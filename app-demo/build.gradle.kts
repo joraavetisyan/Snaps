@@ -11,13 +11,13 @@ android {
     defaultConfig {
         versionName = "8.8.8"
         versionCode = 888
-        applicationId = "com.usacheow.simpleapp.uikit"
+        applicationId = "com.defince.w2e.uikit"
     }
 
     buildTypes {
         all {
             addManifestPlaceholders(mapOf(
-                "app_name" to "SA UiKit",
+                "app_name" to "Watch2Earn UiKit",
             ))
         }
     }

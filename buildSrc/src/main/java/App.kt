@@ -3,7 +3,7 @@ object App {
     const val minSdk = 24
     const val targetSdk = 33
     const val compileSdk = 33
-    const val packageName = "com.usacheow.simpleapp"
+    const val packageName = "com.defince.w2e"
 
     val code
         get() = version

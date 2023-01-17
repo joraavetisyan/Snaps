@@ -15,7 +15,7 @@ object Libs {
     private const val composeGlanceVersion = "1.0.0-alpha03"
     private const val splashVersion = "1.0.0-beta01"
     private const val activityVersion = "1.4.0"
-    private const val materialVersion = "1.5.0"
+    private const val materialVersion = "1.7.0"
     private const val pagingVersion = "3.1.0"
     private const val accompanistVersion = "0.26.2-beta"
     private const val coilVersion = "2.1.0"
@@ -70,7 +70,8 @@ object Libs {
         const val kotlin_serialization = "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
         const val crashlytics_gradle = "com.google.firebase:firebase-crashlytics-gradle:$crashlyticsGradleVersion"
         const val hilt_gradle = "com.google.dagger:hilt-android-gradle-plugin:$hiltVersion"
-        const val navigation_safeArgs_gradle = "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
+        const val navigation_safeArgs_gradle =
+            "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
         const val kotlinter = "org.jmailen.gradle:kotlinter-gradle:$kotlinterVersion"
         const val ruler = "com.spotify.ruler:ruler-gradle-plugin:$rulerVersion"
     }
@@ -80,16 +81,18 @@ object Libs {
         val coroutines = arrayOf(
             "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion",
             "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion",
-            "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutinesVersion")
+            "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutinesVersion"
+        )
         val kotlinSerialization = arrayOf(
             "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinSerializationVersion",
-            "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerializationVersion")
+            "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerializationVersion"
+        )
 
         val desugar = arrayOf("com.android.tools:desugar_jdk_libs:$desugarVersion")
 
         val hilt = arrayOf(
-            "com.google.dagger:hilt-android:$hiltVersion",
-            "androidx.hilt:hilt-navigation-compose:$hiltJetpackVersion")
+            "com.google.dagger:hilt-android:$hiltVersion", "androidx.hilt:hilt-navigation-compose:$hiltJetpackVersion"
+        )
         const val hiltKapt = "com.google.dagger:hilt-android-compiler:$hiltVersion"
         const val hiltKaptViewModel = "androidx.hilt:hilt-compiler:$hiltJetpackVersion"
 
@@ -97,11 +100,12 @@ object Libs {
             "com.google.firebase:firebase-crashlytics-ktx:$crashlyticsVersion",
             "com.google.firebase:firebase-analytics-ktx:$analyticsVersion",
             "com.google.firebase:firebase-messaging-ktx:$messagingVersion",
-            "com.google.firebase:firebase-config-ktx:$configVersion")
+            "com.google.firebase:firebase-config-ktx:$configVersion"
+        )
 
-        val composeCompiler =arrayOf("androidx.compose.compiler:compiler:$composeCompilerVersion")
-        val composeRuntime =arrayOf("androidx.compose.runtime:runtime:$composeVersion")
-        val composeTheme =arrayOf(
+        val composeCompiler = arrayOf("androidx.compose.compiler:compiler:$composeCompilerVersion")
+        val composeRuntime = arrayOf("androidx.compose.runtime:runtime:$composeVersion")
+        val composeTheme = arrayOf(
             "androidx.compose.ui:ui:$composeVersion",
             "androidx.compose.ui:ui-tooling:$composeVersion",
             "androidx.compose.ui:ui-tooling-preview:$composeVersion",
@@ -109,9 +113,10 @@ object Libs {
             "androidx.compose.material3:material3:$composeMaterialVersion",
             "androidx.compose.material3:material3-window-size-class:$composeMaterialVersion",
             "androidx.compose.material:material-icons-extended:$composeVersion",
-            "com.google.android.material:material:$materialVersion")
-        val composeWidgetTheme =arrayOf("androidx.glance:glance-appwidget:$composeGlanceVersion")
-        val composeKit =arrayOf(
+            "com.google.android.material:material:$materialVersion"
+        )
+        val composeWidgetTheme = arrayOf("androidx.glance:glance-appwidget:$composeGlanceVersion")
+        val composeKit = arrayOf(
             "androidx.activity:activity-compose:$activityVersion",
             "androidx.compose.foundation:foundation:$composeVersion",
             "androidx.compose.foundation:foundation-layout:$composeVersion",
@@ -120,7 +125,8 @@ object Libs {
             "com.google.accompanist:accompanist-placeholder-material:$accompanistVersion",
             "androidx.compose.animation:animation:$composeVersion",
             "io.coil-kt:coil-compose:$coilVersion",
-            "io.coil-kt:coil-svg:$coilVersion")
+            "io.coil-kt:coil-svg:$coilVersion"
+        )
 
         val splashscreen = arrayOf("androidx.core:core-splashscreen:$splashVersion")
         val paging = arrayOf("androidx.paging:paging-runtime:$pagingVersion")
@@ -129,11 +135,13 @@ object Libs {
             "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion",
             "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion",
             "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion",
-            "androidx.lifecycle:lifecycle-process:$lifecycleVersion")
+            "androidx.lifecycle:lifecycle-process:$lifecycleVersion"
+        )
         const val lifecycleKapt = "androidx.lifecycle:lifecycle-compiler:$lifecycleVersion"
 
         val navigation = arrayOf(
-            "androidx.navigation:navigation-compose:$navigationVersion")
+            "androidx.navigation:navigation-compose:$navigationVersion"
+        )
 
         val appUpdater = arrayOf("com.google.android.play:core-ktx:$appUpdaterVersion")
         val billing = arrayOf("com.android.billingclient:billing-ktx:$billingVersion")
@@ -146,8 +154,8 @@ object Libs {
         val preference = arrayOf("androidx.preference:preference-ktx:$preferenceVersion")
 
         val room = arrayOf(
-            "androidx.room:room-runtime:$roomVersion",
-            "androidx.room:room-ktx:$roomVersion")
+            "androidx.room:room-runtime:$roomVersion", "androidx.room:room-ktx:$roomVersion"
+        )
         const val roomKapt = "androidx.room:room-compiler:$roomVersion"
 
         val requests = arrayOf(
@@ -155,18 +163,21 @@ object Libs {
             "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:$jsonConverterVersion",
             "com.squareup.okhttp3:okhttp:$okHttpVersion",
             "com.squareup.okhttp3:logging-interceptor:$okHttpVersion",
-            "com.github.chuckerteam.chucker:library:$chuckVersion")
+            "com.github.chuckerteam.chucker:library:$chuckVersion"
+        )
 
         const val unitTestsRunner = "android.support.test.runner.AndroidJUnitRunner"
         val unitTests = arrayOf(
             "junit:junit:$junitVersion",
             "org.mockito:mockito-core:$mockitoVersion",
-            "com.google.truth:truth:$truthVersion")
+            "com.google.truth:truth:$truthVersion"
+        )
         val uiTests = arrayOf(
             "androidx.test.espresso:espresso-core:$espressoVersion",
             "androidx.test.espresso:espresso-intents:$espressoVersion",
             "androidx.test:runner:$runnerVersion",
             "org.mockito:mockito-core:$mockitoVersion",
-            "com.google.truth:truth:$truthVersion")
+            "com.google.truth:truth:$truthVersion"
+        )
     }
 }

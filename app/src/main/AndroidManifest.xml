@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.usacheow.simpleapp">
+    package="com.defince.w2e">
 
     <!--
     todo: remove if not needed
@@ -11,20 +11,20 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
-        android:name=".SimpleApp"
+        android:name=".W2EApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="${app_name}"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Simple.AppTheme"
+        android:theme="@style/Watch2Earn.AppTheme"
         android:fullBackupContent="@xml/backup_rules"
         android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="n">
 
         <activity
             android:name=".mainscreen.AppActivity"
-            android:theme="@style/Simple.AppThemeSplash"
+            android:theme="@style/Watch2Earn.AppThemeSplash"
             android:windowSoftInputMode="adjustResize"
             android:exported="true">
 
@@ -42,7 +42,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="com.usacheow.simppleapp"
+                    android:host="com.defince.w2e"
                     android:scheme="app" />
             </intent-filter>
         </activity>

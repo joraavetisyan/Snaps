@@ -1,6 +1,6 @@
 plugins {
     id(Libs.plugin.application)
-    id("com.google.gms.google-services")
+//    id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     id("com.spotify.ruler")
 }
@@ -44,7 +44,7 @@ android {
             applicationIdSuffix = BuildTypes.debugPackageSuffix
 
             addManifestPlaceholders(mapOf(
-                "app_name" to "SA Debug",
+                "app_name" to "Watch2Earn Debug",
             ))
 
             isMinifyEnabled = false
@@ -55,7 +55,7 @@ android {
             applicationIdSuffix = BuildTypes.alphaPackageSuffix
 
             addManifestPlaceholders(mapOf(
-                "app_name" to "SA Alpha",
+                "app_name" to "Watch2Earn Alpha",
             ))
 
             isMinifyEnabled = true
@@ -66,7 +66,7 @@ android {
             applicationIdSuffix = BuildTypes.releasePackageSuffix
 
             addManifestPlaceholders(mapOf(
-                "app_name" to "Sample App",
+                "app_name" to "Watch2Earn",
             ))
 
             signingConfig = signingConfigs.getByName(BuildTypes.release)
@@ -86,7 +86,6 @@ dependencies {
 
     implementation(projects.featureBottomBar)
     implementation(projects.featureMain)
-    implementation(projects.featureExample)
 
     implementation(*Libs.bundle.splashscreen)
     implementation(*Libs.bundle.appUpdater)
