@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Simple.AppThemeSplash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenAnimationDuration">500</item>
+
+        <item name="postSplashScreenTheme">@style/Simple.AppTheme</item>
+
+        <item name="android:statusBarColor">@color/colorStatusBar</item>
+        <item name="android:navigationBarColor">@color/colorNavigationBar</item>
+    </style>
+
+    <style name="Simple.AppTheme" parent="Theme.Material3.DynamicColors.DayNight">
+
+        <item name="android:statusBarColor">@color/colorStatusBar</item>
+        <item name="android:navigationBarColor">@color/colorNavigationBar</item>
+
+        <item name="android:spotShadowAlpha">0.05</item>
+        <item name="android:ambientShadowAlpha">0.05</item>
+    </style>
+
+</resources>

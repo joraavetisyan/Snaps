@@ -1,0 +1,64 @@
+image: jangrewe/gitlab-ci-android
+
+cache:
+  paths:
+  - .m2/
+  - .gradle/
+
+variables:
+  ANDROID_COMPILE_SDK: "28"
+  ANDROID_BUILD_TOOLS: "28.0.3"
+  ANDROID_SDK_TOOLS:   "4333796"
+
+stages:
+  - lint
+  - build
+
+before_script:
+- export GRADLE_USER_HOME=$(pwd)/.gradle
+- chmod +x ./gradlew
+
+lint:
+  stage: lint
+  script:
+    - ./gradlew lintKotlin
+  artifacts:
+    when: on_failure
+    expire_in: 4 days
+    paths:
+    - app/build/reports/
+
+build_mr:
+  stage: build
+  script:
+    - ./gradlew assembleDebug
+  only:
+    - merge_requests
+  artifacts:
+    expire_in: 4 days
+    paths:
+      - app/build/outputs/
+
+build_develop:
+  stage: build
+  script:
+    - ./gradlew assembleAlpha
+  only:
+    - develop
+  artifacts:
+    expire_in: 4 days
+    paths:
+      - app/build/outputs/
+
+build_release:
+  stage: build
+  script:
+    - ./gradlew assembleRelease
+    - ./gradlew bundleRelease
+  only:
+    - main
+    - /^rc_*/
+  artifacts:
+    expire_in: 4 days
+    paths:
+      - app/build/outputs/
