@@ -22,7 +22,11 @@ import com.defince.corecommon.container.IconValue
 import com.defince.coreuitheme.R
 
 object SpecificIcons {
-    val logo: IconValue = resource(R.drawable.ic_logo)
+    val camera: IconValue = resource(R.drawable.ic_camera)
+    val check: IconValue = resource(R.drawable.ic_check)
+    val picture: IconValue = resource(R.drawable.ic_picture)
+    val profile: IconValue = resource(R.drawable.ic_profile)
+    val star: IconValue = resource(R.drawable.ic_star)
     val back: IconValue = vector(Icons.Filled.ArrowBack)
     val add: IconValue = vector(Icons.Filled.Add)
     val account: IconValue = vector(Icons.Filled.AccountCircle)

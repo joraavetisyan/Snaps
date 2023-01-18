@@ -38,4 +38,14 @@ class MainFeatureProviderImpl @Inject constructor() : MainFeatureProvider {
         composable(AppRoute.MainBottomBar.Mock3) { Mock2Screen(controller) }
         composable(AppRoute.MainBottomBar.Mock3Second) { MainBScreen(controller) }
     }
+
+    override fun NavGraphBuilder.mock4Graph(controller: NavHostController) {
+        composable(AppRoute.MainBottomBar.Mock4) { Mock2Screen(controller) }
+        composable(AppRoute.MainBottomBar.Mock4Second) { MainBScreen(controller) }
+    }
+
+    override fun NavGraphBuilder.mock5Graph(controller: NavHostController) {
+        composable(AppRoute.MainBottomBar.Mock5) { Mock2Screen(controller) }
+        composable(AppRoute.MainBottomBar.Mock5Second) { MainBScreen(controller) }
+    }
 }
