@@ -6,7 +6,5 @@ enum class StringKey {
     ConnectionErrorMessage,
     UnknownErrorMessage,
 
-    BbExample,
-
     NumPadForget,
 }

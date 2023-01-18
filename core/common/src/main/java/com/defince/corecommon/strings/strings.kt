@@ -14,11 +14,6 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "An error has occurred. Try again later",
     ),
 
-    key(StringKey.BbExample) to mapOf(
-        SupportedLanguageKey.Ru to "Пример",
-        SupportedLanguageKey.En to "Example",
-    ),
-
     key(StringKey.NumPadForget) to mapOf(
         SupportedLanguageKey.Ru to "Забыл код",
         SupportedLanguageKey.En to "Forgot",

@@ -18,7 +18,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.defince.corecommon.strings.StringKey
 import com.defince.corenavigation.AppRoute
 import com.defince.corenavigation.BottomBarFeatureProvider
 import com.defince.corenavigation.MainFeatureProvider
@@ -82,25 +81,34 @@ class AppActivity : FragmentActivity() {
 
     private fun mainBottomBarItems() = listOf(
         BottomBarFeatureProvider.ScreenItem(
-            icon = AppTheme.specificIcons.logo,
-            labelKey = StringKey.BbExample,
+            icon = AppTheme.specificIcons.camera,
             route = AppRoute.MainBottomBar.MainTab1,
             startDestination = AppRoute.MainBottomBar.Mock1,
             builder = { mainTab1Graph(it) },
         ),
         BottomBarFeatureProvider.ScreenItem(
-            icon = AppTheme.specificIcons.logo,
-            labelKey = StringKey.BbExample,
+            icon = AppTheme.specificIcons.star,
             route = AppRoute.MainBottomBar.MainTab2,
             startDestination = AppRoute.MainBottomBar.Mock2,
             builder = { mainTab2Graph(it) },
         ),
         BottomBarFeatureProvider.ScreenItem(
-            icon = AppTheme.specificIcons.logo,
-            labelKey = StringKey.BbExample,
+            icon = AppTheme.specificIcons.check,
             route = AppRoute.MainBottomBar.MainTab3,
             startDestination = AppRoute.MainBottomBar.Mock3,
             builder = { mainTab3Graph(it) },
+        ),
+        BottomBarFeatureProvider.ScreenItem(
+            icon = AppTheme.specificIcons.picture,
+            route = AppRoute.MainBottomBar.MainTab4,
+            startDestination = AppRoute.MainBottomBar.Mock4,
+            builder = { mainTab4Graph(it) },
+        ),
+        BottomBarFeatureProvider.ScreenItem(
+            icon = AppTheme.specificIcons.profile,
+            route = AppRoute.MainBottomBar.MainTab5,
+            startDestination = AppRoute.MainBottomBar.Mock5,
+            builder = { mainTab5Graph(it) },
         ),
     )
 
@@ -114,5 +122,13 @@ class AppActivity : FragmentActivity() {
 
     private fun NavGraphBuilder.mainTab3Graph(controller: NavHostController) {
         with(mainFeatureProvider) { mock3Graph(controller) }
+    }
+
+    private fun NavGraphBuilder.mainTab4Graph(controller: NavHostController) {
+        with(mainFeatureProvider) { mock4Graph(controller) }
+    }
+
+    private fun NavGraphBuilder.mainTab5Graph(controller: NavHostController) {
+        with(mainFeatureProvider) { mock5Graph(controller) }
     }
 }

@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets
 import java.util.Calendar
 import javax.inject.Inject
 
-private const val PublicAppDirectoryName = "SA"
+private const val PublicAppDirectoryName = "Watch2Earn"
 
 class FileManager @Inject constructor(@ApplicationContext val context: Context) {
 

@@ -4,7 +4,6 @@ import androidx.core.net.toUri
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import kotlinx.serialization.Serializable
 
 const val DefaultArgKey = "arg"
 
@@ -46,6 +45,14 @@ object AppRoute {
         object MainTab3 : Route("mainTab3")
         object Mock3 : Route("Mock3")
         object Mock3Second : Route("Mock3Second")
+
+        object MainTab4 : Route("mainTab4")
+        object Mock4 : Route("Mock4")
+        object Mock4Second : Route("Mock4Second")
+
+        object MainTab5 : Route("mainTab5")
+        object Mock5 : Route("Mock5")
+        object Mock5Second : Route("Mock5Second")
     }
 }
 

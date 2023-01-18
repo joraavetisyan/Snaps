@@ -12,6 +12,10 @@ interface MainFeatureProvider {
     fun NavGraphBuilder.mock2Graph(controller: NavHostController)
 
     fun NavGraphBuilder.mock3Graph(controller: NavHostController)
+
+    fun NavGraphBuilder.mock4Graph(controller: NavHostController)
+
+    fun NavGraphBuilder.mock5Graph(controller: NavHostController)
 }
 
 interface BottomBarFeatureProvider {
@@ -20,7 +24,7 @@ interface BottomBarFeatureProvider {
 
     data class ScreenItem(
         val icon: IconValue,
-        val labelKey: StringKey,
+        val labelKey: StringKey? = null,
         val route: Route,
         val startDestination: Route,
         val builder: NavGraphBuilder.(NavHostController) -> Unit,
