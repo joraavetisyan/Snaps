@@ -89,8 +89,8 @@ internal val DefaultSpecificTypography = SpecificTypography(
 
     titleLarge = TextStyle(
         fontFamily = FontFamilyW600,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
+        fontSize = 28.sp,
+        lineHeight = 26.4f.sp,
         letterSpacing = 0.em,
     ),
     titleMedium = TextStyle(
@@ -101,8 +101,8 @@ internal val DefaultSpecificTypography = SpecificTypography(
     ),
     titleSmall = TextStyle(
         fontFamily = FontFamilyW500,
-        fontSize = 14.sp,
-        lineHeight = 16.sp,
+        fontSize = 16.sp,
+        lineHeight = 19.36f.sp,
         letterSpacing = 0.007.em,
     ),
 

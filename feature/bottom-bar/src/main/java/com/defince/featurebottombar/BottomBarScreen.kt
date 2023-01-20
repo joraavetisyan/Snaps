@@ -51,10 +51,7 @@ fun BottomBarScreen(
         CompositionLocalProvider(LocalBottomNavigationHeight provides 80.dp) {
             NavHost(navController = navController, startDestination = items.first().route.pattern) {
                 items.forEach {
-                    navigation(
-                        route = it.route.pattern,
-                        startDestination = it.startDestination.pattern,
-                    ) {
+                    navigation(route = it.route.pattern, startDestination = it.startDestination.pattern) {
                         with(it) { builder(navController) }
                     }
                 }
@@ -114,7 +111,7 @@ private fun MenuItem(
             painter = icon.get(),
             contentDescription = null,
             tint = color,
-            modifier = modifier.size(40.dp)
+            modifier = modifier.size(40.dp),
         )
     }
 }

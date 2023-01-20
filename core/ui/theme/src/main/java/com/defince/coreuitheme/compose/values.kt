@@ -16,7 +16,7 @@ object SpecificValues {
 
     val radius_extra_small = 4.dp
     val radius_small = 8.dp
-    val radius_medium = 16.dp
+    val radius_medium = 12.dp
     val radius_large = 20.dp
     val radius_extra_large = 24.dp
 
