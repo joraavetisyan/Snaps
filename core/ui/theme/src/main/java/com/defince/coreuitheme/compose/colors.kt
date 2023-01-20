@@ -50,6 +50,8 @@ internal val LightSpecificColorScheme = SpecificColorScheme(
     symbolSecondaryInverse = Color(0x9AFFFFFF),
     symbolTertiary = Color(0x651C1B1F),
     symbolTertiaryInverse = Color(0x65FFFFFF),
+
+    text = Color(0xFFB1B3C0),
 )
 
 internal val DarkSpecificColorScheme = LightSpecificColorScheme
@@ -98,6 +100,8 @@ data class SpecificColorScheme(
     val symbolSecondaryInverse: Color,
     val symbolTertiary: Color,
     val symbolTertiaryInverse: Color,
+
+    val text: Color,
 
     val white_10: Color = Color(0x33FFFFFF),
     val white_20: Color = Color(0x33FFFFFF),

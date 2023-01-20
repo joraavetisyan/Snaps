@@ -1,34 +1,37 @@
 package com.defince.featuremain.presentation.viewmodel
 
 import com.defince.basesources.LocationSource
+import com.defince.corecommon.container.ImageValue
 import com.defince.coreui.viewmodel.SimpleViewModel
 import com.defince.featuremain.data.StubApi
+import com.defince.featuremain.domain.Nft
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import javax.inject.Inject
 
 @HiltViewModel
-class AViewModel @Inject constructor(
+class ItemListViewModel @Inject constructor(
     private val source: LocationSource,
     private val api: StubApi,
 ) : SimpleViewModel() {
 
-    private val _uiState = MutableStateFlow(BViewModel.UiState())
+    private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _command = Channel<BViewModel.Command>()
+    private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
-
-    var x = 0
-
-//    val state = provider.state.shareIn(viewModelScope, SharingStarted.WhileSubscribed())
-
-    sealed class Command
 
     data class UiState(
         val isLoading: Boolean = false,
+        val items: List<Nft> = listOf(
+            Nft(ImageValue.Url("https://picsum.photos/200"), "0.51\$", "6%", "60%"),
+            Nft(ImageValue.Url("https://picsum.photos/200"), "0.51\$", "6%", "60%"),
+            Nft(ImageValue.Url("https://picsum.photos/200"), "0.51\$", "6%", "60%"),
+        ),
     )
+
+    sealed class Command
 }

@@ -88,6 +88,7 @@ fun ColorScheme.toSpecificColorScheme(isLight: Boolean) = SpecificColorScheme(
     else DarkSpecificColorScheme.symbolTertiary,
     symbolTertiaryInverse = if (isLight) LightSpecificColorScheme.symbolTertiaryInverse
     else DarkSpecificColorScheme.symbolTertiaryInverse,
+    text = this.onSurface, // todo
 )
 
 fun SpecificTypography.toTypography() = Typography(

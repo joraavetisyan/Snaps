@@ -7,7 +7,7 @@ import com.defince.corenavigation.MainFeatureProvider
 import com.defince.corenavigation.base.Navigator
 import com.defince.corenavigation.base.composable
 import com.defince.corenavigation.base.navigate
-import com.defince.featuremain.presentation.screen.MainAScreen
+import com.defince.featuremain.presentation.screen.ItemListScreen
 import com.defince.featuremain.presentation.screen.MainBScreen
 import com.defince.featuremain.presentation.screen.Mock2Screen
 import com.defince.featuremain.presentation.screen.MockScreen
@@ -25,7 +25,7 @@ internal class ScreenNavigator(navHostController: NavHostController) : Navigator
 class MainFeatureProviderImpl @Inject constructor() : MainFeatureProvider {
 
     override fun NavGraphBuilder.mock1Graph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.Mock1) { MainAScreen(controller) }
+        composable(AppRoute.MainBottomBar.Mock1) { ItemListScreen(controller) }
         composable(AppRoute.MainBottomBar.Mock1Second) { MainBScreen(controller) }
     }
 
