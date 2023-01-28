@@ -2,21 +2,23 @@ package com.defince.coreuitheme.compose
 
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.CreditCard
-import androidx.compose.material.icons.filled.CurrencyExchange
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.Fingerprint
-import androidx.compose.material.icons.filled.NavigateNext
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.outlined.AutoMode
-import androidx.compose.material.icons.outlined.DarkMode
-import androidx.compose.material.icons.outlined.LightMode
-import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.AutoMode
+import androidx.compose.material.icons.rounded.CreditCard
+import androidx.compose.material.icons.rounded.CurrencyExchange
+import androidx.compose.material.icons.rounded.DarkMode
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material.icons.rounded.Fingerprint
+import androidx.compose.material.icons.rounded.LightMode
+import androidx.compose.material.icons.rounded.NavigateNext
+import androidx.compose.material.icons.rounded.Phone
+import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.defince.corecommon.container.IconValue
 import com.defince.coreuitheme.R
@@ -27,21 +29,25 @@ object SpecificIcons {
     val picture: IconValue = resource(R.drawable.ic_picture)
     val profile: IconValue = resource(R.drawable.ic_profile)
     val star: IconValue = resource(R.drawable.ic_star)
-    val back: IconValue = vector(Icons.Filled.ArrowBack)
-    val add: IconValue = vector(Icons.Filled.Add)
-    val account: IconValue = vector(Icons.Filled.AccountCircle)
-    val navigateNext: IconValue = vector(Icons.Filled.NavigateNext)
-    val creditCard: IconValue = vector(Icons.Filled.CreditCard)
-    val currencyExchange: IconValue = vector(Icons.Filled.CurrencyExchange)
-    val phone: IconValue = vector(Icons.Filled.Phone)
-    val error: IconValue = vector(Icons.Filled.Error)
-    val fingerprint: IconValue = vector(Icons.Filled.Fingerprint)
-    val delete: IconValue = vector(Icons.Filled.Delete)
-    val done: IconValue = vector(Icons.Filled.Done)
-    val settings: IconValue = vector(Icons.Outlined.Settings)
-    val themeSystem: IconValue = vector(Icons.Outlined.AutoMode)
-    val themeDark: IconValue = vector(Icons.Outlined.DarkMode)
-    val themeLight: IconValue = vector(Icons.Outlined.LightMode)
+    val back: IconValue = vector(Icons.Rounded.ArrowBack)
+    val add: IconValue = vector(Icons.Rounded.Add)
+    val account: IconValue = vector(Icons.Rounded.AccountCircle)
+    val navigateNext: IconValue = vector(Icons.Rounded.NavigateNext)
+    val creditCard: IconValue = vector(Icons.Rounded.CreditCard)
+    val currencyExchange: IconValue = vector(Icons.Rounded.CurrencyExchange)
+    val phone: IconValue = vector(Icons.Rounded.Phone)
+    val error: IconValue = vector(Icons.Rounded.Error)
+    val fingerprint: IconValue = vector(Icons.Rounded.Fingerprint)
+    val delete: IconValue = vector(Icons.Rounded.Delete)
+    val done: IconValue = vector(Icons.Rounded.Done)
+    val settings: IconValue = resource(R.drawable.ic_settings)
+    val share: IconValue = resource(R.drawable.ic_share)
+    val gallery: IconValue = resource(R.drawable.ic_gallery)
+    val like: IconValue = resource(R.drawable.ic_like)
+    val play: IconValue = vector(Icons.Rounded.PlayArrow)
+    val themeSystem: IconValue = vector(Icons.Rounded.AutoMode)
+    val themeDark: IconValue = vector(Icons.Rounded.DarkMode)
+    val themeLight: IconValue = vector(Icons.Rounded.LightMode)
 }
 
 private fun vector(value: ImageVector) = IconValue.Vector(value)

@@ -4,6 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
+import androidx.compose.material.LocalContentAlpha
+import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +30,7 @@ fun TopAppBarActionIcon(
     Icon(
         painter = data.icon.get(),
         contentDescription = null,
+        tint = data.color ?: LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
         modifier = Modifier
             .clip(CircleShape)
             .clickable(enabled = true, onClick = data.onClick)

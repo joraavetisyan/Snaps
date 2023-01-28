@@ -11,6 +11,7 @@ import com.defince.featuremain.presentation.screen.ItemListScreen
 import com.defince.featuremain.presentation.screen.MainBScreen
 import com.defince.featuremain.presentation.screen.Mock2Screen
 import com.defince.featuremain.presentation.screen.MockScreen
+import com.defince.featuremain.presentation.screen.ProfileScreen
 import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController) {
@@ -30,7 +31,7 @@ class MainFeatureProviderImpl @Inject constructor() : MainFeatureProvider {
     }
 
     override fun NavGraphBuilder.mock2Graph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.Mock2) { MockScreen(controller) }
+        composable(AppRoute.MainBottomBar.Mock2) { ProfileScreen(controller) }
         composable(AppRoute.MainBottomBar.Mock2Second) { MainBScreen(controller) }
     }
 

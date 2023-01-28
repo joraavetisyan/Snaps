@@ -35,7 +35,7 @@ internal val LightSpecificColorScheme = SpecificColorScheme(
     shimmer = Color(0xFFF4F4F4),
     scrim = Color(0xB3FFFFFF),
 
-    background = Color(0xFFFFFFFF),
+    background = Color(0xFFFAFAFA),
     onBackground = Color(0xFF1C1B1F),
     surface = Color(0xFFFFFFFF),
     onSurface = Color(0xFF1C1B1F),

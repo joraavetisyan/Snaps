@@ -107,7 +107,7 @@ fun SingleRowTopAppBar(
                 titleTextStyle = titleTextStyle,
                 titleAlpha = 1f,
                 titleVerticalArrangement = Arrangement.Center,
-                titleHorizontalArrangement = Arrangement.Center,
+                titleHorizontalArrangement = Arrangement.Start,
                 titleBottomPadding = 0,
                 hideTitleSemantics = false,
                 navigationIcon = navigationIcon,

@@ -15,7 +15,7 @@ import com.defince.coreuitheme.compose.AppTheme
 
 object SimpleTopAppBarConfig {
 
-    val ContainerColorAlpha = .9f
+    private const val ContainerColorAlpha = .9f
 
     @Composable
     fun surfaceColors() = SimpleTopAppBarColors(
