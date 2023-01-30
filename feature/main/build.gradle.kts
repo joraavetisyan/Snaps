@@ -16,4 +16,6 @@ dependencies {
     implementation(projects.baseSources)
 
     implementation(*Libs.bundle.firebase)
+    implementation(*Libs.bundle.pager)
+    implementation(*Libs.bundle.media)
 }

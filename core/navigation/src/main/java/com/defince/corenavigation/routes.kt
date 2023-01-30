@@ -36,23 +36,18 @@ object AppRoute {
 
         object MainTab1 : Route("mainTab1")
         object Mock1 : Route("Mock1")
-        object Mock1Second : Route("Mock1Second")
 
         object MainTab2 : Route("mainTab2")
         object Mock2 : Route("Mock2")
-        object Mock2Second : Route("Mock2Second")
 
         object MainTab3 : Route("mainTab3")
         object Mock3 : Route("Mock3")
-        object Mock3Second : Route("Mock3Second")
 
         object MainTab4 : Route("mainTab4")
         object Mock4 : Route("Mock4")
-        object Mock4Second : Route("Mock4Second")
 
         object MainTab5 : Route("mainTab5")
         object Mock5 : Route("Mock5")
-        object Mock5Second : Route("Mock5Second")
     }
 }
 
