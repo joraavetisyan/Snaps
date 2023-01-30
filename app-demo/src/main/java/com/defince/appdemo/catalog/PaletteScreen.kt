@@ -67,50 +67,42 @@ fun PaletteScreen(navController: NavHostController) {
 
 @Composable
 private fun items() = listOf(
-    HeaderTileState.Data(value = "Primary".textValue(), type = HeaderTileState.Type.Small),
-    ColorItem(AppTheme.specificColorScheme.primary, "primary"),
-    ColorItem(AppTheme.specificColorScheme.onPrimary, "onPrimary"),
-    ColorItem(AppTheme.specificColorScheme.primaryContainer, "primaryContainer"),
-    ColorItem(AppTheme.specificColorScheme.onPrimaryContainer, "onPrimaryContainer"),
-    ColorItem(AppTheme.specificColorScheme.primaryInverse, "primaryInverse"),
+    HeaderTileState.Data(value = "Ui".textValue(), type = HeaderTileState.Type.Small),
+    ColorItem(AppTheme.specificColorScheme.uiAccent, "uiAccent"),
+    ColorItem(AppTheme.specificColorScheme.uiContentBg, "uiContentBg"),
+    ColorItem(AppTheme.specificColorScheme.uiSystemRed, "uiSystemRed"),
+    ColorItem(AppTheme.specificColorScheme.uiSystemGreen, "uiSystemGreen"),
+    ColorItem(AppTheme.specificColorScheme.uiDisabledLabel, "uiDisabledLabel"),
 
-    HeaderTileState.Data(value = "Secondary".textValue(), type = HeaderTileState.Type.Small),
-    ColorItem(AppTheme.specificColorScheme.secondary, "secondary"),
-    ColorItem(AppTheme.specificColorScheme.onSecondary, "onSecondary"),
-    ColorItem(AppTheme.specificColorScheme.secondaryContainer, "secondaryContainer"),
-    ColorItem(AppTheme.specificColorScheme.onSecondaryContainer, "onSecondaryContainer"),
+    HeaderTileState.Data(value = "Text".textValue(), type = HeaderTileState.Type.Small),
+    ColorItem(AppTheme.specificColorScheme.textPrimary, "textPrimary"),
+    ColorItem(AppTheme.specificColorScheme.textSecondary, "textSecondary"),
+    ColorItem(AppTheme.specificColorScheme.textLink, "textLink"),
 
-    HeaderTileState.Data(value = "Tertiary".textValue(), type = HeaderTileState.Type.Small),
-    ColorItem(AppTheme.specificColorScheme.tertiary, "tertiary"),
-    ColorItem(AppTheme.specificColorScheme.onTertiary, "onTertiary"),
-    ColorItem(AppTheme.specificColorScheme.tertiaryContainer, "tertiaryContainer"),
-    ColorItem(AppTheme.specificColorScheme.onTertiaryContainer, "onTertiaryContainer"),
+    HeaderTileState.Data(value = "Grey".textValue(), type = HeaderTileState.Type.Small),
+    ColorItem(AppTheme.specificColorScheme.lightGrey, "lightGrey"),
+    ColorItem(AppTheme.specificColorScheme.grey, "grey"),
+    ColorItem(AppTheme.specificColorScheme.darkGrey, "darkGrey"),
 
-    HeaderTileState.Data(value = "Error".textValue(), type = HeaderTileState.Type.Small),
-    ColorItem(AppTheme.specificColorScheme.error, "error"),
-    ColorItem(AppTheme.specificColorScheme.onError, "onError"),
-    ColorItem(AppTheme.specificColorScheme.errorContainer, "errorContainer"),
-    ColorItem(AppTheme.specificColorScheme.onErrorContainer, "onErrorContainer"),
+    HeaderTileState.Data(value = "Action".textValue(), type = HeaderTileState.Type.Small),
+    ColorItem(AppTheme.specificColorScheme.actionLabel, "actionLabel"),
+    ColorItem(AppTheme.specificColorScheme.actionBase, "actionBase"),
+    ColorItem(AppTheme.specificColorScheme.actionDisabled, "actionDisabled"),
 
-    HeaderTileState.Data(value = "Background".textValue(), type = HeaderTileState.Type.Small),
-    ColorItem(AppTheme.specificColorScheme.background, "background"),
-    ColorItem(AppTheme.specificColorScheme.onBackground, "onBackground"),
+    HeaderTileState.Data(value = "Light".textValue(), type = HeaderTileState.Type.Small),
+    ColorItem(AppTheme.specificColorScheme.lightLabel, "lightLabel"),
+    ColorItem(AppTheme.specificColorScheme.lightBase, "lightBase"),
+    ColorItem(AppTheme.specificColorScheme.lightDisabled, "lightDisabled"),
 
-    HeaderTileState.Data(value = "Surface".textValue(), type = HeaderTileState.Type.Small),
-    ColorItem(AppTheme.specificColorScheme.surface, "surface"),
-    ColorItem(AppTheme.specificColorScheme.onSurface, "onSurface"),
-    ColorItem(AppTheme.specificColorScheme.surfaceVariant, "surfaceVariant"),
-    ColorItem(AppTheme.specificColorScheme.onSurfaceVariant, "onSurfaceVariant"),
-    ColorItem(AppTheme.specificColorScheme.surfaceInverse, "surfaceInverse"),
-    ColorItem(AppTheme.specificColorScheme.onSurfaceInverse, "onSurfaceInverse"),
+    HeaderTileState.Data(value = "Default".textValue(), type = HeaderTileState.Type.Small),
+    ColorItem(AppTheme.specificColorScheme.defaultLabel, "defaultLabel"),
+    ColorItem(AppTheme.specificColorScheme.defaultBase, "defaultBase"),
+    ColorItem(AppTheme.specificColorScheme.defaultDisabled, "defaultDisabled"),
 
-    HeaderTileState.Data(value = "Text/Icons".textValue(), type = HeaderTileState.Type.Small),
-    ColorItem(AppTheme.specificColorScheme.symbolPrimary, "symbolPrimary"),
-    ColorItem(AppTheme.specificColorScheme.symbolPrimaryInverse, "symbolPrimaryInverse"),
-    ColorItem(AppTheme.specificColorScheme.symbolSecondary, "symbolSecondary"),
-    ColorItem(AppTheme.specificColorScheme.symbolSecondaryInverse, "symbolSecondaryInverse"),
-    ColorItem(AppTheme.specificColorScheme.symbolTertiary, "symbolTertiary"),
-    ColorItem(AppTheme.specificColorScheme.symbolTertiaryInverse, "symbolTertiaryInverse"),
+    HeaderTileState.Data(value = "Outline".textValue(), type = HeaderTileState.Type.Small),
+    ColorItem(AppTheme.specificColorScheme.outlineLabel, "outlineLabel"),
+    ColorItem(AppTheme.specificColorScheme.outlineBorderBase, "outlineBase"),
+    ColorItem(AppTheme.specificColorScheme.outlineDisabled, "outlineDisabled"),
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -125,9 +117,9 @@ data class ColorItem(
             colors = CardDefaults.cardColors(
                 containerColor = color,
                 contentColor = if (MaterialColors.isColorLight(color.toArgb())) {
-                    AppTheme.specificColorScheme.symbolPrimary
+                    AppTheme.specificColorScheme.textPrimary
                 } else {
-                    AppTheme.specificColorScheme.symbolPrimaryInverse
+                    AppTheme.specificColorScheme.textSecondary
                 },
             ),
             modifier = modifier.heightIn(min = 100.dp),

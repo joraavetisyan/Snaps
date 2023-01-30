@@ -24,7 +24,7 @@ fun SimpleAlertDialogUi(
                 text = text.get(),
                 modifier = Modifier.fillMaxWidth(),
                 style = AppTheme.specificTypography.bodyLarge,
-                color = AppTheme.specificColorScheme.symbolPrimary
+                color = AppTheme.specificColorScheme.textPrimary
             )
         },
         dismissButton = {

@@ -30,9 +30,9 @@ import com.defince.coreuicompose.tools.get
 import com.defince.coreuicompose.tools.inset
 import com.defince.coreuicompose.tools.insetAll
 import com.defince.coreuicompose.tools.mockClick
+import com.defince.coreuicompose.uikit.button.SimpleButtonActionL
 import com.defince.coreuicompose.uikit.button.SimpleButtonContent
-import com.defince.coreuicompose.uikit.button.SimpleButtonPrimaryL
-import com.defince.coreuicompose.uikit.button.SimpleButtonTonalL
+import com.defince.coreuicompose.uikit.button.SimpleButtonInlineL
 import com.defince.coreuitheme.compose.AppTheme
 
 data class FullScreenMessage(
@@ -72,7 +72,7 @@ fun FullScreenMessageUi(
     Column(
         modifier = modifier
             .mockClick()
-            .background(AppTheme.specificColorScheme.background)
+            .background(AppTheme.specificColorScheme.uiContentBg)
             .fillMaxSize()
             .inset(insetAll())
             .padding(24.dp),
@@ -96,7 +96,7 @@ fun FullScreenMessageUi(
         )
         Spacer(modifier = Modifier.weight(1f))
         data.primaryButton?.let { button ->
-            SimpleButtonPrimaryL(
+            SimpleButtonActionL(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = button.onClick,
             ) {
@@ -104,7 +104,7 @@ fun FullScreenMessageUi(
             }
         }
         data.secondaryButton?.let { button ->
-            SimpleButtonTonalL(
+            SimpleButtonInlineL(
                 modifier = Modifier
                     .padding(top = 16.dp)
                     .fillMaxWidth(),
@@ -124,7 +124,7 @@ private fun Visuals(
     Box(
         modifier = Modifier
             .background(
-                color = AppTheme.specificColorScheme.surfaceVariant,
+                color = AppTheme.specificColorScheme.uiContentBg,
                 shape = RoundedCornerShape(40.dp),
             )
             .size(128.dp),

@@ -32,7 +32,7 @@ fun ShimmerTile(
 ) {
     Row(
         modifier = modifier
-            .background(AppTheme.specificColorScheme.background)
+            .background(AppTheme.specificColorScheme.lightGrey)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(AppTheme.specificValues.default_padding),
     ) {
@@ -56,7 +56,7 @@ fun ShimmerTileLine(
     height: Dp = 16.dp,
 ) {
     Surface(
-        color = AppTheme.specificColorScheme.shimmer,
+        color = AppTheme.specificColorScheme.lightGrey,
         shape = CircleShape,
         content = {},
         modifier = modifier
@@ -72,7 +72,7 @@ fun ShimmerTileCircle(
     size: Dp = 36.dp,
 ) {
     Surface(
-        color = AppTheme.specificColorScheme.shimmer,
+        color = AppTheme.specificColorScheme.lightGrey,
         shape = CircleShape,
         content = {},
         modifier = modifier

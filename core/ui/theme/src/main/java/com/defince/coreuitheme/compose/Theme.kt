@@ -18,6 +18,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.DpSize
 import com.defince.coreuitheme.compose.ext.Material2ThemeSupport
+import com.defince.coreuitheme.compose.ext.toColorScheme
 import com.defince.coreuitheme.compose.ext.toSpecificColorScheme
 
 val LocalWindowSizeClass = staticCompositionLocalOf<WindowSizeClass> {
@@ -36,8 +37,8 @@ fun PreviewAppTheme(
             isDarkTheme = darkTheme,
         ) {
             Surface(
-                color = AppTheme.specificColorScheme.surface,
-                contentColor = AppTheme.specificColorScheme.onSurface,
+                color = AppTheme.specificColorScheme.uiContentBg,
+                contentColor = AppTheme.specificColorScheme.textPrimary,
                 content = content,
             )
         }
@@ -54,12 +55,12 @@ fun AppTheme(
     val (colorScheme, specificColorScheme) = if (isDynamicTheme) {
         val colorScheme = when {
             isDarkTheme -> dynamicDarkColorScheme(LocalContext.current).copy(
-                outline = DarkSpecificColorScheme.outline,
-                outlineVariant = DarkSpecificColorScheme.outlineVariant,
+                outline = DarkSpecificColorScheme.outlineBorderBase,
+                outlineVariant = DarkSpecificColorScheme.outlineBorderBase,
             )
             else -> dynamicLightColorScheme(LocalContext.current).copy(
-                outline = LightSpecificColorScheme.outline,
-                outlineVariant = LightSpecificColorScheme.outlineVariant,
+                outline = LightSpecificColorScheme.outlineBorderBase,
+                outlineVariant = LightSpecificColorScheme.outlineBorderBase,
             )
         }
         val specificColorScheme = colorScheme.toSpecificColorScheme(!isDarkTheme)
@@ -77,7 +78,7 @@ fun AppTheme(
         LocalWindowSizeClass provides windowSizeClass,
     ) {
         MaterialTheme(
-            colorScheme = colorScheme,
+            colorScheme = specificColorScheme.toColorScheme(),
             shapes = AppShapes,
             typography = DefaultTypography,
             content = { Material2ThemeSupport(isDarkTheme, content) },

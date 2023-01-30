@@ -15,7 +15,7 @@ fun Header(
     Text(
         text = value.get(),
         style = AppTheme.specificTypography.headlineMedium,
-        color = AppTheme.specificColorScheme.symbolPrimary,
+        color = AppTheme.specificColorScheme.textPrimary,
         modifier = modifier,
     )
 }
@@ -28,7 +28,7 @@ fun Header2(
     Text(
         text = value.get(),
         style = AppTheme.specificTypography.headlineSmall,
-        color = AppTheme.specificColorScheme.symbolPrimary,
+        color = AppTheme.specificColorScheme.textPrimary,
         modifier = modifier,
     )
 }
@@ -41,7 +41,7 @@ fun Header3(
     Text(
         text = value.get(),
         style = AppTheme.specificTypography.titleLarge,
-        color = AppTheme.specificColorScheme.symbolPrimary,
+        color = AppTheme.specificColorScheme.textPrimary,
         modifier = modifier,
     )
 }
@@ -54,7 +54,7 @@ fun Header4(
     Text(
         text = value.get(),
         style = AppTheme.specificTypography.titleMedium,
-        color = AppTheme.specificColorScheme.symbolPrimary,
+        color = AppTheme.specificColorScheme.textPrimary,
         modifier = modifier,
     )
 }
@@ -67,7 +67,7 @@ fun Header5(
     Text(
         text = value.get(),
         style = AppTheme.specificTypography.titleSmall,
-        color = AppTheme.specificColorScheme.symbolSecondary,
+        color = AppTheme.specificColorScheme.textPrimary,
         modifier = modifier,
     )
 }

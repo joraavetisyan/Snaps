@@ -95,7 +95,7 @@ private fun Header() {
         Text(
             text = "All your inventory is displayed here",
             style = AppTheme.specificTypography.titleSmall,
-            color = AppTheme.specificColorScheme.text,
+            color = AppTheme.specificColorScheme.textPrimary,
         )
     }
 }
@@ -106,7 +106,7 @@ private fun Item(item: Nft) {
         verticalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier
             .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
-            .background(color = AppTheme.specificColorScheme.surface, shape = AppTheme.shapes.medium)
+            .background(color = AppTheme.specificColorScheme.uiContentBg, shape = AppTheme.shapes.medium)
             .padding(horizontal = 12.dp, vertical = 16.dp),
     ) {
         Card(
@@ -135,7 +135,7 @@ private fun Item(item: Nft) {
 @Composable
 private fun Line(name: String, value: String) {
     Row {
-        Text(text = name, color = AppTheme.specificColorScheme.text)
+        Text(text = name, color = AppTheme.specificColorScheme.textPrimary)
         Spacer(modifier = Modifier.weight(1f))
         Text(text = value)
     }

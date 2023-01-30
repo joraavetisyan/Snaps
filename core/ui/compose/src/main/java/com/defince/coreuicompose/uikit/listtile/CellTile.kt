@@ -324,13 +324,13 @@ private fun LeftPart(data: CellTileState.LeftPart?) {
         is CellTileState.LeftPart.GreyIcon -> LeftIcon(
             icon = data.icon,
             builder = data.builder,
-            bgModifier = Modifier.background(AppTheme.specificColorScheme.surfaceVariant, CircleShape),
+            bgModifier = Modifier.background(AppTheme.specificColorScheme.uiContentBg, CircleShape),
         )
         is CellTileState.LeftPart.GreyColoredIcon -> LeftIcon(
             icon = data.icon,
             builder = data.builder,
-            tint = AppTheme.specificColorScheme.onSurfaceVariant,
-            bgModifier = Modifier.background(AppTheme.specificColorScheme.surfaceVariant, CircleShape),
+            tint = AppTheme.specificColorScheme.uiContentBg,
+            bgModifier = Modifier.background(AppTheme.specificColorScheme.uiContentBg, CircleShape),
         )
         is CellTileState.LeftPart.Logo -> Image(
             painter = data.source.get(data.builder),
@@ -355,7 +355,7 @@ private fun RowScope.MiddlePart(
         additionalHeader?.get()?.let {
             Text(
                 text = it,
-                color = AppTheme.specificColorScheme.symbolTertiary,
+                color = AppTheme.specificColorScheme.textSecondary,
                 style = CellTileConfig.additionalHeaderStyle(),
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -363,7 +363,7 @@ private fun RowScope.MiddlePart(
         header?.get()?.let {
             Text(
                 text = it,
-                color = AppTheme.specificColorScheme.symbolTertiary,
+                color = AppTheme.specificColorScheme.textSecondary,
                 style = CellTileConfig.headerStyle(),
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -371,7 +371,7 @@ private fun RowScope.MiddlePart(
         value?.get()?.let {
             FadeText(
                 text = it,
-                color = AppTheme.specificColorScheme.symbolPrimary,
+                color = AppTheme.specificColorScheme.textPrimary,
                 style = CellTileConfig.valueStyle(),
                 modifier = Modifier.fillMaxWidth(),
                 maxLines = maxValueLines,
@@ -380,7 +380,7 @@ private fun RowScope.MiddlePart(
         valueLarge?.get()?.let {
             Text(
                 text = it,
-                color = AppTheme.specificColorScheme.symbolPrimary,
+                color = AppTheme.specificColorScheme.textPrimary,
                 style = CellTileConfig.valueLargeStyle(),
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -388,7 +388,7 @@ private fun RowScope.MiddlePart(
         description?.get()?.let {
             Text(
                 text = it,
-                color = AppTheme.specificColorScheme.symbolSecondary,
+                color = AppTheme.specificColorScheme.textSecondary,
                 style = CellTileConfig.descriptionStyle(),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -399,7 +399,7 @@ private fun RowScope.MiddlePart(
         action?.get()?.let {
             Text(
                 text = it,
-                color = AppTheme.specificColorScheme.symbolPrimary,
+                color = AppTheme.specificColorScheme.textPrimary,
                 style = CellTileConfig.actionStyle(),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -410,7 +410,7 @@ private fun RowScope.MiddlePart(
         additionalDescription?.get()?.let {
             Text(
                 text = it,
-                color = AppTheme.specificColorScheme.symbolTertiary,
+                color = AppTheme.specificColorScheme.textSecondary,
                 style = CellTileConfig.additionalDescriptionStyle(),
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -435,7 +435,7 @@ private fun RowScope.RightPart(data: CellTileState.RightPart?) {
     when (data) {
         is CellTileState.RightPart.ActionIcon -> Icon(
             painter = data.source.get(),
-            tint = AppTheme.specificColorScheme.onSurfaceVariant,
+            tint = AppTheme.specificColorScheme.uiAccent,
             contentDescription = null,
             modifier = Modifier
                 .size(CellTileConfig.ActionIconSize)
@@ -446,7 +446,7 @@ private fun RowScope.RightPart(data: CellTileState.RightPart?) {
         )
         is CellTileState.RightPart.CheckIcon -> Icon(
             painter = AppTheme.specificIcons.done.get(),
-            tint = AppTheme.specificColorScheme.secondary,
+            tint = AppTheme.specificColorScheme.lightBase,
             contentDescription = null,
             modifier = Modifier
                 .size(CellTileConfig.ActionIconSize)
@@ -466,7 +466,7 @@ private fun RowScope.RightPart(data: CellTileState.RightPart?) {
         )
         is CellTileState.RightPart.Text -> Text(
             text = data.text.get(),
-            color = AppTheme.specificColorScheme.symbolSecondary,
+            color = AppTheme.specificColorScheme.textSecondary,
             style = AppTheme.specificTypography.bodyMedium,
             modifier = Modifier.align(Alignment.CenterVertically),
         )

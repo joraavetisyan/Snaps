@@ -48,8 +48,8 @@ object MessageBannerConfig {
 
     @Composable
     fun colors() = CardDefaults.cardColors(
-        containerColor = AppTheme.specificColorScheme.surfaceVariant,
-        contentColor = AppTheme.specificColorScheme.onSurfaceVariant,
+        containerColor = AppTheme.specificColorScheme.uiContentBg,
+        contentColor = AppTheme.specificColorScheme.uiContentBg,
     )
 
     @Composable
@@ -122,7 +122,7 @@ private fun Icon(icon: Painter) {
 private fun Title(title: TextValue) {
     Text(
         text = title.get(),
-        color = AppTheme.specificColorScheme.symbolPrimary,
+        color = AppTheme.specificColorScheme.textPrimary,
         style = AppTheme.specificTypography.headlineLarge,
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
@@ -133,7 +133,7 @@ private fun Title(title: TextValue) {
 private fun Description(description: TextValue) {
     Text(
         text = description.get(),
-        color = AppTheme.specificColorScheme.symbolSecondary,
+        color = AppTheme.specificColorScheme.textSecondary,
         style = AppTheme.specificTypography.bodyMedium,
         textAlign = TextAlign.Center,
         maxLines = 3,

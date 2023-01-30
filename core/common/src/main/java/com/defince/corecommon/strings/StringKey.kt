@@ -7,4 +7,19 @@ enum class StringKey {
     UnknownErrorMessage,
 
     NumPadForget,
+
+    RegistrationMessagePrivacyPolicy,
+    RegistrationActionPrivacyPolicy,
+    RegistrationActionTermsOfUse,
+    RegistrationActionLoginWithEmail,
+    RegistrationActionLoginWithGoogle,
+    RegistrationActionLoginWithApple,
+    RegistrationActionLoginWithFacebook,
+    RegistrationActionLoginWithTwitter,
+    RegistrationActionSendCode,
+    RegistrationHintConfirmationCode,
+    RegistrationHintEmailAddress,
+    RegistrationMessageEnterEmail,
+    RegistrationTitle,
+    RegistrationFieldOr,
 }

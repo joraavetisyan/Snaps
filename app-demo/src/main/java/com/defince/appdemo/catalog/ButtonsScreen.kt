@@ -22,22 +22,25 @@ import androidx.navigation.NavHostController
 import com.defince.corecommon.container.textValue
 import com.defince.coreuicompose.tools.add
 import com.defince.coreuicompose.tools.insetAllExcludeTop
+import com.defince.coreuicompose.uikit.button.SimpleButtonActionL
+import com.defince.coreuicompose.uikit.button.SimpleButtonActionM
+import com.defince.coreuicompose.uikit.button.SimpleButtonActionS
 import com.defince.coreuicompose.uikit.button.SimpleButtonContent
+import com.defince.coreuicompose.uikit.button.SimpleButtonDefaultL
+import com.defince.coreuicompose.uikit.button.SimpleButtonDefaultM
+import com.defince.coreuicompose.uikit.button.SimpleButtonDefaultS
+import com.defince.coreuicompose.uikit.button.SimpleButtonGreyL
+import com.defince.coreuicompose.uikit.button.SimpleButtonGreyM
+import com.defince.coreuicompose.uikit.button.SimpleButtonGreyS
 import com.defince.coreuicompose.uikit.button.SimpleButtonInlineL
 import com.defince.coreuicompose.uikit.button.SimpleButtonInlineM
 import com.defince.coreuicompose.uikit.button.SimpleButtonInlineS
+import com.defince.coreuicompose.uikit.button.SimpleButtonLightL
+import com.defince.coreuicompose.uikit.button.SimpleButtonLightM
+import com.defince.coreuicompose.uikit.button.SimpleButtonLightS
 import com.defince.coreuicompose.uikit.button.SimpleButtonOutlineL
 import com.defince.coreuicompose.uikit.button.SimpleButtonOutlineM
 import com.defince.coreuicompose.uikit.button.SimpleButtonOutlineS
-import com.defince.coreuicompose.uikit.button.SimpleButtonPrimaryL
-import com.defince.coreuicompose.uikit.button.SimpleButtonPrimaryM
-import com.defince.coreuicompose.uikit.button.SimpleButtonPrimaryS
-import com.defince.coreuicompose.uikit.button.SimpleButtonSecondaryL
-import com.defince.coreuicompose.uikit.button.SimpleButtonSecondaryM
-import com.defince.coreuicompose.uikit.button.SimpleButtonSecondaryS
-import com.defince.coreuicompose.uikit.button.SimpleButtonTonalL
-import com.defince.coreuicompose.uikit.button.SimpleButtonTonalM
-import com.defince.coreuicompose.uikit.button.SimpleButtonTonalS
 import com.defince.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import com.defince.coreuitheme.compose.AppTheme
 
@@ -61,160 +64,161 @@ fun ButtonsScreen(navController: NavHostController) {
             contentPadding = insetAllExcludeTop().asPaddingValues().add(horizontal = 24.dp).add(it),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
-            item { Primaries() }
-            item { Secondaries() }
-            item { Tonals() }
+            item { Actions() }
+            item { Defaults() }
+            item { Lights() }
             item { Outlines() }
             item { Inlines() }
+            item { Greys() }
         }
     }
 }
 
 @Composable
-private fun Primaries() {
+private fun Actions() {
     val icon = AppTheme.specificIcons.add
-    Header("Primary")
+    Header("Action")
     Container {
-        SimpleButtonPrimaryS(onClick = {}) {
+        SimpleButtonActionS(onClick = {}) {
             SimpleButtonContent("Label".textValue())
         }
-        SimpleButtonPrimaryS(onClick = {}, enabled = false) {
+        SimpleButtonActionS(onClick = {}, enabled = false) {
             SimpleButtonContent("Label".textValue())
         }
-        SimpleButtonPrimaryS(onClick = {}) {
+        SimpleButtonActionS(onClick = {}) {
             SimpleButtonContent("Label".textValue(), iconRight = icon)
         }
-        SimpleButtonPrimaryS(onClick = {}) {
+        SimpleButtonActionS(onClick = {}) {
             SimpleButtonContent(null, icon)
         }
     }
     Spacer(modifier = Modifier.height(8.dp))
     Container {
-        SimpleButtonPrimaryM(onClick = {}) {
+        SimpleButtonActionM(onClick = {}) {
             SimpleButtonContent("Label".textValue())
         }
-        SimpleButtonPrimaryM(onClick = {}, enabled = false) {
+        SimpleButtonActionM(onClick = {}, enabled = false) {
             SimpleButtonContent("Label".textValue())
         }
-        SimpleButtonPrimaryM(onClick = {}) {
+        SimpleButtonActionM(onClick = {}) {
             SimpleButtonContent("Label".textValue(), iconRight = icon)
         }
-        SimpleButtonPrimaryM(onClick = {}) {
+        SimpleButtonActionM(onClick = {}) {
             SimpleButtonContent(null, icon)
         }
     }
     Spacer(modifier = Modifier.height(8.dp))
     Container {
-        SimpleButtonPrimaryL(onClick = {}) {
+        SimpleButtonActionL(onClick = {}) {
             SimpleButtonContent("Label".textValue())
         }
-        SimpleButtonPrimaryL(onClick = {}, enabled = false) {
+        SimpleButtonActionL(onClick = {}, enabled = false) {
             SimpleButtonContent("Label".textValue())
         }
-        SimpleButtonPrimaryL(onClick = {}) {
+        SimpleButtonActionL(onClick = {}) {
             SimpleButtonContent("Label".textValue(), iconRight = icon)
         }
-        SimpleButtonPrimaryL(onClick = {}) {
-            SimpleButtonContent(null, icon)
-        }
-    }
-}
-
-@Composable
-private fun Secondaries() {
-    val icon = AppTheme.specificIcons.add
-    Header("Secondary")
-    Container {
-        SimpleButtonSecondaryS(onClick = {}) {
-            SimpleButtonContent("Label".textValue())
-        }
-        SimpleButtonSecondaryS(onClick = {}, enabled = false) {
-            SimpleButtonContent("Label".textValue())
-        }
-        SimpleButtonSecondaryS(onClick = {}) {
-            SimpleButtonContent("Label".textValue(), iconRight = icon)
-        }
-        SimpleButtonSecondaryS(onClick = {}) {
-            SimpleButtonContent(null, icon)
-        }
-    }
-    Spacer(modifier = Modifier.height(8.dp))
-    Container {
-        SimpleButtonSecondaryM(onClick = {}) {
-            SimpleButtonContent("Label".textValue())
-        }
-        SimpleButtonSecondaryM(onClick = {}, enabled = false) {
-            SimpleButtonContent("Label".textValue())
-        }
-        SimpleButtonSecondaryM(onClick = {}) {
-            SimpleButtonContent("Label".textValue(), iconRight = icon)
-        }
-        SimpleButtonSecondaryM(onClick = {}) {
-            SimpleButtonContent(null, icon)
-        }
-    }
-    Spacer(modifier = Modifier.height(8.dp))
-    Container {
-        SimpleButtonSecondaryL(onClick = {}) {
-            SimpleButtonContent("Label".textValue())
-        }
-        SimpleButtonSecondaryL(onClick = {}, enabled = false) {
-            SimpleButtonContent("Label".textValue())
-        }
-        SimpleButtonSecondaryL(onClick = {}) {
-            SimpleButtonContent("Label".textValue(), iconRight = icon)
-        }
-        SimpleButtonSecondaryL(onClick = {}) {
+        SimpleButtonActionL(onClick = {}) {
             SimpleButtonContent(null, icon)
         }
     }
 }
 
 @Composable
-private fun Tonals() {
+private fun Defaults() {
     val icon = AppTheme.specificIcons.add
-    Header("Tonal")
+    Header("Default")
     Container {
-        SimpleButtonTonalS(onClick = {}) {
+        SimpleButtonDefaultS(onClick = {}) {
             SimpleButtonContent("Label".textValue())
         }
-        SimpleButtonTonalS(onClick = {}, enabled = false) {
+        SimpleButtonDefaultS(onClick = {}, enabled = false) {
             SimpleButtonContent("Label".textValue())
         }
-        SimpleButtonTonalS(onClick = {}) {
+        SimpleButtonDefaultS(onClick = {}) {
             SimpleButtonContent("Label".textValue(), iconRight = icon)
         }
-        SimpleButtonTonalS(onClick = {}) {
+        SimpleButtonDefaultS(onClick = {}) {
             SimpleButtonContent(null, icon)
         }
     }
     Spacer(modifier = Modifier.height(8.dp))
     Container {
-        SimpleButtonTonalM(onClick = {}) {
+        SimpleButtonDefaultM(onClick = {}) {
             SimpleButtonContent("Label".textValue())
         }
-        SimpleButtonTonalM(onClick = {}, enabled = false) {
+        SimpleButtonDefaultM(onClick = {}, enabled = false) {
             SimpleButtonContent("Label".textValue())
         }
-        SimpleButtonTonalM(onClick = {}) {
+        SimpleButtonDefaultM(onClick = {}) {
             SimpleButtonContent("Label".textValue(), iconRight = icon)
         }
-        SimpleButtonTonalM(onClick = {}) {
+        SimpleButtonDefaultM(onClick = {}) {
             SimpleButtonContent(null, icon)
         }
     }
     Spacer(modifier = Modifier.height(8.dp))
     Container {
-        SimpleButtonTonalL(onClick = {}) {
+        SimpleButtonDefaultL(onClick = {}) {
             SimpleButtonContent("Label".textValue())
         }
-        SimpleButtonTonalL(onClick = {}, enabled = false) {
+        SimpleButtonDefaultL(onClick = {}, enabled = false) {
             SimpleButtonContent("Label".textValue())
         }
-        SimpleButtonTonalL(onClick = {}) {
+        SimpleButtonDefaultL(onClick = {}) {
             SimpleButtonContent("Label".textValue(), iconRight = icon)
         }
-        SimpleButtonTonalL(onClick = {}) {
+        SimpleButtonDefaultL(onClick = {}) {
+            SimpleButtonContent(null, icon)
+        }
+    }
+}
+
+@Composable
+private fun Lights() {
+    val icon = AppTheme.specificIcons.add
+    Header("Light")
+    Container {
+        SimpleButtonLightS(onClick = {}) {
+            SimpleButtonContent("Label".textValue())
+        }
+        SimpleButtonLightS(onClick = {}, enabled = false) {
+            SimpleButtonContent("Label".textValue())
+        }
+        SimpleButtonLightS(onClick = {}) {
+            SimpleButtonContent("Label".textValue(), iconRight = icon)
+        }
+        SimpleButtonLightS(onClick = {}) {
+            SimpleButtonContent(null, icon)
+        }
+    }
+    Spacer(modifier = Modifier.height(8.dp))
+    Container {
+        SimpleButtonLightM(onClick = {}) {
+            SimpleButtonContent("Label".textValue())
+        }
+        SimpleButtonLightM(onClick = {}, enabled = false) {
+            SimpleButtonContent("Label".textValue())
+        }
+        SimpleButtonLightM(onClick = {}) {
+            SimpleButtonContent("Label".textValue(), iconRight = icon)
+        }
+        SimpleButtonLightM(onClick = {}) {
+            SimpleButtonContent(null, icon)
+        }
+    }
+    Spacer(modifier = Modifier.height(8.dp))
+    Container {
+        SimpleButtonLightL(onClick = {}) {
+            SimpleButtonContent("Label".textValue())
+        }
+        SimpleButtonLightL(onClick = {}, enabled = false) {
+            SimpleButtonContent("Label".textValue())
+        }
+        SimpleButtonLightL(onClick = {}) {
+            SimpleButtonContent("Label".textValue(), iconRight = icon)
+        }
+        SimpleButtonLightL(onClick = {}) {
             SimpleButtonContent(null, icon)
         }
     }
@@ -319,6 +323,55 @@ private fun Inlines() {
         }
     }
 }
+@Composable
+private fun Greys() {
+    val icon = AppTheme.specificIcons.add
+    Header("Grey")
+    Container {
+        SimpleButtonGreyS(onClick = {}) {
+            SimpleButtonContent("Label".textValue())
+        }
+        SimpleButtonGreyS(onClick = {}, enabled = false) {
+            SimpleButtonContent("Label".textValue())
+        }
+        SimpleButtonGreyS(onClick = {}) {
+            SimpleButtonContent("Label".textValue(), iconRight = icon)
+        }
+        SimpleButtonGreyS(onClick = {}) {
+            SimpleButtonContent(null, icon)
+        }
+    }
+    Spacer(modifier = Modifier.height(8.dp))
+    Container {
+        SimpleButtonGreyM(onClick = {}) {
+            SimpleButtonContent("Label".textValue())
+        }
+        SimpleButtonGreyM(onClick = {}, enabled = false) {
+            SimpleButtonContent("Label".textValue())
+        }
+        SimpleButtonGreyM(onClick = {}) {
+            SimpleButtonContent("Label".textValue(), iconRight = icon)
+        }
+        SimpleButtonGreyM(onClick = {}) {
+            SimpleButtonContent(null, icon)
+        }
+    }
+    Spacer(modifier = Modifier.height(8.dp))
+    Container {
+        SimpleButtonGreyL(onClick = {}) {
+            SimpleButtonContent("Label".textValue())
+        }
+        SimpleButtonGreyL(onClick = {}, enabled = false) {
+            SimpleButtonContent("Label".textValue())
+        }
+        SimpleButtonGreyL(onClick = {}) {
+            SimpleButtonContent("Label".textValue(), iconRight = icon)
+        }
+        SimpleButtonGreyL(onClick = {}) {
+            SimpleButtonContent(null, icon)
+        }
+    }
+}
 
 @Composable
 private fun Header(text: String) {
@@ -326,7 +379,7 @@ private fun Header(text: String) {
         text = text,
         style = AppTheme.specificTypography.titleLarge,
         modifier = Modifier.padding(bottom = 12.dp),
-        color = AppTheme.specificColorScheme.symbolPrimary,
+        color = AppTheme.specificColorScheme.textPrimary,
     )
 }
 
