@@ -30,3 +30,8 @@ interface BottomBarFeatureProvider {
         val builder: NavGraphBuilder.(NavHostController) -> Unit,
     )
 }
+
+interface RegistrationFeatureProvider {
+
+    fun NavGraphBuilder.registrationGraph(controller: NavHostController)
+}

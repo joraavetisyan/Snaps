@@ -54,6 +54,7 @@ object AppRoute {
         object Mock5 : Route("Mock5")
         object Mock5Second : Route("Mock5Second")
     }
+    object Registration : Route("Registration")
 }
 
 object AppDeeplink {

@@ -16,6 +16,6 @@ fun Badge(
     Box(
         modifier = modifier
             .size(6.dp)
-            .background(AppTheme.specificColorScheme.primaryContainer, CircleShape),
+            .background(AppTheme.specificColorScheme.actionBase, CircleShape),
     )
 }

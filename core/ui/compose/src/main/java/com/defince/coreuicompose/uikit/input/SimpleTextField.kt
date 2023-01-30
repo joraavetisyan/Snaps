@@ -1,10 +1,10 @@
 package com.defince.coreuicompose.uikit.input
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
@@ -24,10 +24,15 @@ object SimpleTextFieldConfig {
     val MinHeight = 48.dp
 
     @Composable
-    fun shape() = AppTheme.shapes.medium
+    fun shape() = CircleShape
 
     @Composable
-    fun colors() = TextFieldDefaults.outlinedTextFieldColors()
+    fun colors() = TextFieldDefaults.outlinedTextFieldColors(
+        containerColor = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.15f),
+        unfocusedBorderColor = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.15f),
+        disabledBorderColor = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.15f),
+        placeholderColor = AppTheme.specificColorScheme.darkGrey,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,7 +43,7 @@ fun SimpleTextField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     readOnly: Boolean = false,
-    textStyle: TextStyle = LocalTextStyle.current,
+    textStyle: TextStyle = AppTheme.specificTypography.titleSmall,
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,

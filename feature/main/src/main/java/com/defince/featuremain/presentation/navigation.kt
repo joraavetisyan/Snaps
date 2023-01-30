@@ -10,7 +10,6 @@ import com.defince.corenavigation.base.navigate
 import com.defince.featuremain.presentation.screen.ItemListScreen
 import com.defince.featuremain.presentation.screen.MainBScreen
 import com.defince.featuremain.presentation.screen.Mock2Screen
-import com.defince.featuremain.presentation.screen.MockScreen
 import com.defince.featuremain.presentation.screen.ProfileScreen
 import javax.inject.Inject
 

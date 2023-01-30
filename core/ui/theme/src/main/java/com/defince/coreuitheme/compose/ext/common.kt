@@ -8,87 +8,85 @@ import com.defince.coreuitheme.compose.SpecificColorScheme
 import com.defince.coreuitheme.compose.SpecificTypography
 
 fun SpecificColorScheme.toColorScheme() = ColorScheme(
-    primary = primary,
-    onPrimary = onPrimary,
-    primaryContainer = primaryContainer,
-    onPrimaryContainer = onPrimaryContainer,
-    inversePrimary = primaryInverse,
+    primary = actionBase,
+    onPrimary = actionLabel,
+    primaryContainer = actionBase,
+    onPrimaryContainer = actionLabel,
+    inversePrimary = actionBase,
 
-    secondary = secondary,
-    onSecondary = onSecondary,
-    secondaryContainer = secondaryContainer,
-    onSecondaryContainer = onSecondaryContainer,
+    secondary = lightBase,
+    onSecondary = lightLabel,
+    secondaryContainer = lightBase,
+    onSecondaryContainer = lightLabel,
 
-    tertiary = tertiary,
-    onTertiary = onTertiary,
-    tertiaryContainer = tertiaryContainer,
-    onTertiaryContainer = onTertiaryContainer,
+    tertiary = lightBase,
+    onTertiary = lightLabel,
+    tertiaryContainer = lightBase,
+    onTertiaryContainer = lightLabel,
 
-    background = background,
-    onBackground = onBackground,
-    surface = surface,
-    onSurface = onSurface,
-    surfaceVariant = surfaceVariant,
-    onSurfaceVariant = onSurfaceVariant,
-    inverseSurface = surfaceInverse,
-    inverseOnSurface = onSurfaceInverse,
-    surfaceTint = surfaceTint,
+    background = uiContentBg,
+    onBackground = textPrimary,
+    surface = uiContentBg,
+    onSurface = textPrimary,
+    surfaceVariant = uiContentBg,
+    onSurfaceVariant = textPrimary,
+    inverseSurface = uiContentBg,
+    inverseOnSurface = textPrimary,
+    surfaceTint = actionBase,
 
-    error = error,
-    onError = onError,
-    errorContainer = errorContainer,
-    onErrorContainer = onErrorContainer,
+    error = uiSystemRed,
+    onError = lightGrey,
+    errorContainer = uiSystemRed,
+    onErrorContainer = lightGrey,
 
-    outline = outline,
-    outlineVariant = outlineVariant,
+    outline = outlineBorderBase,
+    outlineVariant = outlineBorderBase,
 
-    scrim = scrim,
+    scrim = uiContentBg.copy(alpha = .7f),
 )
 
 fun ColorScheme.toSpecificColorScheme(isLight: Boolean) = SpecificColorScheme(
-    primary = primary,
-    onPrimary = onPrimary,
-    primaryContainer = primaryContainer,
-    onPrimaryContainer = onPrimaryContainer,
-    primaryInverse = inversePrimary,
-    secondary = secondary,
-    onSecondary = onSecondary,
-    secondaryContainer = secondaryContainer,
-    onSecondaryContainer = onSecondaryContainer,
-    tertiary = tertiary,
-    onTertiary = onTertiary,
-    tertiaryContainer = tertiaryContainer,
-    onTertiaryContainer = onTertiaryContainer,
-    error = error,
-    onError = onError,
-    errorContainer = errorContainer,
-    onErrorContainer = onErrorContainer,
-    outline = outline,
-    outlineVariant = outlineVariant,
-    scrim = scrim,
-    shimmer = if (isLight) LightSpecificColorScheme.shimmer
-    else DarkSpecificColorScheme.shimmer,
-    background = background,
-    onBackground = onBackground,
-    surface = surface,
-    onSurface = onSurface,
-    surfaceVariant = surfaceVariant,
-    onSurfaceVariant = onSurfaceVariant,
-    surfaceInverse = inverseSurface,
-    onSurfaceInverse = inverseOnSurface,
-    symbolPrimary = if (isLight) LightSpecificColorScheme.symbolPrimary
-    else DarkSpecificColorScheme.symbolPrimary,
-    symbolPrimaryInverse = if (isLight) LightSpecificColorScheme.symbolPrimaryInverse
-    else DarkSpecificColorScheme.symbolPrimaryInverse,
-    symbolSecondary = if (isLight) LightSpecificColorScheme.symbolSecondary
-    else DarkSpecificColorScheme.symbolSecondary,
-    symbolSecondaryInverse = if (isLight) LightSpecificColorScheme.symbolSecondaryInverse
-    else DarkSpecificColorScheme.symbolSecondaryInverse,
-    symbolTertiary = if (isLight) LightSpecificColorScheme.symbolTertiary
-    else DarkSpecificColorScheme.symbolTertiary,
-    symbolTertiaryInverse = if (isLight) LightSpecificColorScheme.symbolTertiaryInverse
-    else DarkSpecificColorScheme.symbolTertiaryInverse,
-    text = this.onSurface, // todo
+    uiAccent = primary,
+    uiContentBg = background,
+    uiSystemRed = errorContainer,
+    uiSystemGreen = if (isLight) LightSpecificColorScheme.uiSystemGreen
+    else DarkSpecificColorScheme.uiSystemGreen,
+    uiDisabledLabel = if (isLight) LightSpecificColorScheme.uiDisabledLabel
+    else DarkSpecificColorScheme.uiDisabledLabel,
+
+    textPrimary = onSurface,
+    textSecondary = if (isLight) LightSpecificColorScheme.textSecondary
+    else DarkSpecificColorScheme.textSecondary,
+    textLink = primary,
+
+    actionLabel = onPrimary,
+    actionBase = primary,
+    actionDisabled = if (isLight) LightSpecificColorScheme.uiDisabledLabel
+    else DarkSpecificColorScheme.uiDisabledLabel,
+
+    defaultLabel = if (isLight) LightSpecificColorScheme.defaultLabel
+    else DarkSpecificColorScheme.defaultLabel,
+    defaultBase = if (isLight) LightSpecificColorScheme.defaultBase
+    else DarkSpecificColorScheme.defaultBase,
+    defaultDisabled = if (isLight) LightSpecificColorScheme.defaultDisabled
+    else DarkSpecificColorScheme.defaultDisabled,
+
+    outlineLabel = if (isLight) LightSpecificColorScheme.outlineLabel
+    else DarkSpecificColorScheme.outlineLabel,
+    outlineBorderBase = outline,
+    outlineDisabled = if (isLight) LightSpecificColorScheme.outlineDisabled
+    else DarkSpecificColorScheme.outlineDisabled,
+
+    lightLabel = onSecondary,
+    lightBase = secondary,
+    lightDisabled = if (isLight) LightSpecificColorScheme.lightDisabled
+    else DarkSpecificColorScheme.lightDisabled,
+
+    lightGrey = onError,
+    grey = if (isLight) LightSpecificColorScheme.grey
+    else DarkSpecificColorScheme.grey,
+    darkGrey = if (isLight) LightSpecificColorScheme.darkGrey
+    else DarkSpecificColorScheme.darkGrey,
 )
 
 fun SpecificTypography.toTypography() = Typography(

@@ -2,6 +2,8 @@ package com.defince.w2e
 
 import com.defince.corenavigation.BottomBarFeatureProvider
 import com.defince.corenavigation.MainFeatureProvider
+import com.defince.corenavigation.RegistrationFeatureProvider
+import com.defince.featureregistration.presentation.RegistrationFeatureProviderImpl
 import com.defince.featurebottombar.BottomBarFeatureProviderImpl
 import com.defince.featuremain.presentation.MainFeatureProviderImpl
 import dagger.Binds
@@ -21,4 +23,8 @@ interface FeatureProviderModule {
     @Binds
     @Singleton
     fun mainProvider(provider: MainFeatureProviderImpl): MainFeatureProvider
+
+    @Binds
+    @Singleton
+    fun registrationProvider(provider: RegistrationFeatureProviderImpl): RegistrationFeatureProvider
 }

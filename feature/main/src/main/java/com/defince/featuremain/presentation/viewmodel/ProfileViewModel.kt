@@ -4,7 +4,6 @@ import com.defince.basesources.LocationSource
 import com.defince.corecommon.container.ImageValue
 import com.defince.coreui.viewmodel.SimpleViewModel
 import com.defince.featuremain.data.StubApi
-import com.defince.featuremain.domain.Nft
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

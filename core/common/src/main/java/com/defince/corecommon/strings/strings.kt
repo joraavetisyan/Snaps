@@ -18,4 +18,48 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ru to "Забыл код",
         SupportedLanguageKey.En to "Forgot",
     ),
+
+    key(StringKey.RegistrationTitle) to mapOf(
+        SupportedLanguageKey.En to "Login / Registration",
+    ),
+    key(StringKey.RegistrationActionLoginWithApple) to mapOf(
+        SupportedLanguageKey.En to "Login with Apple",
+    ),
+    key(StringKey.RegistrationActionLoginWithGoogle) to mapOf(
+        SupportedLanguageKey.En to "Login with Google",
+    ),
+    key(StringKey.RegistrationActionLoginWithEmail) to mapOf(
+        SupportedLanguageKey.En to "Login with Email",
+    ),
+    key(StringKey.RegistrationActionLoginWithTwitter) to mapOf(
+        SupportedLanguageKey.En to "Login with Twitter",
+    ),
+    key(StringKey.RegistrationActionLoginWithFacebook) to mapOf(
+        SupportedLanguageKey.En to "Login with Facebook",
+    ),
+    key(StringKey.RegistrationFieldOr) to mapOf(
+        SupportedLanguageKey.En to "Or",
+    ),
+    key(StringKey.RegistrationActionSendCode) to mapOf(
+        SupportedLanguageKey.En to "Send",
+    ),
+    key(StringKey.RegistrationMessagePrivacyPolicy) to mapOf(
+        SupportedLanguageKey.En to "By creating an account, I consent to the processing of my data in accordance with the Privacy Policy and \n" +
+            "Terms of Use",
+    ),
+    key(StringKey.RegistrationActionPrivacyPolicy) to mapOf(
+        SupportedLanguageKey.En to "PrivacyPolicy",
+    ),
+    key(StringKey.RegistrationActionTermsOfUse) to mapOf(
+        SupportedLanguageKey.En to "TermsOfUse",
+    ),
+    key(StringKey.RegistrationHintEmailAddress) to mapOf(
+        SupportedLanguageKey.En to "Enter your email address",
+    ),
+    key(StringKey.RegistrationHintConfirmationCode) to mapOf(
+        SupportedLanguageKey.En to "Enter confirmation code",
+    ),
+    key(StringKey.RegistrationMessageEnterEmail) to mapOf(
+        SupportedLanguageKey.En to "Enter your e-mail address and receive the code to the specified mail",
+    ),
 )

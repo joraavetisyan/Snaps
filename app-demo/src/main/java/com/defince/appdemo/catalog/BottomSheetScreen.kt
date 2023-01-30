@@ -26,8 +26,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.defince.corecommon.container.textValue
+import com.defince.coreuicompose.uikit.button.SimpleButtonActionL
 import com.defince.coreuicompose.uikit.button.SimpleButtonContent
-import com.defince.coreuicompose.uikit.button.SimpleButtonPrimaryL
 import com.defince.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import com.defince.coreuicompose.uikit.simpleSheetParams
 import com.defince.coreuitheme.compose.AppTheme
@@ -97,7 +97,7 @@ private fun Content(
     showSheet: () -> Unit,
     hideSheet: () -> Unit,
 ) {
-    SimpleButtonPrimaryL(
+    SimpleButtonActionL(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth(),
@@ -105,7 +105,7 @@ private fun Content(
     ) {
         SimpleButtonContent(text = "Show sheet".textValue())
     }
-    SimpleButtonPrimaryL(
+    SimpleButtonActionL(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth(),

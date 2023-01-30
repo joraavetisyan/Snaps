@@ -12,6 +12,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,7 +42,7 @@ fun SimpleButtonContent(
         Icon(
             painter = it,
             contentDescription = "Button icon",
-            tint = LocalContentColor.current,
+            tint = Color.Unspecified,
             modifier = Modifier.size(getContentHeight()),
         )
     }
@@ -61,7 +62,7 @@ fun SimpleButtonContent(
         Icon(
             painter = it,
             contentDescription = "Button icon",
-            tint = LocalContentColor.current,
+            tint = Color.Unspecified,
             modifier = Modifier.size(getContentHeight()),
         )
     }
@@ -84,17 +85,17 @@ private fun getContentHeight() = LocalTextStyle.current.lineHeight.value.dp + 3.
 private fun Preview() {
     PreviewAppTheme {
         Row {
-            SimpleButtonTonalL(
+            SimpleButtonActionL(
                 modifier = Modifier.padding(horizontal = 4.dp),
                 onClick = {},
             ) { SimpleButtonContent("Simple button".textValue()) }
 
-            SimpleButtonTonalL(
+            SimpleButtonActionL(
                 modifier = Modifier.padding(horizontal = 4.dp),
                 onClick = {},
             ) { SimpleButtonContent(null, iconLeft = AppTheme.specificIcons.add) }
 
-            SimpleButtonTonalL(
+            SimpleButtonActionL(
                 modifier = Modifier.padding(horizontal = 4.dp),
                 onClick = {},
             ) { SimpleButtonContentLoader() }

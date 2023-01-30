@@ -19,47 +19,47 @@ object SimpleTopAppBarConfig {
 
     @Composable
     fun surfaceColors() = SimpleTopAppBarColors(
-        containerColor = AppTheme.specificColorScheme.surface,
-        scrolledContainerColor = AppTheme.specificColorScheme.surfaceVariant,
-        navigationIconContentColor = AppTheme.specificColorScheme.onSurface,
-        titleContentColor = AppTheme.specificColorScheme.onSurface,
-        actionIconContentColor = AppTheme.specificColorScheme.onSurface,
+        containerColor = AppTheme.specificColorScheme.uiContentBg,
+        scrolledContainerColor = AppTheme.specificColorScheme.uiContentBg,
+        navigationIconContentColor = AppTheme.specificColorScheme.textPrimary,
+        titleContentColor = AppTheme.specificColorScheme.textPrimary,
+        actionIconContentColor = AppTheme.specificColorScheme.textPrimary,
     )
 
     @Composable
     fun transparentSurfaceColors() = SimpleTopAppBarColors(
-        containerColor = AppTheme.specificColorScheme.surface.copy(alpha = ContainerColorAlpha),
-        scrolledContainerColor = AppTheme.specificColorScheme.surface,
-        navigationIconContentColor = AppTheme.specificColorScheme.onSurface,
-        titleContentColor = AppTheme.specificColorScheme.onSurface,
-        actionIconContentColor = AppTheme.specificColorScheme.onSurface,
+        containerColor = AppTheme.specificColorScheme.uiContentBg.copy(alpha = ContainerColorAlpha),
+        scrolledContainerColor = AppTheme.specificColorScheme.uiContentBg,
+        navigationIconContentColor = AppTheme.specificColorScheme.textPrimary,
+        titleContentColor = AppTheme.specificColorScheme.textPrimary,
+        actionIconContentColor = AppTheme.specificColorScheme.textPrimary,
     )
 
     @Composable
     fun surfaceVariantColors() = SimpleTopAppBarColors(
-        containerColor = AppTheme.specificColorScheme.surfaceVariant,
-        scrolledContainerColor = AppTheme.specificColorScheme.surfaceVariant,
-        navigationIconContentColor = AppTheme.specificColorScheme.onSurfaceVariant,
-        titleContentColor = AppTheme.specificColorScheme.onSurfaceVariant,
-        actionIconContentColor = AppTheme.specificColorScheme.onSurfaceVariant,
+        containerColor = AppTheme.specificColorScheme.uiContentBg,
+        scrolledContainerColor = AppTheme.specificColorScheme.uiContentBg,
+        navigationIconContentColor = AppTheme.specificColorScheme.textPrimary,
+        titleContentColor = AppTheme.specificColorScheme.textPrimary,
+        actionIconContentColor = AppTheme.specificColorScheme.textPrimary,
     )
 
     @Composable
     fun primaryContainerColors() = SimpleTopAppBarColors(
-        containerColor = AppTheme.specificColorScheme.primaryContainer,
-        scrolledContainerColor = AppTheme.specificColorScheme.primaryContainer,
-        navigationIconContentColor = AppTheme.specificColorScheme.onPrimaryContainer,
-        titleContentColor = AppTheme.specificColorScheme.onPrimaryContainer,
-        actionIconContentColor = AppTheme.specificColorScheme.onPrimaryContainer,
+        containerColor = AppTheme.specificColorScheme.actionBase,
+        scrolledContainerColor = AppTheme.specificColorScheme.actionBase,
+        navigationIconContentColor = AppTheme.specificColorScheme.actionLabel,
+        titleContentColor = AppTheme.specificColorScheme.actionLabel,
+        actionIconContentColor = AppTheme.specificColorScheme.actionLabel,
     )
 
     @Composable
     fun transparentColors() = SimpleTopAppBarColors(
         containerColor = AppTheme.specificColorScheme.transparent,
         scrolledContainerColor = AppTheme.specificColorScheme.transparent,
-        navigationIconContentColor = AppTheme.specificColorScheme.onSurface,
-        titleContentColor = AppTheme.specificColorScheme.onSurface,
-        actionIconContentColor = AppTheme.specificColorScheme.onSurface,
+        navigationIconContentColor = AppTheme.specificColorScheme.textPrimary,
+        titleContentColor = AppTheme.specificColorScheme.textPrimary,
+        actionIconContentColor = AppTheme.specificColorScheme.darkGrey,
     )
 }
 

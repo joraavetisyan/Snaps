@@ -17,11 +17,9 @@ import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.NavigateNext
 import androidx.compose.material.icons.rounded.Phone
 import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material.icons.rounded.Share
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.defince.corecommon.container.IconValue
-import com.defince.coreuitheme.R
+import com.defince.corecommon.R
 
 object SpecificIcons {
     val camera: IconValue = resource(R.drawable.ic_camera)
@@ -48,6 +46,10 @@ object SpecificIcons {
     val themeSystem: IconValue = vector(Icons.Rounded.AutoMode)
     val themeDark: IconValue = vector(Icons.Rounded.DarkMode)
     val themeLight: IconValue = vector(Icons.Rounded.LightMode)
+    val google: IconValue = resource(R.drawable.ic_google)
+    val apple: IconValue = resource(R.drawable.ic_apple)
+    val facebook: IconValue = resource(R.drawable.ic_facebook)
+    val twitter: IconValue = resource(R.drawable.ic_twitter)
 }
 
 private fun vector(value: ImageVector) = IconValue.Vector(value)

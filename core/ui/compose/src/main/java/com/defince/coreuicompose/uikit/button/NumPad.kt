@@ -188,7 +188,7 @@ private fun ForgetButton(onClick: () -> Unit) {
             text = LocalStringHolder.current(StringKey.NumPadForget),
             style = AppTheme.specificTypography.bodySmall,
             textAlign = TextAlign.Center,
-            color = AppTheme.specificColorScheme.symbolSecondary,
+            color = AppTheme.specificColorScheme.textSecondary,
             modifier = Modifier
                 .size(NumPadConfig.ButtonSize)
                 .clip(NumPadConfig.shape())
@@ -205,7 +205,7 @@ private fun IconButton(icon: IconValue, onClick: () -> Unit) {
         Icon(
             painter = icon.get(),
             contentDescription = null,
-            tint = AppTheme.specificColorScheme.symbolSecondary,
+            tint = AppTheme.specificColorScheme.grey,
             modifier = Modifier
                 .size(NumPadConfig.ButtonSize)
                 .clip(NumPadConfig.shape())

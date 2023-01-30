@@ -125,8 +125,8 @@ private fun badges(): List<TileState> = listOf(
     BadgeTileState.Data(
         header = "Badge tile header text".textValue(),
         value = "Badge tile text".textValue(),
-        contentColor = AppTheme.specificColorScheme.onSurface,
-        containerColor = AppTheme.specificColorScheme.surface,
+        contentColor = AppTheme.specificColorScheme.textPrimary,
+        containerColor = AppTheme.specificColorScheme.uiContentBg,
         onClick = {}
     ),
 )
@@ -136,8 +136,8 @@ private fun smallBadges(): List<TileState> = listOf(
     BadgeTileState.Shimmer(hasHeader = false),
     BadgeTileState.Data(
         value = "Badge tile text".textValue(),
-        contentColor = AppTheme.specificColorScheme.onSurface,
-        containerColor = AppTheme.specificColorScheme.surface,
+        contentColor = AppTheme.specificColorScheme.textPrimary,
+        containerColor = AppTheme.specificColorScheme.uiContentBg,
         onClick = {}
     ),
 )

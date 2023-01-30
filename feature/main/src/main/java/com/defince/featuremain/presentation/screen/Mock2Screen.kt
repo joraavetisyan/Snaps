@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavHostController
 import com.defince.corecommon.container.textValue
-import com.defince.coreuicompose.uikit.button.SimpleButtonTonalL
+import com.defince.coreuicompose.uikit.button.SimpleButtonDefaultL
 import com.defince.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import com.defince.featuremain.presentation.ScreenNavigator
 
@@ -51,7 +51,7 @@ private fun Mock2Screen(
                 .fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
-            SimpleButtonTonalL(onClick = onNextClick) { Text("Next screen") }
+            SimpleButtonDefaultL(onClick = onNextClick) { Text("Next screen") }
         }
     }
 }
