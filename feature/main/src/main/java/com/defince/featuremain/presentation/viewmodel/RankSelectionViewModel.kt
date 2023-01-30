@@ -1,0 +1,26 @@
+package com.defince.featuremain.presentation.viewmodel
+
+import com.defince.coredata.network.Action
+import com.defince.coreui.viewmodel.SimpleViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import javax.inject.Inject
+
+@HiltViewModel
+class RankSelectionViewModel @Inject constructor(
+    private val action: Action,
+) : SimpleViewModel() {
+
+    private val _uiState = MutableStateFlow(UiState)
+    val uiState = _uiState.asStateFlow()
+
+    private val _command = Channel<Command>()
+    val command = _command.receiveAsFlow()
+
+    object UiState
+
+    sealed class Command
+}
