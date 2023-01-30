@@ -91,6 +91,7 @@ class EmptyLocationListener(
         onLocationChangedAction(location)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
         onStatusChangedAction(provider, status, extras)
     }

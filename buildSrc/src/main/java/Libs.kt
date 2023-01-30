@@ -52,6 +52,10 @@ object Libs {
     private const val espressoVersion = "3.1.0"
     private const val runnerVersion = "1.1.0"
 
+    private const val pagerVersion = "0.29.0-alpha"
+
+    private const val mediaVersion = "1.0.0-beta03"
+
     object plugin {
         const val application = "com.android.application"
         const val library = "com.android.library"
@@ -68,7 +72,8 @@ object Libs {
         const val android_gradle = "com.android.tools.build:gradle:$gradleVersion"
         const val kotlin_gradle = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         const val kotlin_serialization = "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
-        const val crashlytics_gradle = "com.google.firebase:firebase-crashlytics-gradle:$crashlyticsGradleVersion"
+        const val crashlytics_gradle =
+            "com.google.firebase:firebase-crashlytics-gradle:$crashlyticsGradleVersion"
         const val hilt_gradle = "com.google.dagger:hilt-android-gradle-plugin:$hiltVersion"
         const val navigation_safeArgs_gradle =
             "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
@@ -91,7 +96,8 @@ object Libs {
         val desugar = arrayOf("com.android.tools:desugar_jdk_libs:$desugarVersion")
 
         val hilt = arrayOf(
-            "com.google.dagger:hilt-android:$hiltVersion", "androidx.hilt:hilt-navigation-compose:$hiltJetpackVersion"
+            "com.google.dagger:hilt-android:$hiltVersion",
+            "androidx.hilt:hilt-navigation-compose:$hiltJetpackVersion"
         )
         const val hiltKapt = "com.google.dagger:hilt-android-compiler:$hiltVersion"
         const val hiltKaptViewModel = "androidx.hilt:hilt-compiler:$hiltJetpackVersion"
@@ -163,7 +169,15 @@ object Libs {
             "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:$jsonConverterVersion",
             "com.squareup.okhttp3:okhttp:$okHttpVersion",
             "com.squareup.okhttp3:logging-interceptor:$okHttpVersion",
-            "com.github.chuckerteam.chucker:library:$chuckVersion"
+            "com.github.chuckerteam.chucker:library:$chuckVersion",
+        )
+
+        val pager = arrayOf(
+            "com.google.accompanist:accompanist-pager:$pagerVersion",
+        )
+        val media = arrayOf(
+            "androidx.media3:media3-exoplayer:$mediaVersion",
+            "androidx.media3:media3-ui:$mediaVersion",
         )
 
         const val unitTestsRunner = "android.support.test.runner.AndroidJUnitRunner"

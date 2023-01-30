@@ -1,21 +1,15 @@
 package com.defince.featuremain.presentation.screen
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavHostController
 import com.defince.corecommon.container.textValue
-import com.defince.coreuicompose.uikit.button.SimpleButtonDefaultL
 import com.defince.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import com.defince.featuremain.presentation.ScreenNavigator
 
@@ -24,17 +18,12 @@ fun MockScreen(
     navHostController: NavHostController,
 ) {
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
-
-    MockScreen(
-        onNextClick = router::toMock2SecondScreen,
-    )
+    MockScreen()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MockScreen(
-    onNextClick: () -> Unit,
-) {
+private fun MockScreen() {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -44,14 +33,5 @@ private fun MockScreen(
                 scrollBehavior = scrollBehavior,
             )
         }
-    ) {
-        Box(
-            modifier = Modifier
-                .padding(it)
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center,
-        ) {
-            SimpleButtonDefaultL(onClick = onNextClick) { Text("Next screen") }
-        }
-    }
+    ) { it }
 }
