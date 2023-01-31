@@ -8,14 +8,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.defince.corecommon.container.TextValue
+import com.defince.coreuicompose.tools.get
 import com.defince.coreuicompose.tools.inset
 import com.defince.coreuicompose.tools.insetAllExcludeTop
-import com.defince.coreuicompose.uikit.listtile.HeaderTileState
 import com.defince.coreuicompose.uikit.other.SheetIndicator
 import com.defince.coreuitheme.compose.AppTheme
 
@@ -27,7 +29,7 @@ fun SimpleBottomDialogUI(
 ) {
     Box(
         modifier = Modifier
-            .background(AppTheme.specificColorScheme.surface)
+            .background(AppTheme.specificColorScheme.white)
             .inset(insetAllExcludeTop()),
     ) {
         LazyColumn(
@@ -41,8 +43,15 @@ fun SimpleBottomDialogUI(
                     modifier = Modifier.padding(top = 16.dp),
                 ) {
                     SheetIndicator()
-                    HeaderTileState.Data(value = header)
-                        .Content(modifier = Modifier)
+                    Text(
+                        text = header.get(),
+                        color = AppTheme.specificColorScheme.textPrimary,
+                        style = AppTheme.specificTypography.headlineSmall,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .fillMaxWidth(),
+                    )
                 }
             }
             content()

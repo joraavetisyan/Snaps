@@ -2,10 +2,10 @@ package com.defince.coredata.database
 
 import androidx.core.content.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
 private val PREF_NAME = stringPreferencesKey("PREF_NAME")
 private val PREF_PHONE = stringPreferencesKey("PREF_PHONE")
@@ -21,28 +21,25 @@ class UserDataStorage @Inject constructor(
         provider.userDataStore.set(PREF_NAME, value)
     }
 
-    val phoneNumberFlow: Flow<String?> get() = provider.userDataStore.get(PREF_PHONE)
-    suspend fun setPhoneNumber(value: String) {
-        provider.userDataStore.set(PREF_PHONE, value)
-    }
+    val themeModeFlow: Flow<ThemeMode>
+        get() = provider.userDataStore.get(PREF_THEME_MODE).map {
+            it?.let(ThemeMode::valueOf) ?: ThemeMode.System
+        }
 
-    val themeModeFlow: Flow<ThemeMode> get() = provider.userDataStore.get(PREF_THEME_MODE).map {
-        it?.let(ThemeMode::valueOf) ?: ThemeMode.System
-    }
     suspend fun setThemeMode(value: ThemeMode) {
         provider.userDataStore.set(PREF_THEME_MODE, value.name)
     }
 
-    var isAllowBiometric: Boolean
-        get() = provider.prefs.getBoolean("isAllowBiometric", true)
+    var isStartOnBoardingFinished: Boolean
+        get() = provider.prefs.getBoolean("isStartFinished", false)
         set(value) = provider.prefs.edit {
-            putBoolean("isAllowBiometric", value)
+            putBoolean("isStartFinished", value)
         }
 
-    var isFirstEntry: Boolean
-        get() = provider.prefs.getBoolean("isFirstEntry", true)
+    var isRegistrationFinished: Boolean
+        get() = provider.prefs.getBoolean("isRegistrationFinished", false)
         set(value) = provider.prefs.edit {
-            putBoolean("isFirstEntry", value)
+            putBoolean("isRegistrationFinished", value)
         }
 
     var lastCheckedAvailableVersionCode: Int
@@ -50,6 +47,14 @@ class UserDataStorage @Inject constructor(
         set(value) = provider.prefs.edit {
             putInt("lastCheckedAvailableVersionCode", value)
         }
+
+    fun reset(reason: LogOutReason?) {
+        TODO()
+    }
 }
 
 enum class ThemeMode { Light, Dark, System }
+
+enum class LogOutReason {
+    ExhaustedLoginAttempts
+}

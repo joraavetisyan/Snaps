@@ -65,7 +65,7 @@ fun BottomBarScreen(
                     .padding(horizontal = 12.dp)
                     .padding(bottom = 20.dp)
                     .shadow(elevation = 16.dp, shape = BottomNavigationBarShape)
-                    .background(color = AppTheme.specificColorScheme.surface, shape = BottomNavigationBarShape)
+                    .background(color = AppTheme.specificColorScheme.white, shape = BottomNavigationBarShape)
                     .padding(horizontal = 12.dp, vertical = 16.dp),
             ) {
                 items.forEach { screen ->
@@ -73,9 +73,9 @@ fun BottomBarScreen(
                     MenuItem(
                         icon = screen.icon,
                         color = if (isSelected) {
-                            AppTheme.specificColorScheme.onSecondaryContainer
+                            AppTheme.specificColorScheme.uiAccent
                         } else {
-                            AppTheme.specificColorScheme.onSurfaceVariant
+                            AppTheme.specificColorScheme.darkGrey
                         },
                         onClick = {
                             navController.switchTo(screen.route.path())

@@ -27,7 +27,7 @@ fun SimpleConfirmDialogUi(
                 text = title.get(),
                 modifier = Modifier.fillMaxWidth(),
                 style = AppTheme.specificTypography.titleLarge,
-                color = AppTheme.specificColorScheme.symbolPrimary,
+                color = AppTheme.specificColorScheme.textPrimary,
             )
         },
         text = {
@@ -35,7 +35,7 @@ fun SimpleConfirmDialogUi(
                 text = text.get(),
                 modifier = Modifier.fillMaxWidth(),
                 style = AppTheme.specificTypography.bodyMedium,
-                color = AppTheme.specificColorScheme.symbolPrimary,
+                color = AppTheme.specificColorScheme.textPrimary,
             )
         },
         confirmButton = {

@@ -23,8 +23,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.defince.corecommon.container.textValue
+import com.defince.coreuicompose.uikit.button.SimpleButtonActionL
 import com.defince.coreuicompose.uikit.button.SimpleButtonContent
-import com.defince.coreuicompose.uikit.button.SimpleButtonPrimaryL
 import com.defince.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import com.defince.coreuicompose.uikit.simpleSheetParams
 import com.defince.coreuitheme.compose.AppTheme
@@ -102,7 +102,7 @@ private fun Content(
             )
         },
     ) {
-        SimpleButtonPrimaryL(
+        SimpleButtonActionL(
             modifier = Modifier
                 .padding(it)
                 .padding(16.dp)

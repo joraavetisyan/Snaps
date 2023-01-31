@@ -41,20 +41,20 @@ object PinCodeIndicatorConfig {
 
     @Composable
     fun defaultColor() = PinCodeIndicatorColor(
-        filled = AppTheme.specificColorScheme.tertiary,
-        unfilled = AppTheme.specificColorScheme.surfaceVariant,
+        filled = AppTheme.specificColorScheme.uiAccent,
+        unfilled = AppTheme.specificColorScheme.grey,
     )
 
     @Composable
     fun successColor() = PinCodeIndicatorColor(
-        filled = AppTheme.specificColorScheme.primary,
-        unfilled = AppTheme.specificColorScheme.surfaceVariant,
+        filled = AppTheme.specificColorScheme.uiSystemGreen,
+        unfilled = AppTheme.specificColorScheme.grey,
     )
 
     @Composable
     fun errorColor() = PinCodeIndicatorColor(
-        filled = AppTheme.specificColorScheme.error,
-        unfilled = AppTheme.specificColorScheme.surfaceVariant,
+        filled = AppTheme.specificColorScheme.uiSystemRed,
+        unfilled = AppTheme.specificColorScheme.grey,
     )
 }
 

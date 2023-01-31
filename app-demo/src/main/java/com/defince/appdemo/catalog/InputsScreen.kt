@@ -88,8 +88,8 @@ private fun TextFields() {
         value = cardNumberInputValue,
         onValueChange = cardNumberFormatter.onValueChanged { cardNumberInputValue = it },
         visualTransformation = cardNumberFormatter.visualTransformation(
-            inputtedPartColor = AppTheme.specificColorScheme.symbolPrimary,
-            otherPartColor = AppTheme.specificColorScheme.symbolSecondary,
+            inputtedPartColor = AppTheme.specificColorScheme.textSecondary,
+            otherPartColor = AppTheme.specificColorScheme.textPrimary,
         ),
         placeholder = { Text(cardNumberFormatter.placeholder().get()) },
         label = { Text("Card number") },
@@ -105,8 +105,8 @@ private fun TextFields() {
         value = phoneNumberInputValue,
         onValueChange = phoneNumberFormatter.onValueChanged { phoneNumberInputValue = it },
         visualTransformation = phoneNumberFormatter.visualTransformation(
-            inputtedPartColor = AppTheme.specificColorScheme.symbolPrimary,
-            otherPartColor = AppTheme.specificColorScheme.symbolSecondary,
+            inputtedPartColor = AppTheme.specificColorScheme.textPrimary,
+            otherPartColor = AppTheme.specificColorScheme.textSecondary,
         ),
         placeholder = { Text(phoneNumberFormatter.placeholder().get()) },
         label = { Text("Phone number") },
@@ -122,8 +122,8 @@ private fun TextFields() {
         value = amountInputValue,
         onValueChange = amountFormatter.onValueChanged { amountInputValue = it },
         visualTransformation = amountFormatter.visualTransformation(
-            inputtedPartColor = AppTheme.specificColorScheme.symbolPrimary,
-            otherPartColor = AppTheme.specificColorScheme.symbolSecondary,
+            inputtedPartColor = AppTheme.specificColorScheme.textPrimary,
+            otherPartColor = AppTheme.specificColorScheme.textSecondary,
         ),
         placeholder = { Text("Enter amount") },
         label = { Text("Transfer amount") },

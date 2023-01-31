@@ -17,7 +17,7 @@ fun FullScreenLoaderUi(isLoading: Boolean) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(AppTheme.specificColorScheme.scrim),
+                    .background(AppTheme.specificColorScheme.darkGrey.copy(alpha = .7f)),
             ) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }

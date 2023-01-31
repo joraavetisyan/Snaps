@@ -38,20 +38,6 @@ class CryptoConfigurator @Inject constructor() {
     fun createBiometricEncryptCipher() = initCipher(KEY_FOR_BIOMETRIC, Cipher.ENCRYPT_MODE)
 
     @Throws
-    fun encode(inputString: String, cipher: Cipher): String {
-        return inputString.toByteArray()
-            .run(cipher::doFinal)
-            .run { Base64.encodeToString(this, Base64.NO_WRAP) }
-    }
-
-    @Throws
-    fun decode(encodedString: String, cipher: Cipher): String {
-        return Base64.decode(encodedString, Base64.NO_WRAP)
-            .run(cipher::doFinal)
-            .run { String(this) }
-    }
-
-    @Throws
     private fun initCipher(keyTag: String, mode: Int): Cipher? {
         try {
             createKeyIfNotExist(keyTag)
@@ -69,7 +55,8 @@ class CryptoConfigurator @Inject constructor() {
     @Throws
     private fun createKeyIfNotExist(keyTag: String) {
         if (!keyStore.containsAlias(keyTag)) {
-            val params = createAlgorithmParameterSpec(keyTag, isForBiometric = keyTag == KEY_FOR_BIOMETRIC)
+            val params =
+                createAlgorithmParameterSpec(keyTag, isForBiometric = keyTag == KEY_FOR_BIOMETRIC)
             KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, KEY_STORE).apply {
                 initialize(params)
                 generateKeyPair()
@@ -77,8 +64,14 @@ class CryptoConfigurator @Inject constructor() {
         }
     }
 
-    private fun createAlgorithmParameterSpec(keyTag: String, isForBiometric: Boolean): AlgorithmParameterSpec {
-        return KeyGenParameterSpec.Builder(keyTag, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+    private fun createAlgorithmParameterSpec(
+        keyTag: String,
+        isForBiometric: Boolean
+    ): AlgorithmParameterSpec {
+        return KeyGenParameterSpec.Builder(
+            keyTag,
+            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+        )
             .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
             .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_OAEP)
             .setUserAuthenticationRequired(isForBiometric)
@@ -105,7 +98,12 @@ class CryptoConfigurator @Inject constructor() {
                 KeyFactory.getInstance(it.algorithm)
                     .generatePublic(X509EncodedKeySpec(it.encoded))
             },
-            OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT),
+            OAEPParameterSpec(
+                "SHA-256",
+                "MGF1",
+                MGF1ParameterSpec.SHA1,
+                PSource.PSpecified.DEFAULT
+            ),
         )
 
         return cipher
@@ -119,4 +117,21 @@ class CryptoConfigurator @Inject constructor() {
     }
 
     private fun Exception.wasBiometricDataChanged() = this is KeyPermanentlyInvalidatedException
+
+    companion object {
+
+        @Throws
+        fun encode(inputString: String, cipher: Cipher): String {
+            return inputString.toByteArray()
+                .run(cipher::doFinal)
+                .run { Base64.encodeToString(this, Base64.NO_WRAP) }
+        }
+
+        @Throws
+        fun decode(encodedString: String, cipher: Cipher): String {
+            return Base64.decode(encodedString, Base64.NO_WRAP)
+                .run(cipher::doFinal)
+                .run { String(this) }
+        }
+    }
 }

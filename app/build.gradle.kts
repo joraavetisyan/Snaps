@@ -1,8 +1,8 @@
 plugins {
     id(Libs.plugin.application)
-//    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
-    id("com.spotify.ruler")
+    id(Libs.plugin.google_services)
+    id(Libs.plugin.crashlytics)
+    id(Libs.plugin.spotify_ruler)
 }
 
 common()
@@ -43,9 +43,11 @@ android {
             versionNameSuffix = BuildTypes.debugSuffix
             applicationIdSuffix = BuildTypes.debugPackageSuffix
 
-            addManifestPlaceholders(mapOf(
-                "app_name" to "Watch2Earn Debug",
-            ))
+            addManifestPlaceholders(
+                mapOf(
+                    "app_name" to "Watch2Earn Debug",
+                )
+            )
 
             isMinifyEnabled = false
         }
@@ -54,9 +56,11 @@ android {
             versionNameSuffix = BuildTypes.alphaSuffix
             applicationIdSuffix = BuildTypes.alphaPackageSuffix
 
-            addManifestPlaceholders(mapOf(
-                "app_name" to "Watch2Earn Alpha",
-            ))
+            addManifestPlaceholders(
+                mapOf(
+                    "app_name" to "Watch2Earn Alpha",
+                )
+            )
 
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
@@ -65,9 +69,11 @@ android {
             versionNameSuffix = BuildTypes.releaseSuffix
             applicationIdSuffix = BuildTypes.releasePackageSuffix
 
-            addManifestPlaceholders(mapOf(
-                "app_name" to "Watch2Earn",
-            ))
+            addManifestPlaceholders(
+                mapOf(
+                    "app_name" to "Watch2Earn",
+                )
+            )
 
             signingConfig = signingConfigs.getByName(BuildTypes.release)
             isMinifyEnabled = true
@@ -83,12 +89,16 @@ dependencies {
     implementation(projects.coreNavigation)
 
     implementation(projects.baseSources)
+    implementation(projects.baseProfile)
+    implementation(projects.baseSession)
 
     implementation(projects.featureBottomBar)
     implementation(projects.featureMain)
+    implementation(projects.featureRegistration)
 
     implementation(*Libs.bundle.splashscreen)
     implementation(*Libs.bundle.appUpdater)
     implementation(*Libs.bundle.firebase)
+    implementation(Libs.bundle.playServices)
     implementation(*Libs.bundle.biometric)
 }

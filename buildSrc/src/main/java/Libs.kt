@@ -1,6 +1,6 @@
 object Libs {
 
-    private const val gmsVersion = "4.3.4"
+    private const val gmsVersion = "4.3.15"
     private const val gradleVersion = "7.3.1"
     private const val desugarVersion = "1.1.5"
     private const val kotlinVersion = "1.7.10"
@@ -32,10 +32,13 @@ object Libs {
     private const val hiltJetpackVersion = "1.0.0"
 
     private const val crashlyticsGradleVersion = "2.5.2"
+    private const val authVersion = "21.1.0"
     private const val crashlyticsVersion = "17.4.0"
     private const val analyticsVersion = "18.0.2"
     private const val messagingVersion = "21.0.1"
     private const val configVersion = "20.0.4"
+
+    private const val playServicesVersion = "20.4.1"
 
     private const val datastoreVersion = "1.0.0-rc01"
     private const val securityVersion = "1.1.0-alpha03"
@@ -65,6 +68,9 @@ object Libs {
         const val kotlin_android = "kotlin-android"
         const val hilt = "dagger.hilt.android.plugin"
         const val lint = "org.jmailen.kotlinter"
+        const val google_services = "com.google.gms.google-services"
+        const val crashlytics = "com.google.firebase.crashlytics"
+        const val spotify_ruler = "com.spotify.ruler"
     }
 
     object classpath {
@@ -72,11 +78,9 @@ object Libs {
         const val android_gradle = "com.android.tools.build:gradle:$gradleVersion"
         const val kotlin_gradle = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         const val kotlin_serialization = "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
-        const val crashlytics_gradle =
-            "com.google.firebase:firebase-crashlytics-gradle:$crashlyticsGradleVersion"
+        const val crashlytics_gradle = "com.google.firebase:firebase-crashlytics-gradle:$crashlyticsGradleVersion"
         const val hilt_gradle = "com.google.dagger:hilt-android-gradle-plugin:$hiltVersion"
-        const val navigation_safeArgs_gradle =
-            "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
+        const val navigation_safeArgs_gradle = "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
         const val kotlinter = "org.jmailen.gradle:kotlinter-gradle:$kotlinterVersion"
         const val ruler = "com.spotify.ruler:ruler-gradle-plugin:$rulerVersion"
     }
@@ -97,16 +101,19 @@ object Libs {
 
         val hilt = arrayOf(
             "com.google.dagger:hilt-android:$hiltVersion",
-            "androidx.hilt:hilt-navigation-compose:$hiltJetpackVersion"
+            "androidx.hilt:hilt-navigation-compose:$hiltJetpackVersion",
         )
         const val hiltKapt = "com.google.dagger:hilt-android-compiler:$hiltVersion"
         const val hiltKaptViewModel = "androidx.hilt:hilt-compiler:$hiltJetpackVersion"
 
+        const val playServices = "com.google.android.gms:play-services-auth:$playServicesVersion"
+
         val firebase = arrayOf(
+            "com.google.firebase:firebase-auth-ktx:$authVersion",
             "com.google.firebase:firebase-crashlytics-ktx:$crashlyticsVersion",
             "com.google.firebase:firebase-analytics-ktx:$analyticsVersion",
             "com.google.firebase:firebase-messaging-ktx:$messagingVersion",
-            "com.google.firebase:firebase-config-ktx:$configVersion"
+            "com.google.firebase:firebase-config-ktx:$configVersion",
         )
 
         val composeCompiler = arrayOf("androidx.compose.compiler:compiler:$composeCompilerVersion")
@@ -119,7 +126,7 @@ object Libs {
             "androidx.compose.material3:material3:$composeMaterialVersion",
             "androidx.compose.material3:material3-window-size-class:$composeMaterialVersion",
             "androidx.compose.material:material-icons-extended:$composeVersion",
-            "com.google.android.material:material:$materialVersion"
+            "com.google.android.material:material:$materialVersion",
         )
         val composeWidgetTheme = arrayOf("androidx.glance:glance-appwidget:$composeGlanceVersion")
         val composeKit = arrayOf(
@@ -131,7 +138,7 @@ object Libs {
             "com.google.accompanist:accompanist-placeholder-material:$accompanistVersion",
             "androidx.compose.animation:animation:$composeVersion",
             "io.coil-kt:coil-compose:$coilVersion",
-            "io.coil-kt:coil-svg:$coilVersion"
+            "io.coil-kt:coil-svg:$coilVersion",
         )
 
         val splashscreen = arrayOf("androidx.core:core-splashscreen:$splashVersion")
@@ -141,12 +148,12 @@ object Libs {
             "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion",
             "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion",
             "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion",
-            "androidx.lifecycle:lifecycle-process:$lifecycleVersion"
+            "androidx.lifecycle:lifecycle-process:$lifecycleVersion",
         )
         const val lifecycleKapt = "androidx.lifecycle:lifecycle-compiler:$lifecycleVersion"
 
         val navigation = arrayOf(
-            "androidx.navigation:navigation-compose:$navigationVersion"
+            "androidx.navigation:navigation-compose:$navigationVersion",
         )
 
         val appUpdater = arrayOf("com.google.android.play:core-ktx:$appUpdaterVersion")
@@ -160,7 +167,8 @@ object Libs {
         val preference = arrayOf("androidx.preference:preference-ktx:$preferenceVersion")
 
         val room = arrayOf(
-            "androidx.room:room-runtime:$roomVersion", "androidx.room:room-ktx:$roomVersion"
+            "androidx.room:room-runtime:$roomVersion",
+            "androidx.room:room-ktx:$roomVersion",
         )
         const val roomKapt = "androidx.room:room-compiler:$roomVersion"
 
@@ -184,14 +192,14 @@ object Libs {
         val unitTests = arrayOf(
             "junit:junit:$junitVersion",
             "org.mockito:mockito-core:$mockitoVersion",
-            "com.google.truth:truth:$truthVersion"
+            "com.google.truth:truth:$truthVersion",
         )
         val uiTests = arrayOf(
             "androidx.test.espresso:espresso-core:$espressoVersion",
             "androidx.test.espresso:espresso-intents:$espressoVersion",
             "androidx.test:runner:$runnerVersion",
             "org.mockito:mockito-core:$mockitoVersion",
-            "com.google.truth:truth:$truthVersion"
+            "com.google.truth:truth:$truthVersion",
         )
     }
 }

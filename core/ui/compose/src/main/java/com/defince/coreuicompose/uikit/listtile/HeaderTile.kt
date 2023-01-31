@@ -69,10 +69,10 @@ object HeaderTileConfig {
     }
 
     @Composable
-    fun headerColor() = AppTheme.specificColorScheme.symbolPrimary
+    fun headerColor() = AppTheme.specificColorScheme.textPrimary
 
     @Composable
-    fun actionColor() = AppTheme.specificColorScheme.symbolSecondary
+    fun actionColor() = AppTheme.specificColorScheme.textSecondary
 
     @Composable
     fun shimmerWidth(type: HeaderTileState.Type) = when (type) {

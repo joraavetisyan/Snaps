@@ -17,6 +17,10 @@ class FirebaseNotificationsService : FirebaseMessagingService() {
         sendNotification(remoteMessage)
     }
 
+    override fun onNewToken(p0: String) {
+        TODO("NO NEW TOKEN HANDLER")
+    }
+
     private fun sendNotification(remoteMessage: RemoteMessage) {
         val notificationIntent = Intent(this, AppActivity::class.java)
             .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)

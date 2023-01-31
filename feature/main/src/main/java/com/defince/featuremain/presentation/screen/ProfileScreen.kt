@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -83,12 +84,12 @@ private fun ProfileScreen(
                 actions = listOf(
                     ActionIconData(
                         icon = AppTheme.specificIcons.settings,
-                        color = AppTheme.specificColorScheme.onSurfaceVariant,
+                        color = AppTheme.specificColorScheme.darkGrey,
                         onClick = {},
                     ),
                     ActionIconData(
                         icon = AppTheme.specificIcons.share,
-                        color = AppTheme.specificColorScheme.onSurfaceVariant,
+                        color = AppTheme.specificColorScheme.darkGrey,
                         onClick = {},
                     ),
                 ),
@@ -110,7 +111,7 @@ private fun ProfileScreen(
                 Icon(
                     painter = AppTheme.specificIcons.gallery.get(),
                     contentDescription = null,
-                    tint = AppTheme.specificColorScheme.onSurfaceVariant,
+                    tint = AppTheme.specificColorScheme.darkGrey,
                     modifier = Modifier
                         .padding(vertical = 8.dp)
                         .size(28.dp),
@@ -123,7 +124,7 @@ private fun ProfileScreen(
                 Icon(
                     painter = AppTheme.specificIcons.like.get(),
                     contentDescription = null,
-                    tint = AppTheme.specificColorScheme.onSurfaceVariant,
+                    tint = AppTheme.specificColorScheme.darkGrey,
                     modifier = Modifier
                         .padding(vertical = 8.dp)
                         .size(28.dp),
@@ -156,6 +157,7 @@ private fun Info(
         Card(
             shape = AppTheme.shapes.medium,
             modifier = Modifier.align(Alignment.BottomCenter),
+            colors = CardDefaults.cardColors(containerColor = AppTheme.specificColorScheme.white)
         ) {
             Row(
                 modifier = Modifier
@@ -219,7 +221,7 @@ private fun Item(item: Photo) {
     Box(
         modifier = Modifier
             .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
-            .background(color = AppTheme.specificColorScheme.surface, shape = AppTheme.shapes.medium),
+            .background(color = AppTheme.specificColorScheme.uiContentBg, shape = AppTheme.shapes.medium),
     ) {
         Card(
             shape = AppTheme.shapes.small,

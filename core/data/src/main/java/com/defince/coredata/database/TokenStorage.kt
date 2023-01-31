@@ -12,6 +12,8 @@ class TokenStorage @Inject constructor(
 
     var decodedAccessToken: Token = ""
 
+    var decodedPinCode = IntArray(4) { 0 }
+
     var encodedRefreshToken: Token
         get() = provider.cryptoPrefs.getString("encodedRefreshToken", "").orEmpty()
         set(value) = provider.cryptoPrefs.edit {

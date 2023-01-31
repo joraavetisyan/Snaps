@@ -36,7 +36,7 @@ fun Modifier.addIf(
 fun Modifier.defaultBorder(shape: Shape, width: Dp = .5f.dp) = composed {
     border(
         width = width,
-        color = AppTheme.specificColorScheme.outline,
+        color = AppTheme.specificColorScheme.outlineBorderBase,
         shape = shape,
     ).clip(shape)
 }
@@ -47,7 +47,7 @@ fun Modifier.defaultPlaceholder(
     placeholder(
         visible = true,
         shape = shape,
-        color = AppTheme.specificColorScheme.shimmer,
+        color = AppTheme.specificColorScheme.lightGrey,
         highlight = PlaceholderHighlight.fade(),
     )
 }

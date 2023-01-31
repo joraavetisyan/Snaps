@@ -14,14 +14,12 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.defince.corenavigation.AppRoute
 import com.defince.corenavigation.BottomBarFeatureProvider
 import com.defince.corenavigation.MainFeatureProvider
 import com.defince.coreuicompose.tools.SystemBarsIconsColor
+import com.defince.coreuicompose.uikit.status.MessageBannerUi
 import com.defince.coreuitheme.compose.AppTheme
 import com.defince.coreuitheme.compose.LocalStringHolder
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,6 +33,9 @@ class AppActivity : FragmentActivity() {
     lateinit var bottomBarFeatureProvider: BottomBarFeatureProvider
 
     @Inject
+    lateinit var navHostProvider: NavHostProvider
+
+    @Inject
     lateinit var mainFeatureProvider: MainFeatureProvider
 
     private var shouldKeepSplashScreen = true
@@ -43,15 +44,10 @@ class AppActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        installSplashScreen().setKeepOnScreenCondition {
-            shouldKeepSplashScreen
-        }
-
+        installSplashScreen().setKeepOnScreenCondition { shouldKeepSplashScreen }
         setContent {
             AppTheme(calculateWindowSizeClass(this)) {
-                SideEffect {
-                    shouldKeepSplashScreen = false
-                }
+                SideEffect { shouldKeepSplashScreen = false }
                 SystemBarsIconsColor()
                 AppScreen()
             }
@@ -62,73 +58,23 @@ class AppActivity : FragmentActivity() {
     private fun AppScreen() {
         val navController = rememberNavController()
         val viewModel = viewModel<AppViewModel>()
-        val currentFlow by viewModel.currentFlowState.collectAsState()
+        val currentFlowState = viewModel.currentFlowState.collectAsState()
         val stringHolder by viewModel.stringHolderState.collectAsState()
+        val notification by viewModel.notificationsState.collectAsState()
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
 
         CompositionLocalProvider(LocalStringHolder provides stringHolder) {
-            when (currentFlow) {
-                AppViewModel.CurrentFlow.Main -> MainFlow(navController)
+            when (val currentFlow = currentFlowState.value) {
+                is AppViewModel.StartFlow.RegistrationFlow -> navHostProvider.RegistrationNavHost(
+                    navController = navController,
+                    needOnBoarding = currentFlow.needStartOnBoarding,
+                )
+                is AppViewModel.StartFlow.AuthorizedFlow -> navHostProvider.AuthorizedGraph(
+                    navController = navController,
+                )
             }
+            viewModel.updateAppRoute(navBackStackEntry?.destination?.route)
+            MessageBannerUi(notification)
         }
-    }
-
-    @Composable
-    private fun MainFlow(navController: NavHostController) {
-        NavHost(navController = navController, startDestination = AppRoute.MainBottomBar.path()) {
-            with(bottomBarFeatureProvider) { bottomBarGraph(AppRoute.MainBottomBar, mainBottomBarItems()) }
-        }
-    }
-
-    private fun mainBottomBarItems() = listOf(
-        BottomBarFeatureProvider.ScreenItem(
-            icon = AppTheme.specificIcons.camera,
-            route = AppRoute.MainBottomBar.MainTab1,
-            startDestination = AppRoute.MainBottomBar.Mock1,
-            builder = { mainTab1Graph(it) },
-        ),
-        BottomBarFeatureProvider.ScreenItem(
-            icon = AppTheme.specificIcons.star,
-            route = AppRoute.MainBottomBar.MainTab2,
-            startDestination = AppRoute.MainBottomBar.Mock2,
-            builder = { mainTab2Graph(it) },
-        ),
-        BottomBarFeatureProvider.ScreenItem(
-            icon = AppTheme.specificIcons.check,
-            route = AppRoute.MainBottomBar.MainTab3,
-            startDestination = AppRoute.MainBottomBar.Mock3,
-            builder = { mainTab3Graph(it) },
-        ),
-        BottomBarFeatureProvider.ScreenItem(
-            icon = AppTheme.specificIcons.picture,
-            route = AppRoute.MainBottomBar.MainTab4,
-            startDestination = AppRoute.MainBottomBar.Mock4,
-            builder = { mainTab4Graph(it) },
-        ),
-        BottomBarFeatureProvider.ScreenItem(
-            icon = AppTheme.specificIcons.profile,
-            route = AppRoute.MainBottomBar.MainTab5,
-            startDestination = AppRoute.MainBottomBar.Mock5,
-            builder = { mainTab5Graph(it) },
-        ),
-    )
-
-    private fun NavGraphBuilder.mainTab1Graph(controller: NavHostController) {
-        with(mainFeatureProvider) { mock1Graph(controller) }
-    }
-
-    private fun NavGraphBuilder.mainTab2Graph(controller: NavHostController) {
-        with(mainFeatureProvider) { mock2Graph(controller) }
-    }
-
-    private fun NavGraphBuilder.mainTab3Graph(controller: NavHostController) {
-        with(mainFeatureProvider) { mock3Graph(controller) }
-    }
-
-    private fun NavGraphBuilder.mainTab4Graph(controller: NavHostController) {
-        with(mainFeatureProvider) { mock4Graph(controller) }
-    }
-
-    private fun NavGraphBuilder.mainTab5Graph(controller: NavHostController) {
-        with(mainFeatureProvider) { mock5Graph(controller) }
     }
 }
