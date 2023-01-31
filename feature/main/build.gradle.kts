@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.coreNavigation)
 
     implementation(projects.baseSources)
+    implementation(projects.baseProfile)
 
     implementation(*Libs.bundle.firebase)
     implementation(*Libs.bundle.pager)

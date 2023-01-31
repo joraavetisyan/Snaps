@@ -1,5 +1,6 @@
 package com.defince.coreuicompose.uikit.duplicate
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -7,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
 import com.defince.corecommon.container.IconValue
 import com.defince.corecommon.container.TextValue
 import com.defince.coreuicompose.tools.get
@@ -16,6 +18,7 @@ import com.defince.coreuitheme.compose.AppTheme
 object SimpleTopAppBarConfig {
 
     private const val ContainerColorAlpha = .9f
+    val ActionSize = 44.dp
 
     @Composable
     fun surfaceColors() = SimpleTopAppBarColors(
@@ -68,6 +71,7 @@ object SimpleTopAppBarConfig {
 fun SimpleTopAppBar(
     title: TextValue?,
     titleTextStyle: TextStyle = AppTheme.specificTypography.titleMedium,
+    titleHorizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     navigationIcon: Pair<IconValue, OnBackIconClick>? = null,
     actions: List<ActionIconData> = emptyList(),
     windowInsets: WindowInsets = insetAllExcludeBottom(),
@@ -77,6 +81,7 @@ fun SimpleTopAppBar(
 ) {
     SimpleTopAppBar(
         title = { title?.get()?.let { Text(it) } },
+        titleHorizontalArrangement = titleHorizontalArrangement,
         titleTextStyle = titleTextStyle,
         navigationIcon = navigationIcon,
         actions = actions,
@@ -91,6 +96,7 @@ fun SimpleTopAppBar(
 @Composable
 fun SimpleTopAppBar(
     title: @Composable () -> Unit,
+    titleHorizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     titleTextStyle: TextStyle = AppTheme.specificTypography.titleMedium,
     navigationIcon: Pair<IconValue, OnBackIconClick>? = null,
     actions: List<ActionIconData> = emptyList(),
@@ -101,6 +107,7 @@ fun SimpleTopAppBar(
 ) {
     SingleRowTopAppBar(
         title = title,
+        titleHorizontalArrangement = titleHorizontalArrangement,
         titleTextStyle = titleTextStyle,
         navigationIcon = {
             if (navigationIcon != null) {

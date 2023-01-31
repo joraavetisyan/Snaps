@@ -4,9 +4,9 @@ object Completable
 
 sealed class State<out T : Any> {
 
-    open val findDataOrCache: T?
+    open val dataOrCache: T?
         get() = when (this) {
-            is Effect -> this.findDataOrCache
+            is Effect -> this.dataOrCache
             else -> null
         }
 }
@@ -30,15 +30,15 @@ class Effect<DATA : Any> private constructor(
     val isSuccess: Boolean get() = value is Success<DATA>
     val isError: Boolean get() = value is Error<DATA>
 
-    val requireData: DATA get() = requireNotNull(findData)
-    val findData: DATA?
+    val requireData: DATA get() = requireNotNull(data)
+    val data: DATA?
         get() = when (value) {
             is Success<DATA> -> value.data
             else -> null
         }
 
-    val requireDataOrCache: DATA get() = requireNotNull(findDataOrCache)
-    override val findDataOrCache: DATA?
+    val requireDataOrCache: DATA get() = requireNotNull(dataOrCache)
+    override val dataOrCache: DATA?
         get() = when (value) {
             is Success<DATA> -> value.data
             is Error<DATA> -> value.cache

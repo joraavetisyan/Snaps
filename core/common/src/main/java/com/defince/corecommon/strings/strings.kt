@@ -44,8 +44,7 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Send",
     ),
     key(StringKey.RegistrationMessagePrivacyPolicy) to mapOf(
-        SupportedLanguageKey.En to "By creating an account, I consent to the processing of my data in accordance with the Privacy Policy and \n" +
-            "Terms of Use",
+        SupportedLanguageKey.En to "By creating an account, I consent to the processing of my data in accordance with the Privacy Policy and \nTerms of Use",
     ),
     key(StringKey.RegistrationActionPrivacyPolicy) to mapOf(
         SupportedLanguageKey.En to "PrivacyPolicy",
@@ -61,5 +60,18 @@ internal val strings = mapOf(
     ),
     key(StringKey.RegistrationMessageEnterEmail) to mapOf(
         SupportedLanguageKey.En to "Enter your e-mail address and receive the code to the specified mail",
+    ),
+
+    key(StringKey.SubsActionSubscriptions) to mapOf(
+        SupportedLanguageKey.En to "%s Subscriptions",
+    ),
+    key(StringKey.SubsActionSubscribers) to mapOf(
+        SupportedLanguageKey.En to "%s Subscribers",
+    ),
+    key(StringKey.SubsActionFollow) to mapOf(
+        SupportedLanguageKey.En to "Follow",
+    ),
+    key(StringKey.SubsActionFollowing) to mapOf(
+        SupportedLanguageKey.En to "Following",
     ),
 )

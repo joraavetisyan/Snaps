@@ -35,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -46,7 +45,6 @@ import com.defince.coreuicompose.tools.get
 import com.defince.coreuicompose.tools.inset
 import com.defince.coreuicompose.tools.insetAll
 import com.defince.coreuitheme.compose.AppTheme
-import com.defince.coreuitheme.compose.MainHeaderElementShape
 import com.defince.featuremain.domain.Rank
 import com.defince.featuremain.presentation.ScreenNavigator
 import com.defince.featuremain.presentation.viewmodel.RankSelectionViewModel
@@ -61,7 +59,7 @@ fun RankSelectionScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     RankSelectionScreen(
-        uiState,
+        uiState = uiState,
     )
 }
 
@@ -76,10 +74,10 @@ private fun RankSelectionScreen(
         topBar = {
 
         },
-    ) {
+    ) { paddingValues ->
         Column(
             modifier = Modifier
-                .padding(it)
+                .padding(paddingValues)
                 .inset(insetAll()),
         ) {
             MainHeader(
@@ -98,9 +96,7 @@ private fun RankSelectionScreen(
                 contentPadding = PaddingValues(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                items(uiState.ranks) { item ->
-                    Item(item)
-                }
+                items(uiState.ranks) { Item(it) }
             }
         }
     }
@@ -147,6 +143,13 @@ private fun Item(item: Rank) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
             ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(item.type)
+                    WorthWidget(ImageValue.ResImage(R.drawable.img_coin_silver) to item.price)
+                }
                 @Composable
                 fun Line(name: String, value: String) {
                     Row(
@@ -154,40 +157,11 @@ private fun Item(item: Rank) {
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(
-                            name,
+                            text = name,
                             style = AppTheme.specificTypography.bodySmall,
                             color = AppTheme.specificColorScheme.textSecondary,
                         )
-                        Text(value, style = AppTheme.specificTypography.bodySmall)
-                    }
-                }
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(item.type)
-                    Card(
-                        modifier = Modifier
-                            .shadow(elevation = 16.dp, shape = MainHeaderElementShape)
-                            .background(
-                                color = AppTheme.specificColorScheme.uiContentBg,
-                                shape = MainHeaderElementShape,
-                            ),
-                        shape = MainHeaderElementShape,
-                    ) {
-                        Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = ImageValue.ResImage(R.drawable.img_coin_silver).get(),
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp),
-                                contentScale = ContentScale.Crop,
-                            )
-                            Text(
-                                text = item.price,
-                                style = AppTheme.specificTypography.bodySmall,
-                                modifier = Modifier.padding(end = 4.dp),
-                            )
-                        }
+                        Text(text = value, style = AppTheme.specificTypography.bodySmall)
                     }
                 }
                 Line(name = "Daily reward", value = item.dailyReward)

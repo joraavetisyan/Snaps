@@ -22,4 +22,9 @@ enum class StringKey {
     RegistrationMessageEnterEmail,
     RegistrationTitle,
     RegistrationFieldOr,
+
+    SubsActionSubscriptions,
+    SubsActionSubscribers,
+    SubsActionFollow,
+    SubsActionFollowing,
 }
