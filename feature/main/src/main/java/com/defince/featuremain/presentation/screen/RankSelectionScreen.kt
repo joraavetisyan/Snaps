@@ -2,29 +2,24 @@
 
 package com.defince.featuremain.presentation.screen
 
+import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -38,17 +33,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.defince.corecommon.R
+import com.defince.corecommon.container.ImageValue
 import com.defince.coreuicompose.tools.get
-import com.defince.coreuicompose.uikit.duplicate.ActionIconData
-import com.defince.coreuicompose.uikit.duplicate.SimpleTopAppBar
+import com.defince.coreuicompose.tools.inset
+import com.defince.coreuicompose.tools.insetAll
 import com.defince.coreuitheme.compose.AppTheme
+import com.defince.coreuitheme.compose.MainHeaderElementShape
+import com.defince.featuremain.domain.Rank
 import com.defince.featuremain.presentation.ScreenNavigator
-import com.defince.featuremain.presentation.viewmodel.Photo
 import com.defince.featuremain.presentation.viewmodel.RankSelectionViewModel
 
 @Composable
@@ -74,71 +74,31 @@ private fun RankSelectionScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            SimpleTopAppBar(
-                title = {
-                    Text("My RankSelection")
-                },
-                titleTextStyle = AppTheme.specificTypography.titleLarge,
-                scrollBehavior = scrollBehavior,
-                actions = listOf(
-                    ActionIconData(
-                        icon = AppTheme.specificIcons.settings,
-                        color = AppTheme.specificColorScheme.onSurfaceVariant,
-                        onClick = {},
-                    ),
-                    ActionIconData(
-                        icon = AppTheme.specificIcons.share,
-                        color = AppTheme.specificColorScheme.onSurfaceVariant,
-                        onClick = {},
-                    ),
-                ),
-            )
+
         },
     ) {
         Column(
-            modifier = Modifier.padding(it),
+            modifier = Modifier
+                .padding(it)
+                .inset(insetAll()),
         ) {
-            Info(uiState)
+            MainHeader(
+                uiState = MainHeaderState.Data(
+                    profileImage = ImageValue.Url("https://picsum.photos/44"),
+                    energy = "12",
+                    gold = "12",
+                    silver = "12",
+                    bronze = "12",
+                )
+            )
+            Header()
             Spacer(modifier = Modifier.height(12.dp))
-            Divider()
-            Row(
-                modifier = Modifier
-                    .height(IntrinsicSize.Min)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                Icon(
-                    painter = AppTheme.specificIcons.gallery.get(),
-                    contentDescription = null,
-                    tint = AppTheme.specificColorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .size(28.dp),
-                )
-                Divider(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(1.dp)
-                )
-                Icon(
-                    painter = AppTheme.specificIcons.like.get(),
-                    contentDescription = null,
-                    tint = AppTheme.specificColorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .size(28.dp),
-                )
-            }
-            Divider()
-            Spacer(modifier = Modifier.height(12.dp))
-            LazyVerticalGrid(
+            LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                columns = GridCells.Fixed(3),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                items(uiState.images) { item ->
+                items(uiState.ranks) { item ->
                     Item(item)
                 }
             }
@@ -147,99 +107,104 @@ private fun RankSelectionScreen(
 }
 
 @Composable
-private fun Info(
-    uiState: RankSelectionViewModel.UiState,
-) {
-    Box(
-        Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+private fun Header() {
+    Column(
+        Modifier.padding(12.dp)
     ) {
-        Card(
-            shape = AppTheme.shapes.medium,
-            modifier = Modifier.align(Alignment.BottomCenter),
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 12.dp)
-                    .padding(bottom = 16.dp)
-                    .padding(top = 32.dp)
-                    .height(IntrinsicSize.Min)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                PieceOfInfo(uiState.likes, "Likes")
-                VerticalDivider()
-                PieceOfInfo(uiState.subscribers, "Subscribers")
-                VerticalDivider()
-                PieceOfInfo(uiState.subscriptions, "Subscriptions")
-                VerticalDivider()
-                PieceOfInfo(uiState.publication, "Publication")
-            }
-        }
-        Card(
-            shape = CircleShape,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(bottom = 76.dp),
-        ) {
-            Image(
-                painter = uiState.RankSelectionImage.get(),
+        Text(text = "Choose a rank for your points", style = AppTheme.specificTypography.titleLarge)
+        Spacer(modifier = Modifier.height(8.dp))
+        Row {
+            Text(
+                text = "What is a rank",
+                style = AppTheme.specificTypography.titleSmall,
+                color = AppTheme.specificColorScheme.textLink,
+            )
+            Icon(
+                painter = AppTheme.specificIcons.question.get(),
                 contentDescription = null,
-                modifier = Modifier.size(76.dp),
-                contentScale = ContentScale.Crop,
+                tint = Color.Unspecified,
             )
         }
     }
 }
 
 @Composable
-private fun VerticalDivider() {
-    Divider(
-        modifier = Modifier
-            .padding(vertical = 8.dp)
-            .fillMaxHeight()
-            .width(1.dp)
-    )
-}
-
-@Composable
-private fun PieceOfInfo(
-    value: String,
-    name: String,
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(text = value, style = AppTheme.specificTypography.titleMedium)
-        Text(text = name, style = AppTheme.specificTypography.bodySmall)
-    }
-}
-
-@Composable
-private fun Item(item: Photo) {
-    Box(
+private fun Item(item: Rank) {
+    Card(
         modifier = Modifier
             .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
-            .background(color = AppTheme.specificColorScheme.surface, shape = AppTheme.shapes.medium),
+            .background(
+                color = AppTheme.specificColorScheme.uiContentBg,
+                shape = AppTheme.shapes.medium
+            ),
     ) {
-        Card(
-            shape = AppTheme.shapes.small,
-        ) {
-            Image(
-                painter = item.image.get(),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .size(width = 116.dp, height = 162.dp),
-                contentScale = ContentScale.Crop,
-            )
-        }
         Row(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(horizontal = 4.dp, vertical = 8.dp),
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(AppTheme.specificIcons.play.get(), null, tint = AppTheme.specificColorScheme.white)
-            Text(item.views, color = AppTheme.specificColorScheme.white)
+            Image(item.image.get(), null, modifier = Modifier.size(100.dp))
+            Spacer(Modifier.width(8.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                @Composable
+                fun Line(name: String, value: String) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(
+                            name,
+                            style = AppTheme.specificTypography.bodySmall,
+                            color = AppTheme.specificColorScheme.textSecondary,
+                        )
+                        Text(value, style = AppTheme.specificTypography.bodySmall)
+                    }
+                }
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(item.type)
+                    Card(
+                        modifier = Modifier
+                            .shadow(elevation = 16.dp, shape = MainHeaderElementShape)
+                            .background(
+                                color = AppTheme.specificColorScheme.uiContentBg,
+                                shape = MainHeaderElementShape,
+                            ),
+                        shape = MainHeaderElementShape,
+                    ) {
+                        Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = ImageValue.ResImage(R.drawable.img_coin_silver).get(),
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp),
+                                contentScale = ContentScale.Crop,
+                            )
+                            Text(
+                                text = item.price,
+                                style = AppTheme.specificTypography.bodySmall,
+                                modifier = Modifier.padding(end = 4.dp),
+                            )
+                        }
+                    }
+                }
+                Line(name = "Daily reward", value = item.dailyReward)
+                Line(name = "Daily unlock", value = item.dailyUnlock)
+                Line(name = "Daily consumption", value = item.dailyConsumption)
+                Line(name = "Dosage per day/month", value = item.dosagePerDayMonth)
+                Line(name = "Spending on gas", value = item.spendingOnGas)
+            }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun Preview() {
+    RankSelectionScreen(
+        uiState = RankSelectionViewModel.UiState(),
+    )
 }

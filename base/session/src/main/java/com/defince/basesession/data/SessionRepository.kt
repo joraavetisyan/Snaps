@@ -2,12 +2,9 @@ package com.defince.basesession.data
 
 import com.defince.baseprofile.data.UserSessionTracker
 import com.defince.basesession.data.model.LogoutRequestDto
-import com.defince.basesession.data.model.RefreshRequestDto
 import com.defince.basesources.DeviceInfoProvider
 import com.defince.corecommon.model.Completable
 import com.defince.corecommon.model.Effect
-import com.defince.corecommon.model.Token
-import com.defince.corecommon.model.generateCurrentDateTime
 import com.defince.coredata.coroutine.ApplicationCoroutineScope
 import com.defince.coredata.coroutine.IoDispatcher
 import com.defince.coredata.crypto.PinCodeWrapper
@@ -18,12 +15,11 @@ import com.defince.coredata.network.apiCall
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.net.HttpURLConnection
 import javax.inject.Inject
 
 interface SessionRepository {
 
-    suspend fun login(decodedRefreshToken: Token): Effect<Completable>
+    suspend fun login(): Effect<Completable>
 
     suspend fun refresh(): Effect<Completable>
 
@@ -50,25 +46,9 @@ class SessionRepositoryImpl @Inject constructor(
     * обновление токенов при авторизации.
     * используется refresh токен, полученный при авторизации (через ввод pin кода или биометрию)
     * */
-    override suspend fun login(decodedRefreshToken: Token): Effect<Completable> {
-        return apiCall(ioDispatcher) {
-            refreshApi.refresh(
-                RefreshRequestDto(
-                    refreshToken = decodedRefreshToken,
-                    deviceId = deviceInfoProvider.getDeviceId(),
-                    deviceName = deviceInfoProvider.getDeviceName(),
-                    requestDatetime = generateCurrentDateTime(),
-                )
-            )
-        }.doOnSuccess {
-            pinCodeWrapper.update(it.accessToken, it.refreshToken)
-            onLogin()
-        }.doOnError { error, _ ->
-            if (error.code == HttpURLConnection.HTTP_BAD_REQUEST) {
-                // Refresh token has expired
-                logout()
-            }
-        }.toCompletable()
+    override suspend fun login(): Effect<Completable> {
+        onLogin()
+        return Effect.success(Completable)
     }
 
     /*
@@ -76,7 +56,7 @@ class SessionRepositoryImpl @Inject constructor(
     * используется refresh токен из оперативной памяти
     * */
     override suspend fun refresh(): Effect<Completable> {
-        return login(pinCodeWrapper.getRefreshToken())
+        return login()
     }
 
     override fun onLogin() {

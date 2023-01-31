@@ -17,6 +17,7 @@ import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.NavigateNext
 import androidx.compose.material.icons.rounded.Phone
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.QuestionMark
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.defince.corecommon.container.IconValue
 import com.defince.corecommon.R
@@ -50,6 +51,7 @@ object SpecificIcons {
     val apple: IconValue = resource(R.drawable.ic_apple)
     val facebook: IconValue = resource(R.drawable.ic_facebook)
     val twitter: IconValue = resource(R.drawable.ic_twitter)
+    val question: IconValue = resource(R.drawable.ic_question)
 }
 
 private fun vector(value: ImageVector) = IconValue.Vector(value)

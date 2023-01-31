@@ -3,27 +3,29 @@ package com.defince.featuremain.presentation.screen
 import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.defince.corecommon.R
 import com.defince.corecommon.container.ImageValue
 import com.defince.coreuicompose.tools.get
 import com.defince.coreuicompose.uikit.listtile.CellTileState
-import com.defince.coreuitheme.R
 import com.defince.coreuitheme.compose.AppTheme
+import com.defince.coreuitheme.compose.MainHeaderElementShape
 
 sealed interface MainHeaderState {
 
@@ -47,6 +49,7 @@ fun MainHeader(
     when (uiState) {
         is MainHeaderState.Data -> Row(
             verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 12.dp),
         ) {
             Card(
                 shape = CircleShape,
@@ -60,7 +63,13 @@ fun MainHeader(
             }
             Spacer(Modifier.weight(1f))
             Card(
-                shape = RoundedCornerShape(100.dp),
+                modifier = Modifier
+                    .shadow(elevation = 16.dp, shape = MainHeaderElementShape)
+                    .background(
+                        color = AppTheme.specificColorScheme.uiContentBg,
+                        shape = MainHeaderElementShape,
+                    ),
+                shape = MainHeaderElementShape,
             ) {
                 Element(
                     imageRes = R.drawable.img_energy,
@@ -70,7 +79,13 @@ fun MainHeader(
             }
             Spacer(Modifier.width(4.dp))
             Card(
-                shape = RoundedCornerShape(100.dp),
+                modifier = Modifier
+                    .shadow(elevation = 16.dp, shape = MainHeaderElementShape)
+                    .background(
+                        color = AppTheme.specificColorScheme.uiContentBg,
+                        shape = MainHeaderElementShape,
+                    ),
+                shape = MainHeaderElementShape,
                 elevation = CardDefaults.cardElevation(),
             ) {
                 Row(
@@ -96,7 +111,7 @@ private fun Element(
     value: String,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Image(
             painter = ImageValue.ResImage(imageRes).get(),
             contentDescription = null,

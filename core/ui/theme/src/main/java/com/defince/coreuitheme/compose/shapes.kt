@@ -13,3 +13,5 @@ internal val AppShapes = Shapes(
 )
 
 val BottomNavigationBarShape = RoundedCornerShape(100.dp)
+
+val MainHeaderElementShape = RoundedCornerShape(100.dp)

@@ -9,6 +9,7 @@ import com.defince.corenavigation.base.composable
 import com.defince.featuremain.presentation.screen.ItemListScreen
 import com.defince.featuremain.presentation.screen.MockScreen
 import com.defince.featuremain.presentation.screen.ProfileScreen
+import com.defince.featuremain.presentation.screen.RankSelectionScreen
 import com.defince.featuremain.presentation.screen.ReelsScreen
 import javax.inject.Inject
 
@@ -21,7 +22,7 @@ class MainFeatureProviderImpl @Inject constructor() : MainFeatureProvider {
     }
 
     override fun NavGraphBuilder.mock2Graph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.Mock2) { MockScreen(controller) }
+        composable(AppRoute.MainBottomBar.Mock2) { RankSelectionScreen(controller) }
     }
 
     override fun NavGraphBuilder.mock3Graph(controller: NavHostController) {
