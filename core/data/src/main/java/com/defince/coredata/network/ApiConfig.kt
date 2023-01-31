@@ -3,17 +3,19 @@ package com.defince.coredata.network
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.defince.corecommon.model.BuildInfo
 import com.defince.coredata.network.interceptors.AuthenticationInterceptor
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
+import com.defince.coredata.network.interceptors.CommonHeaderInterceptor
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class ApiConfig @Inject constructor(
-    val authentication: AuthenticationInterceptor,
+    val authenticationInterceptor: AuthenticationInterceptor,
+    val commonHeaderInterceptor: CommonHeaderInterceptor,
 
     private val loggerInterceptor: HttpLoggingInterceptor,
     private val chuckerInterceptor: ChuckerInterceptor,
@@ -65,7 +67,10 @@ class ApiConfig @Inject constructor(
 
         fun interceptor(interceptor: Interceptor) = this.apply { interceptors += interceptor }
 
-        fun build(): API = createRetrofit(requireNotNull(service).getBaseUrl(buildInfo), interceptors).create(clazz)
+        fun build(): API = createRetrofit(
+            requireNotNull(service).getBaseUrl(buildInfo),
+            interceptors
+        ).create(clazz)
     }
 
     inner class OkHttpParams {

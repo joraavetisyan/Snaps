@@ -1,6 +1,5 @@
 package com.defince.corenavigation
 
-import androidx.core.net.toUri
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -49,20 +48,6 @@ object AppRoute {
         object MainTab5 : Route("mainTab5")
         object Mock5 : Route("Mock5")
     }
+
     object Registration : Route("Registration")
-}
-
-object AppDeeplink {
-
-    private val BaseUri = "app://com.defince.w2e".toUri()
-
-    object Main : Deeplink("$BaseUri/main")
-
-    object Details : Deeplink("$BaseUri/details") {
-
-        const val IdKey = "id"
-
-        override val pattern = "$value/{$IdKey}"
-        override fun path(vararg args: Any) = "$value/%s".format(*args)
-    }
 }

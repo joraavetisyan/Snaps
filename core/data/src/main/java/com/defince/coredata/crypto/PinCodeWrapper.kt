@@ -37,7 +37,18 @@ class PinCodeWrapper @Inject constructor(
         val cipher = createEncryptCipher(secretKey)
 
         tokenStorage.decodedAccessToken = accessToken
-        tokenStorage.encodedRefreshToken = cryptoConfigurator.encode(refreshToken, cipher)
+        tokenStorage.encodedRefreshToken = CryptoConfigurator.encode(refreshToken, cipher)
+
+        return Effect.success(Completable)
+    }
+
+    fun update(accessToken: Token, refreshToken: Token): Effect<Completable> {
+        val pinCode = tokenStorage.decodedPinCode.joinToString(separator = "") { it.toString() }
+        val secretKey = Pbkdf2Factory.createKey(pinCode.toCharArray(), tokenStorage.salt.encodeToByteArray())
+        val cipher = createEncryptCipher(secretKey)
+
+        tokenStorage.decodedAccessToken = accessToken
+        tokenStorage.encodedRefreshToken = CryptoConfigurator.encode(refreshToken, cipher)
 
         return Effect.success(Completable)
     }
@@ -45,7 +56,7 @@ class PinCodeWrapper @Inject constructor(
     fun enableBiometric(pinCode: String): Effect<Completable> {
         val cipher = cryptoConfigurator.createBiometricEncryptCipher() ?: return Effect.error(
             AppError.Unknown())
-        tokenStorage.encodedPinCode = cryptoConfigurator.encode(pinCode, cipher)
+        tokenStorage.encodedPinCode = CryptoConfigurator.encode(pinCode, cipher)
         return Effect.success(Completable)
     }
 
@@ -55,9 +66,17 @@ class PinCodeWrapper @Inject constructor(
         return Effect.success(cipher)
     }
 
+    fun getRefreshToken(): Token {
+        val pinCode = tokenStorage.decodedPinCode.joinToString(separator = "") { it.toString() }
+        val salt = tokenStorage.salt.encodeToByteArray()
+        val secretKey = Pbkdf2Factory.createKey(pinCode.toCharArray(), salt)
+        val cipher = createDecryptCipher(secretKey)
+        return CryptoConfigurator.decode(tokenStorage.encodedRefreshToken, cipher)
+    }
+
     fun getRefreshToken(cipher: Cipher?): Effect<Token> {
         cipher ?: return Effect.error(AppError.Unknown())
-        return getRefreshToken(CryptoConfigurator().decode(tokenStorage.encodedPinCode, cipher))
+        return getRefreshToken(CryptoConfigurator.decode(tokenStorage.encodedPinCode, cipher))
     }
 
     fun getRefreshToken(pin: String): Effect<Token> {
@@ -67,7 +86,7 @@ class PinCodeWrapper @Inject constructor(
 
         val token = try {
             val encryptedRefreshToken = tokenStorage.encodedRefreshToken
-            cryptoConfigurator.decode(encryptedRefreshToken, cipher)
+            CryptoConfigurator.decode(encryptedRefreshToken, cipher)
         } catch (e: GeneralSecurityException) {
             null
         }

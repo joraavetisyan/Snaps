@@ -87,9 +87,9 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.media3.ui.PlayerView.SHOW_BUFFERING_ALWAYS
 import androidx.navigation.NavHostController
+import com.defince.corecommon.R
 import com.defince.corecommon.container.ImageValue
 import com.defince.coreuicompose.tools.get
-import com.defince.coreuitheme.R
 import com.defince.coreuitheme.compose.AppTheme
 import com.defince.featuremain.data.reels
 import com.defince.featuremain.domain.Icon

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "347918664048",
+    "project_id": "watch2earn-d3c73",
+    "storage_bucket": "watch2earn-d3c73.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:347918664048:android:22cf699cbb263f3c2c0fb5",
+        "android_client_info": {
+          "package_name": "com.defince.w2e.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "347918664048-betmpj1e6s5ieigki4e0kelgrjm9oii9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.defince.w2e.debug",
+            "certificate_hash": "1fa9fee33119fdb657e3105adcea4cc6e2f0fc7b"
+          }
+        },
+        {
+          "client_id": "347918664048-52tb4pator7tjhce86av720cva3p2blt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChUKlDYumzMEbraNtl-z7zNDwSLsmeRAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "347918664048-2jpj6npfbujevn31k9gcidc313qjb8hs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

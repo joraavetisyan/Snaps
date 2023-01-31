@@ -1,11 +1,18 @@
 package com.defince.coredata.network
 
+
+import com.defince.corecommon.ext.log
 import com.defince.corecommon.model.AppError
 import com.defince.corecommon.model.Completable
 import com.defince.corecommon.model.Effect
 import com.defince.coredata.cache.CacheProvider
 import com.defince.coredata.json.KotlinxSerializationJsonProvider
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.decodeFromStream
+import retrofit2.HttpException
 import java.net.ConnectException
+import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.concurrent.CancellationException
@@ -13,11 +20,6 @@ import javax.net.ssl.SSLException
 import kotlin.reflect.typeOf
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.decodeFromStream
-import retrofit2.Response
 
 suspend inline fun <reified T : Any> cachedApiCall(
     key: String,
@@ -25,7 +27,7 @@ suspend inline fun <reified T : Any> cachedApiCall(
     dispatcher: CoroutineDispatcher,
     needActualData: Boolean = false,
     lifeDuration: Duration = 5.minutes,
-    noinline request: suspend () -> Response<T>,
+    noinline request: suspend () -> BaseResponse<T>,
 ): Effect<T> {
     return if (needActualData) {
         apiCall(dispatcher, request)
@@ -41,7 +43,7 @@ suspend inline fun <reified T : Any> cachedApiCall(
 
 suspend inline fun <reified T : Any> apiCall(
     dispatcher: CoroutineDispatcher,
-    noinline block: suspend () -> Response<T>,
+    noinline block: suspend () -> BaseResponse<T>,
 ): Effect<T> = withContext(dispatcher) {
     try {
         block().toEffect()
@@ -50,32 +52,11 @@ suspend inline fun <reified T : Any> apiCall(
     }
 }
 
-@OptIn(ExperimentalSerializationApi::class)
-inline fun <reified T : Any> Response<T>.toEffect() = when {
-    isSuccessful -> when (val body = body()) {
-        null -> when (T::class) {
-            Completable::class -> Effect.success(Completable as T)
-            else -> Effect.error(AppError.Unknown())
-        }
-        else -> Effect.success(body)
-    }
-
-    else -> {
-        val errorBody = errorBody()?.let {
-            KotlinxSerializationJsonProvider().get().decodeFromStream<ErrorDto>(it.byteStream())
-        }
-
-        val error = when {
-            errorBody == null -> AppError.Unknown()
-
-            else -> AppError.Custom(
-                message = errorBody.message,
-                displayMessage = errorBody.message,
-                code = code(),
-            )
-        }
-
-        Effect.error(error)
+inline fun <reified T : Any> BaseResponse<T>.toEffect() = when {
+    data != null -> Effect.success(data = data)
+    else -> when (T::class) {
+        Completable::class -> Effect.success(Completable as T)
+        else -> Effect.error(error = AppError.Unknown())
     }
 }
 
@@ -83,9 +64,35 @@ fun Throwable.toApiError() = when (this) {
     is UnknownHostException,
     is SSLException,
     is ConnectException,
-    is SocketTimeoutException -> AppError.Custom(cause = this as Exception)
+    is SocketTimeoutException,
+    is SocketException -> AppError.Custom(cause = this as Exception)
 
     is CancellationException -> throw this
 
-    else -> AppError.Unknown()
+    is HttpException -> {
+        val errorBody = try {
+            KotlinxSerializationJsonProvider().get()
+                .decodeFromStream<ErrorResponse>(response()!!.errorBody()!!.byteStream())
+        } catch (t: Throwable) {
+            log("Couldn't retrieve error body: $t")
+            null
+        }
+        val error = errorBody?.error
+        val errorCode = response()?.code()
+
+        when {
+            error == null || errorCode == null -> AppError.Unknown()
+
+            else -> AppError.Custom(
+                message = error.message,
+                displayMessage = error.displayMessage,
+                code = errorCode,
+                cause = this as Exception,
+            )
+        }
+    }
+
+    else -> AppError.Unknown().also {
+        log("Unknown api call error: $this")
+    }
 }

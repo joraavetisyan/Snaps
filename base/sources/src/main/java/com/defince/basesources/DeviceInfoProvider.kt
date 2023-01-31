@@ -18,6 +18,8 @@ interface DeviceInfoProvider {
     suspend fun getDeviceId(): String
 
     suspend fun getPushToken(): String
+
+    suspend fun resetPushToken()
 }
 
 class DeviceInfoProviderImpl @Inject constructor() : DeviceInfoProvider {
@@ -32,6 +34,11 @@ class DeviceInfoProviderImpl @Inject constructor() : DeviceInfoProvider {
 
     override suspend fun getPushToken(): String {
         return FirebaseMessaging.getInstance().token.await()
+    }
+
+    override suspend fun resetPushToken() {
+        FirebaseMessaging.getInstance().deleteToken().await()
+        getPushToken()
     }
 }
 

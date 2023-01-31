@@ -16,6 +16,7 @@ typealias FormattedMoney = String
 typealias CurrencyIso = Int
 typealias FullUrl = String
 typealias PartialUrl = String
+typealias DeviceId = String
 
 fun generateCurrentDateTime() = ZonedDateTime.now().toString()
 fun generateRequestId() = UUID.randomUUID().toString()

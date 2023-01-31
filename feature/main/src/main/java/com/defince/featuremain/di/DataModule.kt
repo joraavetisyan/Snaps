@@ -16,7 +16,7 @@ class DataModule {
     @Provides
     @ViewModelScoped
     fun stubApi(config: ApiConfig) = config.serviceBuilder(StubApi::class.java)
-        .service(ApiService.Stub)
-        .interceptor(config.authentication)
+        .service(ApiService.General)
+        .interceptor(config.authenticationInterceptor)
         .build()
 }
