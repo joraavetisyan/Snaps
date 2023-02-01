@@ -38,4 +38,6 @@ enum class StringKey {
     PhotoDialogActionPickPhoto,
     PhotoDialogActionTakePhoto,
     PhotoDialogActionCancel,
+    
+    PopularVideosTitle,
 }

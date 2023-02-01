@@ -75,6 +75,7 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Following",
     ),
 
+
     key(StringKey.CreateUserTitle) to mapOf(
         SupportedLanguageKey.En to "Your data",
     ),
@@ -102,5 +103,8 @@ internal val strings = mapOf(
     ),
     key(StringKey.PhotoDialogActionCancel) to mapOf(
         SupportedLanguageKey.En to "Cancel",
+
+    key(StringKey.PopularVideosTitle) to mapOf(
+        SupportedLanguageKey.En to "Popular video",
     ),
 )

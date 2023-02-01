@@ -1,4 +1,4 @@
-package com.defince.featuremain.presentation.screen
+package com.defince.baseprofile.ui
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image

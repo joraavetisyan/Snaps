@@ -1,10 +1,9 @@
 package com.defince.featuremain.presentation.viewmodel
 
-import com.defince.corecommon.container.ImageValue
-import com.defince.coredata.network.Action
 import com.defince.coreui.viewmodel.SimpleViewModel
 import com.defince.baseprofile.data.MainHeaderHandler
-import com.defince.featuremain.domain.Rank
+import com.defince.featuremain.data.demoReels
+import com.defince.featuremain.domain.Reel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,8 +12,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class RankSelectionViewModel @Inject constructor(
-    private val action: Action,
+class PopularVideosViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
 ) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
 
@@ -25,18 +23,7 @@ class RankSelectionViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     data class UiState(
-        val ranks: List<Rank> = List(20) {
-            Rank(
-                type = "Free",
-                price = "Free",
-                image = ImageValue.Url("https://picsum.photos/100"),
-                dailyReward = "0.51\$",
-                dailyUnlock = "6%",
-                dailyConsumption = "60%",
-                dosagePerDayMonth = "30/900 tokens",
-                spendingOnGas = "0.11\$",
-            )
-        },
+        val reels: List<Reel> = demoReels,
     )
 
     sealed class Command
