@@ -11,15 +11,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,7 +30,7 @@ import com.defince.coreuicompose.tools.insetAll
 import com.defince.coreuicompose.tools.mockClick
 import com.defince.coreuicompose.uikit.button.SimpleButtonActionL
 import com.defince.coreuicompose.uikit.button.SimpleButtonContent
-import com.defince.coreuicompose.uikit.button.SimpleButtonInlineL
+import com.defince.coreuicompose.uikit.button.SimpleButtonGreyL
 import com.defince.coreuitheme.compose.AppTheme
 
 data class FullScreenMessage(
@@ -86,28 +84,33 @@ fun FullScreenMessageUi(
         Text(
             data.title.get(),
             style = AppTheme.specificTypography.titleLarge,
+            color = AppTheme.specificColorScheme.textPrimary,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
         )
         Text(
             data.message.get(),
             style = AppTheme.specificTypography.bodyLarge,
+            color = AppTheme.specificColorScheme.textSecondary,
             textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.weight(1f))
         data.primaryButton?.let { button ->
             SimpleButtonActionL(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(16.dp, CircleShape),
                 onClick = button.onClick,
             ) {
                 SimpleButtonContent(button.text)
             }
         }
         data.secondaryButton?.let { button ->
-            SimpleButtonInlineL(
+            SimpleButtonGreyL(
                 modifier = Modifier
                     .padding(top = 16.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .shadow(16.dp, CircleShape),
                 onClick = button.onClick,
             ) {
                 SimpleButtonContent(button.text)
@@ -123,17 +126,10 @@ private fun Visuals(
 ) {
     Box(
         modifier = Modifier
-            .background(
-                color = AppTheme.specificColorScheme.uiContentBg,
-                shape = RoundedCornerShape(40.dp),
-            )
-            .size(128.dp),
+            .background(color = AppTheme.specificColorScheme.uiContentBg),
         contentAlignment = Alignment.Center,
     ) {
         Image(
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape),
             painter = icon.get(),
             contentDescription = null,
         )

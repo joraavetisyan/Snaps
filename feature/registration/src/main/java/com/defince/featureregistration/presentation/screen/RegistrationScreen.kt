@@ -75,6 +75,7 @@ fun RegistrationScreen(
         when (it) {
             RegistrationViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             RegistrationViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
+            RegistrationViewModel.Command.OpenConnectWalletScreen -> router.toConnectWalletScreen()
         }
     }
 
@@ -102,7 +103,7 @@ fun RegistrationScreen(
             onLoginWithTwitterClicked = viewModel::onLoginWithTwitterClicked,
             onLoginWithGoogleClicked = viewModel::onLoginWithGoogleClicked,
             onLoginWithAppleClicked = viewModel::onLoginWithAppleClicked,
-            onLoginWithEmailClicked = viewModel::onLoginWithEmailClicked,
+            onLoginWithEmailClicked = viewModel::showRegistrationForm,
             onLoginWithFacebookClicked = viewModel::onLoginWithFacebookClicked,
             onPrivacyPolicyClicked = viewModel::onPrivacyPolicyClicked,
             onTermsOfUserClicked = viewModel::onTermsOfUserClicked,
@@ -254,6 +255,7 @@ private fun PrivacyPolicy(
 @Composable
 private fun LoginWithEmailButton(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onLoginWithEmailClicked: () -> Unit,
 ) {
     SimpleButtonActionM(
@@ -261,6 +263,7 @@ private fun LoginWithEmailButton(
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
             .shadow(elevation = 16.dp, shape = CircleShape),
+        enabled = enabled,
         onClick = onLoginWithEmailClicked,
     ) {
         SimpleButtonContent(text = StringKey.RegistrationActionLoginWithEmail.textValue())
@@ -334,6 +337,7 @@ private fun LoginWithEmailDialog(
             )
             LoginWithEmailButton(
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
+                enabled = uiState.isConfirmationCodeValid,
                 onLoginWithEmailClicked = onLoginWithEmailClicked,
             )
             PrivacyPolicy(

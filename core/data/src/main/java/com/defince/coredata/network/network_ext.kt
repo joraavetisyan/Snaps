@@ -1,6 +1,5 @@
 package com.defince.coredata.network
 
-
 import com.defince.corecommon.ext.log
 import com.defince.corecommon.model.AppError
 import com.defince.corecommon.model.Completable

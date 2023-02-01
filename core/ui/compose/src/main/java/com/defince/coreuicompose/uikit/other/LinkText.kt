@@ -52,7 +52,7 @@ private fun createAnnotatedString(text: String, data: List<LinkTextData>): Annot
             val startIndex = text.indexOf(linkText)
             val endIndex = startIndex + linkText.length
             addStyle(
-                style = SpanStyle(color = AppTheme.specificColorScheme.textLink, textDecoration = TextDecoration.None),
+                style = SpanStyle(color = AppTheme.specificColorScheme.textLink, textDecoration = TextDecoration.Underline),
                 start = startIndex,
                 end = endIndex,
             )

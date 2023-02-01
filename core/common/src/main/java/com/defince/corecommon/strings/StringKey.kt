@@ -22,4 +22,28 @@ enum class StringKey {
     RegistrationMessageEnterEmail,
     RegistrationTitle,
     RegistrationFieldOr,
+
+    WalletImportTitle,
+    WalletImportMessageEnterPhrases,
+
+    ConnectWalletTitle,
+    ConnectWalletMessage,
+    ConnectWalletActionCreate,
+    ConnectWalletActionImport,
+
+    CreateWalletTitle,
+    CreateWalletMessage,
+    CreateWalletAction,
+
+    CreatedWalletTitle,
+    CreatedWalletMessage,
+    CreatedWalletAction,
+
+    PhraseListTitle,
+    PhraseListMessage,
+    PhraseListActionContinue,
+
+    VerificationTitle,
+    VerificationMessage,
+    VerificationActionContinue,
 }

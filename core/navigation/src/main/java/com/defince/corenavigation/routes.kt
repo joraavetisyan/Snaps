@@ -50,4 +50,16 @@ object AppRoute {
     }
 
     object Registration : Route("Registration")
+
+    object WalletImport : Route("WalletImport")
+
+    object ConnectWallet : Route("ConnectWallet")
+
+    object CreateWallet : Route("CreateWallet")
+
+    object CreatedWallet : Route("CreatedWallet")
+
+    object PhraseList : Route("PhraseList")
+
+    object Verification : Route("Verification")
 }
