@@ -3,27 +3,27 @@
 
     <!--Environment.getExternalStorageDirectory()-->
     <external-path
-        name="w2e/public/pics"
+        name="snaps/public/pics"
         path="Pictures/SA" />
     <external-path
-        name="w2e/public/videos"
+        name="snaps/public/videos"
         path="Movies/SA" />
 
     <!--Context.getExternalFilesDir(String)-->
     <external-files-path
-        name="w2e/private/pics"
+        name="snaps/private/pics"
         path="Pictures" />
     <external-files-path
-        name="w2e/private/videos"
+        name="snaps/private/videos"
         path="Videos" />
 
     <!--Context.getFilesDir()-->
     <files-path
-        name="w2e/files"
+        name="snaps/files"
         path="." />
 
     <!--Context.getCacheDir()-->
     <cache-path
-        name="w2e/cache"
+        name="snaps/cache"
         path="." />
 </paths>

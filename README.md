@@ -16,7 +16,6 @@ it can be launched by BottomBarFeatureProvider.
 
 #### 2. Custom views and screens and resources for light/night mode
 The project contains custom elements and screen templates (OnBoardingScreen, BottomBarScreen). 
-For more information, see the app_demo. It is the module which demonstrates different opportunity of this template.
 
 #### 3. Feature Toggle
 Based on FirebaseRemoteConfig

@@ -45,7 +45,7 @@ android {
 
             addManifestPlaceholders(
                 mapOf(
-                    "app_name" to "Watch2Earn Debug",
+                    "app_name" to "SNAPS Debug",
                 )
             )
 
@@ -58,7 +58,7 @@ android {
 
             addManifestPlaceholders(
                 mapOf(
-                    "app_name" to "Watch2Earn Alpha",
+                    "app_name" to "SNAPS Alpha",
                 )
             )
 
@@ -71,7 +71,7 @@ android {
 
             addManifestPlaceholders(
                 mapOf(
-                    "app_name" to "Watch2Earn",
+                    "app_name" to "SNAPS",
                 )
             )
 

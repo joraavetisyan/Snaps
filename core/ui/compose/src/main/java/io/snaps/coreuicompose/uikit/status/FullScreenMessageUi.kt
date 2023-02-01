@@ -1,0 +1,160 @@
+package io.snaps.coreuicompose.uikit.status
+
+import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.container.textValue
+import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.tools.inset
+import io.snaps.coreuicompose.tools.insetAll
+import io.snaps.coreuicompose.tools.mockClick
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
+import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
+import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyL
+import io.snaps.coreuitheme.compose.AppTheme
+
+data class FullScreenMessage(
+    val statusIcon: ImageValue? = null,
+    val icon: ImageValue,
+    val title: TextValue,
+    val message: TextValue,
+    val onDismissed: (() -> Unit)? = null,
+    val primaryButton: ButtonData? = null,
+    val secondaryButton: ButtonData? = null,
+) {
+
+    data class ButtonData(
+        val text: TextValue,
+        val onClick: () -> Unit,
+    )
+}
+
+@Composable
+fun FullScreenMessageUi(state: State<FullScreenMessage?>) {
+    val value = state.value
+    Crossfade(targetState = value != null) { isVisible ->
+        if (isVisible && value != null) {
+            FullScreenMessageUi(data = value)
+        }
+    }
+}
+
+@Composable
+fun FullScreenMessageUi(
+    modifier: Modifier = Modifier,
+    data: FullScreenMessage,
+) {
+    BackHandler(data.onDismissed != null) {
+        data.onDismissed?.invoke()
+    }
+    Column(
+        modifier = modifier
+            .mockClick()
+            .background(AppTheme.specificColorScheme.uiContentBg)
+            .fillMaxSize()
+            .inset(insetAll())
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+        Visuals(
+            icon = data.icon,
+            statusIcon = data.statusIcon,
+        )
+        Text(
+            data.title.get(),
+            style = AppTheme.specificTypography.titleLarge,
+            color = AppTheme.specificColorScheme.textPrimary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
+        )
+        Text(
+            data.message.get(),
+            style = AppTheme.specificTypography.bodyLarge,
+            color = AppTheme.specificColorScheme.textSecondary,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        data.primaryButton?.let { button ->
+            SimpleButtonActionL(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(16.dp, CircleShape),
+                onClick = button.onClick,
+            ) {
+                SimpleButtonContent(button.text)
+            }
+        }
+        data.secondaryButton?.let { button ->
+            SimpleButtonGreyL(
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth()
+                    .shadow(16.dp, CircleShape),
+                onClick = button.onClick,
+            ) {
+                SimpleButtonContent(button.text)
+            }
+        }
+    }
+}
+
+@Composable
+private fun Visuals(
+    icon: ImageValue,
+    statusIcon: ImageValue?,
+) {
+    Box(
+        modifier = Modifier
+            .background(color = AppTheme.specificColorScheme.uiContentBg),
+        contentAlignment = Alignment.Center,
+    ) {
+        Image(
+            painter = icon.get(),
+            contentDescription = null,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun Preview() {
+    FullScreenMessageUi(
+        modifier = Modifier,
+        data = FullScreenMessage(
+            icon = AppTheme.specificIcons.account.toImageValue(),
+            statusIcon = null,
+            title = "This is a long title title title title title title title".textValue(),
+            message = "This is a long description description description description description description description description".textValue(),
+            primaryButton = FullScreenMessage.ButtonData(
+                text = "Action".textValue(),
+                onClick = {},
+            ),
+            secondaryButton = FullScreenMessage.ButtonData(
+                text = "Action".textValue(),
+                onClick = {},
+            ),
+        )
+    )
+}
