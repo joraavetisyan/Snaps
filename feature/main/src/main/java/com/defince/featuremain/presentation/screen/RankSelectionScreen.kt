@@ -57,9 +57,11 @@ fun RankSelectionScreen(
     val viewModel = hiltViewModel<RankSelectionViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
+    val headerState by viewModel.headerState.collectAsState()
 
     RankSelectionScreen(
         uiState = uiState,
+        headerState = headerState.value,
     )
 }
 
@@ -67,28 +69,19 @@ fun RankSelectionScreen(
 @Composable
 private fun RankSelectionScreen(
     uiState: RankSelectionViewModel.UiState,
+    headerState: MainHeaderState,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-
-        },
+        topBar = {},
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
                 .inset(insetAll()),
         ) {
-            MainHeader(
-                uiState = MainHeaderState.Data(
-                    profileImage = ImageValue.Url("https://picsum.photos/44"),
-                    energy = "12",
-                    gold = "12",
-                    silver = "12",
-                    bronze = "12",
-                )
-            )
+            MainHeader(uiState = headerState)
             Header()
             Spacer(modifier = Modifier.height(12.dp))
             LazyColumn(
@@ -178,7 +171,4 @@ private fun Item(item: Rank) {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun Preview() {
-    RankSelectionScreen(
-        uiState = RankSelectionViewModel.UiState(),
-    )
 }

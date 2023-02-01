@@ -27,4 +27,6 @@ enum class StringKey {
     SubsActionSubscribers,
     SubsActionFollow,
     SubsActionFollowing,
+
+    PopularVideosTitle,
 }

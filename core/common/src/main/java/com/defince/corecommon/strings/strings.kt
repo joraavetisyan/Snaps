@@ -74,4 +74,8 @@ internal val strings = mapOf(
     key(StringKey.SubsActionFollowing) to mapOf(
         SupportedLanguageKey.En to "Following",
     ),
+
+    key(StringKey.PopularVideosTitle) to mapOf(
+        SupportedLanguageKey.En to "Popular video",
+    ),
 )

@@ -4,7 +4,7 @@ import androidx.compose.runtime.toMutableStateList
 import com.defince.featuremain.domain.Reel
 import com.defince.featuremain.domain.ReelInfo
 
-val reels = listOf(
+val demoReels = listOf(
     Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170887700-e405c71e-fe31-458d-8572-aea2e801eecc.mp4",
         isFollowed = true,
@@ -120,5 +120,456 @@ val reels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),
+    Reel(
+        reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
+        isFollowed = false,
+        reelInfo = ReelInfo(
+            username = "@hello.adventure.family",
+            profilePicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            description = "⛰ Heaven is a place on earth. ⛰\n" +
+                    "\n" +
+                    "\uD83D\uDCCD Cruising from Banff to Lake Louise\n" +
+                    "\n" +
+                    "Do you enjoy driving through the mountains?\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "•\n" +
+                    "#ourplanetourhome #ourplanetisbeautiful #canada\n" +
+                    "#capturethemoment #capturethemoments #canadaparks #nationalpark #nationalparks #springvibes #spring2022 #springtimevibes #thingstodoincanada #discovercanada #explorecanada #travelcanada #travelalberta #cruisinglife #1000hoursoutside #heavenonearth #naturelover #naturephotography #naturephotography #explorealberta #canadaisbeautiful #canadaisawesome #canadaisbeautiful",
+            isLiked = false,
+            likes = 3522,
+            comments = 125,
+            audio = "Heaven Is a Place on Earth",
+            audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
+            taggedPeople = Array(20) { "it" }.toList()
+        )
+    ),
 ).toMutableStateList()
