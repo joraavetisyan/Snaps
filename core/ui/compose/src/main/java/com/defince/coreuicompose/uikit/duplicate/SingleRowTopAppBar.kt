@@ -49,6 +49,7 @@ import kotlin.math.roundToInt
 fun SingleRowTopAppBar(
     modifier: Modifier = Modifier,
     title: @Composable () -> Unit,
+    titleHorizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     titleTextStyle: TextStyle = AppTheme.specificTypography.titleMedium,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
@@ -107,7 +108,7 @@ fun SingleRowTopAppBar(
                 titleTextStyle = titleTextStyle,
                 titleAlpha = 1f,
                 titleVerticalArrangement = Arrangement.Center,
-                titleHorizontalArrangement = Arrangement.Start,
+                titleHorizontalArrangement = titleHorizontalArrangement,
                 titleBottomPadding = 0,
                 hideTitleSemantics = false,
                 navigationIcon = navigationIcon,

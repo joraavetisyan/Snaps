@@ -35,3 +35,8 @@ interface RegistrationFeatureProvider {
 
     fun NavGraphBuilder.registrationGraph(controller: NavHostController)
 }
+
+interface InitializationFeatureProvider {
+
+    fun NavGraphBuilder.initializationGraph(controller: NavHostController)
+}

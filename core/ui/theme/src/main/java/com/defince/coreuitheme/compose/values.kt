@@ -8,8 +8,8 @@ val LocalStringHolder = staticCompositionLocalOf { StringHolder() }
 
 object SpecificValues {
 
-    val ripple_inner_padding = 8.dp
-    val ripple_outer_padding = 8.dp
+    val ripple_inner_padding = 4.dp
+    val ripple_outer_padding = 4.dp
     val default_padding = ripple_inner_padding + ripple_outer_padding
 
     val stroke_card = 1.dp

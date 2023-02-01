@@ -62,4 +62,6 @@ object AppRoute {
     object PhraseList : Route("PhraseList")
 
     object Verification : Route("Verification")
+
+    object CreateUser: Route("CreateUser")
 }

@@ -44,7 +44,7 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Send",
     ),
     key(StringKey.RegistrationMessagePrivacyPolicy) to mapOf(
-        SupportedLanguageKey.En to "By creating an account, I consent to the processing of my data in accordance with the Privacy Policy and Terms of Use",
+        SupportedLanguageKey.En to "By creating an account, I consent to the processing of my data in accordance with the Privacy Policy and \nTerms of Use",
     ),
     key(StringKey.RegistrationActionPrivacyPolicy) to mapOf(
         SupportedLanguageKey.En to "Privacy Policy",
@@ -123,5 +123,52 @@ internal val strings = mapOf(
     ),
     key(StringKey.CreatedWalletTitle) to mapOf(
         SupportedLanguageKey.En to "Wallet created",
+    ),
+
+    key(StringKey.SubsActionSubscriptions) to mapOf(
+        SupportedLanguageKey.En to "%s Subscriptions",
+    ),
+    key(StringKey.SubsActionSubscribers) to mapOf(
+        SupportedLanguageKey.En to "%s Subscribers",
+    ),
+    key(StringKey.SubsActionFollow) to mapOf(
+        SupportedLanguageKey.En to "Follow",
+    ),
+    key(StringKey.SubsActionFollowing) to mapOf(
+        SupportedLanguageKey.En to "Following",
+    ),
+
+
+    key(StringKey.CreateUserTitle) to mapOf(
+        SupportedLanguageKey.En to "Your data",
+    ),
+    key(StringKey.CreateUserMessage) to mapOf(
+        SupportedLanguageKey.En to "To start, you need to come up with a nickname and upload an avatar",
+    ),
+    key(StringKey.CreateUserHintNickname) to mapOf(
+        SupportedLanguageKey.En to "Come up with a nickname",
+    ),
+    key(StringKey.CreateUserFieldPhotoUploaded) to mapOf(
+        SupportedLanguageKey.En to "Photo uploaded",
+    ),
+    key(StringKey.CreateUserActionStart) to mapOf(
+        SupportedLanguageKey.En to "Start",
+    ),
+
+    key(StringKey.PhotoDialogTitle) to mapOf(
+        SupportedLanguageKey.En to "Select photo",
+    ),
+    key(StringKey.PhotoDialogActionTakePhoto) to mapOf(
+        SupportedLanguageKey.En to "Camera",
+    ),
+    key(StringKey.PhotoDialogActionPickPhoto) to mapOf(
+        SupportedLanguageKey.En to "Photo Gallery",
+    ),
+    key(StringKey.PhotoDialogActionCancel) to mapOf(
+        SupportedLanguageKey.En to "Cancel",
+    ),
+
+    key(StringKey.PopularVideosTitle) to mapOf(
+        SupportedLanguageKey.En to "Popular video",
     ),
 )

@@ -13,5 +13,7 @@ dependencies {
     implementation(projects.coreUi)
     implementation(projects.coreNavigation)
 
+    implementation(projects.baseSession)
+
     implementation(*Libs.bundle.firebase)
 }

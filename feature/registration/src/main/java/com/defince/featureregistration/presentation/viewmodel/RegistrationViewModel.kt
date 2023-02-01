@@ -1,6 +1,7 @@
 package com.defince.featureregistration.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.defince.basesession.data.SessionRepository
 import com.defince.coreui.viewmodel.SimpleViewModel
 import com.defince.coreui.viewmodel.publish
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +14,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RegistrationViewModel @Inject constructor() : SimpleViewModel() {
+class RegistrationViewModel @Inject constructor(
+    private val sessionRepository: SessionRepository,
+) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -41,13 +44,14 @@ class RegistrationViewModel @Inject constructor() : SimpleViewModel() {
             _command publish Command.OpenConnectWalletScreen
         }
     }
-    fun onLoginWithAppleClicked() { /*TODO*/ }
 
-    fun onLoginWithGoogleClicked() { /*TODO*/ }
+    fun onLoginWithAppleClicked() { sessionRepository.onLogin() }
 
-    fun onLoginWithTwitterClicked() { /*TODO*/ }
+    fun onLoginWithGoogleClicked() { sessionRepository.onLogin() }
 
-    fun onLoginWithFacebookClicked() { /*TODO*/ }
+    fun onLoginWithTwitterClicked() { sessionRepository.onLogin() }
+
+    fun onLoginWithFacebookClicked() { sessionRepository.onLogin() }
 
     fun onSendCodeClicked() { /*TODO*/ }
 

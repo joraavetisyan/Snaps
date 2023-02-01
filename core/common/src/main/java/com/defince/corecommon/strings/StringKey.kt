@@ -23,6 +23,24 @@ enum class StringKey {
     RegistrationTitle,
     RegistrationFieldOr,
 
+    SubsActionSubscriptions,
+    SubsActionSubscribers,
+    SubsActionFollow,
+    SubsActionFollowing,
+
+    CreateUserTitle,
+    CreateUserMessage,
+    CreateUserHintNickname,
+    CreateUserFieldPhotoUploaded,
+    CreateUserActionStart,
+
+    PhotoDialogTitle,
+    PhotoDialogActionPickPhoto,
+    PhotoDialogActionTakePhoto,
+    PhotoDialogActionCancel,
+
+    PopularVideosTitle,
+
     WalletImportTitle,
     WalletImportMessageEnterPhrases,
 

@@ -32,29 +32,31 @@ fun Modifier.mockClick() = clickable(
 @Composable
 fun Modifier.defaultTileRipple(
     delay: Duration = 500.milliseconds,
+    enable: Boolean = true,
     shape: Shape = MaterialTheme.shapes.medium,
     padding: Dp = AppTheme.specificValues.ripple_inner_padding,
     onClick: (() -> Unit)?,
 ) = clip(shape)
-    .doOnClick(delay, onClick)
+    .doOnClick(delay = delay, enable = enable, onClick = onClick)
     .padding(padding)
 
 fun Modifier.doOnClick(
     delay: Duration = 500.milliseconds,
+    enable: Boolean = true,
     onClick: (() -> Unit)?,
 ): Modifier = composed {
-    if (onClick == null) return@composed this
+    if (!enable || onClick == null) return@composed this
 
-    val enable = remember { mutableStateOf(true) }
+    val rememberEnable = remember { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
     clickable(enabled = true) {
-        if (enable.value) {
+        if (rememberEnable.value) {
             onClick()
         }
-        enable.value = false
+        rememberEnable.value = false
         coroutineScope.launch {
             delay(delay)
-            enable.value = true
+            rememberEnable.value = true
         }
     }
 }

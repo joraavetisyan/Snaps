@@ -418,7 +418,8 @@ fun SimpleButtonGreyL(
 object SimpleButtonConfig {
 
     @Composable
-    fun borderOutline() = BorderStroke(width = 1.dp, color = AppTheme.specificColorScheme.outlineBorderBase)
+    fun borderOutline() =
+        BorderStroke(width = 1.dp, color = AppTheme.specificColorScheme.outlineBorderBase)
 }
 
 data class SimpleButtonSize(
@@ -516,10 +517,12 @@ data class SimpleButtonColors(
     }
 
     @Composable
-    fun containerColor(enabled: Boolean): State<Color> = rememberUpdatedState(if (enabled) containerColor else disabledContainerColor)
+    fun containerColor(enabled: Boolean): State<Color> =
+        rememberUpdatedState(if (enabled) containerColor else disabledContainerColor)
 
     @Composable
-    fun contentColor(enabled: Boolean): State<Color> = rememberUpdatedState(if (enabled) contentColor else disabledContentColor)
+    fun contentColor(enabled: Boolean): State<Color> =
+        rememberUpdatedState(if (enabled) contentColor else disabledContentColor)
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -537,8 +540,8 @@ private fun SimpleButton(
 ) {
     val containerColor = colors.containerColor(enabled).value
     val contentColor = colors.contentColor(enabled).value
-    val shadowElevation = /*elevation?.shadowElevation(enabled, interactionSource)?.value ?: */0.dp
-    val tonalElevation = /*elevation?.tonalElevation(enabled, interactionSource)?.value ?: */0.dp
+    val shadowElevation = /*elevation?.shadowElevation(enabled, interactionSource)?.value ?: */8.dp
+    val tonalElevation = /*elevation?.tonalElevation(enabled, interactionSource)?.value ?: */8.dp
 
     MaterialTheme(typography = MaterialTheme.typography.copy(labelLarge = size.textStyle)) {
         CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
@@ -567,7 +570,7 @@ private fun SimpleButton(
                             modifier = Modifier.padding(size.contentPadding),
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically,
-                            content = content
+                            content = content,
                         )
                     }
                 }
