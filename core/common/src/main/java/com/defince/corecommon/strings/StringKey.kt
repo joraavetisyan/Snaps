@@ -28,5 +28,16 @@ enum class StringKey {
     SubsActionFollow,
     SubsActionFollowing,
 
+    CreateUserTitle,
+    CreateUserMessage,
+    CreateUserHintNickname,
+    CreateUserFieldPhotoUploaded,
+    CreateUserActionStart,
+
+    PhotoDialogTitle,
+    PhotoDialogActionPickPhoto,
+    PhotoDialogActionTakePhoto,
+    PhotoDialogActionCancel,
+    
     PopularVideosTitle,
 }

@@ -75,6 +75,35 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Following",
     ),
 
+
+    key(StringKey.CreateUserTitle) to mapOf(
+        SupportedLanguageKey.En to "Your data",
+    ),
+    key(StringKey.CreateUserMessage) to mapOf(
+        SupportedLanguageKey.En to "To start, you need to come up with a nickname and upload an avatar",
+    ),
+    key(StringKey.CreateUserHintNickname) to mapOf(
+        SupportedLanguageKey.En to "Come up with a nickname",
+    ),
+    key(StringKey.CreateUserFieldPhotoUploaded) to mapOf(
+        SupportedLanguageKey.En to "Photo uploaded",
+    ),
+    key(StringKey.CreateUserActionStart) to mapOf(
+        SupportedLanguageKey.En to "Start",
+    ),
+
+    key(StringKey.PhotoDialogTitle) to mapOf(
+        SupportedLanguageKey.En to "Select photo",
+    ),
+    key(StringKey.PhotoDialogActionTakePhoto) to mapOf(
+        SupportedLanguageKey.En to "Camera",
+    ),
+    key(StringKey.PhotoDialogActionPickPhoto) to mapOf(
+        SupportedLanguageKey.En to "Photo Gallery",
+    ),
+    key(StringKey.PhotoDialogActionCancel) to mapOf(
+        SupportedLanguageKey.En to "Cancel",
+
     key(StringKey.PopularVideosTitle) to mapOf(
         SupportedLanguageKey.En to "Popular video",
     ),

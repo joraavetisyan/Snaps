@@ -59,6 +59,8 @@ object Libs {
 
     private const val mediaVersion = "1.0.0-beta03"
 
+    private const val permissionVersion = "0.28.0"
+
     object plugin {
         const val application = "com.android.application"
         const val library = "com.android.library"
@@ -139,6 +141,7 @@ object Libs {
             "androidx.compose.animation:animation:$composeVersion",
             "io.coil-kt:coil-compose:$coilVersion",
             "io.coil-kt:coil-svg:$coilVersion",
+            "com.google.accompanist:accompanist-permissions:$permissionVersion",
         )
 
         val splashscreen = arrayOf("androidx.core:core-splashscreen:$splashVersion")
