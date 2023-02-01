@@ -38,6 +38,30 @@ enum class StringKey {
     PhotoDialogActionPickPhoto,
     PhotoDialogActionTakePhoto,
     PhotoDialogActionCancel,
-    
+
     PopularVideosTitle,
+
+    WalletImportTitle,
+    WalletImportMessageEnterPhrases,
+
+    ConnectWalletTitle,
+    ConnectWalletMessage,
+    ConnectWalletActionCreate,
+    ConnectWalletActionImport,
+
+    CreateWalletTitle,
+    CreateWalletMessage,
+    CreateWalletAction,
+
+    CreatedWalletTitle,
+    CreatedWalletMessage,
+    CreatedWalletAction,
+
+    PhraseListTitle,
+    PhraseListMessage,
+    PhraseListActionContinue,
+
+    VerificationTitle,
+    VerificationMessage,
+    VerificationActionContinue,
 }

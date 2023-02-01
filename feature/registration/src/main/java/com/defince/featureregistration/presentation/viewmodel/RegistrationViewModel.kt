@@ -28,9 +28,21 @@ class RegistrationViewModel @Inject constructor(
 
     fun onTermsOfUserClicked() { /*TODO*/ }
 
-    fun onLoginWithEmailClicked() = viewModelScope.launch {
-        _uiState.update { it.copy(bottomDialogType = BottomDialogType.LoginWithEmail) }
+    fun showRegistrationForm() = viewModelScope.launch {
+        _uiState.update {
+            it.copy(
+                bottomDialogType = BottomDialogType.LoginWithEmail,
+                confirmationCodeValue = "",
+                emailAddressValue = "",
+            )
+        }
         _command publish Command.ShowBottomDialog
+    }
+
+    fun onLoginWithEmailClicked() = viewModelScope.launch {
+        if (uiState.value.isConfirmationCodeValid) {
+            _command publish Command.OpenConnectWalletScreen
+        }
     }
 
     fun onLoginWithAppleClicked() { sessionRepository.onLogin() }
@@ -59,7 +71,9 @@ class RegistrationViewModel @Inject constructor(
         val bottomDialogType: BottomDialogType = BottomDialogType.LoginWithEmail,
         val emailAddressValue: String = "",
         val confirmationCodeValue: String = "",
-    )
+    ) {
+        val isConfirmationCodeValid get() = confirmationCodeValue.length >= 0 // todo
+    }
 
     enum class BottomDialogType {
         LoginWithEmail,
@@ -68,5 +82,6 @@ class RegistrationViewModel @Inject constructor(
     sealed class Command {
         object ShowBottomDialog : Command()
         object HideBottomDialog : Command()
+        object OpenConnectWalletScreen : Command()
     }
 }
