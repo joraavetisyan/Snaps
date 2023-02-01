@@ -17,7 +17,6 @@ import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.NavigateNext
 import androidx.compose.material.icons.rounded.Phone
 import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.QuestionMark
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.defince.corecommon.container.IconValue
 import com.defince.corecommon.R

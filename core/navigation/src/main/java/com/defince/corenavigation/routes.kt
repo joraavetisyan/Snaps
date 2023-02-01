@@ -50,4 +50,6 @@ object AppRoute {
     }
 
     object Registration : Route("Registration")
+
+    object CreateUser: Route("CreateUser")
 }

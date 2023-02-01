@@ -1,7 +1,9 @@
 package com.defince.corecommon.date
 
 import com.defince.corecommon.strings.DEFAULT_LOCALE
+import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.Locale
 
 enum class DateTimeFormat(val code: String) {
@@ -11,6 +13,8 @@ enum class DateTimeFormat(val code: String) {
     ISO_LOCAL_TIME("HH:mm:ss"),
 
     ISO_LOCAL_DATE_TIME("yyyy-MM-dd'T'HH:mm"),
+
+    DATE_TIME_DASH_FORMAT("yyyyMMdd_HHmmss"),
 
     ISO_LOCAL_DATE_TIME_FULL("yyyy-MM-dd'T'HH:mm[:ss][.SSS]"),
     // XXX - 03:00
@@ -24,3 +28,9 @@ enum class DateTimeFormat(val code: String) {
 fun String.toDateTimeFormat(locale: Locale = DEFAULT_LOCALE) = kotlin.runCatching {
     DateTimeFormatter.ofPattern(this, locale)
 }.getOrNull()
+
+fun getLocaleDateByPhotoDateFormat(): String {
+    return SimpleDateFormat(DateTimeFormat.DATE_TIME_DASH_FORMAT.code, Locale.getDefault()).format(
+        Date()
+    )
+}
