@@ -1,7 +1,7 @@
-package com.defince.featuremain.data
+package com.defince.baseprofile.data
 
+import com.defince.baseprofile.ui.MainHeaderState
 import com.defince.corecommon.container.ImageValue
-import com.defince.featuremain.presentation.screen.MainHeaderState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

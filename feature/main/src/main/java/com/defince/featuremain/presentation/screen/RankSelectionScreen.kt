@@ -39,6 +39,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.defince.baseprofile.ui.MainHeader
+import com.defince.baseprofile.ui.MainHeaderState
+import com.defince.baseprofile.ui.WorthWidget
 import com.defince.corecommon.R
 import com.defince.corecommon.container.ImageValue
 import com.defince.coreuicompose.tools.get

@@ -3,7 +3,7 @@ package com.defince.featuremain.presentation.viewmodel
 import com.defince.corecommon.container.ImageValue
 import com.defince.coredata.network.Action
 import com.defince.coreui.viewmodel.SimpleViewModel
-import com.defince.featuremain.data.MainHeaderHandler
+import com.defince.baseprofile.data.MainHeaderHandler
 import com.defince.featuremain.domain.Rank
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

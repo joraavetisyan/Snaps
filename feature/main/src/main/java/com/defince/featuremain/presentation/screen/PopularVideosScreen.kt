@@ -30,6 +30,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.defince.baseprofile.ui.MainHeader
+import com.defince.baseprofile.ui.MainHeaderState
 import com.defince.corecommon.container.textValue
 import com.defince.corecommon.strings.StringKey
 import com.defince.coreuicompose.tools.get

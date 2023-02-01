@@ -1,7 +1,7 @@
 package com.defince.featuremain.presentation.viewmodel
 
 import com.defince.coreui.viewmodel.SimpleViewModel
-import com.defince.featuremain.data.MainHeaderHandler
+import com.defince.baseprofile.data.MainHeaderHandler
 import com.defince.featuremain.data.demoReels
 import com.defince.featuremain.domain.Reel
 import dagger.hilt.android.lifecycle.HiltViewModel
