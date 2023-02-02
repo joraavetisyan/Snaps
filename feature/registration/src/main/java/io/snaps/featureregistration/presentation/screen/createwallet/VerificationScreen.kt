@@ -55,7 +55,7 @@ fun VerificationScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     viewModel.command.collectAsCommand {
-        when(it) {
+        when (it) {
             CreateViewModel.Command.OpenCreatedWalletScreen -> router.toCreatedWalletScreen()
         }
     }
@@ -123,7 +123,7 @@ private fun VerificationScreen(
                 color = AppTheme.specificColorScheme.textSecondary,
             )
 
-            for(i in 0..uiState.shuffledPhrases.lastIndex step 3) {
+            for (i in 0..uiState.shuffledPhrases.lastIndex step 3) {
                 PhraseBlock(
                     phrases = uiState.shuffledPhrases.subList(i, i + 3),
                     onPhraseItemClicked = onPhraseItemClicked,

@@ -87,4 +87,3 @@ private fun Preview() {
         onPickPhotoClicked = {},
     )
 }
-

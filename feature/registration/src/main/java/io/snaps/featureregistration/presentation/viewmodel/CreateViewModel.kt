@@ -45,7 +45,7 @@ class CreateViewModel @Inject constructor() : SimpleViewModel() {
 
     fun onAnimationFinished(phrase: Phrase) {
         _uiState.update {
-            val newPhrases = it.shuffledPhrases.map {  item ->
+            val newPhrases = it.shuffledPhrases.map { item ->
                 if (phrase.orderNumber == item.orderNumber) {
                     phrase.copy(status = SelectorTileStatus.Default)
                 } else item

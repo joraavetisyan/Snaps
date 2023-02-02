@@ -44,6 +44,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.duplicate.ActionIconData
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
@@ -61,8 +62,15 @@ fun ProfileScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
+    viewModel.command.collectAsCommand {
+        when (it) {
+            ProfileViewModel.Command.OpenSettingsScreen -> router.toSettingsScreen()
+        }
+    }
+
     ProfileScreen(
-        uiState,
+        uiState = uiState,
+        onSettingsClicked = viewModel::onSettingsClicked,
     )
 }
 
@@ -70,6 +78,7 @@ fun ProfileScreen(
 @Composable
 private fun ProfileScreen(
     uiState: ProfileViewModel.UiState,
+    onSettingsClicked: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -85,7 +94,7 @@ private fun ProfileScreen(
                     ActionIconData(
                         icon = AppTheme.specificIcons.settings,
                         color = AppTheme.specificColorScheme.darkGrey,
-                        onClick = {},
+                        onClick = onSettingsClicked,
                     ),
                     ActionIconData(
                         icon = AppTheme.specificIcons.share,
@@ -221,7 +230,10 @@ private fun Item(item: Photo) {
     Box(
         modifier = Modifier
             .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
-            .background(color = AppTheme.specificColorScheme.uiContentBg, shape = AppTheme.shapes.medium),
+            .background(
+                color = AppTheme.specificColorScheme.uiContentBg,
+                shape = AppTheme.shapes.medium
+            ),
     ) {
         Card(
             shape = AppTheme.shapes.small,

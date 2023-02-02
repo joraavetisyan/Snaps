@@ -19,7 +19,6 @@ import io.snaps.coreuicompose.uikit.status.FullScreenMessageUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featureregistration.presentation.ScreenNavigator
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatedWalletScreen(

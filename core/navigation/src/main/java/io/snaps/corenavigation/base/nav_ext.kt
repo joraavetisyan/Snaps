@@ -30,7 +30,6 @@ fun createRouteWithArg(route: RouteWithArg) = "${route.path()}?$ARG_KEY={$ARG_KE
 inline fun <reified ARG> createRouteWithArg(route: RouteWithArg, arg: ARG) =
     "${route.path()}?${arg.toQuery()}"
 
-
 fun NavGraphBuilder.composable(
     route: Route,
     vararg deeplink: Deeplink,
