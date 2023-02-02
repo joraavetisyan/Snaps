@@ -11,6 +11,7 @@ import io.snaps.featuremain.presentation.screen.PopularVideosScreen
 import io.snaps.featuremain.presentation.screen.ProfileScreen
 import io.snaps.featuremain.presentation.screen.RankSelectionScreen
 import io.snaps.featuremain.presentation.screen.ReelsScreen
+import io.snaps.featuremain.presentation.screen.ReferralProgramScreen
 import io.snaps.featuremain.presentation.screen.SubsScreen
 import javax.inject.Inject
 
@@ -36,5 +37,6 @@ class MainFeatureProviderImpl @Inject constructor() : MainFeatureProvider {
 
     override fun NavGraphBuilder.mock5Graph(controller: NavHostController) {
         composable(AppRoute.MainBottomBar.Mock5) { ProfileScreen(controller) }
+        composable(AppRoute.MainBottomBar.ReferralProgramScreen) { ReferralProgramScreen(controller) }
     }
 }
