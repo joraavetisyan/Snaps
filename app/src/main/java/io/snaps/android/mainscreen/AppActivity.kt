@@ -65,7 +65,7 @@ class AppActivity : FragmentActivity() {
 
         CompositionLocalProvider(LocalStringHolder provides stringHolder) {
             when (val currentFlow = currentFlowState.value) {
-                is AppViewModel.StartFlow.RegistrationFlow ->  navHostProvider.RegistrationNavHost(
+                is AppViewModel.StartFlow.RegistrationFlow -> navHostProvider.RegistrationNavHost(
                     navController = navController,
                     needOnBoarding = currentFlow.needStartOnBoarding,
                 )

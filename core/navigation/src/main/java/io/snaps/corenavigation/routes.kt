@@ -49,6 +49,8 @@ object AppRoute {
         object Mock5 : Route("Mock5")
 
         object Settings : Route("Settings")
+
+        object SocialNetworks : Route("SocialNetworks")
     }
 
     object Registration : Route("Registration")

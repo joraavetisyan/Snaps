@@ -192,4 +192,14 @@ internal val strings = mapOf(
     key(StringKey.SettingsActionLogout) to mapOf(
         SupportedLanguageKey.En to "Sign out",
     ),
+
+    key(StringKey.SocialNetworksTitle) to mapOf(
+        SupportedLanguageKey.En to "Our social networks",
+    ),
+    key(StringKey.SocialNetworksTitleDiscord) to mapOf(
+        SupportedLanguageKey.En to "Discord",
+    ),
+    key(StringKey.SocialNetworksTitleTelegram) to mapOf(
+        SupportedLanguageKey.En to "Telegram",
+    ),
 )

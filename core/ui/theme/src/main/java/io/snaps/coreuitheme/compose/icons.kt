@@ -51,6 +51,8 @@ object SpecificIcons {
     val facebook: IconValue = resource(R.drawable.ic_facebook)
     val twitter: IconValue = resource(R.drawable.ic_twitter)
     val question: IconValue = resource(R.drawable.ic_question)
+    val telegram: IconValue = resource(R.drawable.ic_telegram)
+    val discord: IconValue = resource(R.drawable.ic_discord)
 }
 
 private fun vector(value: ImageVector) = IconValue.Vector(value)

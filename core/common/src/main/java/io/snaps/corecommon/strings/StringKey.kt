@@ -72,4 +72,8 @@ enum class StringKey {
     SettingsTitleAboutProject,
     SettingsActionLogout,
     SettingsActionDeleteAccount,
+
+    SocialNetworksTitle,
+    SocialNetworksTitleDiscord,
+    SocialNetworksTitleTelegram,
 }
