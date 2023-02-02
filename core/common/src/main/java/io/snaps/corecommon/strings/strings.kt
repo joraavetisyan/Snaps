@@ -1,6 +1,13 @@
 package io.snaps.corecommon.strings
 
 internal val strings = mapOf(
+    key(StringKey.ActionStart) to mapOf(
+        SupportedLanguageKey.En to "Start",
+    ),
+    key(StringKey.ActionSave) to mapOf(
+        SupportedLanguageKey.En to "Save",
+    ),
+
     key(StringKey.ConnectionSuccessMessage) to mapOf(
         SupportedLanguageKey.Ru to "Соединение восстановлено",
         SupportedLanguageKey.En to "Connection restored",
@@ -138,7 +145,6 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Following",
     ),
 
-
     key(StringKey.CreateUserTitle) to mapOf(
         SupportedLanguageKey.En to "Your data",
     ),
@@ -170,5 +176,58 @@ internal val strings = mapOf(
 
     key(StringKey.PopularVideosTitle) to mapOf(
         SupportedLanguageKey.En to "Popular video",
+    ),
+
+    key(StringKey.TasksTitleSlideCurrent) to mapOf(
+        SupportedLanguageKey.En to "Current",
+    ),
+    key(StringKey.TasksTitleSlideHistory) to mapOf(
+        SupportedLanguageKey.En to "History",
+    ),
+    key(StringKey.TasksTitleCurrent) to mapOf(
+        SupportedLanguageKey.En to "Daily quests",
+    ),
+    key(StringKey.TasksTitleHistory) to mapOf(
+        SupportedLanguageKey.En to "History",
+    ),
+    key(StringKey.TasksTitleMessageCurrent) to mapOf(
+        SupportedLanguageKey.En to "Complete daily tasks to earn energy, which is converted into tokens",
+    ),
+    key(StringKey.TasksTitleMessageHistory) to mapOf(
+        SupportedLanguageKey.En to "Here you can see the history of your tasks and your progress.",
+    ),
+
+    key(StringKey.TaskWatchVideoTitle) to mapOf(
+        SupportedLanguageKey.En to "Watch short videos",
+    ),
+
+    key(StringKey.TaskLikeAndSubscribeTitle) to mapOf(
+        SupportedLanguageKey.En to "Like and subscribe ",
+    ),
+
+    key(StringKey.TaskShareTitle) to mapOf(
+        SupportedLanguageKey.En to "Share Template",
+    ),
+
+    key(StringKey.TaskFindPointsTitle) to mapOf(
+        SupportedLanguageKey.En to "Find points",
+    ),
+    key(StringKey.TaskFindPointsTitleConnectInstagram) to mapOf(
+        SupportedLanguageKey.En to "Connect instagram",
+    ),
+    key(StringKey.TaskFindPointsTitlePointId) to mapOf(
+        SupportedLanguageKey.En to "PointID",
+    ),
+    key(StringKey.TaskFindPointsMessage) to mapOf(
+        SupportedLanguageKey.En to "You need to find and enter the Sponsor, which can be found on social networks. For each successful match, you will receive 2 energy.",
+    ),
+    key(StringKey.TaskFindPointsActionVerify) to mapOf(
+        SupportedLanguageKey.En to "Verify",
+    ),
+    key(StringKey.TaskFindPointsActionConnect) to mapOf(
+        SupportedLanguageKey.En to "Connect",
+    ),
+    key(StringKey.TaskFindPointsActionNotFound) to mapOf(
+        SupportedLanguageKey.En to "Points not found",
     ),
 )

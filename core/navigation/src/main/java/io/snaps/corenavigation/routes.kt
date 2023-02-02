@@ -63,5 +63,5 @@ object AppRoute {
 
     object Verification : Route("Verification")
 
-    object CreateUser: Route("CreateUser")
+    object CreateUser : Route("CreateUser")
 }

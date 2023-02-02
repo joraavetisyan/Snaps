@@ -7,11 +7,10 @@ import io.snaps.corenavigation.MainFeatureProvider
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.featuremain.presentation.screen.ItemListScreen
-import io.snaps.featuremain.presentation.screen.PopularVideosScreen
 import io.snaps.featuremain.presentation.screen.ProfileScreen
 import io.snaps.featuremain.presentation.screen.RankSelectionScreen
-import io.snaps.featuremain.presentation.screen.ReelsScreen
 import io.snaps.featuremain.presentation.screen.SubsScreen
+import io.snaps.featuremain.presentation.screen.tasks.FindPointsTaskScreen
 import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController)
@@ -19,7 +18,7 @@ internal class ScreenNavigator(navHostController: NavHostController) : Navigator
 class MainFeatureProviderImpl @Inject constructor() : MainFeatureProvider {
 
     override fun NavGraphBuilder.mock1Graph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.Mock1) { PopularVideosScreen(controller) }
+        composable(AppRoute.MainBottomBar.Mock1) { FindPointsTaskScreen(controller) }
     }
 
     override fun NavGraphBuilder.mock2Graph(controller: NavHostController) {

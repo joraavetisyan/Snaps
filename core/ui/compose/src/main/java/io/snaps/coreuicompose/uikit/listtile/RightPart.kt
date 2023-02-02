@@ -23,7 +23,6 @@ import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
-import io.snaps.coreuicompose.uikit.button.SimpleButtonLightS
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.other.ShimmerTileConfig
 import io.snaps.coreuicompose.uikit.other.ShimmerTileLine

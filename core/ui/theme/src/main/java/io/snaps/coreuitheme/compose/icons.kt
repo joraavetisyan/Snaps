@@ -13,6 +13,7 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.Fingerprint
+import androidx.compose.material.icons.rounded.HeartBroken
 import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.NavigateNext
 import androidx.compose.material.icons.rounded.Phone
@@ -32,6 +33,7 @@ object SpecificIcons {
     val account: IconValue = vector(Icons.Rounded.AccountCircle)
     val navigateNext: IconValue = vector(Icons.Rounded.NavigateNext)
     val creditCard: IconValue = vector(Icons.Rounded.CreditCard)
+    val heart: IconValue = vector(Icons.Rounded.HeartBroken)
     val currencyExchange: IconValue = vector(Icons.Rounded.CurrencyExchange)
     val phone: IconValue = vector(Icons.Rounded.Phone)
     val error: IconValue = vector(Icons.Rounded.Error)
@@ -46,6 +48,7 @@ object SpecificIcons {
     val themeSystem: IconValue = vector(Icons.Rounded.AutoMode)
     val themeDark: IconValue = vector(Icons.Rounded.DarkMode)
     val themeLight: IconValue = vector(Icons.Rounded.LightMode)
+    val instagram: IconValue = resource(R.drawable.ic_instagram)
     val google: IconValue = resource(R.drawable.ic_google)
     val apple: IconValue = resource(R.drawable.ic_apple)
     val facebook: IconValue = resource(R.drawable.ic_facebook)
