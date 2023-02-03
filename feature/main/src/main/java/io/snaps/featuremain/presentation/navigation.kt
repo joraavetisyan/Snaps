@@ -6,6 +6,8 @@ import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.MainFeatureProvider
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
+import io.snaps.corenavigation.base.navigate
+import io.snaps.featuremain.presentation.screen.*
 import io.snaps.featuremain.presentation.screen.ItemListScreen
 import io.snaps.featuremain.presentation.screen.ProfileScreen
 import io.snaps.featuremain.presentation.screen.RankSelectionScreen
@@ -13,7 +15,12 @@ import io.snaps.featuremain.presentation.screen.SubsScreen
 import io.snaps.featuremain.presentation.screen.comments.CommentsScreen
 import javax.inject.Inject
 
-internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController)
+internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController) {
+
+    fun toSettingsScreen() = navHostController.navigate(AppRoute.MainBottomBar.Settings)
+
+    fun toSocialNetworksScreen() = navHostController.navigate(AppRoute.MainBottomBar.SocialNetworks)
+}
 
 class MainFeatureProviderImpl @Inject constructor() : MainFeatureProvider {
 
@@ -35,5 +42,7 @@ class MainFeatureProviderImpl @Inject constructor() : MainFeatureProvider {
 
     override fun NavGraphBuilder.mock5Graph(controller: NavHostController) {
         composable(AppRoute.MainBottomBar.Mock5) { ProfileScreen(controller) }
+        composable(AppRoute.MainBottomBar.Settings) { SettingsScreen(controller) }
+        composable(AppRoute.MainBottomBar.SocialNetworks) { SocialNetworksScreen(controller) }
     }
 }

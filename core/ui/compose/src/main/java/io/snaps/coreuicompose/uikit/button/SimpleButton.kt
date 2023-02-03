@@ -419,6 +419,27 @@ fun SimpleButtonGreyL(
     )
 }
 
+@Composable
+fun SimpleButtonRedInlineM(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
+    enabled: Boolean = true,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    content: @Composable RowScope.() -> Unit,
+) {
+    SimpleButton(
+        modifier = modifier,
+        size = SimpleButtonSize.m(),
+        onClick = onClick,
+        onLongClick = onLongClick,
+        enabled = enabled,
+        interactionSource = interactionSource,
+        colors = SimpleButtonColors.redInline(),
+        content = content,
+    )
+}
+
 object SimpleButtonConfig {
 
     @Composable
@@ -517,6 +538,14 @@ data class SimpleButtonColors(
             contentColor = AppTheme.specificColorScheme.darkGrey,
             disabledContainerColor = AppTheme.specificColorScheme.defaultDisabled,
             disabledContentColor = AppTheme.specificColorScheme.uiDisabledLabel,
+        )
+
+        @Composable
+        fun redInline() = SimpleButtonColors(
+            containerColor = Color.Transparent,
+            contentColor = AppTheme.specificColorScheme.uiSystemRed,
+            disabledContainerColor = Color.Transparent,
+            disabledContentColor = AppTheme.specificColorScheme.uiSystemRed.copy(alpha = 0.15f),
         )
     }
 

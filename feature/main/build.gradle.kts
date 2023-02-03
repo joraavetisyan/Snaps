@@ -15,6 +15,7 @@ dependencies {
 
     implementation(projects.baseSources)
     implementation(projects.baseProfile)
+    implementation(projects.baseSession)
 
     implementation(*Libs.bundle.firebase)
     implementation(*Libs.bundle.pager)

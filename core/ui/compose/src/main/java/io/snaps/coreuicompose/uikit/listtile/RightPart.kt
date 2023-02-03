@@ -43,6 +43,8 @@ sealed class RightPart : TileState {
 
     object CheckIcon : RightPart()
 
+    object NavigateNextIcon : RightPart()
+
     data class Logo(val source: ImageValue) : RightPart()
 
     data class Switch(val isChecked: Boolean) : RightPart()
@@ -90,7 +92,7 @@ fun RightPartTile(modifier: Modifier, data: RightPart) {
         when (data) {
             is RightPart.ActionIcon -> Icon(
                 painter = data.source.get(),
-                tint = data.tint ?: AppTheme.specificColorScheme.grey,
+                tint = data.tint ?: AppTheme.specificColorScheme.darkGrey,
                 contentDescription = null,
                 modifier = Modifier
                     .size(data.size ?: RightPartTileConfig.ActionIconSize)
@@ -111,6 +113,14 @@ fun RightPartTile(modifier: Modifier, data: RightPart) {
             is RightPart.CheckIcon -> Icon(
                 painter = AppTheme.specificIcons.done.get(),
                 tint = AppTheme.specificColorScheme.uiAccent,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(RightPartTileConfig.ActionIconSize)
+                    .padding(6.dp),
+            )
+            is RightPart.NavigateNextIcon -> Icon(
+                painter = AppTheme.specificIcons.navigateNext.get(),
+                tint = AppTheme.specificColorScheme.darkGrey,
                 contentDescription = null,
                 modifier = Modifier
                     .size(RightPartTileConfig.ActionIconSize)

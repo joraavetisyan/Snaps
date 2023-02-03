@@ -181,6 +181,38 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Popular video",
     ),
 
+    key(StringKey.SettingsTitle) to mapOf(
+        SupportedLanguageKey.En to "Settings",
+    ),
+    key(StringKey.SettingsTitleWallet) to mapOf(
+        SupportedLanguageKey.En to "Wallet",
+    ),
+    key(StringKey.SettingsTitleReferralProgram) to mapOf(
+        SupportedLanguageKey.En to "Referral program",
+    ),
+    key(StringKey.SettingsTitleSocialNetworks) to mapOf(
+        SupportedLanguageKey.En to "Our social networks",
+    ),
+    key(StringKey.SettingsTitleAboutProject) to mapOf(
+        SupportedLanguageKey.En to "About project",
+    ),
+    key(StringKey.SettingsActionDeleteAccount) to mapOf(
+        SupportedLanguageKey.En to "Delete account",
+    ),
+    key(StringKey.SettingsActionLogout) to mapOf(
+        SupportedLanguageKey.En to "Sign out",
+    ),
+
+    key(StringKey.SocialNetworksTitle) to mapOf(
+        SupportedLanguageKey.En to "Our social networks",
+    ),
+    key(StringKey.SocialNetworksTitleDiscord) to mapOf(
+        SupportedLanguageKey.En to "Discord",
+    ),
+    key(StringKey.SocialNetworksTitleTelegram) to mapOf(
+        SupportedLanguageKey.En to "Telegram",
+    ),
+    
     key(StringKey.TasksTitleSlideCurrent) to mapOf(
         SupportedLanguageKey.En to "Current",
     ),

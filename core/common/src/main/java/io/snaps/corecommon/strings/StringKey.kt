@@ -69,6 +69,18 @@ enum class StringKey {
     VerificationMessage,
     VerificationActionContinue,
 
+    SettingsTitle,
+    SettingsTitleWallet,
+    SettingsTitleReferralProgram,
+    SettingsTitleSocialNetworks,
+    SettingsTitleAboutProject,
+    SettingsActionLogout,
+    SettingsActionDeleteAccount,
+
+    SocialNetworksTitle,
+    SocialNetworksTitleDiscord,
+    SocialNetworksTitleTelegram,
+    
     TasksTitleSlideCurrent,
     TasksTitleSlideHistory,
     TasksTitleCurrent,
