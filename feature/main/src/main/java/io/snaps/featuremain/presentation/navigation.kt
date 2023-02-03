@@ -11,11 +11,14 @@ import io.snaps.featuremain.presentation.screen.*
 import io.snaps.featuremain.presentation.screen.ItemListScreen
 import io.snaps.featuremain.presentation.screen.ProfileScreen
 import io.snaps.featuremain.presentation.screen.RankSelectionScreen
+import io.snaps.featuremain.presentation.screen.ReferralProgramScreen
 import io.snaps.featuremain.presentation.screen.SubsScreen
 import io.snaps.featuremain.presentation.screen.comments.CommentsScreen
 import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController) {
+
+    fun toReferralProgramScreen() = navHostController.navigate(AppRoute.MainBottomBar.ReferralProgramScreen)
 
     fun toSettingsScreen() = navHostController.navigate(AppRoute.MainBottomBar.Settings)
 
@@ -42,6 +45,7 @@ class MainFeatureProviderImpl @Inject constructor() : MainFeatureProvider {
 
     override fun NavGraphBuilder.mock5Graph(controller: NavHostController) {
         composable(AppRoute.MainBottomBar.Mock5) { ProfileScreen(controller) }
+        composable(AppRoute.MainBottomBar.ReferralProgramScreen) { ReferralProgramScreen(controller) }
         composable(AppRoute.MainBottomBar.Settings) { SettingsScreen(controller) }
         composable(AppRoute.MainBottomBar.SocialNetworks) { SocialNetworksScreen(controller) }
     }

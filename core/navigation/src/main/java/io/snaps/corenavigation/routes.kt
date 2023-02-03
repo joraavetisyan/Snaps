@@ -47,6 +47,8 @@ object AppRoute {
 
         object MainTab5 : Route("mainTab5")
         object Mock5 : Route("Mock5")
+        
+        object ReferralProgramScreen : Route("ReferralProgramScreen")
 
         object Settings : Route("Settings")
 

@@ -177,10 +177,63 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Cancel",
     ),
 
+    key(StringKey.ReferralProgramTitle) to mapOf(
+        SupportedLanguageKey.En to "Referral program",
+    ),
+
     key(StringKey.PopularVideosTitle) to mapOf(
         SupportedLanguageKey.En to "Popular video",
     ),
 
+    key(StringKey.ReferralProgramTitle) to mapOf(
+        SupportedLanguageKey.En to "Referral program",
+    ),
+    key(StringKey.ReferralProgramTitleEnterCode) to mapOf(
+        SupportedLanguageKey.En to "Enter ref. the code",
+    ),
+    key(StringKey.ReferralProgramMessageEnterCode) to mapOf(
+        SupportedLanguageKey.En to "Enter a friend code \nto receive bonuses",
+    ),
+    key(StringKey.ReferralProgramActionEnterCode) to mapOf(
+        SupportedLanguageKey.En to "Enter the code",
+    ),
+    key(StringKey.ReferralProgramHintCode) to mapOf(
+        SupportedLanguageKey.En to "Your referral code",
+    ),
+    key(StringKey.ReferralProgramHintLink) to mapOf(
+        SupportedLanguageKey.En to "Ref. link",
+    ),
+    key(StringKey.ReferralProgramTitleDirectReferral) to mapOf(
+        SupportedLanguageKey.En to "Direct referral - %s%%",
+    ),
+    key(StringKey.ReferralProgramMessageDirectReferral) to mapOf(
+        SupportedLanguageKey.En to "You will receive %s%% of all rewards earned by friends",
+    ),
+    key(StringKey.ReferralProgramActionInviteUser) to mapOf(
+        SupportedLanguageKey.En to "Invite user",
+    ),
+    key(StringKey.ReferralProgramInviteDialogTitle) to mapOf(
+        SupportedLanguageKey.En to "Invite friends and earn!",
+    ),
+    key(StringKey.ReferralProgramInviteDialogMessage) to mapOf(
+        SupportedLanguageKey.En to "Copy your code or link and send to your friends!",
+    ),
+    key(StringKey.ReferralProgramCodeDialogTitle) to mapOf(
+        SupportedLanguageKey.En to "Referral Code",
+    ),
+    key(StringKey.ReferralProgramCodeDialogMessage) to mapOf(
+        SupportedLanguageKey.En to "Enter the referral code and you will receive various discounts and bonuses",
+    ),
+    key(StringKey.ReferralProgramCodeDialogActionInvite) to mapOf(
+        SupportedLanguageKey.En to "Referral Code",
+    ),
+    key(StringKey.ReferralProgramCodeDialogHintEnterCode) to mapOf(
+        SupportedLanguageKey.En to "Invite user",
+    ),
+    key(StringKey.ReferralProgramDialogActionClose) to mapOf(
+        SupportedLanguageKey.En to "Close",
+    ),
+    
     key(StringKey.SettingsTitle) to mapOf(
         SupportedLanguageKey.En to "Settings",
     ),
