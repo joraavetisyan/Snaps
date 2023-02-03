@@ -28,6 +28,7 @@ fun SimpleButtonContent(
     text: TextValue?,
     iconLeft: IconValue? = null,
     iconRight: IconValue? = null,
+    tint: Color = Color.Unspecified,
 ) {
     val textPaddingStart = when (iconLeft) {
         null -> 4.dp
@@ -42,7 +43,7 @@ fun SimpleButtonContent(
         Icon(
             painter = it,
             contentDescription = "Button icon",
-            tint = Color.Unspecified,
+            tint = tint,
             modifier = Modifier.size(getContentHeight()),
         )
     }
@@ -62,7 +63,7 @@ fun SimpleButtonContent(
         Icon(
             painter = it,
             contentDescription = "Button icon",
-            tint = Color.Unspecified,
+            tint = tint,
             modifier = Modifier.size(getContentHeight()),
         )
     }
@@ -96,6 +97,10 @@ private fun Preview() {
             ) { SimpleButtonContent(null, iconLeft = AppTheme.specificIcons.add) }
 
             SimpleButtonActionL(
+                modifier = Modifier.padding(horizontal = 4.dp),
+                onClick = {},
+            ) { SimpleButtonContentLoader() }
+            SimpleButtonInlineL(
                 modifier = Modifier.padding(horizontal = 4.dp),
                 onClick = {},
             ) { SimpleButtonContentLoader() }

@@ -47,7 +47,12 @@ object AppRoute {
 
         object MainTab5 : Route("mainTab5")
         object Mock5 : Route("Mock5")
+        
         object ReferralProgramScreen : Route("ReferralProgramScreen")
+
+        object Settings : Route("Settings")
+
+        object SocialNetworks : Route("SocialNetworks")
     }
 
     object Registration : Route("Registration")
@@ -64,5 +69,5 @@ object AppRoute {
 
     object Verification : Route("Verification")
 
-    object CreateUser: Route("CreateUser")
+    object CreateUser : Route("CreateUser")
 }

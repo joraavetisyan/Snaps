@@ -11,7 +11,7 @@ object Libs {
 
     const val composeCompilerVersion = "1.3.0"
     private const val composeVersion = "1.3.0"
-    private const val composeMaterialVersion = "1.0.0"
+    private const val composeMaterialVersion = "1.1.0-alpha03"
     private const val composeGlanceVersion = "1.0.0-alpha03"
     private const val splashVersion = "1.0.0-beta01"
     private const val activityVersion = "1.4.0"

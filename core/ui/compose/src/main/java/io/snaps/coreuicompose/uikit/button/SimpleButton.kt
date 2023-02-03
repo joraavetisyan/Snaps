@@ -6,6 +6,7 @@ import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -31,8 +32,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.snaps.corecommon.container.textValue
 import io.snaps.coreuitheme.compose.AppTheme
+import io.snaps.coreuitheme.compose.PreviewAppTheme
 
 @Composable
 fun SimpleButtonActionS(
@@ -415,6 +419,27 @@ fun SimpleButtonGreyL(
     )
 }
 
+@Composable
+fun SimpleButtonRedInlineM(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
+    enabled: Boolean = true,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    content: @Composable RowScope.() -> Unit,
+) {
+    SimpleButton(
+        modifier = modifier,
+        size = SimpleButtonSize.m(),
+        onClick = onClick,
+        onLongClick = onLongClick,
+        enabled = enabled,
+        interactionSource = interactionSource,
+        colors = SimpleButtonColors.redInline(),
+        content = content,
+    )
+}
+
 object SimpleButtonConfig {
 
     @Composable
@@ -514,6 +539,14 @@ data class SimpleButtonColors(
             disabledContainerColor = AppTheme.specificColorScheme.defaultDisabled,
             disabledContentColor = AppTheme.specificColorScheme.uiDisabledLabel,
         )
+
+        @Composable
+        fun redInline() = SimpleButtonColors(
+            containerColor = Color.Transparent,
+            contentColor = AppTheme.specificColorScheme.uiSystemRed,
+            disabledContainerColor = Color.Transparent,
+            disabledContentColor = AppTheme.specificColorScheme.uiSystemRed.copy(alpha = 0.15f),
+        )
     }
 
     @Composable
@@ -575,6 +608,35 @@ private fun SimpleButton(
                     }
                 }
             }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun Preview() {
+    PreviewAppTheme {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            SimpleButtonActionS(onClick = { }) { SimpleButtonContent(text = "SimpleButtonActionS".textValue()) }
+            SimpleButtonActionM(onClick = { }) { SimpleButtonContent(text = "SimpleButtonActionM".textValue()) }
+            SimpleButtonActionL(onClick = { }) { SimpleButtonContent(text = "SimpleButtonActionL".textValue()) }
+            SimpleButtonLightS(onClick = { }) { SimpleButtonContent(text = "SimpleButtonLightS".textValue()) }
+            SimpleButtonLightM(onClick = { }) { SimpleButtonContent(text = "SimpleButtonLightM".textValue()) }
+            SimpleButtonLightL(onClick = { }) { SimpleButtonContent(text = "SimpleButtonLightL".textValue()) }
+            SimpleButtonDefaultS(onClick = { }) { SimpleButtonContent(text = "SimpleButtonDefaultS".textValue()) }
+            SimpleButtonDefaultM(onClick = { }) { SimpleButtonContent(text = "SimpleButtonDefaultM".textValue()) }
+            SimpleButtonDefaultL(onClick = { }) { SimpleButtonContent(text = "SimpleButtonDefaultL".textValue()) }
+            SimpleButtonOutlineS(onClick = { }) { SimpleButtonContent(text = "SimpleButtonOutlineS".textValue()) }
+            SimpleButtonOutlineM(onClick = { }) { SimpleButtonContent(text = "SimpleButtonOutlineM".textValue()) }
+            SimpleButtonOutlineL(onClick = { }) { SimpleButtonContent(text = "SimpleButtonOutlineL".textValue()) }
+            SimpleButtonInlineS(onClick = { }) { SimpleButtonContent(text = "SimpleButtonInlineS".textValue()) }
+            SimpleButtonInlineM(onClick = { }) { SimpleButtonContent(text = "SimpleButtonInlineM".textValue()) }
+            SimpleButtonInlineL(onClick = { }) { SimpleButtonContent(text = "SimpleButtonInlineL".textValue()) }
+            SimpleButtonGreyS(onClick = { }) { SimpleButtonContent(text = "SimpleButtonGreyS".textValue()) }
+            SimpleButtonGreyM(onClick = { }) { SimpleButtonContent(text = "SimpleButtonGreyM".textValue()) }
+            SimpleButtonGreyL(onClick = { }) { SimpleButtonContent(text = "SimpleButtonGreyL".textValue()) }
         }
     }
 }
