@@ -58,6 +58,7 @@ fun ColorScheme.toSpecificColorScheme(isLight: Boolean) = SpecificColorScheme(
     textSecondary = if (isLight) LightSpecificColorScheme.textSecondary
     else DarkSpecificColorScheme.textSecondary,
     textLink = primary,
+    textGreen = primary,
 
     actionLabel = onPrimary,
     actionBase = primary,

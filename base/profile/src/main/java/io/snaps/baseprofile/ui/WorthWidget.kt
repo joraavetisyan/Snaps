@@ -12,23 +12,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.MainHeaderElementShape
 
 @Composable
-fun WorthWidget(vararg items: Pair<ImageValue, String>) {
+fun EnergyWidget(value: String, isFull: Boolean = false) {
+    WorthWidget(
+        ImageValue.ResImage(R.drawable.img_energy) to value,
+        backgroundColor = if (isFull) {
+            AppTheme.specificColorScheme.uiSystemGreen
+        } else {
+            AppTheme.specificColorScheme.uiContentBg
+        },
+    )
+}
+
+@Composable
+fun WorthWidget(
+    vararg items: Pair<ImageValue?, String>,
+    backgroundColor: Color = AppTheme.specificColorScheme.uiContentBg,
+) {
     @Composable
     fun Element(
-        image: ImageValue,
+        image: ImageValue?,
         value: String,
         modifier: Modifier = Modifier,
     ) {
         Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-            Image(
+            if (image != null) Image(
                 painter = image.get(),
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
@@ -38,17 +55,14 @@ fun WorthWidget(vararg items: Pair<ImageValue, String>) {
         }
     }
     Card(
-        modifier = Modifier
-            .shadow(elevation = 16.dp, shape = MainHeaderElementShape)
-            .background(
-                color = AppTheme.specificColorScheme.uiContentBg,
-                shape = MainHeaderElementShape,
-            ),
+        modifier = Modifier.shadow(elevation = 16.dp, shape = MainHeaderElementShape),
         shape = MainHeaderElementShape,
         elevation = CardDefaults.cardElevation(),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            modifier = Modifier
+                .background(color = backgroundColor, shape = MainHeaderElementShape)
+                .padding(horizontal = 8.dp, vertical = 4.dp),
         ) {
             items.forEach { Element(it.first, it.second) }
         }

@@ -57,7 +57,7 @@ fun MainHeader(
                 )
             }
             Spacer(Modifier.weight(1f))
-            WorthWidget(ImageValue.ResImage(R.drawable.img_energy) to uiState.energy)
+            EnergyWidget(uiState.energy)
             Spacer(Modifier.width(4.dp))
             WorthWidget(
                 ImageValue.ResImage(R.drawable.img_coin_silver) to uiState.silver,

@@ -1,10 +1,10 @@
 package io.snaps.featureregistration.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.featureregistration.presentation.screen.SelectorTileStatus
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -72,9 +72,10 @@ class CreateViewModel @Inject constructor() : SimpleViewModel() {
         val shuffledPhrases: List<Phrase> = phrases.shuffled(),
     ) {
 
-        val isContinueButtonEnabled get() = shuffledPhrases.all { phrase ->
-            phrase.status == SelectorTileStatus.Selected
-        }
+        val isContinueButtonEnabled
+            get() = shuffledPhrases.all { phrase ->
+                phrase.status == SelectorTileStatus.Selected
+            }
     }
 
     sealed class Command {

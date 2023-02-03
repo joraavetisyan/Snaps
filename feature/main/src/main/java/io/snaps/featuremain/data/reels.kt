@@ -120,7 +120,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -145,7 +146,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -170,7 +172,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -195,7 +198,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -220,7 +224,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -245,7 +250,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -270,7 +276,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -295,7 +302,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -320,7 +328,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -345,7 +354,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -370,7 +380,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -395,7 +406,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -420,7 +432,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -445,7 +458,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -470,7 +484,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -495,7 +510,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(
@@ -520,7 +536,8 @@ val demoReels = listOf(
             audioPicUrl = "https://scontent-mct1-1.cdninstagram.com/v/t51.2885-19/271128977_1148150582385758_6231211705717447032_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-mct1-1.cdninstagram.com&_nc_cat=102&_nc_ohc=nXvCaCHGcOsAX-4bhz1&edm=APU89FABAAAA&ccb=7-5&oh=00_AT9frDidLom8pn7fSjTk2zxbmVDmQxPu9uzPbg-0fcDhrA&oe=629A689D&_nc_sid=86f79a",
             taggedPeople = Array(20) { "it" }.toList()
         )
-    ),Reel(
+    ),
+    Reel(
         reelUrl = "https://user-images.githubusercontent.com/90382113/170890384-43214cc8-79c6-4815-bcb7-e22f6f7fe1bc.mp4",
         isFollowed = false,
         reelInfo = ReelInfo(

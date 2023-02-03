@@ -6,8 +6,8 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-class DataModule {}
+class DataModule
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface DataBindModule {}
+interface DataBindModule
