@@ -6,21 +6,25 @@ import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.AutoMode
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.CreditCard
 import androidx.compose.material.icons.rounded.CurrencyExchange
 import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Fingerprint
 import androidx.compose.material.icons.rounded.HeartBroken
 import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.NavigateNext
 import androidx.compose.material.icons.rounded.Phone
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Send
 import androidx.compose.ui.graphics.vector.ImageVector
-import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.R
+import io.snaps.corecommon.container.IconValue
 
 object SpecificIcons {
     val camera: IconValue = resource(R.drawable.ic_camera)
@@ -37,6 +41,8 @@ object SpecificIcons {
     val currencyExchange: IconValue = vector(Icons.Rounded.CurrencyExchange)
     val phone: IconValue = vector(Icons.Rounded.Phone)
     val error: IconValue = vector(Icons.Rounded.Error)
+    val favorite: IconValue = vector(Icons.Rounded.FavoriteBorder)
+    val close: IconValue = vector(Icons.Rounded.Close)
     val fingerprint: IconValue = vector(Icons.Rounded.Fingerprint)
     val delete: IconValue = vector(Icons.Rounded.Delete)
     val done: IconValue = vector(Icons.Rounded.Done)
@@ -54,6 +60,8 @@ object SpecificIcons {
     val facebook: IconValue = resource(R.drawable.ic_facebook)
     val twitter: IconValue = resource(R.drawable.ic_twitter)
     val question: IconValue = resource(R.drawable.ic_question)
+    val verified: IconValue = resource(R.drawable.ic_verified)
+    val send: IconValue = resource(R.drawable.ic_send)
 }
 
 private fun vector(value: ImageVector) = IconValue.Vector(value)

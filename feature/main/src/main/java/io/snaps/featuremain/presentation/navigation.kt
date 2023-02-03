@@ -10,7 +10,7 @@ import io.snaps.featuremain.presentation.screen.ItemListScreen
 import io.snaps.featuremain.presentation.screen.ProfileScreen
 import io.snaps.featuremain.presentation.screen.RankSelectionScreen
 import io.snaps.featuremain.presentation.screen.SubsScreen
-import io.snaps.featuremain.presentation.screen.tasks.FindPointsTaskScreen
+import io.snaps.featuremain.presentation.screen.comments.CommentsScreen
 import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController)
@@ -18,7 +18,7 @@ internal class ScreenNavigator(navHostController: NavHostController) : Navigator
 class MainFeatureProviderImpl @Inject constructor() : MainFeatureProvider {
 
     override fun NavGraphBuilder.mock1Graph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.Mock1) { FindPointsTaskScreen(controller) }
+        composable(AppRoute.MainBottomBar.Mock1) { CommentsScreen(controller) }
     }
 
     override fun NavGraphBuilder.mock2Graph(controller: NavHostController) {

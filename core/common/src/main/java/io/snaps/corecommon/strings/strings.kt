@@ -7,6 +7,9 @@ internal val strings = mapOf(
     key(StringKey.ActionSave) to mapOf(
         SupportedLanguageKey.En to "Save",
     ),
+    key(StringKey.ActionReply) to mapOf(
+        SupportedLanguageKey.En to "Reply",
+    ),
 
     key(StringKey.ConnectionSuccessMessage) to mapOf(
         SupportedLanguageKey.Ru to "Соединение восстановлено",
