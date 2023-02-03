@@ -63,6 +63,7 @@ fun ProfileScreen(
 
     ProfileScreen(
         uiState,
+        router::toReferralProgramScreen
     )
 }
 
@@ -70,6 +71,7 @@ fun ProfileScreen(
 @Composable
 private fun ProfileScreen(
     uiState: ProfileViewModel.UiState,
+    onClick: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -85,7 +87,7 @@ private fun ProfileScreen(
                     ActionIconData(
                         icon = AppTheme.specificIcons.settings,
                         color = AppTheme.specificColorScheme.darkGrey,
-                        onClick = {},
+                        onClick = onClick,
                     ),
                     ActionIconData(
                         icon = AppTheme.specificIcons.share,

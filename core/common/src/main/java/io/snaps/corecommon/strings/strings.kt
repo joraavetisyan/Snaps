@@ -172,6 +172,10 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Referral program",
     ),
 
+    key(StringKey.PopularVideosTitle) to mapOf(
+        SupportedLanguageKey.En to "Popular video",
+    ),
+
     key(StringKey.ReferralProgramTitle) to mapOf(
         SupportedLanguageKey.En to "Referral program",
     ),
@@ -181,7 +185,7 @@ internal val strings = mapOf(
     key(StringKey.ReferralProgramMessageEnterCode) to mapOf(
         SupportedLanguageKey.En to "Enter a friend code \nto receive bonuses",
     ),
-    key(StringKey.ReferralProgramHintEnterCode) to mapOf(
+    key(StringKey.ReferralProgramActionEnterCode) to mapOf(
         SupportedLanguageKey.En to "Enter the code",
     ),
     key(StringKey.ReferralProgramHintCode) to mapOf(
@@ -191,10 +195,10 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Ref. link",
     ),
     key(StringKey.ReferralProgramTitleDirectReferral) to mapOf(
-        SupportedLanguageKey.En to "Direct referral - %d%",
+        SupportedLanguageKey.En to "Direct referral - %s%%",
     ),
     key(StringKey.ReferralProgramMessageDirectReferral) to mapOf(
-        SupportedLanguageKey.En to "You will receive %d% of all rewards earned by friends",
+        SupportedLanguageKey.En to "You will receive %s%% of all rewards earned by friends",
     ),
     key(StringKey.ReferralProgramActionInviteUser) to mapOf(
         SupportedLanguageKey.En to "Invite user",
@@ -214,7 +218,10 @@ internal val strings = mapOf(
     key(StringKey.ReferralProgramCodeDialogActionInvite) to mapOf(
         SupportedLanguageKey.En to "Referral Code",
     ),
-    key(StringKey.ReferralProgramCodeDialogActionEnterCode) to mapOf(
+    key(StringKey.ReferralProgramCodeDialogHintEnterCode) to mapOf(
         SupportedLanguageKey.En to "Invite user",
+    ),
+    key(StringKey.ReferralProgramDialogActionClose) to mapOf(
+        SupportedLanguageKey.En to "Close",
     ),
 )
