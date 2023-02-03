@@ -53,6 +53,10 @@ object AppRoute {
         object Settings : Route("Settings")
 
         object SocialNetworks : Route("SocialNetworks")
+
+        object BackupWalletKey : Route("BackupWalletKey")
+
+        object WalletSettings : Route("WalletSettings")
     }
 
     object Registration : Route("Registration")

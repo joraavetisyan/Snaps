@@ -318,4 +318,34 @@ internal val strings = mapOf(
     key(StringKey.TaskFindPointsActionNotFound) to mapOf(
         SupportedLanguageKey.En to "Points not found",
     ),
+
+    key(StringKey.WalletSettingsTitle) to mapOf(
+        SupportedLanguageKey.En to "Wallet settings",
+    ),
+    key(StringKey.WalletSettingsTitleBackup) to mapOf(
+        SupportedLanguageKey.En to "Backup",
+    ),
+    key(StringKey.WalletSettingsDescriptionBackup) to mapOf(
+        SupportedLanguageKey.En to "Export secret seed/private key for wallet recovery",
+    ),
+
+    key(StringKey.BackupWalletKeyTitle) to mapOf(
+        SupportedLanguageKey.En to "Your Seed Phrase",
+    ),
+    key(StringKey.BackupWalletKeyMessage) to mapOf(
+        SupportedLanguageKey.En to "Please save these 12 words on a piece of paper. Mind their order when notings them down. Keep it in secure place.",
+    ),
+    key(StringKey.BackupWalletKeyActionHold) to mapOf(
+        SupportedLanguageKey.En to "Hold to reveal",
+    ),
+
+    key(StringKey.WalletSettingsBackupDialogTitle) to mapOf(
+        SupportedLanguageKey.En to "Phrase / key for wallet recovery",
+    ),
+    key(StringKey.WalletSettingsBackupDialogMessage) to mapOf(
+        SupportedLanguageKey.En to "Make sure no one can see your secret data. By opening them to someone, you risk losing your funds",
+    ),
+    key(StringKey.WalletSettingsBackupDialogAction) to mapOf(
+        SupportedLanguageKey.En to "Look",
+    ),
 )
