@@ -1,17 +1,13 @@
+package io.snaps.featuremain.presentation.screen.settings
 
-package io.snaps.featuremain.presentation.screen
-
+import io.snaps.featuremain.presentation.viewmodel.WalletSettingsViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,33 +33,47 @@ import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
-import io.snaps.featuremain.presentation.viewmodel.SocialNetworksViewModel
+import io.snaps.coreuicompose.uikit.status.ButtonData
+import io.snaps.coreuicompose.uikit.status.SimpleAlertDialogUi
 
 @Composable
-fun SocialNetworksScreen(
+fun WalletSettingsScreen(
     navHostController: NavHostController,
 ) {
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
-    val viewModel = hiltViewModel<SocialNetworksViewModel>()
+    val viewModel = hiltViewModel<WalletSettingsViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
     val headerState by viewModel.headerState.collectAsState()
 
-    SocialNetworksScreen(
+    viewModel.command.collectAsCommand {
+        when (it) {
+            WalletSettingsViewModel.Command.OpenBackupWalletKeyScreen -> router.toBackupWalletKeyScreen()
+        }
+    }
+
+    WalletSettingsScreen(
         uiState = uiState,
         headerState = headerState.value,
         onBackClicked = router::back,
+        onCloseDialogButtonClicked = viewModel::onCloseDialogButtonClicked,
+        onDismissRequest = viewModel::onDismissRequest,
+        onLookButtonClicked = viewModel::onLookButtonClicked,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SocialNetworksScreen(
-    uiState: SocialNetworksViewModel.UiState,
+private fun WalletSettingsScreen(
+    uiState: WalletSettingsViewModel.UiState,
     headerState: MainHeaderState,
     onBackClicked: () -> Boolean,
+    onDismissRequest: () -> Unit,
+    onCloseDialogButtonClicked: () -> Unit,
+    onLookButtonClicked: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -89,7 +99,7 @@ private fun SocialNetworksScreen(
                     modifier = Modifier.clickable { onBackClicked() }
                 )
                 Text(
-                    text = StringKey.SocialNetworksTitle.textValue().get(),
+                    text = StringKey.WalletSettingsTitle.textValue().get(),
                     style = AppTheme.specificTypography.titleLarge,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
@@ -116,6 +126,22 @@ private fun SocialNetworksScreen(
                     )
                 }
             }
+        }
+        if (uiState.isDialogVisibility) {
+            SimpleAlertDialogUi(
+                title = StringKey.WalletSettingsBackupDialogTitle.textValue(),
+                message = StringKey.WalletSettingsBackupDialogMessage.textValue(),
+                onDismissRequest = onDismissRequest,
+                primaryButton = ButtonData(
+                    text = StringKey.WalletSettingsBackupDialogAction.textValue(),
+                    onClick = onLookButtonClicked,
+                ),
+                secondaryButton = ButtonData(
+                    text = StringKey.ReferralProgramDialogActionClose.textValue(),
+                    onClick = onCloseDialogButtonClicked,
+                ),
+                content = {},
+            )
         }
     }
 }

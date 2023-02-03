@@ -118,4 +118,15 @@ enum class StringKey {
     TaskFindPointsActionConnect,
     TaskFindPointsActionVerify,
     TaskFindPointsActionNotFound,
+
+    WalletSettingsTitle,
+    WalletSettingsTitleBackup,
+    WalletSettingsDescriptionBackup,
+    WalletSettingsBackupDialogTitle,
+    WalletSettingsBackupDialogMessage,
+    WalletSettingsBackupDialogAction,
+
+    BackupWalletKeyTitle,
+    BackupWalletKeyMessage,
+    BackupWalletKeyActionHold,
 }

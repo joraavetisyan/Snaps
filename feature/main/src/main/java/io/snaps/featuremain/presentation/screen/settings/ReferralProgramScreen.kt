@@ -1,4 +1,4 @@
-package io.snaps.featuremain.presentation.screen
+package io.snaps.featuremain.presentation.screen.settings
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*

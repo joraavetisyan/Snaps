@@ -7,13 +7,12 @@ import io.snaps.corenavigation.MainFeatureProvider
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
-import io.snaps.featuremain.presentation.screen.*
 import io.snaps.featuremain.presentation.screen.ItemListScreen
 import io.snaps.featuremain.presentation.screen.ProfileScreen
 import io.snaps.featuremain.presentation.screen.RankSelectionScreen
-import io.snaps.featuremain.presentation.screen.ReferralProgramScreen
 import io.snaps.featuremain.presentation.screen.SubsScreen
 import io.snaps.featuremain.presentation.screen.comments.CommentsScreen
+import io.snaps.featuremain.presentation.screen.settings.*
 import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController) {
@@ -23,6 +22,10 @@ internal class ScreenNavigator(navHostController: NavHostController) : Navigator
     fun toSettingsScreen() = navHostController.navigate(AppRoute.MainBottomBar.Settings)
 
     fun toSocialNetworksScreen() = navHostController.navigate(AppRoute.MainBottomBar.SocialNetworks)
+
+    fun toBackupWalletKeyScreen() = navHostController.navigate(AppRoute.MainBottomBar.BackupWalletKey)
+
+    fun toWalletSettingsScreen() = navHostController.navigate(AppRoute.MainBottomBar.WalletSettings)
 }
 
 class MainFeatureProviderImpl @Inject constructor() : MainFeatureProvider {
@@ -48,5 +51,7 @@ class MainFeatureProviderImpl @Inject constructor() : MainFeatureProvider {
         composable(AppRoute.MainBottomBar.ReferralProgramScreen) { ReferralProgramScreen(controller) }
         composable(AppRoute.MainBottomBar.Settings) { SettingsScreen(controller) }
         composable(AppRoute.MainBottomBar.SocialNetworks) { SocialNetworksScreen(controller) }
+        composable(AppRoute.MainBottomBar.BackupWalletKey) { BackupWalletKeyScreen(controller) }
+        composable(AppRoute.MainBottomBar.WalletSettings) { WalletSettingsScreen(controller) }
     }
 }
