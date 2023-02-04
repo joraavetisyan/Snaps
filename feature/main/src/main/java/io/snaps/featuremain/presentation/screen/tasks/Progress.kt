@@ -24,6 +24,7 @@ import kotlin.math.roundToInt
 fun Progress(
     modifier: Modifier,
     @FloatRange(from = 0.0, to = 1.0) progress: Float,
+    isDashed: Boolean = true,
 ) {
     Box(
         modifier
@@ -50,7 +51,7 @@ fun Progress(
                 topLeft = Offset(x = 0f, y = 0f),
                 size = Size(width = size.width, height = size.height),
             )
-            for (i in -1..stepsCount) {
+            if (isDashed) for (i in -1..stepsCount) {
                 val rect = Rect(
                     offset = Offset(
                         x = i * actualStepWidth,

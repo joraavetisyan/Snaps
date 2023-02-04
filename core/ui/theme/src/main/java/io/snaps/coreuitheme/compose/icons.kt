@@ -6,6 +6,7 @@ import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.AutoMode
+import androidx.compose.material.icons.rounded.BrowseGallery
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.CreditCard
 import androidx.compose.material.icons.rounded.CurrencyExchange
@@ -13,9 +14,9 @@ import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.Error
-import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Fingerprint
+import androidx.compose.material.icons.rounded.FlipCameraAndroid
 import androidx.compose.material.icons.rounded.HeartBroken
 import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.NavigateNext
@@ -26,11 +27,6 @@ import io.snaps.corecommon.R
 import io.snaps.corecommon.container.IconValue
 
 object SpecificIcons {
-    val camera: IconValue = resource(R.drawable.ic_camera)
-    val check: IconValue = resource(R.drawable.ic_check)
-    val picture: IconValue = resource(R.drawable.ic_picture)
-    val profile: IconValue = resource(R.drawable.ic_profile)
-    val star: IconValue = resource(R.drawable.ic_star)
     val back: IconValue = vector(Icons.Rounded.ArrowBack)
     val add: IconValue = vector(Icons.Rounded.Add)
     val account: IconValue = vector(Icons.Rounded.AccountCircle)
@@ -45,14 +41,23 @@ object SpecificIcons {
     val fingerprint: IconValue = vector(Icons.Rounded.Fingerprint)
     val delete: IconValue = vector(Icons.Rounded.Delete)
     val done: IconValue = vector(Icons.Rounded.Done)
-    val settings: IconValue = resource(R.drawable.ic_settings)
-    val share: IconValue = resource(R.drawable.ic_share)
-    val gallery: IconValue = resource(R.drawable.ic_gallery)
-    val like: IconValue = resource(R.drawable.ic_like)
     val play: IconValue = vector(Icons.Rounded.PlayArrow)
     val themeSystem: IconValue = vector(Icons.Rounded.AutoMode)
     val themeDark: IconValue = vector(Icons.Rounded.DarkMode)
     val themeLight: IconValue = vector(Icons.Rounded.LightMode)
+    val flipCamera: IconValue = vector(Icons.Rounded.FlipCameraAndroid)
+    val chooseImage: IconValue = vector(Icons.Rounded.BrowseGallery)
+
+    val camera: IconValue = resource(R.drawable.ic_camera)
+    val cameraTimer: IconValue = resource(R.drawable.ic_camera_timer)
+    val check: IconValue = resource(R.drawable.ic_check)
+    val picture: IconValue = resource(R.drawable.ic_picture)
+    val profile: IconValue = resource(R.drawable.ic_profile)
+    val star: IconValue = resource(R.drawable.ic_star)
+    val settings: IconValue = resource(R.drawable.ic_settings)
+    val share: IconValue = resource(R.drawable.ic_share)
+    val gallery: IconValue = resource(R.drawable.ic_gallery)
+    val like: IconValue = resource(R.drawable.ic_like)
     val instagram: IconValue = resource(R.drawable.ic_instagram)
     val google: IconValue = resource(R.drawable.ic_google)
     val apple: IconValue = resource(R.drawable.ic_apple)
