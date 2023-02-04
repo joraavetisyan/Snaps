@@ -96,6 +96,7 @@ dependencies {
     implementation(projects.featureMain)
     implementation(projects.featureRegistration)
     implementation(projects.featureInitialisation)
+    implementation(projects.featureWallet)
 
     implementation(*Libs.bundle.splashscreen)
     implementation(*Libs.bundle.appUpdater)

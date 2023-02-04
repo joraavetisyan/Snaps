@@ -129,4 +129,22 @@ enum class StringKey {
     BackupWalletKeyTitle,
     BackupWalletKeyMessage,
     BackupWalletKeyActionHold,
+
+    WalletTitle,
+    WalletFieldTotal,
+    WalletTitleTopUp,
+    WalletTitleWithdraw,
+    WalletTitleExchange,
+    WalletTitleBalance,
+    WalletTitleSelectCurrency,
+    WalletMessageTopUp,
+
+    WithdrawTitle,
+    WithdrawHintAddress,
+    WithdrawHintAmount,
+    WithdrawActionMax,
+    WithdrawFieldAvailable,
+    WithdrawFieldTransactionFee,
+    WithdrawFieldTotal,
+    WithdrawActionConfirmTransaction,
 }

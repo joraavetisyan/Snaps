@@ -61,28 +61,28 @@ class SettingsViewModel @Inject constructor(
             middlePart = MiddlePart.Data(
                 value = StringKey.SettingsTitleWallet.textValue(),
             ),
-            rightPart = RightPart.NavigateNextIcon,
+            rightPart = RightPart.NavigateNextIcon(),
             clickListener = { onWalletItemClicked() },
         ),
         CellTileState(
             middlePart = MiddlePart.Data(
                 value = StringKey.SettingsTitleReferralProgram.textValue(),
             ),
-            rightPart = RightPart.NavigateNextIcon,
+            rightPart = RightPart.NavigateNextIcon(),
             clickListener = { onReferralProgramItemClicked() },
         ),
         CellTileState(
             middlePart = MiddlePart.Data(
                 value = StringKey.SettingsTitleSocialNetworks.textValue(),
             ),
-            rightPart = RightPart.NavigateNextIcon,
+            rightPart = RightPart.NavigateNextIcon(),
             clickListener = { onSocialNetworksItemClicked() },
         ),
         CellTileState(
             middlePart = MiddlePart.Data(
                 value = StringKey.SettingsTitleAboutProject.textValue(),
             ),
-            rightPart = RightPart.NavigateNextIcon,
+            rightPart = RightPart.NavigateNextIcon(),
             clickListener = { onAboutProjectItemClicked() },
         ),
     )

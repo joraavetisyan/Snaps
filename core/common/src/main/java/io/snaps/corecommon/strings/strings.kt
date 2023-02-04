@@ -348,4 +348,51 @@ internal val strings = mapOf(
     key(StringKey.WalletSettingsBackupDialogAction) to mapOf(
         SupportedLanguageKey.En to "Look",
     ),
+
+    key(StringKey.WalletTitle) to mapOf(
+        SupportedLanguageKey.En to "Wallet",
+    ),
+    key(StringKey.WalletFieldTotal) to mapOf(
+        SupportedLanguageKey.En to "Total",
+    ),
+    key(StringKey.WalletTitleTopUp) to mapOf(
+        SupportedLanguageKey.En to "Top up",
+    ),
+    key(StringKey.WalletTitleWithdraw) to mapOf(
+        SupportedLanguageKey.En to "Withdraw",
+    ),
+    key(StringKey.WalletTitleExchange) to mapOf(
+        SupportedLanguageKey.En to "Exchange",
+    ),
+    key(StringKey.WalletTitleBalance) to mapOf(
+        SupportedLanguageKey.En to "Balance",
+    ),
+    key(StringKey.WalletTitleSelectCurrency) to mapOf(
+        SupportedLanguageKey.En to "Select currency",
+    ),
+    key(StringKey.WalletMessageTopUp) to mapOf(
+        SupportedLanguageKey.En to "Make sure you are sending your tokens to the correct address and the correct BEP-20 network",
+    ),
+
+    key(StringKey.WithdrawTitle) to mapOf(
+        SupportedLanguageKey.En to "Withdraw BNB",
+    ),
+    key(StringKey.WithdrawHintAddress) to mapOf(
+        SupportedLanguageKey.En to "Enter address",
+    ),
+    key(StringKey.WithdrawHintAmount) to mapOf(
+        SupportedLanguageKey.En to "Enter amount",
+    ),
+    key(StringKey.WithdrawFieldAvailable) to mapOf(
+        SupportedLanguageKey.En to "Available: %s",
+    ),
+    key(StringKey.WithdrawFieldTransactionFee) to mapOf(
+        SupportedLanguageKey.En to "Transaction fee",
+    ),
+    key(StringKey.WithdrawFieldTotal) to mapOf(
+        SupportedLanguageKey.En to "Total",
+    ),
+    key(StringKey.WithdrawActionConfirmTransaction) to mapOf(
+        SupportedLanguageKey.En to "Confirm transaction",
+    ),
 )

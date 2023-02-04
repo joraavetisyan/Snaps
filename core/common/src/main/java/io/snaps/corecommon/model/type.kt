@@ -1,11 +1,10 @@
 package io.snaps.corecommon.model
 
 import io.snaps.corecommon.ext.formatToMoney
-import java.time.ZonedDateTime
-import java.util.Currency
-import java.util.UUID
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.time.ZonedDateTime
+import java.util.*
 
 typealias DateTime = String
 typealias Timestamp = Long
@@ -18,6 +17,7 @@ typealias FullUrl = String
 typealias PartialUrl = String
 typealias DeviceId = String
 typealias Uuid = String
+typealias CurrencySymbol = String
 
 fun generateCurrentDateTime() = ZonedDateTime.now().toString()
 fun generateRequestId() = UUID.randomUUID().toString()
@@ -44,15 +44,17 @@ data class MoneyDto(
 }
 
 @Serializable
-enum class CurrencyType {
-    @SerialName("643") RUB,
-    @SerialName("840") USD,
-    @SerialName("978") EUR;
+enum class CurrencyType(
+    val symbol: CurrencySymbol,
+) {
+    @SerialName("643") RUB("₽"),
+    @SerialName("840") USD("$"),
+    @SerialName("978") EUR("€"),
 
-    val symbol
-        get() = runCatching {
-            Currency.getInstance(name).symbol
-        }.getOrNull().orEmpty()
+    @SerialName("BNB") BNB("BNB"),
+    @SerialName("SNP") SNP("SNP"),
+    @SerialName("SNPS") SNPS("SNPS"),
+    @SerialName("BUSD") BUSD("BUSD");
 
     val displayName
         get() = runCatching {
