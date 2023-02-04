@@ -1,10 +1,7 @@
 package io.snaps.coreuicompose.uikit.listtile
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -13,10 +10,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.model.MoneyDto
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.addIf
 import io.snaps.coreuicompose.tools.doOnClick
@@ -43,13 +42,18 @@ sealed class RightPart : TileState {
 
     object CheckIcon : RightPart()
 
-    object NavigateNextIcon : RightPart()
+    data class NavigateNextIcon(val text: TextValue? = null) : RightPart()
 
     data class Logo(val source: ImageValue) : RightPart()
 
     data class Switch(val isChecked: Boolean) : RightPart()
 
     data class Text(val text: TextValue) : RightPart()
+
+    data class TextMoney(
+        val balance: MoneyDto,
+        val toCurrency: MoneyDto,
+    ) : RightPart()
 
     data class ButtonData(
         val text: TextValue,
@@ -118,14 +122,28 @@ fun RightPartTile(modifier: Modifier, data: RightPart) {
                     .size(RightPartTileConfig.ActionIconSize)
                     .padding(6.dp),
             )
-            is RightPart.NavigateNextIcon -> Icon(
-                painter = AppTheme.specificIcons.navigateNext.get(),
-                tint = AppTheme.specificColorScheme.darkGrey,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(RightPartTileConfig.ActionIconSize)
-                    .padding(6.dp),
-            )
+            is RightPart.NavigateNextIcon -> Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                data.text?.let {
+                    Text(
+                        text = data.text.get(),
+                        color = AppTheme.specificColorScheme.textSecondary,
+                        style = AppTheme.specificTypography.bodySmall,
+                        maxLines = 1,
+                        textAlign = TextAlign.End,
+                    )
+                }
+                Icon(
+                    painter = AppTheme.specificIcons.navigateNext.get(),
+                    tint = AppTheme.specificColorScheme.darkGrey,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(RightPartTileConfig.ActionIconSize)
+                        .padding(6.dp),
+                )
+            }
             is RightPart.Logo -> Image(
                 painter = data.source.get(),
                 contentDescription = null,
@@ -141,6 +159,22 @@ fun RightPartTile(modifier: Modifier, data: RightPart) {
                 color = AppTheme.specificColorScheme.textSecondary,
                 style = AppTheme.specificTypography.bodyMedium,
             )
+            is RightPart.TextMoney -> {
+                Text(
+                    text = data.balance.getFormattedMoney(),
+                    color = AppTheme.specificColorScheme.textPrimary,
+                    style = AppTheme.specificTypography.bodySmall,
+                    maxLines = 1,
+                    textAlign = TextAlign.End,
+                )
+                Text(
+                    text = "≈ ${data.toCurrency.getFormattedMoneyWithCurrency()}",
+                    color = AppTheme.specificColorScheme.textSecondary,
+                    style = AppTheme.specificTypography.bodySmall,
+                    maxLines = 1,
+                    textAlign = TextAlign.End,
+                )
+            }
             is RightPart.ButtonData -> {
                 SimpleButtonActionS(onClick = { data.onClick?.invoke() }, enabled = data.enable) {
                     SimpleButtonContent(data.text)

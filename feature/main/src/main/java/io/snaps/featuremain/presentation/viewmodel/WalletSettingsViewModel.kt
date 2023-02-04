@@ -64,7 +64,7 @@ class WalletSettingsViewModel @Inject constructor(
                 value = StringKey.WalletSettingsTitleBackup.textValue(),
                 description = StringKey.WalletSettingsDescriptionBackup.textValue(),
             ),
-            rightPart = RightPart.NavigateNextIcon,
+            rightPart = RightPart.NavigateNextIcon(),
             clickListener = { onBackupItemClicked() },
         ),
     )

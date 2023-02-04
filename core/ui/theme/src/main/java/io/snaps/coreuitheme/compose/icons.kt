@@ -65,6 +65,10 @@ object SpecificIcons {
     val discord: IconValue = resource(R.drawable.ic_discord)
     val verified: IconValue = resource(R.drawable.ic_verified)
     val send: IconValue = resource(R.drawable.ic_send)
+    val exchange: IconValue = resource(R.drawable.ic_exchange)
+    val topUp: IconValue = resource(R.drawable.ic_topup)
+    val withdraw: IconValue = resource(R.drawable.ic_withdraw)
+    val bnbToken: IconValue = resource(R.drawable.ic_bnb_token)
 }
 
 private fun vector(value: ImageVector) = IconValue.Vector(value)

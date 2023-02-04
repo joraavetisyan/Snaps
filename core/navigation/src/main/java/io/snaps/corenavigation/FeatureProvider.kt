@@ -40,3 +40,8 @@ interface InitializationFeatureProvider {
 
     fun NavGraphBuilder.initializationGraph(controller: NavHostController)
 }
+
+interface WalletFeatureProvider {
+
+    fun NavGraphBuilder.walletGraph(controller: NavHostController)
+}

@@ -25,6 +25,7 @@ import io.snaps.coreuitheme.compose.AppTheme
 @Composable
 fun SimpleBottomDialogUI(
     header: TextValue,
+    modifier: Modifier = Modifier,
     content: LazyListScope.() -> Unit,
 ) {
     Box(
@@ -36,6 +37,7 @@ fun SimpleBottomDialogUI(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             stickyHeader {
                 Column(

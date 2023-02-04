@@ -41,7 +41,7 @@ class SocialNetworksViewModel @Inject constructor(
             middlePart = MiddlePart.Data(
                 value = StringKey.SocialNetworksTitleDiscord.textValue(),
             ),
-            rightPart = RightPart.NavigateNextIcon,
+            rightPart = RightPart.NavigateNextIcon(),
             leftPart = LeftPart.Logo(
                 ImageValue.ResImage(R.drawable.ic_discord)
             ),
@@ -51,7 +51,7 @@ class SocialNetworksViewModel @Inject constructor(
             middlePart = MiddlePart.Data(
                 value = StringKey.SocialNetworksTitleTelegram.textValue(),
             ),
-            rightPart = RightPart.NavigateNextIcon,
+            rightPart = RightPart.NavigateNextIcon(),
             leftPart = LeftPart.Logo(
                 ImageValue.ResImage(R.drawable.ic_telegram)
             ),
