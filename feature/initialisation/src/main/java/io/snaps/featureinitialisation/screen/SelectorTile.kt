@@ -1,4 +1,4 @@
-package io.snaps.initialisation.screen
+package io.snaps.featureinitialisation.screen
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween

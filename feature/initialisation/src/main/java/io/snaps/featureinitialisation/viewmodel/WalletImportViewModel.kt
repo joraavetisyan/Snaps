@@ -1,4 +1,4 @@
-package io.snaps.initialisation.viewmodel
+package io.snaps.featureinitialisation.viewmodel
 
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

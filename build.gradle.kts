@@ -18,6 +18,7 @@ buildscript {
         classpath(Libs.classpath.navigation_safeArgs_gradle)
         classpath(Libs.classpath.kotlinter)
         classpath(Libs.classpath.ruler)
+        classpath(Libs.classpath.ben_manes_versions)
     }
 }
 

@@ -8,6 +8,7 @@ object Libs {
     private const val coroutinesVersion = "1.6.1"
     private const val kotlinterVersion = "3.8.0"
     private const val rulerVersion = "1.1.0"
+    private const val benManesVersionsVersion = "0.45.0"
 
     const val composeCompilerVersion = "1.3.0"
     private const val composeVersion = "1.3.0"
@@ -33,10 +34,10 @@ object Libs {
 
     private const val crashlyticsGradleVersion = "2.5.2"
     private const val authVersion = "21.1.0"
-    private const val crashlyticsVersion = "17.4.0"
-    private const val analyticsVersion = "18.0.2"
-    private const val messagingVersion = "21.0.1"
-    private const val configVersion = "20.0.4"
+    private const val crashlyticsVersion = "18.3.3"
+    private const val analyticsVersion = "21.2.0"
+    private const val messagingVersion = "23.1.1"
+    private const val configVersion = "21.2.1"
 
     private const val playServicesVersion = "20.4.1"
 
@@ -73,6 +74,7 @@ object Libs {
         const val google_services = "com.google.gms.google-services"
         const val crashlytics = "com.google.firebase.crashlytics"
         const val spotify_ruler = "com.spotify.ruler"
+        const val ben_manes_versions = "com.github.ben-manes.versions"
     }
 
     object classpath {
@@ -85,6 +87,7 @@ object Libs {
         const val navigation_safeArgs_gradle = "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
         const val kotlinter = "org.jmailen.gradle:kotlinter-gradle:$kotlinterVersion"
         const val ruler = "com.spotify.ruler:ruler-gradle-plugin:$rulerVersion"
+        const val ben_manes_versions = "com.github.ben-manes:gradle-versions-plugin:$benManesVersionsVersion"
     }
 
     object bundle {

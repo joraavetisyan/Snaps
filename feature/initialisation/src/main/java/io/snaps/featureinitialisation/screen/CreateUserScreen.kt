@@ -1,4 +1,4 @@
-package io.snaps.initialisation.screen
+package io.snaps.featureinitialisation.screen
 
 import android.content.Context
 import android.net.Uri
@@ -51,8 +51,8 @@ import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.status.PhotoAlertDialog
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
-import io.snaps.initialisation.ScreenNavigator
-import io.snaps.initialisation.viewmodel.CreateUserViewModel
+import io.snaps.featureinitialisation.ScreenNavigator
+import io.snaps.featureinitialisation.viewmodel.CreateUserViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import java.io.File
 

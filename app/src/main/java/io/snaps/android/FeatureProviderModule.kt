@@ -19,7 +19,7 @@ import io.snaps.featuremain.presentation.MainFeatureProviderImpl
 import io.snaps.featureprofile.ProfileFeatureProviderImpl
 import io.snaps.featureregistration.presentation.RegistrationFeatureProviderImpl
 import io.snaps.featuretasks.TasksFeatureProviderImpl
-import io.snaps.initialisation.InitialisationFeatureProviderImpl
+import io.snaps.featureinitialisation.InitialisationFeatureProviderImpl
 import javax.inject.Singleton
 
 @Module

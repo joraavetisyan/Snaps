@@ -3,6 +3,7 @@ plugins {
     id(Libs.plugin.google_services)
     id(Libs.plugin.crashlytics)
     id(Libs.plugin.spotify_ruler)
+    id(Libs.plugin.ben_manes_versions)
 }
 
 common()
