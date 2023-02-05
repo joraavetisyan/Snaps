@@ -6,40 +6,27 @@ import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.MainFeatureProvider
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
-import io.snaps.corenavigation.base.navigate
-import io.snaps.featuremain.presentation.screen.ItemListScreen
-import io.snaps.featuremain.presentation.screen.ProfileScreen
-import io.snaps.featuremain.presentation.screen.RankSelectionScreen
-import io.snaps.featuremain.presentation.screen.SubsScreen
-import io.snaps.featuremain.presentation.screen.comments.CommentsScreen
-import io.snaps.featuremain.presentation.screen.settings.*
+import io.snaps.featurecollection.screen.ItemListScreen
+import io.snaps.featurefeed.screen.PopularVideosScreen
+import io.snaps.featurefeed.screen.ReelsScreen
+import io.snaps.featureprofile.screen.ProfileScreen
+import io.snaps.featuretasks.screen.TasksScreen
 import javax.inject.Inject
 
-internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController) {
-
-    fun toReferralProgramScreen() = navHostController.navigate(AppRoute.MainBottomBar.ReferralProgramScreen)
-
-    fun toSettingsScreen() = navHostController.navigate(AppRoute.MainBottomBar.Settings)
-
-    fun toSocialNetworksScreen() = navHostController.navigate(AppRoute.MainBottomBar.SocialNetworks)
-
-    fun toBackupWalletKeyScreen() = navHostController.navigate(AppRoute.MainBottomBar.BackupWalletKey)
-
-    fun toWalletSettingsScreen() = navHostController.navigate(AppRoute.MainBottomBar.WalletSettings)
-}
+internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController)
 
 class MainFeatureProviderImpl @Inject constructor() : MainFeatureProvider {
 
     override fun NavGraphBuilder.mock1Graph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.Mock1) { CommentsScreen(controller) }
+        composable(AppRoute.MainBottomBar.Mock1) { ReelsScreen(controller) }
     }
 
     override fun NavGraphBuilder.mock2Graph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.Mock2) { RankSelectionScreen(controller) }
+        composable(AppRoute.MainBottomBar.Mock2) { PopularVideosScreen(controller) }
     }
 
     override fun NavGraphBuilder.mock3Graph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.Mock3) { SubsScreen(controller) }
+        composable(AppRoute.MainBottomBar.Mock3) { TasksScreen(controller) }
     }
 
     override fun NavGraphBuilder.mock4Graph(controller: NavHostController) {
@@ -48,10 +35,5 @@ class MainFeatureProviderImpl @Inject constructor() : MainFeatureProvider {
 
     override fun NavGraphBuilder.mock5Graph(controller: NavHostController) {
         composable(AppRoute.MainBottomBar.Mock5) { ProfileScreen(controller) }
-        composable(AppRoute.MainBottomBar.ReferralProgramScreen) { ReferralProgramScreen(controller) }
-        composable(AppRoute.MainBottomBar.Settings) { SettingsScreen(controller) }
-        composable(AppRoute.MainBottomBar.SocialNetworks) { SocialNetworksScreen(controller) }
-        composable(AppRoute.MainBottomBar.BackupWalletKey) { BackupWalletKeyScreen(controller) }
-        composable(AppRoute.MainBottomBar.WalletSettings) { WalletSettingsScreen(controller) }
     }
 }

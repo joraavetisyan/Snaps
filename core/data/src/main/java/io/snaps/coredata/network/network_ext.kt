@@ -8,6 +8,7 @@ import io.snaps.coredata.cache.CacheProvider
 import io.snaps.coredata.json.KotlinxSerializationJsonProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.decodeFromStream
 import retrofit2.HttpException
 import java.net.ConnectException
@@ -59,6 +60,7 @@ inline fun <reified T : Any> BaseResponse<T>.toEffect() = when {
     }
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 fun Throwable.toApiError() = when (this) {
     is UnknownHostException,
     is SSLException,

@@ -12,6 +12,4 @@ dependencies {
     implementation(projects.coreData)
     implementation(projects.coreUi)
     implementation(projects.coreNavigation)
-
-    implementation(*Libs.bundle.firebase)
 }

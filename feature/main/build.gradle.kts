@@ -17,7 +17,8 @@ dependencies {
     implementation(projects.baseProfile)
     implementation(projects.baseSession)
 
-    implementation(*Libs.bundle.firebase)
-    implementation(*Libs.bundle.pager)
-    implementation(*Libs.bundle.media)
+    implementation(projects.featureFeed)
+    implementation(projects.featureTasks)
+    implementation(projects.featureCollection)
+    implementation(projects.featureProfile)
 }

@@ -1,9 +1,14 @@
 package io.snaps.coreuicompose.uikit.status
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -25,6 +30,7 @@ data class ButtonData(
     val text: TextValue,
     val onClick: () -> Unit,
 )
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SimpleAlertDialogUi(
@@ -77,7 +83,7 @@ fun SimpleAlertDialogUi(
                     ) {
                         SimpleButtonContent(text = it.text)
                     }
-                     Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
                 secondaryButton?.let {
                     SimpleButtonGreyM(

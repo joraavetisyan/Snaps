@@ -1,10 +1,21 @@
 package io.snaps.featurewallet.screen
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,18 +30,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import io.snaps.coreuicompose.tools.get
-import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
+import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurewallet.ScreenNavigator
 import io.snaps.featurewallet.viewmodel.WithdrawViewModel
@@ -143,7 +154,8 @@ private fun SocialNetworksScreen(
                 }
             )
             Text(
-                text = StringKey.WithdrawFieldAvailable.textValue(uiState.availableAmount.getFormattedMoneyWithCurrency()).get(),
+                text = StringKey.WithdrawFieldAvailable.textValue(uiState.availableAmount.getFormattedMoneyWithCurrency())
+                    .get(),
                 style = AppTheme.specificTypography.bodyMedium,
                 modifier = Modifier
                     .fillMaxWidth()

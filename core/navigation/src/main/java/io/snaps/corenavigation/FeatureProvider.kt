@@ -36,12 +36,32 @@ interface RegistrationFeatureProvider {
     fun NavGraphBuilder.registrationGraph(controller: NavHostController)
 }
 
-interface InitializationFeatureProvider {
+interface InitialisationFeatureProvider {
 
-    fun NavGraphBuilder.initializationGraph(controller: NavHostController)
+    fun NavGraphBuilder.initialisationGraph(controller: NavHostController)
+}
+
+interface ProfileFeatureProvider {
+
+    fun NavGraphBuilder.profileGraph(controller: NavHostController)
 }
 
 interface WalletFeatureProvider {
 
     fun NavGraphBuilder.walletGraph(controller: NavHostController)
+}
+
+interface TasksFeatureProvider {
+
+    fun NavGraphBuilder.tasksGraph(controller: NavHostController)
+}
+
+interface CollectionFeatureProvider {
+
+    fun NavGraphBuilder.collectionGraph(controller: NavHostController)
+}
+
+interface FeedFeatureProvider {
+
+    fun NavGraphBuilder.feedGraph(controller: NavHostController)
 }

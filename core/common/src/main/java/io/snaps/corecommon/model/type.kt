@@ -4,7 +4,8 @@ import io.snaps.corecommon.ext.formatToMoney
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.UUID
+import java.util.Currency
 
 typealias DateTime = String
 typealias Timestamp = Long

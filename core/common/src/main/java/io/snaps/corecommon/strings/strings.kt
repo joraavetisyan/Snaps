@@ -233,7 +233,7 @@ internal val strings = mapOf(
     key(StringKey.ReferralProgramDialogActionClose) to mapOf(
         SupportedLanguageKey.En to "Close",
     ),
-    
+
     key(StringKey.SettingsTitle) to mapOf(
         SupportedLanguageKey.En to "Settings",
     ),
@@ -265,7 +265,7 @@ internal val strings = mapOf(
     key(StringKey.SocialNetworksTitleTelegram) to mapOf(
         SupportedLanguageKey.En to "Telegram",
     ),
-    
+
     key(StringKey.TasksTitleSlideCurrent) to mapOf(
         SupportedLanguageKey.En to "Current",
     ),

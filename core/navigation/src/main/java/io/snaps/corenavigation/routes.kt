@@ -47,16 +47,6 @@ object AppRoute {
 
         object MainTab5 : Route("mainTab5")
         object Mock5 : Route("Mock5")
-        
-        object ReferralProgramScreen : Route("ReferralProgramScreen")
-
-        object Settings : Route("Settings")
-
-        object SocialNetworks : Route("SocialNetworks")
-
-        object BackupWalletKey : Route("BackupWalletKey")
-
-        object WalletSettings : Route("WalletSettings")
     }
 
     object Registration : Route("Registration")
@@ -78,4 +68,14 @@ object AppRoute {
     object Wallet : Route("Wallet")
 
     object Withdraw : Route("Withdraw")
+
+    object ReferralProgramScreen : Route("ReferralProgramScreen")
+
+    object Settings : Route("Settings")
+
+    object SocialNetworks : Route("SocialNetworks")
+
+    object BackupWalletKey : Route("BackupWalletKey")
+
+    object WalletSettings : Route("WalletSettings")
 }

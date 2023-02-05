@@ -35,7 +35,7 @@ class WithdrawViewModel @Inject constructor(
         }
     }
 
-    fun onConfirmTransactionClicked() { }
+    fun onConfirmTransactionClicked() {}
 
     data class UiState(
         val addressValue: String = "",

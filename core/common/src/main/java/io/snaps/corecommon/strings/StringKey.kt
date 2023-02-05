@@ -85,7 +85,7 @@ enum class StringKey {
     ReferralProgramCodeDialogMessage,
     ReferralProgramCodeDialogActionInvite,
     ReferralProgramCodeDialogHintEnterCode,
-    
+
     SettingsTitle,
     SettingsTitleWallet,
     SettingsTitleReferralProgram,
@@ -97,7 +97,7 @@ enum class StringKey {
     SocialNetworksTitle,
     SocialNetworksTitleDiscord,
     SocialNetworksTitleTelegram,
-    
+
     TasksTitleSlideCurrent,
     TasksTitleSlideHistory,
     TasksTitleCurrent,

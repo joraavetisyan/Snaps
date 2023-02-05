@@ -3,11 +3,11 @@ package io.snaps.featurewallet.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.MainHeaderHandler
+import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.CurrencyType
 import io.snaps.corecommon.model.MoneyDto
-import io.snaps.corecommon.R
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
@@ -107,9 +107,13 @@ class WalletViewModel @Inject constructor(
                 ),
                 leftPart = LeftPart.Logo(ImageValue.ResImage(R.drawable.ic_bnb_token)),
                 rightPart = RightPart.NavigateNextIcon(
-                    text = MoneyDto(CurrencyType.BUSD, 0.0).getFormattedMoneyWithCurrency().textValue(),
+                    text = MoneyDto(
+                        CurrencyType.BUSD, 0.0
+                    ).getFormattedMoneyWithCurrency().textValue(),
                 ),
-                clickListener = { onSelectCurrencyBottomDialogItemClicked(MoneyDto(CurrencyType.BUSD, 0.0)) },
+                clickListener = {
+                    onSelectCurrencyBottomDialogItemClicked(MoneyDto(CurrencyType.BUSD, 0.0))
+                },
             ),
             CellTileState(
                 middlePart = MiddlePart.Data(
@@ -117,9 +121,13 @@ class WalletViewModel @Inject constructor(
                 ),
                 leftPart = LeftPart.Logo(ImageValue.ResImage(R.drawable.ic_bnb_token)),
                 rightPart = RightPart.NavigateNextIcon(
-                    text = MoneyDto(CurrencyType.SNP, 0.0).getFormattedMoneyWithCurrency().textValue(),
+                    text = MoneyDto(
+                        CurrencyType.SNP, 0.0
+                    ).getFormattedMoneyWithCurrency().textValue(),
                 ),
-                clickListener = { onSelectCurrencyBottomDialogItemClicked(MoneyDto(CurrencyType.SNP, 0.0)) }
+                clickListener = {
+                    onSelectCurrencyBottomDialogItemClicked(MoneyDto(CurrencyType.SNP, 0.0))
+                }
             ),
             CellTileState(
                 middlePart = MiddlePart.Data(
@@ -127,9 +135,13 @@ class WalletViewModel @Inject constructor(
                 ),
                 leftPart = LeftPart.Logo(ImageValue.ResImage(R.drawable.ic_bnb_token)),
                 rightPart = RightPart.NavigateNextIcon(
-                    text = MoneyDto(CurrencyType.SNPS, 0.0).getFormattedMoneyWithCurrency().textValue(),
+                    text = MoneyDto(
+                        CurrencyType.SNPS, 0.0
+                    ).getFormattedMoneyWithCurrency().textValue(),
                 ),
-                clickListener = { onSelectCurrencyBottomDialogItemClicked(MoneyDto(CurrencyType.SNPS, 0.0)) }
+                clickListener = {
+                    onSelectCurrencyBottomDialogItemClicked(MoneyDto(CurrencyType.SNPS, 0.0))
+                }
             ),
             CellTileState(
                 middlePart = MiddlePart.Data(
@@ -137,9 +149,14 @@ class WalletViewModel @Inject constructor(
                 ),
                 leftPart = LeftPart.Logo(ImageValue.ResImage(R.drawable.ic_bnb_token)),
                 rightPart = RightPart.NavigateNextIcon(
-                    text = MoneyDto(CurrencyType.BUSD, 0.0).getFormattedMoneyWithCurrency().textValue(),
+                    text = MoneyDto(
+                        currency = CurrencyType.BUSD,
+                        value = 0.0,
+                    ).getFormattedMoneyWithCurrency().textValue(),
                 ),
-                clickListener = { onSelectCurrencyBottomDialogItemClicked(MoneyDto(CurrencyType.BUSD, 0.0)) },
+                clickListener = {
+                    onSelectCurrencyBottomDialogItemClicked(MoneyDto(CurrencyType.BUSD, 0.0))
+                },
             ),
         )
     }

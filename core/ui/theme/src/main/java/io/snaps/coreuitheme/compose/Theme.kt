@@ -52,7 +52,7 @@ fun AppTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val (colorScheme, specificColorScheme) = if (isDynamicTheme) {
+    val (_, specificColorScheme) = if (isDynamicTheme) {
         val colorScheme = when {
             isDarkTheme -> dynamicDarkColorScheme(LocalContext.current).copy(
                 outline = DarkSpecificColorScheme.outlineBorderBase,
