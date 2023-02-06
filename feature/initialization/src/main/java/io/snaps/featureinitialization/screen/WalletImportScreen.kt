@@ -1,4 +1,4 @@
-package io.snaps.featureinitialisation.screen
+package io.snaps.featureinitialization.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,8 +32,8 @@ import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.input.formatter.OrdinalNumberFormatter
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
-import io.snaps.featureinitialisation.ScreenNavigator
-import io.snaps.featureinitialisation.viewmodel.WalletImportViewModel
+import io.snaps.featureinitialization.ScreenNavigator
+import io.snaps.featureinitialization.viewmodel.WalletImportViewModel
 
 @Composable
 fun WalletImportScreen(
@@ -115,6 +115,7 @@ private fun WalletImportScreen(
                             )
                         },
                         visualTransformation = OrdinalNumberFormatter(index + 1),
+                        maxLines = 1,
                     )
                     if (index != uiState.phrases.lastIndex) {
                         Spacer(modifier = Modifier.height(8.dp))

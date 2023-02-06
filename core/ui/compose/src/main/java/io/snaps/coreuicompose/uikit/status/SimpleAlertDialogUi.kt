@@ -1,18 +1,26 @@
 package io.snaps.coreuicompose.uikit.status
 
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,53 +56,78 @@ fun SimpleAlertDialogUi(
     ) {
         Surface(
             shape = AppTheme.shapes.medium,
-            color = backgroundColor,
+            color = Color.Transparent,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp),
         ) {
-            Column(
-                modifier = Modifier.padding(20.dp),
+            Box(
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(
-                    text = title.get(),
-                    style = AppTheme.specificTypography.headlineSmall,
-                    color = AppTheme.specificColorScheme.textPrimary,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                )
-                Text(
-                    text = message.get(),
-                    style = AppTheme.specificTypography.titleSmall,
-                    color = AppTheme.specificColorScheme.textSecondary,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp, bottom = 16.dp),
-                )
-                content()
-                Spacer(modifier = Modifier.height(16.dp))
-                primaryButton?.let {
-                    SimpleButtonActionM(
+                Box(
+                    Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Canvas(modifier = Modifier.size(80.dp), onDraw = {
+                        drawCircle(color = backgroundColor)
+                    })
+                    Image(
+                        painter = AppTheme.specificIcons.gem.get(),
+                        contentDescription = null,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .shadow(16.dp, shape = CircleShape),
-                        onClick = it.onClick,
-                    ) {
-                        SimpleButtonContent(text = it.text)
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
+                            .size(140.dp)
+                            .padding(bottom = 64.dp),
+                    )
                 }
-                secondaryButton?.let {
-                    SimpleButtonGreyM(
+                Card(
+                    modifier = Modifier.padding(top = 64.dp),
+                ) {
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .shadow(16.dp, shape = CircleShape),
-                        onClick = it.onClick,
+                            .background(backgroundColor)
+                            .padding(20.dp),
                     ) {
-                        SimpleButtonContent(text = it.text)
+                        Text(
+                            text = title.get(),
+                            style = AppTheme.specificTypography.headlineSmall,
+                            color = AppTheme.specificColorScheme.textPrimary,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                        )
+                        Text(
+                            text = message.get(),
+                            style = AppTheme.specificTypography.titleSmall,
+                            color = AppTheme.specificColorScheme.textSecondary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 4.dp, bottom = 16.dp),
+                        )
+                        content()
+                        Spacer(modifier = Modifier.height(16.dp))
+                        primaryButton?.let {
+                            SimpleButtonActionM(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .shadow(16.dp, shape = CircleShape),
+                                onClick = it.onClick,
+                            ) {
+                                SimpleButtonContent(text = it.text)
+                            }
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                        secondaryButton?.let {
+                            SimpleButtonGreyM(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .shadow(16.dp, shape = CircleShape),
+                                onClick = it.onClick,
+                            ) {
+                                SimpleButtonContent(text = it.text)
+                            }
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }

@@ -1,4 +1,4 @@
-package io.snaps.featureinitialisation.screen
+package io.snaps.featureinitialization.screen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -9,7 +9,7 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.uikit.status.FullScreenMessage
 import io.snaps.coreuicompose.uikit.status.FullScreenMessageUi
-import io.snaps.featureinitialisation.ScreenNavigator
+import io.snaps.featureinitialization.ScreenNavigator
 
 @Composable
 fun ConnectWalletScreen(

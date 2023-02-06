@@ -1,4 +1,4 @@
-package io.snaps.featureinitialisation.screen
+package io.snaps.featureinitialization.screen
 
 import android.content.Context
 import android.net.Uri
@@ -51,8 +51,8 @@ import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.status.PhotoAlertDialog
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
-import io.snaps.featureinitialisation.ScreenNavigator
-import io.snaps.featureinitialisation.viewmodel.CreateUserViewModel
+import io.snaps.featureinitialization.ScreenNavigator
+import io.snaps.featureinitialization.viewmodel.CreateUserViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import java.io.File
 
@@ -154,6 +154,7 @@ private fun CreateUserScreen(
                     style = AppTheme.specificTypography.titleSmall,
                 )
             },
+            maxLines = 1,
         )
         if (hasImage && uiState.photoStatus == CreateUserViewModel.PhotoStatus.Uploaded) {
             Photo(

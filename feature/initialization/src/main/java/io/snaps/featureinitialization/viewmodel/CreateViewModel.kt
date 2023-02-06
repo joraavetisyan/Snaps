@@ -1,10 +1,10 @@
-package io.snaps.featureinitialisation.viewmodel
+package io.snaps.featureinitialization.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
-import io.snaps.featureinitialisation.screen.SelectorTileStatus
+import io.snaps.featureinitialization.screen.SelectorTileStatus
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

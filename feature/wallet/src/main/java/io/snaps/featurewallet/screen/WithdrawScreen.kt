@@ -124,7 +124,8 @@ private fun SocialNetworksScreen(
                         text = LocalStringHolder.current(StringKey.WithdrawHintAddress),
                         style = AppTheme.specificTypography.titleSmall,
                     )
-                }
+                },
+                maxLines = 1,
             )
             SimpleTextField(
                 modifier = Modifier
@@ -151,7 +152,8 @@ private fun SocialNetworksScreen(
                             text = StringKey.WithdrawActionMax.textValue()
                         )
                     }
-                }
+                },
+                maxLines = 1,
             )
             Text(
                 text = StringKey.WithdrawFieldAvailable.textValue(uiState.availableAmount.getFormattedMoneyWithCurrency())

@@ -11,8 +11,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -38,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.ImeAction
@@ -47,6 +51,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImagePainter.State.Empty.painter
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.R
@@ -228,13 +233,25 @@ private fun ReferralProgramScreen(
 private fun ReferralCodeCard(
     onEnterCodeClicked: () -> Unit,
 ) {
-    Card(
+    Box(
         modifier = Modifier
             .padding(horizontal = 16.dp)
-            .fillMaxWidth(),
-        shape = AppTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = AppTheme.specificColorScheme.uiAccent)
+            .clip(AppTheme.shapes.medium)
+            .fillMaxWidth()
+            .heightIn(min = 172.dp, max = 188.dp),
     ) {
+        Image(
+            painter = ImageValue.ResImage(R.drawable.img_referral_program_card_background).get(),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+        )
+        Image(
+            painter = ImageValue.ResImage(R.drawable.img_diamonds).get(),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxHeight()
+                .align(Alignment.CenterEnd),
+        )
         Column(
             modifier = Modifier.padding(24.dp)
         ) {
@@ -385,7 +402,8 @@ private fun ReferralCodeDialog(
                         text = LocalStringHolder.current(StringKey.ReferralProgramCodeDialogHintEnterCode),
                         style = AppTheme.specificTypography.titleSmall,
                     )
-                }
+                },
+                maxLines = 1,
             )
             SimpleButtonActionM(
                 modifier = Modifier

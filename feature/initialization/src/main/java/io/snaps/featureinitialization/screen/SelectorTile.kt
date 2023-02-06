@@ -1,11 +1,10 @@
-package io.snaps.featureinitialisation.screen
+package io.snaps.featureinitialization.screen
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -16,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.TextValue
 import io.snaps.coreuicompose.tools.error
@@ -74,9 +74,8 @@ fun SelectorTile(
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
             .offset(x = offsetX.value.dp)
-            .shadow(16.dp, CircleShape)
+            .shadow(12.dp, CircleShape)
             .background(AppTheme.specificColorScheme.lightGrey, CircleShape)
             .padding(vertical = 12.dp, horizontal = 16.dp)
             .clickable { data.clickListener() },
@@ -85,6 +84,8 @@ fun SelectorTile(
             text = data.text.get(),
             color = textColor,
             style = AppTheme.specificTypography.titleSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }

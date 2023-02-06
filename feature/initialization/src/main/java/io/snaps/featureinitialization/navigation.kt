@@ -1,19 +1,19 @@
-package io.snaps.featureinitialisation
+package io.snaps.featureinitialization
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import io.snaps.corenavigation.AppRoute
-import io.snaps.corenavigation.InitialisationFeatureProvider
+import io.snaps.corenavigation.InitializationFeatureProvider
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
-import io.snaps.featureinitialisation.screen.WalletImportScreen
-import io.snaps.featureinitialisation.screen.ConnectWalletScreen
-import io.snaps.featureinitialisation.screen.CreateUserScreen
-import io.snaps.featureinitialisation.screen.createwallet.CreateWalletScreen
-import io.snaps.featureinitialisation.screen.createwallet.CreatedWalletScreen
-import io.snaps.featureinitialisation.screen.createwallet.PhraseListScreen
-import io.snaps.featureinitialisation.screen.createwallet.VerificationScreen
+import io.snaps.featureinitialization.screen.WalletImportScreen
+import io.snaps.featureinitialization.screen.ConnectWalletScreen
+import io.snaps.featureinitialization.screen.CreateUserScreen
+import io.snaps.featureinitialization.screen.createwallet.CreateWalletScreen
+import io.snaps.featureinitialization.screen.createwallet.CreatedWalletScreen
+import io.snaps.featureinitialization.screen.createwallet.PhraseListScreen
+import io.snaps.featureinitialization.screen.createwallet.VerificationScreen
 import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController) {
@@ -29,9 +29,9 @@ internal class ScreenNavigator(navHostController: NavHostController) : Navigator
     fun toCreatedWalletScreen() = navHostController.navigate(AppRoute.Verification)
 }
 
-class InitialisationFeatureProviderImpl @Inject constructor() : InitialisationFeatureProvider {
+class InitializationFeatureProviderImpl @Inject constructor() : InitializationFeatureProvider {
 
-    override fun NavGraphBuilder.initialisationGraph(controller: NavHostController) {
+    override fun NavGraphBuilder.initializationGraph(controller: NavHostController) {
         composable(AppRoute.CreateUser) { CreateUserScreen(controller) }
         composable(AppRoute.WalletImport) { WalletImportScreen(controller) }
         composable(AppRoute.ConnectWallet) { ConnectWalletScreen(controller) }

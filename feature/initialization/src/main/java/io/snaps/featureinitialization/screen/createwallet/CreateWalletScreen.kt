@@ -1,4 +1,4 @@
-package io.snaps.featureinitialisation.screen.createwallet
+package io.snaps.featureinitialization.screen.createwallet
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,11 +17,11 @@ import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.status.FullScreenMessage
 import io.snaps.coreuicompose.uikit.status.FullScreenMessageUi
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.featureinitialisation.ScreenNavigator
+import io.snaps.featureinitialization.ScreenNavigator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreatedWalletScreen(
+fun CreateWalletScreen(
     navHostController: NavHostController,
 ) {
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
@@ -39,12 +39,12 @@ fun CreatedWalletScreen(
         FullScreenMessageUi(
             modifier = Modifier.padding(it),
             data = FullScreenMessage(
-                icon = ImageValue.ResImage(R.drawable.img_wallet),
-                title = StringKey.CreatedWalletTitle.textValue(),
-                message = StringKey.CreatedWalletMessage.textValue(),
+                icon = ImageValue.ResImage(R.drawable.img_create_wallet),
+                title = StringKey.CreateWalletTitle.textValue(),
+                message = StringKey.CreateWalletMessage.textValue(),
                 primaryButton = FullScreenMessage.ButtonData(
-                    text = StringKey.CreatedWalletAction.textValue(),
-                    onClick = { /*todo*/ },
+                    text = StringKey.CreateWalletAction.textValue(),
+                    onClick = router::toPhraseListScreen,
                 ),
             ),
         )

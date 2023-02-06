@@ -6,8 +6,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.BottomBarFeatureProvider
+import io.snaps.corenavigation.CollectionFeatureProvider
+import io.snaps.corenavigation.FeedFeatureProvider
+import io.snaps.corenavigation.InitializationFeatureProvider
 import io.snaps.corenavigation.MainFeatureProvider
+import io.snaps.corenavigation.ProfileFeatureProvider
 import io.snaps.corenavigation.RegistrationFeatureProvider
+import io.snaps.corenavigation.TasksFeatureProvider
+import io.snaps.corenavigation.WalletFeatureProvider
 import io.snaps.corenavigation.base.createRoute
 import io.snaps.coreuitheme.compose.AppTheme
 import javax.inject.Inject
@@ -16,6 +22,12 @@ class NavHostProvider @Inject constructor(
     private val registrationFeatureProvider: RegistrationFeatureProvider,
     private val bottomBarFeatureProvider: BottomBarFeatureProvider,
     private val mainFeatureProvider: MainFeatureProvider,
+    private val initializationFeatureProvider: InitializationFeatureProvider,
+    private val profileFeatureProvider: ProfileFeatureProvider,
+    private val walletFeatureProvider: WalletFeatureProvider,
+    private val tasksFeatureProvider: TasksFeatureProvider,
+    private val collectionFeatureProvider: CollectionFeatureProvider,
+    private val feedFeatureProvider: FeedFeatureProvider,
 ) {
 
     @Composable
@@ -42,6 +54,11 @@ class NavHostProvider @Inject constructor(
                 mock5Graph(navController)
             }
             with(bottomBarFeatureProvider) { bottomBarGraph(AppRoute.MainBottomBar, mainBottomBarItems()) }
+            with(initializationFeatureProvider) { initializationGraph(navController) }
+            with(walletFeatureProvider) { walletGraph(navController) }
+            with(tasksFeatureProvider) { tasksGraph(navController) }
+            with(collectionFeatureProvider) { collectionGraph(navController) }
+            with(feedFeatureProvider) { feedGraph(navController) }
         }
     }
 
@@ -96,5 +113,6 @@ class NavHostProvider @Inject constructor(
 
     private fun NavGraphBuilder.mainTab5Graph(controller: NavHostController) {
         with(mainFeatureProvider) { mock5Graph(controller) }
+        with(profileFeatureProvider) { profileGraph(controller) }
     }
 }

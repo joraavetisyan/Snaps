@@ -306,7 +306,8 @@ private fun LoginWithEmailDialog(
                         text = LocalStringHolder.current(StringKey.RegistrationHintEmailAddress),
                         style = AppTheme.specificTypography.titleSmall,
                     )
-                }
+                },
+                maxLines = 1,
             )
             SimpleTextField(
                 modifier = Modifier
@@ -333,7 +334,8 @@ private fun LoginWithEmailDialog(
                             text = StringKey.RegistrationActionSendCode.textValue()
                         )
                     }
-                }
+                },
+                maxLines = 1,
             )
             LoginWithEmailButton(
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),

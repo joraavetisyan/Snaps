@@ -54,7 +54,7 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Send",
     ),
     key(StringKey.RegistrationMessagePrivacyPolicy) to mapOf(
-        SupportedLanguageKey.En to "By creating an account, I consent to the processing of my data in accordance with the Privacy Policy and \nTerms of Use",
+        SupportedLanguageKey.En to "By creating an account, I consent to the processing of my data in accordance with the Privacy Policy and Terms of Use",
     ),
     key(StringKey.RegistrationActionPrivacyPolicy) to mapOf(
         SupportedLanguageKey.En to "Privacy Policy",

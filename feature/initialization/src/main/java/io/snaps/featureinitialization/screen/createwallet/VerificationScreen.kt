@@ -1,15 +1,14 @@
-package io.snaps.featureinitialisation.screen.createwallet
+package io.snaps.featureinitialization.screen.createwallet
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
@@ -25,26 +24,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
-import io.snaps.featureinitialisation.ScreenNavigator
-import io.snaps.featureinitialisation.viewmodel.CreateViewModel
-import io.snaps.featureinitialisation.viewmodel.Phrase
+import io.snaps.featureinitialization.ScreenNavigator
+import io.snaps.featureinitialization.screen.SelectorTile
+import io.snaps.featureinitialization.screen.SelectorTileData
+import io.snaps.featureinitialization.viewmodel.CreateViewModel
+import io.snaps.featureinitialization.viewmodel.Phrase
 
 @Composable
-fun PhraseListScreen(
+fun VerificationScreen(
     navHostController: NavHostController,
 ) {
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
@@ -52,22 +51,32 @@ fun PhraseListScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
-    PhraseListScreen(
+    viewModel.command.collectAsCommand {
+        when (it) {
+            CreateViewModel.Command.OpenCreatedWalletScreen -> router.toCreatedWalletScreen()
+        }
+    }
+
+    VerificationScreen(
         uiState = uiState,
-        onContinueButtonClicked = router::toVerificationScreen,
+        onContinueButtonClicked = viewModel::onContinueButtonClicked,
         onBackClicked = router::back,
+        onPhraseItemClicked = viewModel::onPhraseItemClicked,
+        onAnimationFinished = viewModel::onAnimationFinished,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PhraseListScreen(
+private fun VerificationScreen(
     uiState: CreateViewModel.UiState,
     onContinueButtonClicked: () -> Unit,
     onBackClicked: () -> Boolean,
+    onPhraseItemClicked: (Phrase) -> Unit,
+    onAnimationFinished: (Phrase) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val topBarTitle = LocalStringHolder.current(StringKey.PhraseListTitle)
+    val topBarTitle = LocalStringHolder.current(StringKey.VerificationTitle)
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -87,67 +96,80 @@ private fun PhraseListScreen(
                     .padding(horizontal = 12.dp, vertical = 24.dp)
                     .shadow(elevation = 16.dp, shape = CircleShape),
                 onClick = onContinueButtonClicked,
+                enabled = uiState.isContinueButtonEnabled,
             ) {
-                SimpleButtonContent(text = StringKey.PhraseListActionContinue.textValue())
+                SimpleButtonContent(text = StringKey.VerificationActionContinue.textValue())
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
     ) {
         Column(
-            modifier = Modifier.padding(it),
+            modifier = Modifier
+                .padding(it)
+                .padding(horizontal = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = LocalStringHolder.current(StringKey.PhraseListMessage),
+                text = LocalStringHolder.current(StringKey.VerificationMessage),
                 style = AppTheme.specificTypography.titleSmall,
                 modifier = Modifier
-                    .padding(horizontal = 32.dp, vertical = 12.dp)
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 12.dp, bottom = 24.dp)
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = AppTheme.specificColorScheme.textSecondary,
             )
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                items(uiState.phrases) { item ->
-                    Item(phrase = item)
-                }
+
+            for (i in 0..uiState.shuffledPhrases.lastIndex step 3) {
+                PhraseBlock(
+                    phrases = uiState.shuffledPhrases.subList(i, i + 3),
+                    onPhraseItemClicked = onPhraseItemClicked,
+                    onAnimationFinished = onAnimationFinished,
+                )
+                Spacer(modifier = Modifier.height(12.dp))
             }
         }
     }
 }
 
 @Composable
-private fun Item(
-    phrase: Phrase,
+private fun PhraseBlock(
+    phrases: List<Phrase>,
+    onPhraseItemClicked: (Phrase) -> Unit,
+    onAnimationFinished: (Phrase) -> Unit,
 ) {
-    val text = buildAnnotatedString {
-        val textFormatted = "${phrase.orderNumber}. ${phrase.text}"
-        append(textFormatted)
-        val ordinalNumberText = "${phrase.orderNumber}."
-        val startIndex = textFormatted.indexOf(ordinalNumberText)
-        val endIndex = startIndex + ordinalNumberText.length
-        addStyle(
-            style = SpanStyle(
-                color = AppTheme.specificColorScheme.textSecondary,
-                textDecoration = TextDecoration.None
-            ),
-            start = startIndex,
-            end = endIndex,
-        )
-    }
-    Text(
-        text = text,
-        color = AppTheme.specificColorScheme.textPrimary,
-        style = AppTheme.specificTypography.titleSmall,
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(16.dp, CircleShape)
-            .background(AppTheme.specificColorScheme.lightGrey, CircleShape)
-            .padding(horizontal = 24.dp, vertical = 16.dp),
-    )
+            .background(color = AppTheme.specificColorScheme.white, shape = AppTheme.shapes.medium)
+            .border(
+                width = 1.dp,
+                color = AppTheme.specificColorScheme.darkGrey,
+                shape = AppTheme.shapes.medium,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "3.",
+            color = AppTheme.specificColorScheme.textSecondary,
+            style = AppTheme.specificTypography.titleSmall,
+            modifier = Modifier.padding(start = 24.dp),
+        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(24.dp),
+        ) {
+            phrases.forEach { item ->
+                SelectorTile(
+                    data = SelectorTileData(
+                        text = item.text.textValue(),
+                        status = item.status,
+                        clickListener = { onPhraseItemClicked(item) },
+                        onAnimationFinished = { onAnimationFinished(item) },
+                    ),
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        }
+    }
 }

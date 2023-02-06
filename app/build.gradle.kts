@@ -96,7 +96,7 @@ dependencies {
     implementation(projects.featureBottomBar)
     implementation(projects.featureMain)
     implementation(projects.featureRegistration)
-    implementation(projects.featureInitialisation)
+    implementation(projects.featureInitialization)
     implementation(projects.featureWallet)
     implementation(projects.featureProfile)
     implementation(projects.featureCollection)
