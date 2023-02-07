@@ -32,9 +32,6 @@ internal val strings = mapOf(
     key(StringKey.RegistrationTitle) to mapOf(
         SupportedLanguageKey.En to "Login / Registration",
     ),
-    key(StringKey.RegistrationActionLoginWithApple) to mapOf(
-        SupportedLanguageKey.En to "Login with Apple",
-    ),
     key(StringKey.RegistrationActionLoginWithGoogle) to mapOf(
         SupportedLanguageKey.En to "Login with Google",
     ),
@@ -50,9 +47,6 @@ internal val strings = mapOf(
     key(StringKey.RegistrationFieldOr) to mapOf(
         SupportedLanguageKey.En to "Or",
     ),
-    key(StringKey.RegistrationActionSendCode) to mapOf(
-        SupportedLanguageKey.En to "Send",
-    ),
     key(StringKey.RegistrationMessagePrivacyPolicy) to mapOf(
         SupportedLanguageKey.En to "By creating an account, I consent to the processing of my data in accordance with the Privacy Policy and Terms of Use",
     ),
@@ -62,14 +56,45 @@ internal val strings = mapOf(
     key(StringKey.RegistrationActionTermsOfUse) to mapOf(
         SupportedLanguageKey.En to "Terms of Use",
     ),
-    key(StringKey.RegistrationHintEmailAddress) to mapOf(
+    key(StringKey.RegistrationDialogSignInTitle) to mapOf(
+        SupportedLanguageKey.En to "SignIn",
+    ),
+    key(StringKey.RegistrationDialogSignInMessage) to mapOf(
+        SupportedLanguageKey.En to "Enter your e-mail address and password to login to SNAPS",
+    ),
+    key(StringKey.RegistrationDialogSignInHintEmail) to mapOf(
         SupportedLanguageKey.En to "Enter your email address",
     ),
-    key(StringKey.RegistrationHintConfirmationCode) to mapOf(
-        SupportedLanguageKey.En to "Enter confirmation code",
+    key(StringKey.RegistrationDialogSignInActionLogin) to mapOf(
+        SupportedLanguageKey.En to "Sign in with email",
     ),
-    key(StringKey.RegistrationMessageEnterEmail) to mapOf(
-        SupportedLanguageKey.En to "Enter your e-mail address and receive the code to the specified mail",
+    key(StringKey.RegistrationDialogSignInActionRegistration) to mapOf(
+        SupportedLanguageKey.En to "Don't have account yet? Sign up",
+    ),
+    key(StringKey.RegistrationDialogSignInHintPassword) to mapOf(
+        SupportedLanguageKey.En to "Enter password",
+    ),
+
+    key(StringKey.RegistrationDialogSignUpTitle) to mapOf(
+        SupportedLanguageKey.En to "Sign up",
+    ),
+    key(StringKey.RegistrationDialogSignUpMessage) to mapOf(
+        SupportedLanguageKey.En to "Enter your e-mail address and password to registration to SNAPS",
+    ),
+    key(StringKey.RegistrationDialogSignUpHintEmail) to mapOf(
+        SupportedLanguageKey.En to "Enter your email address",
+    ),
+    key(StringKey.RegistrationDialogSignUpHintPassword) to mapOf(
+        SupportedLanguageKey.En to "Enter password",
+    ),
+    key(StringKey.RegistrationDialogSignUpHintConfirmPassword) to mapOf(
+        SupportedLanguageKey.En to "Confirm password",
+    ),
+    key(StringKey.RegistrationDialogSignUpActionRegistration) to mapOf(
+        SupportedLanguageKey.En to "Sign up with email",
+    ),
+    key(StringKey.RegistrationDialogSignUpActionLogin) to mapOf(
+        SupportedLanguageKey.En to "Already has account? Sign in",
     ),
 
     key(StringKey.WalletImportTitle) to mapOf(

@@ -5,6 +5,7 @@ import io.snaps.basesession.data.SessionRepository
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.coredata.database.TokenStorage
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RegistrationViewModel @Inject constructor(
     private val sessionRepository: SessionRepository,
+    private val tokenStorage: TokenStorage,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -28,32 +30,47 @@ class RegistrationViewModel @Inject constructor(
 
     fun onTermsOfUserClicked() { /*TODO*/ }
 
-    fun showRegistrationForm() = viewModelScope.launch {
+    fun onLoginWithEmailClicked() = viewModelScope.launch {
         _uiState.update {
             it.copy(
-                bottomDialogType = BottomDialogType.LoginWithEmail,
-                confirmationCodeValue = "",
+                bottomDialogType = BottomDialogType.SignIn,
+                confirmPasswordValue = "",
+                passwordValue = "",
                 emailAddressValue = "",
             )
         }
         _command publish Command.ShowBottomDialog
     }
 
-    fun onLoginWithEmailClicked() = viewModelScope.launch {
-        if (uiState.value.isConfirmationCodeValid) {
-            _command publish Command.OpenConnectWalletScreen
-        }
-    }
-
-    fun onLoginWithAppleClicked() { sessionRepository.onLogin() }
-
-    fun onLoginWithGoogleClicked() { sessionRepository.onLogin() }
-
     fun onLoginWithTwitterClicked() { sessionRepository.onLogin() }
 
     fun onLoginWithFacebookClicked() { sessionRepository.onLogin() }
 
-    fun onSendCodeClicked() { /*TODO*/ }
+    fun onSignUpWithEmailClicked() { sessionRepository.onLogin() }
+
+    fun showSignInBottomDialog() = viewModelScope.launch {
+        _uiState.update {
+            it.copy(
+                bottomDialogType = BottomDialogType.SignIn,
+                confirmPasswordValue = "",
+                passwordValue = "",
+                emailAddressValue = "",
+            )
+        }
+        _command publish Command.ShowBottomDialog
+    }
+
+    fun showSignUpBottomDialog() = viewModelScope.launch {
+        _uiState.update {
+            it.copy(
+                bottomDialogType = BottomDialogType.SignUp,
+                confirmPasswordValue = "",
+                passwordValue = "",
+                emailAddressValue = "",
+            )
+        }
+        _command publish Command.ShowBottomDialog
+    }
 
     fun onEmailAddressValueChanged(emailAddress: String) {
         _uiState.update {
@@ -61,22 +78,39 @@ class RegistrationViewModel @Inject constructor(
         }
     }
 
-    fun onConfirmationCodeValueChanged(confirmationCode: String) {
+    fun onPasswordValueChanged(password: String) {
         _uiState.update {
-            it.copy(confirmationCodeValue = confirmationCode)
+            it.copy(passwordValue = password)
         }
     }
 
+    fun onConfirmPasswordValueChanged(password: String) {
+        _uiState.update {
+            it.copy(confirmPasswordValue = password)
+        }
+    }
+
+    fun onAuthTokenReceived(token: String) { // todo
+        sessionRepository.onLogin()
+    }
+
     data class UiState(
-        val bottomDialogType: BottomDialogType = BottomDialogType.LoginWithEmail,
+        val bottomDialogType: BottomDialogType = BottomDialogType.SignIn,
         val emailAddressValue: String = "",
-        val confirmationCodeValue: String = "",
+        val passwordValue: String = "",
+        val confirmPasswordValue: String = "",
     ) {
-        val isConfirmationCodeValid get() = confirmationCodeValue.length >= 0 // todo
+        val isSignInButtonEnabled get() = emailAddressValue.isNotBlank()
+                && passwordValue.isNotBlank()
+
+        val isSignUpButtonEnabled get() = emailAddressValue.isNotBlank()
+                && passwordValue.isNotBlank()
+                && confirmPasswordValue.isNotBlank()
+                && passwordValue == confirmPasswordValue
     }
 
     enum class BottomDialogType {
-        LoginWithEmail,
+        SignIn, SignUp
     }
 
     sealed class Command {
