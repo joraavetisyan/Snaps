@@ -395,4 +395,20 @@ internal val strings = mapOf(
     key(StringKey.WithdrawActionConfirmTransaction) to mapOf(
         SupportedLanguageKey.En to "Confirm transaction",
     ),
+
+    key(StringKey.ProfileTitle) to mapOf(
+        SupportedLanguageKey.En to "My Profile",
+    ),
+    key(StringKey.ProfileTitleLikes) to mapOf(
+        SupportedLanguageKey.En to "Likes",
+    ),
+    key(StringKey.ProfileTitleSubscribers) to mapOf(
+        SupportedLanguageKey.En to "Subscribers",
+    ),
+    key(StringKey.ProfileTitleSubscriptions) to mapOf(
+        SupportedLanguageKey.En to "Subscriptions",
+    ),
+    key(StringKey.ProfileTitlePublication) to mapOf(
+        SupportedLanguageKey.En to "Publication",
+    ),
 )

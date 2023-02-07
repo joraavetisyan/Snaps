@@ -19,6 +19,7 @@ typealias PartialUrl = String
 typealias DeviceId = String
 typealias Uuid = String
 typealias CurrencySymbol = String
+typealias WalletAddress = String
 
 fun generateCurrentDateTime() = ZonedDateTime.now().toString()
 fun generateRequestId() = UUID.randomUUID().toString()

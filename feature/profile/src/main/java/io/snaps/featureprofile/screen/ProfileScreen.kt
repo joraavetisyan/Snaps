@@ -19,9 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,11 +39,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.duplicate.ActionIconData
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
+import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.featureprofile.viewmodel.Photo
 import io.snaps.featureprofile.viewmodel.ProfileViewModel
@@ -83,7 +83,9 @@ private fun ProfileScreen(
         topBar = {
             SimpleTopAppBar(
                 title = {
-                    Text("My Profile")
+                    Text(
+                        text = LocalStringHolder.current(StringKey.ProfileTitle)
+                    )
                 },
                 titleTextStyle = AppTheme.specificTypography.titleLarge,
                 scrollBehavior = scrollBehavior,
@@ -105,7 +107,7 @@ private fun ProfileScreen(
         Column(
             modifier = Modifier.padding(paddingValues),
         ) {
-            Info(uiState)
+            uiState.userInfoTileState.Content(modifier = Modifier)
             Spacer(modifier = Modifier.height(12.dp))
             Divider()
             Row(
@@ -148,75 +150,6 @@ private fun ProfileScreen(
                 items(uiState.images) { Item(it) }
             }
         }
-    }
-}
-
-@Composable
-private fun Info(
-    uiState: ProfileViewModel.UiState,
-) {
-    Box(
-        Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
-    ) {
-        Card(
-            shape = AppTheme.shapes.medium,
-            modifier = Modifier.align(Alignment.BottomCenter),
-            colors = CardDefaults.cardColors(containerColor = AppTheme.specificColorScheme.white)
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 12.dp)
-                    .padding(bottom = 16.dp)
-                    .padding(top = 32.dp)
-                    .height(IntrinsicSize.Min)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                PieceOfInfo(uiState.likes, "Likes")
-                VerticalDivider()
-                PieceOfInfo(uiState.subscribers, "Subscribers")
-                VerticalDivider()
-                PieceOfInfo(uiState.subscriptions, "Subscriptions")
-                VerticalDivider()
-                PieceOfInfo(uiState.publication, "Publication")
-            }
-        }
-        Card(
-            shape = CircleShape,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(bottom = 76.dp),
-        ) {
-            Image(
-                painter = uiState.profileImage.get(),
-                contentDescription = null,
-                modifier = Modifier.size(76.dp),
-                contentScale = ContentScale.Crop,
-            )
-        }
-    }
-}
-
-@Composable
-private fun VerticalDivider() {
-    Divider(
-        modifier = Modifier
-            .padding(vertical = 8.dp)
-            .fillMaxHeight()
-            .width(1.dp)
-    )
-}
-
-@Composable
-private fun PieceOfInfo(
-    value: String,
-    name: String,
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(text = value, style = AppTheme.specificTypography.titleMedium)
-        Text(text = name, style = AppTheme.specificTypography.bodySmall)
     }
 }
 

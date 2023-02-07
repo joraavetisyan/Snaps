@@ -1,7 +1,19 @@
 package io.snaps.baseprofile.domain
 
+import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.model.Uuid
+import java.time.LocalDateTime
+
 data class ProfileModel(
-    val firstName: String?,
-    val lastName: String?,
-    val middleName: String?,
+    val entityId: Uuid,
+    val createdDate: LocalDateTime,
+    val userId: Uuid,
+    val email: String,
+    val wallet: String,
+    val name: String,
+    val totalLikes: String,
+    val totalSubscribers: String,
+    val totalSubscriptions: String,
+    val totalPublication: String,
+    val avatar: ImageValue.Url,
 )

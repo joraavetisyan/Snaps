@@ -2,6 +2,9 @@ package io.snaps.corecommon.date
 
 import io.snaps.corecommon.strings.DEFAULT_LOCALE
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 object LocalDateFactory {
 
@@ -29,3 +32,7 @@ object LocalDateFactory {
         LocalDate.parse(date, format.toDateTimeFormat(DEFAULT_LOCALE))
     }.getOrNull()
 }
+
+fun ZonedDateTime.toOffsetLocalDateTime(
+    zoneId: ZoneId = ZoneId.systemDefault(),
+) = LocalDateTime.ofInstant(this.toInstant(), zoneId)

@@ -147,4 +147,10 @@ enum class StringKey {
     WithdrawFieldTransactionFee,
     WithdrawFieldTotal,
     WithdrawActionConfirmTransaction,
+
+    ProfileTitle,
+    ProfileTitleLikes,
+    ProfileTitleSubscribers,
+    ProfileTitleSubscriptions,
+    ProfileTitlePublication,
 }
