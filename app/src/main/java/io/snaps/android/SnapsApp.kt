@@ -14,6 +14,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import coil.decode.SvgDecoder
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import io.snaps.corecommon.model.BuildInfo
 import io.snaps.coredata.network.ApiConfig
 
 @HiltAndroidApp
@@ -27,22 +29,20 @@ class SnapsApp : Application(), ApplicationCoroutineScopeHolder, ImageLoaderFact
 
     @Inject lateinit var apiConfig: ApiConfig
 
+    @Inject lateinit var buildInfo: BuildInfo
+
     override val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     override fun onCreate() {
         super.onCreate()
 
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(buildInfo.isRelease)
         AnalyticsTrackerHolder.init(tracker)
     }
 
     override fun newImageLoader() = ImageLoader.Builder(this)
-        .okHttpClient {
-            apiConfig.okHttpBuilder()
-                .build()
-        }
-        .components {
-            add(SvgDecoder.Factory())
-        }
+        .okHttpClient { apiConfig.okHttpBuilder().build() }
+        .components { add(SvgDecoder.Factory()) }
         .crossfade(true)
         .build()
 }

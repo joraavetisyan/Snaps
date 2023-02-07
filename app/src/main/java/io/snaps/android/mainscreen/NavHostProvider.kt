@@ -9,19 +9,23 @@ import io.snaps.corenavigation.BottomBarFeatureProvider
 import io.snaps.corenavigation.CollectionFeatureProvider
 import io.snaps.corenavigation.FeedFeatureProvider
 import io.snaps.corenavigation.InitializationFeatureProvider
-import io.snaps.corenavigation.MainFeatureProvider
 import io.snaps.corenavigation.ProfileFeatureProvider
 import io.snaps.corenavigation.RegistrationFeatureProvider
 import io.snaps.corenavigation.TasksFeatureProvider
 import io.snaps.corenavigation.WalletFeatureProvider
+import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.createRoute
 import io.snaps.coreuitheme.compose.AppTheme
+import io.snaps.featurecollection.screen.ItemListScreen
+import io.snaps.featurefeed.screen.PopularVideosScreen
+import io.snaps.featurefeed.screen.ReelsScreen
+import io.snaps.featureprofile.screen.ProfileScreen
+import io.snaps.featuretasks.screen.TasksScreen
 import javax.inject.Inject
 
 class NavHostProvider @Inject constructor(
     private val registrationFeatureProvider: RegistrationFeatureProvider,
     private val bottomBarFeatureProvider: BottomBarFeatureProvider,
-    private val mainFeatureProvider: MainFeatureProvider,
     private val initializationFeatureProvider: InitializationFeatureProvider,
     private val profileFeatureProvider: ProfileFeatureProvider,
     private val walletFeatureProvider: WalletFeatureProvider,
@@ -31,88 +35,88 @@ class NavHostProvider @Inject constructor(
 ) {
 
     @Composable
-    fun RegistrationNavHost(navController: NavHostController, needOnBoarding: Boolean) = Graph(
-        navController, when {
-            needOnBoarding -> createRoute(AppRoute.Registration)
+    fun RegistrationNavHost(navController: NavHostController, isNeedForOnboarding: Boolean) = Graph(
+        navController = navController,
+        startDestinationRoute = when {
+            isNeedForOnboarding -> createRoute(AppRoute.Registration)
             else -> createRoute(AppRoute.Registration)
         }
     )
 
     @Composable
-    fun AuthorizedGraph(navController: NavHostController) =
-        Graph(navController, createRoute(AppRoute.MainBottomBar))
+    fun AuthorizedGraph(navController: NavHostController) = Graph(
+        navController = navController,
+        startDestinationRoute = createRoute(AppRoute.MainBottomBar),
+    )
 
     @Composable
     fun Graph(navController: NavHostController, startDestinationRoute: String) {
         NavHost(navController = navController, startDestination = startDestinationRoute) {
             with(registrationFeatureProvider) { registrationGraph(navController) }
-            with(mainFeatureProvider) {
-                mock1Graph(navController)
-                mock2Graph(navController)
-                mock3Graph(navController)
-                mock4Graph(navController)
-                mock5Graph(navController)
-            }
-            with(bottomBarFeatureProvider) { bottomBarGraph(AppRoute.MainBottomBar, mainBottomBarItems()) }
             with(initializationFeatureProvider) { initializationGraph(navController) }
-            with(walletFeatureProvider) { walletGraph(navController) }
-            with(tasksFeatureProvider) { tasksGraph(navController) }
-            with(collectionFeatureProvider) { collectionGraph(navController) }
-            with(feedFeatureProvider) { feedGraph(navController) }
+            with(bottomBarFeatureProvider) {
+                bottomBarGraph(route = AppRoute.MainBottomBar, items = mainBottomBarItems)
+            }
         }
     }
 
-    private fun mainBottomBarItems() = listOf(
-        BottomBarFeatureProvider.ScreenItem(
-            icon = AppTheme.specificIcons.camera,
-            route = AppRoute.MainBottomBar.MainTab1,
-            startDestination = AppRoute.MainBottomBar.Mock1,
-            builder = { mainTab1Graph(it) },
-        ),
-        BottomBarFeatureProvider.ScreenItem(
-            icon = AppTheme.specificIcons.star,
-            route = AppRoute.MainBottomBar.MainTab2,
-            startDestination = AppRoute.MainBottomBar.Mock2,
-            builder = { mainTab2Graph(it) },
-        ),
-        BottomBarFeatureProvider.ScreenItem(
-            icon = AppTheme.specificIcons.check,
-            route = AppRoute.MainBottomBar.MainTab3,
-            startDestination = AppRoute.MainBottomBar.Mock3,
-            builder = { mainTab3Graph(it) },
-        ),
-        BottomBarFeatureProvider.ScreenItem(
-            icon = AppTheme.specificIcons.picture,
-            route = AppRoute.MainBottomBar.MainTab4,
-            startDestination = AppRoute.MainBottomBar.Mock4,
-            builder = { mainTab4Graph(it) },
-        ),
-        BottomBarFeatureProvider.ScreenItem(
-            icon = AppTheme.specificIcons.profile,
-            route = AppRoute.MainBottomBar.MainTab5,
-            startDestination = AppRoute.MainBottomBar.Mock5,
-            builder = { mainTab5Graph(it) },
-        ),
-    )
+    private val mainBottomBarItems
+        get() = listOf(
+            BottomBarFeatureProvider.ScreenItem(
+                icon = AppTheme.specificIcons.camera,
+                route = AppRoute.MainBottomBar.MainTab1,
+                startDestination = AppRoute.MainBottomBar.MainTab1Start,
+                builder = { mainTab1Graph(it) },
+            ),
+            BottomBarFeatureProvider.ScreenItem(
+                icon = AppTheme.specificIcons.star,
+                route = AppRoute.MainBottomBar.MainTab2,
+                startDestination = AppRoute.MainBottomBar.MainTab2Start,
+                builder = { mainTab2Graph(it) },
+            ),
+            BottomBarFeatureProvider.ScreenItem(
+                icon = AppTheme.specificIcons.check,
+                route = AppRoute.MainBottomBar.MainTab3,
+                startDestination = AppRoute.MainBottomBar.MainTab3Start,
+                builder = { mainTab3Graph(it) },
+            ),
+            BottomBarFeatureProvider.ScreenItem(
+                icon = AppTheme.specificIcons.picture,
+                route = AppRoute.MainBottomBar.MainTab4,
+                startDestination = AppRoute.MainBottomBar.MainTab4Start,
+                builder = { mainTab4Graph(it) },
+            ),
+            BottomBarFeatureProvider.ScreenItem(
+                icon = AppTheme.specificIcons.profile,
+                route = AppRoute.MainBottomBar.MainTab5,
+                startDestination = AppRoute.MainBottomBar.MainTab5Start,
+                builder = { mainTab5Graph(it) },
+            ),
+        )
 
+    // todo better graph
     private fun NavGraphBuilder.mainTab1Graph(controller: NavHostController) {
-        with(mainFeatureProvider) { mock1Graph(controller) }
+        composable(AppRoute.MainBottomBar.MainTab1Start) { ReelsScreen(controller) }
+        with(feedFeatureProvider) { feedGraph(controller) }
     }
 
     private fun NavGraphBuilder.mainTab2Graph(controller: NavHostController) {
-        with(mainFeatureProvider) { mock2Graph(controller) }
+        composable(AppRoute.MainBottomBar.MainTab2Start) { PopularVideosScreen(controller) }
+        with(walletFeatureProvider) { walletGraph(controller) }
     }
 
     private fun NavGraphBuilder.mainTab3Graph(controller: NavHostController) {
-        with(mainFeatureProvider) { mock3Graph(controller) }
+        composable(AppRoute.MainBottomBar.MainTab3Start) { TasksScreen(controller) }
+        with(tasksFeatureProvider) { tasksGraph(controller) }
     }
 
     private fun NavGraphBuilder.mainTab4Graph(controller: NavHostController) {
-        with(mainFeatureProvider) { mock4Graph(controller) }
+        composable(AppRoute.MainBottomBar.MainTab4Start) { ItemListScreen(controller) }
+        with(collectionFeatureProvider) { collectionGraph(controller) }
     }
 
     private fun NavGraphBuilder.mainTab5Graph(controller: NavHostController) {
-        with(mainFeatureProvider) { mock5Graph(controller) }
+        composable(AppRoute.MainBottomBar.MainTab5Start) { ProfileScreen(controller) }
         with(profileFeatureProvider) { profileGraph(controller) }
     }
 }

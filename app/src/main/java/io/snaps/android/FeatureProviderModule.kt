@@ -8,7 +8,6 @@ import io.snaps.corenavigation.BottomBarFeatureProvider
 import io.snaps.corenavigation.CollectionFeatureProvider
 import io.snaps.corenavigation.FeedFeatureProvider
 import io.snaps.corenavigation.InitializationFeatureProvider
-import io.snaps.corenavigation.MainFeatureProvider
 import io.snaps.corenavigation.ProfileFeatureProvider
 import io.snaps.corenavigation.RegistrationFeatureProvider
 import io.snaps.corenavigation.TasksFeatureProvider
@@ -16,7 +15,6 @@ import io.snaps.corenavigation.WalletFeatureProvider
 import io.snaps.featurebottombar.BottomBarFeatureProviderImpl
 import io.snaps.featurecollection.CollectionFeatureProviderImpl
 import io.snaps.featurefeed.FeedFeatureProviderImpl
-import io.snaps.featuremain.presentation.MainFeatureProviderImpl
 import io.snaps.featureprofile.ProfileFeatureProviderImpl
 import io.snaps.featureregistration.presentation.RegistrationFeatureProviderImpl
 import io.snaps.featuretasks.TasksFeatureProviderImpl
@@ -31,10 +29,6 @@ interface FeatureProviderModule {
     @Binds
     @Singleton
     fun bottomBarProvider(provider: BottomBarFeatureProviderImpl): BottomBarFeatureProvider
-
-    @Binds
-    @Singleton
-    fun mainProvider(provider: MainFeatureProviderImpl): MainFeatureProvider
 
     @Binds
     @Singleton

@@ -16,13 +16,11 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import io.snaps.corenavigation.BottomBarFeatureProvider
-import io.snaps.corenavigation.MainFeatureProvider
+import dagger.hilt.android.AndroidEntryPoint
 import io.snaps.coreuicompose.tools.SystemBarsIconsColor
 import io.snaps.coreuicompose.uikit.status.MessageBannerUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
-import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -30,13 +28,7 @@ import javax.inject.Inject
 class AppActivity : FragmentActivity() {
 
     @Inject
-    lateinit var bottomBarFeatureProvider: BottomBarFeatureProvider
-
-    @Inject
     lateinit var navHostProvider: NavHostProvider
-
-    @Inject
-    lateinit var mainFeatureProvider: MainFeatureProvider
 
     private var shouldKeepSplashScreen = true
 
@@ -67,7 +59,7 @@ class AppActivity : FragmentActivity() {
             when (val currentFlow = currentFlowState.value) {
                 is AppViewModel.StartFlow.RegistrationFlow -> navHostProvider.RegistrationNavHost(
                     navController = navController,
-                    needOnBoarding = currentFlow.needStartOnBoarding,
+                    isNeedForOnboarding = currentFlow.needStartOnBoarding,
                 )
                 is AppViewModel.StartFlow.AuthorizedFlow -> navHostProvider.AuthorizedGraph(
                     navController = navController,

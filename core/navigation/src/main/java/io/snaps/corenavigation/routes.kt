@@ -33,20 +33,20 @@ object AppRoute {
 
     object MainBottomBar : Route("MainBottomBar") {
 
-        object MainTab1 : Route("mainTab1")
-        object Mock1 : Route("Mock1")
+        object MainTab1 : Route("MainTab1")
+        object MainTab1Start : Route("MainTab1Start")
 
-        object MainTab2 : Route("mainTab2")
-        object Mock2 : Route("Mock2")
+        object MainTab2 : Route("MainTab2")
+        object MainTab2Start : Route("MainTab2Start")
 
-        object MainTab3 : Route("mainTab3")
-        object Mock3 : Route("Mock3")
+        object MainTab3 : Route("MainTab3")
+        object MainTab3Start : Route("MainTab3Start")
 
-        object MainTab4 : Route("mainTab4")
-        object Mock4 : Route("Mock4")
+        object MainTab4 : Route("MainTab4")
+        object MainTab4Start : Route("MainTab4Start")
 
-        object MainTab5 : Route("mainTab5")
-        object Mock5 : Route("Mock5")
+        object MainTab5 : Route("MainTab5")
+        object MainTab5Start : Route("MainTab5Start")
     }
 
     object Registration : Route("Registration")
