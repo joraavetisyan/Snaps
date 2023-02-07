@@ -1,12 +1,13 @@
 package io.snaps.baseprofile.domain
 
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.model.Uuid
 import java.time.LocalDateTime
 
 data class ProfileModel(
-    val entityId: String,
+    val entityId: Uuid,
     val createdDate: LocalDateTime,
-    val userId: String,
+    val userId: Uuid,
     val email: String,
     val wallet: String,
     val name: String,

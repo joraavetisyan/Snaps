@@ -25,11 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.other.ShimmerTileLine
 import io.snaps.coreuitheme.compose.AppTheme
+import io.snaps.coreuitheme.compose.LocalStringHolder
 
 sealed class UserInfoTileState : TileState {
 
@@ -67,13 +69,13 @@ private fun Data(
 ) {
     Container(modifier) {
         InfoContainer {
-            PieceOfInfo(data.likes, "Likes")
+            StatsLine(data.likes, LocalStringHolder.current(StringKey.ProfileTitleLikes))
             VerticalDivider()
-            PieceOfInfo(data.subscribers, "Subscribers")
+            StatsLine(data.subscribers, LocalStringHolder.current(StringKey.ProfileTitleSubscribers))
             VerticalDivider()
-            PieceOfInfo(data.subscriptions, "Subscriptions")
+            StatsLine(data.subscriptions, LocalStringHolder.current(StringKey.ProfileTitleSubscriptions))
             VerticalDivider()
-            PieceOfInfo(data.publication, "Publication")
+            StatsLine(data.publication, LocalStringHolder.current(StringKey.ProfileTitlePublication))
         }
         Card(
             shape = CircleShape,
@@ -159,7 +161,7 @@ private fun BoxScope.InfoContainer(
 }
 
 @Composable
-private fun PieceOfInfo(
+private fun StatsLine(
     value: String,
     name: String,
 ) {

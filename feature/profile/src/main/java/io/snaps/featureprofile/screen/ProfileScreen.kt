@@ -39,11 +39,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.duplicate.ActionIconData
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
+import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.featureprofile.viewmodel.Photo
 import io.snaps.featureprofile.viewmodel.ProfileViewModel
@@ -81,7 +83,9 @@ private fun ProfileScreen(
         topBar = {
             SimpleTopAppBar(
                 title = {
-                    Text("My Profile")
+                    Text(
+                        text = LocalStringHolder.current(StringKey.ProfileTitle)
+                    )
                 },
                 titleTextStyle = AppTheme.specificTypography.titleLarge,
                 scrollBehavior = scrollBehavior,
