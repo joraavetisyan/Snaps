@@ -1,4 +1,4 @@
-package io.snaps.featurefeed.viewmodel
+package io.snaps.featurefeed.presentation.viewmodel
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.corecommon.container.ImageValue

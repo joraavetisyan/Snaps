@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package io.snaps.featurefeed.screen
+package io.snaps.featurefeed.presentation.screen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -45,7 +45,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonLightS
 import io.snaps.coreuicompose.uikit.other.Progress
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.featurefeed.viewmodel.CreateVideoViewModel
+import io.snaps.featurefeed.presentation.viewmodel.CreateVideoViewModel
 import io.snaps.featurefeed.ScreenNavigator
 
 @Composable

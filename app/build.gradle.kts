@@ -94,7 +94,6 @@ dependencies {
     implementation(projects.baseSession)
 
     implementation(projects.featureBottomBar)
-    implementation(projects.featureMain)
     implementation(projects.featureRegistration)
     implementation(projects.featureInitialization)
     implementation(projects.featureWallet)

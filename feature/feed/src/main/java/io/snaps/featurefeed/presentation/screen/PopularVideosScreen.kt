@@ -1,4 +1,4 @@
-package io.snaps.featurefeed.screen
+package io.snaps.featurefeed.presentation.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -39,8 +39,8 @@ import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.baseplayer.domain.Reel
-import io.snaps.featurefeed.viewmodel.PopularVideosViewModel
+import io.snaps.baseplayer.domain.VideoClipModel
+import io.snaps.featurefeed.presentation.viewmodel.PopularVideosViewModel
 import io.snaps.baseplayer.ui.ReelPlayer
 import io.snaps.featurefeed.ScreenNavigator
 
@@ -52,7 +52,7 @@ fun PopularVideosScreen(
     val viewModel = hiltViewModel<PopularVideosViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
-    val headerState by viewModel.headerState.collectAsState()
+    val headerState by viewModel.headerUiState.collectAsState()
 
     PopularVideosScreen(
         uiState = uiState,
@@ -76,7 +76,7 @@ private fun PopularVideosScreen(
                 .padding(paddingValues)
                 .inset(insetAll()),
         ) {
-            MainHeader(uiState = headerState)
+            MainHeader(state = headerState)
             Text(
                 text = StringKey.PopularVideosTitle.textValue().get(),
                 style = AppTheme.specificTypography.titleLarge,
@@ -91,8 +91,8 @@ private fun PopularVideosScreen(
                 contentPadding = PaddingValues(12.dp),
             ) {
                 itemsIndexed(
-                    items = uiState.reels,
-                    key = { _, item -> item.reelInfo.id },
+                    items = uiState.videoClipModels,
+                    key = { _, item -> item.id },
                 ) { index, it ->
                     Item(it, index == 0)
                 }
@@ -102,7 +102,7 @@ private fun PopularVideosScreen(
 }
 
 @Composable
-private fun Item(item: Reel, shouldPlay: Boolean) {
+private fun Item(item: VideoClipModel, shouldPlay: Boolean) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -114,7 +114,7 @@ private fun Item(item: Reel, shouldPlay: Boolean) {
             ),
     ) {
         ReelPlayer(
-            reel = item,
+            videoClipUrl = item.url,
             shouldPlay = shouldPlay,
         )
         Row(
@@ -123,7 +123,7 @@ private fun Item(item: Reel, shouldPlay: Boolean) {
                 .padding(horizontal = 4.dp, vertical = 8.dp),
         ) {
             Icon(AppTheme.specificIcons.play.get(), null, tint = AppTheme.specificColorScheme.white)
-            Text(item.reelInfo.likes.toString(), color = AppTheme.specificColorScheme.white)
+            Text(item.likeCount.toString(), color = AppTheme.specificColorScheme.white)
         }
     }
 }

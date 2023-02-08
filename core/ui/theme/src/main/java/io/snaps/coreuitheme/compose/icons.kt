@@ -2,6 +2,7 @@ package io.snaps.coreuitheme.compose
 
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBack
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.NavigateNext
 import androidx.compose.material.icons.rounded.Phone
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Try
 import androidx.compose.ui.graphics.vector.ImageVector
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.IconValue
@@ -36,7 +38,8 @@ object SpecificIcons {
     val currencyExchange: IconValue = vector(Icons.Rounded.CurrencyExchange)
     val phone: IconValue = vector(Icons.Rounded.Phone)
     val error: IconValue = vector(Icons.Rounded.Error)
-    val favorite: IconValue = vector(Icons.Rounded.FavoriteBorder)
+    val favoriteBorder: IconValue = vector(Icons.Rounded.FavoriteBorder)
+    val favorite: IconValue = vector(Icons.Filled.Favorite)
     val close: IconValue = vector(Icons.Rounded.Close)
     val fingerprint: IconValue = vector(Icons.Rounded.Fingerprint)
     val delete: IconValue = vector(Icons.Rounded.Delete)
@@ -47,6 +50,7 @@ object SpecificIcons {
     val themeLight: IconValue = vector(Icons.Rounded.LightMode)
     val flipCamera: IconValue = vector(Icons.Rounded.FlipCameraAndroid)
     val chooseImage: IconValue = vector(Icons.Rounded.BrowseGallery)
+    val reload: IconValue = vector(Icons.Rounded.Try)
 
     val camera: IconValue = resource(R.drawable.ic_camera)
     val cameraTimer: IconValue = resource(R.drawable.ic_camera_timer)
@@ -74,6 +78,8 @@ object SpecificIcons {
     val topUp: IconValue = resource(R.drawable.ic_topup)
     val withdraw: IconValue = resource(R.drawable.ic_withdraw)
     val bnbToken: IconValue = resource(R.drawable.ic_bnb_token)
+    val comment: IconValue = resource(R.drawable.ic_comment)
+    val addCircled: IconValue = resource(R.drawable.ic_add)
 }
 
 private fun vector(value: ImageVector) = IconValue.Vector(value)

@@ -5,6 +5,9 @@ enum class StringKey {
     ActionStart,
     ActionSave,
     ActionReply,
+    ActionReload,
+
+    ErrorLoadFail,
 
     ConnectionSuccessMessage,
     ConnectionErrorMessage,

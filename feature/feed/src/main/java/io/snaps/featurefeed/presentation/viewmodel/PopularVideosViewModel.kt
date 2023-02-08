@@ -1,10 +1,9 @@
-package io.snaps.featurefeed.viewmodel
+package io.snaps.featurefeed.presentation.viewmodel
 
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.coreui.viewmodel.SimpleViewModel
-import io.snaps.featurefeed.data.demoReels
-import io.snaps.baseplayer.domain.Reel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +22,7 @@ class PopularVideosViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     data class UiState(
-        val reels: List<Reel> = demoReels,
+        val videoClipModels: List<VideoClipModel> = emptyList(),
     )
 
     sealed class Command

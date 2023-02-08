@@ -36,6 +36,7 @@ fun EnergyWidget(value: String, isFull: Boolean = false) {
 @Composable
 fun WorthWidget(
     vararg items: Pair<ImageValue?, String>,
+    modifier: Modifier = Modifier,
     backgroundColor: Color = AppTheme.specificColorScheme.uiContentBg,
 ) {
     @Composable
@@ -55,7 +56,7 @@ fun WorthWidget(
         }
     }
     Card(
-        modifier = Modifier.shadow(elevation = 16.dp, shape = MainHeaderElementShape),
+        modifier = modifier.shadow(elevation = 16.dp, shape = MainHeaderElementShape),
         shape = MainHeaderElementShape,
         elevation = CardDefaults.cardElevation(),
     ) {

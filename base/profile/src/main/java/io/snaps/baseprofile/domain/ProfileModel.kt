@@ -15,5 +15,5 @@ data class ProfileModel(
     val totalSubscribers: String,
     val totalSubscriptions: String,
     val totalPublication: String,
-    val avatar: ImageValue.Url,
+    val avatar: ImageValue,
 )

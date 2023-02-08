@@ -51,7 +51,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImagePainter.State.Empty.painter
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.R
@@ -84,7 +83,7 @@ fun ReferralProgramScreen(
     val viewModel = hiltViewModel<ReferralProgramViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
-    val headerState by viewModel.headerState.collectAsState()
+    val headerState by viewModel.headerUiState.collectAsState()
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -148,7 +147,7 @@ private fun ReferralProgramScreen(
                 .padding(paddingValues)
                 .inset(insetAll()),
         ) {
-            MainHeader(uiState = headerState)
+            MainHeader(state = headerState)
             Text(
                 text = StringKey.ReferralProgramTitle.textValue().get(),
                 style = AppTheme.specificTypography.titleLarge,

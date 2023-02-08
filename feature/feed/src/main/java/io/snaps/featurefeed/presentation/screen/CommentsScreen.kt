@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package io.snaps.featurefeed.screen
+package io.snaps.featurefeed.presentation.screen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -47,7 +47,7 @@ import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurefeed.domain.Comment
-import io.snaps.featurefeed.viewmodel.CommentsViewModel
+import io.snaps.featurefeed.presentation.viewmodel.CommentsViewModel
 import io.snaps.featurefeed.ScreenNavigator
 
 @Composable
@@ -208,7 +208,7 @@ private fun Item(item: Comment) {
         }
         Column {
             Image(
-                painter = AppTheme.specificIcons.favorite.get(),
+                painter = AppTheme.specificIcons.favoriteBorder.get(),
                 contentDescription = null,
                 modifier = Modifier.size(12.dp),
                 contentScale = ContentScale.Crop,

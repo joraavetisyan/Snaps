@@ -11,7 +11,10 @@ import io.snaps.baseprofile.data.MainHeaderHandlerImplDelegate
 import io.snaps.baseprofile.data.ProfileApi
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.data.ProfileRepositoryImpl
+import io.snaps.basesources.featuretoggle.Feature
+import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.coredata.network.ApiConfig
+import io.snaps.coredata.network.ApiService
 import javax.inject.Singleton
 
 @Module
@@ -20,16 +23,14 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun profileApi(config: ApiConfig): ProfileApi = FakeProfileApi()
-
-    /*@Provides
-    @Singleton
-    fun profileApi(config: ApiConfig) = config
-        .serviceBuilder(ProfileApi::class.java)
-        .service(ApiService.General)
-        .interceptor(config.commonHeaderInterceptor)
-        .interceptor(config.authenticationInterceptor)
-        .build()*/
+    fun profileApi(config: ApiConfig, feature: FeatureToggle): ProfileApi =
+        if (feature.isEnabled(Feature.ProfileApiMock)) FakeProfileApi()
+        else config
+            .serviceBuilder(ProfileApi::class.java)
+            .service(ApiService.General)
+            .interceptor(config.commonHeaderInterceptor)
+            .interceptor(config.authenticationInterceptor)
+            .build()
 }
 
 @Module

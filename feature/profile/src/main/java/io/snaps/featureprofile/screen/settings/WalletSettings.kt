@@ -51,7 +51,7 @@ fun WalletSettingsScreen(
     val viewModel = hiltViewModel<WalletSettingsViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
-    val headerState by viewModel.headerState.collectAsState()
+    val headerState by viewModel.headerUiState.collectAsState()
 
     viewModel.command.collectAsCommand {
         when (it) {
@@ -89,7 +89,7 @@ private fun WalletSettingsScreen(
                 .padding(paddingValues)
                 .inset(insetAll()),
         ) {
-            MainHeader(uiState = headerState)
+            MainHeader(state = headerState)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

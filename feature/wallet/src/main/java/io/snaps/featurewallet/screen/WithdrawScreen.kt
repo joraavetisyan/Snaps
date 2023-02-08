@@ -54,7 +54,7 @@ fun WithdrawScreen(
     val viewModel = hiltViewModel<WithdrawViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
-    val headerState by viewModel.headerState.collectAsState()
+    val headerState by viewModel.headerUiState.collectAsState()
 
     SocialNetworksScreen(
         uiState = uiState,
@@ -88,7 +88,7 @@ private fun SocialNetworksScreen(
                 .padding(paddingValues)
                 .inset(insetAll()),
         ) {
-            MainHeader(uiState = headerState)
+            MainHeader(state = headerState)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

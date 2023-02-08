@@ -73,7 +73,7 @@ fun WalletScreen(
     val viewModel = hiltViewModel<WalletViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
-    val headerState by viewModel.headerState.collectAsState()
+    val headerState by viewModel.headerUiState.collectAsState()
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -141,7 +141,7 @@ private fun WalletScreen(
                 .padding(paddingValues)
                 .inset(insetAll()),
         ) {
-            MainHeader(uiState = headerState)
+            MainHeader(state = headerState)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

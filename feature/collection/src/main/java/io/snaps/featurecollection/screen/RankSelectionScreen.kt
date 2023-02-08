@@ -60,7 +60,7 @@ fun RankSelectionScreen(
     val viewModel = hiltViewModel<RankSelectionViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
-    val headerState by viewModel.headerState.collectAsState()
+    val headerState by viewModel.headerUiState.collectAsState()
 
     RankSelectionScreen(
         uiState = uiState,
@@ -84,7 +84,7 @@ private fun RankSelectionScreen(
                 .padding(paddingValues)
                 .inset(insetAll()),
         ) {
-            MainHeader(uiState = headerState)
+            MainHeader(state = headerState)
             Header()
             Spacer(modifier = Modifier.height(12.dp))
             LazyColumn(

@@ -57,7 +57,7 @@ class AppActivity : FragmentActivity() {
 
         CompositionLocalProvider(LocalStringHolder provides stringHolder) {
             when (val currentFlow = currentFlowState.value) {
-                is AppViewModel.StartFlow.RegistrationFlow -> navHostProvider.RegistrationNavHost(
+                is AppViewModel.StartFlow.RegistrationFlow -> navHostProvider.NonAuthorizedGraph(
                     navController = navController,
                     isNeedForOnboarding = currentFlow.needStartOnBoarding,
                 )

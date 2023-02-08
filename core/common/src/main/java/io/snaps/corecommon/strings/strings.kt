@@ -10,6 +10,13 @@ internal val strings = mapOf(
     key(StringKey.ActionReply) to mapOf(
         SupportedLanguageKey.En to "Reply",
     ),
+    key(StringKey.ActionReload) to mapOf(
+        SupportedLanguageKey.En to "Reload",
+    ),
+
+    key(StringKey.ErrorLoadFail) to mapOf(
+        SupportedLanguageKey.En to "Error while loading",
+    ),
 
     key(StringKey.ConnectionSuccessMessage) to mapOf(
         SupportedLanguageKey.Ru to "Соединение восстановлено",

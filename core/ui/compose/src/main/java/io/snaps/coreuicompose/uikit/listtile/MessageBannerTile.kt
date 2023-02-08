@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
@@ -41,6 +42,16 @@ data class MessageBannerState(
     @Composable
     override fun Content(modifier: Modifier) {
         MessageBannerTile(modifier, this)
+    }
+
+    companion object {
+
+        fun defaultState(onClick: () -> Unit) = MessageBannerState(
+            description = StringKey.ErrorLoadFail.textValue(),
+            button = StringKey.ActionReload.textValue(),
+            icon = AppTheme.specificIcons.reload.toImageValue(),
+            onClick = onClick,
+        )
     }
 }
 

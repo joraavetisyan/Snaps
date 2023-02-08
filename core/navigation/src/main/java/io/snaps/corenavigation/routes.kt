@@ -65,6 +65,8 @@ object AppRoute {
 
     object CreateUser : Route("CreateUser")
 
+    object Profile : Route("Profile")
+
     object Wallet : Route("Wallet")
 
     object Withdraw : Route("Withdraw")

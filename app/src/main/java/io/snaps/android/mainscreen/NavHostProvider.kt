@@ -17,8 +17,8 @@ import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.createRoute
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurecollection.screen.ItemListScreen
-import io.snaps.featurefeed.screen.PopularVideosScreen
-import io.snaps.featurefeed.screen.ReelsScreen
+import io.snaps.featurefeed.presentation.screen.PopularVideosScreen
+import io.snaps.featurefeed.presentation.screen.VideoFeedScreen
 import io.snaps.featureprofile.screen.ProfileScreen
 import io.snaps.featuretasks.screen.TasksScreen
 import javax.inject.Inject
@@ -35,7 +35,7 @@ class NavHostProvider @Inject constructor(
 ) {
 
     @Composable
-    fun RegistrationNavHost(navController: NavHostController, isNeedForOnboarding: Boolean) = Graph(
+    fun NonAuthorizedGraph(navController: NavHostController, isNeedForOnboarding: Boolean) = Graph(
         navController = navController,
         startDestinationRoute = when {
             isNeedForOnboarding -> createRoute(AppRoute.Registration)
@@ -96,7 +96,7 @@ class NavHostProvider @Inject constructor(
 
     // todo better graph
     private fun NavGraphBuilder.mainTab1Graph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.MainTab1Start) { ReelsScreen(controller) }
+        composable(AppRoute.MainBottomBar.MainTab1Start) { VideoFeedScreen(controller) }
         with(feedFeatureProvider) { feedGraph(controller) }
     }
 

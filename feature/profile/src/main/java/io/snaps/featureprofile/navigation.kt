@@ -7,6 +7,7 @@ import io.snaps.corenavigation.ProfileFeatureProvider
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
+import io.snaps.featureprofile.screen.ProfileScreen
 import io.snaps.featureprofile.screen.settings.BackupWalletKeyScreen
 import io.snaps.featureprofile.screen.settings.ReferralProgramScreen
 import io.snaps.featureprofile.screen.settings.SettingsScreen
@@ -31,7 +32,7 @@ internal class ScreenNavigator(navHostController: NavHostController) :
 class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider {
 
     override fun NavGraphBuilder.profileGraph(controller: NavHostController) {
-
+        composable(AppRoute.Profile) { ProfileScreen(controller) }
         composable(AppRoute.ReferralProgramScreen) { ReferralProgramScreen(controller) }
         composable(AppRoute.Settings) { SettingsScreen(controller) }
         composable(AppRoute.SocialNetworks) { SocialNetworksScreen(controller) }

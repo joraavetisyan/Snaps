@@ -1,19 +1,11 @@
 package io.snaps.baseplayer.ui
 
 import android.view.ViewGroup
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.VolumeMute
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.runtime.Composable
@@ -41,48 +33,47 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
-import io.snaps.baseplayer.domain.Reel
+import io.snaps.corecommon.model.FullUrl
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ReelPlayer(
-    reel: Reel,
+    videoClipUrl: FullUrl,
     shouldPlay: Boolean,
     isMuted: Boolean = true,
     onMuted: (Boolean) -> Unit = {},
-    onDoubleTap: (Boolean) -> Unit = {},
     isScrolling: Boolean = false,
 ) {
-    val exoPlayer = rememberExoPlayerWithLifecycle(reel.reelUrl)
+    val exoPlayer = rememberExoPlayerWithLifecycle(videoClipUrl)
     val playerView = rememberPlayerView(exoPlayer)
     var volumeIconVisibility by remember { mutableStateOf(false) }
-    var likeIconVisibility by remember { mutableStateOf(false) }
+    /*var likeIconVisibility by remember { mutableStateOf(false) }*/
     val coroutineScope = rememberCoroutineScope()
 
     Box {
         AndroidView(
             factory = { playerView },
             modifier = Modifier
-                .pointerInput(reel.reelInfo.isLiked, isMuted) {
+                .pointerInput(/*videoClipModel.isLiked,*/ isMuted) {
                     detectTapGestures(
                         onDoubleTap = {
-                            onDoubleTap(true)
+                            // like
+                            /*onDoubleTap(true)
                             coroutineScope.launch {
                                 likeIconVisibility = true
                                 delay(800)
                                 likeIconVisibility = false
-                            }
+                            }*/
                         },
                         onTap = {
                             if (exoPlayer.playWhenReady) {
-                                if (isMuted.not()) {
-                                    exoPlayer.volume = 0f
-                                    onMuted(true)
-                                } else {
+                                if (isMuted) {
                                     exoPlayer.volume = 1f
                                     onMuted(false)
+                                } else {
+                                    exoPlayer.volume = 0f
+                                    onMuted(true)
                                 }
                                 coroutineScope.launch {
                                     volumeIconVisibility = true
@@ -107,7 +98,7 @@ fun ReelPlayer(
             }
         )
 
-        AnimatedVisibility(
+        /*AnimatedVisibility(
             visible = likeIconVisibility,
             enter = scaleIn(spring(Spring.DampingRatioMediumBouncy)),
             exit = scaleOut(tween(150)),
@@ -119,7 +110,7 @@ fun ReelPlayer(
                 tint = Color.White.copy(0.90f),
                 modifier = Modifier.size(100.dp),
             )
-        }
+        }*/
 
         if (volumeIconVisibility) {
             Icon(
