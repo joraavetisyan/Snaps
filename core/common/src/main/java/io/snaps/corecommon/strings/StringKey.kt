@@ -34,6 +34,9 @@ enum class StringKey {
     RegistrationDialogSignUpHintConfirmPassword,
     RegistrationDialogSignUpActionLogin,
     RegistrationDialogSignUpActionRegistration,
+    RegistrationDialogVerificationTitle,
+    RegistrationDialogVerificationMessage,
+    RegistrationDialogVerificationAction,
 
     SubsActionSubscriptions,
     SubsActionSubscribers,

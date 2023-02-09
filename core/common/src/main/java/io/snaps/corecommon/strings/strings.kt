@@ -74,7 +74,15 @@ internal val strings = mapOf(
     key(StringKey.RegistrationDialogSignInHintPassword) to mapOf(
         SupportedLanguageKey.En to "Enter password",
     ),
-
+    key(StringKey.RegistrationDialogVerificationTitle) to mapOf(
+        SupportedLanguageKey.En to "Verify your email address",
+    ),
+    key(StringKey.RegistrationDialogVerificationMessage) to mapOf(
+        SupportedLanguageKey.En to "Check your email for the verification link sent to account",
+    ),
+    key(StringKey.RegistrationDialogVerificationAction) to mapOf(
+        SupportedLanguageKey.En to "Ok",
+    ),
     key(StringKey.RegistrationDialogSignUpTitle) to mapOf(
         SupportedLanguageKey.En to "Sign up",
     ),

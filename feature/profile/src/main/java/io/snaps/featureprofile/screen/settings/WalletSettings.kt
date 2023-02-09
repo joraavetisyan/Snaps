@@ -37,10 +37,10 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
-import io.snaps.coreuicompose.uikit.status.ButtonData
-import io.snaps.coreuicompose.uikit.status.SimpleAlertDialogUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featureprofile.ScreenNavigator
+import io.snaps.featureprofile.screen.ButtonData
+import io.snaps.featureprofile.screen.DialogUi
 import io.snaps.featureprofile.viewmodel.WalletSettingsViewModel
 
 @Composable
@@ -132,7 +132,7 @@ private fun WalletSettingsScreen(
             }
         }
         if (uiState.isDialogVisibility) {
-            SimpleAlertDialogUi(
+            DialogUi(
                 title = StringKey.WalletSettingsBackupDialogTitle.textValue(),
                 message = StringKey.WalletSettingsBackupDialogMessage.textValue(),
                 onDismissRequest = onDismissRequest,

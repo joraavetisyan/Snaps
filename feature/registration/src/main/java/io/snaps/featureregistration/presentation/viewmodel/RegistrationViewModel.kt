@@ -6,6 +6,8 @@ import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.coredata.database.TokenStorage
+import io.snaps.coredata.network.Action
+import io.snaps.featureregistration.presentation.data.AuthRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +20,8 @@ import javax.inject.Inject
 class RegistrationViewModel @Inject constructor(
     private val sessionRepository: SessionRepository,
     private val tokenStorage: TokenStorage,
+    private val authRepository: AuthRepository,
+    private val action: Action,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -31,22 +35,28 @@ class RegistrationViewModel @Inject constructor(
     fun onTermsOfUserClicked() { /*TODO*/ }
 
     fun onLoginWithEmailClicked() = viewModelScope.launch {
-        _uiState.update {
-            it.copy(
-                bottomDialogType = BottomDialogType.SignIn,
-                confirmPasswordValue = "",
-                passwordValue = "",
-                emailAddressValue = "",
-            )
+        if (authRepository.isEmailVerified()) {
+            _uiState.update {
+                it.copy(
+                    bottomDialogType = BottomDialogType.SignIn,
+                    confirmPasswordValue = "",
+                    passwordValue = "",
+                    emailAddressValue = "",
+                )
+            }
+            _command publish Command.ShowBottomDialog
+        } else {
+            _uiState.update {
+                it.copy(
+                    isEmailVerificationDialogVisibility = true,
+                )
+            }
         }
-        _command publish Command.ShowBottomDialog
     }
 
     fun onLoginWithTwitterClicked() { sessionRepository.onLogin() }
 
     fun onLoginWithFacebookClicked() { sessionRepository.onLogin() }
-
-    fun onSignUpWithEmailClicked() { sessionRepository.onLogin() }
 
     fun showSignInBottomDialog() = viewModelScope.launch {
         _uiState.update {
@@ -90,8 +100,48 @@ class RegistrationViewModel @Inject constructor(
         }
     }
 
-    fun onAuthTokenReceived(token: String) { // todo
-        sessionRepository.onLogin()
+    fun signInWithGoogle(idToken: String) = viewModelScope.launch {
+        action.execute {
+            authRepository.signInWithGoogle(idToken)
+        }.doOnSuccess {
+            sessionRepository.onLogin()
+        }
+    }
+
+    fun signInWithEmail() = viewModelScope.launch {
+        action.execute {
+            authRepository.signInWithEmail(
+                email = uiState.value.emailAddressValue,
+                password = uiState.value.confirmPasswordValue,
+            )
+        }.doOnSuccess {
+            sessionRepository.onLogin()
+        }
+    }
+
+    fun signUpWithEmail() = viewModelScope.launch {
+        action.execute {
+            authRepository.signUpWithEmail(
+                email = uiState.value.emailAddressValue,
+                password = uiState.value.confirmPasswordValue,
+            )
+        }.doOnSuccess {
+            authRepository.sendEmailVerification()
+        }
+        if (!authRepository.isEmailVerified()) {
+            _command publish Command.HideBottomDialog
+            _uiState.update {
+                it.copy(
+                    isEmailVerificationDialogVisibility = true,
+                )
+            }
+        }
+    }
+
+    fun onDismissRequest() {
+        _uiState.update {
+            it.copy(isEmailVerificationDialogVisibility = false)
+        }
     }
 
     data class UiState(
@@ -99,6 +149,7 @@ class RegistrationViewModel @Inject constructor(
         val emailAddressValue: String = "",
         val passwordValue: String = "",
         val confirmPasswordValue: String = "",
+        val isEmailVerificationDialogVisibility: Boolean = false,
     ) {
         val isSignInButtonEnabled get() = emailAddressValue.isNotBlank()
                 && passwordValue.isNotBlank()
