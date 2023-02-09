@@ -6,6 +6,7 @@ import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.coredata.database.TokenStorage
+import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.Action
 import io.snaps.featureregistration.presentation.data.AuthRepository
 import kotlinx.coroutines.channels.Channel
@@ -21,6 +22,7 @@ class RegistrationViewModel @Inject constructor(
     private val sessionRepository: SessionRepository,
     private val tokenStorage: TokenStorage,
     private val authRepository: AuthRepository,
+    private val userDataStorage: UserDataStorage,
     private val action: Action,
 ) : SimpleViewModel() {
 
@@ -104,6 +106,7 @@ class RegistrationViewModel @Inject constructor(
         action.execute {
             authRepository.signInWithGoogle(idToken)
         }.doOnSuccess {
+            userDataStorage.isRegistrationFinished = true
             sessionRepository.onLogin()
         }
     }
@@ -115,6 +118,7 @@ class RegistrationViewModel @Inject constructor(
                 password = uiState.value.confirmPasswordValue,
             )
         }.doOnSuccess {
+            userDataStorage.isRegistrationFinished = true
             sessionRepository.onLogin()
         }
     }
