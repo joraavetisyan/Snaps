@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,9 +41,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.uikit.button.SimpleChip
 import io.snaps.coreuicompose.uikit.duplicate.ActionIconData
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
@@ -68,33 +72,41 @@ fun ProfileScreen(
     ProfileScreen(
         uiState = uiState,
         onSettingsClicked = viewModel::onSettingsClicked,
+        onBackClicked = router::back,
+        onSubscribeClicked = viewModel::onSubscribeClicked,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 private fun ProfileScreen(
     uiState: ProfileViewModel.UiState,
     onSettingsClicked: () -> Unit,
+    onBackClicked: () -> Boolean,
+    onSubscribeClicked: () -> Unit,
 ) {
+    val title = when (uiState.userType) {
+        ProfileViewModel.UserType.Other -> "@${uiState.nickname}"
+        ProfileViewModel.UserType.Current -> LocalStringHolder.current(StringKey.ProfileTitle)
+    }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SimpleTopAppBar(
                 title = {
-                    Text(
-                        text = LocalStringHolder.current(StringKey.ProfileTitle)
-                    )
+                    Text(text = title)
                 },
+                navigationIcon = (AppTheme.specificIcons.back to onBackClicked)
+                    .takeIf { uiState.userType == ProfileViewModel.UserType.Other },
                 titleTextStyle = AppTheme.specificTypography.titleLarge,
                 scrollBehavior = scrollBehavior,
-                actions = listOf(
+                actions = listOfNotNull(
                     ActionIconData(
                         icon = AppTheme.specificIcons.settings,
                         color = AppTheme.specificColorScheme.darkGrey,
                         onClick = onSettingsClicked,
-                    ),
+                    ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
                     ActionIconData(
                         icon = AppTheme.specificIcons.share,
                         color = AppTheme.specificColorScheme.darkGrey,
@@ -140,6 +152,18 @@ private fun ProfileScreen(
             }
             Divider()
             Spacer(modifier = Modifier.height(12.dp))
+            if (uiState.userType == ProfileViewModel.UserType.Other) {
+                SimpleChip(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .shadow(elevation = 12.dp, shape = CircleShape),
+                    selected = !uiState.isSubscribed,
+                    label = (if (uiState.isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),
+                    onClick = onSubscribeClicked,
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
             LazyVerticalGrid(
                 modifier = Modifier.fillMaxSize(),
                 columns = GridCells.Fixed(3),

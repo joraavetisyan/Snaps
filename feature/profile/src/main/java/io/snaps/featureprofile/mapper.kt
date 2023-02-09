@@ -9,13 +9,15 @@ import io.snaps.featureprofile.screen.UserInfoTileState
 fun State<ProfileModel>.toUserInfoTileState() = when (this) {
     is Loading -> UserInfoTileState.Shimmer
     is Effect -> when {
-        isSuccess -> UserInfoTileState.Data(
-            profileImage = requireData.avatar,
-            likes = requireData.totalLikes,
-            subscriptions = requireData.totalSubscriptions,
-            subscribers = requireData.totalSubscribers,
-            publication = requireData.totalPublication,
-        )
+        isSuccess -> requireData.toUserInfoTileState()
         else -> UserInfoTileState.Shimmer
     }
 }
+
+fun ProfileModel.toUserInfoTileState() = UserInfoTileState.Data(
+    profileImage = avatar,
+    likes = totalLikes,
+    subscriptions = totalSubscriptions,
+    subscribers = totalSubscribers,
+    publication = totalPublication,
+)
