@@ -1,6 +1,11 @@
 package io.snaps.featureregistration.presentation.screen
 
+import android.app.Activity
+import android.app.Activity.RESULT_OK
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,12 +32,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.google.android.gms.auth.api.identity.BeginSignInRequest
+import com.google.android.gms.auth.api.identity.Identity
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
@@ -42,18 +50,21 @@ import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
-import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonDefaultM
+import io.snaps.coreuicompose.uikit.button.SimpleButtonInlineM
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.other.LinkText
 import io.snaps.coreuicompose.uikit.other.LinkTextData
+import io.snaps.coreuicompose.uikit.status.SimpleAlertDialogUi
 import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureregistration.presentation.ScreenNavigator
 import io.snaps.featureregistration.presentation.viewmodel.RegistrationViewModel
 import kotlinx.coroutines.launch
+
+private const val SERVER_CLIENT_ID = "132799039711-rd59jfaphbpinbmhrp647hqapp2b6aiu.apps.googleusercontent.com"
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -70,6 +81,29 @@ fun RegistrationScreen(
         skipHalfExpanded = true,
     )
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    val googleSignInRequest = BeginSignInRequest.Builder()
+        .setGoogleIdTokenRequestOptions(
+            BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                .setSupported(true)
+                .setServerClientId(SERVER_CLIENT_ID)
+                .setFilterByAuthorizedAccounts(false)
+                .build()
+        )
+        .setAutoSelectEnabled(true)
+        .build()
+    val oneTapClient = Identity.getSignInClient(context)
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val credentials = oneTapClient.getSignInCredentialFromIntent(result.data)
+            credentials.googleIdToken?.let {
+                viewModel.signInWithGoogle(it)
+            }
+        }
+    }
 
     viewModel.command.collectAsCommand {
         when (it) {
@@ -87,39 +121,55 @@ fun RegistrationScreen(
         sheetState = sheetState,
         sheetContent = {
             when (uiState.bottomDialogType) {
-                RegistrationViewModel.BottomDialogType.LoginWithEmail -> LoginWithEmailDialog(
+                RegistrationViewModel.BottomDialogType.SignIn -> LoginWithEmailDialog(
                     uiState = uiState,
-                    onSendCodeClicked = viewModel::onSendCodeClicked,
-                    onLoginWithEmailClicked = viewModel::onLoginWithEmailClicked,
-                    onTermsOfUserClicked = viewModel::onTermsOfUserClicked,
-                    onPrivacyPolicyClicked = viewModel::onPrivacyPolicyClicked,
+                    onLoginWithEmailClicked = viewModel::signInWithEmail,
                     onEmailAddressValueChanged = viewModel::onEmailAddressValueChanged,
-                    onConfirmationCodeValueChanged = viewModel::onConfirmationCodeValueChanged,
+                    onPasswordValueChanged = viewModel::onPasswordValueChanged,
+                    onSignUpClicked = viewModel::showSignUpBottomDialog,
+                )
+                RegistrationViewModel.BottomDialogType.SignUp -> RegistrationWithEmailDialog(
+                    uiState = uiState,
+                    onEmailAddressValueChanged = viewModel::onEmailAddressValueChanged,
+                    onPasswordValueChanged = viewModel::onPasswordValueChanged,
+                    onConfirmPasswordValueChanged = viewModel::onConfirmPasswordValueChanged,
+                    onSignInClicked = viewModel::showSignInBottomDialog,
+                    onSignUpClicked = viewModel::signUpWithEmail,
+                    onPrivacyPolicyClicked = viewModel::onPrivacyPolicyClicked,
+                    onTermsOfUserClicked = viewModel::onTermsOfUserClicked,
                 )
             }
         },
     ) {
         RegistrationScreen(
+            uiState = uiState,
             onLoginWithTwitterClicked = viewModel::onLoginWithTwitterClicked,
-            onLoginWithGoogleClicked = viewModel::onLoginWithGoogleClicked,
-            onLoginWithAppleClicked = viewModel::onLoginWithAppleClicked,
-            onLoginWithEmailClicked = viewModel::showRegistrationForm,
+            onLoginWithGoogleClicked = {
+                oneTapClient.beginSignIn(googleSignInRequest)
+                    .addOnSuccessListener(context as Activity) { result ->
+                        val intentSenderRequest = IntentSenderRequest.Builder(result.pendingIntent.intentSender).build()
+                        googleSignInLauncher.launch(intentSenderRequest)
+                    }
+            },
+            onLoginWithEmailClicked = viewModel::onLoginWithEmailClicked,
             onLoginWithFacebookClicked = viewModel::onLoginWithFacebookClicked,
             onPrivacyPolicyClicked = viewModel::onPrivacyPolicyClicked,
             onTermsOfUserClicked = viewModel::onTermsOfUserClicked,
+            onDismissRequest = viewModel::onDismissRequest,
         )
     }
 }
 
 @Composable
 private fun RegistrationScreen(
+    uiState: RegistrationViewModel.UiState,
     onPrivacyPolicyClicked: () -> Unit,
     onLoginWithEmailClicked: () -> Unit,
     onTermsOfUserClicked: () -> Unit,
-    onLoginWithAppleClicked: () -> Unit,
     onLoginWithGoogleClicked: () -> Unit,
     onLoginWithTwitterClicked: () -> Unit,
     onLoginWithFacebookClicked: () -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -139,7 +189,6 @@ private fun RegistrationScreen(
         )
         Login(
             onLoginWithFacebookClicked = onLoginWithFacebookClicked,
-            onLoginWithAppleClicked = onLoginWithAppleClicked,
             onLoginWithGoogleClicked = onLoginWithGoogleClicked,
             onLoginWithTwitterClicked = onLoginWithTwitterClicked,
         )
@@ -148,13 +197,29 @@ private fun RegistrationScreen(
             onPrivacyPolicyClicked = onPrivacyPolicyClicked,
             onTermsOfUserClicked = onTermsOfUserClicked,
         )
-        LoginWithEmailButton(onLoginWithEmailClicked = onLoginWithEmailClicked)
+        SimpleButtonActionM(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp)
+                .shadow(elevation = 16.dp, shape = CircleShape),
+            onClick = onLoginWithEmailClicked,
+        ) {
+            SimpleButtonContent(text = StringKey.RegistrationActionLoginWithEmail.textValue())
+        }
+    }
+
+    if (uiState.isEmailVerificationDialogVisibility) {
+        SimpleAlertDialogUi(
+            text = StringKey.RegistrationDialogVerificationMessage.textValue(),
+            title = StringKey.RegistrationDialogVerificationTitle.textValue(),
+            buttonText = StringKey.RegistrationDialogVerificationAction.textValue(),
+            onClickRequest = onDismissRequest,
+        )
     }
 }
 
 @Composable
 private fun Login(
-    onLoginWithAppleClicked: () -> Unit,
     onLoginWithGoogleClicked: () -> Unit,
     onLoginWithTwitterClicked: () -> Unit,
     onLoginWithFacebookClicked: () -> Unit,
@@ -169,19 +234,6 @@ private fun Login(
         SimpleButtonContent(
             text = StringKey.RegistrationActionLoginWithGoogle.textValue(),
             iconLeft = AppTheme.specificIcons.google,
-        )
-    }
-    Spacer(modifier = Modifier.height(12.dp))
-    SimpleButtonDefaultM(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp)
-            .shadow(elevation = 16.dp, shape = CircleShape),
-        onClick = onLoginWithAppleClicked,
-    ) {
-        SimpleButtonContent(
-            text = StringKey.RegistrationActionLoginWithApple.textValue(),
-            iconLeft = AppTheme.specificIcons.apple,
         )
     }
     Spacer(modifier = Modifier.height(12.dp))
@@ -253,57 +305,37 @@ private fun PrivacyPolicy(
 }
 
 @Composable
-private fun LoginWithEmailButton(
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    onLoginWithEmailClicked: () -> Unit,
-) {
-    SimpleButtonActionM(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp)
-            .shadow(elevation = 16.dp, shape = CircleShape),
-        enabled = enabled,
-        onClick = onLoginWithEmailClicked,
-    ) {
-        SimpleButtonContent(text = StringKey.RegistrationActionLoginWithEmail.textValue())
-    }
-}
-
-@Composable
 private fun LoginWithEmailDialog(
     uiState: RegistrationViewModel.UiState,
-    onSendCodeClicked: () -> Unit,
     onEmailAddressValueChanged: (String) -> Unit,
-    onConfirmationCodeValueChanged: (String) -> Unit,
+    onPasswordValueChanged: (String) -> Unit,
     onLoginWithEmailClicked: () -> Unit,
-    onPrivacyPolicyClicked: () -> Unit,
-    onTermsOfUserClicked: () -> Unit,
+    onSignUpClicked: () -> Unit,
 ) {
-    SimpleBottomDialogUI(StringKey.RegistrationTitle.textValue()) {
+    SimpleBottomDialogUI(StringKey.RegistrationDialogSignInTitle.textValue()) {
         item {
             Text(
-                text = LocalStringHolder.current(StringKey.RegistrationMessageEnterEmail),
+                text = LocalStringHolder.current(StringKey.RegistrationDialogSignInMessage),
                 color = AppTheme.specificColorScheme.textSecondary,
                 style = AppTheme.specificTypography.titleSmall,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp, horizontal = 32.dp),
+                    .padding(vertical = 16.dp, horizontal = 32.dp),
                 textAlign = TextAlign.Center,
             )
             SimpleTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
+                    .padding(horizontal = 16.dp),
                 onValueChange = onEmailAddressValueChanged,
                 value = uiState.emailAddressValue,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Done,
+                    imeAction = ImeAction.Next,
                 ),
                 placeholder = {
                     Text(
-                        text = LocalStringHolder.current(StringKey.RegistrationHintEmailAddress),
+                        text = LocalStringHolder.current(StringKey.RegistrationDialogSignInHintEmail),
                         style = AppTheme.specificTypography.titleSmall,
                     )
                 },
@@ -312,36 +344,137 @@ private fun LoginWithEmailDialog(
             SimpleTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp, vertical = 8.dp),
-                onValueChange = onConfirmationCodeValueChanged,
-                value = uiState.confirmationCodeValue,
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                onValueChange = onPasswordValueChanged,
+                value = uiState.passwordValue,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
+                    keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done,
                 ),
                 placeholder = {
                     Text(
-                        text = LocalStringHolder.current(StringKey.RegistrationHintConfirmationCode),
+                        text = LocalStringHolder.current(StringKey.RegistrationDialogSignInHintPassword),
                         style = AppTheme.specificTypography.titleSmall,
                     )
                 },
-                trailingIcon = {
-                    SimpleButtonActionS(
-                        modifier = Modifier.padding(horizontal = 12.dp),
-                        onClick = onSendCodeClicked,
-                    ) {
-                        SimpleButtonContent(
-                            text = StringKey.RegistrationActionSendCode.textValue()
-                        )
-                    }
+                maxLines = 1,
+            )
+            SimpleButtonActionM(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .shadow(elevation = 16.dp, shape = CircleShape),
+                enabled = uiState.isSignInButtonEnabled,
+                onClick = onLoginWithEmailClicked,
+            ) {
+                SimpleButtonContent(text = StringKey.RegistrationDialogSignInActionLogin.textValue())
+            }
+            SimpleButtonInlineM(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                onClick = onSignUpClicked,
+            ) {
+                SimpleButtonContent(text = StringKey.RegistrationDialogSignInActionRegistration.textValue())
+            }
+        }
+    }
+}
+
+@Composable
+private fun RegistrationWithEmailDialog(
+    uiState: RegistrationViewModel.UiState,
+    onEmailAddressValueChanged: (String) -> Unit,
+    onPasswordValueChanged: (String) -> Unit,
+    onConfirmPasswordValueChanged: (String) -> Unit,
+    onSignInClicked: () -> Unit,
+    onSignUpClicked: () -> Unit,
+    onPrivacyPolicyClicked: () -> Unit,
+    onTermsOfUserClicked: () -> Unit,
+) {
+    SimpleBottomDialogUI(StringKey.RegistrationDialogSignUpTitle.textValue()) {
+        item {
+            Text(
+                text = LocalStringHolder.current(StringKey.RegistrationDialogSignUpMessage),
+                color = AppTheme.specificColorScheme.textSecondary,
+                style = AppTheme.specificTypography.titleSmall,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp, horizontal = 32.dp),
+                textAlign = TextAlign.Center,
+            )
+            SimpleTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                onValueChange = onEmailAddressValueChanged,
+                value = uiState.emailAddressValue,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next,
+                ),
+                placeholder = {
+                    Text(
+                        text = LocalStringHolder.current(StringKey.RegistrationDialogSignUpHintEmail),
+                        style = AppTheme.specificTypography.titleSmall,
+                    )
                 },
                 maxLines = 1,
             )
-            LoginWithEmailButton(
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
-                enabled = uiState.isConfirmationCodeValid,
-                onLoginWithEmailClicked = onLoginWithEmailClicked,
+            SimpleTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                onValueChange = onPasswordValueChanged,
+                value = uiState.passwordValue,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next,
+                ),
+                placeholder = {
+                    Text(
+                        text = LocalStringHolder.current(StringKey.RegistrationDialogSignUpHintPassword),
+                        style = AppTheme.specificTypography.titleSmall,
+                    )
+                },
+                maxLines = 1,
             )
+            SimpleTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                onValueChange = onConfirmPasswordValueChanged,
+                value = uiState.confirmPasswordValue,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done,
+                ),
+                placeholder = {
+                    Text(
+                        text = LocalStringHolder.current(StringKey.RegistrationDialogSignUpHintConfirmPassword),
+                        style = AppTheme.specificTypography.titleSmall,
+                    )
+                },
+                maxLines = 1,
+            )
+            SimpleButtonActionM(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .shadow(elevation = 16.dp, shape = CircleShape),
+                enabled = uiState.isSignUpButtonEnabled,
+                onClick = onSignUpClicked,
+            ) {
+                SimpleButtonContent(text = StringKey.RegistrationDialogSignUpActionRegistration.textValue())
+            }
+            SimpleButtonInlineM(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                onClick = onSignInClicked,
+            ) {
+                SimpleButtonContent(text = StringKey.RegistrationDialogSignUpActionLogin.textValue())
+            }
             PrivacyPolicy(
                 onPrivacyPolicyClicked = onPrivacyPolicyClicked,
                 onTermsOfUserClicked = onTermsOfUserClicked,
