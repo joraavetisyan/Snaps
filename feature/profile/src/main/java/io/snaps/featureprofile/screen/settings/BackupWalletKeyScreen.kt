@@ -67,7 +67,7 @@ private fun BackupWalletKeyScreen(
     onBackClicked: () -> Boolean,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val topBarTitle = LocalStringHolder.current(StringKey.PhraseListTitle)
+    val topBarTitle = LocalStringHolder.current(StringKey.MnemonicsTitle)
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -90,7 +90,7 @@ private fun BackupWalletKeyScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = LocalStringHolder.current(StringKey.PhraseListMessage),
+                text = LocalStringHolder.current(StringKey.MnemonicsMessage),
                 style = AppTheme.specificTypography.titleSmall,
                 modifier = Modifier
                     .padding(horizontal = 32.dp, vertical = 12.dp)

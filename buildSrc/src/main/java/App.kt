@@ -1,6 +1,6 @@
 object App {
 
-    const val minSdk = 24
+    const val minSdk = 26
     const val targetSdk = 33
     const val compileSdk = 33
     const val packageName = "io.snaps.android"

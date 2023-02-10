@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.snaps.coreuitheme.compose.AppTheme
 
@@ -67,10 +68,12 @@ object SimpleTextFieldConfig {
     )
 
     @Composable
-    fun successColors() = defaultColors(borderAndCursorColor = AppTheme.specificColorScheme.uiSystemGreen)
+    fun successColors() =
+        defaultColors(borderAndCursorColor = AppTheme.specificColorScheme.uiSystemGreen)
 
     @Composable
-    fun errorColors() = defaultColors(borderAndCursorColor = AppTheme.specificColorScheme.uiSystemRed)
+    fun errorColors() =
+        defaultColors(borderAndCursorColor = AppTheme.specificColorScheme.uiSystemRed)
 }
 
 enum class SimpleTextFieldStatus {
@@ -100,6 +103,7 @@ fun SimpleTextField(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = SimpleTextFieldConfig.shape(),
     status: SimpleTextFieldStatus = SimpleTextFieldStatus.Normal,
+    textAlign: TextAlign? = null,
 ) {
     val colors = when (status) {
         SimpleTextFieldStatus.Normal -> SimpleTextFieldConfig.defaultColors()
@@ -113,7 +117,7 @@ fun SimpleTextField(
         onValueChange = onValueChange,
         enabled = enabled,
         readOnly = readOnly,
-        textStyle = textStyle,
+        textStyle = textAlign?.let { textStyle.copy(textAlign = it) } ?: textStyle,
         cursorBrush = SolidColor(colors.cursorColor(status.isError()).value),
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions,
@@ -143,8 +147,8 @@ fun SimpleTextField(
                         colors = colors.toLibColors(),
                         shape = shape,
                     )
-                }
+                },
             )
-        }
+        },
     )
 }

@@ -3,6 +3,7 @@ package io.snaps.corenavigation
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import kotlinx.serialization.Serializable
 
 const val DefaultArgKey = "arg"
 
@@ -51,17 +52,23 @@ object AppRoute {
 
     object Registration : Route("Registration")
 
+    object WalletConnect : Route("WalletConnect")
+
+    object WalletCreate : Route("WalletCreate")
+
     object WalletImport : Route("WalletImport")
 
-    object ConnectWallet : Route("ConnectWallet")
+    object WalletConnected : Route("WalletConnected")
 
-    object CreateWallet : Route("CreateWallet")
+    object Mnemonics : Route("Mnemonics")
 
-    object CreatedWallet : Route("CreatedWallet")
+    object MnemonicsVerification : RouteWithArg("MnemonicsVerification") {
 
-    object PhraseList : Route("PhraseList")
-
-    object Verification : Route("Verification")
+        @Serializable
+        data class Args(
+            val words: List<String>,
+        )
+    }
 
     object CreateUser : Route("CreateUser")
 

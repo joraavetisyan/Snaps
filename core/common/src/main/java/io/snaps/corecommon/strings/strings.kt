@@ -13,6 +13,9 @@ internal val strings = mapOf(
     key(StringKey.ActionReload) to mapOf(
         SupportedLanguageKey.En to "Reload",
     ),
+    key(StringKey.ActionContinue) to mapOf(
+        SupportedLanguageKey.En to "Continue",
+    ),
 
     key(StringKey.ErrorLoadFail) to mapOf(
         SupportedLanguageKey.En to "Error while loading",
@@ -118,8 +121,8 @@ internal val strings = mapOf(
     key(StringKey.WalletImportMessageEnterPhrases) to mapOf(
         SupportedLanguageKey.En to "Enter your 12-word seed phrase to be able to use the wallet inside the app",
     ),
-    key(StringKey.WalletImportTitle) to mapOf(
-        SupportedLanguageKey.En to "Wallet import",
+    key(StringKey.WalletImportHint) to mapOf(
+        SupportedLanguageKey.En to "%s. Enter here",
     ),
 
     key(StringKey.ConnectWalletActionCreate) to mapOf(
@@ -145,14 +148,11 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Write down your seed phrase",
     ),
 
-    key(StringKey.PhraseListTitle) to mapOf(
+    key(StringKey.MnemonicsTitle) to mapOf(
         SupportedLanguageKey.En to "Your Seed Phrase",
     ),
-    key(StringKey.PhraseListMessage) to mapOf(
+    key(StringKey.MnemonicsMessage) to mapOf(
         SupportedLanguageKey.En to "Please save these 12 words on a piece of paper. Mind their order when notings them down. Keep it in secure place.",
-    ),
-    key(StringKey.PhraseListActionContinue) to mapOf(
-        SupportedLanguageKey.En to "Continue",
     ),
 
     key(StringKey.VerificationTitle) to mapOf(
@@ -160,9 +160,6 @@ internal val strings = mapOf(
     ),
     key(StringKey.VerificationMessage) to mapOf(
         SupportedLanguageKey.En to "Please select correct words based on their numbers (the order they were written on the previous screen)",
-    ),
-    key(StringKey.VerificationActionContinue) to mapOf(
-        SupportedLanguageKey.En to "Continue",
     ),
 
     key(StringKey.CreatedWalletAction) to mapOf(

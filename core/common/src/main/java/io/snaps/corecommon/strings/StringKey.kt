@@ -6,6 +6,7 @@ enum class StringKey {
     ActionSave,
     ActionReply,
     ActionReload,
+    ActionContinue,
 
     ErrorLoadFail,
 
@@ -61,6 +62,7 @@ enum class StringKey {
 
     WalletImportTitle,
     WalletImportMessageEnterPhrases,
+    WalletImportHint,
 
     ConnectWalletTitle,
     ConnectWalletMessage,
@@ -75,13 +77,11 @@ enum class StringKey {
     CreatedWalletMessage,
     CreatedWalletAction,
 
-    PhraseListTitle,
-    PhraseListMessage,
-    PhraseListActionContinue,
+    MnemonicsTitle,
+    MnemonicsMessage,
 
     VerificationTitle,
     VerificationMessage,
-    VerificationActionContinue,
 
     ReferralProgramTitle,
     ReferralProgramTitleEnterCode,

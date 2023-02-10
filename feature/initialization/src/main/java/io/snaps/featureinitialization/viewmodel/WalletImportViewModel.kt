@@ -1,16 +1,24 @@
 package io.snaps.featureinitialization.viewmodel
 
-import io.snaps.coreui.viewmodel.SimpleViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.coredata.network.Action
+import io.snaps.coreui.viewmodel.SimpleViewModel
+import io.snaps.coreui.viewmodel.publish
+import io.snaps.featureinitialization.data.WalletRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WalletImportViewModel @Inject constructor() : SimpleViewModel() {
+class WalletImportViewModel @Inject constructor(
+    private val walletRepository: WalletRepository,
+    private val action: Action,
+) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -18,25 +26,35 @@ class WalletImportViewModel @Inject constructor() : SimpleViewModel() {
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
-    fun onContinueButtonClicked() { /*TODO*/ }
+    fun onContinueButtonClicked() {
+        viewModelScope.launch {
+            action.execute {
+                walletRepository.importAccount(_uiState.value.words)
+            }.doOnSuccess {
+                _command publish Command.OpenCreatedWalletScreen
+            }.doOnError { _, _ ->
+                _uiState.update { it.copy(hasError = true) }
+            }
+        }
+    }
 
     fun onPhraseValueChanged(phrase: String, index: Int) {
         _uiState.update {
-            val newPhrases = it.phrases.mapIndexed { i, s ->
-                if (index == i) phrase else s
-            }
-            it.copy(phrases = newPhrases)
+            val newPhrases = it.words.mapIndexed { i, s -> if (index == i) phrase else s }
+            it.copy(hasError = false, words = newPhrases)
         }
     }
 
     data class UiState(
-        val phrases: List<String> = List(12) { "" },
+        val hasError: Boolean = false,
+        val words: List<String> = List(12) { "" },
     ) {
 
-        val isContinueButtonEnabled get() = phrases.forEach { phrase ->
-            phrase.isNotBlank()
-        }
+        val isContinueButtonEnabled get() = !hasError && words.all(String::isNotBlank)
     }
 
-    sealed class Command
+    sealed interface Command {
+
+        object OpenCreatedWalletScreen : Command
+    }
 }

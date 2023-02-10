@@ -8,8 +8,8 @@ class DateFormatter(
 ) : SimpleFormatter {
 
     private val pattern = format.map {
-        when {
-            it == '.' || it == '/' -> SimpleInputSymbol.Divider(it.toString())
+        when (it) {
+            '.', '/' -> SimpleInputSymbol.Divider(it.toString())
             else -> SimpleInputSymbol.Inputted(it.toString())
         }
     }

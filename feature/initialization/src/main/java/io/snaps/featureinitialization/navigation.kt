@@ -4,29 +4,34 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.InitializationFeatureProvider
+import io.snaps.corenavigation.base.FeatureNavDirection
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
-import io.snaps.featureinitialization.screen.WalletImportScreen
-import io.snaps.featureinitialization.screen.ConnectWalletScreen
 import io.snaps.featureinitialization.screen.CreateUserScreen
-import io.snaps.featureinitialization.screen.createwallet.CreateWalletScreen
-import io.snaps.featureinitialization.screen.createwallet.CreatedWalletScreen
-import io.snaps.featureinitialization.screen.createwallet.PhraseListScreen
-import io.snaps.featureinitialization.screen.createwallet.VerificationScreen
+import io.snaps.featureinitialization.screen.MnemonicListVerificationScreen
+import io.snaps.featureinitialization.screen.MnemonicsScreen
+import io.snaps.featureinitialization.screen.WalletConnectScreen
+import io.snaps.featureinitialization.screen.WalletConnectedScreen
+import io.snaps.featureinitialization.screen.WalletCreateScreen
+import io.snaps.featureinitialization.screen.WalletImportScreen
 import javax.inject.Inject
 
-internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController) {
+internal class ScreenNavigator(navHostController: NavHostController) :
+    Navigator(navHostController) {
 
     fun toWalletImportScreen() = navHostController.navigate(AppRoute.WalletImport)
 
-    fun toCreateWalletScreen() = navHostController.navigate(AppRoute.CreateWallet)
+    fun toWalletCreateScreen() = navHostController.navigate(AppRoute.WalletCreate)
 
-    fun toPhraseListScreen() = navHostController.navigate(AppRoute.PhraseList)
+    fun toMnemonicsScreen() = navHostController.navigate(AppRoute.Mnemonics)
 
-    fun toVerificationScreen() = navHostController.navigate(AppRoute.Verification)
+    fun toVerificationScreen(words: List<String>) = navHostController navigate FeatureNavDirection(
+        route = AppRoute.MnemonicsVerification,
+        arg = AppRoute.MnemonicsVerification.Args(words),
+    )
 
-    fun toCreatedWalletScreen() = navHostController.navigate(AppRoute.Verification)
+    fun toWalletConnectedScreen() = navHostController.navigate(AppRoute.WalletConnected)
 }
 
 class InitializationFeatureProviderImpl @Inject constructor() : InitializationFeatureProvider {
@@ -34,10 +39,10 @@ class InitializationFeatureProviderImpl @Inject constructor() : InitializationFe
     override fun NavGraphBuilder.initializationGraph(controller: NavHostController) {
         composable(AppRoute.CreateUser) { CreateUserScreen(controller) }
         composable(AppRoute.WalletImport) { WalletImportScreen(controller) }
-        composable(AppRoute.ConnectWallet) { ConnectWalletScreen(controller) }
-        composable(AppRoute.CreateWallet) { CreateWalletScreen(controller) }
-        composable(AppRoute.PhraseList) { PhraseListScreen(controller) }
-        composable(AppRoute.Verification) { VerificationScreen(controller) }
-        composable(AppRoute.CreatedWallet) { CreatedWalletScreen(controller) }
+        composable(AppRoute.WalletConnect) { WalletConnectScreen(controller) }
+        composable(AppRoute.WalletCreate) { WalletCreateScreen(controller) }
+        composable(AppRoute.Mnemonics) { MnemonicsScreen(controller) }
+        composable(AppRoute.MnemonicsVerification) { MnemonicListVerificationScreen(controller) }
+        composable(AppRoute.WalletConnected) { WalletConnectedScreen(controller) }
     }
 }
