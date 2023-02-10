@@ -38,5 +38,6 @@ class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider 
         composable(AppRoute.SocialNetworks) { SocialNetworksScreen(controller) }
         composable(AppRoute.BackupWalletKey) { BackupWalletKeyScreen(controller) }
         composable(AppRoute.WalletSettings) { WalletSettingsScreen(controller) }
+        composable(AppRoute.Profile) { ProfileScreen(controller) }
     }
 }

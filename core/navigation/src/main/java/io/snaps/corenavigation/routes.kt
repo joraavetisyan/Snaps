@@ -3,6 +3,7 @@ package io.snaps.corenavigation
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import io.snaps.corecommon.model.Uuid
 import kotlinx.serialization.Serializable
 
 const val DefaultArgKey = "arg"
@@ -72,7 +73,12 @@ object AppRoute {
 
     object CreateUser : Route("CreateUser")
 
-    object Profile : Route("Profile")
+    object Profile : RouteWithArg("Profile") {
+        @Serializable
+        data class Args(
+            val userId: Uuid? = null,
+        )
+    }
 
     object Wallet : Route("Wallet")
 
