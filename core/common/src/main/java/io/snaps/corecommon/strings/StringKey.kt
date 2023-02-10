@@ -6,6 +6,7 @@ enum class StringKey {
     ActionSave,
     ActionReply,
     ActionReload,
+    ActionContinue,
 
     ErrorLoadFail,
 
@@ -20,15 +21,26 @@ enum class StringKey {
     RegistrationActionTermsOfUse,
     RegistrationActionLoginWithEmail,
     RegistrationActionLoginWithGoogle,
-    RegistrationActionLoginWithApple,
     RegistrationActionLoginWithFacebook,
     RegistrationActionLoginWithTwitter,
-    RegistrationActionSendCode,
-    RegistrationHintConfirmationCode,
-    RegistrationHintEmailAddress,
-    RegistrationMessageEnterEmail,
     RegistrationTitle,
     RegistrationFieldOr,
+    RegistrationDialogSignInTitle,
+    RegistrationDialogSignInMessage,
+    RegistrationDialogSignInHintEmail,
+    RegistrationDialogSignInHintPassword,
+    RegistrationDialogSignInActionLogin,
+    RegistrationDialogSignInActionRegistration,
+    RegistrationDialogSignUpTitle,
+    RegistrationDialogSignUpMessage,
+    RegistrationDialogSignUpHintEmail,
+    RegistrationDialogSignUpHintPassword,
+    RegistrationDialogSignUpHintConfirmPassword,
+    RegistrationDialogSignUpActionLogin,
+    RegistrationDialogSignUpActionRegistration,
+    RegistrationDialogVerificationTitle,
+    RegistrationDialogVerificationMessage,
+    RegistrationDialogVerificationAction,
 
     SubsActionSubscriptions,
     SubsActionSubscribers,
@@ -50,6 +62,7 @@ enum class StringKey {
 
     WalletImportTitle,
     WalletImportMessageEnterPhrases,
+    WalletImportHint,
 
     ConnectWalletTitle,
     ConnectWalletMessage,
@@ -64,13 +77,11 @@ enum class StringKey {
     CreatedWalletMessage,
     CreatedWalletAction,
 
-    PhraseListTitle,
-    PhraseListMessage,
-    PhraseListActionContinue,
+    MnemonicsTitle,
+    MnemonicsMessage,
 
     VerificationTitle,
     VerificationMessage,
-    VerificationActionContinue,
 
     ReferralProgramTitle,
     ReferralProgramTitleEnterCode,

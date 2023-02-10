@@ -4,7 +4,8 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.fileTree
 
 private val Project.android: BaseExtension
-    get() = extensions.findByName("android") as? BaseExtension ?: error("Not an Android module: $name")
+    get() = extensions.findByName("android") as? BaseExtension
+        ?: error("Not an Android module: $name")
 
 fun Project.common() {
     plugins.apply {
@@ -47,6 +48,10 @@ fun Project.common() {
     }
 
     dependencies {
+        /*constraints {
+            implementation(*Libs.constraints.kotlin)
+        }*/
+
         coreLibraryDesugaring(*Libs.bundle.desugar)
         implementation(project.fileTree("include" to "*.jar", "dir" to "libs"))
 

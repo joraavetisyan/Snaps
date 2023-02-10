@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController) {
 
-    fun toConnectWalletScreen() = navHostController.navigate(AppRoute.ConnectWallet)
+    fun toConnectWalletScreen() = navHostController.navigate(AppRoute.WalletConnect)
 }
 
 class RegistrationFeatureProviderImpl @Inject constructor() : RegistrationFeatureProvider {

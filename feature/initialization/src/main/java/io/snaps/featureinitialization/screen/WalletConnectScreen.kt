@@ -12,7 +12,7 @@ import io.snaps.coreuicompose.uikit.status.FullScreenMessageUi
 import io.snaps.featureinitialization.ScreenNavigator
 
 @Composable
-fun ConnectWalletScreen(
+fun WalletConnectScreen(
     navHostController: NavHostController,
 ) {
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
@@ -24,7 +24,7 @@ fun ConnectWalletScreen(
             message = StringKey.ConnectWalletMessage.textValue(),
             primaryButton = FullScreenMessage.ButtonData(
                 text = StringKey.ConnectWalletActionCreate.textValue(),
-                onClick = router::toCreateWalletScreen,
+                onClick = router::toWalletCreateScreen,
             ),
             secondaryButton = FullScreenMessage.ButtonData(
                 text = StringKey.ConnectWalletActionImport.textValue(),

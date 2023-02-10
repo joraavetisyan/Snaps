@@ -10,9 +10,13 @@ object Libs {
     private const val rulerVersion = "1.1.0"
     private const val benManesVersionsVersion = "0.45.0"
 
+    /*Compatibility with Kotlin https://developer.android.com/jetpack/androidx/releases/compose-kotlin*/
     const val composeCompilerVersion = "1.3.0"
+    /*https://developer.android.com/jetpack/androidx/releases/compose*/
     private const val composeVersion = "1.3.0"
-    private const val composeMaterialVersion = "1.1.0-alpha03"
+    private const val composeFoundationVersion = "1.3.0"
+    private const val composeMaterialVersion = "1.3.0"
+    private const val composeMaterial3Version = "1.1.0-alpha03"
     private const val composeGlanceVersion = "1.0.0-alpha03"
     private const val splashVersion = "1.0.0-beta01"
     private const val activityVersion = "1.4.0"
@@ -90,8 +94,15 @@ object Libs {
         const val ben_manes_versions = "com.github.ben-manes:gradle-versions-plugin:$benManesVersionsVersion"
     }
 
+    object constraints {
+        /*val kotlin = arrayOf(
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion",
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion",
+        )*/
+    }
+
     object bundle {
-        val kotlin = arrayOf("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+        val kotlin = arrayOf("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
         val coroutines = arrayOf(
             "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion",
             "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion",
@@ -127,21 +138,21 @@ object Libs {
             "androidx.compose.ui:ui:$composeVersion",
             "androidx.compose.ui:ui-tooling:$composeVersion",
             "androidx.compose.ui:ui-tooling-preview:$composeVersion",
-            "androidx.compose.material:material:$composeVersion",
-            "androidx.compose.material3:material3:$composeMaterialVersion",
-            "androidx.compose.material3:material3-window-size-class:$composeMaterialVersion",
-            "androidx.compose.material:material-icons-extended:$composeVersion",
+            "androidx.compose.material:material:$composeMaterialVersion",
+            "androidx.compose.material:material-icons-extended:$composeMaterialVersion",
+            "androidx.compose.material3:material3:$composeMaterial3Version",
+            "androidx.compose.material3:material3-window-size-class:$composeMaterial3Version",
             "com.google.android.material:material:$materialVersion",
         )
         val composeWidgetTheme = arrayOf("androidx.glance:glance-appwidget:$composeGlanceVersion")
         val composeKit = arrayOf(
             "androidx.activity:activity-compose:$activityVersion",
-            "androidx.compose.foundation:foundation:$composeVersion",
-            "androidx.compose.foundation:foundation-layout:$composeVersion",
+            "androidx.compose.foundation:foundation:$composeFoundationVersion",
+            "androidx.compose.foundation:foundation-layout:$composeFoundationVersion",
+            "androidx.compose.animation:animation:$composeVersion",
             "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion",
             "com.google.accompanist:accompanist-pager:$accompanistVersion",
             "com.google.accompanist:accompanist-placeholder-material:$accompanistVersion",
-            "androidx.compose.animation:animation:$composeVersion",
             "io.coil-kt:coil-compose:$coilVersion",
             "io.coil-kt:coil-svg:$coilVersion",
             "com.google.accompanist:accompanist-permissions:$permissionVersion",
@@ -192,6 +203,13 @@ object Libs {
         val media = arrayOf(
             "androidx.media3:media3-exoplayer:$mediaVersion",
             "androidx.media3:media3-ui:$mediaVersion",
+        )
+
+        val crypto = arrayOf(
+            "com.github.horizontalsystems:ethereum-kit-android:7aadf9d",
+            "com.github.horizontalsystems:market-kit-android:97f5bc7",
+            "com.github.horizontalsystems:binance-chain-kit-android:2a89cad",
+            "com.github.horizontalsystems:hd-wallet-kit-android:f46885a",
         )
 
         const val unitTestsRunner = "android.support.test.runner.AndroidJUnitRunner"

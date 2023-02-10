@@ -1,14 +1,16 @@
 package io.snaps.featureinitialization.screen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,12 +28,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
+import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
-import io.snaps.coreuicompose.uikit.input.formatter.OrdinalNumberFormatter
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureinitialization.ScreenNavigator
 import io.snaps.featureinitialization.viewmodel.WalletImportViewModel
 
@@ -44,6 +49,12 @@ fun WalletImportScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
+    viewModel.command.collectAsCommand {
+        when (it) {
+            WalletImportViewModel.Command.OpenCreatedWalletScreen -> router.toWalletConnectedScreen()
+        }
+    }
+
     WalletImportScreen(
         uiState = uiState,
         onContinueButtonClicked = viewModel::onContinueButtonClicked,
@@ -52,7 +63,7 @@ fun WalletImportScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 private fun WalletImportScreen(
     uiState: WalletImportViewModel.UiState,
@@ -61,13 +72,12 @@ private fun WalletImportScreen(
     onBackClicked: () -> Boolean,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val topBarTitle = LocalStringHolder.current(StringKey.WalletImportTitle)
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SimpleTopAppBar(
                 title = {
-                    Text(topBarTitle)
+                    Text(StringKey.WalletImportTitle.textValue().get())
                 },
                 titleTextStyle = AppTheme.specificTypography.titleMedium,
                 scrollBehavior = scrollBehavior,
@@ -76,51 +86,62 @@ private fun WalletImportScreen(
         },
     ) {
         Column(
-            modifier = Modifier.padding(it),
+            modifier = Modifier
+                .padding(it)
+                .padding(horizontal = 12.dp)
+                .wrapContentHeight()
+                .imePadding()
+                .verticalScroll(rememberScrollState()),
         ) {
-            LazyColumn(
-                contentPadding = PaddingValues(12.dp),
+            Text(
+                text = StringKey.WalletImportMessageEnterPhrases.textValue().get(),
+                style = AppTheme.specificTypography.titleSmall,
+                color = AppTheme.specificColorScheme.textSecondary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 24.dp),
+                textAlign = TextAlign.Center,
+            )
+            uiState.words.forEachIndexed { index, phrase ->
+                SimpleTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    onValueChange = { value ->
+                        onPhraseValueChanged(value, index)
+                    },
+                    value = phrase,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = if (index != uiState.words.lastIndex) {
+                            ImeAction.Next
+                        } else ImeAction.Done,
+                    ),
+                    placeholder = {
+                        Text(
+                            text = StringKey.WalletImportHint
+                                .textValue((index + 1).toString())
+                                .get(),
+                            style = AppTheme.specificTypography.titleSmall,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                        )
+                    },
+//                    visualTransformation = OrdinalNumberFormatter(index + 1),
+                    maxLines = 1,
+                    textAlign = TextAlign.Center,
+                )
+                if (index != uiState.words.lastIndex) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
+            SimpleButtonActionM(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 24.dp),
+                onClick = onContinueButtonClicked,
+                enabled = uiState.isContinueButtonEnabled,
             ) {
-                item {
-                    Text(
-                        text = LocalStringHolder.current(StringKey.WalletImportMessageEnterPhrases),
-                        style = AppTheme.specificTypography.titleSmall,
-                        color = AppTheme.specificColorScheme.textSecondary,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp)
-                            .padding(bottom = 24.dp),
-                        textAlign = TextAlign.Center,
-                    )
-                }
-                itemsIndexed(uiState.phrases) { index, phrase ->
-                    SimpleTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        onValueChange = { value ->
-                            onPhraseValueChanged(value, index)
-                        },
-                        value = phrase,
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = if (index != uiState.phrases.lastIndex) {
-                                ImeAction.Next
-                            } else ImeAction.Done,
-                        ),
-                        placeholder = {
-                            Text(
-                                text = "${index + 1}. Enter here",
-                                style = AppTheme.specificTypography.titleSmall,
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                            )
-                        },
-                        visualTransformation = OrdinalNumberFormatter(index + 1),
-                        maxLines = 1,
-                    )
-                    if (index != uiState.phrases.lastIndex) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-                }
+                SimpleButtonContent(text = StringKey.ActionContinue.textValue())
             }
         }
     }

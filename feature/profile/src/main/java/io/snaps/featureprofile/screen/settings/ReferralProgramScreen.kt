@@ -65,12 +65,12 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
-import io.snaps.coreuicompose.uikit.status.ButtonData
-import io.snaps.coreuicompose.uikit.status.SimpleAlertDialogUi
 import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureprofile.ScreenNavigator
+import io.snaps.featureprofile.screen.ButtonData
+import io.snaps.featureprofile.screen.DialogUi
 import io.snaps.featureprofile.viewmodel.ReferralProgramViewModel
 import kotlinx.coroutines.launch
 
@@ -203,7 +203,7 @@ private fun ReferralProgramScreen(
         }
 
         if (uiState.isInviteUserDialogVisibility) {
-            SimpleAlertDialogUi(
+            DialogUi(
                 title = StringKey.ReferralProgramInviteDialogTitle.textValue(),
                 message = StringKey.ReferralProgramInviteDialogMessage.textValue(),
                 onDismissRequest = onDismissRequest,
