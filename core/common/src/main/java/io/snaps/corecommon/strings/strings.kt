@@ -451,4 +451,11 @@ internal val strings = mapOf(
     key(StringKey.ProfileTitlePublication) to mapOf(
         SupportedLanguageKey.En to "Publication",
     ),
+
+    key(StringKey.CommentsTitle) to mapOf(
+        SupportedLanguageKey.En to "%s comments",
+    ),
+    key(StringKey.CommentsHint) to mapOf(
+        SupportedLanguageKey.En to "Add comment...",
+    ),
 )
