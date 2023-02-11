@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
-import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.FileType

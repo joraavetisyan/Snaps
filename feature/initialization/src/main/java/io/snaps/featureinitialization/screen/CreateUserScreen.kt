@@ -53,7 +53,6 @@ import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureinitialization.ScreenNavigator
 import io.snaps.featureinitialization.viewmodel.CreateUserViewModel
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import java.io.File
 
 private const val AUTHORITY_SUFFIX = ".fileprovider"
