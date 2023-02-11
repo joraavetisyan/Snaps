@@ -3,7 +3,7 @@ package io.snaps.featurefeed.domain
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.model.Uuid
 
-data class Comment(
+data class CommentModel(
     val id: Uuid,
     val ownerImage: ImageValue,
     val ownerName: String,

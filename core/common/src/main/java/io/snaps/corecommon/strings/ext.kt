@@ -5,6 +5,8 @@ import java.util.Locale
 val DEFAULT_LOCALE: Locale get() = Locale.getDefault()
 val RU_LOCALE: Locale get() = Locale("ru")
 
+val emojis = listOf("😁", "🥰", "😂", "😳", "😏", "😅", "🥺", "😌", "😬")
+
 enum class PluralKey {
     Zero, One, Two, Few, Many, Other;
 

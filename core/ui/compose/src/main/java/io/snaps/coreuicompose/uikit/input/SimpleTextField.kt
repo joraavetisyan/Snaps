@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -127,6 +128,76 @@ fun SimpleTextField(
         decorationBox = @Composable { innerTextField ->
             TextFieldDefaults.OutlinedTextFieldDecorationBox(
                 value = value,
+                innerTextField = innerTextField,
+                enabled = enabled,
+                singleLine = maxLines == 1,
+                visualTransformation = visualTransformation,
+                interactionSource = interactionSource,
+                colors = colors.toLibColors(),
+                isError = status.isError(),
+                trailingIcon = trailingIcon,
+                leadingIcon = leadingIcon,
+                label = label,
+                placeholder = placeholder,
+                container = {
+                    TextFieldDefaults.OutlinedBorderContainerBox(
+                        enabled = enabled,
+                        isError = status.isError(),
+                        interactionSource = interactionSource,
+                        colors = colors.toLibColors(),
+                        shape = shape,
+                    )
+                },
+            )
+        },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SimpleTextField(
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    textStyle: TextStyle = AppTheme.specificTypography.titleSmall,
+    label: @Composable (() -> Unit)? = null,
+    placeholder: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    maxLines: Int = Int.MAX_VALUE,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    shape: Shape = SimpleTextFieldConfig.shape(),
+    status: SimpleTextFieldStatus = SimpleTextFieldStatus.Normal,
+    textAlign: TextAlign? = null,
+) {
+    val colors = when (status) {
+        SimpleTextFieldStatus.Normal -> SimpleTextFieldConfig.defaultColors()
+        SimpleTextFieldStatus.Error -> SimpleTextFieldConfig.errorColors()
+        SimpleTextFieldStatus.Success -> SimpleTextFieldConfig.successColors()
+    }
+
+    BasicTextField(
+        value = value,
+        modifier = modifier.defaultMinSize(minHeight = SimpleTextFieldConfig.MinHeight),
+        onValueChange = onValueChange,
+        enabled = enabled,
+        readOnly = readOnly,
+        textStyle = textAlign?.let { textStyle.copy(textAlign = it) } ?: textStyle,
+        cursorBrush = SolidColor(colors.cursorColor(status.isError()).value),
+        visualTransformation = visualTransformation,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        interactionSource = interactionSource,
+        singleLine = maxLines == 1,
+        maxLines = maxLines,
+        decorationBox = @Composable { innerTextField ->
+            TextFieldDefaults.OutlinedTextFieldDecorationBox(
+                value = value.text,
                 innerTextField = innerTextField,
                 enabled = enabled,
                 singleLine = maxLines == 1,

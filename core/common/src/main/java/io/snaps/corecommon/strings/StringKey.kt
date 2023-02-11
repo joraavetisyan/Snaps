@@ -168,4 +168,7 @@ enum class StringKey {
     ProfileTitleSubscribers,
     ProfileTitleSubscriptions,
     ProfileTitlePublication,
+
+    CommentsTitle,
+    CommentsHint,
 }
