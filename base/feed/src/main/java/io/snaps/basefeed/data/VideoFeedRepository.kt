@@ -4,6 +4,7 @@ import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
+import io.snaps.coredata.network.PagedLoaderParams
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
@@ -36,19 +37,19 @@ class VideoFeedRepositoryImpl @Inject constructor(
     private fun getLoader(currencyType: VideoFeedType): VideoFeedLoader {
         return loaderFactory.get(currencyType) {
             when (it) {
-                VideoFeedType.Main -> VideoFeedLoaderParams(
+                VideoFeedType.Main -> PagedLoaderParams(
                     action = videoFeedApi::feed,
                     pageSize = 3,
                 )
-                VideoFeedType.Own -> VideoFeedLoaderParams(
+                VideoFeedType.Own -> PagedLoaderParams(
                     action = videoFeedApi::feed,
                     pageSize = 15,
                 )
-                is VideoFeedType.Popular -> VideoFeedLoaderParams(
+                is VideoFeedType.Popular -> PagedLoaderParams(
                     action = videoFeedApi::popularFeed,
                     pageSize = 12,
                 )
-                is VideoFeedType.User -> VideoFeedLoaderParams(
+                is VideoFeedType.User -> PagedLoaderParams(
                     action = videoFeedApi::feed,
                     pageSize = 15,
                 )
