@@ -23,6 +23,7 @@ import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.NavigateNext
 import androidx.compose.material.icons.rounded.Phone
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Try
 import androidx.compose.ui.graphics.vector.ImageVector
 import io.snaps.corecommon.R
@@ -51,6 +52,7 @@ object SpecificIcons {
     val flipCamera: IconValue = vector(Icons.Rounded.FlipCameraAndroid)
     val chooseImage: IconValue = vector(Icons.Rounded.BrowseGallery)
     val reload: IconValue = vector(Icons.Rounded.Try)
+    val search: IconValue = vector(Icons.Rounded.Search)
 
     val camera: IconValue = resource(R.drawable.ic_camera)
     val cameraTimer: IconValue = resource(R.drawable.ic_camera_timer)

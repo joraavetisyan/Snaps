@@ -34,7 +34,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -48,9 +47,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerScope
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.VerticalPager
 import com.google.accompanist.pager.rememberPagerState
+import io.snaps.basefeed.ui.VideoClipUiState
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseplayer.ui.ReelPlayer
 import io.snaps.baseprofile.data.MainHeaderHandler
@@ -61,11 +62,12 @@ import io.snaps.corecommon.container.ImageValue
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.uikit.scroll.DetectScroll
+import io.snaps.coreuicompose.uikit.scroll.ScrollInfo
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurefeed.ScreenNavigator
 import io.snaps.featurefeed.presentation.viewmodel.VideoFeedViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.fold
 import kotlin.math.abs
 
 private const val DETECT_THRESHOLD = 1
@@ -127,35 +129,28 @@ private fun VideoFeedScreen(
             ScrollDetector(pagerState, uiState.videoFeedUiState.onListEndReaching)
 
             VerticalPager(
-                count = uiState.videoFeedUiState.clips.size,
+                count = uiState.videoFeedUiState.items.size,
                 state = pagerState,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 itemSpacing = 10.dp,
-                key = { uiState.videoFeedUiState.clips[it].id },
+                key = { uiState.videoFeedUiState.items[it].id },
             ) { index ->
-
-                val shouldPlay by remember(pagerState) {
-                    derivedStateOf {
-                        (abs(currentPageOffset) < .5 && currentPage == index)
-                                || (abs(currentPageOffset) > .5 && pagerState.currentPage == index)
+                when (val item = uiState.videoFeedUiState.items[index]) {
+                    is VideoClipUiState.Data -> {
+                        VideoClip(
+                            pagerState = pagerState,
+                            index = index,
+                            item = item,
+                            uiState = uiState,
+                            onMuteClicked = onMuteClicked,
+                            onAuthorClicked = onAuthorClicked,
+                            onLikeClicked = onLikeClicked,
+                            onCommentClicked = onCommentClicked,
+                            onShareClicked = onShareClicked
+                        )
                     }
+                    is VideoClipUiState.Shimmer -> {}
                 }
-
-                ReelPlayer(
-                    videoClipUrl = uiState.videoFeedUiState.clips[index].url,
-                    shouldPlay = shouldPlay,
-                    isMuted = uiState.isMuted,
-                    isScrolling = pagerState.isScrollInProgress,
-                    onMuted = onMuteClicked,
-                )
-
-                VideoClipItem(
-                    videoClipModel = uiState.videoFeedUiState.clips[index],
-                    onAuthorClicked = onAuthorClicked,
-                    onLikeClicked = onLikeClicked,
-                    onCommentClicked = onCommentClicked,
-                    onShareClicked = onShareClicked,
-                )
             }
 
             MainHeader(
@@ -175,17 +170,6 @@ private fun ScrollDetector(
     pagerState: PagerState,
     onListEndReaching: (() -> Unit)?,
 ) {
-    class ScrollInfo(
-        val isReachingEnd: Boolean,
-        val totalItemsCount: Int,
-    ) {
-
-        override fun equals(other: Any?): Boolean =
-            this.isReachingEnd == (other as ScrollInfo).isReachingEnd
-
-        override fun hashCode(): Int = isReachingEnd.hashCode()
-    }
-
     val scrollInfo = remember(pagerState) {
         derivedStateOf {
             val currentPage = pagerState.currentPage
@@ -196,20 +180,44 @@ private fun ScrollDetector(
         }
     }
 
-    val onScrollEndDetectedRemembered by rememberUpdatedState(onListEndReaching)
+    DetectScroll(scrollInfo, onListEndReaching)
+}
 
-    LaunchedEffect(scrollInfo) {
-        snapshotFlow { scrollInfo.value }.fold(0) { previousTotalItemsCount, currentScrollInfo ->
-            if (currentScrollInfo.isReachingEnd && currentScrollInfo.totalItemsCount > previousTotalItemsCount) {
-                onScrollEndDetectedRemembered?.invoke()
-            }
-            if (currentScrollInfo.isReachingEnd) {
-                currentScrollInfo.totalItemsCount
-            } else {
-                previousTotalItemsCount
-            }
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+private fun PagerScope.VideoClip(
+    pagerState: PagerState,
+    index: Int,
+    item: VideoClipUiState.Data,
+    uiState: VideoFeedViewModel.UiState,
+    onMuteClicked: (Boolean) -> Unit,
+    onAuthorClicked: (VideoClipModel) -> Unit,
+    onLikeClicked: (VideoClipModel) -> Unit,
+    onCommentClicked: (VideoClipModel) -> Unit,
+    onShareClicked: (VideoClipModel) -> Unit
+) {
+    val shouldPlay by remember(pagerState) {
+        derivedStateOf {
+            (abs(currentPageOffset) < .5 && currentPage == index)
+                    || (abs(currentPageOffset) > .5 && pagerState.currentPage == index)
         }
     }
+
+    ReelPlayer(
+        videoClipUrl = item.clip.url,
+        shouldPlay = shouldPlay,
+        isMuted = uiState.isMuted,
+        isScrolling = pagerState.isScrollInProgress,
+        onMuted = onMuteClicked,
+    )
+
+    VideoClipItem(
+        videoClipModel = item.clip,
+        onAuthorClicked = onAuthorClicked,
+        onLikeClicked = onLikeClicked,
+        onCommentClicked = onCommentClicked,
+        onShareClicked = onShareClicked,
+    )
 }
 
 @Composable

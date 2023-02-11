@@ -79,7 +79,7 @@ class WalletRepositoryImpl @Inject constructor(
 
         saveLastCreatedAccount()
 
-        return Effect.success(Completable)
+        return Effect.completable
     }
 
     private fun mnemonicAccountType(): AccountType.Mnemonic {

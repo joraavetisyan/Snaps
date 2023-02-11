@@ -39,7 +39,7 @@ class PinCodeWrapper @Inject constructor(
         tokenStorage.decodedAccessToken = accessToken
         tokenStorage.encodedRefreshToken = CryptoConfigurator.encode(refreshToken, cipher)
 
-        return Effect.success(Completable)
+        return Effect.completable
     }
 
     fun update(accessToken: Token, refreshToken: Token): Effect<Completable> {
@@ -50,14 +50,14 @@ class PinCodeWrapper @Inject constructor(
         tokenStorage.decodedAccessToken = accessToken
         tokenStorage.encodedRefreshToken = CryptoConfigurator.encode(refreshToken, cipher)
 
-        return Effect.success(Completable)
+        return Effect.completable
     }
 
     fun enableBiometric(pinCode: String): Effect<Completable> {
         val cipher = cryptoConfigurator.createBiometricEncryptCipher() ?: return Effect.error(
             AppError.Unknown())
         tokenStorage.encodedPinCode = CryptoConfigurator.encode(pinCode, cipher)
-        return Effect.success(Completable)
+        return Effect.completable
     }
 
     fun getBiometricCipher(): Effect<Cipher> {

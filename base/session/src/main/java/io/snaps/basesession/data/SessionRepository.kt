@@ -48,7 +48,7 @@ class SessionRepositoryImpl @Inject constructor(
     * */
     override suspend fun login(): Effect<Completable> {
         onLogin()
-        return Effect.success(Completable)
+        return Effect.completable
     }
 
     /*

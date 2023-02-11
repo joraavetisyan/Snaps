@@ -3,6 +3,9 @@ package io.snaps.featureprofile.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.basefeed.data.VideoFeedRepository
+import io.snaps.basefeed.ui.VideoFeedUiState
+import io.snaps.basefeed.ui.toVideoFeedUiState
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.model.Uuid
@@ -17,6 +20,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
@@ -25,9 +29,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val profileRepository: ProfileRepository,
-    private val action: Action,
     savedStateHandle: SavedStateHandle,
+    private val profileRepository: ProfileRepository,
+    private val videoFeedRepository: VideoFeedRepository,
+    private val action: Action,
 ) : SimpleViewModel() {
 
     private val args = savedStateHandle.getArg<AppRoute.Profile.Args>()
@@ -48,6 +53,7 @@ class ProfileViewModel @Inject constructor(
             subscribeOnCurrentUser()
             loadCurrentUser()
         }
+        subscribeOnFeed()
     }
 
     private fun subscribeOnCurrentUser() {
@@ -77,6 +83,27 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    private fun subscribeOnFeed() {
+        videoFeedRepository.getUserFeedState(args?.userId).map {
+            it.toVideoFeedUiState(
+                shimmerListSize = 12,
+                onClipClicked = {},
+                onReloadClicked = {},
+                onListEndReaching = ::onListEndReaching,
+            )
+        }.onEach { state ->
+            _uiState.update { it.copy(videoFeedUiState = state) }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun onListEndReaching() {
+        viewModelScope.launch {
+            action.execute {
+                videoFeedRepository.loadNextUserFeedPage(args?.userId)
+            }
+        }
+    }
+
     fun onSettingsClicked() = viewModelScope.launch {
         _command publish Command.OpenSettingsScreen
     }
@@ -93,25 +120,7 @@ class ProfileViewModel @Inject constructor(
         val nickname: String = "",
         val isSubscribed: Boolean = false,
         val userType: UserType = UserType.Current,
-        val images: List<Photo> = listOf(
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-            Photo(ImageValue.Url("https://picsum.photos/116/162"), "1,2M"),
-        ),
+        val videoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
     )
 
     sealed class Command {

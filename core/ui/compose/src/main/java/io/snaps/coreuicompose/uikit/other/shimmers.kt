@@ -14,6 +14,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -47,6 +49,19 @@ fun ShimmerTile(
         }
         if (needRightIcon) ShimmerTileCircle()
     }
+}
+
+@Composable
+fun ShimmerTile(
+    modifier: Modifier = Modifier,
+    shape: Shape = RectangleShape,
+) {
+    Surface(
+        color = AppTheme.specificColorScheme.lightGrey,
+        content = {},
+        shape = shape,
+        modifier = modifier.defaultPlaceholder(shape = shape),
+    )
 }
 
 @Composable

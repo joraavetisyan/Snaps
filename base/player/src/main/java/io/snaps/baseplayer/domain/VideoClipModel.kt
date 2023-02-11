@@ -15,4 +15,5 @@ data class VideoClipModel(
     val description: String,
     val authorId: Uuid,
     val isLiked: Boolean = true, // todo
+    val thumbnail: FullUrl = "https://picsum.photos/177/222",
 )

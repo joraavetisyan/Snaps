@@ -2,13 +2,13 @@ package io.snaps.featurefeed.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.basefeed.data.VideoFeedRepository
+import io.snaps.basefeed.ui.VideoFeedUiState
+import io.snaps.basefeed.ui.toVideoFeedUiState
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
-import io.snaps.featurefeed.data.VideoFeedRepository
-import io.snaps.featurefeed.presentation.VideoFeedUiState
-import io.snaps.featurefeed.presentation.toVideoFeedUiState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,8 +38,9 @@ class VideoFeedViewModel @Inject constructor(
     }
 
     private fun subscribeOnVideoFeed() {
-        videoFeedRepository.getState().map {
+        videoFeedRepository.getFeedState().map {
             it.toVideoFeedUiState(
+                shimmerListSize = 1,
                 onClipClicked = ::onClipClicked,
                 onReloadClicked = ::onReloadClicked,
                 onListEndReaching = ::onListEndReaching,
@@ -54,7 +55,7 @@ class VideoFeedViewModel @Inject constructor(
     private fun onReloadClicked() {}
 
     private fun onListEndReaching() {
-        viewModelScope.launch { action.execute { videoFeedRepository.loadNextPage() } }
+        viewModelScope.launch { action.execute { videoFeedRepository.loadNextFeedPage() } }
     }
 
     fun onMuteClicked(isMuted: Boolean) {

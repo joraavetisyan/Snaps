@@ -40,6 +40,9 @@ class AppViewModel @Inject constructor(
                 UserSessionTracker.ActualState.Refreshed,
                 UserSessionTracker.ActualState.NeedRefresh,
                 -> StartFlow.AuthorizedFlow
+                UserSessionTracker.ActualState.NotWalletConnected -> TODO()
+                UserSessionTracker.ActualState.NotInitialized -> TODO()
+                UserSessionTracker.ActualState.NotRanked -> TODO()
             }
         }
     }.likeStateFlow(

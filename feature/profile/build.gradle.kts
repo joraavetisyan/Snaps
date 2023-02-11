@@ -15,4 +15,6 @@ dependencies {
 
     implementation(projects.baseSession)
     implementation(projects.baseProfile)
+    implementation(projects.baseFeed)
+    implementation(projects.basePlayer)
 }

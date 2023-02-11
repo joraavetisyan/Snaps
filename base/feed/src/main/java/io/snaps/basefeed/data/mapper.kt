@@ -1,7 +1,7 @@
-package io.snaps.featurefeed.data
+package io.snaps.basefeed.data
 
 import io.snaps.baseplayer.domain.VideoClipModel
-import io.snaps.featurefeed.data.model.VideoFeedItemResponseDto
+import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 
 fun List<VideoFeedItemResponseDto>.toModelList() = map(VideoFeedItemResponseDto::toModel)
 

@@ -1,18 +1,8 @@
 package io.snaps.featurefeed.presentation.screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -23,13 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.basefeed.ui.VideoFeedGrid
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.textValue
@@ -39,10 +28,8 @@ import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.baseplayer.domain.VideoClipModel
-import io.snaps.featurefeed.presentation.viewmodel.PopularVideosViewModel
-import io.snaps.baseplayer.ui.ReelPlayer
 import io.snaps.featurefeed.ScreenNavigator
+import io.snaps.featurefeed.presentation.viewmodel.PopularVideosViewModel
 
 @Composable
 fun PopularVideosScreen(
@@ -57,6 +44,7 @@ fun PopularVideosScreen(
     PopularVideosScreen(
         uiState = uiState,
         headerState = headerState.value,
+        onSearchQueryChanged = viewModel::onSearchQueryChanged,
     )
 }
 
@@ -65,6 +53,7 @@ fun PopularVideosScreen(
 private fun PopularVideosScreen(
     uiState: PopularVideosViewModel.UiState,
     headerState: MainHeaderState,
+    onSearchQueryChanged: (String) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -82,48 +71,22 @@ private fun PopularVideosScreen(
                 style = AppTheme.specificTypography.titleLarge,
                 modifier = Modifier.padding(12.dp),
             )
-            SimpleTextField(value = "", onValueChange = {})
-            LazyVerticalGrid(
-                modifier = Modifier.fillMaxSize(),
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(12.dp),
-            ) {
-                itemsIndexed(
-                    items = uiState.videoClipModels,
-                    key = { _, item -> item.id },
-                ) { index, it ->
-                    Item(it, index == 0)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun Item(item: VideoClipModel, shouldPlay: Boolean) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(177f / 222f)
-            .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
-            .background(
-                color = AppTheme.specificColorScheme.uiContentBg,
-                shape = AppTheme.shapes.medium,
-            ),
-    ) {
-        ReelPlayer(
-            videoClipUrl = item.url,
-            shouldPlay = shouldPlay,
-        )
-        Row(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(horizontal = 4.dp, vertical = 8.dp),
-        ) {
-            Icon(AppTheme.specificIcons.play.get(), null, tint = AppTheme.specificColorScheme.white)
-            Text(item.likeCount.toString(), color = AppTheme.specificColorScheme.white)
+            SimpleTextField(value = uiState.query,
+                onValueChange = onSearchQueryChanged,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                placeholder = {
+                    Text(text = StringKey.PopularVideosHint.textValue().get())
+                },
+                trailingIcon = {
+                    Icon(
+                        painter = AppTheme.specificIcons.search.get(),
+                        contentDescription = null,
+                        tint = AppTheme.specificColorScheme.darkGrey,
+                    )
+                })
+            VideoFeedGrid(columnCount = 2, uiState = uiState.videoFeedUiState)
         }
     }
 }

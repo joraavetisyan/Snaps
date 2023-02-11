@@ -25,6 +25,8 @@ class Effect<DATA : Any> private constructor(
             error: AppError,
             cachedData: T? = null,
         ) = Effect(Error(error, cachedData))
+
+        val completable get() = success(Completable)
     }
 
     val isSuccess: Boolean get() = value is Success<DATA>
@@ -83,7 +85,7 @@ class Effect<DATA : Any> private constructor(
     }
 
     fun toCompletable() = when (value) {
-        is Success<DATA> -> success(Completable)
+        is Success<DATA> -> completable
         is Error<DATA> -> error(value.error)
     }
 
