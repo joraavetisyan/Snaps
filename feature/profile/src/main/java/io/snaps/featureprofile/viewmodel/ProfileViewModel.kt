@@ -8,6 +8,7 @@ import io.snaps.basefeed.ui.VideoFeedUiState
 import io.snaps.basefeed.ui.toVideoFeedUiState
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.model.SubsPage
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -59,7 +60,13 @@ class ProfileViewModel @Inject constructor(
     private fun subscribeOnCurrentUser() {
         profileRepository.state.onEach { state ->
             _uiState.update {
-                it.copy(userInfoTileState = state.toUserInfoTileState())
+                it.copy(
+                    userInfoTileState = state.toUserInfoTileState(
+                        onSubscribersClick = { onSubscribersClicked(SubsPage.Subscribers) },
+                        onSubscriptionsClick =  { onSubscribersClicked(SubsPage.Subscriptions) }
+                    ),
+                    nickname = state.dataOrCache?.name.orEmpty(),
+                )
             }
         }.launchIn(viewModelScope)
     }
@@ -76,10 +83,27 @@ class ProfileViewModel @Inject constructor(
         }.doOnSuccess { user ->
             _uiState.update {
                 it.copy(
-                    userInfoTileState = user.toUserInfoTileState(),
+                    userInfoTileState = user.toUserInfoTileState(
+                        onSubscribersClick = { onSubscribersClicked(SubsPage.Subscribers) },
+                        onSubscriptionsClick =  { onSubscribersClicked(SubsPage.Subscriptions) }
+                    ),
                     nickname = user.name,
                 )
             }
+        }
+    }
+
+    private fun onSubscribersClicked(subsPage: SubsPage) = viewModelScope.launch {
+        val userInfo = uiState.value.userInfoTileState
+        if (userInfo is UserInfoTileState.Data) {
+            _command publish Command.OpenSubsScreen(
+                args = AppRoute.Subs.Args(
+                    subsPage = subsPage,
+                    nickname = uiState.value.nickname,
+                    totalSubscriptions = userInfo.subscriptions,
+                    totalSubscribers = userInfo.subscribers,
+                )
+            )
         }
     }
 
@@ -125,6 +149,7 @@ class ProfileViewModel @Inject constructor(
 
     sealed class Command {
         object OpenSettingsScreen : Command()
+        data class OpenSubsScreen(val args: AppRoute.Subs.Args) : Command()
     }
 
     enum class UserType {

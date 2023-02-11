@@ -55,6 +55,7 @@ fun ProfileScreen(
     viewModel.command.collectAsCommand {
         when (it) {
             ProfileViewModel.Command.OpenSettingsScreen -> router.toSettingsScreen()
+            is ProfileViewModel.Command.OpenSubsScreen -> router.toSubsScreen(it.args)
         }
     }
 

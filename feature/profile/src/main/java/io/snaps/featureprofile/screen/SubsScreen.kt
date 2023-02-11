@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.transform.CircleCropTransformation
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.inset
@@ -43,6 +48,7 @@ import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.featureprofile.domain.Sub
 import io.snaps.featureprofile.viewmodel.SubsViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun SubsScreen(
@@ -55,22 +61,24 @@ fun SubsScreen(
 
     SubsScreen(
         uiState = uiState,
+        onBackClicked = router::back,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
 private fun SubsScreen(
     uiState: SubsViewModel.UiState,
+    onBackClicked: () -> Boolean,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SimpleTopAppBar(
-                title = "@name".textValue(),
+                title = "@${uiState.nickname}".textValue(),
                 titleTextStyle = AppTheme.specificTypography.titleLarge,
-                navigationIcon = AppTheme.specificIcons.back to { false },
+                navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 scrollBehavior = scrollBehavior,
                 titleHorizontalArrangement = Arrangement.Center,
             )
@@ -82,21 +90,33 @@ private fun SubsScreen(
                 .inset(insetAllExcludeTop()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            var isFirst by remember { mutableStateOf(true) }
-            val subscriptions = StringKey.SubsActionSubscriptions.textValue("26,3k")
-            val subscribers = StringKey.SubsActionSubscriptions.textValue("32,6k")
-            TitleSlider(title1 = subscriptions, title2 = subscribers, isFirst = isFirst) {
-                isFirst = !it
-            }
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+            val subscriptions = StringKey.SubsActionSubscriptions.textValue(uiState.totalSubscribers)
+            val subscribers = StringKey.SubsActionSubscribers.textValue(uiState.totalSubscriptions)
+
+            val pages = listOf(uiState.subscriptions, uiState.subscribers)
+            val pagerState = rememberPagerState(uiState.initialPage)
+
+            val coroutineScope = rememberCoroutineScope()
+
+            TitleSlider(
+                items = listOf(subscriptions, subscribers),
+                selectedItemIndex = pagerState.currentPage,
+                onClick = {
+                   coroutineScope.launch {
+                       pagerState.animateScrollToPage(it)
+                   }
+                },
+            )
+            HorizontalPager(
+                count = pages.size,
+                state = pagerState,
             ) {
-                if (isFirst) {
-                    items(uiState.subscriptions) { Item(it) }
-                } else {
-                    items(uiState.subscribers) { Item(it) }
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    items(pages[pagerState.currentPage]) { Item(it) }
                 }
             }
         }
@@ -114,11 +134,4 @@ private fun Item(item: Sub) {
             onClick = {},
         )
     ).Content(modifier = Modifier)
-}
-
-@Preview(showBackground = true)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun Preview() {
-    SubsScreen(uiState = SubsViewModel.UiState())
 }

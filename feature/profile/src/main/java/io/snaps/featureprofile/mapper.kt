@@ -6,18 +6,31 @@ import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.featureprofile.screen.UserInfoTileState
 
-fun State<ProfileModel>.toUserInfoTileState() = when (this) {
+fun State<ProfileModel>.toUserInfoTileState(
+    onSubscribersClick: () -> Unit,
+    onSubscriptionsClick: () -> Unit,
+) = when (this) {
     is Loading -> UserInfoTileState.Shimmer
     is Effect -> when {
-        isSuccess -> requireData.toUserInfoTileState()
+        isSuccess -> {
+            requireData.toUserInfoTileState(
+                onSubscribersClick = onSubscribersClick,
+                onSubscriptionsClick = onSubscriptionsClick,
+            )
+        }
         else -> UserInfoTileState.Shimmer
     }
 }
 
-fun ProfileModel.toUserInfoTileState() = UserInfoTileState.Data(
+fun ProfileModel.toUserInfoTileState(
+    onSubscribersClick: () -> Unit,
+    onSubscriptionsClick: () -> Unit,
+) = UserInfoTileState.Data(
     profileImage = avatar,
     likes = totalLikes,
     subscriptions = totalSubscriptions,
     subscribers = totalSubscribers,
     publication = totalPublication,
+    onSubscribersClick = onSubscribersClick,
+    onSubscriptionsClick = onSubscriptionsClick,
 )

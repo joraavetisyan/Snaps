@@ -63,3 +63,8 @@ enum class CurrencyType(
             Currency.getInstance(name).displayName
         }.getOrNull().orEmpty()
 }
+
+@Serializable
+enum class SubsPage {
+    Subscriptions, Subscribers,
+}

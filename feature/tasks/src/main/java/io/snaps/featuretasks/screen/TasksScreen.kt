@@ -100,12 +100,12 @@ private fun TasksScreen(
                         contentScale = ContentScale.Crop,
                     )
                 }
-                TitleSlider(
+                /*TitleSlider(
                     modifier = Modifier.align(Alignment.Center),
                     title1 = title1,
                     title2 = title2,
                     isFirst = isFirst,
-                ) { isFirst = !it }
+                ) { isFirst = !it }*/
             }
             if (isFirst) {
                 Titles(

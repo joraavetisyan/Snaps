@@ -3,6 +3,7 @@ package io.snaps.corenavigation
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import io.snaps.corecommon.model.SubsPage
 import io.snaps.corecommon.model.Uuid
 import kotlinx.serialization.Serializable
 
@@ -93,4 +94,14 @@ object AppRoute {
     object BackupWalletKey : Route("BackupWalletKey")
 
     object WalletSettings : Route("WalletSettings")
+
+    object Subs : RouteWithArg("Subs") {
+        @Serializable
+        data class Args(
+            val subsPage: SubsPage = SubsPage.Subscriptions,
+            val nickname: String,
+            val totalSubscriptions: String,
+            val totalSubscribers: String,
+        )
+    }
 }

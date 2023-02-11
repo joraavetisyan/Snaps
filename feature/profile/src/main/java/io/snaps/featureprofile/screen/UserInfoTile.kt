@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
+import io.snaps.coreuicompose.tools.defaultTileRipple
+import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.other.ShimmerTileLine
@@ -41,6 +43,8 @@ sealed class UserInfoTileState : TileState {
         val subscribers: String,
         val subscriptions: String,
         val publication: String,
+        val onSubscribersClick: () -> Unit,
+        val onSubscriptionsClick: () -> Unit,
     ) : UserInfoTileState()
 
     object Shimmer : UserInfoTileState()
@@ -71,9 +75,17 @@ private fun Data(
         InfoContainer {
             StatsLine(data.likes, LocalStringHolder.current(StringKey.ProfileTitleLikes))
             VerticalDivider()
-            StatsLine(data.subscribers, LocalStringHolder.current(StringKey.ProfileTitleSubscribers))
+            StatsLine(
+                value = data.subscribers,
+                name = LocalStringHolder.current(StringKey.ProfileTitleSubscribers),
+                onClick = data.onSubscribersClick,
+            )
             VerticalDivider()
-            StatsLine(data.subscriptions, LocalStringHolder.current(StringKey.ProfileTitleSubscriptions))
+            StatsLine(
+                value = data.subscriptions,
+                name = LocalStringHolder.current(StringKey.ProfileTitleSubscriptions),
+                onClick = data.onSubscriptionsClick,
+            )
             VerticalDivider()
             StatsLine(data.publication, LocalStringHolder.current(StringKey.ProfileTitlePublication))
         }
@@ -164,8 +176,10 @@ private fun BoxScope.InfoContainer(
 private fun StatsLine(
     value: String,
     name: String,
+    onClick: (() -> Unit)? = null,
 ) {
     Column(
+        modifier = Modifier.defaultTileRipple(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(text = value, style = AppTheme.specificTypography.titleMedium)
