@@ -65,12 +65,31 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
         return FileProvider.getUriForFile(context, getFileProviderAuthority(), file)
     }
 
-    fun copyFile(uri: Uri?, fileType: FileType): Uri? {
+    fun copyFileToInternalStorage(uri: Uri?, fileType: FileType): Uri? {
+        return copyFile(uri, createInternalFile(fileType))
+    }
+
+    fun copyFile(uri: Uri?, fileType: FileType) = copyFile(uri, createPublicFile(fileType))
+
+    fun readFile(uri: Uri): String? {
+        var inputStream: InputStream? = null
+        return try {
+            inputStream = contentResolver().openInputStream(uri)
+            val buf = ByteArray(inputStream!!.available())
+            inputStream.read(buf)
+            String(buf, StandardCharsets.UTF_8)
+        } catch (e: Exception) {
+            null
+        } finally {
+            inputStream?.close()
+        }
+    }
+
+    private fun copyFile(uri: Uri?, newFileUri: Uri): Uri? {
         uri ?: return null
 
         var inputStream: InputStream? = null
         var outputStream: OutputStream? = null
-        val newFileUri = createPublicFile(fileType)
         return try {
             inputStream = contentResolver().openInputStream(uri)
             outputStream = contentResolver().openOutputStream(newFileUri)
@@ -86,20 +105,6 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
         } finally {
             inputStream?.close()
             outputStream?.close()
-        }
-    }
-
-    fun readFile(uri: Uri): String? {
-        var inputStream: InputStream? = null
-        return try {
-            inputStream = contentResolver().openInputStream(uri)
-            val buf = ByteArray(inputStream!!.available())
-            inputStream.read(buf)
-            String(buf, StandardCharsets.UTF_8)
-        } catch (e: Exception) {
-            null
-        } finally {
-            inputStream?.close()
         }
     }
 

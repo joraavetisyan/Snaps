@@ -38,7 +38,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun isEmailVerified(): Boolean {
         getCurrentUser()?.reload()
-        return getCurrentUser()?.isEmailVerified == true
+        return getCurrentUser()?.isEmailVerified ?: true
     }
 
     override suspend fun signInWithGoogle(idToken: String): Effect<Completable> {

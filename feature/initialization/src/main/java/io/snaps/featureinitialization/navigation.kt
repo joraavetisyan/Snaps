@@ -32,6 +32,8 @@ internal class ScreenNavigator(navHostController: NavHostController) :
     )
 
     fun toWalletConnectedScreen() = navHostController.navigate(AppRoute.WalletConnected)
+
+    fun toCreateUserScreen() = navHostController.navigate(AppRoute.CreateUser)
 }
 
 class InitializationFeatureProviderImpl @Inject constructor() : InitializationFeatureProvider {
