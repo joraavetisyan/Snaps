@@ -44,7 +44,7 @@ fun WalletConnectedScreen(
                 message = StringKey.CreatedWalletMessage.textValue(),
                 primaryButton = FullScreenMessage.ButtonData(
                     text = StringKey.CreatedWalletAction.textValue(),
-                    onClick = { /*todo*/ },
+                    onClick = router::toCreateUserScreen,
                 ),
             ),
         )

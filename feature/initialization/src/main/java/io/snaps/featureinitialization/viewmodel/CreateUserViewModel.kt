@@ -1,16 +1,28 @@
 package io.snaps.featureinitialization.viewmodel
 
+import android.net.Uri
+import androidx.lifecycle.viewModelScope
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.coredata.database.UserDataStorage
+import io.snaps.coredata.network.Action
+import io.snaps.coreui.FileManager
+import io.snaps.coreui.FileType
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CreateUserViewModel @Inject constructor() : SimpleViewModel() {
+class CreateUserViewModel @Inject constructor(
+    private val fileManager: FileManager,
+    private val profileRepository: ProfileRepository,
+    private val action: Action,
+) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -26,20 +38,26 @@ class CreateUserViewModel @Inject constructor() : SimpleViewModel() {
         _uiState.update { it.copy(isDialogVisible = false) }
     }
 
-    fun onTakePhotoClicked(hasImage: Boolean) {
+    fun onTakePhotoClicked(imageUri: Uri?) = viewModelScope.launch {
         _uiState.update {
             it.copy(
                 isDialogVisible = false,
-                photoStatus = if (hasImage) PhotoStatus.Uploaded else PhotoStatus.NotUploaded,
+                photoStatus = if (imageUri != null) {
+                    PhotoStatus.Uploaded
+                } else PhotoStatus.NotUploaded,
+                imageUri = imageUri,
             )
         }
     }
 
-    fun onPickPhotoClicked(hasImage: Boolean) {
+    fun onPickPhotoClicked(imageUri: Uri?) = viewModelScope.launch {
         _uiState.update {
             it.copy(
                 isDialogVisible = false,
-                photoStatus = if (hasImage) PhotoStatus.Uploaded else PhotoStatus.NotUploaded,
+                photoStatus = if (imageUri != null) {
+                    PhotoStatus.Uploaded
+                } else PhotoStatus.NotUploaded,
+                imageUri = imageUri,
             )
         }
     }
@@ -50,7 +68,27 @@ class CreateUserViewModel @Inject constructor() : SimpleViewModel() {
         }
     }
 
-    fun onStartButtonClicked() { /*TODO*/ }
+    fun onStartButtonClicked() = viewModelScope.launch {
+        fileManager.copyFileToInternalStorage(
+            uri = uiState.value.imageUri,
+            fileType = FileType.Pictures,
+        )?.let {
+            action.execute {
+                _uiState.update {
+                    it.copy(isLoading = true)
+                }
+                profileRepository.createUser(it, uiState.value.nicknameValue)
+            }.doOnSuccess {
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
+            }.doOnError { error, data ->
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
+            }
+        }
+    }
 
     fun onNickNameValueChanged(nickname: String) {
         _uiState.update {
@@ -59,8 +97,10 @@ class CreateUserViewModel @Inject constructor() : SimpleViewModel() {
     }
 
     data class UiState(
+        val isLoading: Boolean = false,
         val isDialogVisible: Boolean = false,
         val nicknameValue: String = "",
+        val imageUri: Uri? = null,
         val photoStatus: PhotoStatus = PhotoStatus.NotUploaded,
     ) {
         val isStartButtonEnabled get() = nicknameValue.isNotBlank()

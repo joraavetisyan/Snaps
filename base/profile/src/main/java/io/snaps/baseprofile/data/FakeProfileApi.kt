@@ -2,6 +2,8 @@ package io.snaps.baseprofile.data
 
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.coredata.network.BaseResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 class FakeProfileApi : ProfileApi {
 
@@ -9,6 +11,16 @@ class FakeProfileApi : ProfileApi {
         return BaseResponse(
             actualTimestamp = 0L,
             data = getUserInfo(userId),
+        )
+    }
+
+    override suspend fun createUser(
+        file: MultipartBody.Part,
+        userName: RequestBody
+    ): BaseResponse<UserInfoResponseDto> {
+        return BaseResponse(
+            actualTimestamp = 0L,
+            data = getUserInfo(null),
         )
     }
 

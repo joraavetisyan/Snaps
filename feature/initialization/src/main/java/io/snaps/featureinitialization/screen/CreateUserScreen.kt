@@ -82,7 +82,6 @@ fun CreateUserScreen(
     )
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun CreateUserScreen(
     uiState: CreateUserViewModel.UiState,
@@ -90,25 +89,20 @@ private fun CreateUserScreen(
     onStartButtonClicked: () -> Unit,
     onUploadPhotoClicked: () -> Unit,
     onDismissRequest: () -> Unit,
-    onTakePhotoClicked: (Boolean) -> Unit,
-    onPickPhotoClicked: (Boolean) -> Unit,
+    onTakePhotoClicked: (Uri?) -> Unit,
+    onPickPhotoClicked: (Uri?) -> Unit,
     onDeleteClicked: () -> Unit,
 ) {
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
     }
-    var hasImage by remember {
-        mutableStateOf(false)
-    }
     val imagePicker = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-        hasImage = uri != null
         imageUri = uri
-        onPickPhotoClicked(hasImage)
+        onPickPhotoClicked(imageUri)
     }
     val cameraLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicture(),
         onResult = { success ->
-            hasImage = success
-            onTakePhotoClicked(hasImage)
+            onTakePhotoClicked(imageUri)
         }
     )
 
@@ -156,7 +150,7 @@ private fun CreateUserScreen(
             },
             maxLines = 1,
         )
-        if (hasImage && uiState.photoStatus == CreateUserViewModel.PhotoStatus.Uploaded) {
+        if (imageUri != null && uiState.photoStatus == CreateUserViewModel.PhotoStatus.Uploaded) {
             Photo(
                 imageUri = imageUri,
                 onDeleteClick = onDeleteClicked,
