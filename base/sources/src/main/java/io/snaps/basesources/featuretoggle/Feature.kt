@@ -7,5 +7,6 @@ enum class Feature(
     ProfileApiMock("ProfileApiMock", true),
     FeedApiMock("FeedApiMock", true),
     CommentApiMock("CommentApiMock", true),
+    SubsApiMock("SubsApiMock", true),
     UNKNOWN
 }

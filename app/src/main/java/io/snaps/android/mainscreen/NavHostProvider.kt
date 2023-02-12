@@ -19,7 +19,7 @@ import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurecollection.screen.ItemListScreen
 import io.snaps.featurefeed.presentation.screen.PopularVideosScreen
 import io.snaps.featurefeed.presentation.screen.VideoFeedScreen
-import io.snaps.featureprofile.screen.ProfileScreen
+import io.snaps.featureprofile.presentation.screen.ProfileScreen
 import io.snaps.featuretasks.screen.TasksScreen
 import javax.inject.Inject
 

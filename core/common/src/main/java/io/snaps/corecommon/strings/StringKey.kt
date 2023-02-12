@@ -171,4 +171,8 @@ enum class StringKey {
 
     CommentsTitle,
     CommentsHint,
+
+    ConfirmUnsubscribeDialogMessage,
+    ConfirmUnsubscribeDialogActionCancel,
+    ConfirmUnsubscribeDialogActionUnsubscribe,
 }

@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.screen
+package io.snaps.featureprofile.presentation.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,7 +41,9 @@ import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureprofile.ScreenNavigator
-import io.snaps.featureprofile.viewmodel.ProfileViewModel
+import io.snaps.featureprofile.domain.Sub
+import io.snaps.featureprofile.presentation.viewmodel.ProfileViewModel
+import io.snaps.featureprofile.presentation.viewmodel.SubsViewModel
 
 @Composable
 fun ProfileScreen(
@@ -64,6 +66,8 @@ fun ProfileScreen(
         onSettingsClicked = viewModel::onSettingsClicked,
         onBackClicked = router::back,
         onSubscribeClicked = viewModel::onSubscribeClicked,
+        onDismissRequest = viewModel::onDismissRequest,
+        onUnSubscribeClicked = viewModel::onUnSubscribeClicked,
     )
 }
 
@@ -74,6 +78,8 @@ private fun ProfileScreen(
     onSettingsClicked: () -> Unit,
     onBackClicked: () -> Boolean,
     onSubscribeClicked: () -> Unit,
+    onUnSubscribeClicked: (Sub) -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
     val title = when (uiState.userType) {
         ProfileViewModel.UserType.Other -> "@${uiState.nickname}"
@@ -156,5 +162,13 @@ private fun ProfileScreen(
             }
             VideoFeedGrid(columnCount = 3, uiState = uiState.videoFeedUiState)
         }
+    }
+    when (uiState.dialog) {
+        is SubsViewModel.Dialog.ConfirmUnsubscribe -> ConfirmUnsubscribeDialog(
+            data = uiState.dialog.data,
+            onDismissRequest = onDismissRequest,
+            onUnsubscribeClicked = onUnSubscribeClicked,
+        )
+        null -> Unit
     }
 }

@@ -49,7 +49,6 @@ import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featuretasks.domain.Task
 import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.coreuicompose.uikit.other.SimpleCard
-import io.snaps.coreuicompose.uikit.other.TitleSlider
 import io.snaps.featuretasks.viewmodel.TasksViewModel
 
 @Composable

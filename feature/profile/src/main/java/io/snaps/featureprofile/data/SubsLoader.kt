@@ -1,0 +1,47 @@
+package io.snaps.featureprofile.data
+
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import io.snaps.corecommon.model.Uuid
+import io.snaps.coredata.coroutine.ApplicationCoroutineScope
+import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.network.Action
+import io.snaps.coredata.network.PagedLoader
+import io.snaps.coredata.network.PagedLoaderFactory
+import io.snaps.coredata.network.PagedLoaderParams
+import io.snaps.featureprofile.data.model.SubscriptionItemResponseDto
+import io.snaps.featureprofile.domain.Sub
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import javax.inject.Singleton
+
+sealed interface SubType {
+
+    data class Subscription(val userId: Uuid?) : SubType
+
+    data class Subscriber(val userId: Uuid?) : SubType
+}
+
+class SubsLoader @AssistedInject constructor(
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @ApplicationCoroutineScope private val scope: CoroutineScope,
+    action: Action,
+    @Assisted private val params: PagedLoaderParams<SubscriptionItemResponseDto>,
+) : PagedLoader<SubscriptionItemResponseDto, Sub>(
+    ioDispatcher = ioDispatcher,
+    scope = scope,
+    action = action,
+    params = params,
+    mapper = List<SubscriptionItemResponseDto>::toModelList,
+)
+
+@Singleton
+@AssistedFactory
+abstract class SubsLoaderFactory :
+    PagedLoaderFactory<SubType, SubsLoader, SubscriptionItemResponseDto, Sub>() {
+
+    override fun provide(params: PagedLoaderParams<SubscriptionItemResponseDto>) = create(params)
+
+    abstract fun create(params: PagedLoaderParams<SubscriptionItemResponseDto>): SubsLoader
+}

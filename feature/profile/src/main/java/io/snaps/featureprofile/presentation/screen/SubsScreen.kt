@@ -1,17 +1,15 @@
-@file:OptIn(ExperimentalFoundationApi::class)
+package io.snaps.featureprofile.presentation.screen
 
-package io.snaps.featureprofile.screen
-
-import android.content.res.Configuration
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
@@ -19,14 +17,11 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -36,18 +31,21 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
+import io.snaps.coreuicompose.uikit.listtile.CellTile
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.coreuicompose.uikit.other.TitleSlider
+import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.featureprofile.domain.Sub
-import io.snaps.featureprofile.viewmodel.SubsViewModel
+import io.snaps.featureprofile.presentation.viewmodel.SubsViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -59,9 +57,17 @@ fun SubsScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
+    viewModel.command.collectAsCommand {
+        when (it) {
+            is SubsViewModel.Command.OpenProfileScreen -> router.toProfileScreen(it.args)
+        }
+    }
+
     SubsScreen(
         uiState = uiState,
         onBackClicked = router::back,
+        onDismissRequest = viewModel::onDismissRequest,
+        onUnSubscribeClicked = viewModel::onUnSubscribeClicked,
     )
 }
 
@@ -70,6 +76,8 @@ fun SubsScreen(
 private fun SubsScreen(
     uiState: SubsViewModel.UiState,
     onBackClicked: () -> Boolean,
+    onUnSubscribeClicked: (Sub) -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -93,7 +101,7 @@ private fun SubsScreen(
             val subscriptions = StringKey.SubsActionSubscriptions.textValue(uiState.totalSubscribers)
             val subscribers = StringKey.SubsActionSubscribers.textValue(uiState.totalSubscriptions)
 
-            val pages = listOf(uiState.subscriptions, uiState.subscribers)
+            val pages = listOf(uiState.subscriptionsUiState, uiState.subscribersUiState)
             val pagerState = rememberPagerState(uiState.initialPage)
 
             val coroutineScope = rememberCoroutineScope()
@@ -111,27 +119,60 @@ private fun SubsScreen(
                 count = pages.size,
                 state = pagerState,
             ) {
-                LazyColumn(
+                ScrollEndDetectLazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
+                    onScrollEndDetected = pages[pagerState.currentPage].onListEndReaching
                 ) {
-                    items(pages[pagerState.currentPage]) { Item(it) }
+                    items(pages[pagerState.currentPage].items, key = { it.userId }) {
+                        when (it) {
+                            is SubUiState.Data -> Item(it)
+                            is SubUiState.Shimmer -> CellTile(
+                                data = CellTileState.Data(
+                                    leftPart = LeftPart.Shimmer,
+                                    middlePart = MiddlePart.Shimmer(
+                                        needValueLine = true,
+                                    ),
+                                    rightPart = RightPart.Shimmer(needRightCircle = true),
+                                )
+                            )
+                            is SubUiState.Progress -> Box(modifier = Modifier.fillMaxWidth()) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .align(Alignment.Center),
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
     }
+    when (uiState.dialog) {
+        is SubsViewModel.Dialog.ConfirmUnsubscribe -> ConfirmUnsubscribeDialog(
+            data = uiState.dialog.data,
+            onDismissRequest = onDismissRequest,
+            onUnsubscribeClicked = onUnSubscribeClicked,
+        )
+        null -> Unit
+    }
 }
 
 @Composable
-private fun Item(item: Sub) {
+private fun Item(
+    data: SubUiState.Data,
+) {
+    val item = data.item
     CellTileState.Data(
         leftPart = LeftPart.Logo(item.image) { transformations(CircleCropTransformation()) },
         middlePart = MiddlePart.Data(valueBold = item.name.textValue()),
-        rightPart = RightPart.ButtonData(
+        rightPart = RightPart.ChipData(
             text = (if (item.isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),
-            enable = !item.isSubscribed,
-            onClick = {},
-        )
+            selected = !item.isSubscribed,
+            onClick = data.onSubscribeClicked,
+        ),
+        clickListener = data.onClicked,
     ).Content(modifier = Modifier)
 }

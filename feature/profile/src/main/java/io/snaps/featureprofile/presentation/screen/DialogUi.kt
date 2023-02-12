@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.screen
+package io.snaps.featureprofile.presentation.screen
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image

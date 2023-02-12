@@ -65,6 +65,6 @@ enum class CurrencyType(
 }
 
 @Serializable
-enum class SubsPage {
+enum class SubsType {
     Subscriptions, Subscribers,
 }

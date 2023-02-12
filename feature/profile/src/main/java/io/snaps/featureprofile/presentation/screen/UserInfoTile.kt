@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.screen
+package io.snaps.featureprofile.presentation.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +28,6 @@ import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.defaultTileRipple
-import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.other.ShimmerTileLine

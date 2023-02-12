@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.screen.settings
+package io.snaps.featureprofile.presentation.screen.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -40,8 +40,8 @@ import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureprofile.ScreenNavigator
-import io.snaps.featureprofile.viewmodel.BackupWalletKeyViewModel
-import io.snaps.featureprofile.viewmodel.Phrase
+import io.snaps.featureprofile.presentation.viewmodel.BackupWalletKeyViewModel
+import io.snaps.featureprofile.presentation.viewmodel.Phrase
 
 private const val WALLET_KEY_MASK = "****"
 

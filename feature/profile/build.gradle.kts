@@ -17,4 +17,5 @@ dependencies {
     implementation(projects.baseProfile)
     implementation(projects.baseFeed)
     implementation(projects.basePlayer)
+    implementation(projects.baseSources)
 }

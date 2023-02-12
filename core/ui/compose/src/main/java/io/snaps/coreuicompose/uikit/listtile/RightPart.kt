@@ -3,10 +3,13 @@ package io.snaps.coreuicompose.uikit.listtile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +29,7 @@ import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
+import io.snaps.coreuicompose.uikit.button.SimpleChip
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.other.ShimmerTileConfig
 import io.snaps.coreuicompose.uikit.other.ShimmerTileLine
@@ -65,6 +69,12 @@ sealed class RightPart : TileState {
         val onClick: (() -> Unit)? = null,
     ) : RightPart()
 
+    data class ChipData(
+        val text: TextValue,
+        val selected: Boolean = true,
+        val onClick: () -> Unit,
+    ) : RightPart()
+
     data class Shimmer(
         val needRightCircle: Boolean = false,
         val needRightLine: Boolean = false,
@@ -90,6 +100,7 @@ object RightPartTileConfig {
     fun rightPartAdditionalTextStyle() = AppTheme.specificTypography.headlineSmall
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RightPartTile(modifier: Modifier, data: RightPart) {
     Column(
@@ -183,6 +194,16 @@ fun RightPartTile(modifier: Modifier, data: RightPart) {
                 SimpleButtonActionS(onClick = { data.onClick?.invoke() }, enabled = data.enable) {
                     SimpleButtonContent(data.text)
                 }
+            }
+            is RightPart.ChipData -> {
+                SimpleChip(
+                    modifier = Modifier.width(100.dp),
+                    contentPadding = PaddingValues(4.dp),
+                    selected = data.selected,
+                    label = data.text,
+                    textStyle = AppTheme.specificTypography.labelMedium,
+                    onClick = data.onClick,
+                )
             }
             is RightPart.Shimmer -> {
                 if (data.needRightCircle) {

@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.viewmodel
+package io.snaps.featureprofile.presentation.viewmodel
 
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel

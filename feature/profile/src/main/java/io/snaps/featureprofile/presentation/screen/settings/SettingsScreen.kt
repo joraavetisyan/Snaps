@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.screen.settings
+package io.snaps.featureprofile.presentation.screen.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,14 +7,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -29,39 +32,56 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import io.snaps.coreuicompose.tools.get
-import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
-import io.snaps.featureprofile.viewmodel.SocialNetworksViewModel
+import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
+import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
+import io.snaps.coreuicompose.uikit.button.SimpleButtonRedInlineM
+import io.snaps.coreuitheme.compose.AppTheme
+import io.snaps.featureprofile.ScreenNavigator
+import io.snaps.featureprofile.presentation.viewmodel.SettingsViewModel
 
 @Composable
-fun SocialNetworksScreen(
+fun SettingsScreen(
     navHostController: NavHostController,
 ) {
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
-    val viewModel = hiltViewModel<SocialNetworksViewModel>()
+    val viewModel = hiltViewModel<SettingsViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
     val headerState by viewModel.headerUiState.collectAsState()
 
-    SocialNetworksScreen(
+    viewModel.command.collectAsCommand {
+        when (it) {
+            SettingsViewModel.Command.OpenAboutProjectScreen -> {}
+            SettingsViewModel.Command.OpenWalletSettingsScreen -> router.toWalletSettingsScreen()
+            SettingsViewModel.Command.OpenSocialNetworksScreen -> router.toSocialNetworksScreen()
+            SettingsViewModel.Command.OpenReferralProgramScreen -> router.toReferralProgramScreen()
+        }
+    }
+
+    SettingsScreen(
         uiState = uiState,
         headerState = headerState.value,
+        onLogoutClicked = viewModel::onLogoutClicked,
+        onDeleteAccountClicked = viewModel::onDeleteAccountClicked,
         onBackClicked = router::back,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SocialNetworksScreen(
-    uiState: SocialNetworksViewModel.UiState,
+private fun SettingsScreen(
+    uiState: SettingsViewModel.UiState,
     headerState: MainHeaderState,
+    onLogoutClicked: () -> Unit,
+    onDeleteAccountClicked: () -> Unit,
     onBackClicked: () -> Boolean,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -88,7 +108,7 @@ private fun SocialNetworksScreen(
                     modifier = Modifier.clickable { onBackClicked() }
                 )
                 Text(
-                    text = StringKey.SocialNetworksTitle.textValue().get(),
+                    text = StringKey.SettingsTitle.textValue().get(),
                     style = AppTheme.specificTypography.titleLarge,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
@@ -114,6 +134,28 @@ private fun SocialNetworksScreen(
                             .padding(horizontal = 12.dp, vertical = 12.dp),
                     )
                 }
+            }
+            Spacer(Modifier.height(16.dp))
+            SimpleButtonGreyM(
+                onClick = onLogoutClicked,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(elevation = 16.dp, shape = CircleShape)
+                    .padding(horizontal = 12.dp),
+            ) {
+                SimpleButtonContent(text = StringKey.SettingsActionLogout.textValue())
+            }
+            SimpleButtonRedInlineM(
+                onClick = onDeleteAccountClicked,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+            ) {
+                SimpleButtonContent(
+                    text = StringKey.SettingsActionDeleteAccount.textValue(),
+                    iconLeft = AppTheme.specificIcons.delete,
+                    tint = AppTheme.specificColorScheme.uiSystemRed,
+                )
             }
         }
     }
