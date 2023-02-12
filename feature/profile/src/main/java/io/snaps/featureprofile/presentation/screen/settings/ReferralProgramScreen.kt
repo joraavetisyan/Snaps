@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.screen.settings
+package io.snaps.featureprofile.presentation.screen.settings
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -69,9 +69,9 @@ import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureprofile.ScreenNavigator
-import io.snaps.featureprofile.screen.ButtonData
-import io.snaps.featureprofile.screen.DialogUi
-import io.snaps.featureprofile.viewmodel.ReferralProgramViewModel
+import io.snaps.featureprofile.presentation.screen.ButtonData
+import io.snaps.featureprofile.presentation.screen.DialogUi
+import io.snaps.featureprofile.presentation.viewmodel.ReferralProgramViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)

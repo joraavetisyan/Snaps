@@ -458,4 +458,14 @@ internal val strings = mapOf(
     key(StringKey.CommentsHint) to mapOf(
         SupportedLanguageKey.En to "Add comment...",
     ),
+
+    key(StringKey.ConfirmUnsubscribeDialogMessage) to mapOf(
+        SupportedLanguageKey.En to "If you change your mind, you'll have to request to follow %s again",
+    ),
+    key(StringKey.ConfirmUnsubscribeDialogActionCancel) to mapOf(
+        SupportedLanguageKey.En to "Cancel",
+    ),
+    key(StringKey.ConfirmUnsubscribeDialogActionUnsubscribe) to mapOf(
+        SupportedLanguageKey.En to "Unfollow",
+    ),
 )

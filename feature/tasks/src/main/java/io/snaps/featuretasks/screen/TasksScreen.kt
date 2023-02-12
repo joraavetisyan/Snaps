@@ -49,7 +49,6 @@ import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featuretasks.domain.Task
 import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.coreuicompose.uikit.other.SimpleCard
-import io.snaps.coreuicompose.uikit.other.TitleSlider
 import io.snaps.featuretasks.viewmodel.TasksViewModel
 
 @Composable
@@ -100,12 +99,12 @@ private fun TasksScreen(
                         contentScale = ContentScale.Crop,
                     )
                 }
-                TitleSlider(
+                /*TitleSlider(
                     modifier = Modifier.align(Alignment.Center),
                     title1 = title1,
                     title2 = title2,
                     isFirst = isFirst,
-                ) { isFirst = !it }
+                ) { isFirst = !it }*/
             }
             if (isFirst) {
                 Titles(

@@ -4,15 +4,17 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.ProfileFeatureProvider
+import io.snaps.corenavigation.base.FeatureNavDirection
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
-import io.snaps.featureprofile.screen.ProfileScreen
-import io.snaps.featureprofile.screen.settings.BackupWalletKeyScreen
-import io.snaps.featureprofile.screen.settings.ReferralProgramScreen
-import io.snaps.featureprofile.screen.settings.SettingsScreen
-import io.snaps.featureprofile.screen.settings.SocialNetworksScreen
-import io.snaps.featureprofile.screen.settings.WalletSettingsScreen
+import io.snaps.featureprofile.presentation.screen.ProfileScreen
+import io.snaps.featureprofile.presentation.screen.SubsScreen
+import io.snaps.featureprofile.presentation.screen.settings.BackupWalletKeyScreen
+import io.snaps.featureprofile.presentation.screen.settings.ReferralProgramScreen
+import io.snaps.featureprofile.presentation.screen.settings.SettingsScreen
+import io.snaps.featureprofile.presentation.screen.settings.SocialNetworksScreen
+import io.snaps.featureprofile.presentation.screen.settings.WalletSettingsScreen
 import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) :
@@ -27,6 +29,20 @@ internal class ScreenNavigator(navHostController: NavHostController) :
     fun toBackupWalletKeyScreen() = navHostController.navigate(AppRoute.BackupWalletKey)
 
     fun toWalletSettingsScreen() = navHostController.navigate(AppRoute.WalletSettings)
+
+    fun toSubsScreen(
+        args: AppRoute.Subs.Args
+    ) = navHostController navigate FeatureNavDirection(
+        AppRoute.Subs,
+        args,
+    )
+
+    fun toProfileScreen(
+        args: AppRoute.Profile.Args
+    ) = navHostController navigate FeatureNavDirection(
+        AppRoute.Profile,
+        args,
+    )
 }
 
 class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider {
@@ -39,5 +55,6 @@ class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider 
         composable(AppRoute.BackupWalletKey) { BackupWalletKeyScreen(controller) }
         composable(AppRoute.WalletSettings) { WalletSettingsScreen(controller) }
         composable(AppRoute.Profile) { ProfileScreen(controller) }
+        composable(AppRoute.Subs) { SubsScreen(controller) }
     }
 }

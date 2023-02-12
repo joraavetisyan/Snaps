@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.screen.settings
+package io.snaps.featureprofile.presentation.screen.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -39,9 +39,9 @@ import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featureprofile.ScreenNavigator
-import io.snaps.featureprofile.screen.ButtonData
-import io.snaps.featureprofile.screen.DialogUi
-import io.snaps.featureprofile.viewmodel.WalletSettingsViewModel
+import io.snaps.featureprofile.presentation.screen.ButtonData
+import io.snaps.featureprofile.presentation.screen.DialogUi
+import io.snaps.featureprofile.presentation.viewmodel.WalletSettingsViewModel
 
 @Composable
 fun WalletSettingsScreen(
