@@ -33,6 +33,7 @@ fun EnergyWidget(value: String, isFull: Boolean = false) {
     )
 }
 
+// todo rename
 @Composable
 fun WorthWidget(
     vararg items: Pair<ImageValue?, String>,

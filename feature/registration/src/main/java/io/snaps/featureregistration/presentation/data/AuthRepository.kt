@@ -8,6 +8,7 @@ import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.database.TokenStorage
 import io.snaps.coredata.network.apiCall
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
@@ -32,6 +33,7 @@ class AuthRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val api: AuthApi,
     private val auth: FirebaseAuth,
+    private val tokenStorage: TokenStorage,
 ) : AuthRepository {
 
     override fun getCurrentUser() = auth.currentUser
@@ -88,6 +90,8 @@ class AuthRepositoryImpl @Inject constructor(
     private suspend fun auth(token: String): Effect<Completable> {
         return apiCall(ioDispatcher) {
             api.auth(token)
-        }
+        }.doOnSuccess {
+            tokenStorage.authToken = it
+        }.toCompletable()
     }
 }

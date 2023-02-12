@@ -1,6 +1,7 @@
 package io.snaps.android.mainscreen
 
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.UserSessionTracker
 import io.snaps.basesession.ActiveAppZoneProvider
 import io.snaps.basesession.AppRouteProvider
@@ -8,11 +9,12 @@ import io.snaps.basesources.LocaleSource
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.strings.StringHolder
 import io.snaps.coredata.database.UserDataStorage
+import io.snaps.coredata.database.WalletStorage
 import io.snaps.corenavigation.base.ROUTE_ARGS_SEPARATOR
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreuicompose.uikit.status.BannerMessage
-import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -25,6 +27,7 @@ class AppViewModel @Inject constructor(
     userSessionTracker: UserSessionTracker,
     notificationsSource: NotificationsSource,
     private val userDataStorage: UserDataStorage,
+    private val walletStorage: WalletStorage,
     private val appRouteProvider: AppRouteProvider,
 ) : SimpleViewModel() {
 
@@ -34,20 +37,18 @@ class AppViewModel @Inject constructor(
 
     val currentFlowState = userSessionTracker.state.map { userSession ->
         when (userSession) {
-            UserSessionTracker.State.NotActive -> StartFlow.RegistrationFlow(!userDataStorage.isStartOnBoardingFinished)
-            is UserSessionTracker.State.Active -> when (userSession.actualState) {
-                UserSessionTracker.ActualState.NotStarted,
-                UserSessionTracker.ActualState.Refreshed,
-                UserSessionTracker.ActualState.NeedRefresh,
-                -> StartFlow.AuthorizedFlow
-                UserSessionTracker.ActualState.NotWalletConnected -> TODO()
-                UserSessionTracker.ActualState.NotInitialized -> TODO()
-                UserSessionTracker.ActualState.NotRanked -> TODO()
-            }
+            UserSessionTracker.State.NotActive -> StartFlow.RegistrationFlow(
+                needsStartOnBoarding = !userDataStorage.isStartOnBoardingFinished,
+            )
+            UserSessionTracker.State.Active -> StartFlow.AuthorizedFlow(
+                needsWalletConnect = walletStorage.wallet == null,
+                needsInitialization = userDataStorage.userNameFlow.firstOrNull() == null,
+                needsRanking = false,
+            )
         }
     }.likeStateFlow(
         viewModelScope,
-        StartFlow.RegistrationFlow(!userDataStorage.isStartOnBoardingFinished)
+        StartFlow.RegistrationFlow(!userDataStorage.isStartOnBoardingFinished),
     )
 
     val notificationsState = notificationsSource.state.map {
@@ -77,7 +78,15 @@ class AppViewModel @Inject constructor(
     }
 
     sealed class StartFlow {
-        data class RegistrationFlow(val needStartOnBoarding: Boolean) : StartFlow()
-        object AuthorizedFlow : StartFlow()
+
+        data class RegistrationFlow(
+            val needsStartOnBoarding: Boolean,
+        ) : StartFlow()
+
+        data class AuthorizedFlow(
+            val needsWalletConnect: Boolean,
+            val needsInitialization: Boolean,
+            val needsRanking: Boolean,
+        ) : StartFlow()
     }
 }

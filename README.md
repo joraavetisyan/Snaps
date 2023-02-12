@@ -46,3 +46,6 @@ Access to the Tracker object is through AnalyticsTrackerHolder.
 + NotificationHelper
 + Navigation extensions (in nav_ext.kt)
 + and many other extensions for some routine
+
+#### Naming
++ Provider/Source - a Source provide data in a stream, a Provider through getters

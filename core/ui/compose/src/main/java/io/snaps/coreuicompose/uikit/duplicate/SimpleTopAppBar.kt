@@ -1,7 +1,6 @@
 package io.snaps.coreuicompose.uikit.duplicate
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -118,11 +117,7 @@ fun SimpleTopAppBar(
             }
         },
         actions = {
-            if (actions.toList().isNotEmpty()) Row {
-                actions.toList().forEach {
-                    TopAppBarActionIcon(data = it)
-                }
-            }
+            actions.toList().forEach { TopAppBarActionIcon(data = it) }
         },
         windowInsets = windowInsets,
         colors = colors,

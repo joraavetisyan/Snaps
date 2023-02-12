@@ -155,7 +155,7 @@ fun RegistrationScreen(
             onLoginWithFacebookClicked = viewModel::onLoginWithFacebookClicked,
             onPrivacyPolicyClicked = viewModel::onPrivacyPolicyClicked,
             onTermsOfUserClicked = viewModel::onTermsOfUserClicked,
-            onDismissRequest = viewModel::onDismissRequest,
+            onEmailVerificationDialogDismissRequest = viewModel::onEmailVerificationDialogDismissRequest,
         )
     }
 }
@@ -169,7 +169,7 @@ private fun RegistrationScreen(
     onLoginWithGoogleClicked: () -> Unit,
     onLoginWithTwitterClicked: () -> Unit,
     onLoginWithFacebookClicked: () -> Unit,
-    onDismissRequest: () -> Unit,
+    onEmailVerificationDialogDismissRequest: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -208,12 +208,12 @@ private fun RegistrationScreen(
         }
     }
 
-    if (uiState.isEmailVerificationDialogVisibility) {
+    if (uiState.isEmailVerificationDialogVisible) {
         SimpleAlertDialogUi(
             text = StringKey.RegistrationDialogVerificationMessage.textValue(),
             title = StringKey.RegistrationDialogVerificationTitle.textValue(),
             buttonText = StringKey.RegistrationDialogVerificationAction.textValue(),
-            onClickRequest = onDismissRequest,
+            onClickRequest = onEmailVerificationDialogDismissRequest,
         )
     }
 }

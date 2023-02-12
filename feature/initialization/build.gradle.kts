@@ -14,6 +14,4 @@ dependencies {
     implementation(projects.coreNavigation)
 
     implementation(projects.baseProfile)
-
-    implementation(*Libs.bundle.crypto)
 }

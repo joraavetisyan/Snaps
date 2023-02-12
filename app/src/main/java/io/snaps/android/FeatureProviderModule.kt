@@ -11,15 +11,17 @@ import io.snaps.corenavigation.InitializationFeatureProvider
 import io.snaps.corenavigation.ProfileFeatureProvider
 import io.snaps.corenavigation.RegistrationFeatureProvider
 import io.snaps.corenavigation.TasksFeatureProvider
+import io.snaps.corenavigation.WalletConnectFeatureProvider
 import io.snaps.corenavigation.WalletFeatureProvider
 import io.snaps.featurebottombar.BottomBarFeatureProviderImpl
 import io.snaps.featurecollection.CollectionFeatureProviderImpl
 import io.snaps.featurefeed.FeedFeatureProviderImpl
+import io.snaps.featureinitialization.InitializationFeatureProviderImpl
 import io.snaps.featureprofile.ProfileFeatureProviderImpl
 import io.snaps.featureregistration.presentation.RegistrationFeatureProviderImpl
 import io.snaps.featuretasks.TasksFeatureProviderImpl
-import io.snaps.featureinitialization.InitializationFeatureProviderImpl
 import io.snaps.featurewallet.WalletFeatureProviderImpl
+import io.snaps.featurewalletconnect.WalletConnectFeatureProviderImpl
 import javax.inject.Singleton
 
 @Module
@@ -28,11 +30,11 @@ interface FeatureProviderModule {
 
     @Binds
     @Singleton
-    fun bottomBarProvider(provider: BottomBarFeatureProviderImpl): BottomBarFeatureProvider
+    fun registrationProvider(provider: RegistrationFeatureProviderImpl): RegistrationFeatureProvider
 
     @Binds
     @Singleton
-    fun registrationProvider(provider: RegistrationFeatureProviderImpl): RegistrationFeatureProvider
+    fun walletConnectFeatureProvider(provider: WalletConnectFeatureProviderImpl): WalletConnectFeatureProvider
 
     @Binds
     @Singleton
@@ -40,7 +42,11 @@ interface FeatureProviderModule {
 
     @Binds
     @Singleton
-    fun profileFeatureProvider(provider: ProfileFeatureProviderImpl): ProfileFeatureProvider
+    fun bottomBarProvider(provider: BottomBarFeatureProviderImpl): BottomBarFeatureProvider
+
+    @Binds
+    @Singleton
+    fun feedFeatureProvider(provider: FeedFeatureProviderImpl): FeedFeatureProvider
 
     @Binds
     @Singleton
@@ -52,7 +58,7 @@ interface FeatureProviderModule {
 
     @Binds
     @Singleton
-    fun feedFeatureProvider(provider: FeedFeatureProviderImpl): FeedFeatureProvider
+    fun profileFeatureProvider(provider: ProfileFeatureProviderImpl): ProfileFeatureProvider
 
     @Binds
     @Singleton

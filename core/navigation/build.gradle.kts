@@ -3,6 +3,7 @@ plugins {
 }
 
 common()
+dagger()
 compose()
 
 dependencies {

@@ -1,13 +1,11 @@
 package io.snaps.featureregistration.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basesession.data.SessionRepository
+import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
-import dagger.hilt.android.lifecycle.HiltViewModel
-import io.snaps.coredata.database.TokenStorage
-import io.snaps.coredata.database.UserDataStorage
-import io.snaps.coredata.network.Action
 import io.snaps.featureregistration.presentation.data.AuthRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,9 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RegistrationViewModel @Inject constructor(
     private val sessionRepository: SessionRepository,
-    private val tokenStorage: TokenStorage,
     private val authRepository: AuthRepository,
-    private val userDataStorage: UserDataStorage,
     private val action: Action,
 ) : SimpleViewModel() {
 
@@ -32,9 +28,11 @@ class RegistrationViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
-    fun onPrivacyPolicyClicked() { /*TODO*/ }
+    fun onPrivacyPolicyClicked() { /*TODO*/
+    }
 
-    fun onTermsOfUserClicked() { /*TODO*/ }
+    fun onTermsOfUserClicked() { /*TODO*/
+    }
 
     fun onLoginWithEmailClicked() = viewModelScope.launch {
         if (authRepository.isEmailVerified()) {
@@ -50,15 +48,19 @@ class RegistrationViewModel @Inject constructor(
         } else {
             _uiState.update {
                 it.copy(
-                    isEmailVerificationDialogVisibility = true,
+                    isEmailVerificationDialogVisible = true,
                 )
             }
         }
     }
 
-    fun onLoginWithTwitterClicked() { sessionRepository.onLogin() }
+    fun onLoginWithTwitterClicked() {
+        sessionRepository.onLogin()
+    }
 
-    fun onLoginWithFacebookClicked() { sessionRepository.onLogin() }
+    fun onLoginWithFacebookClicked() {
+        sessionRepository.onLogin()
+    }
 
     fun showSignInBottomDialog() = viewModelScope.launch {
         _uiState.update {
@@ -106,7 +108,6 @@ class RegistrationViewModel @Inject constructor(
         action.execute {
             authRepository.signInWithGoogle(idToken)
         }.doOnSuccess {
-            userDataStorage.isRegistrationFinished = true
             sessionRepository.onLogin()
         }
     }
@@ -118,7 +119,6 @@ class RegistrationViewModel @Inject constructor(
                 password = uiState.value.confirmPasswordValue,
             )
         }.doOnSuccess {
-            userDataStorage.isRegistrationFinished = true
             sessionRepository.onLogin()
         }
     }
@@ -136,15 +136,15 @@ class RegistrationViewModel @Inject constructor(
             _command publish Command.HideBottomDialog
             _uiState.update {
                 it.copy(
-                    isEmailVerificationDialogVisibility = true,
+                    isEmailVerificationDialogVisible = true,
                 )
             }
         }
     }
 
-    fun onDismissRequest() {
+    fun onEmailVerificationDialogDismissRequest() {
         _uiState.update {
-            it.copy(isEmailVerificationDialogVisibility = false)
+            it.copy(isEmailVerificationDialogVisible = false)
         }
     }
 
@@ -153,15 +153,18 @@ class RegistrationViewModel @Inject constructor(
         val emailAddressValue: String = "",
         val passwordValue: String = "",
         val confirmPasswordValue: String = "",
-        val isEmailVerificationDialogVisibility: Boolean = false,
+        val isEmailVerificationDialogVisible: Boolean = false,
     ) {
-        val isSignInButtonEnabled get() = emailAddressValue.isNotBlank()
-                && passwordValue.isNotBlank()
 
-        val isSignUpButtonEnabled get() = emailAddressValue.isNotBlank()
-                && passwordValue.isNotBlank()
-                && confirmPasswordValue.isNotBlank()
-                && passwordValue == confirmPasswordValue
+        val isSignInButtonEnabled
+            get() = emailAddressValue.isNotBlank()
+                    && passwordValue.isNotBlank()
+
+        val isSignUpButtonEnabled
+            get() = emailAddressValue.isNotBlank()
+                    && passwordValue.isNotBlank()
+                    && confirmPasswordValue.isNotBlank()
+                    && passwordValue == confirmPasswordValue
     }
 
     enum class BottomDialogType {

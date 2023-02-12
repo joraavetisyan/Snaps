@@ -2,6 +2,7 @@ package io.snaps.baseprofile.data
 
 import android.net.Uri
 import androidx.core.net.toFile
+import io.snaps.baseprofile.domain.CoinsModel
 import io.snaps.baseprofile.domain.ProfileModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
@@ -23,6 +24,9 @@ import javax.inject.Inject
 
 interface ProfileRepository {
 
+    // todo
+    val coinState: StateFlow<State<CoinsModel>>
+
     val state: StateFlow<State<ProfileModel>>
 
     suspend fun updateData(): Effect<Completable>
@@ -40,6 +44,11 @@ class ProfileRepositoryImpl @Inject constructor(
 
     private val _state = MutableStateFlow<State<ProfileModel>>(Loading())
     override val state = _state.asStateFlow()
+
+    private val _coinState = MutableStateFlow(
+        Effect.success(CoinsModel(energy = "12", gold = "12", silver = "12", bronze = "12"))
+    )
+    override val coinState = _coinState.asStateFlow()
 
     override suspend fun updateData(): Effect<Completable> {
         return apiCall(ioDispatcher) {
@@ -60,18 +69,19 @@ class ProfileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun createUser(uri: Uri, userName: String): Effect<Completable> {
-        val file = uri.toFile()
+        // todo
+        val file = uri.buildUpon().scheme("file").build().toFile()
         val mediaType = "multipart/form-data".toMediaType()
         val name = userName.toRequestBody(mediaType)
 
         val multipartBody = MultipartBody.Part.createFormData(
-            "file",
-            file.name,
-            file.asRequestBody(mediaType)
+            name = "file",
+            filename = file.name,
+            body = file.asRequestBody(mediaType),
         )
 
         return apiCall(ioDispatcher) {
-            api.createUser(multipartBody, name)
+            api.createUser(file = multipartBody, userName = name)
         }.doOnSuccess {
             userDataStorage.setUserName(it.name)
             userDataStorage.setUserAvatar(uri.toString())

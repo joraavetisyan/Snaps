@@ -4,6 +4,7 @@ import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.model.Uuid
 import java.time.LocalDateTime
 
+// todo rename UserModel
 data class ProfileModel(
     val entityId: Uuid,
     val createdDate: LocalDateTime,

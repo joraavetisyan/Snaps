@@ -72,7 +72,7 @@ object AppRoute {
         )
     }
 
-    object CreateUser : Route("CreateUser")
+    object UserCreate : Route("UserCreate")
 
     object Profile : RouteWithArg("Profile") {
         @Serializable

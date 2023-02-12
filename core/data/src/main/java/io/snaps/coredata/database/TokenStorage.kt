@@ -34,10 +34,15 @@ class TokenStorage @Inject constructor(
             putString("encodedPinCode", value)
         }
 
+    var authToken: Token?
+        get() = provider.cryptoPrefs.getString("authToken", null)
+        set(value) = provider.cryptoPrefs.edit { putString("authToken", value) }
+
     fun reset() {
         decodedAccessToken = ""
         encodedRefreshToken = ""
         salt = ""
         encodedPinCode = ""
+        authToken = null
     }
 }

@@ -70,6 +70,12 @@ class Effect<DATA : Any> private constructor(
         return this
     }
 
+    suspend fun doOnComplete(
+        block: suspend () -> Unit,
+    ): Effect<DATA> {
+        return doOnSuccess { block() }.doOnError { _, _ -> block() }
+    }
+
     suspend fun applyCacheData(
         cachedDataProvider: suspend () -> DATA?,
     ): Effect<DATA> = when (value) {

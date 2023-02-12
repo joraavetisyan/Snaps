@@ -10,6 +10,7 @@ import io.snaps.basefeed.ui.toVideoFeedUiState
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -36,6 +37,7 @@ class VideoFeedViewModel @Inject constructor(
     private val videoFeedRepository: VideoFeedRepository,
     private val profileRepository: ProfileRepository,
     private val commentRepository: CommentRepository,
+    private val bottomBarVisibilitySource: BottomBarVisibilitySource,
 ) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -94,6 +96,14 @@ class VideoFeedViewModel @Inject constructor(
         viewModelScope.launch { action.execute { commentRepository.loadNextCommentPage("") } }
     }
 
+    fun onBottomSheetHidden() {
+        bottomBarVisibilitySource.updateState(true)
+    }
+
+    fun onCommentInputBottomSheetHidden() {
+        onCommentChanged(TextFieldValue(""))
+    }
+
     fun onMuteClicked(isMuted: Boolean) {
         _uiState.update { it.copy(isMuted = isMuted) }
     }
@@ -105,6 +115,7 @@ class VideoFeedViewModel @Inject constructor(
     }
 
     fun onCommentClicked(clipModel: VideoClipModel) {
+        bottomBarVisibilitySource.updateState(false)
         viewModelScope.launch { _command publish Command.ShowBottomDialog }
     }
 

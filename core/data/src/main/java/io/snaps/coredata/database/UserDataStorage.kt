@@ -37,15 +37,9 @@ class UserDataStorage @Inject constructor(
     }
 
     var isStartOnBoardingFinished: Boolean
-        get() = provider.prefs.getBoolean("isStartFinished", false)
+        get() = provider.prefs.getBoolean("isStartOnBoardingFinished", false)
         set(value) = provider.prefs.edit {
-            putBoolean("isStartFinished", value)
-        }
-
-    var isRegistrationFinished: Boolean
-        get() = provider.prefs.getBoolean("isRegistrationFinished", false)
-        set(value) = provider.prefs.edit {
-            putBoolean("isRegistrationFinished", value)
+            putBoolean("isStartOnBoardingFinished", value)
         }
 
     var lastCheckedAvailableVersionCode: Int
@@ -54,13 +48,13 @@ class UserDataStorage @Inject constructor(
             putInt("lastCheckedAvailableVersionCode", value)
         }
 
-    fun reset(reason: LogOutReason?) {
-        TODO()
+    fun reset(reason: LogOutReason? = null) {
+        // todo
     }
 }
 
 enum class ThemeMode { Light, Dark, System }
 
 enum class LogOutReason {
-    ExhaustedLoginAttempts
+    Example
 }

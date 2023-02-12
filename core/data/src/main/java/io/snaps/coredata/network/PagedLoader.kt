@@ -26,7 +26,7 @@ data class PageModel<T>(
 )
 
 abstract class PagedLoader<T, R>(
-    scope: CoroutineScope,
+    private val scope: CoroutineScope,
     private val ioDispatcher: CoroutineDispatcher,
     private val action: Action,
     private val params: PagedLoaderParams<T>,
@@ -44,10 +44,10 @@ abstract class PagedLoader<T, R>(
 
     suspend fun refresh(): Effect<Completable> {
         _state.update { initialPageModel }
-        return load()
+        return action.execute { load() }
     }
 
-    suspend fun loadNext(): Effect<Completable> = load()
+    suspend fun loadNext(): Effect<Completable> = action.execute { load() }
 
     private suspend fun load(): Effect<Completable> {
         val nextPage = _state.value.nextPage ?: return Effect.completable

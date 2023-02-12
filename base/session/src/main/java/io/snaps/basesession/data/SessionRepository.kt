@@ -73,10 +73,8 @@ class SessionRepositoryImpl @Inject constructor(
 
     private fun clearData(reason: LogOutReason?) {
         scope.launch {
-            if (userSessionTracker.state.value.isRefreshed) {
-                apiCall(ioDispatcher) {
-                    logoutApi.logout(LogoutRequestDto(deviceInfoProvider.getDeviceId()))
-                }
+            apiCall(ioDispatcher) {
+                logoutApi.logout(LogoutRequestDto(deviceInfoProvider.getDeviceId()))
             }
             deviceInfoProvider.resetPushToken()
             tokenStorage.reset()

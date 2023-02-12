@@ -130,7 +130,7 @@ private fun SocialNetworksScreen(
             SimpleTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp, vertical = 8.dp),
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
                 onValueChange = onAmountValueChanged,
                 value = uiState.amountValue,
                 keyboardOptions = KeyboardOptions(

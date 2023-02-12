@@ -13,5 +13,6 @@ dependencies {
     implementation(projects.coreUi)
     implementation(projects.coreNavigation)
 
+    implementation(projects.baseSources)
     implementation(projects.baseProfile)
 }

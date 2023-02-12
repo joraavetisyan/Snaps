@@ -124,10 +124,18 @@ fun VideoFeedScreen(
     )
 
     LaunchedEffect(Unit) {
+        snapshotFlow { sheetState.currentValue }.collect {
+            if (it == ModalBottomSheetValue.Hidden) {
+                viewModel.onBottomSheetHidden()
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
         snapshotFlow { commentInputSheetState.currentValue }.collect {
             if (it == ModalBottomSheetValue.Hidden) {
                 hideKeyboard()
-                viewModel.onCommentChanged(TextFieldValue(""))
+                viewModel.onCommentInputBottomSheetHidden()
             }
         }
     }

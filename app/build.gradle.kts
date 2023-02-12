@@ -101,6 +101,7 @@ dependencies {
     implementation(projects.featureRegistration)
     implementation(projects.featureInitialization)
     implementation(projects.featureWallet)
+    implementation(projects.featureWalletConnect)
     implementation(projects.featureProfile)
     implementation(projects.featureCollection)
     implementation(projects.featureTasks)

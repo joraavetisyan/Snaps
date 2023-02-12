@@ -28,6 +28,11 @@ interface InitializationFeatureProvider {
     fun NavGraphBuilder.initializationGraph(controller: NavHostController)
 }
 
+interface WalletConnectFeatureProvider {
+
+    fun NavGraphBuilder.walletConnectGraph(controller: NavHostController)
+}
+
 interface ProfileFeatureProvider {
 
     fun NavGraphBuilder.profileGraph(controller: NavHostController)

@@ -59,10 +59,13 @@ class AppActivity : FragmentActivity() {
             when (val currentFlow = currentFlowState.value) {
                 is AppViewModel.StartFlow.RegistrationFlow -> navHostProvider.NonAuthorizedGraph(
                     navController = navController,
-                    isNeedForOnboarding = currentFlow.needStartOnBoarding,
+                    needsStartOnBoarding = currentFlow.needsStartOnBoarding,
                 )
                 is AppViewModel.StartFlow.AuthorizedFlow -> navHostProvider.AuthorizedGraph(
                     navController = navController,
+                    needsWalletConnect = currentFlow.needsWalletConnect,
+                    needsInitialization = currentFlow.needsInitialization,
+                    needsRanking = currentFlow.needsRanking,
                 )
             }
             viewModel.updateAppRoute(navBackStackEntry?.destination?.route)

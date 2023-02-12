@@ -200,6 +200,9 @@ internal val strings = mapOf(
     key(StringKey.CreateUserActionStart) to mapOf(
         SupportedLanguageKey.En to "Start",
     ),
+    key(StringKey.CreateUserActionUploadPhoto) to mapOf(
+        SupportedLanguageKey.En to "Upload a photo",
+    ),
 
     key(StringKey.PhotoDialogTitle) to mapOf(
         SupportedLanguageKey.En to "Select photo",
@@ -422,6 +425,9 @@ internal val strings = mapOf(
     ),
     key(StringKey.WithdrawHintAmount) to mapOf(
         SupportedLanguageKey.En to "Enter amount",
+    ),
+    key(StringKey.WithdrawActionMax) to mapOf(
+        SupportedLanguageKey.En to "Max",
     ),
     key(StringKey.WithdrawFieldAvailable) to mapOf(
         SupportedLanguageKey.En to "Available: %s",

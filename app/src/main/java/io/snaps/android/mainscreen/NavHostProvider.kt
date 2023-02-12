@@ -12,6 +12,7 @@ import io.snaps.corenavigation.InitializationFeatureProvider
 import io.snaps.corenavigation.ProfileFeatureProvider
 import io.snaps.corenavigation.RegistrationFeatureProvider
 import io.snaps.corenavigation.TasksFeatureProvider
+import io.snaps.corenavigation.WalletConnectFeatureProvider
 import io.snaps.corenavigation.WalletFeatureProvider
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.createRoute
@@ -25,34 +26,49 @@ import javax.inject.Inject
 
 class NavHostProvider @Inject constructor(
     private val registrationFeatureProvider: RegistrationFeatureProvider,
-    private val bottomBarFeatureProvider: BottomBarFeatureProvider,
+    private val walletConnectFeatureProvider: WalletConnectFeatureProvider,
     private val initializationFeatureProvider: InitializationFeatureProvider,
-    private val profileFeatureProvider: ProfileFeatureProvider,
-    private val walletFeatureProvider: WalletFeatureProvider,
+    private val bottomBarFeatureProvider: BottomBarFeatureProvider,
+    private val feedFeatureProvider: FeedFeatureProvider,
     private val tasksFeatureProvider: TasksFeatureProvider,
     private val collectionFeatureProvider: CollectionFeatureProvider,
-    private val feedFeatureProvider: FeedFeatureProvider,
+    private val profileFeatureProvider: ProfileFeatureProvider,
+    private val walletFeatureProvider: WalletFeatureProvider,
 ) {
 
     @Composable
-    fun NonAuthorizedGraph(navController: NavHostController, isNeedForOnboarding: Boolean) = Graph(
+    fun NonAuthorizedGraph(
+        navController: NavHostController,
+        needsStartOnBoarding: Boolean,
+    ) = Graph(
         navController = navController,
         startDestinationRoute = when {
-            isNeedForOnboarding -> createRoute(AppRoute.Registration)
+            needsStartOnBoarding -> createRoute(AppRoute.Registration)
             else -> createRoute(AppRoute.Registration)
         }
     )
 
     @Composable
-    fun AuthorizedGraph(navController: NavHostController) = Graph(
+    fun AuthorizedGraph(
+        navController: NavHostController,
+        needsWalletConnect: Boolean,
+        needsInitialization: Boolean,
+        needsRanking: Boolean,
+    ) = Graph(
         navController = navController,
-        startDestinationRoute = createRoute(AppRoute.MainBottomBar),
+        startDestinationRoute = when {
+            needsWalletConnect -> createRoute(AppRoute.WalletConnect)
+            needsInitialization -> createRoute(AppRoute.UserCreate)
+            needsRanking -> createRoute(AppRoute.MainBottomBar) // todo
+            else -> createRoute(AppRoute.MainBottomBar)
+        },
     )
 
     @Composable
     fun Graph(navController: NavHostController, startDestinationRoute: String) {
         NavHost(navController = navController, startDestination = startDestinationRoute) {
             with(registrationFeatureProvider) { registrationGraph(navController) }
+            with(walletConnectFeatureProvider) { walletConnectGraph(navController) }
             with(initializationFeatureProvider) { initializationGraph(navController) }
             with(bottomBarFeatureProvider) {
                 bottomBarGraph(route = AppRoute.MainBottomBar, items = mainBottomBarItems)

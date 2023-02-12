@@ -51,6 +51,7 @@ enum class StringKey {
     CreateUserMessage,
     CreateUserHintNickname,
     CreateUserFieldPhotoUploaded,
+    CreateUserActionUploadPhoto,
     CreateUserActionStart,
 
     PhotoDialogTitle,
