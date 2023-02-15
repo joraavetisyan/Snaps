@@ -1,8 +1,7 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package io.snaps.featuretasks.screen
+package io.snaps.featuretasks.presentation.screen
 
-import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -37,7 +35,7 @@ import io.snaps.coreuicompose.uikit.duplicate.ActionIconData
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featuretasks.ScreenNavigator
-import io.snaps.featuretasks.viewmodel.TaskViewModel
+import io.snaps.featuretasks.presentation.viewmodel.TaskViewModel
 
 @Composable
 fun ShareTaskScreen(
@@ -50,6 +48,9 @@ fun ShareTaskScreen(
 
     ShareTaskScreen(
         uiState = uiState,
+        onBackClicked = router::back,
+        onSaveButtonClicked = viewModel::onSaveButtonClicked,
+        onShareIconClicked = viewModel::onShareIconClicked,
     )
 }
 
@@ -57,6 +58,9 @@ fun ShareTaskScreen(
 @Composable
 private fun ShareTaskScreen(
     uiState: TaskViewModel.UiState,
+    onBackClicked: () -> Boolean,
+    onShareIconClicked: () -> Unit,
+    onSaveButtonClicked: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -65,11 +69,15 @@ private fun ShareTaskScreen(
             SimpleTopAppBar(
                 title = StringKey.TaskShareTitle.textValue(),
                 titleTextStyle = AppTheme.specificTypography.titleLarge,
-                navigationIcon = AppTheme.specificIcons.back to { false },
+                navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 scrollBehavior = scrollBehavior,
                 titleHorizontalArrangement = Arrangement.Center,
                 actions = listOf(
-                    ActionIconData(AppTheme.specificIcons.share) {},
+                    ActionIconData(
+                        icon = AppTheme.specificIcons.share,
+                        color = AppTheme.specificColorScheme.grey,
+                        onClick = onShareIconClicked,
+                    ),
                 ),
             )
         },
@@ -87,16 +95,12 @@ private fun ShareTaskScreen(
                 modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Crop,
             )
-            SimpleButtonActionL(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+            SimpleButtonActionL(
+                onClick = onSaveButtonClicked,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
                 SimpleButtonContent(text = StringKey.ActionSave.textValue())
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun Preview() {
-    ShareTaskScreen(uiState = TaskViewModel.UiState())
 }

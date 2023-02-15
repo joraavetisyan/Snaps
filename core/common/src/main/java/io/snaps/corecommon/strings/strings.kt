@@ -331,6 +331,9 @@ internal val strings = mapOf(
     key(StringKey.TaskWatchVideoTitle) to mapOf(
         SupportedLanguageKey.En to "Watch short videos",
     ),
+    key(StringKey.TaskWatchVideoFieldJobCompleted) to mapOf(
+        SupportedLanguageKey.En to "Job completed successfully",
+    ),
 
     key(StringKey.TaskLikeAndSubscribeTitle) to mapOf(
         SupportedLanguageKey.En to "Like and subscribe ",
@@ -360,6 +363,9 @@ internal val strings = mapOf(
     ),
     key(StringKey.TaskFindPointsActionNotFound) to mapOf(
         SupportedLanguageKey.En to "Points not found",
+    ),
+    key(StringKey.TaskFindPointsTitleSponsor) to mapOf(
+        SupportedLanguageKey.En to "Sponsor",
     ),
 
     key(StringKey.WalletSettingsTitle) to mapOf(

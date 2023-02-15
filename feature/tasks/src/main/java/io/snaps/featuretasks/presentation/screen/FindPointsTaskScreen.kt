@@ -1,8 +1,7 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package io.snaps.featuretasks.screen
+package io.snaps.featuretasks.presentation.screen
 
-import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,7 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -48,8 +49,6 @@ import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyL
-import io.snaps.coreuicompose.uikit.duplicate.ActionIconData
-import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.listtile.CellTile
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
@@ -59,8 +58,9 @@ import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.coreuicompose.uikit.other.SimpleCard
-import io.snaps.featuretasks.viewmodel.TaskViewModel
+import io.snaps.featuretasks.presentation.viewmodel.TaskViewModel
 import io.snaps.coreuicompose.uikit.other.Progress
+import io.snaps.featuretasks.presentation.ui.TaskToolbar
 
 @Composable
 fun FindPointsTaskScreen(
@@ -73,6 +73,11 @@ fun FindPointsTaskScreen(
 
     FindPointsTaskScreen(
         uiState = uiState,
+        onBackClicked = router::back,
+        onPointIdChanged = viewModel::onPointIdChanged,
+        onConnectButtonClicked = viewModel::onConnectButtonClicked,
+        onVerifyButtonClicked = viewModel::onVerifyButtonClicked,
+        onPointsNotFoundButtonClicked = viewModel::onPointsNotFoundButtonClicked,
     )
 }
 
@@ -80,20 +85,21 @@ fun FindPointsTaskScreen(
 @Composable
 private fun FindPointsTaskScreen(
     uiState: TaskViewModel.UiState,
+    onBackClicked: () -> Boolean,
+    onPointIdChanged: (String) -> Unit,
+    onConnectButtonClicked: () -> Unit,
+    onVerifyButtonClicked: () -> Unit,
+    onPointsNotFoundButtonClicked: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            SimpleTopAppBar(
+            TaskToolbar(
                 title = StringKey.TaskFindPointsTitle.textValue(),
-                titleTextStyle = AppTheme.specificTypography.titleLarge,
-                navigationIcon = AppTheme.specificIcons.back to { false },
+                navigationIcon = AppTheme.specificIcons.back to onBackClicked,
+                progress = uiState.task?.energy,
                 scrollBehavior = scrollBehavior,
-                titleHorizontalArrangement = Arrangement.Center,
-                actions = listOf(
-                    ActionIconData(AppTheme.specificIcons.share) {},
-                ),
             )
         },
     ) { paddingValues ->
@@ -123,7 +129,7 @@ private fun FindPointsTaskScreen(
                         )
                     }
                     Column(Modifier.weight(1f)) {
-                        Text("Sponsor")
+                        Text(StringKey.TaskFindPointsTitleSponsor.textValue().get())
                         Spacer(Modifier.height(4.dp))
                         Progress(Modifier.fillMaxWidth(), progress = 1f)
                         Spacer(Modifier.height(4.dp))
@@ -158,11 +164,13 @@ private fun FindPointsTaskScreen(
             )
 
             Column(
-                Modifier.border(
-                    width = 1.dp,
-                    color = AppTheme.specificColorScheme.grey,
-                    shape = AppTheme.shapes.medium,
-                )
+                modifier = Modifier
+                    .border(
+                        width = 1.dp,
+                        color = AppTheme.specificColorScheme.darkGrey,
+                        shape = AppTheme.shapes.medium,
+                    )
+                    .padding(16.dp),
             ) {
                 CellTile(
                     data = CellTileState.Data(
@@ -172,31 +180,46 @@ private fun FindPointsTaskScreen(
                         middlePart = MiddlePart.Data(
                             value = StringKey.TaskFindPointsTitleConnectInstagram.textValue(),
                         ),
-                        rightPart = RightPart.ButtonData(StringKey.TaskFindPointsActionConnect.textValue())
+                        rightPart = RightPart.ButtonData(
+                            text = StringKey.TaskFindPointsActionConnect.textValue(),
+                            onClick = onConnectButtonClicked,
+                        )
                     )
                 )
-                Divider(modifier = Modifier.fillMaxWidth())
+                Divider(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = AppTheme.specificColorScheme.darkGrey,
+                )
                 Text(
                     text = StringKey.TaskFindPointsTitlePointId.textValue().get(),
                     style = AppTheme.specificTypography.titleMedium,
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(vertical = 12.dp)
                 )
-                SimpleTextField(value = "", onValueChange = {})
+                SimpleTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = uiState.pointId,
+                    onValueChange = onPointIdChanged,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done,
+                    ),
+                )
             }
 
-            SimpleButtonActionL(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+            Spacer(Modifier.height(16.dp))
+
+            SimpleButtonActionL(
+                onClick = onVerifyButtonClicked,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
                 SimpleButtonContent(text = StringKey.TaskFindPointsActionVerify.textValue())
             }
-            SimpleButtonGreyL(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+            SimpleButtonGreyL(
+                onClick = onPointsNotFoundButtonClicked,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 SimpleButtonContent(text = StringKey.TaskFindPointsActionNotFound.textValue())
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun Preview() {
-    FindPointsTaskScreen(uiState = TaskViewModel.UiState())
 }

@@ -1,4 +1,4 @@
-package io.snaps.featuretasks.screen
+package io.snaps.featuretasks.presentation.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
