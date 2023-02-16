@@ -106,16 +106,16 @@ object AppRoute {
         )
     }
 
-    object FindPointsTask : RouteWithArg("FindPointsTask") {
-        @Serializable
-        data class Args(
-            val id: Uuid,
-        )
-    }
+    @Serializable
+    data class TaskArgs(
+        val id: Uuid,
+    )
 
-    object LikeAndSubscribeTask : RouteWithArg("LikeAndSubscribeTask") // need pass FindPointsTask.args
+    object FindPointsTask : RouteWithArg("FindPointsTask") // need pass TaskArgs
 
-    object ShareTask : RouteWithArg("ShareTask") // need pass FindPointsTask.args
+    object LikeAndSubscribeTask : RouteWithArg("LikeAndSubscribeTask") // need pass TaskArgs
 
-    object WatchVideoTask : RouteWithArg("WatchVideoTask") // need pass FindPointsTask.args
+    object ShareTask : RouteWithArg("ShareTask") // need pass TaskArgs
+
+    object WatchVideoTask : RouteWithArg("WatchVideoTask") // need pass TaskArgs
 }

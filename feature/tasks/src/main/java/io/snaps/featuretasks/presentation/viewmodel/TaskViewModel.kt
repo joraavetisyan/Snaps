@@ -25,7 +25,7 @@ class TaskViewModel @Inject constructor(
     private val tasksRepository: TasksRepository,
 ) : SimpleViewModel() {
 
-    private val args = savedStateHandle.requireArgs<AppRoute.FindPointsTask.Args>()
+    private val args = savedStateHandle.requireArgs<AppRoute.TaskArgs>()
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()

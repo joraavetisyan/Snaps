@@ -21,28 +21,28 @@ internal class ScreenNavigator(navHostController: NavHostController) : Navigator
         id: Uuid,
     ) = navHostController navigate FeatureNavDirection(
         AppRoute.ShareTask,
-        AppRoute.FindPointsTask.Args(id),
+        AppRoute.TaskArgs(id),
     )
 
     fun toLikeAndSubscribeTaskScreen(
         id: Uuid,
     ) = navHostController navigate FeatureNavDirection(
         AppRoute.LikeAndSubscribeTask,
-        AppRoute.FindPointsTask.Args(id),
+        AppRoute.TaskArgs(id),
     )
 
     fun toFindPointsTaskScreen(
         id: Uuid,
     ) = navHostController navigate FeatureNavDirection(
         AppRoute.FindPointsTask,
-        AppRoute.FindPointsTask.Args(id),
+        AppRoute.TaskArgs(id),
     )
 
     fun toWatchVideoTaskScreen(
         id: Uuid,
     ) = navHostController navigate FeatureNavDirection(
         AppRoute.WatchVideoTask,
-        AppRoute.FindPointsTask.Args(id),
+        AppRoute.TaskArgs(id),
     )
 }
 
