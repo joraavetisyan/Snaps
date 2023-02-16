@@ -1,9 +1,9 @@
 package io.snaps.featureregistration.presentation.data
 
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
@@ -20,7 +20,7 @@ interface AuthRepository {
 
     fun isEmailVerified(): Boolean
 
-    suspend fun signInWithGoogle(idToken: String): Effect<Completable>
+    suspend fun signInWithCredential(authCredential: AuthCredential): Effect<Completable>
 
     suspend fun signInWithEmail(email: String, password: String): Effect<Completable>
 
@@ -43,10 +43,9 @@ class AuthRepositoryImpl @Inject constructor(
         return getCurrentUser()?.isEmailVerified ?: true
     }
 
-    override suspend fun signInWithGoogle(idToken: String): Effect<Completable> {
-        val googleCredential = GoogleAuthProvider.getCredential(idToken, null)
+    override suspend fun signInWithCredential(authCredential: AuthCredential): Effect<Completable> {
         return try {
-            auth.signInWithCredential(googleCredential)
+            auth.signInWithCredential(authCredential)
                 .await()
                 .handleAuthResult()
         } catch (e: Exception) {

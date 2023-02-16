@@ -66,6 +66,8 @@ object Libs {
 
     private const val permissionVersion = "0.28.0"
 
+    private const val facebookVersion = "16.0.0"
+
     object plugin {
         const val application = "com.android.application"
         const val library = "com.android.library"
@@ -210,6 +212,10 @@ object Libs {
             "com.github.horizontalsystems:market-kit-android:97f5bc7",
             "com.github.horizontalsystems:binance-chain-kit-android:2a89cad",
             "com.github.horizontalsystems:hd-wallet-kit-android:f46885a",
+        )
+
+        val facebook = arrayOf(
+            "com.facebook.android:facebook-android-sdk:$facebookVersion",
         )
 
         const val unitTestsRunner = "android.support.test.runner.AndroidJUnitRunner"
