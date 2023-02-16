@@ -15,6 +15,7 @@ import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.getArg
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
+import io.snaps.featureprofile.data.SubsRepository
 import io.snaps.featureprofile.domain.Sub
 import io.snaps.featureprofile.presentation.toUserInfoTileState
 import io.snaps.featureprofile.presentation.screen.UserInfoTileState
@@ -34,6 +35,7 @@ class ProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val profileRepository: ProfileRepository,
     private val videoFeedRepository: VideoFeedRepository,
+    private val subsRepository: SubsRepository,
     private val action: Action,
 ) : SimpleViewModel() {
 
@@ -133,7 +135,7 @@ class ProfileViewModel @Inject constructor(
         _command publish Command.OpenSettingsScreen
     }
 
-    fun onSubscribeClicked() {
+    fun onSubscribeClicked() = viewModelScope.launch {
         if (uiState.value.isSubscribed) {
             val userInfo = uiState.value.userInfoTileState
             if (userInfo is UserInfoTileState.Data) {
@@ -154,15 +156,21 @@ class ProfileViewModel @Inject constructor(
             _uiState.update {
                 it.copy(isSubscribed = !it.isSubscribed)
             }
+            action.execute {
+                subsRepository.subscribe(requireNotNull(args?.userId))
+            }
         }
     }
 
-    fun onUnSubscribeClicked(item: Sub) = viewModelScope.launch {
+    fun onUnsubscribeClicked(item: Sub) = viewModelScope.launch {
         _uiState.update {
             it.copy(
                 dialog = null,
                 isSubscribed = !it.isSubscribed,
             )
+        }
+        action.execute {
+            subsRepository.unsubscribe(item.userId)
         }
     }
 

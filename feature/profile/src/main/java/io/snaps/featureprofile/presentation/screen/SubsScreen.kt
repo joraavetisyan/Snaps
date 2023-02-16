@@ -67,7 +67,7 @@ fun SubsScreen(
         uiState = uiState,
         onBackClicked = router::back,
         onDismissRequest = viewModel::onDismissRequest,
-        onUnSubscribeClicked = viewModel::onUnSubscribeClicked,
+        onUnsubscribeClicked = viewModel::onUnsubscribeClicked,
     )
 }
 
@@ -76,7 +76,7 @@ fun SubsScreen(
 private fun SubsScreen(
     uiState: SubsViewModel.UiState,
     onBackClicked: () -> Boolean,
-    onUnSubscribeClicked: (Sub) -> Unit,
+    onUnsubscribeClicked: (Sub) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -154,7 +154,7 @@ private fun SubsScreen(
         is SubsViewModel.Dialog.ConfirmUnsubscribe -> ConfirmUnsubscribeDialog(
             data = uiState.dialog.data,
             onDismissRequest = onDismissRequest,
-            onUnsubscribeClicked = onUnSubscribeClicked,
+            onUnsubscribeClicked = onUnsubscribeClicked,
         )
         null -> Unit
     }

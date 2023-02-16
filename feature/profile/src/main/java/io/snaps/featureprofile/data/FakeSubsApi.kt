@@ -4,9 +4,12 @@ import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.mock.rImage
+import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
+import io.snaps.featureprofile.data.model.SubscribeRequestDto
 import io.snaps.featureprofile.data.model.SubscriptionItemResponseDto
+import io.snaps.featureprofile.data.model.UnsubscribeRequestDto
 import kotlinx.coroutines.delay
 import retrofit2.http.Query
 
@@ -53,5 +56,23 @@ class FakeSubsApi : SubsApi {
                 )
             }
         ).also { subscriptionGeneration++ }
+    }
+
+    override suspend fun subscribe(body: SubscribeRequestDto): BaseResponse<Completable> {
+        delay(mockDelay)
+        log("Requesting subscribe: ${body.toSubscribeUserId}")
+        return BaseResponse(
+            actualTimestamp = 1L,
+            data = Completable,
+        )
+    }
+
+    override suspend fun unsubscribe(body: UnsubscribeRequestDto): BaseResponse<Completable> {
+        delay(mockDelay)
+        log("Requesting unsubscribe: ${body.subscriptionId}")
+        return BaseResponse(
+            actualTimestamp = 1L,
+            data = Completable,
+        )
     }
 }
