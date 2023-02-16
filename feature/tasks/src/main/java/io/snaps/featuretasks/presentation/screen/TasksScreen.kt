@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package io.snaps.featuretasks.screen
+package io.snaps.featuretasks.presentation.screen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,9 +25,8 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -37,19 +35,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import io.snaps.baseprofile.ui.EnergyWidget
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.featuretasks.domain.Task
 import io.snaps.featuretasks.ScreenNavigator
-import io.snaps.coreuicompose.uikit.other.SimpleCard
-import io.snaps.featuretasks.viewmodel.TasksViewModel
+import io.snaps.coreuicompose.uikit.other.TitleSlider
+import io.snaps.featuretasks.presentation.viewmodel.TasksViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun TasksScreen(
@@ -60,12 +61,20 @@ fun TasksScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
+    viewModel.command.collectAsCommand {
+        when (it) {
+            is TasksViewModel.Command.OpenWatchVideoTaskScreen -> router.toWatchVideoTaskScreen(it.id)
+            is TasksViewModel.Command.OpenShareTaskScreen -> router.toShareTaskScreen(it.id)
+            is TasksViewModel.Command.OpenFindPointsTaskScreen -> router.toFindPointsTaskScreen(it.id)
+            is TasksViewModel.Command.OpenLikeAndSubscribeTaskScreen -> router.toLikeAndSubscribeTaskScreen(it.id)
+        }
+    }
     TasksScreen(
         uiState = uiState,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
 private fun TasksScreen(
     uiState: TasksViewModel.UiState,
@@ -80,9 +89,14 @@ private fun TasksScreen(
                 .padding(paddingValues)
                 .inset(insetAllExcludeTop()),
         ) {
-            var isFirst by remember { mutableStateOf(true) }
-            val title1 = StringKey.TasksTitleSlideCurrent.textValue()
-            val title2 = StringKey.TasksTitleSlideHistory.textValue()
+            val current = StringKey.TasksTitleSlideCurrent.textValue()
+            val history = StringKey.TasksTitleSlideHistory.textValue()
+
+            val pages = listOf(uiState.current, uiState.history)
+            val pagerState = rememberPagerState()
+
+            val coroutineScope = rememberCoroutineScope()
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -99,14 +113,18 @@ private fun TasksScreen(
                         contentScale = ContentScale.Crop,
                     )
                 }
-                /*TitleSlider(
+                TitleSlider(
                     modifier = Modifier.align(Alignment.Center),
-                    title1 = title1,
-                    title2 = title2,
-                    isFirst = isFirst,
-                ) { isFirst = !it }*/
+                    items = listOf(current, history),
+                    selectedItemIndex = pagerState.currentPage,
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(it)
+                        }
+                    },
+                )
             }
-            if (isFirst) {
+            if (pagerState.currentPage == 0) {
                 Titles(
                     StringKey.TasksTitleCurrent.textValue(),
                     StringKey.TasksTitleMessageCurrent.textValue(),
@@ -117,15 +135,24 @@ private fun TasksScreen(
                     StringKey.TasksTitleMessageHistory.textValue(),
                 )
             }
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+            HorizontalPager(
+                count = pages.size,
+                state = pagerState,
             ) {
-                if (isFirst) {
-                    items(uiState.current, key = { it.id }) { Item(it) }
-                } else {
-                    items(uiState.history, key = { it.id }) { Item(it) }
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    if (pagerState.currentPage == 0) {
+                        items(uiState.current) {
+                            it.Content(modifier = Modifier)
+                        }
+                    } else {
+                        items(uiState.history) {
+                            it.Content(modifier = Modifier)
+                        }
+                    }
                 }
             }
         }
@@ -138,27 +165,15 @@ private fun Titles(title1: TextValue, title2: TextValue) {
         modifier = Modifier.padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(title1.get(), style = AppTheme.specificTypography.titleLarge)
-        Text(title2.get(), style = AppTheme.specificTypography.titleSmall)
-    }
-}
-
-@Composable
-private fun Item(item: Task) {
-    SimpleCard {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Column {
-                Text(item.title)
-                Text(item.description)
-            }
-            EnergyWidget(value = item.result, isFull = item.isCompleted)
-        }
+        Text(
+            text = title1.get(),
+            style = AppTheme.specificTypography.titleLarge,
+        )
+        Text(
+            text = title2.get(),
+            style = AppTheme.specificTypography.titleSmall,
+            color = AppTheme.specificColorScheme.textSecondary,
+        )
     }
 }
 

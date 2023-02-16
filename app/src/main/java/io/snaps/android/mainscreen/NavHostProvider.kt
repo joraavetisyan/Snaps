@@ -21,7 +21,7 @@ import io.snaps.featurecollection.screen.ItemListScreen
 import io.snaps.featurefeed.presentation.screen.PopularVideosScreen
 import io.snaps.featurefeed.presentation.screen.VideoFeedScreen
 import io.snaps.featureprofile.presentation.screen.ProfileScreen
-import io.snaps.featuretasks.screen.TasksScreen
+import io.snaps.featuretasks.presentation.screen.TasksScreen
 import javax.inject.Inject
 
 class NavHostProvider @Inject constructor(

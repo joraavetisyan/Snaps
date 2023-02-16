@@ -105,4 +105,17 @@ object AppRoute {
             val totalSubscribers: String,
         )
     }
+
+    @Serializable
+    data class TaskArgs(
+        val id: Uuid,
+    )
+
+    object FindPointsTask : RouteWithArg("FindPointsTask") // need pass TaskArgs
+
+    object LikeAndSubscribeTask : RouteWithArg("LikeAndSubscribeTask") // need pass TaskArgs
+
+    object ShareTask : RouteWithArg("ShareTask") // need pass TaskArgs
+
+    object WatchVideoTask : RouteWithArg("WatchVideoTask") // need pass TaskArgs
 }

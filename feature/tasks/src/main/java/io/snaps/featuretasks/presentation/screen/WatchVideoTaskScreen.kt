@@ -1,8 +1,7 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package io.snaps.featuretasks.screen
+package io.snaps.featuretasks.presentation.screen
 
-import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -36,11 +34,14 @@ import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
-import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
+import io.snaps.coreuicompose.uikit.listtile.MiddlePart
+import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.coreuicompose.uikit.other.SimpleCard
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featuretasks.ScreenNavigator
-import io.snaps.featuretasks.viewmodel.TaskViewModel
+import io.snaps.featuretasks.domain.TaskModel
+import io.snaps.featuretasks.presentation.ui.TaskToolbar
+import io.snaps.featuretasks.presentation.viewmodel.TaskViewModel
 
 @Composable
 fun WatchVideoTaskScreen(
@@ -53,6 +54,7 @@ fun WatchVideoTaskScreen(
 
     WatchVideoTaskScreen(
         uiState = uiState,
+        onBackClicked = router::back,
     )
 }
 
@@ -60,17 +62,17 @@ fun WatchVideoTaskScreen(
 @Composable
 private fun WatchVideoTaskScreen(
     uiState: TaskViewModel.UiState,
+    onBackClicked: () -> Boolean,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            SimpleTopAppBar(
+            TaskToolbar(
                 title = StringKey.TaskWatchVideoTitle.textValue(),
-                titleTextStyle = AppTheme.specificTypography.titleLarge,
-                navigationIcon = AppTheme.specificIcons.back to { false },
+                navigationIcon = AppTheme.specificIcons.back to onBackClicked,
+                progress = uiState.task?.energy,
                 scrollBehavior = scrollBehavior,
-                titleHorizontalArrangement = Arrangement.Center,
             )
         },
     ) { paddingValues ->
@@ -81,41 +83,74 @@ private fun WatchVideoTaskScreen(
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            SimpleCard {
-                TaskProgress(55)
-                Text(
-                    "Watch at least 50 videos with a retention of at least 70% to get 15 energy points.",
-                    modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 16.dp),
-                )
+            uiState.task?.let {
+                Content(task = it)
             }
-            SimpleCard {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = AppTheme.specificColorScheme.uiSystemGreen)
-                        .padding(horizontal = 12.dp, vertical = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
-                        "Job completed successfully",
-                        color = AppTheme.specificColorScheme.textGreen,
-                    )
-                    Image(
-                        painter = ImageValue.ResImage(R.drawable.img_fire).get(),
-                        contentDescription = null,
-                        modifier = Modifier.size(44.dp),
-                        contentScale = ContentScale.Crop,
-                    )
-                }
+            uiState.messageBannerState?.Content(modifier = Modifier)
+            if (uiState.isLoading) {
+                Shimmer()
             }
         }
     }
 }
 
-@Preview(showBackground = true)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun Preview() {
-    WatchVideoTaskScreen(uiState = TaskViewModel.UiState())
+private fun Content(
+    task: TaskModel,
+) {
+    SimpleCard {
+        TaskProgress(
+            progress = task.madeCount,
+            maxValue = task.count,
+        )
+        Text(
+            modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 16.dp),
+            text = task.description,
+            style = AppTheme.specificTypography.bodySmall,
+        )
+    }
+    if (task.done) {
+        TaskCompletedMessage()
+    }
+}
+
+@Composable
+private fun Shimmer() {
+    SimpleCard {
+        Row {
+            MiddlePart.Shimmer(
+                needValueLine = true,
+                needDescriptionLine = true,
+            ).Content(modifier = Modifier.padding(12.dp))
+            RightPart.Shimmer(
+                needRightLine = true,
+            ).Content(modifier = Modifier.padding(12.dp))
+        }
+    }
+}
+
+@Composable
+private fun TaskCompletedMessage() {
+    SimpleCard {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = AppTheme.specificColorScheme.uiSystemGreen.copy(0.2f))
+                .padding(horizontal = 12.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                StringKey.TaskWatchVideoFieldJobCompleted.textValue().get(),
+                color = AppTheme.specificColorScheme.textGreen,
+                style = AppTheme.specificTypography.bodySmall,
+            )
+            Image(
+                painter = ImageValue.ResImage(R.drawable.img_fire).get(),
+                contentDescription = null,
+                modifier = Modifier.size(44.dp),
+                contentScale = ContentScale.Crop,
+            )
+        }
+    }
 }

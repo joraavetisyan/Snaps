@@ -26,7 +26,7 @@ fun EnergyWidget(value: String, isFull: Boolean = false) {
     WorthWidget(
         ImageValue.ResImage(R.drawable.img_energy) to value,
         backgroundColor = if (isFull) {
-            AppTheme.specificColorScheme.uiSystemGreen
+            AppTheme.specificColorScheme.uiSystemGreen.copy(alpha = 0.2f)
         } else {
             AppTheme.specificColorScheme.uiContentBg
         },
