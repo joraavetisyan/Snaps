@@ -17,4 +17,5 @@ dependencies {
 
     implementation(*Libs.bundle.firebase)
     implementation(Libs.bundle.playServices)
+    implementation(*Libs.bundle.facebook)
 }
