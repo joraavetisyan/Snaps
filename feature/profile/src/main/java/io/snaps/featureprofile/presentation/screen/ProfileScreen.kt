@@ -67,7 +67,7 @@ fun ProfileScreen(
         onBackClicked = router::back,
         onSubscribeClicked = viewModel::onSubscribeClicked,
         onDismissRequest = viewModel::onDismissRequest,
-        onUnSubscribeClicked = viewModel::onUnSubscribeClicked,
+        onUnsubscribeClicked = viewModel::onUnsubscribeClicked,
     )
 }
 
@@ -78,7 +78,7 @@ private fun ProfileScreen(
     onSettingsClicked: () -> Unit,
     onBackClicked: () -> Boolean,
     onSubscribeClicked: () -> Unit,
-    onUnSubscribeClicked: (Sub) -> Unit,
+    onUnsubscribeClicked: (Sub) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     val title = when (uiState.userType) {
@@ -167,7 +167,7 @@ private fun ProfileScreen(
         is SubsViewModel.Dialog.ConfirmUnsubscribe -> ConfirmUnsubscribeDialog(
             data = uiState.dialog.data,
             onDismissRequest = onDismissRequest,
-            onUnsubscribeClicked = onUnSubscribeClicked,
+            onUnsubscribeClicked = onUnsubscribeClicked,
         )
         null -> Unit
     }
