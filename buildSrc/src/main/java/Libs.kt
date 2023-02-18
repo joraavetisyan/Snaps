@@ -12,6 +12,7 @@ object Libs {
 
     /*Compatibility with Kotlin https://developer.android.com/jetpack/androidx/releases/compose-kotlin*/
     const val composeCompilerVersion = "1.3.0"
+
     /*https://developer.android.com/jetpack/androidx/releases/compose*/
     private const val composeVersion = "1.3.0"
     private const val composeFoundationVersion = "1.3.0"
@@ -65,6 +66,8 @@ object Libs {
     private const val mediaVersion = "1.0.0-beta03"
 
     private const val permissionVersion = "0.28.0"
+
+    private const val barcodeVersion = "4.3.0"
 
     object plugin {
         const val application = "com.android.application"
@@ -206,11 +209,28 @@ object Libs {
         )
 
         val crypto = arrayOf(
+            "com.github.horizontalsystems:bitcoin-kit-android:d1a55ca",
             "com.github.horizontalsystems:ethereum-kit-android:7aadf9d",
-            "com.github.horizontalsystems:market-kit-android:97f5bc7",
+            "com.github.horizontalsystems:blockchain-fee-rate-kit-android:501cf1e",
             "com.github.horizontalsystems:binance-chain-kit-android:2a89cad",
+            "com.github.horizontalsystems:market-kit-android:97f5bc7",
+            "com.github.horizontalsystems:solana-kit-android:59c448a",
             "com.github.horizontalsystems:hd-wallet-kit-android:f46885a",
+            "com.github.horizontalsystems:wallet-connect-kotlin:b9a50b8",
+            "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:1.6.4",
+            "io.reactivex.rxjava2:rxandroid:2.1.1",
+            "androidx.room:room-rxjava2:2.4.3",
+            /*"com.walletconnect:android-core:1.9.1",
+            "com.walletconnect:sign:2.7.1",*/
+            "androidx.work:work-runtime-ktx:2.7.1",
+            "cash.z.ecc.android:zcash-android-sdk:1.9.0-beta04",
+            "com.google.code.gson:gson:2.9.0",
+            "com.squareup.retrofit2:converter-gson:2.9.0",
+            "com.squareup.retrofit2:adapter-rxjava2:2.9.0",
+            "com.squareup.retrofit2:converter-scalars:2.9.0",
         )
+
+        const val barcode = "com.journeyapps:zxing-android-embedded:$barcodeVersion"
 
         const val unitTestsRunner = "android.support.test.runner.AndroidJUnitRunner"
         val unitTests = arrayOf(

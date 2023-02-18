@@ -1,7 +1,9 @@
 package io.snaps.featurewallet.screen
 
+import android.graphics.Bitmap
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -39,7 +42,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -59,6 +64,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
+import io.snaps.coreuicompose.uikit.text.MiddleEllipsisText
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewallet.ScreenNavigator
 import io.snaps.featurewallet.viewmodel.WalletViewModel
@@ -96,13 +102,14 @@ fun WalletScreen(
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-            when (uiState.bottomDialogType) {
-                WalletViewModel.BottomDialogType.SelectCurrency -> SelectCurrencyDialog(
+            when (val dialog = uiState.bottomDialogType) {
+                is WalletViewModel.BottomDialogType.SelectCurrency -> SelectCurrencyDialog(
                     currencies = uiState.currencies,
                 )
-                WalletViewModel.BottomDialogType.TopUp -> TopUpDialog(
+                is WalletViewModel.BottomDialogType.TopUp -> TopUpDialog(
                     title = "Top up BNB (BEP-20)",
-                    token = uiState.token,
+                    address = uiState.address,
+                    qr = dialog.qr,
                     onTokenCopyClicked = {},
                 )
             }
@@ -168,7 +175,7 @@ private fun WalletScreen(
             ) {
                 Balance(
                     amount = uiState.selectedCurrency,
-                    token = uiState.token,
+                    token = uiState.address,
                     onTokenCopyClicked = onTokenCopyClicked,
                 )
                 Row(
@@ -356,8 +363,9 @@ private fun SelectCurrencyDialog(
 
 @Composable
 private fun TopUpDialog(
+    qr: Bitmap?,
     title: String,
-    token: String,
+    address: String,
     onTokenCopyClicked: () -> Unit,
 ) {
     SimpleBottomDialogUI(title.textValue()) {
@@ -370,7 +378,18 @@ private fun TopUpDialog(
                         color = AppTheme.specificColorScheme.darkGrey,
                         shape = AppTheme.shapes.extraLarge,
                     ),
-            ) {}
+            ) {
+                qr?.let {
+                    Image(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxSize(),
+                        bitmap = it.asImageBitmap(),
+                        contentScale = ContentScale.FillWidth,
+                        contentDescription = null,
+                    )
+                }
+            }
             SimpleButtonGreyM(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -379,11 +398,11 @@ private fun TopUpDialog(
                 onClick = onTokenCopyClicked,
             ) {
                 SimpleButtonContent(
-                    text = token.textValue(),
+                    text = address.textValue(),
                     iconRight = AppTheme.specificIcons.copy,
                 )
             }
-            Text(
+            MiddleEllipsisText(
                 text = StringKey.WalletMessageTopUp.textValue().get().text,
                 style = AppTheme.specificTypography.bodySmall,
                 color = AppTheme.specificColorScheme.textSecondary,

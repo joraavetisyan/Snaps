@@ -16,6 +16,14 @@ android {
         versionName = App.name
         versionCode = App.code
         applicationId = App.packageName
+
+        configurations {
+            all {
+                exclude(group = "org.bouncycastle", module = "bcprov-jdk15on")
+                exclude(group = "org.bouncycastle", module = "jetified-bcprov-jdk15on-1.64")
+                exclude(group = "com.google.protobuf", module = "protobuf-javalite")
+            }
+        }
     }
 
     ruler {
@@ -92,6 +100,7 @@ dependencies {
     implementation(projects.coreData)
     implementation(projects.coreUi)
     implementation(projects.coreNavigation)
+    implementation(projects.coreCrypto)
 
     implementation(projects.baseSources)
     implementation(projects.baseProfile)

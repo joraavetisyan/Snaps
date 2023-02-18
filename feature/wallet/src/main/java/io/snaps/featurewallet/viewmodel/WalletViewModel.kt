@@ -1,13 +1,16 @@
 package io.snaps.featurewallet.viewmodel
 
+import android.graphics.Bitmap
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.MainHeaderHandler
+import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.CurrencyType
 import io.snaps.corecommon.model.MoneyDto
+import io.snaps.coreui.barcode.BarcodeManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
@@ -25,10 +28,13 @@ import javax.inject.Inject
 @HiltViewModel
 class WalletViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
+    private val walletRepository: WalletRepository,
+    private val barcodeManager: BarcodeManager,
 ) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
 
     private val _uiState = MutableStateFlow(
         UiState(
+            address = walletRepository.getActiveWalletAddress(),
             currencies = getCurrencies(),
             selectCurrencyBottomDialogItems = getSelectCurrencyBottomDialogItems(),
         )
@@ -40,7 +46,8 @@ class WalletViewModel @Inject constructor(
 
     fun onTopUpClicked() = viewModelScope.launch {
         _uiState.update {
-            it.copy(bottomDialogType = BottomDialogType.TopUp)
+            val qr = barcodeManager.getQrCodeBitmap(it.address)
+            it.copy(bottomDialogType = BottomDialogType.TopUp(qr))
         }
         _command publish Command.ShowBottomDialog
     }
@@ -169,15 +176,16 @@ class WalletViewModel @Inject constructor(
     }
 
     data class UiState(
-        val token: String = "0x3EBAc5s...632EX67FS54",
+        val address: String,
         val selectedCurrency: MoneyDto = MoneyDto(currency = CurrencyType.BNB, value = 0.0),
         val currencies: List<CellTileState>,
         val selectCurrencyBottomDialogItems: List<CellTileState>,
         val bottomDialogType: BottomDialogType = BottomDialogType.SelectCurrency,
     )
 
-    enum class BottomDialogType {
-        SelectCurrency, TopUp,
+    sealed class BottomDialogType {
+        object SelectCurrency : BottomDialogType()
+        data class TopUp(val qr: Bitmap?) : BottomDialogType()
     }
 
     sealed class Command {

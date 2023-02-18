@@ -11,6 +11,9 @@ dependencies {
     implementation(projects.coreCommon)
     implementation(projects.coreData)
     implementation(projects.coreUi)
+    implementation(projects.coreCrypto)
+
+    implementation(projects.baseSources)
 
     implementation(*Libs.bundle.crypto)
 }

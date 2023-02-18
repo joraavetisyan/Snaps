@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basewallet.data.WalletRepository
+import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class MnemonicsVerificationViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val walletRepository: WalletRepository,
+    private val action: Action,
 ) : SimpleViewModel() {
 
     private val args = savedStateHandle.requireArgs<AppRoute.MnemonicsVerification.Args>()
@@ -47,8 +49,11 @@ class MnemonicsVerificationViewModel @Inject constructor(
         // -3 means no selections added yet
         val firstOrderNumber = _uiState.value.selections.firstOrNull()?.orderNumber ?: -3
         if (_uiState.value.selections.firstOrNull()?.orderNumber == 9) {
-            walletRepository.saveLastCreatedAccount()
-            _command publish Command.OpenCreatedWalletScreen
+            action.execute {
+                walletRepository.saveLastConnectedAccount()
+            }.doOnSuccess {
+                _command publish Command.OpenCreatedWalletScreen
+            }
         } else {
             val range = (firstOrderNumber + 4)..(firstOrderNumber + 7)
             val wordPool = _uiState.value.words.mapNotNull {

@@ -1,21 +1,28 @@
 package io.snaps.basewallet.data
 
-import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.marketkit.models.TokenQuery
 import io.horizontalsystems.marketkit.models.TokenType
-import io.snaps.basewallet.domain.Account
-import io.snaps.basewallet.domain.AccountOrigin
-import io.snaps.basewallet.domain.AccountType
-import io.snaps.basewallet.domain.EnabledWallet
-import io.snaps.basewallet.domain.Wallet
-import io.snaps.basewallet.domain.normalizeNFKD
+import io.snaps.basewallet.data.model.WalletSaveRequestDto
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
-import io.snaps.corecommon.model.generateRequestId
-import io.snaps.coredata.database.WalletStorage
+import io.snaps.corecrypto.core.CryptoKit
+import io.snaps.corecrypto.core.IAccountFactory
+import io.snaps.corecrypto.core.IAccountManager
+import io.snaps.corecrypto.core.IWalletManager
+import io.snaps.corecrypto.core.IWordsManager
+import io.snaps.corecrypto.core.managers.WalletActivator
+import io.snaps.corecrypto.core.managers.WalletManager
+import io.snaps.corecrypto.core.managers.WordsManager
+import io.snaps.corecrypto.core.providers.PredefinedBlockchainSettingsProvider
+import io.snaps.corecrypto.entities.Account
+import io.snaps.corecrypto.entities.AccountOrigin
+import io.snaps.corecrypto.entities.AccountType
+import io.snaps.corecrypto.entities.normalizeNFKD
+import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.network.apiCall
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 object InvalidMnemonicsException : Exception()
@@ -24,116 +31,93 @@ interface WalletRepository {
 
     fun createAccount(): List<String>
 
-    fun importAccount(words: List<String>): Effect<Completable>
+    suspend fun importAccount(words: List<String>): Effect<Completable>
 
-    fun saveLastCreatedAccount()
+    suspend fun saveLastConnectedAccount(): Effect<Completable>
+
+    fun getActiveWalletAddress(): String
 }
 
 class WalletRepositoryImpl @Inject constructor(
-    @ApplicationContext context: Context,
-    private val wordManager: WordManager,
-    private val walletStorage: WalletStorage,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    private val accountFactory: IAccountFactory,
+    private val walletManager: IWalletManager,
+    private val wordsManager: IWordsManager,
+    private val accountManager: IAccountManager,
+    private val walletActivator: WalletActivator,
+    private val predefinedBlockchainSettingsProvider: PredefinedBlockchainSettingsProvider,
+    private val walletApi: WalletApi,
 ) : WalletRepository {
 
-    private var lastCreatedAccount: Account? = null
-
-//    private val marketKit: MarketKit = MarketKit.getInstance(
-//        context = context,
-//        hsApiBaseUrl = hsApiBaseUrl,
-//        hsApiKey = hsApiKey,
-//        cryptoCompareApiKey = cryptoCompareApiKey,
-//        defiYieldApiKey = defiYieldApiKey
-//    )
+    private var account: Account? = null
 
     override fun createAccount(): List<String> {
-        val id = generateRequestId()
-        val accountType = mnemonicAccountType()
-        lastCreatedAccount = Account(
-            id = id,
-            name = "accountName", // todo
+        val accountType = mnemonicAccountType(12)
+        account = accountFactory.account(
+            name = "Wallet",
             type = accountType,
             origin = AccountOrigin.Created,
-            isBackedUp = false,
+            backedUp = false,
         )
         return accountType.words
     }
 
-    override fun importAccount(words: List<String>): Effect<Completable> {
-        val wordsNormed = words.map { it.normalizeNFKD() }
-
-        try {
-            wordManager.validateChecksumStrict(wordsNormed)
-        } catch (e: Exception) {
-            return Effect.error(AppError.Unknown(cause = InvalidMnemonicsException))
-        }
-
-        val id = generateRequestId()
-
-        val accountType = AccountType.Mnemonic(wordsNormed, "".normalizeNFKD())
-
-        lastCreatedAccount = Account(
-            id = id,
-            name = "accountName", // todo
-            type = accountType,
-            origin = AccountOrigin.Restored,
-            isBackedUp = true,
-        )
-
-        saveLastCreatedAccount()
-
-        return Effect.completable
-    }
-
-    private fun mnemonicAccountType(): AccountType.Mnemonic {
-        val words = wordManager.generateWords(AccountType.Mnemonic.Kind.Mnemonic12.wordsCount).map {
-            it.normalizeNFKD()
-        }
+    private fun mnemonicAccountType(wordCount: Int): AccountType.Mnemonic {
+        // A new account can be created only using an English wordlist and limited chars in the passphrase.
+        // Despite it, we add text normalizing.
+        // It is to avoid potential issues if we allow non-English wordlists on account creation.
+        val words = wordsManager.generateWords(wordCount).map { it.normalizeNFKD() }
         return AccountType.Mnemonic(words, "".normalizeNFKD())
     }
 
-    override fun saveLastCreatedAccount() {
-        val account = lastCreatedAccount ?: return
-        walletStorage.wallet = account.type.words
-        //        storage.save(account)// todo
-        val tokenQueries = listOf(
-            // BUSD
-            TokenQuery(
-                blockchainType = BlockchainType.BinanceSmartChain,
-                tokenType = TokenType.Eip20("0xe9e7cea3dedca5984780bafc599bd69add087d56"),
-            ),
-        )
-        activateWallets(account, tokenQueries)
-    }
-
-    private fun activateWallets(account: Account, tokenQueries: List<TokenQuery>) {
-        val wallets = mutableListOf<Wallet>()
-
-//        for (tokenQuery in tokenQueries) {
-//            val token = marketKit.token(tokenQuery) ?: continue
-//            wallets.add(Wallet(token, account))
-//        }
-
-        val enabledWallets = mutableListOf<EnabledWallet>()
-
-        wallets.forEachIndexed { index, wallet ->
-
-            enabledWallets.add(
-                enabledWallet(wallet, index)
+    override suspend fun importAccount(words: List<String>): Effect<Completable> {
+        return try {
+            wordsManager.validateChecksumStrict(words)
+            val accountType = AccountType.Mnemonic(words, "".normalizeNFKD())
+            account = accountFactory.account(
+                name = "Wallet",
+                type = accountType,
+                origin = AccountOrigin.Restored,
+                backedUp = true,
             )
+            saveLastConnectedAccount()
+            Effect.completable
+        } catch (checksumException: Exception) {
+            Effect.error(AppError.Unknown(cause = InvalidMnemonicsException))
         }
-
-//        storage.save(enabledWallets) // todo
     }
 
-    private fun enabledWallet(wallet: Wallet, index: Int? = null): EnabledWallet {
-        return EnabledWallet(
-            wallet.token.tokenQuery.id,
-            wallet.coinSettings.id,
-            wallet.account.id,
-            index,
-            wallet.coin.name,
-            wallet.coin.code,
-            wallet.decimal
-        )
+    override suspend fun saveLastConnectedAccount(): Effect<Completable> {
+        val account = account ?: return Effect.error(AppError.Unknown("No account was created!"))
+        accountManager.save(account)
+        activateDefaultWallets(account)
+        predefinedBlockchainSettingsProvider.prepareNew(account, BlockchainType.Zcash)
+        this.account = null
+        return apiCall(ioDispatcher) {
+            walletApi.save(WalletSaveRequestDto(getActiveWalletAddress()))
+        }
+    }
+
+    override fun getActiveWalletAddress(): String {
+        val account = accountManager.activeAccount ?: throw Exception("No active account")
+        return walletManager.getWallets(account).firstOrNull()?.let {
+            CryptoKit.adapterManager.getReceiveAdapterForWallet(it)
+        }?.receiveAddress ?: throw Exception("No active wallet")
+    }
+
+    private fun activateDefaultWallets(account: Account) {
+        val tokenQueries = listOf(
+            // boxer
+            "0x192E9321b6244D204D4301AfA507EB29CA84D9ef",
+            // laflix
+            "0x3e3bfa35e81e85be5c65b0c759fe1b6ed6525ec0",
+            // bnbAddress
+            "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+            // BUSD
+            "0xe9e7cea3dedca5984780bafc599bd69add087d56",
+        ).map {
+            TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Eip20(it))
+        }
+        walletActivator.activateWallets(account, tokenQueries)
     }
 }

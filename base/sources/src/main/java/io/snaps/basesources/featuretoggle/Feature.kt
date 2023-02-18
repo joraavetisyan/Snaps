@@ -8,5 +8,6 @@ enum class Feature(
     FeedApiMock("FeedApiMock", true),
     CommentApiMock("CommentApiMock", true),
     SubsApiMock("SubsApiMock", true),
+    WalletApiMock("WalletApiMock", true),
     UNKNOWN
 }

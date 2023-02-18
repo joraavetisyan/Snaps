@@ -1,0 +1,14 @@
+package io.snaps.corecrypto.other
+
+import io.snaps.corecrypto.entities.CurrencyValue
+import java.math.BigDecimal
+
+sealed class Value {
+    class Percent(val percent: BigDecimal) : Value()
+    class Currency(val currencyValue: CurrencyValue) : Value()
+
+    fun raw() = when (this) {
+        is Currency -> currencyValue.value
+        is Percent -> percent
+    }
+}

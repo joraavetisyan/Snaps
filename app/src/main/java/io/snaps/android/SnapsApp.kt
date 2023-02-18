@@ -16,6 +16,7 @@ import kotlinx.coroutines.SupervisorJob
 import coil.decode.SvgDecoder
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.snaps.corecommon.model.BuildInfo
+import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.coredata.network.ApiConfig
 
 @HiltAndroidApp
@@ -37,7 +38,10 @@ class SnapsApp : Application(), ApplicationCoroutineScopeHolder, ImageLoaderFact
         super.onCreate()
 
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(buildInfo.isRelease)
+
         AnalyticsTrackerHolder.init(tracker)
+
+        CryptoKit.init(this)
     }
 
     override fun newImageLoader() = ImageLoader.Builder(this)
