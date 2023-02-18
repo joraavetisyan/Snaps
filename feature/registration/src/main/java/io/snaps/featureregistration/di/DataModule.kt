@@ -1,4 +1,4 @@
-package io.snaps.featureregistration.presentation.di
+package io.snaps.featureregistration.di
 
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Binds
@@ -7,10 +7,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.snaps.coredata.network.ApiConfig
-import io.snaps.featureregistration.presentation.data.AuthApi
-import io.snaps.featureregistration.presentation.data.AuthRepository
-import io.snaps.featureregistration.presentation.data.AuthRepositoryImpl
-import io.snaps.featureregistration.presentation.data.FakeAuthApi
+import io.snaps.featureregistration.data.AuthApi
+import io.snaps.featureregistration.data.AuthRepository
+import io.snaps.featureregistration.data.AuthRepositoryImpl
+import io.snaps.featureregistration.data.FakeAuthApi
 import javax.inject.Singleton
 
 @Module

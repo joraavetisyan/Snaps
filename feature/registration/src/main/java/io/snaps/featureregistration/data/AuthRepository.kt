@@ -1,4 +1,4 @@
-package io.snaps.featureregistration.presentation.data
+package io.snaps.featureregistration.data
 
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult

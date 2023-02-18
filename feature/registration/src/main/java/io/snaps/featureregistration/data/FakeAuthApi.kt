@@ -1,4 +1,4 @@
-package io.snaps.featureregistration.presentation.data
+package io.snaps.featureregistration.data
 
 import io.snaps.corecommon.model.Token
 import io.snaps.coredata.network.BaseResponse
