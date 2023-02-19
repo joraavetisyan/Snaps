@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
+import io.snaps.coreui.viewmodel.publish
 import io.snaps.featurecollection.data.MyCollectionRepository
 import io.snaps.featurecollection.domain.RankModel
 import io.snaps.featurecollection.presentation.screen.RankTileState
@@ -51,13 +52,24 @@ class RankSelectionViewModel @Inject constructor(
         loadRanks()
     }
 
-    private fun onItemClicked(task: RankModel) = viewModelScope.launch {
-        // todo
+    private fun onItemClicked(rank: RankModel) = viewModelScope.launch {
+        if (rank.type == "Free") { // todo type
+            action.execute {
+                myCollectionRepository.addNft(rank.id)
+            }.doOnSuccess {
+                _command publish Command.OpenMainScreen
+            }
+        } else {
+            _command publish Command.OpenBuyNft
+        }
     }
 
     data class UiState(
         val ranks: List<RankTileState> = List(6) { RankTileState.Shimmer },
     )
 
-    sealed class Command
+    sealed class Command {
+        object OpenMainScreen : Command()
+        object OpenBuyNft : Command()
+    }
 }

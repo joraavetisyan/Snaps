@@ -22,6 +22,7 @@ fun UserInfoResponseDto.toProfileModel() = ProfileModel(
     totalSubscriptions = totalSubscriptions,
     totalPublication = totalPublication,
     avatar = ImageValue.Url(avatarUrl),
+    hasNft = hasNft,
 )
 
 fun mainHeaderState(

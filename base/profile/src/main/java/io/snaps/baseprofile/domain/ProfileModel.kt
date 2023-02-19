@@ -17,4 +17,5 @@ data class ProfileModel(
     val totalSubscriptions: String,
     val totalPublication: String,
     val avatar: ImageValue,
+    val hasNft: Boolean,
 )

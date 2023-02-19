@@ -11,6 +11,7 @@ import io.snaps.featurecollection.domain.RankModel
 fun List<RankItemResponseDto>.toModelList() = map(RankItemResponseDto::toModel)
 
 fun RankItemResponseDto.toModel() = RankModel(
+    id = id,
     type = type,
     price = price,
     image = ImageValue.Url(image),

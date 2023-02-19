@@ -15,4 +15,6 @@ dependencies {
 
     implementation(projects.baseProfile)
     implementation(projects.baseSources)
+
+    implementation(*Libs.bundle.billing)
 }

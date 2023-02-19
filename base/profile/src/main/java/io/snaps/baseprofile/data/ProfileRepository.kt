@@ -88,6 +88,11 @@ class ProfileRepositoryImpl @Inject constructor(
         }.doOnSuccess {
             userDataStorage.setUserName(it.name)
             userDataStorage.setUserAvatar(uri.toString())
+            userDataStorage.needsRanking = !it.hasNft
+        }.map {
+            it.toProfileModel()
+        }.also {
+            _state tryPublish it
         }.toCompletable()
     }
 

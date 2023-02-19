@@ -20,4 +20,5 @@ class UserInfoResponseDto(
     @SerialName("totalSubscriptions") val totalSubscriptions: String,
     @SerialName("totalPublication") val totalPublication: String,
     @SerialName("avatar") val avatarUrl: FullUrl,
+    @SerialName("hasNft") val hasNft: Boolean,
 )

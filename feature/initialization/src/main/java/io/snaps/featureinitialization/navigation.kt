@@ -13,7 +13,9 @@ import javax.inject.Inject
 internal class ScreenNavigator(navHostController: NavHostController) :
     Navigator(navHostController) {
 
-    fun toRankSelectionScreen() = navHostController.navigate(AppRoute.MainBottomBar)
+    fun toRankSelectionScreen() = navHostController.navigate(AppRoute.RankSelection)
+
+    fun toMainScreen() = navHostController.navigate(AppRoute.MainBottomBar)
 }
 
 class InitializationFeatureProviderImpl @Inject constructor() : InitializationFeatureProvider {

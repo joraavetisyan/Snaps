@@ -73,6 +73,7 @@ fun CreateUserScreen(
     viewModel.command.collectAsCommand {
         when (it) {
             CreateUserViewModel.Command.OpenRankSelectionScreen -> router.toRankSelectionScreen()
+            CreateUserViewModel.Command.OpenMainScreen -> router.toMainScreen()
         }
     }
 

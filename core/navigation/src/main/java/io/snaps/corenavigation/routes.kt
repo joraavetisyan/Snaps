@@ -142,4 +142,6 @@ object AppRoute {
     }
 
     object RankSelection : Route("RankSelection")
+
+    object BuyNft : Route("BuyNft")
 }
