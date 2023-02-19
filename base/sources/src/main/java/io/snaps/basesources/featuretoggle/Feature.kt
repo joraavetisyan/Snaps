@@ -9,5 +9,6 @@ enum class Feature(
     CommentApiMock("CommentApiMock", true),
     SubsApiMock("SubsApiMock", true),
     TasksApiMock("TasksApiMock", true),
+    MyCollectionApiMock("MyCollectionApiMock", true),
     UNKNOWN
 }

@@ -17,7 +17,7 @@ import io.snaps.corenavigation.WalletFeatureProvider
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.createRoute
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.featurecollection.screen.ItemListScreen
+import io.snaps.featurecollection.presentation.screen.MyCollectionScreen
 import io.snaps.featurefeed.presentation.screen.PopularVideosScreen
 import io.snaps.featurefeed.presentation.screen.VideoFeedScreen
 import io.snaps.featureprofile.presentation.screen.ProfileScreen
@@ -127,7 +127,7 @@ class NavHostProvider @Inject constructor(
     }
 
     private fun NavGraphBuilder.mainTab4Graph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.MainTab4Start) { ItemListScreen(controller) }
+        composable(AppRoute.MainBottomBar.MainTab4Start) { MyCollectionScreen(controller) }
         with(collectionFeatureProvider) { collectionGraph(controller) }
     }
 

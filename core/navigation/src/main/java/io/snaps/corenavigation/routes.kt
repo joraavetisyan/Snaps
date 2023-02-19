@@ -118,4 +118,6 @@ object AppRoute {
     object ShareTask : RouteWithArg("ShareTask") // need pass TaskArgs
 
     object WatchVideoTask : RouteWithArg("WatchVideoTask") // need pass TaskArgs
+
+    object RankSelection : Route("RankSelection")
 }
