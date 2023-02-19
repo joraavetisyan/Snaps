@@ -1,4 +1,4 @@
-package io.snaps.featurefeed.presentation.screen
+package io.snaps.basefeed.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
@@ -8,7 +8,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -52,61 +54,51 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerScope
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.VerticalPager
 import com.google.accompanist.pager.rememberPagerState
-import io.snaps.basefeed.ui.VideoClipUiState
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseplayer.ui.ReelPlayer
-import io.snaps.baseprofile.data.MainHeaderHandler
-import io.snaps.baseprofile.ui.MainHeader
-import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.model.Uuid
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.scroll.DetectScroll
 import io.snaps.coreuicompose.uikit.scroll.ScrollInfo
+import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.featurefeed.ScreenNavigator
-import io.snaps.featurefeed.presentation.viewmodel.VideoFeedViewModel
+import io.snaps.featurefeed.presentation.screen.CommentsScreen
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 private const val DETECT_THRESHOLD = 1
 
+@Composable
 @OptIn(
     ExperimentalPagerApi::class,
+    ExperimentalMaterial3Api::class,
     ExperimentalMaterialApi::class,
-    ExperimentalComposeUiApi::class,
+    ExperimentalComposeUiApi::class
 )
-@Composable
-fun VideoFeedScreen(
-    navHostController: NavHostController,
+fun VideoClipScreen(
+    viewModel: VideoFeedViewModel,
+    onAuthorClicked: (Uuid) -> Unit,
+    content: @Composable ((BoxScope.(PaddingValues) -> Unit))? = null,
 ) {
-    val router = remember(navHostController) { ScreenNavigator(navHostController) }
-    val viewModel = hiltViewModel<VideoFeedViewModel>()
     val uiState by viewModel.uiState.collectAsState()
-    val mainHeaderUiState by viewModel.headerUiState.collectAsState()
-
-    viewModel.headerCommand.collectAsCommand {
-        when (it) {
-            MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
-            MainHeaderHandler.Command.OpenWalletScreen -> router.toWalletScreen()
-        }
-    }
-
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val pagerState = rememberPagerState(initialPage = viewModel.startPosition)
+    val currentPage by remember(pagerState) { derivedStateOf { pagerState.currentPage } }
+    LaunchedEffect(currentPage) { viewModel.onScrolledToPosition(currentPage) }
 
     fun hideKeyboard() {
         focusRequester.freeFocus()
@@ -114,7 +106,7 @@ fun VideoFeedScreen(
     }
 
     val coroutineScope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState(
+    val commentsSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true,
     )
@@ -124,7 +116,7 @@ fun VideoFeedScreen(
     )
 
     LaunchedEffect(Unit) {
-        snapshotFlow { sheetState.currentValue }.collect {
+        snapshotFlow { commentsSheetState.currentValue }.collect {
             if (it == ModalBottomSheetValue.Hidden) {
                 viewModel.onBottomSheetHidden()
             }
@@ -145,17 +137,17 @@ fun VideoFeedScreen(
 
     viewModel.command.collectAsCommand {
         when (it) {
-            VideoFeedViewModel.Command.ShowBottomDialog -> sheetState.showSheet()
-            VideoFeedViewModel.Command.HideBottomDialog -> sheetState.hideSheet()
+            VideoFeedViewModel.Command.ShowCommentsBottomDialog -> commentsSheetState.showSheet()
+            VideoFeedViewModel.Command.HideCommentsBottomDialog -> commentsSheetState.hideSheet()
             VideoFeedViewModel.Command.ShowCommentInputBottomDialog -> {
                 commentInputSheetState.showSheet()
                 focusRequester.requestFocus()
             }
             VideoFeedViewModel.Command.HideCommentInputBottomDialog -> commentInputSheetState.hideSheet()
+            is VideoFeedViewModel.Command.ScrollToPosition -> pagerState.scrollToPage(it.position)
+            is VideoFeedViewModel.Command.OpenProfileScreen -> onAuthorClicked(it.userId)
         }
     }
-
-    val pagerState = rememberPagerState()
 
     LaunchedEffect(key1 = pagerState) {
         snapshotFlow { pagerState.currentPage }.distinctUntilChanged().collect { page ->
@@ -163,7 +155,7 @@ fun VideoFeedScreen(
         }
     }
 
-    BackHandler(enabled = sheetState.isVisible) {
+    BackHandler(enabled = commentsSheetState.isVisible) {
         if (commentInputSheetState.isVisible) {
             if (focusRequester.freeFocus()) {
                 hideKeyboard()
@@ -171,82 +163,49 @@ fun VideoFeedScreen(
                 commentInputSheetState.hideSheet()
             }
         } else {
-            sheetState.hideSheet()
+            commentsSheetState.hideSheet()
         }
     }
 
-    VideoFeedScreen(
-        focusRequester = focusRequester,
-        sheetState = sheetState,
-        commentInputSheetState = commentInputSheetState,
-        pagerState = pagerState,
-        uiState = uiState,
-        mainHeaderState = mainHeaderUiState.value,
-        onMuteClicked = viewModel::onMuteClicked,
-        onAuthorClicked = viewModel::onAuthorClicked,
-        onLikeClicked = viewModel::onLikeClicked,
-        onCommentClicked = viewModel::onCommentClicked,
-        onCommentChanged = viewModel::onCommentChanged,
-        onCommentInputClick = viewModel::onCommentInputClick,
-        onCommentSendClick = viewModel::onCommentSendClick,
-        onEmojiClicked = viewModel::onEmojiClicked,
-        onCommentsCloseClicked = sheetState::hideSheet,
-        onReplyClicked = commentInputSheetState::showSheet,
-        onShareClicked = viewModel::onShareClicked,
-    )
-}
-
-@Composable
-@OptIn(ExperimentalPagerApi::class, ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
-private fun VideoFeedScreen(
-    focusRequester: FocusRequester,
-    sheetState: ModalBottomSheetState,
-    commentInputSheetState: ModalBottomSheetState,
-    pagerState: PagerState,
-    uiState: VideoFeedViewModel.UiState,
-    mainHeaderState: MainHeaderState,
-    onMuteClicked: (Boolean) -> Unit,
-    onAuthorClicked: (VideoClipModel) -> Unit,
-    onLikeClicked: (VideoClipModel) -> Unit,
-    onCommentClicked: (VideoClipModel) -> Unit,
-    onCommentsCloseClicked: () -> Unit,
-    onCommentChanged: (TextFieldValue) -> Unit,
-    onCommentInputClick: () -> Unit,
-    onCommentSendClick: () -> Unit,
-    onEmojiClicked: (String) -> Unit,
-    onReplyClicked: () -> Unit,
-    onShareClicked: (VideoClipModel) -> Unit,
-) {
-    ModalBottomSheetLayout(sheetState = commentInputSheetState, sheetContent = {
-        CommentInput(
-            focusRequester = focusRequester,
-            profileImage = uiState.profileAvatar,
-            value = uiState.comment,
-            onValueChange = onCommentChanged,
-            isEditable = true,
-            onEmojiClick = onEmojiClicked,
-            onInputClick = {},
-            onSendClick = onCommentSendClick,
-        )
-    }) {
-        ModalBottomSheetLayout(sheetState = sheetState, sheetContent = {
-            CommentsScreen(
-                uiState = uiState,
-                onCommentInputClick = {
-                    onEmojiClicked(it)
-                    onCommentInputClick()
-                },
-                onCloseClicked = onCommentsCloseClicked,
-                onReplyClicked = onReplyClicked,
+    ModalBottomSheetLayout(
+        sheetState = commentInputSheetState,
+        sheetContent = {
+            CommentInput(
+                focusRequester = focusRequester,
+                profileImage = uiState.profileAvatar,
+                value = uiState.comment,
+                onValueChange = viewModel::onCommentChanged,
+                isEditable = true,
+                onEmojiClick = viewModel::onEmojiClicked,
+                onInputClick = {},
+                onSendClick = viewModel::onCommentSendClick,
             )
-        }) {
+        },
+    ) {
+        ModalBottomSheetLayout(
+            sheetState = commentsSheetState,
+            sheetContent = {
+                CommentsScreen(
+                    uiState = uiState,
+                    onCommentInputClick = {
+                        viewModel.onEmojiClicked(it)
+                        viewModel.onCommentInputClick()
+                    },
+                    onCloseClicked = commentsSheetState::hideSheet,
+                    onReplyClicked = commentInputSheetState::showSheet,
+                )
+            },
+        ) {
             val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
             Scaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             ) { paddingValues ->
                 Box {
-                    ScrollDetector(pagerState, uiState.videoFeedUiState.onListEndReaching)
+                    ScrollDetector(
+                        pagerState = pagerState,
+                        onListEndReaching = uiState.videoFeedUiState.onListEndReaching,
+                    )
 
                     VerticalPager(
                         count = uiState.videoFeedUiState.items.size,
@@ -262,24 +221,18 @@ private fun VideoFeedScreen(
                                     index = index,
                                     item = item,
                                     uiState = uiState,
-                                    onMuteClicked = onMuteClicked,
-                                    onAuthorClicked = onAuthorClicked,
-                                    onLikeClicked = onLikeClicked,
-                                    onCommentClicked = onCommentClicked,
-                                    onShareClicked = onShareClicked
+                                    onMuteClicked = viewModel::onMuteClicked,
+                                    onAuthorClicked = viewModel::onAuthorClicked,
+                                    onLikeClicked = viewModel::onLikeClicked,
+                                    onCommentClicked = viewModel::onCommentClicked,
+                                    onShareClicked = viewModel::onShareClicked,
                                 )
                             }
-                            is VideoClipUiState.Shimmer -> {}
+                            is VideoClipUiState.Shimmer -> FullScreenLoaderUi(isLoading = true)
                         }
                     }
 
-                    MainHeader(
-                        state = mainHeaderState,
-                        modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .padding(paddingValues)
-                            .padding(top = 16.dp),
-                    )
+                    content?.invoke(this, paddingValues)
                 }
             }
         }
@@ -334,6 +287,7 @@ private fun PagerScope.VideoClip(
 
     VideoClipItem(
         videoClipModel = item.clip,
+        authorProfileAvatar = uiState.authorProfileAvatar,
         onAuthorClicked = onAuthorClicked,
         onLikeClicked = onLikeClicked,
         onCommentClicked = onCommentClicked,
@@ -345,6 +299,7 @@ private fun PagerScope.VideoClip(
 private fun VideoClipItem(
     modifier: Modifier = Modifier,
     videoClipModel: VideoClipModel,
+    authorProfileAvatar: ImageValue?,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onCommentClicked: (VideoClipModel) -> Unit,
@@ -368,6 +323,7 @@ private fun VideoClipItem(
         ) {
             VideoClipInfoItems(
                 clipModel = videoClipModel,
+                authorProfileAvatar = authorProfileAvatar,
                 onAuthorClicked = onAuthorClicked,
                 onLikeClicked = onLikeClicked,
                 onCommentClicked = onCommentClicked,
@@ -380,6 +336,7 @@ private fun VideoClipItem(
 @Composable
 private fun VideoClipInfoItems(
     clipModel: VideoClipModel,
+    authorProfileAvatar: ImageValue?,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onCommentClicked: (VideoClipModel) -> Unit,
@@ -396,6 +353,7 @@ private fun VideoClipInfoItems(
         Spacer(modifier = Modifier.weight(1f))
         VideoClipEndItems(
             clipModel = clipModel,
+            authorProfileAvatar = authorProfileAvatar,
             onAuthorClicked = onAuthorClicked,
             onLikeClicked = onLikeClicked,
             onCommentClicked = onCommentClicked,
@@ -450,6 +408,7 @@ private fun VideoClipBottomItems(
 @Composable
 private fun VideoClipEndItems(
     clipModel: VideoClipModel,
+    authorProfileAvatar: ImageValue?,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onCommentClicked: (VideoClipModel) -> Unit,
@@ -470,12 +429,14 @@ private fun VideoClipEndItems(
                 shape = CircleShape,
                 modifier = Modifier.padding(10.dp),
             ) {
-                Image(
-                    painter = ImageValue.Url("https://picsum.photos/60").get(),
-                    contentDescription = null,
-                    modifier = Modifier.size(60.dp),
-                    contentScale = ContentScale.Crop,
-                )
+                authorProfileAvatar?.let {
+                    Image(
+                        painter = it.get(),
+                        contentDescription = null,
+                        modifier = Modifier.size(60.dp),
+                        contentScale = ContentScale.Crop,
+                    )
+                }
             }
             Icon(
                 painter = AppTheme.specificIcons.addCircled.get(),

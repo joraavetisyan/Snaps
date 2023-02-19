@@ -1,4 +1,4 @@
-package io.snaps.featurefeed.presentation.screen
+package io.snaps.featurepopular.presentation.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,13 +23,14 @@ import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.featurefeed.ScreenNavigator
-import io.snaps.featurefeed.presentation.viewmodel.PopularVideosViewModel
+import io.snaps.featurepopular.ScreenNavigator
+import io.snaps.featurepopular.presentation.viewmodel.PopularVideosViewModel
 
 @Composable
 fun PopularVideosScreen(
@@ -41,10 +42,19 @@ fun PopularVideosScreen(
     val uiState by viewModel.uiState.collectAsState()
     val headerState by viewModel.headerUiState.collectAsState()
 
+    viewModel.command.collectAsCommand {
+        when (it) {
+            is PopularVideosViewModel.Command.OpenPopularVideoFeedScreen -> {
+                router.toPopularVideoFeedScreen(query = it.query, position = it.position)
+            }
+        }
+    }
+
     PopularVideosScreen(
         uiState = uiState,
         headerState = headerState.value,
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
+        onClick = viewModel::onItemClicked,
     )
 }
 
@@ -54,6 +64,7 @@ private fun PopularVideosScreen(
     uiState: PopularVideosViewModel.UiState,
     headerState: MainHeaderState,
     onSearchQueryChanged: (String) -> Unit,
+    onClick: (Int) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -86,7 +97,11 @@ private fun PopularVideosScreen(
                         tint = AppTheme.specificColorScheme.darkGrey,
                     )
                 })
-            VideoFeedGrid(columnCount = 2, uiState = uiState.videoFeedUiState)
+            VideoFeedGrid(
+                columnCount = 2,
+                uiState = uiState.videoFeedUiState,
+                onClick = onClick,
+            )
         }
     }
 }

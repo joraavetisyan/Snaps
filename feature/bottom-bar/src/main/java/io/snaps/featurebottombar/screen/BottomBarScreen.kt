@@ -24,11 +24,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import io.snaps.corecommon.container.IconValue
+import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.BottomBarFeatureProvider
 import io.snaps.coreuicompose.tools.LocalBottomNavigationHeight
 import io.snaps.coreuicompose.tools.get
@@ -39,6 +42,7 @@ import io.snaps.featurebottombar.viewmodel.BottomBarViewModel
 @Composable
 fun BottomBarScreen(
     items: List<BottomBarFeatureProvider.ScreenItem>,
+    mainBuilder: NavGraphBuilder.(NavHostController) -> Unit,
 ) {
     val navController = rememberNavController()
     val viewModel = hiltViewModel<BottomBarViewModel>()
@@ -55,6 +59,7 @@ fun BottomBarScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         CompositionLocalProvider(LocalBottomNavigationHeight provides 80.dp) {
             NavHost(navController = navController, startDestination = items.first().route.pattern) {
+                mainBuilder(navController)
                 items.forEach {
                     navigation(
                         route = it.route.pattern,
@@ -64,7 +69,17 @@ fun BottomBarScreen(
                     }
                 }
             }
-            if (uiState.isBottomBarVisible) {
+            val bottomBarScreens = listOf(
+                AppRoute.MainBottomBar.MainTab1Start,
+                AppRoute.MainBottomBar.MainTab2Start,
+                AppRoute.MainBottomBar.MainTab3Start,
+                AppRoute.MainBottomBar.MainTab4Start,
+                AppRoute.MainBottomBar.MainTab5Start,
+            )
+            val bottomBarDestination = bottomBarScreens.any {
+                it.path() == currentDestination?.route?.substringBefore(delimiter = "?")
+            }
+            if (uiState.isBottomBarVisible && bottomBarDestination) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly,

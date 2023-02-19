@@ -56,7 +56,7 @@ class RegistrationViewModel @Inject constructor(
     }
 
     fun onLoginWithTwitterClicked() {
-        sessionRepository.onLogin()
+        // todo
     }
 
     fun showSignInBottomDialog() = viewModelScope.launch {

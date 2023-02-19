@@ -1,61 +1,66 @@
 package io.snaps.basefeed.ui
 
-import io.snaps.basefeed.domain.VideoFeedPageModel
-import io.snaps.baseplayer.domain.VideoClipModel
+import io.snaps.basefeed.domain.CommentModel
+import io.snaps.basefeed.domain.CommentPageModel
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.coreuicompose.uikit.listtile.EmptyListTileState
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 
-sealed interface VideoClipUiState {
+sealed interface CommentUiState {
 
     val id: Any
 
     data class Data(
         override val id: Any,
-        val clip: VideoClipModel,
+        val item: CommentModel,
         val onClicked: () -> Unit,
-    ) : VideoClipUiState
+    ) : CommentUiState
 
-    data class Shimmer(override val id: Any) : VideoClipUiState
+    data class Shimmer(override val id: Any) : CommentUiState
+
+    data class Progress(override val id: Any = -1000) : CommentUiState
 }
 
-data class VideoFeedUiState(
-    val items: List<VideoClipUiState> = emptyList(),
+data class CommentsUiState(
+    val items: List<CommentUiState> = emptyList(),
     val errorState: MessageBannerState? = null,
     val emptyState: EmptyListTileState? = null,
     val onListEndReaching: (() -> Unit)? = null,
 )
 
-fun VideoFeedPageModel.toVideoFeedUiState(
+fun CommentPageModel.toCommentsUiState(
     shimmerListSize: Int,
-    onClipClicked: (VideoClipModel) -> Unit,
+    onClipClicked: (CommentModel) -> Unit,
     onReloadClicked: () -> Unit,
     onListEndReaching: () -> Unit,
-): VideoFeedUiState {
+): CommentsUiState {
     return when {
-        isLoading && loadedPageItems.isEmpty() -> VideoFeedUiState(
+        isLoading && loadedPageItems.isEmpty() -> CommentsUiState(
             items = List(shimmerListSize) {
-                VideoClipUiState.Shimmer("${VideoClipUiState.Shimmer::class.simpleName}$it")
+                CommentUiState.Shimmer("${CommentUiState.Shimmer::class.simpleName}$it")
             }
         )
-        error != null -> VideoFeedUiState(
+        error != null -> CommentsUiState(
             errorState = MessageBannerState.defaultState(onReloadClicked)
         )
-        loadedPageItems.isEmpty() -> VideoFeedUiState(
+        loadedPageItems.isEmpty() -> CommentsUiState(
             emptyState = EmptyListTileState(
                 message = "No data".textValue(),
                 image = ImageValue.ResImage(R.drawable.img_diamonds),
             )
         )
-        else -> VideoFeedUiState(
+        else -> CommentsUiState(
             items = loadedPageItems.map {
-                VideoClipUiState.Data(
+                CommentUiState.Data(
                     id = it.id,
-                    clip = it,
+                    item = it,
                     onClicked = { onClipClicked(it) },
                 )
+            }.run {
+                if (nextPage == null) this
+                else this.plus(CommentUiState.Progress())
             },
             onListEndReaching = onListEndReaching,
         )

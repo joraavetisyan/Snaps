@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package io.snaps.featurecollection.presentation.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi

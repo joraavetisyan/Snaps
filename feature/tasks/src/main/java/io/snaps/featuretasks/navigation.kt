@@ -12,10 +12,12 @@ import io.snaps.corenavigation.base.navigate
 import io.snaps.featuretasks.presentation.screen.FindPointsTaskScreen
 import io.snaps.featuretasks.presentation.screen.LikeAndSubscribeTaskScreen
 import io.snaps.featuretasks.presentation.screen.ShareTaskScreen
+import io.snaps.featuretasks.presentation.screen.TasksScreen
 import io.snaps.featuretasks.presentation.screen.WatchVideoTaskScreen
 import javax.inject.Inject
 
-internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController) {
+internal class ScreenNavigator(navHostController: NavHostController) :
+    Navigator(navHostController) {
 
     fun toShareTaskScreen(
         id: Uuid,
@@ -49,6 +51,7 @@ internal class ScreenNavigator(navHostController: NavHostController) : Navigator
 class TasksFeatureProviderImpl @Inject constructor() : TasksFeatureProvider {
 
     override fun NavGraphBuilder.tasksGraph(controller: NavHostController) {
+        composable(AppRoute.MainBottomBar.MainTab3Start) { TasksScreen(controller) }
         composable(AppRoute.ShareTask) { ShareTaskScreen(controller) }
         composable(AppRoute.LikeAndSubscribeTask) { LikeAndSubscribeTaskScreen(controller) }
         composable(AppRoute.FindPointsTask) { FindPointsTaskScreen(controller) }

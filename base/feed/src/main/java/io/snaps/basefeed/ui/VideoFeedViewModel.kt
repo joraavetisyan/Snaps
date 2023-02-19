@@ -1,24 +1,20 @@
-package io.snaps.featurefeed.presentation.viewmodel
+package io.snaps.basefeed.ui
 
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.basefeed.data.CommentRepository
 import io.snaps.basefeed.data.VideoFeedRepository
-import io.snaps.basefeed.ui.VideoFeedUiState
-import io.snaps.basefeed.ui.toVideoFeedUiState
+import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseplayer.domain.VideoClipModel
-import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
-import io.snaps.featurefeed.data.CommentRepository
-import io.snaps.featurefeed.presentation.CommentUiState
-import io.snaps.featurefeed.presentation.CommentsUiState
-import io.snaps.featurefeed.presentation.toCommentsUiState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,18 +23,18 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class VideoFeedViewModel @Inject constructor(
-    mainHeaderHandlerDelegate: MainHeaderHandler,
+abstract class VideoFeedViewModel(
+    private val videoFeedType: VideoFeedType,
     private val action: Action,
     private val videoFeedRepository: VideoFeedRepository,
     private val profileRepository: ProfileRepository,
     private val commentRepository: CommentRepository,
     private val bottomBarVisibilitySource: BottomBarVisibilitySource,
-) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
+    val startPosition: Int = 0,
+) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -46,14 +42,22 @@ class VideoFeedViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
+    private var commentsLoadJob: Job? = null
+    private var authorLoadJob: Job? = null
+
     init {
-        subscribeOnVideoFeed()
         subscribeToProfile()
-        subscribeOnComments()
+        subscribeOnVideoFeed()
+    }
+
+    private fun subscribeToProfile() {
+        profileRepository.state.onEach { profileState ->
+            _uiState.update { it.copy(profileAvatar = profileState.dataOrCache?.avatar) }
+        }.launchIn(viewModelScope)
     }
 
     private fun subscribeOnVideoFeed() {
-        videoFeedRepository.getFeedState().map {
+        videoFeedRepository.getFeedState(videoFeedType).map {
             it.toVideoFeedUiState(
                 shimmerListSize = 1,
                 onClipClicked = ::onClipClicked,
@@ -65,35 +69,46 @@ class VideoFeedViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun subscribeToProfile() {
-        profileRepository.state.onEach { profileState ->
-            _uiState.update { it.copy(profileAvatar = profileState.dataOrCache?.avatar) }
-        }.launchIn(viewModelScope)
+    private fun onClipClicked(clip: VideoClipModel) {}
+
+    private fun onReloadClicked() {
+        viewModelScope.launch { action.execute { videoFeedRepository.refreshFeed(videoFeedType) } }
     }
 
-    private fun subscribeOnComments() {
-        commentRepository.getCommentsState("").map {
+    private fun onListEndReaching() {
+        viewModelScope.launch { action.execute { videoFeedRepository.loadNextFeedPage(videoFeedType) } }
+    }
+
+    fun onScrolledToPosition(position: Int) {
+        val current =
+            _uiState.value.videoFeedUiState.items.getOrNull(position) as? VideoClipUiState.Data
+        val videoClip = current?.clip ?: return
+        commentsLoadJob?.cancel()
+        commentsLoadJob = commentRepository.getCommentsState(videoClip.id).map {
             it.toCommentsUiState(
                 shimmerListSize = 10,
                 onClipClicked = {},
                 onReloadClicked = {},
-                onListEndReaching = ::onCommentListEndReaching,
+                onListEndReaching = { onCommentListEndReaching(videoClip.id) },
             )
         }.onEach { state ->
             _uiState.update { it.copy(commentsUiState = state) }
         }.launchIn(viewModelScope)
+        authorLoadJob?.cancel()
+        authorLoadJob = viewModelScope.launch {
+            action.execute {
+                profileRepository.getUserInfoById(videoClip.authorId)
+            }.doOnSuccess { profileModel ->
+                if (!isActive) return@doOnSuccess
+                _uiState.update {
+                    it.copy(authorProfileAvatar = profileModel.avatar)
+                }
+            }
+        }
     }
 
-    private fun onClipClicked(clip: VideoClipModel) {}
-
-    private fun onReloadClicked() {}
-
-    private fun onListEndReaching() {
-        viewModelScope.launch { action.execute { videoFeedRepository.loadNextFeedPage() } }
-    }
-
-    private fun onCommentListEndReaching() {
-        viewModelScope.launch { action.execute { commentRepository.loadNextCommentPage("") } }
+    private fun onCommentListEndReaching(videoId: Uuid) {
+        viewModelScope.launch { action.execute { commentRepository.loadNextCommentPage(videoId) } }
     }
 
     fun onBottomSheetHidden() {
@@ -109,6 +124,7 @@ class VideoFeedViewModel @Inject constructor(
     }
 
     fun onAuthorClicked(clipModel: VideoClipModel) {
+        viewModelScope.launch { _command publish Command.OpenProfileScreen(clipModel.authorId) }
     }
 
     fun onLikeClicked(clipModel: VideoClipModel) {
@@ -116,7 +132,7 @@ class VideoFeedViewModel @Inject constructor(
 
     fun onCommentClicked(clipModel: VideoClipModel) {
         bottomBarVisibilitySource.updateState(false)
-        viewModelScope.launch { _command publish Command.ShowBottomDialog }
+        viewModelScope.launch { _command publish Command.ShowCommentsBottomDialog }
     }
 
     fun onCommentChanged(newValue: TextFieldValue) {
@@ -145,6 +161,7 @@ class VideoFeedViewModel @Inject constructor(
     data class UiState(
         val isMuted: Boolean = false,
         val profileAvatar: ImageValue? = null,
+        val authorProfileAvatar: ImageValue? = null,
         val comment: TextFieldValue = TextFieldValue(""),
         val videoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
         val commentsUiState: CommentsUiState = CommentsUiState(),
@@ -157,9 +174,11 @@ class VideoFeedViewModel @Inject constructor(
     }
 
     sealed class Command {
-        object ShowBottomDialog : Command()
-        object HideBottomDialog : Command()
+        object ShowCommentsBottomDialog : Command()
+        object HideCommentsBottomDialog : Command()
         object ShowCommentInputBottomDialog : Command()
         object HideCommentInputBottomDialog : Command()
+        data class ScrollToPosition(val position: Int) : Command()
+        data class OpenProfileScreen(val userId: Uuid) : Command()
     }
 }

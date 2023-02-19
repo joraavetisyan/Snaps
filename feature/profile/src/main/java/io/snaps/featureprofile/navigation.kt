@@ -2,14 +2,17 @@ package io.snaps.featureprofile
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import io.snaps.corecommon.model.Uuid
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.ProfileFeatureProvider
 import io.snaps.corenavigation.base.FeatureNavDirection
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
+import io.snaps.featureprofile.presentation.screen.CreateVideoScreen
 import io.snaps.featureprofile.presentation.screen.ProfileScreen
 import io.snaps.featureprofile.presentation.screen.SubsScreen
+import io.snaps.featureprofile.presentation.screen.UserVideoFeedScreen
 import io.snaps.featureprofile.presentation.screen.settings.BackupWalletKeyScreen
 import io.snaps.featureprofile.presentation.screen.settings.ReferralProgramScreen
 import io.snaps.featureprofile.presentation.screen.settings.SettingsScreen
@@ -30,24 +33,34 @@ internal class ScreenNavigator(navHostController: NavHostController) :
 
     fun toWalletSettingsScreen() = navHostController.navigate(AppRoute.WalletSettings)
 
+    fun toCreateVideoScreen() = navHostController.navigate(AppRoute.CreateVideo)
+
     fun toSubsScreen(
         args: AppRoute.Subs.Args
     ) = navHostController navigate FeatureNavDirection(
-        AppRoute.Subs,
-        args,
+        route = AppRoute.Subs,
+        arg = args,
     )
 
     fun toProfileScreen(
         args: AppRoute.Profile.Args
     ) = navHostController navigate FeatureNavDirection(
-        AppRoute.Profile,
-        args,
+        route = AppRoute.Profile,
+        arg = args,
     )
+
+    fun toUserVideoFeedScreen(userId: Uuid?, position: Int) =
+        navHostController navigate FeatureNavDirection(
+            route = AppRoute.UserVideoFeed,
+            arg = AppRoute.UserVideoFeed.Args(userId = userId, position = position),
+        )
 }
 
 class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider {
 
     override fun NavGraphBuilder.profileGraph(controller: NavHostController) {
+        composable(AppRoute.MainBottomBar.MainTab5Start) { ProfileScreen(controller) }
+        composable(AppRoute.CreateVideo) { CreateVideoScreen(controller) }
         composable(AppRoute.Profile) { ProfileScreen(controller) }
         composable(AppRoute.ReferralProgramScreen) { ReferralProgramScreen(controller) }
         composable(AppRoute.Settings) { SettingsScreen(controller) }
@@ -56,5 +69,6 @@ class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider 
         composable(AppRoute.WalletSettings) { WalletSettingsScreen(controller) }
         composable(AppRoute.Profile) { ProfileScreen(controller) }
         composable(AppRoute.Subs) { SubsScreen(controller) }
+        composable(AppRoute.UserVideoFeed) { UserVideoFeedScreen(controller) }
     }
 }

@@ -4,8 +4,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
+import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseplayer.domain.VideoClipModel
-import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.Action
@@ -15,17 +15,6 @@ import io.snaps.coredata.network.PagedLoaderParams
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
-
-sealed interface VideoFeedType {
-
-    object Main : VideoFeedType
-
-    data class Popular(val query: String) : VideoFeedType
-
-    data class User(val userId: Uuid) : VideoFeedType
-
-    object Own : VideoFeedType
-}
 
 class VideoFeedLoader @AssistedInject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
@@ -37,10 +26,9 @@ class VideoFeedLoader @AssistedInject constructor(
     scope = scope,
     action = action,
     params = params,
-    mapper = List<VideoFeedItemResponseDto>::toModelList,
+    mapper = List<VideoFeedItemResponseDto>::toVideoClipModelList,
 )
 
-@Singleton
 @AssistedFactory
 abstract class VideoFeedLoaderFactory :
     PagedLoaderFactory<VideoFeedType, VideoFeedLoader, VideoFeedItemResponseDto, VideoClipModel>() {

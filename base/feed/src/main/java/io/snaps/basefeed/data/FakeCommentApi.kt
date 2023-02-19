@@ -1,5 +1,6 @@
-package io.snaps.featurefeed.data
+package io.snaps.basefeed.data
 
+import io.snaps.basefeed.data.model.CommentResponseDto
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rBool
@@ -7,7 +8,6 @@ import io.snaps.corecommon.mock.rImage
 import io.snaps.corecommon.mock.rInt
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
-import io.snaps.featurefeed.data.model.CommentResponseDto
 import kotlinx.coroutines.delay
 import retrofit2.http.Query
 

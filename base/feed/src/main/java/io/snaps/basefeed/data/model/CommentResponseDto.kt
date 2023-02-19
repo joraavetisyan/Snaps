@@ -1,4 +1,4 @@
-package io.snaps.featurefeed.data.model
+package io.snaps.basefeed.data.model
 
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Uuid

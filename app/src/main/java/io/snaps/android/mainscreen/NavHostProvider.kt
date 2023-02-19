@@ -9,19 +9,14 @@ import io.snaps.corenavigation.BottomBarFeatureProvider
 import io.snaps.corenavigation.CollectionFeatureProvider
 import io.snaps.corenavigation.FeedFeatureProvider
 import io.snaps.corenavigation.InitializationFeatureProvider
+import io.snaps.corenavigation.PopularFeatureProvider
 import io.snaps.corenavigation.ProfileFeatureProvider
 import io.snaps.corenavigation.RegistrationFeatureProvider
 import io.snaps.corenavigation.TasksFeatureProvider
 import io.snaps.corenavigation.WalletConnectFeatureProvider
 import io.snaps.corenavigation.WalletFeatureProvider
-import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.createRoute
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.featurecollection.presentation.screen.MyCollectionScreen
-import io.snaps.featurefeed.presentation.screen.PopularVideosScreen
-import io.snaps.featurefeed.presentation.screen.VideoFeedScreen
-import io.snaps.featureprofile.presentation.screen.ProfileScreen
-import io.snaps.featuretasks.presentation.screen.TasksScreen
 import javax.inject.Inject
 
 class NavHostProvider @Inject constructor(
@@ -30,6 +25,7 @@ class NavHostProvider @Inject constructor(
     private val initializationFeatureProvider: InitializationFeatureProvider,
     private val bottomBarFeatureProvider: BottomBarFeatureProvider,
     private val feedFeatureProvider: FeedFeatureProvider,
+    private val popularFeatureProvider: PopularFeatureProvider,
     private val tasksFeatureProvider: TasksFeatureProvider,
     private val collectionFeatureProvider: CollectionFeatureProvider,
     private val profileFeatureProvider: ProfileFeatureProvider,
@@ -71,7 +67,12 @@ class NavHostProvider @Inject constructor(
             with(walletConnectFeatureProvider) { walletConnectGraph(navController) }
             with(initializationFeatureProvider) { initializationGraph(navController) }
             with(bottomBarFeatureProvider) {
-                bottomBarGraph(route = AppRoute.MainBottomBar, items = mainBottomBarItems)
+                bottomBarGraph(
+                    route = AppRoute.MainBottomBar,
+                    items = mainBottomBarItems
+                ) { controller ->
+                    with(walletFeatureProvider) { walletGraph(controller) }
+                }
             }
         }
     }
@@ -110,29 +111,23 @@ class NavHostProvider @Inject constructor(
             ),
         )
 
-    // todo better graph
     private fun NavGraphBuilder.mainTab1Graph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.MainTab1Start) { VideoFeedScreen(controller) }
         with(feedFeatureProvider) { feedGraph(controller) }
     }
 
     private fun NavGraphBuilder.mainTab2Graph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.MainTab2Start) { PopularVideosScreen(controller) }
-        with(walletFeatureProvider) { walletGraph(controller) }
+        with(popularFeatureProvider) { popularGraph(controller) }
     }
 
     private fun NavGraphBuilder.mainTab3Graph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.MainTab3Start) { TasksScreen(controller) }
         with(tasksFeatureProvider) { tasksGraph(controller) }
     }
 
     private fun NavGraphBuilder.mainTab4Graph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.MainTab4Start) { MyCollectionScreen(controller) }
         with(collectionFeatureProvider) { collectionGraph(controller) }
     }
 
     private fun NavGraphBuilder.mainTab5Graph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.MainTab5Start) { ProfileScreen(controller) }
         with(profileFeatureProvider) { profileGraph(controller) }
     }
 }

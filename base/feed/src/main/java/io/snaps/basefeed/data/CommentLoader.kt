@@ -1,8 +1,10 @@
-package io.snaps.featurefeed.data
+package io.snaps.basefeed.data
 
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import io.snaps.basefeed.data.model.CommentResponseDto
+import io.snaps.basefeed.domain.CommentModel
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
@@ -10,11 +12,8 @@ import io.snaps.coredata.network.Action
 import io.snaps.coredata.network.PagedLoader
 import io.snaps.coredata.network.PagedLoaderFactory
 import io.snaps.coredata.network.PagedLoaderParams
-import io.snaps.featurefeed.data.model.CommentResponseDto
-import io.snaps.featurefeed.domain.CommentModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import javax.inject.Singleton
 
 class CommentLoader @AssistedInject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
@@ -26,10 +25,9 @@ class CommentLoader @AssistedInject constructor(
     scope = scope,
     action = action,
     params = params,
-    mapper = List<CommentResponseDto>::toModelList,
+    mapper = List<CommentResponseDto>::toCommentModelList,
 )
 
-@Singleton
 @AssistedFactory
 abstract class CommentLoaderFactory :
     PagedLoaderFactory<Uuid, CommentLoader, CommentResponseDto, CommentModel>() {

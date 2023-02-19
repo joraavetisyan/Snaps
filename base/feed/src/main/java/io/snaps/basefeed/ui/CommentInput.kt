@@ -1,4 +1,4 @@
-package io.snaps.featurefeed.presentation.screen
+package io.snaps.basefeed.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

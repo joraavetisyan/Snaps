@@ -30,6 +30,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.snaps.basefeed.ui.CommentInput
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.defaultTileRipple
@@ -43,8 +44,8 @@ import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.featurefeed.presentation.CommentUiState
-import io.snaps.featurefeed.presentation.viewmodel.VideoFeedViewModel
+import io.snaps.basefeed.ui.CommentUiState
+import io.snaps.basefeed.ui.VideoFeedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

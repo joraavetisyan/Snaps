@@ -1,4 +1,4 @@
-package io.snaps.featurefeed.domain
+package io.snaps.basefeed.domain
 
 import io.snaps.coredata.network.PageModel
 

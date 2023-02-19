@@ -14,7 +14,6 @@ import io.snaps.featureprofile.data.model.SubscriptionItemResponseDto
 import io.snaps.featureprofile.domain.Sub
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import javax.inject.Singleton
 
 sealed interface SubType {
 
@@ -36,7 +35,6 @@ class SubsLoader @AssistedInject constructor(
     mapper = List<SubscriptionItemResponseDto>::toModelList,
 )
 
-@Singleton
 @AssistedFactory
 abstract class SubsLoaderFactory :
     PagedLoaderFactory<SubType, SubsLoader, SubscriptionItemResponseDto, Sub>() {

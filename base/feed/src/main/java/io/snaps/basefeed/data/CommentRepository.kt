@@ -1,10 +1,10 @@
-package io.snaps.featurefeed.data
+package io.snaps.basefeed.data
 
+import io.snaps.basefeed.domain.CommentPageModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.PagedLoaderParams
-import io.snaps.featurefeed.domain.CommentPageModel
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 

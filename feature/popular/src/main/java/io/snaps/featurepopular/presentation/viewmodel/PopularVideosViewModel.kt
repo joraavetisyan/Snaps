@@ -1,14 +1,16 @@
-package io.snaps.featurefeed.presentation.viewmodel
+package io.snaps.featurepopular.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basefeed.data.VideoFeedRepository
+import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.ui.VideoFeedUiState
 import io.snaps.basefeed.ui.toVideoFeedUiState
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
+import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -45,7 +47,7 @@ class PopularVideosViewModel @Inject constructor(
 
     private fun search(query: String) {
         subscribeJob?.cancel()
-        subscribeJob = videoFeedRepository.getPopularFeedState(query).map {
+        subscribeJob = videoFeedRepository.getFeedState(VideoFeedType.Popular(query)).map {
             it.toVideoFeedUiState(
                 shimmerListSize = 6,
                 onClipClicked = ::onClipClicked,
@@ -64,7 +66,7 @@ class PopularVideosViewModel @Inject constructor(
     private fun onListEndReaching() {
         viewModelScope.launch {
             action.execute {
-                videoFeedRepository.loadNextPopularFeedPage(_uiState.value.query)
+                videoFeedRepository.loadNextFeedPage(VideoFeedType.Popular(_uiState.value.query))
             }
         }
     }
@@ -79,10 +81,21 @@ class PopularVideosViewModel @Inject constructor(
         }
     }
 
+    fun onItemClicked(position: Int) {
+        viewModelScope.launch {
+            _command publish Command.OpenPopularVideoFeedScreen(
+                query = _uiState.value.query,
+                position = position,
+            )
+        }
+    }
+
     data class UiState(
         val query: String = "",
         val videoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
     )
 
-    sealed class Command
+    sealed class Command {
+        data class OpenPopularVideoFeedScreen(val query: String, val position: Int) : Command()
+    }
 }

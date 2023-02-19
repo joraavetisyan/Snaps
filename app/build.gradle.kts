@@ -106,6 +106,7 @@ dependencies {
     implementation(projects.featureCollection)
     implementation(projects.featureTasks)
     implementation(projects.featureFeed)
+    implementation(projects.featurePopular)
 
     implementation(*Libs.bundle.splashscreen)
     implementation(*Libs.bundle.appUpdater)

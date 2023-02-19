@@ -1,8 +1,8 @@
-package io.snaps.featurefeed.data
+package io.snaps.basefeed.data
 
+import io.snaps.basefeed.data.model.CommentResponseDto
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
-import io.snaps.featurefeed.data.model.CommentResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 

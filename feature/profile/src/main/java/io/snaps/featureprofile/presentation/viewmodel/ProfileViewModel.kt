@@ -4,10 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basefeed.data.VideoFeedRepository
+import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.ui.VideoFeedUiState
 import io.snaps.basefeed.ui.toVideoFeedUiState
 import io.snaps.baseprofile.data.ProfileRepository
-import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.model.SubsType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.Action
@@ -17,8 +17,8 @@ import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.featureprofile.data.SubsRepository
 import io.snaps.featureprofile.domain.Sub
-import io.snaps.featureprofile.presentation.toUserInfoTileState
 import io.snaps.featureprofile.presentation.screen.UserInfoTileState
+import io.snaps.featureprofile.presentation.toUserInfoTileState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -48,7 +48,7 @@ class ProfileViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     init {
-        if (args?.userId != null) {
+        if (args?.userId != null && !profileRepository.isCurrentUser(args.userId!!)) {
             _uiState.update {
                 it.copy(userType = UserType.Other)
             }
@@ -111,7 +111,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun subscribeOnFeed() {
-        videoFeedRepository.getUserFeedState(args?.userId).map {
+        videoFeedRepository.getFeedState(VideoFeedType.User(args?.userId)).map {
             it.toVideoFeedUiState(
                 shimmerListSize = 12,
                 onClipClicked = {},
@@ -126,7 +126,7 @@ class ProfileViewModel @Inject constructor(
     private fun onListEndReaching() {
         viewModelScope.launch {
             action.execute {
-                videoFeedRepository.loadNextUserFeedPage(args?.userId)
+                videoFeedRepository.loadNextFeedPage(VideoFeedType.User(args?.userId))
             }
         }
     }
@@ -180,6 +180,15 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun onVideoClipClicked(position: Int) {
+        viewModelScope.launch {
+            _command publish Command.OpenUserVideoFeedScreen(
+                userId = args?.userId,
+                position = position,
+            )
+        }
+    }
+
     data class UiState(
         val isLoading: Boolean = true,
         val userInfoTileState: UserInfoTileState = UserInfoTileState.Shimmer,
@@ -193,6 +202,7 @@ class ProfileViewModel @Inject constructor(
     sealed class Command {
         object OpenSettingsScreen : Command()
         data class OpenSubsScreen(val args: AppRoute.Subs.Args) : Command()
+        data class OpenUserVideoFeedScreen(val userId: Uuid?, val position: Int) : Command()
     }
 
     sealed class Dialog {
@@ -203,8 +213,3 @@ class ProfileViewModel @Inject constructor(
         Current, Other
     }
 }
-
-data class Photo(
-    val image: ImageValue,
-    val views: String,
-)

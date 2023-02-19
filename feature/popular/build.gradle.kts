@@ -11,10 +11,10 @@ dependencies {
     implementation(projects.coreCommon)
     implementation(projects.coreData)
     implementation(projects.coreUi)
+    implementation(projects.coreNavigation)
 
     implementation(projects.baseSources)
-    implementation(projects.basePlayer)
     implementation(projects.baseProfile)
-
-    implementation(*Libs.bundle.media)
+    implementation(projects.baseFeed)
+    implementation(projects.basePlayer)
 }

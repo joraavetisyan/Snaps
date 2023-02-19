@@ -1,5 +1,6 @@
 package io.snaps.coredata.network
 
+import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
@@ -26,7 +27,7 @@ data class PageModel<T>(
 )
 
 abstract class PagedLoader<T, R>(
-    private val scope: CoroutineScope,
+    scope: CoroutineScope,
     private val ioDispatcher: CoroutineDispatcher,
     private val action: Action,
     private val params: PagedLoaderParams<T>,
@@ -39,6 +40,7 @@ abstract class PagedLoader<T, R>(
     private val initialPageModel get() = PageModel<R>(pageSize = params.pageSize)
 
     init {
+        log("${this.javaClass.simpleName} init")
         scope.launch { action.execute { load() } }
     }
 
