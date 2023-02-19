@@ -21,7 +21,7 @@ class DataModule {
 
     @Provides
     @ViewModelScoped
-    fun commentApi(config: ApiConfig, feature: FeatureToggle): MyCollectionApi =
+    fun myCollectionApi(config: ApiConfig, feature: FeatureToggle): MyCollectionApi =
         if (feature.isEnabled(Feature.MyCollectionApiMock)) FakeMyCollectionApi()
         else config
             .serviceBuilder(MyCollectionApi::class.java)
@@ -37,5 +37,5 @@ interface DataBindModule {
 
     @Binds
     @ViewModelScoped
-    fun commentRepository(bind: MyCollectionRepositoryImpl): MyCollectionRepository
+    fun myCollectionRepository(bind: MyCollectionRepositoryImpl): MyCollectionRepository
 }
