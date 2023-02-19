@@ -14,13 +14,14 @@ import io.snaps.featurecollection.data.FakeMyCollectionApi
 import io.snaps.featurecollection.data.MyCollectionApi
 import io.snaps.featurecollection.data.MyCollectionRepository
 import io.snaps.featurecollection.data.MyCollectionRepositoryImpl
+import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class)
 class DataModule {
 
     @Provides
-    @ViewModelScoped
+    @Singleton
     fun myCollectionApi(config: ApiConfig, feature: FeatureToggle): MyCollectionApi =
         if (feature.isEnabled(Feature.MyCollectionApiMock)) FakeMyCollectionApi()
         else config
@@ -36,6 +37,6 @@ class DataModule {
 interface DataBindModule {
 
     @Binds
-    @ViewModelScoped
+    @Singleton
     fun myCollectionRepository(bind: MyCollectionRepositoryImpl): MyCollectionRepository
 }
