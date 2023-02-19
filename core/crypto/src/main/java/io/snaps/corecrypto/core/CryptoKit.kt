@@ -363,7 +363,8 @@ class CryptoKit : CoreApp(), WorkConfiguration.Provider {
                 solanaKitManager = solanaKitManager
             )
             transactionAdapterManager = TransactionAdapterManager(
-                adapterManager, adapterFactory
+                adapterManager = adapterManager,
+                adapterFactory = adapterFactory,
             )
 
             feeCoinProvider = FeeTokenProvider(marketKit)

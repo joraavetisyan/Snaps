@@ -5,18 +5,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.basewallet.data.WalletRepository
-import io.snaps.corecommon.R
-import io.snaps.corecommon.container.ImageValue
-import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.CurrencyType
 import io.snaps.corecommon.model.MoneyDto
 import io.snaps.coreui.barcode.BarcodeManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
-import io.snaps.coreuicompose.uikit.listtile.LeftPart
-import io.snaps.coreuicompose.uikit.listtile.MiddlePart
-import io.snaps.coreuicompose.uikit.listtile.RightPart
+import io.snaps.featurewallet.toCellTileStateList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,11 +29,12 @@ class WalletViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(
         UiState(
-            address = walletRepository.getActiveWalletAddress(),
-            currencies = getCurrencies(),
-            selectCurrencyBottomDialogItems = getSelectCurrencyBottomDialogItems(),
+            address = walletRepository.getActiveWalletsReceiveAddresses().firstOrNull().orEmpty(),
+            currencies = walletRepository.getActiveWallets().toCellTileStateList(),
+            selectCurrencyBottomDialogItems = emptyList(),
         )
     )
+
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
@@ -63,121 +59,14 @@ class WalletViewModel @Inject constructor(
         _command publish Command.ShowBottomDialog
     }
 
-    private fun getCurrencies() = listOf(
-        CellTileState(
-            middlePart = MiddlePart.Data(
-                value = CurrencyType.BNB.name.textValue(),
-            ),
-            leftPart = LeftPart.Logo(ImageValue.ResImage(R.drawable.ic_bnb_token)),
-            rightPart = RightPart.TextMoney(
-                balance = MoneyDto(CurrencyType.BNB, 0.0),
-                toCurrency = MoneyDto(CurrencyType.USD, 0.0),
-            ),
-        ),
-        CellTileState(
-            middlePart = MiddlePart.Data(
-                value = CurrencyType.SNP.name.textValue(),
-            ),
-            leftPart = LeftPart.Logo(ImageValue.ResImage(R.drawable.ic_bnb_token)),
-            rightPart = RightPart.TextMoney(
-                balance = MoneyDto(CurrencyType.SNP, 0.0),
-                toCurrency = MoneyDto(CurrencyType.USD, 0.0),
-            ),
-        ),
-        CellTileState(
-            middlePart = MiddlePart.Data(
-                value = CurrencyType.SNPS.name.textValue(),
-            ),
-            leftPart = LeftPart.Logo(ImageValue.ResImage(R.drawable.ic_bnb_token)),
-            rightPart = RightPart.TextMoney(
-                balance = MoneyDto(CurrencyType.SNPS, 0.0),
-                toCurrency = MoneyDto(CurrencyType.USD, 0.0),
-            ),
-        ),
-        CellTileState(
-            middlePart = MiddlePart.Data(
-                value = CurrencyType.BUSD.name.textValue(),
-            ),
-            leftPart = LeftPart.Logo(ImageValue.ResImage(R.drawable.ic_bnb_token)),
-            rightPart = RightPart.TextMoney(
-                balance = MoneyDto(CurrencyType.BUSD, 0.0),
-                toCurrency = MoneyDto(CurrencyType.USD, 0.0),
-            ),
-        ),
-    )
-
-    private fun getSelectCurrencyBottomDialogItems(): List<CellTileState> {
-        return listOf(
-            CellTileState(
-                middlePart = MiddlePart.Data(
-                    value = CurrencyType.BNB.name.textValue(),
-                ),
-                leftPart = LeftPart.Logo(ImageValue.ResImage(R.drawable.ic_bnb_token)),
-                rightPart = RightPart.NavigateNextIcon(
-                    text = MoneyDto(
-                        CurrencyType.BUSD, 0.0
-                    ).getFormattedMoneyWithCurrency().textValue(),
-                ),
-                clickListener = {
-                    onSelectCurrencyBottomDialogItemClicked(MoneyDto(CurrencyType.BUSD, 0.0))
-                },
-            ),
-            CellTileState(
-                middlePart = MiddlePart.Data(
-                    value = CurrencyType.SNP.name.textValue(),
-                ),
-                leftPart = LeftPart.Logo(ImageValue.ResImage(R.drawable.ic_bnb_token)),
-                rightPart = RightPart.NavigateNextIcon(
-                    text = MoneyDto(
-                        CurrencyType.SNP, 0.0
-                    ).getFormattedMoneyWithCurrency().textValue(),
-                ),
-                clickListener = {
-                    onSelectCurrencyBottomDialogItemClicked(MoneyDto(CurrencyType.SNP, 0.0))
-                }
-            ),
-            CellTileState(
-                middlePart = MiddlePart.Data(
-                    value = CurrencyType.SNPS.name.textValue(),
-                ),
-                leftPart = LeftPart.Logo(ImageValue.ResImage(R.drawable.ic_bnb_token)),
-                rightPart = RightPart.NavigateNextIcon(
-                    text = MoneyDto(
-                        CurrencyType.SNPS, 0.0
-                    ).getFormattedMoneyWithCurrency().textValue(),
-                ),
-                clickListener = {
-                    onSelectCurrencyBottomDialogItemClicked(MoneyDto(CurrencyType.SNPS, 0.0))
-                }
-            ),
-            CellTileState(
-                middlePart = MiddlePart.Data(
-                    value = CurrencyType.BUSD.name.textValue(),
-                ),
-                leftPart = LeftPart.Logo(ImageValue.ResImage(R.drawable.ic_bnb_token)),
-                rightPart = RightPart.NavigateNextIcon(
-                    text = MoneyDto(
-                        currency = CurrencyType.BUSD,
-                        value = 0.0,
-                    ).getFormattedMoneyWithCurrency().textValue(),
-                ),
-                clickListener = {
-                    onSelectCurrencyBottomDialogItemClicked(MoneyDto(CurrencyType.BUSD, 0.0))
-                },
-            ),
-        )
-    }
-
     private fun onSelectCurrencyBottomDialogItemClicked(item: MoneyDto) = viewModelScope.launch {
         _command publish Command.HideBottomDialog
-        _uiState.update {
-            it.copy(selectedCurrency = item)
-        }
+        _uiState.update { it.copy(selectedCurrency = item) }
     }
 
     data class UiState(
         val address: String,
-        val selectedCurrency: MoneyDto = MoneyDto(currency = CurrencyType.BNB, value = 0.0),
+        val selectedCurrency: MoneyDto = MoneyDto(currency = CurrencyType.USD, value = 0.0),
         val currencies: List<CellTileState>,
         val selectCurrencyBottomDialogItems: List<CellTileState>,
         val bottomDialogType: BottomDialogType = BottomDialogType.SelectCurrency,

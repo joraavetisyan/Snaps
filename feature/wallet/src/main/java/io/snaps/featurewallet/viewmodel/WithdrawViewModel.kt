@@ -40,9 +40,9 @@ class WithdrawViewModel @Inject constructor(
     data class UiState(
         val addressValue: String = "",
         val amountValue: String = "",
-        val availableAmount: MoneyDto = MoneyDto(CurrencyType.BNB, 0.0),
-        val transactionFee: MoneyDto = MoneyDto(CurrencyType.BNB, 0.0),
-        val totalAmount: MoneyDto = MoneyDto(CurrencyType.BNB, 0.0),
+        val availableAmount: MoneyDto = MoneyDto(CurrencyType.USD, 0.0),
+        val transactionFee: MoneyDto = MoneyDto(CurrencyType.USD, 0.0),
+        val totalAmount: MoneyDto = MoneyDto(CurrencyType.USD, 0.0),
     )
 
     sealed class Command

@@ -44,6 +44,7 @@ abstract class VideoFeedViewModel(
 
     private var commentsLoadJob: Job? = null
     private var authorLoadJob: Job? = null
+    private var loaded: Boolean = false
 
     init {
         subscribeToProfile()
@@ -66,6 +67,10 @@ abstract class VideoFeedViewModel(
             )
         }.onEach { state ->
             _uiState.update { it.copy(videoFeedUiState = state) }
+            if (state.isData && startPosition == 0 && !loaded) {
+                loaded = true
+                onScrolledToPosition(0)
+            }
         }.launchIn(viewModelScope)
     }
 

@@ -105,6 +105,7 @@ dependencies {
     implementation(projects.baseSources)
     implementation(projects.baseProfile)
     implementation(projects.baseSession)
+    implementation(projects.baseWallet)
 
     implementation(projects.featureBottomBar)
     implementation(projects.featureRegistration)

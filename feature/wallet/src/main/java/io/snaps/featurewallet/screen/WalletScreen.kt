@@ -375,7 +375,7 @@ private fun TopUpDialog(
                     .size(164.dp)
                     .padding(16.dp)
                     .background(
-                        color = AppTheme.specificColorScheme.darkGrey,
+                        color = AppTheme.specificColorScheme.white,
                         shape = AppTheme.shapes.extraLarge,
                     ),
             ) {
@@ -402,7 +402,7 @@ private fun TopUpDialog(
                     iconRight = AppTheme.specificIcons.copy,
                 )
             }
-            MiddleEllipsisText(
+            Text(
                 text = StringKey.WalletMessageTopUp.textValue().get().text,
                 style = AppTheme.specificTypography.bodySmall,
                 color = AppTheme.specificColorScheme.textSecondary,

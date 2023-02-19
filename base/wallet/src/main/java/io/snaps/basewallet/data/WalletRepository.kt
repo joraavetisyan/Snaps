@@ -4,21 +4,23 @@ import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.marketkit.models.TokenQuery
 import io.horizontalsystems.marketkit.models.TokenType
 import io.snaps.basewallet.data.model.WalletSaveRequestDto
+import io.snaps.basewallet.domain.WalletModel
+import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
+import io.snaps.corecommon.model.WalletAddress
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.core.IAccountFactory
 import io.snaps.corecrypto.core.IAccountManager
 import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.IWordsManager
 import io.snaps.corecrypto.core.managers.WalletActivator
-import io.snaps.corecrypto.core.managers.WalletManager
-import io.snaps.corecrypto.core.managers.WordsManager
 import io.snaps.corecrypto.core.providers.PredefinedBlockchainSettingsProvider
 import io.snaps.corecrypto.entities.Account
 import io.snaps.corecrypto.entities.AccountOrigin
 import io.snaps.corecrypto.entities.AccountType
+import io.snaps.corecrypto.entities.Wallet
 import io.snaps.corecrypto.entities.normalizeNFKD
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.apiCall
@@ -35,7 +37,11 @@ interface WalletRepository {
 
     suspend fun saveLastConnectedAccount(): Effect<Completable>
 
-    fun getActiveWalletAddress(): String
+    fun getActiveAccount(): Account?
+
+    fun getActiveWallets(): List<WalletModel>
+
+    fun getActiveWalletsReceiveAddresses(): List<WalletAddress>
 }
 
 class WalletRepositoryImpl @Inject constructor(
@@ -93,16 +99,31 @@ class WalletRepositoryImpl @Inject constructor(
         activateDefaultWallets(account)
         predefinedBlockchainSettingsProvider.prepareNew(account, BlockchainType.Zcash)
         this.account = null
-        return apiCall(ioDispatcher) {
-            walletApi.save(WalletSaveRequestDto(getActiveWalletAddress()))
+        return getActiveWalletsReceiveAddresses().firstOrNull()?.let {
+            apiCall(ioDispatcher) { walletApi.save(WalletSaveRequestDto(it)) }
+        } ?: Effect.error(AppError.Unknown("No address!"))
+    }
+
+    override fun getActiveAccount(): Account? {
+        return accountManager.activeAccount ?: run {
+            log("No active account")
+            null
         }
     }
 
-    override fun getActiveWalletAddress(): String {
-        val account = accountManager.activeAccount ?: throw Exception("No active account")
-        return walletManager.getWallets(account).firstOrNull()?.let {
-            CryptoKit.adapterManager.getReceiveAdapterForWallet(it)
-        }?.receiveAddress ?: throw Exception("No active wallet")
+    override fun getActiveWallets(): List<WalletModel> {
+        return getWallets().toWalletModelList()
+    }
+
+    private fun getWallets(): List<Wallet> {
+        val account = getActiveAccount() ?: return emptyList()
+        return walletManager.getWallets(account)
+    }
+
+    override fun getActiveWalletsReceiveAddresses(): List<WalletAddress> {
+        return getWallets().mapNotNull {
+            CryptoKit.adapterManager.getReceiveAdapterForWallet(it)?.receiveAddress
+        }
     }
 
     private fun activateDefaultWallets(account: Account) {
@@ -111,7 +132,7 @@ class WalletRepositoryImpl @Inject constructor(
             "0x192E9321b6244D204D4301AfA507EB29CA84D9ef",
             // laflix
             "0x3e3bfa35e81e85be5c65b0c759fe1b6ed6525ec0",
-            // bnbAddress
+            // wrapped bnb
             "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
             // BUSD
             "0xe9e7cea3dedca5984780bafc599bd69add087d56",

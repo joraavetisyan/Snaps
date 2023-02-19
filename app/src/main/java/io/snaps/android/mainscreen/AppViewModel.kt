@@ -7,9 +7,9 @@ import io.snaps.basesession.ActiveAppZoneProvider
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesources.LocaleSource
 import io.snaps.basesources.NotificationsSource
+import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.strings.StringHolder
 import io.snaps.coredata.database.UserDataStorage
-import io.snaps.coredata.database.WalletStorage
 import io.snaps.corenavigation.base.ROUTE_ARGS_SEPARATOR
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.likeStateFlow
@@ -27,8 +27,8 @@ class AppViewModel @Inject constructor(
     userSessionTracker: UserSessionTracker,
     notificationsSource: NotificationsSource,
     private val userDataStorage: UserDataStorage,
-    private val walletStorage: WalletStorage,
     private val appRouteProvider: AppRouteProvider,
+    private val walletRepository: WalletRepository,
 ) : SimpleViewModel() {
 
     val stringHolderState = localeSource.stateFlow
@@ -41,7 +41,7 @@ class AppViewModel @Inject constructor(
                 needsStartOnBoarding = !userDataStorage.isStartOnBoardingFinished,
             )
             UserSessionTracker.State.Active -> StartFlow.AuthorizedFlow(
-                needsWalletConnect = walletStorage.wallet == null,
+                needsWalletConnect = walletRepository.getActiveAccount() == null,
                 needsInitialization = userDataStorage.userNameFlow.firstOrNull() == null,
                 needsRanking = false,
             )

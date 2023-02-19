@@ -52,11 +52,7 @@ enum class CurrencyType(
     @SerialName("643") RUB("₽"),
     @SerialName("840") USD("$"),
     @SerialName("978") EUR("€"),
-
-    @SerialName("BNB") BNB("BNB"),
-    @SerialName("SNP") SNP("SNP"),
-    @SerialName("SNPS") SNPS("SNPS"),
-    @SerialName("BUSD") BUSD("BUSD");
+    ;
 
     val displayName
         get() = runCatching {
