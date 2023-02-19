@@ -177,4 +177,16 @@ enum class StringKey {
     ConfirmUnsubscribeDialogMessage,
     ConfirmUnsubscribeDialogActionCancel,
     ConfirmUnsubscribeDialogActionUnsubscribe,
+
+    MyCollectionTitle,
+    MyCollectionMessage,
+    MyCollectionTitleSlideNft,
+    MyCollectionTitleSlideMysteryBox,
+    MyCollectionTitleMysteryBox,
+
+    RankSelectionTitle,
+    RankSelectionMessage,
+    RankSelectionTitleDailyReward,
+    RankSelectionTitleDailyUnlock,
+    RankSelectionTitleDailyConsumption,
 }

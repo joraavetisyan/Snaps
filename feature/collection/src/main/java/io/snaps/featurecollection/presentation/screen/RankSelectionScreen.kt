@@ -1,10 +1,8 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package io.snaps.featurecollection.screen
+package io.snaps.featurecollection.presentation.screen
 
-import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,14 +10,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -30,27 +24,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
-import io.snaps.baseprofile.ui.WorthWidget
-import io.snaps.corecommon.R
-import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurecollection.ScreenNavigator
-import io.snaps.featurecollection.domain.Rank
-import io.snaps.featurecollection.viewmodel.RankSelectionViewModel
+import io.snaps.featurecollection.presentation.viewmodel.RankSelectionViewModel
 
 @Composable
 fun RankSelectionScreen(
@@ -81,6 +70,7 @@ private fun RankSelectionScreen(
     ) { paddingValues ->
         Column(
             modifier = Modifier
+                .background(color = AppTheme.specificColorScheme.uiContentBg)
                 .padding(paddingValues)
                 .inset(insetAll()),
         ) {
@@ -92,7 +82,7 @@ private fun RankSelectionScreen(
                 contentPadding = PaddingValues(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                items(uiState.ranks) { Item(it) }
+                items(uiState.ranks) { it.Content(modifier = Modifier) }
             }
         }
     }
@@ -103,11 +93,14 @@ private fun Header() {
     Column(
         Modifier.padding(12.dp)
     ) {
-        Text(text = "Choose a rank for your points", style = AppTheme.specificTypography.titleLarge)
+        Text(
+            text = StringKey.RankSelectionTitle.textValue().get(),
+            style = AppTheme.specificTypography.titleLarge,
+        )
         Spacer(modifier = Modifier.height(8.dp))
         Row {
             Text(
-                text = "What is a rank",
+                text = StringKey.RankSelectionMessage.textValue().get(),
                 style = AppTheme.specificTypography.titleSmall,
                 color = AppTheme.specificColorScheme.textLink,
             )
@@ -118,60 +111,4 @@ private fun Header() {
             )
         }
     }
-}
-
-@Composable
-private fun Item(item: Rank) {
-    Card(
-        modifier = Modifier
-            .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
-            .background(
-                color = AppTheme.specificColorScheme.uiContentBg,
-                shape = AppTheme.shapes.medium
-            ),
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Image(item.image.get(), null, modifier = Modifier.size(100.dp))
-            Spacer(Modifier.width(8.dp))
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(item.type)
-                    WorthWidget(ImageValue.ResImage(R.drawable.img_coin_silver) to item.price)
-                }
-                @Composable
-                fun Line(name: String, value: String) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(
-                            text = name,
-                            style = AppTheme.specificTypography.bodySmall,
-                            color = AppTheme.specificColorScheme.textSecondary,
-                        )
-                        Text(text = value, style = AppTheme.specificTypography.bodySmall)
-                    }
-                }
-                Line(name = "Daily reward", value = item.dailyReward)
-                Line(name = "Daily unlock", value = item.dailyUnlock)
-                Line(name = "Daily consumption", value = item.dailyConsumption)
-                Line(name = "Dosage per day/month", value = item.dosagePerDayMonth)
-                Line(name = "Spending on gas", value = item.spendingOnGas)
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun Preview() {
 }

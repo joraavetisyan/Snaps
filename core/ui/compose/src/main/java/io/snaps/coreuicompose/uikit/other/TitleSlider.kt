@@ -44,7 +44,8 @@ fun TitleSlider(
             ),
     ) {
         Row(
-            modifier = Modifier.padding(vertical = 2.dp, horizontal = 4.dp),
+            modifier = Modifier
+                .padding(vertical = 2.dp, horizontal = 4.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -81,6 +82,7 @@ private fun RowScope.TabItem(
         color = tabTextColor,
         textAlign = TextAlign.Center,
         modifier = Modifier
+            .weight(1f)
             .addIf(isSelected) {
                 border(
                     width = 1.dp,

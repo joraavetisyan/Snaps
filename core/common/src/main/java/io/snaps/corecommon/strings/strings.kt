@@ -480,4 +480,36 @@ internal val strings = mapOf(
     key(StringKey.ConfirmUnsubscribeDialogActionUnsubscribe) to mapOf(
         SupportedLanguageKey.En to "Unfollow",
     ),
+
+    key(StringKey.MyCollectionTitle) to mapOf(
+        SupportedLanguageKey.En to "My Collection",
+    ),
+    key(StringKey.MyCollectionMessage) to mapOf(
+        SupportedLanguageKey.En to "All your inventory is displayed here",
+    ),
+    key(StringKey.MyCollectionTitleSlideNft) to mapOf(
+        SupportedLanguageKey.En to "Nft",
+    ),
+    key(StringKey.MyCollectionTitleSlideMysteryBox) to mapOf(
+        SupportedLanguageKey.En to "Mystery Box",
+    ),
+    key(StringKey.MyCollectionTitleMysteryBox) to mapOf(
+        SupportedLanguageKey.En to "Mystery Box",
+    ),
+
+    key(StringKey.RankSelectionTitle) to mapOf(
+        SupportedLanguageKey.En to "Choose a rank for your points",
+    ),
+    key(StringKey.RankSelectionMessage) to mapOf(
+        SupportedLanguageKey.En to "What is a rank",
+    ),
+    key(StringKey.RankSelectionTitleDailyReward) to mapOf(
+        SupportedLanguageKey.En to "Daily reward",
+    ),
+    key(StringKey.RankSelectionTitleDailyUnlock) to mapOf(
+        SupportedLanguageKey.En to "Daily unlock",
+    ),
+    key(StringKey.RankSelectionTitleDailyConsumption) to mapOf(
+        SupportedLanguageKey.En to "Daily consumption",
+    ),
 )

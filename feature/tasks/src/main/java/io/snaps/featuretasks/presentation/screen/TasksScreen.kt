@@ -6,9 +6,9 @@ import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -97,14 +97,14 @@ private fun TasksScreen(
 
             val coroutineScope = rememberCoroutineScope()
 
-            Box(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Card(
                     shape = CircleShape,
-                    modifier = Modifier.align(Alignment.CenterStart),
                 ) {
                     Image(
                         painter = ImageValue.Url("https://picsum.photos/44").get(),
@@ -114,7 +114,7 @@ private fun TasksScreen(
                     )
                 }
                 TitleSlider(
-                    modifier = Modifier.align(Alignment.Center),
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     items = listOf(current, history),
                     selectedItemIndex = pagerState.currentPage,
                     onClick = {
