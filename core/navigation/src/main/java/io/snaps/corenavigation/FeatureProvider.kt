@@ -7,7 +7,11 @@ import io.snaps.corecommon.strings.StringKey
 
 interface BottomBarFeatureProvider {
 
-    fun NavGraphBuilder.bottomBarGraph(route: Route, items: List<ScreenItem>)
+    fun NavGraphBuilder.bottomBarGraph(
+        route: Route,
+        items: List<ScreenItem>,
+        builder: NavGraphBuilder.(NavHostController) -> Unit,
+    )
 
     data class ScreenItem(
         val icon: IconValue,
@@ -56,4 +60,9 @@ interface CollectionFeatureProvider {
 interface FeedFeatureProvider {
 
     fun NavGraphBuilder.feedGraph(controller: NavHostController)
+}
+
+interface PopularFeatureProvider {
+
+    fun NavGraphBuilder.popularGraph(controller: NavHostController)
 }

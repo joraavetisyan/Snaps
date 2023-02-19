@@ -1,12 +1,13 @@
 package io.snaps.featureregistration.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.AuthCredential
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
-import io.snaps.featureregistration.presentation.data.AuthRepository
+import io.snaps.featureregistration.data.AuthRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -55,11 +56,7 @@ class RegistrationViewModel @Inject constructor(
     }
 
     fun onLoginWithTwitterClicked() {
-        sessionRepository.onLogin()
-    }
-
-    fun onLoginWithFacebookClicked() {
-        sessionRepository.onLogin()
+        // todo
     }
 
     fun showSignInBottomDialog() = viewModelScope.launch {
@@ -104,9 +101,17 @@ class RegistrationViewModel @Inject constructor(
         }
     }
 
-    fun signInWithGoogle(idToken: String) = viewModelScope.launch {
+    fun signInWithGoogle(authCredential: AuthCredential) = viewModelScope.launch {
         action.execute {
-            authRepository.signInWithGoogle(idToken)
+            authRepository.signInWithCredential(authCredential)
+        }.doOnSuccess {
+            sessionRepository.onLogin()
+        }
+    }
+
+    fun signInWithWithFacebook(authCredential: AuthCredential) = viewModelScope.launch {
+        action.execute {
+            authRepository.signInWithCredential(authCredential)
         }.doOnSuccess {
             sessionRepository.onLogin()
         }

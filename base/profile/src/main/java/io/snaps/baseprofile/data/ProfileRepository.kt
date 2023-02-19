@@ -8,6 +8,7 @@ import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
+import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.apiCall
@@ -34,6 +35,8 @@ interface ProfileRepository {
     suspend fun getUserInfoById(userId: String): Effect<ProfileModel>
 
     suspend fun createUser(uri: Uri, userName: String): Effect<Completable>
+
+    fun isCurrentUser(userId: Uuid): Boolean
 }
 
 class ProfileRepositoryImpl @Inject constructor(
@@ -86,5 +89,9 @@ class ProfileRepositoryImpl @Inject constructor(
             userDataStorage.setUserName(it.name)
             userDataStorage.setUserAvatar(uri.toString())
         }.toCompletable()
+    }
+
+    override fun isCurrentUser(userId: Uuid): Boolean {
+        return _state.value.dataOrCache?.userId == userId
     }
 }

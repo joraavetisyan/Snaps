@@ -15,16 +15,14 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import io.snaps.baseplayer.domain.VideoClipModel
-import io.snaps.baseplayer.ui.ReelPlayer
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.coreuicompose.tools.addIf
+import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.other.ShimmerTile
 import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyVerticalGrid
@@ -35,37 +33,9 @@ fun VideoFeedGrid(
     columnCount: Int,
     detectThreshold: Int = columnCount * 2,
     uiState: VideoFeedUiState,
+    onClick: (Int) -> Unit,
 ) {
     val lazyGridState = rememberLazyGridState()
-    val firstVisibleItemIndex by remember {
-        derivedStateOf { lazyGridState.firstVisibleItemScrollOffset }
-    }
-    val firstFullyVisibleItemIndex: Int? by remember {
-        derivedStateOf {
-            val layoutInfo = lazyGridState.layoutInfo
-            val visibleItemsInfo = layoutInfo.visibleItemsInfo
-            if (visibleItemsInfo.isEmpty()) {
-                emptyList()
-            } else {
-                val fullyVisibleItemsInfo = visibleItemsInfo.toMutableList()
-                val viewportHeight =
-                    layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
-                repeat(columnCount) {
-                    val lastItem = fullyVisibleItemsInfo.last()
-                    if ((lastItem.offset.y + lastItem.size.height) > viewportHeight) {
-                        fullyVisibleItemsInfo.removeLast()
-                    }
-                }
-                repeat(columnCount) {
-                    val firstItemIfLeft = fullyVisibleItemsInfo.firstOrNull()
-                    if (firstItemIfLeft != null && firstItemIfLeft.offset.y < layoutInfo.viewportStartOffset) {
-                        fullyVisibleItemsInfo.removeFirst()
-                    }
-                }
-                fullyVisibleItemsInfo.map { it.index }
-            }.firstOrNull()
-        }
-    }
     ScrollEndDetectLazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         state = lazyGridState,
@@ -80,8 +50,7 @@ fun VideoFeedGrid(
             when (it) {
                 is VideoClipUiState.Data -> Item(
                     item = it.clip,
-                    shouldPlay = index == (firstFullyVisibleItemIndex ?: firstVisibleItemIndex),
-                    isScrolling = lazyGridState.isScrollInProgress,
+                    onClick = { onClick(index) },
                 )
                 is VideoClipUiState.Shimmer -> ItemShimmer()
             }
@@ -92,28 +61,26 @@ fun VideoFeedGrid(
 @Composable
 private fun Item(
     item: VideoClipModel,
-    shouldPlay: Boolean,
-    isScrolling: Boolean,
+    onClick: () -> Unit,
 ) {
-    ItemContainer {
-        if (shouldPlay) {
-            ReelPlayer(
-                videoClipUrl = item.url,
-                shouldPlay = !isScrolling,
-            )
-        } else {
-            Image(
-                modifier = Modifier.fillMaxSize(),
-                painter = ImageValue.Url(item.thumbnail).get(),
-                contentDescription = null,
-            )
-        }
+    ItemContainer(
+        onClick = onClick,
+    ) {
+        Image(
+            modifier = Modifier.fillMaxSize(),
+            painter = ImageValue.Url(item.thumbnail).get(),
+            contentDescription = null,
+        )
         Row(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(horizontal = 4.dp, vertical = 8.dp),
         ) {
-            Icon(AppTheme.specificIcons.play.get(), null, tint = AppTheme.specificColorScheme.white)
+            Icon(
+                painter = AppTheme.specificIcons.play.get(),
+                contentDescription = null,
+                tint = AppTheme.specificColorScheme.white,
+            )
             Text(item.likeCount.toString(), color = AppTheme.specificColorScheme.white)
         }
     }
@@ -127,10 +94,15 @@ private fun ItemShimmer() {
 }
 
 @Composable
-private fun ItemContainer(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) {
+private fun ItemContainer(
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+    content: @Composable BoxScope.() -> Unit,
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .addIf(onClick != null) { defaultTileRipple(onClick = onClick) }
             .aspectRatio(177f / 222f)
             .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
             .background(

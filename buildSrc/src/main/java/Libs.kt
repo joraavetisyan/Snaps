@@ -67,6 +67,8 @@ object Libs {
 
     private const val permissionVersion = "0.28.0"
 
+    private const val facebookVersion = "16.0.0"
+
     private const val barcodeVersion = "4.3.0"
 
     object plugin {
@@ -231,6 +233,10 @@ object Libs {
         )
 
         const val barcode = "com.journeyapps:zxing-android-embedded:$barcodeVersion"
+
+        val facebook = arrayOf(
+            "com.facebook.android:facebook-android-sdk:$facebookVersion",
+        )
 
         const val unitTestsRunner = "android.support.test.runner.AndroidJUnitRunner"
         val unitTests = arrayOf(

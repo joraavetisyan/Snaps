@@ -75,11 +75,14 @@ object AppRoute {
     object UserCreate : Route("UserCreate")
 
     object Profile : RouteWithArg("Profile") {
+
         @Serializable
         data class Args(
             val userId: Uuid? = null,
         )
     }
+
+    object CreateVideo : Route("CreateVideo")
 
     object Wallet : Route("Wallet")
 
@@ -96,6 +99,7 @@ object AppRoute {
     object WalletSettings : Route("WalletSettings")
 
     object Subs : RouteWithArg("Subs") {
+
         @Serializable
         data class Args(
             val userId: Uuid? = null,
@@ -105,4 +109,37 @@ object AppRoute {
             val totalSubscribers: String,
         )
     }
+
+    @Serializable
+    data class TaskArgs(
+        val id: Uuid,
+    )
+
+    object FindPointsTask : RouteWithArg("FindPointsTask") // need pass TaskArgs
+
+    object LikeAndSubscribeTask : RouteWithArg("LikeAndSubscribeTask") // need pass TaskArgs
+
+    object ShareTask : RouteWithArg("ShareTask") // need pass TaskArgs
+
+    object WatchVideoTask : RouteWithArg("WatchVideoTask") // need pass TaskArgs
+
+    object PopularVideoFeed : RouteWithArg("PopularVideoFeed") {
+
+        @Serializable
+        data class Args(
+            val query: String,
+            val position: Int,
+        )
+    }
+
+    object UserVideoFeed : RouteWithArg("UserVideoFeed") {
+
+        @Serializable
+        data class Args(
+            val userId: Uuid?,
+            val position: Int,
+        )
+    }
+
+    object RankSelection : Route("RankSelection")
 }

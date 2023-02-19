@@ -39,11 +39,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
-import io.snaps.corecommon.container.textValue
+import com.google.firebase.auth.FacebookAuthProvider
+import com.google.firebase.auth.GoogleAuthProvider
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
@@ -64,7 +71,8 @@ import io.snaps.featureregistration.presentation.ScreenNavigator
 import io.snaps.featureregistration.presentation.viewmodel.RegistrationViewModel
 import kotlinx.coroutines.launch
 
-private const val SERVER_CLIENT_ID = "132799039711-rd59jfaphbpinbmhrp647hqapp2b6aiu.apps.googleusercontent.com"
+private const val SERVER_CLIENT_ID =
+    "132799039711-rd59jfaphbpinbmhrp647hqapp2b6aiu.apps.googleusercontent.com"
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -100,9 +108,31 @@ fun RegistrationScreen(
         if (result.resultCode == RESULT_OK) {
             val credentials = oneTapClient.getSignInCredentialFromIntent(result.data)
             credentials.googleIdToken?.let {
-                viewModel.signInWithGoogle(it)
+                val authCredential = GoogleAuthProvider.getCredential(it, null)
+                viewModel.signInWithGoogle(authCredential)
             }
         }
+    }
+
+    val callbackManager = CallbackManager.Factory.create()
+    val loginManager = LoginManager.getInstance()
+    val facebookSignInLauncher = rememberLauncherForActivityResult(
+        contract = loginManager.createLogInActivityResultContract(callbackManager)
+    ) { result ->
+        loginManager.onActivityResult(
+            resultCode = result.resultCode,
+            data = result.data,
+            callback = object : FacebookCallback<LoginResult> {
+                override fun onSuccess(result: LoginResult) {
+                    val token = result.accessToken.token
+                    val credential = FacebookAuthProvider.getCredential(token)
+                    viewModel.signInWithWithFacebook(credential)
+                }
+
+                override fun onCancel() = Unit
+                override fun onError(error: FacebookException) = Unit
+            },
+        )
     }
 
     viewModel.command.collectAsCommand {
@@ -147,12 +177,18 @@ fun RegistrationScreen(
             onLoginWithGoogleClicked = {
                 oneTapClient.beginSignIn(googleSignInRequest)
                     .addOnSuccessListener(context as Activity) { result ->
-                        val intentSenderRequest = IntentSenderRequest.Builder(result.pendingIntent.intentSender).build()
+                        val intentSenderRequest = IntentSenderRequest.Builder(
+                            result.pendingIntent.intentSender
+                        ).build()
                         googleSignInLauncher.launch(intentSenderRequest)
                     }
             },
             onLoginWithEmailClicked = viewModel::onLoginWithEmailClicked,
-            onLoginWithFacebookClicked = viewModel::onLoginWithFacebookClicked,
+            onLoginWithFacebookClicked = {
+                facebookSignInLauncher.launch(
+                    listOf("email", "public_profile")
+                )
+            },
             onPrivacyPolicyClicked = viewModel::onPrivacyPolicyClicked,
             onTermsOfUserClicked = viewModel::onTermsOfUserClicked,
             onEmailVerificationDialogDismissRequest = viewModel::onEmailVerificationDialogDismissRequest,

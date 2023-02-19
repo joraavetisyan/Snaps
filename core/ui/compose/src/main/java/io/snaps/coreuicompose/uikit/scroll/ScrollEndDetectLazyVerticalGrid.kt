@@ -12,12 +12,13 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.snaps.coreuicompose.tools.add
 
 @Composable
 fun ScrollEndDetectLazyVerticalGrid(
     modifier: Modifier = Modifier,
     state: LazyGridState = rememberLazyGridState(),
-    contentPadding: PaddingValues = PaddingValues(12.dp),
+    contentPadding: PaddingValues = PaddingValues(12.dp).add(padding = PaddingValues(bottom = 100.dp)),
     horizontalArrangement: Arrangement.HorizontalOrVertical = Arrangement.spacedBy(12.dp),
     verticalArrangement: Arrangement.HorizontalOrVertical = Arrangement.spacedBy(12.dp),
     detectThreshold: Int = DETECT_THRESHOLD,

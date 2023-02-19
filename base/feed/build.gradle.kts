@@ -14,6 +14,7 @@ dependencies {
 
     implementation(projects.baseSources)
     implementation(projects.basePlayer)
+    implementation(projects.baseProfile)
 
     implementation(*Libs.bundle.media)
 }

@@ -8,7 +8,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
@@ -46,7 +45,6 @@ fun TitleSlider(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(vertical = 2.dp, horizontal = 4.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
@@ -97,6 +95,6 @@ private fun RowScope.TabItem(
                 shape = CircleShape,
                 onClick = onClick,
             )
-            .padding(vertical = 4.dp),
+            .padding(vertical = 4.dp, horizontal = 16.dp),
     )
 }

@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -58,28 +59,35 @@ fun ProfileScreen(
         when (it) {
             ProfileViewModel.Command.OpenSettingsScreen -> router.toSettingsScreen()
             is ProfileViewModel.Command.OpenSubsScreen -> router.toSubsScreen(it.args)
+            is ProfileViewModel.Command.OpenUserVideoFeedScreen -> {
+                router.toUserVideoFeedScreen(userId = it.userId, position = it.position)
+            }
         }
     }
 
     ProfileScreen(
         uiState = uiState,
+        onCreateVideoScreenClicked = router::toCreateVideoScreen,
         onSettingsClicked = viewModel::onSettingsClicked,
         onBackClicked = router::back,
         onSubscribeClicked = viewModel::onSubscribeClicked,
         onDismissRequest = viewModel::onDismissRequest,
-        onUnSubscribeClicked = viewModel::onUnSubscribeClicked,
+        onUnsubscribeClicked = viewModel::onUnsubscribeClicked,
+        onVideoClipClicked = viewModel::onVideoClipClicked,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProfileScreen(
     uiState: ProfileViewModel.UiState,
+    onCreateVideoScreenClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
     onBackClicked: () -> Boolean,
     onSubscribeClicked: () -> Unit,
-    onUnSubscribeClicked: (Sub) -> Unit,
+    onUnsubscribeClicked: (Sub) -> Unit,
     onDismissRequest: () -> Unit,
+    onVideoClipClicked: (Int) -> Unit,
 ) {
     val title = when (uiState.userType) {
         ProfileViewModel.UserType.Other -> "@${uiState.nickname}"
@@ -111,44 +119,29 @@ private fun ProfileScreen(
                 ),
             )
         },
+        floatingActionButton = {
+            if (uiState.userType == ProfileViewModel.UserType.Current) {
+                FloatingActionButton(
+                    onClick = onCreateVideoScreenClicked,
+                    modifier = Modifier.padding(bottom = 100.dp),
+                ) {
+                    Icon(
+                        painter = AppTheme.specificIcons.addCircled.get(),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                    )
+                }
+            }
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier.padding(paddingValues),
         ) {
             uiState.userInfoTileState.Content(modifier = Modifier)
-            Spacer(modifier = Modifier.height(12.dp))
-            Divider()
-            Row(
-                modifier = Modifier
-                    .height(IntrinsicSize.Min)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                Icon(
-                    painter = AppTheme.specificIcons.gallery.get(),
-                    contentDescription = null,
-                    tint = AppTheme.specificColorScheme.darkGrey,
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .size(28.dp),
-                )
-                Divider(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(1.dp)
-                )
-                Icon(
-                    painter = AppTheme.specificIcons.like.get(),
-                    contentDescription = null,
-                    tint = AppTheme.specificColorScheme.darkGrey,
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .size(28.dp),
-                )
-            }
-            Divider()
-            Spacer(modifier = Modifier.height(12.dp))
             if (uiState.userType == ProfileViewModel.UserType.Other) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Actions()
+                Spacer(modifier = Modifier.height(12.dp))
                 SimpleChip(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -158,17 +151,55 @@ private fun ProfileScreen(
                     label = (if (uiState.isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),
                     onClick = onSubscribeClicked,
                 )
-                Spacer(modifier = Modifier.height(12.dp))
             }
-            VideoFeedGrid(columnCount = 3, uiState = uiState.videoFeedUiState)
+            Spacer(modifier = Modifier.height(12.dp))
+            VideoFeedGrid(
+                columnCount = 3,
+                uiState = uiState.videoFeedUiState,
+                onClick = onVideoClipClicked,
+            )
         }
     }
     when (uiState.dialog) {
         is SubsViewModel.Dialog.ConfirmUnsubscribe -> ConfirmUnsubscribeDialog(
             data = uiState.dialog.data,
             onDismissRequest = onDismissRequest,
-            onUnsubscribeClicked = onUnSubscribeClicked,
+            onUnsubscribeClicked = onUnsubscribeClicked,
         )
         null -> Unit
     }
+}
+
+@Composable
+private fun Actions() {
+    Divider()
+    Row(
+        modifier = Modifier
+            .height(IntrinsicSize.Min)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+    ) {
+        Icon(
+            painter = AppTheme.specificIcons.gallery.get(),
+            contentDescription = null,
+            tint = AppTheme.specificColorScheme.darkGrey,
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .size(28.dp),
+        )
+        Divider(
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(1.dp)
+        )
+        Icon(
+            painter = AppTheme.specificIcons.like.get(),
+            contentDescription = null,
+            tint = AppTheme.specificColorScheme.darkGrey,
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .size(28.dp),
+        )
+    }
+    Divider()
 }

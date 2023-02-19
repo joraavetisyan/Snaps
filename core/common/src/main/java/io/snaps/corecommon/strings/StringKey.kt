@@ -122,7 +122,7 @@ enum class StringKey {
     TasksTitleMessageHistory,
 
     TaskWatchVideoTitle,
-
+    TaskWatchVideoFieldJobCompleted,
     TaskLikeAndSubscribeTitle,
 
     TaskShareTitle,
@@ -134,6 +134,7 @@ enum class StringKey {
     TaskFindPointsActionConnect,
     TaskFindPointsActionVerify,
     TaskFindPointsActionNotFound,
+    TaskFindPointsTitleSponsor,
 
     WalletSettingsTitle,
     WalletSettingsTitleBackup,
@@ -176,4 +177,16 @@ enum class StringKey {
     ConfirmUnsubscribeDialogMessage,
     ConfirmUnsubscribeDialogActionCancel,
     ConfirmUnsubscribeDialogActionUnsubscribe,
+
+    MyCollectionTitle,
+    MyCollectionMessage,
+    MyCollectionTitleSlideNft,
+    MyCollectionTitleSlideMysteryBox,
+    MyCollectionTitleMysteryBox,
+
+    RankSelectionTitle,
+    RankSelectionMessage,
+    RankSelectionTitleDailyReward,
+    RankSelectionTitleDailyUnlock,
+    RankSelectionTitleDailyConsumption,
 }

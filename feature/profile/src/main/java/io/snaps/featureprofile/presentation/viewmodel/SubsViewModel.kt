@@ -6,10 +6,12 @@ import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.featureprofile.domain.Sub
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.corecommon.model.Uuid
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.featureprofile.data.SubsRepository
+import io.snaps.featureprofile.domain.SubPageModel
 import io.snaps.featureprofile.presentation.screen.SubsUiState
 import io.snaps.featureprofile.presentation.screen.toSubsUiState
 import kotlinx.coroutines.channels.Channel
@@ -38,6 +40,9 @@ class SubsViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
+    private var subscribersPageModel: SubPageModel? = null
+    private var subscriptionsPageModel: SubPageModel? = null
+
     init {
         _uiState.update {
             it.copy(
@@ -53,6 +58,7 @@ class SubsViewModel @Inject constructor(
 
     private fun subscribeOnSubscribers() {
         subsRepository.getSubscribersState(args.userId).map {
+            subscribersPageModel = it
             it.toSubsUiState(
                 shimmerListSize = 5,
                 onItemClicked = ::onItemClicked,
@@ -67,6 +73,7 @@ class SubsViewModel @Inject constructor(
 
     private fun subscribeOnSubscriptions() {
         subsRepository.getSubscriptionsState(args.userId).map {
+            subscriptionsPageModel = it
             it.toSubsUiState(
                 shimmerListSize = 5,
                 onItemClicked = ::onItemClicked,
@@ -92,8 +99,45 @@ class SubsViewModel @Inject constructor(
             _uiState.update {
                 it.copy(dialog = Dialog.ConfirmUnsubscribe(item))
             }
-        } else { /*todo*/ }
+        } else {
+            subscribe(item.userId, true)
+            action.execute {
+                subsRepository.subscribe(item.userId)
+            }
+        }
     }
+
+    private fun subscribe(userId: Uuid, isSubscribe: Boolean) {
+        val subscribers = subscribersPageModel?.loadedPageItems?.map {
+            when (it.userId) {
+                userId -> it.copy(isSubscribed = isSubscribe)
+                else -> it
+            }
+        } ?: emptyList()
+        val subscriptions = subscriptionsPageModel?.loadedPageItems?.map {
+            when (it.userId) {
+                userId -> it.copy(isSubscribed = isSubscribe)
+                else -> it
+            }
+        } ?: emptyList()
+
+        subscribersPageModel = subscribersPageModel?.copy(loadedPageItems = subscribers)
+        subscriptionsPageModel = subscriptionsPageModel?.copy(loadedPageItems = subscriptions)
+        _uiState.update {
+            it.copy(
+                subscribersUiState = subscribersPageModel.applySubToState(),
+                subscriptionsUiState = subscriptionsPageModel.applySubToState(),
+            )
+        }
+    }
+
+    private fun SubPageModel?.applySubToState() = this?.toSubsUiState(
+        shimmerListSize = 5,
+        onItemClicked = ::onItemClicked,
+        onReloadClicked = ::onSubscriptionsReloadClicked,
+        onListEndReaching = ::onSubscriptionListEndReaching,
+        onSubscribeClicked = ::onSubscribeClicked,
+    ) ?: SubsUiState()
 
     private fun onSubscribersReloadClicked() = viewModelScope.launch {
         action.execute {
@@ -119,9 +163,13 @@ class SubsViewModel @Inject constructor(
         }
     }
 
-    fun onUnSubscribeClicked(item: Sub) = viewModelScope.launch {
+    fun onUnsubscribeClicked(item: Sub) = viewModelScope.launch {
         _uiState.update {
             it.copy(dialog = null)
+        }
+        subscribe(item.userId, false)
+        action.execute {
+            subsRepository.unsubscribe(item.userId)
         }
     }
 
