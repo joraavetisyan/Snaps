@@ -1,6 +1,7 @@
 package io.snaps.baseprofile.data
 
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
+import io.snaps.corecommon.mock.rBool
 import io.snaps.coredata.network.BaseResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -36,5 +37,6 @@ class FakeProfileApi : ProfileApi {
         totalPublication = "23",
         totalSubscribers = "12",
         totalSubscriptions = "10",
+        hasNft = rBool,
     )
 }

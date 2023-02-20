@@ -4,6 +4,7 @@ import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
+import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.tryPublish
@@ -26,6 +27,8 @@ interface MyCollectionRepository {
     suspend fun loadNftCollection(): Effect<Completable>
 
     suspend fun loadMysteryBoxCollection(): Effect<Completable>
+
+    suspend fun addNft(rankId: Uuid): Effect<Completable>
 }
 
 class MyCollectionRepositoryImpl @Inject constructor(
@@ -65,5 +68,11 @@ class MyCollectionRepositoryImpl @Inject constructor(
         }.also {
             _mysteryBoxCollectionState tryPublish it
         }.toCompletable()
+    }
+
+    override suspend fun addNft(rankId: Uuid): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            myCollectionApi.addNft(rankId)
+        }
     }
 }

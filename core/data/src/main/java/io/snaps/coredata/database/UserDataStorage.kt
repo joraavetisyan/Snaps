@@ -42,6 +42,12 @@ class UserDataStorage @Inject constructor(
             putBoolean("isStartOnBoardingFinished", value)
         }
 
+    var needsRanking: Boolean
+        get() = provider.prefs.getBoolean("needsRanking", false)
+        set(value) = provider.prefs.edit {
+            putBoolean("needsRanking", value)
+        }
+
     var lastCheckedAvailableVersionCode: Int
         get() = provider.prefs.getInt("lastCheckedAvailableVersionCode", 0)
         set(value) = provider.prefs.edit {

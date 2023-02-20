@@ -55,7 +55,7 @@ class NavHostProvider @Inject constructor(
         startDestinationRoute = when {
             needsWalletConnect -> createRoute(AppRoute.WalletConnect)
             needsInitialization -> createRoute(AppRoute.UserCreate)
-            needsRanking -> createRoute(AppRoute.MainBottomBar) // todo
+            needsRanking -> createRoute(AppRoute.RankSelection)
             else -> createRoute(AppRoute.MainBottomBar)
         },
     )
@@ -66,6 +66,7 @@ class NavHostProvider @Inject constructor(
             with(registrationFeatureProvider) { registrationGraph(navController) }
             with(walletConnectFeatureProvider) { walletConnectGraph(navController) }
             with(initializationFeatureProvider) { initializationGraph(navController) }
+            with(collectionFeatureProvider) { collectionGraph(navController) }
             with(bottomBarFeatureProvider) {
                 bottomBarGraph(
                     route = AppRoute.MainBottomBar,

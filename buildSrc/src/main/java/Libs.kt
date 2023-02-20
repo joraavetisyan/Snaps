@@ -179,7 +179,10 @@ object Libs {
         )
 
         val appUpdater = arrayOf("com.google.android.play:core-ktx:$appUpdaterVersion")
-        val billing = arrayOf("com.android.billingclient:billing-ktx:$billingVersion")
+        val billing = arrayOf(
+            "com.android.billingclient:billing-ktx:$billingVersion",
+            "com.android.billingclient:billing:$billingVersion",
+        )
         val browser = arrayOf("androidx.browser:browser:$browserVersion")
         val biometric = arrayOf("androidx.biometric:biometric-ktx:$biometricVersion")
         val window = arrayOf("androidx.window:window:$windowVersion")

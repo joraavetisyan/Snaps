@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -34,6 +35,7 @@ import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
@@ -50,6 +52,13 @@ fun RankSelectionScreen(
 
     val uiState by viewModel.uiState.collectAsState()
     val headerState by viewModel.headerUiState.collectAsState()
+
+    viewModel.command.collectAsCommand {
+        when (it) {
+            RankSelectionViewModel.Command.OpenMainScreen -> router.toMainScreen()
+            RankSelectionViewModel.Command.OpenBuyNft -> router.toBuyNftScreen()
+        }
+    }
 
     RankSelectionScreen(
         uiState = uiState,

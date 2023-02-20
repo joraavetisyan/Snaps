@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.FileType
@@ -22,6 +23,7 @@ class CreateUserViewModel @Inject constructor(
     private val fileManager: FileManager,
     private val profileRepository: ProfileRepository,
     private val action: Action,
+    private val userDataStorage: UserDataStorage,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -79,7 +81,11 @@ class CreateUserViewModel @Inject constructor(
             }.doOnComplete {
                 _uiState.update { it.copy(isLoading = false) }
             }.doOnSuccess {
-                _command publish Command.OpenRankSelectionScreen
+                if (userDataStorage.needsRanking) {
+                    _command publish Command.OpenRankSelectionScreen
+                } else {
+                    _command publish Command.OpenMainScreen
+                }
             }
         }
     }
@@ -109,5 +115,6 @@ class CreateUserViewModel @Inject constructor(
 
     sealed class Command {
         object OpenRankSelectionScreen : Command()
+        object OpenMainScreen : Command()
     }
 }

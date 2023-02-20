@@ -3,6 +3,8 @@ package io.snaps.featurecollection.data
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rBool
+import io.snaps.corecommon.model.Completable
+import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import io.snaps.featurecollection.data.model.NftItemDto
 import io.snaps.featurecollection.data.model.NftResponseDto
@@ -68,6 +70,15 @@ class FakeMyCollectionApi : MyCollectionApi {
             actualTimestamp = 1L,
             data = getRanks()
         ).also { generation++ }
+    }
+
+    override suspend fun addNft(rankId: Uuid): BaseResponse<Completable> {
+        log("Requesting add nft")
+        delay(mockDelay)
+        return BaseResponse(
+            actualTimestamp = 1L,
+            data = Completable,
+        )
     }
 
     private fun getRanks() = listOf(

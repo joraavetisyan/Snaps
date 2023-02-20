@@ -15,4 +15,5 @@ dependencies {
 
     implementation(projects.baseProfile)
     implementation(projects.baseSources)
+    implementation(projects.baseBilling)
 }
