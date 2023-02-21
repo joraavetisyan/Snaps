@@ -9,7 +9,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.SelectableChipBorder
 import androidx.compose.material3.SelectableChipElevation
 import androidx.compose.material3.Text
@@ -66,7 +65,7 @@ fun SimpleChip(
     onClick: () -> Unit,
     label: TextValue,
     contentPadding: PaddingValues = PaddingValues(10.dp),
-    textStyle: TextStyle = LocalTextStyle.current,
+    textStyle: TextStyle = AppTheme.specificTypography.bodySmall,
     enabled: Boolean = true,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,

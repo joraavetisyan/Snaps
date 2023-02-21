@@ -181,8 +181,12 @@ private fun StatsLine(
         modifier = Modifier.defaultTileRipple(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(text = value, style = AppTheme.specificTypography.titleMedium)
-        Text(text = name, style = AppTheme.specificTypography.bodySmall)
+        Text(text = value, style = AppTheme.specificTypography.titleSmall)
+        Text(
+            text = name,
+            style = AppTheme.specificTypography.bodySmall,
+            color = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.5f),
+        )
     }
 }
 

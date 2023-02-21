@@ -87,11 +87,7 @@ class SubsViewModel @Inject constructor(
     }
 
     private fun onItemClicked(item: Sub) = viewModelScope.launch {
-        _command publish Command.OpenProfileScreen(
-            AppRoute.Profile.Args(
-                userId = item.userId,
-            )
-        )
+        _command publish Command.OpenProfileScreen(userId = item.userId)
     }
 
     private fun onSubscribeClicked(item: Sub) = viewModelScope.launch {
@@ -194,6 +190,6 @@ class SubsViewModel @Inject constructor(
     }
 
     sealed class Command {
-        data class OpenProfileScreen(val args: AppRoute.Profile.Args) : Command()
+        data class OpenProfileScreen(val userId: Uuid) : Command()
     }
 }

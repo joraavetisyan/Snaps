@@ -136,7 +136,7 @@ private fun TaskCompletedMessage() {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = AppTheme.specificColorScheme.uiSystemGreen.copy(0.2f))
-                .padding(horizontal = 12.dp, vertical = 16.dp),
+                .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {

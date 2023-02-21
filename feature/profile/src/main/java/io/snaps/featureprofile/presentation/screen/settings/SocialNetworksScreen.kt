@@ -23,12 +23,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featureprofile.ScreenNavigator
@@ -36,6 +36,7 @@ import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.featureprofile.presentation.viewmodel.SocialNetworksViewModel
@@ -49,6 +50,13 @@ fun SocialNetworksScreen(
 
     val uiState by viewModel.uiState.collectAsState()
     val headerState by viewModel.headerUiState.collectAsState()
+
+    viewModel.headerCommand.collectAsCommand {
+        when (it) {
+            MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
+            MainHeaderHandler.Command.OpenWalletScreen -> { /*todo*/ }
+        }
+    }
 
     SocialNetworksScreen(
         uiState = uiState,
@@ -89,7 +97,7 @@ private fun SocialNetworksScreen(
                 )
                 Text(
                     text = StringKey.SocialNetworksTitle.textValue().get(),
-                    style = AppTheme.specificTypography.titleLarge,
+                    style = AppTheme.specificTypography.titleMedium,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
                 )
@@ -101,14 +109,13 @@ private fun SocialNetworksScreen(
                 items(uiState.items) { item ->
                     item.Content(
                         modifier = Modifier
-                            .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
                             .background(
                                 color = AppTheme.specificColorScheme.white,
                                 shape = AppTheme.shapes.medium,
                             )
                             .border(
                                 width = 1.dp,
-                                color = AppTheme.specificColorScheme.grey,
+                                color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
                                 shape = AppTheme.shapes.medium,
                             )
                             .padding(horizontal = 12.dp, vertical = 12.dp),

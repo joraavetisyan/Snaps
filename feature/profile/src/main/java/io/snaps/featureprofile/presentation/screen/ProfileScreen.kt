@@ -26,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -103,7 +102,6 @@ private fun ProfileScreen(
                 },
                 navigationIcon = (AppTheme.specificIcons.back to onBackClicked)
                     .takeIf { uiState.userType == ProfileViewModel.UserType.Other },
-                titleTextStyle = AppTheme.specificTypography.titleLarge,
                 scrollBehavior = scrollBehavior,
                 actions = listOfNotNull(
                     ActionIconData(
@@ -124,11 +122,13 @@ private fun ProfileScreen(
                 FloatingActionButton(
                     onClick = onCreateVideoScreenClicked,
                     modifier = Modifier.padding(bottom = 100.dp),
+                    shape = CircleShape,
+                    containerColor = AppTheme.specificColorScheme.uiAccent,
                 ) {
                     Icon(
-                        painter = AppTheme.specificIcons.addCircled.get(),
+                        painter = AppTheme.specificIcons.add.get(),
                         contentDescription = null,
-                        tint = Color.Unspecified,
+                        tint = AppTheme.specificColorScheme.white,
                     )
                 }
             }

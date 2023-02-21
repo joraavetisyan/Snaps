@@ -46,9 +46,9 @@ import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
-import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
-import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyL
+import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.listtile.CellTile
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
@@ -110,7 +110,13 @@ private fun FindPointsTaskScreen(
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            SimpleCard {
+            SimpleCard(
+                modifier = Modifier.border(
+                    width = 1.dp,
+                    color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
+                    shape = AppTheme.shapes.medium,
+                ),
+            ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -129,7 +135,10 @@ private fun FindPointsTaskScreen(
                         )
                     }
                     Column(Modifier.weight(1f)) {
-                        Text(StringKey.TaskFindPointsTitleSponsor.textValue().get())
+                        Text(
+                            text = StringKey.TaskFindPointsTitleSponsor.textValue().get(),
+                            style = AppTheme.specificTypography.titleSmall,
+                        )
                         Spacer(Modifier.height(4.dp))
                         Progress(Modifier.fillMaxWidth(), progress = 1f)
                         Spacer(Modifier.height(4.dp))
@@ -154,12 +163,12 @@ private fun FindPointsTaskScreen(
 
             Text(
                 text = StringKey.TaskFindPointsTitle.textValue().get(),
-                style = AppTheme.specificTypography.titleLarge,
+                style = AppTheme.specificTypography.titleMedium,
             )
 
             Text(
                 text = StringKey.TaskFindPointsMessage.textValue().get(),
-                style = AppTheme.specificTypography.bodySmall,
+                style = AppTheme.specificTypography.titleSmall,
                 color = AppTheme.specificColorScheme.textSecondary,
             )
 
@@ -167,7 +176,7 @@ private fun FindPointsTaskScreen(
                 modifier = Modifier
                     .border(
                         width = 1.dp,
-                        color = AppTheme.specificColorScheme.darkGrey,
+                        color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
                         shape = AppTheme.shapes.medium,
                     )
                     .padding(16.dp),
@@ -188,11 +197,11 @@ private fun FindPointsTaskScreen(
                 )
                 Divider(
                     modifier = Modifier.fillMaxWidth(),
-                    color = AppTheme.specificColorScheme.darkGrey,
+                    color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
                 )
                 Text(
                     text = StringKey.TaskFindPointsTitlePointId.textValue().get(),
-                    style = AppTheme.specificTypography.titleMedium,
+                    style = AppTheme.specificTypography.titleSmall,
                     modifier = Modifier.padding(vertical = 12.dp)
                 )
                 SimpleTextField(
@@ -208,13 +217,13 @@ private fun FindPointsTaskScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            SimpleButtonActionL(
+            SimpleButtonActionM(
                 onClick = onVerifyButtonClicked,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 SimpleButtonContent(text = StringKey.TaskFindPointsActionVerify.textValue())
             }
-            SimpleButtonGreyL(
+            SimpleButtonGreyM(
                 onClick = onPointsNotFoundButtonClicked,
                 modifier = Modifier.fillMaxWidth()
             ) {

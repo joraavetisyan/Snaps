@@ -67,7 +67,7 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Terms of Use",
     ),
     key(StringKey.RegistrationDialogSignInTitle) to mapOf(
-        SupportedLanguageKey.En to "SignIn",
+        SupportedLanguageKey.En to "Sign in",
     ),
     key(StringKey.RegistrationDialogSignInMessage) to mapOf(
         SupportedLanguageKey.En to "Enter your e-mail address and password to login to SNAPS",

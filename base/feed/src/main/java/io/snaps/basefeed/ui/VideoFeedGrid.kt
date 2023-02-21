@@ -75,13 +75,18 @@ private fun Item(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(horizontal = 4.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 painter = AppTheme.specificIcons.play.get(),
                 contentDescription = null,
                 tint = AppTheme.specificColorScheme.white,
             )
-            Text(item.likeCount.toString(), color = AppTheme.specificColorScheme.white)
+            Text(
+                text = item.likeCount.toString(),
+                color = AppTheme.specificColorScheme.white,
+                style = AppTheme.specificTypography.bodySmall,
+            )
         }
     }
 }

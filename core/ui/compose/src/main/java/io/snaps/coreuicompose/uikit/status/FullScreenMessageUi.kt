@@ -11,13 +11,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,9 +26,9 @@ import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.coreuicompose.tools.mockClick
-import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
-import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyL
+import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
 import io.snaps.coreuitheme.compose.AppTheme
 
 data class FullScreenMessage(
@@ -90,27 +88,26 @@ fun FullScreenMessageUi(
         )
         Text(
             data.message.get(),
-            style = AppTheme.specificTypography.bodyLarge,
+            style = AppTheme.specificTypography.titleSmall,
             color = AppTheme.specificColorScheme.textSecondary,
             textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.weight(1f))
         data.primaryButton?.let { button ->
-            SimpleButtonActionL(
+            SimpleButtonActionM(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .shadow(16.dp, CircleShape),
+                    .padding(top = 16.dp),
                 onClick = button.onClick,
             ) {
                 SimpleButtonContent(button.text)
             }
         }
         data.secondaryButton?.let { button ->
-            SimpleButtonGreyL(
+            SimpleButtonGreyM(
                 modifier = Modifier
                     .padding(top = 16.dp)
-                    .fillMaxWidth()
-                    .shadow(16.dp, CircleShape),
+                    .fillMaxWidth(),
                 onClick = button.onClick,
             ) {
                 SimpleButtonContent(button.text)

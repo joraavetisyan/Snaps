@@ -41,7 +41,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -49,6 +48,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.IconValue
@@ -64,7 +64,6 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
-import io.snaps.coreuicompose.uikit.text.MiddleEllipsisText
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewallet.ScreenNavigator
 import io.snaps.featurewallet.viewmodel.WalletViewModel
@@ -92,6 +91,13 @@ fun WalletScreen(
             WalletViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             WalletViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
             WalletViewModel.Command.OpenWithdrawScreen -> router.toWithdrawScreen()
+        }
+    }
+
+    viewModel.headerCommand.collectAsCommand {
+        when (it) {
+            MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
+            MainHeaderHandler.Command.OpenWalletScreen -> { /*todo*/ }
         }
     }
 
@@ -163,7 +169,7 @@ private fun WalletScreen(
                 )
                 Text(
                     text = StringKey.WalletTitle.textValue().get(),
-                    style = AppTheme.specificTypography.titleLarge,
+                    style = AppTheme.specificTypography.titleMedium,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
                 )
@@ -202,7 +208,7 @@ private fun WalletScreen(
                 }
                 Text(
                     text = StringKey.WalletTitleBalance.textValue().get().text,
-                    style = AppTheme.specificTypography.headlineSmall,
+                    style = AppTheme.specificTypography.titleMedium,
                     color = AppTheme.specificColorScheme.textPrimary,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
@@ -214,14 +220,13 @@ private fun WalletScreen(
                     uiState.currencies.forEach { item ->
                         item.Content(
                             modifier = Modifier
-                                .shadow(elevation = 8.dp, shape = AppTheme.shapes.medium)
                                 .background(
                                     color = AppTheme.specificColorScheme.white,
                                     shape = AppTheme.shapes.medium,
                                 )
                                 .border(
                                     width = 1.dp,
-                                    color = AppTheme.specificColorScheme.grey,
+                                    color = AppTheme.specificColorScheme.grey.copy(alpha = 0.5f),
                                     shape = AppTheme.shapes.medium,
                                 )
                                 .padding(horizontal = 12.dp),
@@ -242,10 +247,12 @@ private fun Balance(
     Card(
         shape = AppTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = AppTheme.specificColorScheme.white),
-        border = BorderStroke(width = 1.dp, color = AppTheme.specificColorScheme.darkGrey),
+        border = BorderStroke(
+            width = 1.dp,
+            color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f)
+        ),
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(elevation = 8.dp, shape = AppTheme.shapes.medium)
             .padding(horizontal = 12.dp),
     ) {
         Column(
@@ -280,8 +287,7 @@ private fun Balance(
             SimpleButtonGreyM(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding()
-                    .shadow(elevation = 16.dp, shape = CircleShape),
+                    .padding(),
                 onClick = onTokenCopyClicked,
             ) {
                 SimpleButtonContent(
@@ -302,10 +308,12 @@ private fun RowScope.OperationType(
     Card(
         shape = AppTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = AppTheme.specificColorScheme.white),
-        border = BorderStroke(width = 1.dp, color = AppTheme.specificColorScheme.darkGrey),
+        border = BorderStroke(
+            width = 1.dp,
+            color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f)
+        ),
         modifier = Modifier
             .weight(1f)
-            .shadow(elevation = 8.dp, shape = AppTheme.shapes.medium)
             .doOnClick(onClick = onClick),
     ) {
         Column(
@@ -324,7 +332,7 @@ private fun RowScope.OperationType(
             )
             Text(
                 text = title,
-                style = AppTheme.specificTypography.titleMedium,
+                style = AppTheme.specificTypography.titleSmall,
                 color = AppTheme.specificColorScheme.textPrimary,
                 modifier = Modifier.padding(top = 8.dp),
                 textAlign = TextAlign.Center,
@@ -345,14 +353,13 @@ private fun SelectCurrencyDialog(
             it.Content(
                 modifier = Modifier
                     .padding(horizontal = 12.dp, vertical = 6.dp)
-                    .shadow(elevation = 8.dp, shape = AppTheme.shapes.medium)
                     .background(
                         color = AppTheme.specificColorScheme.white,
                         shape = AppTheme.shapes.medium,
                     )
                     .border(
                         width = 1.dp,
-                        color = AppTheme.specificColorScheme.grey,
+                        color = AppTheme.specificColorScheme.grey.copy(alpha = 0.5f),
                         shape = AppTheme.shapes.medium,
                     )
                     .padding(horizontal = 12.dp),
@@ -393,8 +400,7 @@ private fun TopUpDialog(
             SimpleButtonGreyM(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .shadow(elevation = 16.dp, shape = CircleShape),
+                    .padding(horizontal = 24.dp),
                 onClick = onTokenCopyClicked,
             ) {
                 SimpleButtonContent(

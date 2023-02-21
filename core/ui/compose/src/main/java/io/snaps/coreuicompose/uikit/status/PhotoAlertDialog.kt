@@ -28,7 +28,7 @@ fun PhotoAlertDialog(
         title = {
             Text(
                 text = LocalStringHolder.current(StringKey.PhotoDialogTitle),
-                style = AppTheme.specificTypography.bodyLarge,
+                style = AppTheme.specificTypography.titleSmall,
                 textAlign = TextAlign.Center,
                 color = AppTheme.specificColorScheme.textPrimary,
                 modifier = Modifier

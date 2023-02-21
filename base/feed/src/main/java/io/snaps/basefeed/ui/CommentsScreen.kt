@@ -81,6 +81,7 @@ fun CommentsScreen(
                     text = StringKey.CommentsTitle
                         .textValue(uiState.commentListSize.toString()).get(),
                     modifier = Modifier.align(Alignment.Center),
+                    style = AppTheme.specificTypography.titleSmall
                 )
                 IconButton(
                     onClick = onCloseClicked,
@@ -166,10 +167,14 @@ private fun Item(data: CommentUiState.Data, onReplyClicked: () -> Unit) {
                     Text(
                         text = " · " + item.ownerTitle,
                         color = AppTheme.specificColorScheme.uiSystemRed,
+                        style = AppTheme.specificTypography.bodySmall,
                     )
                 }
             }
-            Text(text = item.text)
+            Text(
+                text = item.text,
+                style = AppTheme.specificTypography.bodySmall,
+            )
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically,

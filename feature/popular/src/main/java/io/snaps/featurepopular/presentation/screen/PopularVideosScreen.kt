@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.basefeed.ui.VideoFeedGrid
+import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.textValue
@@ -47,6 +48,13 @@ fun PopularVideosScreen(
             is PopularVideosViewModel.Command.OpenPopularVideoFeedScreen -> {
                 router.toPopularVideoFeedScreen(query = it.query, position = it.position)
             }
+        }
+    }
+
+    viewModel.headerCommand.collectAsCommand {
+        when (it) {
+            MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
+            MainHeaderHandler.Command.OpenWalletScreen -> { /*todo*/ }
         }
     }
 

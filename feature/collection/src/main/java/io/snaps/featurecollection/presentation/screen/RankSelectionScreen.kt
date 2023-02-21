@@ -27,10 +27,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.textValue
@@ -57,6 +57,13 @@ fun RankSelectionScreen(
         when (it) {
             RankSelectionViewModel.Command.OpenMainScreen -> router.toMainScreen()
             RankSelectionViewModel.Command.OpenBuyNft -> router.toBuyNftScreen()
+        }
+    }
+
+    viewModel.headerCommand.collectAsCommand {
+        when (it) {
+            MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
+            MainHeaderHandler.Command.OpenWalletScreen -> { /*todo*/ }
         }
     }
 
@@ -104,7 +111,7 @@ private fun Header() {
     ) {
         Text(
             text = StringKey.RankSelectionTitle.textValue().get(),
-            style = AppTheme.specificTypography.titleLarge,
+            style = AppTheme.specificTypography.titleMedium,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Row {

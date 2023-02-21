@@ -64,10 +64,10 @@ object MiddlePartTileConfig {
     fun headerStyle() = AppTheme.specificTypography.bodyMedium
 
     @Composable
-    fun valueStyle() = AppTheme.specificTypography.bodyLarge
+    fun valueStyle() = AppTheme.specificTypography.titleSmall
 
     @Composable
-    fun valueBoldStyle() = AppTheme.specificTypography.bodyLarge
+    fun valueBoldStyle() = AppTheme.specificTypography.titleSmall
 
     @Composable
     fun valueLargeStyle() = AppTheme.specificTypography.headlineLarge

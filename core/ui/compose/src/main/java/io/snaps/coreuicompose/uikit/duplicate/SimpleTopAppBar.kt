@@ -70,7 +70,7 @@ object SimpleTopAppBarConfig {
 fun SimpleTopAppBar(
     title: TextValue?,
     titleTextStyle: TextStyle = AppTheme.specificTypography.titleMedium,
-    titleHorizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
+    titleHorizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
     navigationIcon: Pair<IconValue, OnBackIconClick>? = null,
     actions: List<ActionIconData> = emptyList(),
     windowInsets: WindowInsets = insetAllExcludeBottom(),
@@ -95,7 +95,7 @@ fun SimpleTopAppBar(
 @Composable
 fun SimpleTopAppBar(
     title: @Composable () -> Unit,
-    titleHorizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
+    titleHorizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
     titleTextStyle: TextStyle = AppTheme.specificTypography.titleMedium,
     navigationIcon: Pair<IconValue, OnBackIconClick>? = null,
     actions: List<ActionIconData> = emptyList(),

@@ -69,12 +69,12 @@ private fun Data(
             Text(
                 text = data.title,
                 color = AppTheme.specificColorScheme.textPrimary,
-                style = AppTheme.specificTypography.bodyMedium,
+                style = AppTheme.specificTypography.labelMedium,
             )
             Text(
                 text = data.description,
                 color = AppTheme.specificColorScheme.textSecondary,
-                style = AppTheme.specificTypography.bodySmall,
+                style = AppTheme.specificTypography.labelSmall,
             )
         }
         EnergyWidget(

@@ -2,8 +2,10 @@ package io.snaps.featurecollection
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import io.snaps.corecommon.model.Uuid
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.CollectionFeatureProvider
+import io.snaps.corenavigation.base.FeatureNavDirection
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
@@ -20,6 +22,13 @@ internal class ScreenNavigator(navHostController: NavHostController) :
     fun toMainScreen() = navHostController.navigate(AppRoute.MainBottomBar)
 
     fun toBuyNftScreen() = navHostController.navigate(AppRoute.BuyNft)
+
+    fun toProfileScreen(
+        userId: Uuid? = null,
+    ) = navHostController navigate FeatureNavDirection(
+        route = AppRoute.Profile,
+        arg = AppRoute.Profile.Args(userId),
+    )
 }
 
 class CollectionFeatureProviderImpl @Inject constructor() : CollectionFeatureProvider {

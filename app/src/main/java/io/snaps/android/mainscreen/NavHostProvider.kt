@@ -67,6 +67,7 @@ class NavHostProvider @Inject constructor(
             with(walletConnectFeatureProvider) { walletConnectGraph(navController) }
             with(initializationFeatureProvider) { initializationGraph(navController) }
             with(collectionFeatureProvider) { collectionGraph(navController) }
+            with(profileFeatureProvider) { profileGraph(navController) }
             with(bottomBarFeatureProvider) {
                 bottomBarGraph(
                     route = AppRoute.MainBottomBar,

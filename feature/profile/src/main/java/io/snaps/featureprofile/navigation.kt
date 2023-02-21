@@ -43,10 +43,10 @@ internal class ScreenNavigator(navHostController: NavHostController) :
     )
 
     fun toProfileScreen(
-        args: AppRoute.Profile.Args
+        userId: Uuid? = null,
     ) = navHostController navigate FeatureNavDirection(
         route = AppRoute.Profile,
-        arg = args,
+        arg = AppRoute.Profile.Args(userId = userId),
     )
 
     fun toUserVideoFeedScreen(userId: Uuid?, position: Int) =

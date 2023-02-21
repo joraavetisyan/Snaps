@@ -59,7 +59,7 @@ fun SubsScreen(
 
     viewModel.command.collectAsCommand {
         when (it) {
-            is SubsViewModel.Command.OpenProfileScreen -> router.toProfileScreen(it.args)
+            is SubsViewModel.Command.OpenProfileScreen -> router.toProfileScreen(it.userId)
         }
     }
 
@@ -85,7 +85,6 @@ private fun SubsScreen(
         topBar = {
             SimpleTopAppBar(
                 title = "@${uiState.nickname}".textValue(),
-                titleTextStyle = AppTheme.specificTypography.titleLarge,
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 scrollBehavior = scrollBehavior,
                 titleHorizontalArrangement = Arrangement.Center,

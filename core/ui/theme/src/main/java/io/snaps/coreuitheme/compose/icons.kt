@@ -3,6 +3,7 @@ package io.snaps.coreuitheme.compose
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBack
@@ -45,7 +46,7 @@ object SpecificIcons {
     val fingerprint: IconValue = vector(Icons.Rounded.Fingerprint)
     val delete: IconValue = vector(Icons.Rounded.Delete)
     val done: IconValue = vector(Icons.Rounded.Done)
-    val play: IconValue = vector(Icons.Rounded.PlayArrow)
+    val play: IconValue = vector(Icons.Outlined.PlayArrow)
     val themeSystem: IconValue = vector(Icons.Rounded.AutoMode)
     val themeDark: IconValue = vector(Icons.Rounded.DarkMode)
     val themeLight: IconValue = vector(Icons.Rounded.LightMode)

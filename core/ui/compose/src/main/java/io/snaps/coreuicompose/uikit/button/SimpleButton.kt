@@ -461,7 +461,7 @@ data class SimpleButtonSize(
             heightModifier = Modifier.sizeIn(minWidth = 80.dp, minHeight = 24.dp),
             contentPadding = PaddingValues(8.dp),
             shape = CircleShape,
-            textStyle = AppTheme.specificTypography.labelMedium,
+            textStyle = AppTheme.specificTypography.bodySmall,
         )
 
         @Composable
@@ -573,8 +573,8 @@ private fun SimpleButton(
 ) {
     val containerColor = colors.containerColor(enabled).value
     val contentColor = colors.contentColor(enabled).value
-    val shadowElevation = /*elevation?.shadowElevation(enabled, interactionSource)?.value ?: */8.dp
-    val tonalElevation = /*elevation?.tonalElevation(enabled, interactionSource)?.value ?: */8.dp
+    val shadowElevation = /*elevation?.shadowElevation(enabled, interactionSource)?.value ?: */0.dp
+    val tonalElevation = /*elevation?.tonalElevation(enabled, interactionSource)?.value ?: */0.dp
 
     MaterialTheme(typography = MaterialTheme.typography.copy(labelLarge = size.textStyle)) {
         CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {

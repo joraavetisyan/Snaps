@@ -201,7 +201,7 @@ fun RightPartTile(modifier: Modifier, data: RightPart) {
                     contentPadding = PaddingValues(4.dp),
                     selected = data.selected,
                     label = data.text,
-                    textStyle = AppTheme.specificTypography.labelMedium,
+                    textStyle = AppTheme.specificTypography.labelSmall,
                     onClick = data.onClick,
                 )
             }

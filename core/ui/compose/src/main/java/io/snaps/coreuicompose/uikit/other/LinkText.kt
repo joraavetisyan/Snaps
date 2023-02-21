@@ -23,7 +23,7 @@ fun LinkText(
     text: TextValue,
     linkTextData: List<LinkTextData>,
     modifier: Modifier = Modifier,
-    style: TextStyle = AppTheme.specificTypography.bodySmall,
+    style: TextStyle = AppTheme.specificTypography.labelSmall,
     color: Color = AppTheme.specificColorScheme.textSecondary,
 ) {
     val annotatedString = createAnnotatedString(text.get().text, linkTextData)

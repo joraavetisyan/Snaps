@@ -27,7 +27,7 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
-import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
@@ -111,7 +111,7 @@ private fun Content(
             modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 16.dp),
         )
     }
-    SimpleButtonActionL(
+    SimpleButtonActionM(
         onClick = onStartButtonClicked,
         modifier = Modifier.fillMaxWidth(),
     ) {
