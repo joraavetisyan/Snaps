@@ -77,8 +77,7 @@ fun ConfirmUnsubscribeDialog(
                 Spacer(modifier = Modifier.height(16.dp))
                 SimpleButtonGreyM(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .shadow(16.dp, shape = CircleShape),
+                        .fillMaxWidth(),
                     onClick = onDismissRequest,
                 ) {
                     SimpleButtonContent(

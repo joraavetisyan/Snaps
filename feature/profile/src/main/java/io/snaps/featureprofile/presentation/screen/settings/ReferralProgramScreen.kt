@@ -42,7 +42,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -51,6 +50,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.R
@@ -96,6 +96,13 @@ fun ReferralProgramScreen(
         when (it) {
             ReferralProgramViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             ReferralProgramViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
+        }
+    }
+
+    viewModel.headerCommand.collectAsCommand {
+        when (it) {
+            MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
+            MainHeaderHandler.Command.OpenWalletScreen -> { /*todo*/ }
         }
     }
 
@@ -150,7 +157,7 @@ private fun ReferralProgramScreen(
             MainHeader(state = headerState)
             Text(
                 text = StringKey.ReferralProgramTitle.textValue().get(),
-                style = AppTheme.specificTypography.titleLarge,
+                style = AppTheme.specificTypography.headlineLarge,
                 modifier = Modifier.padding(12.dp),
             )
             Column(
@@ -193,7 +200,6 @@ private fun ReferralProgramScreen(
                 SimpleButtonActionM(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .shadow(16.dp, shape = CircleShape)
                         .padding(horizontal = 12.dp),
                     onClick = onInviteUserButtonClicked,
                 ) {
@@ -261,13 +267,12 @@ private fun ReferralCodeCard(
             )
             Text(
                 text = StringKey.ReferralProgramMessageEnterCode.textValue().get(),
-                style = AppTheme.specificTypography.titleMedium,
+                style = AppTheme.specificTypography.bodyLarge,
                 color = AppTheme.specificColorScheme.white,
                 modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
             )
             SimpleButtonGreyS(
                 onClick = onEnterCodeClicked,
-                modifier = Modifier.shadow(elevation = 16.dp, shape = CircleShape)
             ) {
                 SimpleButtonContent(text = StringKey.ReferralProgramActionEnterCode.textValue())
             }
@@ -284,7 +289,7 @@ private fun RowScope.DirectReferralCard(
     Card(
         shape = AppTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = AppTheme.specificColorScheme.white),
-        border = BorderStroke(width = 1.dp, color = AppTheme.specificColorScheme.darkGrey),
+        border = BorderStroke(width = 1.dp, color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f)),
         modifier = Modifier.weight(1f),
     ) {
         Column(
@@ -331,7 +336,7 @@ private fun CopyButton(
             .padding(horizontal = 12.dp)
             .border(
                 width = 1.dp,
-                color = AppTheme.specificColorScheme.darkGrey,
+                color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
                 shape = CircleShape,
             )
             .background(color = AppTheme.specificColorScheme.white, shape = CircleShape)
@@ -341,7 +346,7 @@ private fun CopyButton(
     ) {
         Text(
             text = hint,
-            style = AppTheme.specificTypography.titleMedium,
+            style = AppTheme.specificTypography.titleSmall,
             color = AppTheme.specificColorScheme.textSecondary,
         )
         Row(
@@ -351,7 +356,7 @@ private fun CopyButton(
         ) {
             Text(
                 text = value,
-                style = AppTheme.specificTypography.titleMedium,
+                style = AppTheme.specificTypography.bodyLarge,
                 modifier = Modifier
                     .weight(1f, fill = false)
                     .padding(horizontal = 8.dp),
@@ -407,8 +412,7 @@ private fun ReferralCodeDialog(
             SimpleButtonActionM(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp, vertical = 16.dp)
-                    .shadow(elevation = 16.dp, shape = CircleShape),
+                    .padding(horizontal = 32.dp, vertical = 16.dp),
                 enabled = isInviteUserButtonEnabled,
                 onClick = onInviteUserClicked,
             ) {

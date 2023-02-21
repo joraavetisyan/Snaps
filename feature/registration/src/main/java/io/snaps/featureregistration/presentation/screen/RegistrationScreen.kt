@@ -236,8 +236,7 @@ private fun RegistrationScreen(
         SimpleButtonActionM(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp)
-                .shadow(elevation = 16.dp, shape = CircleShape),
+                .padding(horizontal = 12.dp),
             onClick = onLoginWithEmailClicked,
         ) {
             SimpleButtonContent(text = StringKey.RegistrationActionLoginWithEmail.textValue())
@@ -398,8 +397,7 @@ private fun LoginWithEmailDialog(
             SimpleButtonActionM(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .shadow(elevation = 16.dp, shape = CircleShape),
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
                 enabled = uiState.isSignInButtonEnabled,
                 onClick = onLoginWithEmailClicked,
             ) {
@@ -496,8 +494,7 @@ private fun RegistrationWithEmailDialog(
             SimpleButtonActionM(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
-                    .shadow(elevation = 16.dp, shape = CircleShape),
+                    .padding(16.dp),
                 enabled = uiState.isSignUpButtonEnabled,
                 onClick = onSignUpClicked,
             ) {

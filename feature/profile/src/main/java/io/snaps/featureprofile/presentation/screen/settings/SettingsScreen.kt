@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -26,12 +25,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.textValue
@@ -63,6 +62,13 @@ fun SettingsScreen(
             SettingsViewModel.Command.OpenWalletSettingsScreen -> router.toWalletSettingsScreen()
             SettingsViewModel.Command.OpenSocialNetworksScreen -> router.toSocialNetworksScreen()
             SettingsViewModel.Command.OpenReferralProgramScreen -> router.toReferralProgramScreen()
+        }
+    }
+
+    viewModel.headerCommand.collectAsCommand {
+        when (it) {
+            MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
+            MainHeaderHandler.Command.OpenWalletScreen -> { /*todo*/ }
         }
     }
 
@@ -109,7 +115,7 @@ private fun SettingsScreen(
                 )
                 Text(
                     text = StringKey.SettingsTitle.textValue().get(),
-                    style = AppTheme.specificTypography.titleLarge,
+                    style = AppTheme.specificTypography.titleMedium,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
                 )
@@ -121,14 +127,13 @@ private fun SettingsScreen(
                 items(uiState.items) { item ->
                     item.Content(
                         modifier = Modifier
-                            .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
                             .background(
                                 color = AppTheme.specificColorScheme.white,
                                 shape = AppTheme.shapes.medium,
                             )
                             .border(
                                 width = 1.dp,
-                                color = AppTheme.specificColorScheme.grey,
+                                color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
                                 shape = AppTheme.shapes.medium,
                             )
                             .padding(horizontal = 12.dp, vertical = 12.dp),
@@ -140,7 +145,6 @@ private fun SettingsScreen(
                 onClick = onLogoutClicked,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .shadow(elevation = 16.dp, shape = CircleShape)
                     .padding(horizontal = 12.dp),
             ) {
                 SimpleButtonContent(text = StringKey.SettingsActionLogout.textValue())

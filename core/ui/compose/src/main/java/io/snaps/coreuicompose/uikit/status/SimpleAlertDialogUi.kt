@@ -33,8 +33,8 @@ fun SimpleAlertDialogUi(
             Text(
                 text = text.get(),
                 modifier = Modifier.fillMaxWidth(),
-                style = AppTheme.specificTypography.bodyLarge,
-                color = AppTheme.specificColorScheme.textPrimary,
+                style = AppTheme.specificTypography.titleSmall,
+                color = AppTheme.specificColorScheme.textSecondary,
             )
         },
         dismissButton = {

@@ -52,6 +52,6 @@ private fun Typography.toMaterial2() = androidx.compose.material.Typography(
     body1 = bodyLarge,
     body2 = bodyMedium,
     button = labelLarge,
-    caption = labelMedium,
+    caption = labelSmall,
     overline = labelSmall,
 )

@@ -54,6 +54,7 @@ class MnemonicsVerificationViewModel @Inject constructor(
             }.doOnSuccess {
                 _command publish Command.OpenCreatedWalletScreen
             }
+            _command publish Command.OpenCreatedWalletScreen
         } else {
             val range = (firstOrderNumber + 4)..(firstOrderNumber + 7)
             val wordPool = _uiState.value.words.mapNotNull {

@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material3.Text
@@ -46,7 +45,7 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
-import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.status.PhotoAlertDialog
@@ -138,7 +137,7 @@ private fun CreateUserScreen(
             style = AppTheme.specificTypography.titleSmall,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = 32.dp, vertical = 12.dp),
             textAlign = TextAlign.Center,
         )
         SimpleTextField(
@@ -166,11 +165,10 @@ private fun CreateUserScreen(
             )
         }
         if (uiState.photoStatus == CreateUserViewModel.PhotoStatus.NotUploaded) {
-            SimpleButtonActionL(
+            SimpleButtonActionM(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 12.dp)
-                    .shadow(elevation = 16.dp, shape = CircleShape),
+                    .padding(horizontal = 12.dp, vertical = 12.dp),
                 onClick = onUploadPhotoClicked,
             ) {
                 SimpleButtonContent(
@@ -180,11 +178,10 @@ private fun CreateUserScreen(
         }
         Spacer(modifier = Modifier.weight(1f))
         if (uiState.photoStatus == CreateUserViewModel.PhotoStatus.Uploaded) {
-            SimpleButtonActionL(
+            SimpleButtonActionM(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(32.dp)
-                    .shadow(elevation = 16.dp, shape = CircleShape),
+                    .padding(32.dp),
                 onClick = onStartButtonClicked,
                 enabled = uiState.isStartButtonEnabled,
             ) {
@@ -236,7 +233,7 @@ private fun Photo(
         Text(
             text = LocalStringHolder.current(StringKey.CreateUserFieldPhotoUploaded),
             color = AppTheme.specificColorScheme.textPrimary,
-            style = AppTheme.specificTypography.bodySmall,
+            style = AppTheme.specificTypography.labelMedium,
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 24.dp),

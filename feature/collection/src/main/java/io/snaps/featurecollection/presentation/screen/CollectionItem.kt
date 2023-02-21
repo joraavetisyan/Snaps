@@ -104,7 +104,7 @@ private fun Nft(
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = data.type,
-            style = AppTheme.specificTypography.bodyMedium,
+            style = AppTheme.specificTypography.labelMedium,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Line(
@@ -152,7 +152,7 @@ private fun MysteryBox(
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = LocalStringHolder.current(StringKey.MyCollectionTitleMysteryBox),
-            style = AppTheme.specificTypography.bodyMedium,
+            style = AppTheme.specificTypography.labelMedium,
             modifier = modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
         )
@@ -181,11 +181,16 @@ private fun Shimmer(
 @Composable
 private fun Line(name: String, value: String) {
     Row {
-        Text(text = name, color = AppTheme.specificColorScheme.textSecondary)
+        Text(
+            text = name,
+            color = AppTheme.specificColorScheme.textSecondary,
+            style = AppTheme.specificTypography.bodySmall,
+        )
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = value,
             modifier = Modifier.padding(start = 4.dp),
+            style = AppTheme.specificTypography.bodySmall,
         )
     }
 }

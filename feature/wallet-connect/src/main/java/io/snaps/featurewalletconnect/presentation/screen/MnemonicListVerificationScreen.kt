@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
@@ -22,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -92,8 +90,7 @@ private fun MnemonicListVerificationScreen(
             SimpleButtonActionM(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 24.dp)
-                    .shadow(elevation = 16.dp, shape = CircleShape),
+                    .padding(horizontal = 12.dp, vertical = 24.dp),
                 onClick = onContinueButtonClicked,
                 enabled = uiState.isContinueButtonEnabled,
             ) {
@@ -143,7 +140,7 @@ private fun SelectionBlock(
             .background(color = AppTheme.specificColorScheme.white, shape = AppTheme.shapes.medium)
             .border(
                 width = 1.dp,
-                color = AppTheme.specificColorScheme.darkGrey,
+                color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
                 shape = AppTheme.shapes.medium,
             ),
         verticalAlignment = Alignment.CenterVertically,

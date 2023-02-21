@@ -34,8 +34,8 @@ internal val FontFamilyW500 = FontFamily(
 )
 internal val FontFamilyW600 = FontFamily(
     listOf(
-        Font(R.font.medium, weight = FontWeight.W600, style = FontStyle.Normal),
-        Font(R.font.medium_italic, weight = FontWeight.W600, style = FontStyle.Italic),
+        Font(R.font.semibold, weight = FontWeight.W600, style = FontStyle.Normal),
+        Font(R.font.semibold_italic, weight = FontWeight.W600, style = FontStyle.Italic),
     )
 )
 internal val FontFamilyW700 = FontFamily(
@@ -69,48 +69,48 @@ internal val DefaultSpecificTypography = SpecificTypography(
     ),
 
     headlineLarge = TextStyle(
-        fontFamily = FontFamilyW700,
-        fontSize = 32.sp,
-        lineHeight = 40.sp,
-        letterSpacing = 0.em,
-    ),
-    headlineMedium = TextStyle(
-        fontFamily = FontFamilyW700,
+        fontFamily = FontFamilyW600,
         fontSize = 28.sp,
         lineHeight = 36.sp,
         letterSpacing = 0.em,
     ),
-    headlineSmall = TextStyle(
-        fontFamily = FontFamilyW700,
+    headlineMedium = TextStyle(
+        fontFamily = FontFamilyW600,
         fontSize = 24.sp,
         lineHeight = 30.sp,
+        letterSpacing = 0.em,
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = FontFamilyW600,
+        fontSize = 20.sp,
+        lineHeight = 26.sp,
         letterSpacing = 0.em,
     ),
 
     titleLarge = TextStyle(
         fontFamily = FontFamilyW600,
         fontSize = 28.sp,
-        lineHeight = 26.4f.sp,
+        lineHeight = 36.sp,
         letterSpacing = 0.em,
     ),
     titleMedium = TextStyle(
         fontFamily = FontFamilyW600,
-        fontSize = 16.sp,
-        lineHeight = 18.sp,
-        letterSpacing = 0.009.em,
+        fontSize = 20.sp,
+        lineHeight = 26.sp,
+        letterSpacing = 0.em,
     ),
     titleSmall = TextStyle(
         fontFamily = FontFamilyW500,
         fontSize = 16.sp,
-        lineHeight = 19.36f.sp,
-        letterSpacing = 0.007.em,
+        lineHeight = 21.sp,
+        letterSpacing = 0.em,
     ),
 
     bodyLarge = TextStyle(
         fontFamily = FontFamilyW400,
         fontSize = 16.sp,
-        lineHeight = 18.sp,
-        letterSpacing = 0.009.em,
+        lineHeight = 21.sp,
+        letterSpacing = 0.em,
     ),
     bodyMedium = TextStyle(
         fontFamily = FontFamilyW400,
@@ -121,8 +121,8 @@ internal val DefaultSpecificTypography = SpecificTypography(
     bodySmall = TextStyle(
         fontFamily = FontFamilyW400,
         fontSize = 12.sp,
-        lineHeight = 14.sp,
-        letterSpacing = 0.03.em,
+        lineHeight = 16.sp,
+        letterSpacing = 0.em,
     ),
 
     labelLarge = TextStyle(
@@ -132,13 +132,13 @@ internal val DefaultSpecificTypography = SpecificTypography(
         letterSpacing = 0.007.em,
     ),
     labelMedium = TextStyle(
-        fontFamily = FontFamilyW400,
+        fontFamily = FontFamilyW600,
         fontSize = 12.sp,
-        lineHeight = 14.sp,
-        letterSpacing = 0.0416.em,
+        lineHeight = 16.sp,
+        letterSpacing = 0.em,
     ),
     labelSmall = TextStyle(
-        fontFamily = FontFamilyW200,
+        fontFamily = FontFamilyW400,
         fontSize = 12.sp,
         lineHeight = 14.sp,
         letterSpacing = 0.0416.em,

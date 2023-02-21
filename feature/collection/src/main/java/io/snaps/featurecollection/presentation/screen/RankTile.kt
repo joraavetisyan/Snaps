@@ -77,8 +77,9 @@ private fun Data(
 ) {
     Container(
         modifier = modifier
-            .addIf(!data.isSelected) { defaultTileRipple(onClick = data.clickListener) }
-            .addIf(data.isSelected) {
+            .addIf(!data.isSelected) {
+                defaultTileRipple(onClick = data.clickListener, padding = 0.dp)
+            }.addIf(data.isSelected) {
                 drawWithCache {
                     onDrawWithContent {
                         drawContent()
@@ -103,7 +104,10 @@ private fun Data(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(data.type)
+                Text(
+                    text = data.type,
+                    style = AppTheme.specificTypography.labelMedium,
+                )
                 WorthWidget(ImageValue.ResImage(R.drawable.img_coin_silver) to data.price)
             }
             Spacer(Modifier.height(4.dp))

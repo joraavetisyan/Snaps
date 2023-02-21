@@ -16,6 +16,8 @@ internal class ScreenNavigator(navHostController: NavHostController) : Navigator
     fun toWalletScreen() = navHostController.navigate(AppRoute.Wallet)
 
     fun toWithdrawScreen() = navHostController.navigate(AppRoute.Withdraw)
+
+    fun toProfileScreen() = navHostController.navigate(AppRoute.Profile)
 }
 
 class WalletFeatureProviderImpl @Inject constructor() : WalletFeatureProvider {

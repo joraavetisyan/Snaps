@@ -121,13 +121,14 @@ private fun RowScope.TabItem(
     val tabTextColor: Color by animateColorAsState(
         targetValue = if (isSelected) {
             AppTheme.specificColorScheme.uiAccent
-        } else AppTheme.specificColorScheme.textSecondary,
+        } else AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.5f),
         animationSpec = tween(easing = LinearEasing),
     )
 
     Text(
         text = text.get(),
         color = tabTextColor,
+        style = AppTheme.specificTypography.bodySmall,
         textAlign = TextAlign.Center,
         modifier = Modifier
             .weight(1f)

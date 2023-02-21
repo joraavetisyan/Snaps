@@ -29,7 +29,7 @@ import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
-import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.duplicate.ActionIconData
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
@@ -68,7 +68,6 @@ private fun ShareTaskScreen(
         topBar = {
             SimpleTopAppBar(
                 title = StringKey.TaskShareTitle.textValue(),
-                titleTextStyle = AppTheme.specificTypography.titleLarge,
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 scrollBehavior = scrollBehavior,
                 titleHorizontalArrangement = Arrangement.Center,
@@ -95,7 +94,7 @@ private fun ShareTaskScreen(
                 modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Crop,
             )
-            SimpleButtonActionL(
+            SimpleButtonActionM(
                 onClick = onSaveButtonClicked,
                 modifier = Modifier.fillMaxWidth(),
             ) {

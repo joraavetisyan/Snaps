@@ -23,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -90,8 +89,7 @@ private fun MnemonicsScreen(
             SimpleButtonActionM(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 24.dp)
-                    .shadow(elevation = 16.dp, shape = CircleShape),
+                    .padding(horizontal = 12.dp, vertical = 24.dp),
                 onClick = onContinueButtonClicked,
             ) {
                 SimpleButtonContent(text = StringKey.ActionContinue.textValue())
@@ -151,7 +149,6 @@ private fun Item(
         style = AppTheme.specificTypography.titleSmall,
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(16.dp, CircleShape)
             .background(AppTheme.specificColorScheme.lightGrey, CircleShape)
             .padding(horizontal = 24.dp, vertical = 16.dp),
     )

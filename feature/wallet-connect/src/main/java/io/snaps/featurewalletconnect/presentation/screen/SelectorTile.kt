@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -77,9 +76,8 @@ fun SelectorTile(
     Box(
         modifier = modifier
             .offset(x = offsetX.value.dp)
-            .shadow(12.dp, CircleShape)
             .background(AppTheme.specificColorScheme.lightGrey, CircleShape)
-            .defaultTileRipple { data.clickListener() }
+            .defaultTileRipple(shape = CircleShape) { data.clickListener() }
             .padding(vertical = 12.dp, horizontal = 16.dp),
     ) {
         Text(
