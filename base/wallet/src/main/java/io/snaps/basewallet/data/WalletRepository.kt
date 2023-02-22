@@ -98,10 +98,9 @@ class WalletRepositoryImpl @Inject constructor(
         accountManager.save(account)
         activateDefaultWallets(account)
         predefinedBlockchainSettingsProvider.prepareNew(account, BlockchainType.Zcash)
-        this.account = null
         return getActiveWalletsReceiveAddresses().firstOrNull()?.let {
             apiCall(ioDispatcher) { walletApi.save(WalletSaveRequestDto(it)) }
-        } ?: Effect.error(AppError.Unknown("No address!"))
+        }?.also { log("No address!") }?.toCompletable() ?: Effect.completable
     }
 
     override fun getActiveAccount(): Account? {

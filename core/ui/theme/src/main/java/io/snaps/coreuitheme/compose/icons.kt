@@ -3,6 +3,7 @@ package io.snaps.coreuitheme.compose
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Add
@@ -23,7 +24,6 @@ import androidx.compose.material.icons.rounded.HeartBroken
 import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.NavigateNext
 import androidx.compose.material.icons.rounded.Phone
-import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Try
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -47,6 +47,7 @@ object SpecificIcons {
     val delete: IconValue = vector(Icons.Rounded.Delete)
     val done: IconValue = vector(Icons.Rounded.Done)
     val play: IconValue = vector(Icons.Outlined.PlayArrow)
+    val pause: IconValue = vector(Icons.Outlined.Pause)
     val themeSystem: IconValue = vector(Icons.Rounded.AutoMode)
     val themeDark: IconValue = vector(Icons.Rounded.DarkMode)
     val themeLight: IconValue = vector(Icons.Rounded.LightMode)

@@ -81,7 +81,7 @@ class CreateUserViewModel @Inject constructor(
             }.doOnComplete {
                 _uiState.update { it.copy(isLoading = false) }
             }.doOnSuccess {
-                if (userDataStorage.needsRanking) {
+                if (userDataStorage.hasNft) {
                     _command publish Command.OpenRankSelectionScreen
                 } else {
                     _command publish Command.OpenMainScreen

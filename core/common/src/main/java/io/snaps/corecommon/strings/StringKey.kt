@@ -189,4 +189,11 @@ enum class StringKey {
     RankSelectionTitleDailyReward,
     RankSelectionTitleDailyUnlock,
     RankSelectionTitleDailyConsumption,
+
+    CreateVideoActionGrantPerms,
+    CreateVideoActionFlip,
+    CreateVideoActionChoose,
+
+    PreviewVideoActionDiscard,
+    PreviewVideoActionProceed,
 }

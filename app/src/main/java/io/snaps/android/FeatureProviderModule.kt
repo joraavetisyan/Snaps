@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.snaps.corenavigation.BottomBarFeatureProvider
 import io.snaps.corenavigation.CollectionFeatureProvider
+import io.snaps.corenavigation.CreateFeatureProvider
 import io.snaps.corenavigation.FeedFeatureProvider
 import io.snaps.corenavigation.InitializationFeatureProvider
 import io.snaps.corenavigation.PopularFeatureProvider
@@ -22,6 +23,7 @@ import io.snaps.featurepopular.PopularFeatureProviderImpl
 import io.snaps.featureprofile.ProfileFeatureProviderImpl
 import io.snaps.featureregistration.presentation.RegistrationFeatureProviderImpl
 import io.snaps.featuretasks.TasksFeatureProviderImpl
+import io.snaps.featurecreate.CreateFeatureProviderImpl
 import io.snaps.featurewallet.WalletFeatureProviderImpl
 import io.snaps.featurewalletconnect.WalletConnectFeatureProviderImpl
 import javax.inject.Singleton
@@ -69,4 +71,8 @@ interface FeatureProviderModule {
     @Binds
     @Singleton
     fun walletFeatureProvider(provider: WalletFeatureProviderImpl): WalletFeatureProvider
+
+    @Binds
+    @Singleton
+    fun createFeatureProvider(provider: CreateFeatureProviderImpl): CreateFeatureProvider
 }

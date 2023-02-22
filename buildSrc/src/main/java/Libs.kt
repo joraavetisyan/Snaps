@@ -65,6 +65,9 @@ object Libs {
 
     private const val mediaVersion = "1.0.0-beta03"
 
+    private const val cameraxVersion = "1.2.0-beta01"
+    private const val guavaVersion = "31.1-android"
+
     private const val permissionVersion = "0.28.0"
 
     private const val facebookVersion = "16.0.0"
@@ -211,6 +214,14 @@ object Libs {
         val media = arrayOf(
             "androidx.media3:media3-exoplayer:$mediaVersion",
             "androidx.media3:media3-ui:$mediaVersion",
+        )
+
+        val camerax = arrayOf(
+            "androidx.camera:camera-lifecycle:$cameraxVersion",
+            "androidx.camera:camera-video:$cameraxVersion",
+            "androidx.camera:camera-view:$cameraxVersion",
+            "androidx.camera:camera-extensions:$cameraxVersion",
+            "com.google.guava:guava:$guavaVersion",
         )
 
         val crypto = arrayOf(

@@ -43,7 +43,7 @@ class AppViewModel @Inject constructor(
             UserSessionTracker.State.Active -> StartFlow.AuthorizedFlow(
                 needsWalletConnect = walletRepository.getActiveAccount() == null,
                 needsInitialization = userDataStorage.userNameFlow.firstOrNull() == null,
-                needsRanking = userDataStorage.needsRanking,
+                needsRanking = !userDataStorage.hasNft,
             )
         }
     }.likeStateFlow(

@@ -6,6 +6,7 @@ import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.tryPublish
 import io.snaps.featurecollection.domain.NftModel
@@ -34,6 +35,7 @@ interface MyCollectionRepository {
 class MyCollectionRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val myCollectionApi: MyCollectionApi,
+    private val userDataStorage: UserDataStorage,
 ) : MyCollectionRepository {
 
     private val _nftCollectionState = MutableStateFlow<State<NftModel>>(Loading())
@@ -73,6 +75,8 @@ class MyCollectionRepositoryImpl @Inject constructor(
     override suspend fun addNft(rankId: Uuid): Effect<Completable> {
         return apiCall(ioDispatcher) {
             myCollectionApi.addNft(rankId)
+        }.doOnSuccess {
+            userDataStorage.hasNft = true
         }
     }
 }

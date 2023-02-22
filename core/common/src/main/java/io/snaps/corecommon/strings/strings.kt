@@ -512,4 +512,21 @@ internal val strings = mapOf(
     key(StringKey.RankSelectionTitleDailyConsumption) to mapOf(
         SupportedLanguageKey.En to "Daily consumption",
     ),
+
+    key(StringKey.CreateVideoActionGrantPerms) to mapOf(
+        SupportedLanguageKey.En to "Grant permissions",
+    ),
+    key(StringKey.CreateVideoActionFlip) to mapOf(
+        SupportedLanguageKey.En to "Flip",
+    ),
+    key(StringKey.CreateVideoActionChoose) to mapOf(
+        SupportedLanguageKey.En to "Choose",
+    ),
+
+    key(StringKey.PreviewVideoActionDiscard) to mapOf(
+        SupportedLanguageKey.En to "Discard",
+    ),
+    key(StringKey.PreviewVideoActionProceed) to mapOf(
+        SupportedLanguageKey.En to "Proceed",
+    ),
 )

@@ -84,6 +84,14 @@ object AppRoute {
 
     object CreateVideo : Route("CreateVideo")
 
+    object PreviewVideo : RouteWithArg("PreviewVideo") {
+
+        @Serializable
+        data class Args(
+            val uri: String,
+        )
+    }
+
     object Wallet : Route("Wallet")
 
     object Withdraw : Route("Withdraw")

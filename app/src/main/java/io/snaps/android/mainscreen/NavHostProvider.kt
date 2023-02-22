@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.BottomBarFeatureProvider
 import io.snaps.corenavigation.CollectionFeatureProvider
+import io.snaps.corenavigation.CreateFeatureProvider
 import io.snaps.corenavigation.FeedFeatureProvider
 import io.snaps.corenavigation.InitializationFeatureProvider
 import io.snaps.corenavigation.PopularFeatureProvider
@@ -30,6 +31,7 @@ class NavHostProvider @Inject constructor(
     private val collectionFeatureProvider: CollectionFeatureProvider,
     private val profileFeatureProvider: ProfileFeatureProvider,
     private val walletFeatureProvider: WalletFeatureProvider,
+    private val createFeatureProvider: CreateFeatureProvider,
 ) {
 
     @Composable
@@ -74,6 +76,7 @@ class NavHostProvider @Inject constructor(
                     items = mainBottomBarItems
                 ) { controller ->
                     with(walletFeatureProvider) { walletGraph(controller) }
+                    with(createFeatureProvider) { createGraph(controller) }
                 }
             }
         }

@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.IconValue
@@ -56,10 +57,12 @@ object SimpleTopAppBarConfig {
     )
 
     @Composable
-    fun transparentColors() = SimpleTopAppBarColors(
+    fun transparentColors(
+        navigationIconContentColor: Color = AppTheme.specificColorScheme.textPrimary,
+    ) = SimpleTopAppBarColors(
         containerColor = AppTheme.specificColorScheme.transparent,
         scrolledContainerColor = AppTheme.specificColorScheme.transparent,
-        navigationIconContentColor = AppTheme.specificColorScheme.textPrimary,
+        navigationIconContentColor = navigationIconContentColor,
         titleContentColor = AppTheme.specificColorScheme.textPrimary,
         actionIconContentColor = AppTheme.specificColorScheme.darkGrey,
     )

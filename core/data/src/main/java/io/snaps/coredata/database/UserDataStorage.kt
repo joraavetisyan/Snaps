@@ -42,10 +42,10 @@ class UserDataStorage @Inject constructor(
             putBoolean("isStartOnBoardingFinished", value)
         }
 
-    var needsRanking: Boolean
-        get() = provider.prefs.getBoolean("needsRanking", false)
+    var hasNft: Boolean
+        get() = provider.prefs.getBoolean("hasNft", false)
         set(value) = provider.prefs.edit {
-            putBoolean("needsRanking", value)
+            putBoolean("hasNft", value)
         }
 
     var lastCheckedAvailableVersionCode: Int

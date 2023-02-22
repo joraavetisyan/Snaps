@@ -9,7 +9,6 @@ import io.snaps.corenavigation.base.FeatureNavDirection
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
-import io.snaps.featureprofile.presentation.screen.CreateVideoScreen
 import io.snaps.featureprofile.presentation.screen.ProfileScreen
 import io.snaps.featureprofile.presentation.screen.SubsScreen
 import io.snaps.featureprofile.presentation.screen.UserVideoFeedScreen
@@ -60,7 +59,6 @@ class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider 
 
     override fun NavGraphBuilder.profileGraph(controller: NavHostController) {
         composable(AppRoute.MainBottomBar.MainTab5Start) { ProfileScreen(controller) }
-        composable(AppRoute.CreateVideo) { CreateVideoScreen(controller) }
         composable(AppRoute.Profile) { ProfileScreen(controller) }
         composable(AppRoute.ReferralProgramScreen) { ReferralProgramScreen(controller) }
         composable(AppRoute.Settings) { SettingsScreen(controller) }

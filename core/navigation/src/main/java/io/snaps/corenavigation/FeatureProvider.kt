@@ -47,6 +47,11 @@ interface WalletFeatureProvider {
     fun NavGraphBuilder.walletGraph(controller: NavHostController)
 }
 
+interface CreateFeatureProvider {
+
+    fun NavGraphBuilder.createGraph(controller: NavHostController)
+}
+
 interface TasksFeatureProvider {
 
     fun NavGraphBuilder.tasksGraph(controller: NavHostController)

@@ -36,16 +36,19 @@ import androidx.media3.ui.PlayerView
 import io.snaps.corecommon.model.FullUrl
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun ReelPlayer(
-    videoClipUrl: FullUrl,
+    videoClipUrl: FullUrl? = null,
+    videoClipUri: String? = null,
     shouldPlay: Boolean,
     isMuted: Boolean = true,
     onMuted: (Boolean) -> Unit = {},
     isScrolling: Boolean = false,
 ) {
-    val exoPlayer = rememberExoPlayerWithLifecycle(videoClipUrl)
+    val exoPlayer = rememberExoPlayerWithLifecycle(videoClipUrl, videoClipUri)
     val playerView = rememberPlayerView(exoPlayer)
     var volumeIconVisibility by remember { mutableStateOf(false) }
     /*var likeIconVisibility by remember { mutableStateOf(false) }*/
@@ -134,18 +137,25 @@ fun ReelPlayer(
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 private fun rememberExoPlayerWithLifecycle(
-    reelUrl: String
+    url: String?,
+    uri: String?,
 ): ExoPlayer {
     val context = LocalContext.current
-    val exoPlayer = remember(reelUrl) {
+    val exoPlayer = remember(url ?: uri) {
         ExoPlayer.Builder(context).build().apply {
             videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
             repeatMode = Player.REPEAT_MODE_ONE
             setHandleAudioBecomingNoisy(true)
-            val defaultDataSource = DefaultHttpDataSource.Factory()
-            val source = ProgressiveMediaSource.Factory(defaultDataSource)
-                .createMediaSource(MediaItem.fromUri(reelUrl))
-            setMediaSource(source)
+            if (url != null) {
+                val defaultDataSource = DefaultHttpDataSource.Factory()
+                val source = ProgressiveMediaSource.Factory(defaultDataSource)
+                    .createMediaSource(MediaItem.fromUri(url))
+                setMediaSource(source)
+            } else if (uri != null) {
+                setMediaItem(
+                    MediaItem.fromUri(uri)
+                )
+            }
             prepare()
         }
     }

@@ -51,7 +51,7 @@ class MnemonicsVerificationViewModel @Inject constructor(
         if (_uiState.value.selections.firstOrNull()?.orderNumber == 9) {
             action.execute {
                 walletRepository.saveLastConnectedAccount()
-            }.doOnSuccess {
+            }.doOnComplete {
                 _command publish Command.OpenCreatedWalletScreen
             }
             _command publish Command.OpenCreatedWalletScreen

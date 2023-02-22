@@ -42,5 +42,4 @@ class WalletActivator(
 
         walletManager.save(wallets)
     }
-
 }

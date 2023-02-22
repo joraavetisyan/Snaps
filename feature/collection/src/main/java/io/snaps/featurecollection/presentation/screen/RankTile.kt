@@ -146,13 +146,14 @@ private fun Line(name: String, value: String) {
 private fun Shimmer(
     modifier: Modifier,
 ) {
-    Container(modifier) {
+    Container(modifier.fillMaxWidth()) {
         ShimmerTile(
             modifier = Modifier
                 .size(100.dp)
                 .padding(end = 8.dp),
             shape = AppTheme.shapes.small,
         )
+        Spacer(modifier = Modifier.weight(1f))
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {

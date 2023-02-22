@@ -88,7 +88,7 @@ class ProfileRepositoryImpl @Inject constructor(
         }.doOnSuccess {
             userDataStorage.setUserName(it.name)
             userDataStorage.setUserAvatar(uri.toString())
-            userDataStorage.needsRanking = !it.hasNft
+            userDataStorage.hasNft = !it.hasNft
         }.map {
             it.toProfileModel()
         }.also {
