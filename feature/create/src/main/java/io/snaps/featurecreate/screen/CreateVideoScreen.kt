@@ -304,23 +304,25 @@ fun BoxScope.PermissionGrantedContent(
 private fun BoxScope.Actions(
     onCloseClicked: () -> Unit,
 ) {
-    IconButton(onClick = onCloseClicked) {
+    IconButton(
+        onClick = onCloseClicked,
+        modifier = Modifier.align(Alignment.TopStart),
+    ) {
         Icon(
             painter = AppTheme.specificIcons.close.get(),
             contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .size(36.dp),
+            modifier = Modifier.size(36.dp),
             tint = AppTheme.specificColorScheme.white,
         )
     }
-    IconButton(onClick = { /*TODO*/ }) {
+    IconButton(
+        onClick = { /*TODO*/ },
+        modifier = Modifier.align(Alignment.TopEnd),
+    ) {
         Image(
             painter = AppTheme.specificIcons.cameraTimer.get(),
             contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .size(36.dp),
+            modifier = Modifier.size(36.dp),
         )
     }
 }
