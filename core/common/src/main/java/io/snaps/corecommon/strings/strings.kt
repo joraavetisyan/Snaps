@@ -422,9 +422,15 @@ internal val strings = mapOf(
     key(StringKey.WalletMessageTopUp) to mapOf(
         SupportedLanguageKey.En to "Make sure you are sending your tokens to the correct address and the correct BEP-20 network",
     ),
+    key(StringKey.WalletMessageAddressCopied) to mapOf(
+        SupportedLanguageKey.En to "Address copied!",
+    ),
+    key(StringKey.WalletDialogTitleTopUp) to mapOf(
+        SupportedLanguageKey.En to "Top up %s",
+    ),
 
     key(StringKey.WithdrawTitle) to mapOf(
-        SupportedLanguageKey.En to "Withdraw BNB",
+        SupportedLanguageKey.En to "Withdraw %s",
     ),
     key(StringKey.WithdrawHintAddress) to mapOf(
         SupportedLanguageKey.En to "Enter address",
@@ -446,6 +452,9 @@ internal val strings = mapOf(
     ),
     key(StringKey.WithdrawActionConfirmTransaction) to mapOf(
         SupportedLanguageKey.En to "Confirm transaction",
+    ),
+    key(StringKey.WithdrawActionSendTransaction) to mapOf(
+        SupportedLanguageKey.En to "Send transaction",
     ),
 
     key(StringKey.ProfileTitle) to mapOf(

@@ -155,6 +155,8 @@ enum class StringKey {
     WalletTitleBalance,
     WalletTitleSelectCurrency,
     WalletMessageTopUp,
+    WalletMessageAddressCopied,
+    WalletDialogTitleTopUp,
 
     WithdrawTitle,
     WithdrawHintAddress,
@@ -164,6 +166,7 @@ enum class StringKey {
     WithdrawFieldTransactionFee,
     WithdrawFieldTotal,
     WithdrawActionConfirmTransaction,
+    WithdrawActionSendTransaction,
 
     ProfileTitle,
     ProfileTitleLikes,

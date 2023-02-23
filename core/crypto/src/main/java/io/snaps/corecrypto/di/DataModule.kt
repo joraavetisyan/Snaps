@@ -7,11 +7,24 @@ import dagger.hilt.components.SingletonComponent
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.core.IAccountFactory
 import io.snaps.corecrypto.core.IAccountManager
+import io.snaps.corecrypto.core.ISendBinanceAdapter
 import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.IWordsManager
 import io.snaps.corecrypto.core.managers.PassphraseValidator
 import io.snaps.corecrypto.core.managers.WalletActivator
+import io.snaps.corecrypto.core.providers.BalanceActiveWalletRepository
+import io.snaps.corecrypto.core.providers.BalanceAdapterRepository
+import io.snaps.corecrypto.core.providers.BalanceCache
+import io.snaps.corecrypto.core.providers.BalanceService
+import io.snaps.corecrypto.core.providers.BalanceViewItemFactory
+import io.snaps.corecrypto.core.providers.BalanceXRateRepository
+import io.snaps.corecrypto.core.providers.ISendEvmTransactionService
+import io.snaps.corecrypto.core.providers.ITotalBalance
 import io.snaps.corecrypto.core.providers.PredefinedBlockchainSettingsProvider
+import io.snaps.corecrypto.core.providers.SendBinanceFeeService
+import io.snaps.corecrypto.core.providers.SendEvmTransactionService
+import io.snaps.corecrypto.core.providers.TotalBalance
+import io.snaps.corecrypto.core.providers.TotalService
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -36,9 +49,42 @@ class DataModule {
     fun passphraseValidator(): PassphraseValidator = PassphraseValidator()
 
     @Provides
+    fun totalBalance(): ITotalBalance = TotalBalance(
+        totalService = TotalService(
+            currencyManager = CryptoKit.currencyManager,
+            marketKit = CryptoKit.marketKit,
+            baseTokenManager = CryptoKit.baseTokenManager,
+            balanceHiddenManager = CryptoKit.balanceHiddenManager,
+        ),
+        balanceHiddenManager = CryptoKit.balanceHiddenManager,
+    )
+
+    @Provides
+    fun balanceViewItemFactory(): BalanceViewItemFactory = BalanceViewItemFactory()
+
+    @Provides
     fun predefinedBlockchainSettingsProvider(): PredefinedBlockchainSettingsProvider =
         PredefinedBlockchainSettingsProvider(
             manager = CryptoKit.restoreSettingsManager,
             zcashBirthdayProvider = CryptoKit.zcashBirthdayProvider,
         )
+
+    @Provides
+    fun balanceService(): BalanceService = BalanceService(
+        activeWalletRepository = BalanceActiveWalletRepository(
+            walletManager = CryptoKit.walletManager,
+            evmSyncSourceManager = CryptoKit.evmSyncSourceManager
+        ),
+        xRateRepository = BalanceXRateRepository(
+            currencyManager = CryptoKit.currencyManager,
+            marketKit = CryptoKit.marketKit
+        ),
+        adapterRepository = BalanceAdapterRepository(
+            adapterManager = CryptoKit.adapterManager,
+            balanceCache = BalanceCache(dao = CryptoKit.appDatabase.enabledWalletsCacheDao())
+        ),
+        localStorage = CryptoKit.localStorage,
+        connectivityManager = CryptoKit.connectivityManager,
+        accountManager = CryptoKit.accountManager,
+    )
 }

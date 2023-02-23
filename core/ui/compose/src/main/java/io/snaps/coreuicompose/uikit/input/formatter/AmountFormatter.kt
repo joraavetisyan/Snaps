@@ -9,7 +9,7 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.model.CurrencyType
+import io.snaps.corecommon.model.FiatCurrency
 import io.snaps.corecommon.strings.RU_LOCALE
 import java.text.NumberFormat
 
@@ -20,7 +20,7 @@ private const val fractionalPartMaxLength = 2
 const val amountDivider = ','
 
 class AmountFormatter(
-    private val currencyType: CurrencyType,
+    private val fiatCurrency: FiatCurrency,
     private val maxLength: Int = 10,
 ) : SimpleFormatter {
 
@@ -87,7 +87,7 @@ class AmountFormatter(
         otherPartColor: Color,
     ) = object : VisualTransformation {
 
-        private val suffix = " ${currencyType.symbol}"
+        private val suffix = " ${fiatCurrency.symbol}"
         private var lastValue = ""
 
         private val offsetMapping = object : OffsetMapping {

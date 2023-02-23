@@ -41,6 +41,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
+import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurewallet.ScreenNavigator
@@ -56,27 +57,35 @@ fun WithdrawScreen(
     val uiState by viewModel.uiState.collectAsState()
     val headerState by viewModel.headerUiState.collectAsState()
 
-    viewModel.headerCommand.collectAsCommand {
+    viewModel.command.collectAsCommand {
         when (it) {
-            MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
-            MainHeaderHandler.Command.OpenWalletScreen -> { /*todo*/ }
+            WithdrawViewModel.Command.CloseScreen -> router.back()
         }
     }
 
-    SocialNetworksScreen(
+    viewModel.headerCommand.collectAsCommand {
+        when (it) {
+            MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
+            MainHeaderHandler.Command.OpenWalletScreen -> router.back()
+        }
+    }
+
+    WithdrawScreen(
         uiState = uiState,
         headerState = headerState.value,
         onBackClicked = router::back,
         onAddressValueChanged = viewModel::onAddressValueChanged,
         onAmountValueChanged = viewModel::onAmountValueChanged,
         onConfirmTransactionClicked = viewModel::onConfirmTransactionClicked,
-        onMaxButtonClicked = {},
+        onMaxButtonClicked = viewModel::onMaxButtonClicked,
     )
+
+    FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SocialNetworksScreen(
+private fun WithdrawScreen(
     uiState: WithdrawViewModel.UiState,
     headerState: MainHeaderState,
     onAddressValueChanged: (String) -> Unit,
@@ -109,7 +118,7 @@ private fun SocialNetworksScreen(
                     modifier = Modifier.clickable { onBackClicked() }
                 )
                 Text(
-                    text = StringKey.WithdrawTitle.textValue().get(),
+                    text = StringKey.WithdrawTitle.textValue(uiState.walletModel.symbol).get(),
                     style = AppTheme.specificTypography.titleMedium,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
@@ -141,7 +150,7 @@ private fun SocialNetworksScreen(
                 onValueChange = onAmountValueChanged,
                 value = uiState.amountValue,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
+                    keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Done,
                 ),
                 placeholder = {
@@ -163,7 +172,7 @@ private fun SocialNetworksScreen(
                 maxLines = 1,
             )
             Text(
-                text = StringKey.WithdrawFieldAvailable.textValue(uiState.availableAmount.getFormattedMoneyWithCurrency())
+                text = StringKey.WithdrawFieldAvailable.textValue(uiState.availableAmount)
                     .get(),
                 style = AppTheme.specificTypography.bodySmall,
                 modifier = Modifier
@@ -185,7 +194,7 @@ private fun SocialNetworksScreen(
                     modifier = Modifier.padding(horizontal = 12.dp),
                 )
                 Text(
-                    text = uiState.transactionFee.getFormattedMoneyWithCurrency(),
+                    text = uiState.transactionFee,
                     style = AppTheme.specificTypography.bodySmall,
                     color = AppTheme.specificColorScheme.textPrimary,
                     modifier = Modifier
@@ -202,7 +211,7 @@ private fun SocialNetworksScreen(
                     modifier = Modifier.padding(12.dp),
                 )
                 Text(
-                    text = uiState.totalAmount.getFormattedMoneyWithCurrency(),
+                    text = uiState.totalAmount,
                     style = AppTheme.specificTypography.bodySmall,
                     color = AppTheme.specificColorScheme.textPrimary,
                     modifier = Modifier
@@ -215,10 +224,19 @@ private fun SocialNetworksScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp, vertical = 20.dp),
-                onClick = onConfirmTransactionClicked,
+                onClick = if (uiState.isSendEnabled) {
+                    uiState.onSendClicked
+                } else {
+                    onConfirmTransactionClicked
+                },
+                enabled = uiState.isConfirmEnabled || uiState.isSendEnabled,
             ) {
                 SimpleButtonContent(
-                    text = StringKey.WithdrawActionConfirmTransaction.textValue(),
+                    text = if (uiState.isSendEnabled) {
+                        StringKey.WithdrawActionSendTransaction
+                    } else {
+                        StringKey.WithdrawActionConfirmTransaction
+                    }.textValue(),
                 )
             }
         }

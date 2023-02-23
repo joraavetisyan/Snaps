@@ -44,6 +44,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,9 +53,11 @@ import androidx.navigation.NavHostController
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
+import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.corecommon.container.IconValue
+import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.model.MoneyDto
+import io.snaps.corecommon.model.WalletAddress
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.doOnClick
@@ -86,18 +90,20 @@ fun WalletScreen(
     )
     val coroutineScope = rememberCoroutineScope()
 
+    val clipboardManager = LocalClipboardManager.current
+
     viewModel.command.collectAsCommand {
         when (it) {
             WalletViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             WalletViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
-            WalletViewModel.Command.OpenWithdrawScreen -> router.toWithdrawScreen()
+            is WalletViewModel.Command.OpenWithdrawScreen -> router.toWithdrawScreen(it.wallet)
         }
     }
 
     viewModel.headerCommand.collectAsCommand {
         when (it) {
             MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
-            MainHeaderHandler.Command.OpenWalletScreen -> { /*todo*/ }
+            MainHeaderHandler.Command.OpenWalletScreen -> Unit
         }
     }
 
@@ -105,18 +111,23 @@ fun WalletScreen(
         coroutineScope.launch { sheetState.hide() }
     }
 
+    fun onAddressCopyClicked(address: WalletAddress) {
+        clipboardManager.setText(AnnotatedString(address))
+        viewModel.onAddressCopied()
+    }
+
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
             when (val dialog = uiState.bottomDialogType) {
-                is WalletViewModel.BottomDialogType.SelectCurrency -> SelectCurrencyDialog(
-                    currencies = uiState.currencies,
+                is WalletViewModel.BottomDialogType.SelectWallet -> SelectWalletDialog(
+                    wallets = dialog.wallets,
                 )
                 is WalletViewModel.BottomDialogType.TopUp -> TopUpDialog(
-                    title = "Top up BNB (BEP-20)",
-                    address = uiState.address,
+                    title = StringKey.WalletDialogTitleTopUp.textValue(dialog.title),
+                    address = dialog.address,
                     qr = dialog.qr,
-                    onTokenCopyClicked = {},
+                    onAddressCopyClicked = { onAddressCopyClicked(dialog.address) },
                 )
             }
         },
@@ -125,7 +136,7 @@ fun WalletScreen(
             uiState = uiState,
             headerState = headerState.value,
             onBackClicked = router::back,
-            onTokenCopyClicked = {},
+            onAddressCopyClicked = ::onAddressCopyClicked,
             onTopUpClicked = viewModel::onTopUpClicked,
             onWithdrawClicked = viewModel::onWithdrawClicked,
             onExchangeClicked = viewModel::onExchangeClicked,
@@ -139,7 +150,7 @@ private fun WalletScreen(
     uiState: WalletViewModel.UiState,
     headerState: MainHeaderState,
     onBackClicked: () -> Boolean,
-    onTokenCopyClicked: () -> Unit,
+    onAddressCopyClicked: (WalletAddress) -> Unit,
     onTopUpClicked: () -> Unit,
     onWithdrawClicked: () -> Unit,
     onExchangeClicked: () -> Unit,
@@ -180,9 +191,9 @@ private fun WalletScreen(
                     .padding(vertical = 16.dp)
             ) {
                 Balance(
-                    amount = uiState.selectedCurrency,
-                    token = uiState.address,
-                    onTokenCopyClicked = onTokenCopyClicked,
+                    totalBalance = uiState.totalBalance,
+                    address = uiState.address,
+                    onAddressCopyClicked = { onAddressCopyClicked(uiState.address) },
                 )
                 Row(
                     modifier = Modifier
@@ -217,7 +228,7 @@ private fun WalletScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp)
                 ) {
-                    uiState.currencies.forEach { item ->
+                    uiState.wallets.forEach { item ->
                         item.Content(
                             modifier = Modifier
                                 .background(
@@ -240,9 +251,9 @@ private fun WalletScreen(
 
 @Composable
 private fun Balance(
-    amount: MoneyDto,
-    token: String,
-    onTokenCopyClicked: () -> Unit,
+    totalBalance: TotalBalanceModel,
+    address: WalletAddress,
+    onAddressCopyClicked: () -> Unit,
 ) {
     Card(
         shape = AppTheme.shapes.medium,
@@ -267,7 +278,7 @@ private fun Balance(
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = amount.getFormattedMoneyWithCurrency(),
+                text = totalBalance.coin,
                 style = AppTheme.specificTypography.titleLarge,
                 color = AppTheme.specificColorScheme.textPrimary,
                 modifier = Modifier
@@ -276,7 +287,7 @@ private fun Balance(
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = "≈ ${amount.getFormattedMoneyWithCurrency()}",
+                text = totalBalance.fiat,
                 style = AppTheme.specificTypography.bodySmall,
                 color = AppTheme.specificColorScheme.textSecondary,
                 modifier = Modifier
@@ -288,10 +299,10 @@ private fun Balance(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(),
-                onClick = onTokenCopyClicked,
+                onClick = onAddressCopyClicked,
             ) {
                 SimpleButtonContent(
-                    text = token.textValue(),
+                    text = address.textValue(),
                     iconRight = AppTheme.specificIcons.copy,
                 )
             }
@@ -342,14 +353,14 @@ private fun RowScope.OperationType(
 }
 
 @Composable
-private fun SelectCurrencyDialog(
-    currencies: List<CellTileState>,
+private fun SelectWalletDialog(
+    wallets: List<CellTileState>,
 ) {
     SimpleBottomDialogUI(StringKey.WalletTitleSelectCurrency.textValue()) {
         item {
             Spacer(modifier = Modifier.height(8.dp))
         }
-        items(currencies) {
+        items(wallets) {
             it.Content(
                 modifier = Modifier
                     .padding(horizontal = 12.dp, vertical = 6.dp)
@@ -370,12 +381,12 @@ private fun SelectCurrencyDialog(
 
 @Composable
 private fun TopUpDialog(
+    title: TextValue,
     qr: Bitmap?,
-    title: String,
     address: String,
-    onTokenCopyClicked: () -> Unit,
+    onAddressCopyClicked: () -> Unit,
 ) {
-    SimpleBottomDialogUI(title.textValue()) {
+    SimpleBottomDialogUI(title) {
         item {
             Box(
                 modifier = Modifier
@@ -401,7 +412,7 @@ private fun TopUpDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp),
-                onClick = onTokenCopyClicked,
+                onClick = onAddressCopyClicked,
             ) {
                 SimpleButtonContent(
                     text = address.textValue(),

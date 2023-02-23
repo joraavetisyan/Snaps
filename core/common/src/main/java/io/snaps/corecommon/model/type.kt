@@ -36,7 +36,7 @@ data class PhoneNumberData(
 
 @Serializable
 data class MoneyDto(
-    @SerialName("currency") val currency: CurrencyType,
+    @SerialName("currency") val currency: FiatCurrency,
     @SerialName("value") val value: Double,
 ) {
 
@@ -46,7 +46,7 @@ data class MoneyDto(
 }
 
 @Serializable
-enum class CurrencyType(
+enum class FiatCurrency(
     val symbol: CurrencySymbol,
 ) {
     @SerialName("643") RUB("₽"),
@@ -64,3 +64,13 @@ enum class CurrencyType(
 enum class SubsType {
     Subscriptions, Subscribers,
 }
+
+@Serializable
+data class WalletModel(
+    @SerialName("coinUid") val coinUid: String,
+    @SerialName("receiveAddress") val receiveAddress: WalletAddress,
+    @SerialName("symbol") val symbol: String,
+    @SerialName("iconUrl") val iconUrl: FullUrl,
+    @SerialName("coinValue") val coinValue: String,
+    @SerialName("fiatValue") val fiatValue: String,
+)

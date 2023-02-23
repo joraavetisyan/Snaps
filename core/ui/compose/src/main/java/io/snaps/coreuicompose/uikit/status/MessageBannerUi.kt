@@ -38,8 +38,8 @@ fun MessageBannerUi(state: BannerMessage?) {
         currentText = state.value.get()
         currentColor = when (state) {
             is BannerMessage.Error -> AppTheme.specificColorScheme.uiSystemRed
-            is BannerMessage.Message -> AppTheme.specificColorScheme.uiSystemGreen
-            is BannerMessage.Warning -> AppTheme.specificColorScheme.uiSystemGreen
+            is BannerMessage.Message -> AppTheme.specificColorScheme.textGreen
+            is BannerMessage.Warning -> AppTheme.specificColorScheme.textGreen
         }
     }
     AnimatedVisibility(

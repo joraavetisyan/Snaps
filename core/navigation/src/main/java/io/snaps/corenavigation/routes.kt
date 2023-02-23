@@ -5,6 +5,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import io.snaps.corecommon.model.SubsType
 import io.snaps.corecommon.model.Uuid
+import io.snaps.corecommon.model.WalletModel
 import kotlinx.serialization.Serializable
 
 const val DefaultArgKey = "arg"
@@ -94,7 +95,13 @@ object AppRoute {
 
     object Wallet : Route("Wallet")
 
-    object Withdraw : Route("Withdraw")
+    object Withdraw : RouteWithArg("Withdraw") {
+
+        @Serializable
+        data class Args(
+            val wallet: WalletModel,
+        )
+    }
 
     object ReferralProgramScreen : Route("ReferralProgramScreen")
 
