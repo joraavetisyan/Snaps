@@ -12,10 +12,13 @@ data class ProfileModel(
     val email: String,
     val wallet: String,
     val name: String,
-    val totalLikes: String,
-    val totalSubscribers: String,
-    val totalSubscriptions: String,
-    val totalPublication: String,
+    val totalLikes: Int,
+    val totalSubscribers: Int,
+    val totalSubscriptions: Int,
+    val totalPublication: Int,
     val avatar: ImageValue,
     val hasNft: Boolean,
+    val experience: Int,
+    val level: Int,
+    val quests: List<QuestModel>
 )

@@ -127,7 +127,9 @@ object AppRoute {
 
     @Serializable
     data class TaskArgs(
-        val id: Uuid,
+        val energy: Int,
+        val energyProgress: Int,
+        val completed: Boolean,
     )
 
     object FindPointsTask : RouteWithArg("FindPointsTask") // need pass TaskArgs

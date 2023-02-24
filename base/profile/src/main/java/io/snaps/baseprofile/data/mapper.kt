@@ -1,8 +1,10 @@
 package io.snaps.baseprofile.data
 
+import io.snaps.baseprofile.data.model.QuestItemDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.baseprofile.domain.CoinsModel
 import io.snaps.baseprofile.domain.ProfileModel
+import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
@@ -23,6 +25,19 @@ fun UserInfoResponseDto.toProfileModel() = ProfileModel(
     totalPublication = totalPublication,
     avatar = ImageValue.Url(avatarUrl),
     hasNft = hasNft,
+    level = level,
+    experience = experience,
+    quests = questInfo.quests.map(QuestItemDto::toQuestModel),
+)
+
+fun QuestItemDto.toQuestModel() = QuestModel(
+    energyProgress = energyProgress,
+    energy = quest.energy,
+    type = quest.type,
+    completed = completed,
+    madeCount = madeCount,
+    network = network,
+    count = quest.count,
 )
 
 fun mainHeaderState(

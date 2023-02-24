@@ -39,7 +39,6 @@ import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.coreuicompose.uikit.other.SimpleCard
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featuretasks.ScreenNavigator
-import io.snaps.featuretasks.domain.TaskModel
 import io.snaps.featuretasks.presentation.ui.TaskToolbar
 import io.snaps.featuretasks.presentation.viewmodel.TaskViewModel
 
@@ -71,7 +70,7 @@ private fun WatchVideoTaskScreen(
             TaskToolbar(
                 title = StringKey.TaskWatchVideoTitle.textValue(),
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
-                progress = uiState.task?.energy,
+                progress = uiState.energy,
                 scrollBehavior = scrollBehavior,
             )
         },
@@ -83,9 +82,7 @@ private fun WatchVideoTaskScreen(
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            uiState.task?.let {
-                Content(task = it)
-            }
+            Content(uiState = uiState)
             uiState.messageBannerState?.Content(modifier = Modifier)
             if (uiState.isLoading) {
                 Shimmer()
@@ -96,20 +93,20 @@ private fun WatchVideoTaskScreen(
 
 @Composable
 private fun Content(
-    task: TaskModel,
+    uiState: TaskViewModel.UiState,
 ) {
     SimpleCard {
         TaskProgress(
-            progress = task.madeCount,
-            maxValue = task.count,
+            progress = uiState.energyProgress,
+            maxValue = uiState.energy,
         )
         Text(
             modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 16.dp),
-            text = task.description,
+            text = uiState.description,
             style = AppTheme.specificTypography.bodySmall,
         )
     }
-    if (task.done) {
+    if (uiState.completed) {
         TaskCompletedMessage()
     }
 }

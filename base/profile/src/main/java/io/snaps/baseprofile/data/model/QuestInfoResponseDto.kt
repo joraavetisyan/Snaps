@@ -1,0 +1,41 @@
+package io.snaps.baseprofile.data.model
+
+import io.snaps.corecommon.model.DateTime
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class QuestInfoResponseDto(
+    @SerialName("quests") val quests: List<QuestItemDto>,
+    @SerialName("questDate") val questDate: DateTime,
+    @SerialName("updatedDate") val updatedDate: DateTime,
+    @SerialName("experience") val experience: Int,
+)
+
+@Serializable
+data class QuestItemDto(
+    @SerialName("energyProgress") val energyProgress: Int,
+    @SerialName("completed") val completed: Boolean,
+    @SerialName("quest") val quest: QuestDto,
+    @SerialName("madeCount") val madeCount: Int,
+
+    // For SocialPost
+    @SerialName("network") val network: String?,
+)
+
+@Serializable
+data class QuestDto(
+    @SerialName("count") val count: Int,
+    @SerialName("type") val type: QuestType,
+    @SerialName("energy") val energy: Int,
+)
+
+@Serializable
+enum class QuestType {
+    Like,
+    PublishVideo,
+    Subscribe,
+    Watch,
+    SocialShare,
+    SocialPost,
+}

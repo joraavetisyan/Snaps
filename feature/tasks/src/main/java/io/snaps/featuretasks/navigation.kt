@@ -2,7 +2,6 @@ package io.snaps.featuretasks
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import io.snaps.corecommon.model.Uuid
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.TasksFeatureProvider
 import io.snaps.corenavigation.base.FeatureNavDirection
@@ -20,31 +19,31 @@ internal class ScreenNavigator(navHostController: NavHostController) :
     Navigator(navHostController) {
 
     fun toShareTaskScreen(
-        id: Uuid,
+        args: AppRoute.TaskArgs,
     ) = navHostController navigate FeatureNavDirection(
         AppRoute.ShareTask,
-        AppRoute.TaskArgs(id),
+        args,
     )
 
     fun toLikeAndSubscribeTaskScreen(
-        id: Uuid,
+        args: AppRoute.TaskArgs,
     ) = navHostController navigate FeatureNavDirection(
         AppRoute.LikeAndSubscribeTask,
-        AppRoute.TaskArgs(id),
+        args,
     )
 
     fun toFindPointsTaskScreen(
-        id: Uuid,
+        args: AppRoute.TaskArgs,
     ) = navHostController navigate FeatureNavDirection(
         AppRoute.FindPointsTask,
-        AppRoute.TaskArgs(id),
+        args,
     )
 
     fun toWatchVideoTaskScreen(
-        id: Uuid,
+        args: AppRoute.TaskArgs,
     ) = navHostController navigate FeatureNavDirection(
         AppRoute.WatchVideoTask,
-        AppRoute.TaskArgs(id),
+        args,
     )
 }
 

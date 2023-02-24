@@ -98,7 +98,7 @@ private fun FindPointsTaskScreen(
             TaskToolbar(
                 title = StringKey.TaskFindPointsTitle.textValue(),
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
-                progress = uiState.task?.energy,
+                progress = uiState.energy,
                 scrollBehavior = scrollBehavior,
             )
         },

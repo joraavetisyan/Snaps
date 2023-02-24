@@ -9,8 +9,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.snaps.baseprofile.data.model.QuestType
 import io.snaps.baseprofile.ui.EnergyWidget
-import io.snaps.corecommon.model.Uuid
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
@@ -22,9 +22,7 @@ import io.snaps.coreuitheme.compose.AppTheme
 sealed class TaskTileState : TileState {
 
     data class Data(
-        val id: Uuid,
-        val title: String,
-        val description: String,
+        val type: QuestType,
         val energy: Int,
         val energyProgress: Int,
         val done: Boolean,
@@ -58,6 +56,22 @@ private fun Data(
     modifier: Modifier = Modifier,
     data: TaskTileState.Data,
 ) {
+    val title = when (data.type) { // todo
+        QuestType.Like -> "Like"
+        QuestType.PublishVideo -> "Publish video"
+        QuestType.SocialPost -> "Social post"
+        QuestType.Subscribe -> "Subscribe"
+        QuestType.SocialShare -> "Social share"
+        QuestType.Watch -> "Watch video"
+    }
+    val description = when (data.type) { // todo
+        QuestType.Like -> "At least 10 likes, at least 5 subscriptions = 10 energy points"
+        QuestType.PublishVideo -> "The minimum video length is 5 seconds, the maximum video length is 1 minute = 15 energy points."
+        QuestType.SocialPost -> "View at least 50 videos with a retention of at least 70 percent"
+        QuestType.Subscribe -> "At least 10 likes, at least 5 subscriptions = 10 energy points"
+        QuestType.SocialShare -> ""
+        QuestType.Watch -> "Watch at least 50 videos with a retention of at least 70% to get 15 energy points."
+    }
     Container(
         modifier = modifier.defaultTileRipple(onClick = data.clickListener),
     ) {
@@ -67,12 +81,12 @@ private fun Data(
                 .padding(end = 8.dp),
         ) {
             Text(
-                text = data.title,
+                text = title,
                 color = AppTheme.specificColorScheme.textPrimary,
                 style = AppTheme.specificTypography.labelMedium,
             )
             Text(
-                text = data.description,
+                text = description,
                 color = AppTheme.specificColorScheme.textSecondary,
                 style = AppTheme.specificTypography.labelSmall,
             )

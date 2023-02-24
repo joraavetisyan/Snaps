@@ -4,19 +4,24 @@ import android.net.Uri
 import androidx.core.net.toFile
 import io.snaps.baseprofile.domain.CoinsModel
 import io.snaps.baseprofile.domain.ProfileModel
+import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
+import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.apiCall
+import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreui.viewmodel.tryPublish
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -30,6 +35,8 @@ interface ProfileRepository {
 
     val state: StateFlow<State<ProfileModel>>
 
+    val currentQuestsState: StateFlow<State<List<QuestModel>>>
+
     suspend fun updateData(): Effect<Completable>
 
     suspend fun getUserInfoById(userId: String): Effect<ProfileModel>
@@ -41,6 +48,7 @@ interface ProfileRepository {
 
 class ProfileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val api: ProfileApi,
     private val userDataStorage: UserDataStorage,
 ) : ProfileRepository {
@@ -52,6 +60,16 @@ class ProfileRepositoryImpl @Inject constructor(
         Effect.success(CoinsModel(energy = "12", gold = "12", silver = "12", bronze = "12"))
     )
     override val coinState = _coinState.asStateFlow()
+
+    override val currentQuestsState = state.map {
+        when (it) {
+            is Loading -> Loading()
+            is Effect -> when {
+                it.isSuccess -> Effect.success(it.requireData.quests)
+                else -> Effect.error(requireNotNull(it.errorOrNull))
+            }
+        }
+    }.likeStateFlow(scope, Loading())
 
     override suspend fun updateData(): Effect<Completable> {
         return apiCall(ioDispatcher) {

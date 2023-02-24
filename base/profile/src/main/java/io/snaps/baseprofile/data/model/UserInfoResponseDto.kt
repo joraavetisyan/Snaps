@@ -15,10 +15,13 @@ class UserInfoResponseDto(
     @SerialName("email") val email: String,
     @SerialName("wallet") val wallet: WalletAddress,
     @SerialName("name") val name: String,
-    @SerialName("totalLikes") val totalLikes: String,
-    @SerialName("totalSubscribers") val totalSubscribers: String,
-    @SerialName("totalSubscriptions") val totalSubscriptions: String,
-    @SerialName("totalPublication") val totalPublication: String,
+    @SerialName("totalLikes") val totalLikes: Int,
+    @SerialName("totalSubscribers") val totalSubscribers: Int,
+    @SerialName("totalSubscriptions") val totalSubscriptions: Int,
+    @SerialName("totalPublication") val totalPublication: Int,
     @SerialName("avatar") val avatarUrl: FullUrl,
     @SerialName("hasNft") val hasNft: Boolean,
+    @SerialName("experience") val experience: Int,
+    @SerialName("questInfo") val questInfo: QuestInfoResponseDto, // current quests
+    @SerialName("level") val level: Int,
 )

@@ -1,29 +1,30 @@
 package io.snaps.featuretasks.presentation
 
+import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.corecommon.model.Effect
-import io.snaps.featuretasks.domain.TaskModel
+import io.snaps.corecommon.model.Loading
+import io.snaps.corecommon.model.State
 import io.snaps.featuretasks.presentation.ui.TaskTileState
 
-fun Effect<List<TaskModel>>.toTaskTileState(
-    onItemClicked: (TaskModel) -> Unit,
+fun State<List<QuestModel>>.toTaskTileState(
+    onItemClicked: (QuestModel) -> Unit,
     onReloadClicked: () -> Unit,
-) = when {
-    isSuccess -> {
-        requireData.map {
+) = when (this) {
+    is Loading -> List(6) { TaskTileState.Shimmer }
+    is Effect -> when {
+        isSuccess -> requireData.map {
             it.toTaskTileState(onItemClicked = onItemClicked)
         }
+        else -> listOf(TaskTileState.Error(clickListener = onReloadClicked))
     }
-    else -> listOf(TaskTileState.Error(clickListener = onReloadClicked))
 }
 
-private fun TaskModel.toTaskTileState(
-    onItemClicked: (TaskModel) -> Unit,
+private fun QuestModel.toTaskTileState(
+    onItemClicked: (QuestModel) -> Unit,
 ) = TaskTileState.Data(
-    id = id,
-    title = title,
-    description = description,
     energy = energy,
     energyProgress = energyProgress,
-    done = done,
+    done = completed,
+    type = type,
     clickListener = { onItemClicked(this) },
 )
