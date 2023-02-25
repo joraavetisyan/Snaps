@@ -3,6 +3,8 @@ package io.snaps.corecommon.date
 import io.snaps.corecommon.strings.DEFAULT_LOCALE
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 object LocalDateTimeFactory {
 
@@ -35,3 +37,7 @@ object LocalDateTimeFactory {
         LocalDateTime.parse(date, format.toDateTimeFormat(DEFAULT_LOCALE))
     }.getOrNull()
 }
+
+fun LocalDateTime.toLong(
+    zoneId: ZoneId = ZoneId.systemDefault(),
+) = ZonedDateTime.of(this, ZoneId.systemDefault()).toInstant().toEpochMilli()

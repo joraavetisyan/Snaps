@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.date.toStringValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
@@ -48,9 +49,12 @@ import io.snaps.coreuitheme.compose.AppTheme
 @Composable
 fun CommentsScreen(
     uiState: VideoFeedViewModel.UiState,
-    onCommentInputClick: (String) -> Unit,
+    onCommentInputClicked: () -> Unit,
+    onCommentChanged: (TextFieldValue) -> Unit,
     onCloseClicked: () -> Unit,
     onReplyClicked: () -> Unit,
+    onSendClicked: () -> Unit,
+    onEmojiClicked: (String) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -59,12 +63,12 @@ fun CommentsScreen(
         bottomBar = {
             CommentInput(
                 profileImage = uiState.profileAvatar,
-                value = TextFieldValue(""),
-                onValueChange = {},
+                value = uiState.comment,
+                onValueChange = onCommentChanged,
                 isEditable = false,
-                onEmojiClick = { onCommentInputClick(it) },
-                onInputClick = { onCommentInputClick("") },
-                onSendClick = {},
+                onEmojiClick = { onEmojiClicked(it) },
+                onInputClick = onCommentInputClicked,
+                onSendClick = onSendClicked,
             )
         },
     ) { paddingValues ->
@@ -180,7 +184,7 @@ private fun Item(data: CommentUiState.Data, onReplyClicked: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = item.time,
+                    text = item.createdDate.toStringValue(),
                     style = AppTheme.specificTypography.bodySmall,
                     color = AppTheme.specificColorScheme.textSecondary,
                 )
@@ -198,13 +202,16 @@ private fun Item(data: CommentUiState.Data, onReplyClicked: () -> Unit) {
             Image(
                 painter = AppTheme.specificIcons.favoriteBorder.get(),
                 contentDescription = null,
-                modifier = Modifier.size(12.dp),
+                modifier = Modifier
+                    .size(12.dp)
+                    .align(Alignment.CenterHorizontally),
                 contentScale = ContentScale.Crop,
             )
             Text(
                 text = item.likes.toString(),
                 style = AppTheme.specificTypography.bodySmall,
                 color = AppTheme.specificColorScheme.textSecondary,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
             )
         }
     }

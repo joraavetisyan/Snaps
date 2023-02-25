@@ -1,7 +1,13 @@
 package io.snaps.corecommon.date
 
+import android.text.format.DateUtils.DAY_IN_MILLIS
+import android.text.format.DateUtils.SECOND_IN_MILLIS
+import android.text.format.DateUtils.getRelativeTimeSpanString
 import io.snaps.corecommon.strings.DEFAULT_LOCALE
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
@@ -34,3 +40,16 @@ fun getLocaleDateByPhotoDateFormat(): String {
         Date()
     )
 }
+
+fun LocalDateTime.toStringValue(): String = when {
+    Period.between(this.toLocalDate(), LocalDate.now()).days <= 1 -> getRelativeTimeSpanString(
+            toLong(), System.currentTimeMillis(), SECOND_IN_MILLIS
+    ).toString()
+    Period.between(this.toLocalDate(), LocalDate.now()).days <= 7 -> getRelativeTimeSpanString(
+            toLong(), System.currentTimeMillis(), DAY_IN_MILLIS
+    ).toString()
+    this.year == LocalDate.now().year -> toLocalDate().format("MMMM dd")
+    else -> toLocalDate().format("MMMM dd, yyyy")
+}
+
+private fun LocalDate.format(pattern: String) = this.format(DateTimeFormatter.ofPattern(pattern))

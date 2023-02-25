@@ -186,12 +186,12 @@ fun VideoClipScreen(
             sheetContent = {
                 CommentsScreen(
                     uiState = uiState,
-                    onCommentInputClick = {
-                        viewModel.onEmojiClicked(it)
-                        viewModel.onCommentInputClick()
-                    },
+                    onCommentInputClicked = viewModel::onCommentInputClick,
                     onCloseClicked = commentsSheetState::hideSheet,
                     onReplyClicked = commentInputSheetState::showSheet,
+                    onEmojiClicked = viewModel::onEmojiClicked,
+                    onSendClicked = viewModel::onCommentSendClick,
+                    onCommentChanged = viewModel::onCommentChanged,
                 )
             },
         ) {

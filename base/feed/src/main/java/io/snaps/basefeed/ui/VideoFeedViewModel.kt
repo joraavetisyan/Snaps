@@ -149,8 +149,18 @@ abstract class VideoFeedViewModel(
     }
 
     fun onCommentSendClick() {
-        _uiState.update { it.copy(comment = TextFieldValue("")) }
-        viewModelScope.launch { _command publish Command.HideCommentInputBottomDialog }
+        val comment = uiState.value.commentsUiState.items.firstOrNull() as? CommentUiState.Data ?: return
+        viewModelScope.launch {
+            action.execute {
+                commentRepository.createComment(
+                    videoId = comment.item.videoId,
+                    text = uiState.value.comment.text,
+                ).doOnSuccess {
+                    _command publish Command.HideCommentInputBottomDialog
+                    _uiState.update { it.copy(comment = TextFieldValue("")) }
+                }
+            }
+        }
     }
 
     fun onEmojiClicked(emoji: String) {
