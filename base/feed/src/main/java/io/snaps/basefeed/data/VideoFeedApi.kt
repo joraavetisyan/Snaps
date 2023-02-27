@@ -2,7 +2,11 @@ package io.snaps.basefeed.data
 
 import io.snaps.coredata.network.BaseResponse
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
+import io.snaps.corecommon.model.Completable
+import io.snaps.corecommon.model.Uuid
 import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface VideoFeedApi {
@@ -18,4 +22,9 @@ interface VideoFeedApi {
         @Query("from") from: Int,
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
+
+    @POST("video/{videoId}/like")
+    suspend fun like(
+        @Path("videoId") videoId: Uuid,
+    ): BaseResponse<Completable>
 }

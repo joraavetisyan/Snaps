@@ -4,7 +4,11 @@ import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
+import io.snaps.corecommon.model.Uuid
+import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.PagedLoaderParams
+import io.snaps.coredata.network.apiCall
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
@@ -15,9 +19,12 @@ interface VideoFeedRepository {
     suspend fun refreshFeed(feedType: VideoFeedType): Effect<Completable>
 
     suspend fun loadNextFeedPage(feedType: VideoFeedType): Effect<Completable>
+
+    suspend fun like(videoId: Uuid): Effect<Completable>
 }
 
 class VideoFeedRepositoryImpl @Inject constructor(
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val videoFeedApi: VideoFeedApi,
     private val loaderFactory: VideoFeedLoaderFactory,
 ) : VideoFeedRepository {
@@ -49,4 +56,10 @@ class VideoFeedRepositoryImpl @Inject constructor(
 
     override suspend fun loadNextFeedPage(feedType: VideoFeedType): Effect<Completable> =
         getLoader(feedType).loadNext()
+
+    override suspend fun like(videoId: Uuid): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            videoFeedApi.like(videoId)
+        }
+    }
 }

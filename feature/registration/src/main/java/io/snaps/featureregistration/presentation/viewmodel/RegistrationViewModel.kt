@@ -121,7 +121,7 @@ class RegistrationViewModel @Inject constructor(
         action.execute {
             authRepository.signInWithEmail(
                 email = uiState.value.emailAddressValue,
-                password = uiState.value.confirmPasswordValue,
+                password = uiState.value.passwordValue,
             )
         }.doOnSuccess {
             sessionRepository.onLogin()

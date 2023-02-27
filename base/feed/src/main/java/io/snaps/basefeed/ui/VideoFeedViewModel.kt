@@ -5,6 +5,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.viewModelScope
 import io.snaps.basefeed.data.CommentRepository
 import io.snaps.basefeed.data.VideoFeedRepository
+import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseprofile.data.ProfileRepository
@@ -46,6 +47,8 @@ abstract class VideoFeedViewModel(
     private var authorLoadJob: Job? = null
     private var loaded: Boolean = false
 
+    private var videoFeedPageModel: VideoFeedPageModel? = null
+
     init {
         subscribeToProfile()
         subscribeOnVideoFeed()
@@ -59,6 +62,7 @@ abstract class VideoFeedViewModel(
 
     private fun subscribeOnVideoFeed() {
         videoFeedRepository.getFeedState(videoFeedType).map {
+            videoFeedPageModel = it
             it.toVideoFeedUiState(
                 shimmerListSize = 1,
                 onClipClicked = ::onClipClicked,
@@ -132,9 +136,36 @@ abstract class VideoFeedViewModel(
         viewModelScope.launch { _command publish Command.OpenProfileScreen(clipModel.authorId) }
     }
 
-    fun onLikeClicked(clipModel: VideoClipModel) {
+    fun onLikeClicked(clipModel: VideoClipModel) = viewModelScope.launch {
+        likeVideoClip(clipModel)
+        action.execute {
+            videoFeedRepository.like(clipModel.id)
+        }
     }
 
+    private fun likeVideoClip(clipModel: VideoClipModel) {
+        val videoClips = videoFeedPageModel?.loadedPageItems?.map {
+            when (it.id) {
+                clipModel.id -> it.copy(
+                    isLiked = !clipModel.isLiked,
+                    likeCount = clipModel.likeCount + 1,
+                )
+                else -> it
+            }
+        } ?: emptyList()
+
+        videoFeedPageModel = videoFeedPageModel?.copy(loadedPageItems = videoClips)
+        _uiState.update {
+            it.copy(
+                videoFeedUiState = videoFeedPageModel?.toVideoFeedUiState(
+                    shimmerListSize = 1,
+                    onClipClicked = ::onClipClicked,
+                    onReloadClicked = ::onReloadClicked,
+                    onListEndReaching = ::onListEndReaching,
+                ) ?: VideoFeedUiState(),
+            )
+        }
+    }
     fun onCommentClicked(clipModel: VideoClipModel) {
         bottomBarVisibilitySource.updateState(false)
         viewModelScope.launch { _command publish Command.ShowCommentsBottomDialog }

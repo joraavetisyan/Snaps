@@ -5,6 +5,8 @@ import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rVideos
 import io.snaps.corecommon.mock.rInt
+import io.snaps.corecommon.model.Completable
+import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
 
@@ -56,5 +58,14 @@ class FakeVideoFeedApi : VideoFeedApi {
                 )
             }
         ).also { popularGeneration++ }
+    }
+
+    override suspend fun like(videoId: Uuid): BaseResponse<Completable> {
+        log("Requesting like video")
+        delay(mockDelay)
+        return BaseResponse(
+            actualTimestamp = 1L,
+            data = Completable,
+        )
     }
 }

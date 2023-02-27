@@ -65,6 +65,7 @@ import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseplayer.ui.ReelPlayer
 import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.ext.toFormatDecimal
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.defaultTileRipple
@@ -453,13 +454,13 @@ private fun VideoClipEndItems(
             } else {
                 AppTheme.specificIcons.favorite
             },
-            text = clipModel.likeCount.toString(),
+            text = clipModel.likeCount.toFormatDecimal(),
             onIconClicked = { onLikeClicked(clipModel) },
         )
 
         TextedIcon(
             icon = AppTheme.specificIcons.comment,
-            text = clipModel.commentCount.toString(),
+            text = clipModel.commentCount.toFormatDecimal(),
             onIconClicked = { onCommentClicked(clipModel) },
         )
 
