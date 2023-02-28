@@ -1,5 +1,6 @@
 package io.snaps.basefeed.data
 
+import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.corecommon.model.Completable
@@ -21,6 +22,8 @@ interface VideoFeedRepository {
     suspend fun loadNextFeedPage(feedType: VideoFeedType): Effect<Completable>
 
     suspend fun like(videoId: Uuid): Effect<Completable>
+
+    suspend fun addVideo(title: String, description: String, fileId: Uuid): Effect<Completable>
 }
 
 class VideoFeedRepositoryImpl @Inject constructor(
@@ -60,6 +63,22 @@ class VideoFeedRepositoryImpl @Inject constructor(
     override suspend fun like(videoId: Uuid): Effect<Completable> {
         return apiCall(ioDispatcher) {
             videoFeedApi.like(videoId)
+        }
+    }
+
+    override suspend fun addVideo(
+        title: String,
+        description: String,
+        fileId: Uuid,
+    ): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            videoFeedApi.addVideo(
+                AddVideoRequestDto(
+                    title = title,
+                    description = description,
+                    thumbnailFileId = fileId,
+                )
+            )
         }
     }
 }

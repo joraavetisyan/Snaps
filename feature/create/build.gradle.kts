@@ -15,5 +15,8 @@ dependencies {
 
     implementation(projects.baseSources)
     implementation(projects.basePlayer)
+    implementation(projects.baseFile)
+    implementation(projects.baseFeed)
+
     implementation(*Libs.bundle.camerax)
 }

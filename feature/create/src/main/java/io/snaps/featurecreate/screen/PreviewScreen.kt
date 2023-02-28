@@ -36,7 +36,11 @@ fun PreviewScreen(
 
     viewModel.command.collectAsCommand {}
 
-    PreviewScreen(uiState = uiState, onBackClicked = router::back)
+    PreviewScreen(
+        uiState = uiState,
+        onBackClicked = router::back,
+        onProceedClicked = viewModel::onProceedClicked,
+    )
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -44,6 +48,7 @@ fun PreviewScreen(
 private fun PreviewScreen(
     uiState: PreviewViewModel.UiState,
     onBackClicked: () -> Boolean,
+    onProceedClicked: () -> Unit,
 ) {
     Box(Modifier.fillMaxSize()) {
         ReelPlayer(
@@ -63,7 +68,7 @@ private fun PreviewScreen(
             SimpleButtonActionM(onClick = { onBackClicked() }) {
                 SimpleButtonContent(text = StringKey.PreviewVideoActionDiscard.textValue())
             }
-            SimpleButtonActionM(onClick = { /*TODO*/ }) {
+            SimpleButtonActionM(onClick = onProceedClicked) {
                 SimpleButtonContent(text = StringKey.PreviewVideoActionProceed.textValue())
             }
         }

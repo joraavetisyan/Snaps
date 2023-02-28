@@ -1,5 +1,6 @@
 package io.snaps.basefeed.data
 
+import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.mock.mockDelay
@@ -62,6 +63,15 @@ class FakeVideoFeedApi : VideoFeedApi {
 
     override suspend fun like(videoId: Uuid): BaseResponse<Completable> {
         log("Requesting like video")
+        delay(mockDelay)
+        return BaseResponse(
+            actualTimestamp = 1L,
+            data = Completable,
+        )
+    }
+
+    override suspend fun addVideo(body: AddVideoRequestDto): BaseResponse<Completable> {
+        log("Requesting add video")
         delay(mockDelay)
         return BaseResponse(
             actualTimestamp = 1L,
