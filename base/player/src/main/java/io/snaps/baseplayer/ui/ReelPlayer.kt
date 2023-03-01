@@ -36,8 +36,6 @@ import androidx.media3.ui.PlayerView
 import io.snaps.corecommon.model.FullUrl
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
 
 @Composable
 fun ReelPlayer(

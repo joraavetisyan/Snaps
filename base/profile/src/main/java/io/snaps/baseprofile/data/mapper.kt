@@ -28,6 +28,8 @@ fun UserInfoResponseDto.toProfileModel() = ProfileModel(
     level = level,
     experience = experience,
     quests = questInfo.quests.map(QuestItemDto::toQuestModel),
+    inviteCodeRegisteredBy = inviteCodeRegisteredBy,
+    ownInviteCode = ownInviteCode,
 )
 
 fun QuestItemDto.toQuestModel() = QuestModel(

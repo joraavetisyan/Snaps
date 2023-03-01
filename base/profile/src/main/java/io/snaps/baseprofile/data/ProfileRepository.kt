@@ -2,6 +2,7 @@ package io.snaps.baseprofile.data
 
 import android.net.Uri
 import androidx.core.net.toFile
+import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.domain.CoinsModel
 import io.snaps.baseprofile.domain.ProfileModel
 import io.snaps.baseprofile.domain.QuestModel
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -42,6 +44,8 @@ interface ProfileRepository {
     suspend fun getUserInfoById(userId: String): Effect<ProfileModel>
 
     suspend fun createUser(uri: Uri, userName: String): Effect<Completable>
+
+    suspend fun setInviteCode(inviteCode: String): Effect<Completable>
 
     fun isCurrentUser(userId: Uuid): Boolean
 }
@@ -112,6 +116,22 @@ class ProfileRepositoryImpl @Inject constructor(
         }.also {
             _state tryPublish it
         }.toCompletable()
+    }
+
+    override suspend fun setInviteCode(inviteCode: String): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            api.setInviteCode(
+                SetInviteCodeRequestDto(inviteCode = inviteCode)
+            )
+        }.doOnSuccess {
+            _state.update {
+                if (it is Effect && it.isSuccess) {
+                    Effect.success(it.requireData.copy(inviteCodeRegisteredBy = inviteCode))
+                } else {
+                    it
+                }
+            }
+        }
     }
 
     override fun isCurrentUser(userId: Uuid): Boolean {

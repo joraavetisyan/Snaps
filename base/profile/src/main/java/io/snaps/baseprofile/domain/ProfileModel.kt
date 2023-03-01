@@ -20,5 +20,7 @@ data class ProfileModel(
     val hasNft: Boolean,
     val experience: Int,
     val level: Int,
-    val quests: List<QuestModel>
+    val quests: List<QuestModel>,
+    val inviteCodeRegisteredBy: String?,
+    val ownInviteCode: String?,
 )

@@ -1,10 +1,11 @@
 package io.snaps.featureprofile.presentation.screen.settings
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +44,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -58,11 +61,13 @@ import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
+import io.snaps.coreuicompose.uikit.button.SimpleButtonContentLoader
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
@@ -92,6 +97,8 @@ fun ReferralProgramScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
+    val clipboardManager = LocalClipboardManager.current
+
     viewModel.command.collectAsCommand {
         when (it) {
             ReferralProgramViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
@@ -111,10 +118,11 @@ fun ReferralProgramScreen(
         sheetContent = {
             when (uiState.bottomDialog) {
                 ReferralProgramViewModel.BottomDialog.ReferralCode -> ReferralCodeDialog(
-                    referralCode = uiState.referralCode,
+                    referralCode = uiState.inviteCodeValue,
                     isInviteUserButtonEnabled = uiState.isReferralCodeValid,
+                    isLoading = uiState.isLoading,
                     onInviteUserClicked = viewModel::onReferralCodeDialogButtonClicked,
-                    onReferralCodeValueChanged = viewModel::onReferralCodeValueChanged,
+                    onInviteCodeValueChanged = viewModel::onInviteCodeValueChanged,
                 )
             }
         },
@@ -123,8 +131,16 @@ fun ReferralProgramScreen(
             uiState = uiState,
             headerState = headerState.value,
             onEnterCodeClicked = viewModel::onEnterCodeClicked,
-            onReferralCodeClicked = {},
-            onReferralLinkClicked = {},
+            onReferralCodeClicked = {
+                clipboardManager.setText(
+                    AnnotatedString(uiState.referralCode)
+                )
+            },
+            onReferralLinkClicked = {
+                clipboardManager.setText(
+                    AnnotatedString(uiState.referralLink)
+                )
+            },
             onInviteUserButtonClicked = viewModel::onInviteUserButtonClicked,
             onDismissRequest = viewModel::onDismissRequest,
             onDialogCloseButtonClicked = viewModel::onCloseDialogClicked,
@@ -312,7 +328,7 @@ private fun RowScope.DirectReferralCard(
             }
             Text(
                 text = title,
-                style = AppTheme.specificTypography.titleMedium,
+                style = AppTheme.specificTypography.titleSmall,
                 modifier = Modifier.padding(top = 12.dp, bottom = 4.dp),
             )
             Text(
@@ -340,7 +356,7 @@ private fun CopyButton(
                 shape = CircleShape,
             )
             .background(color = AppTheme.specificColorScheme.white, shape = CircleShape)
-            .clickable { onClick() }
+            .defaultTileRipple(shape = CircleShape) { onClick() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -373,12 +389,14 @@ private fun CopyButton(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun ReferralCodeDialog(
     referralCode: String,
     isInviteUserButtonEnabled: Boolean,
+    isLoading: Boolean,
     onInviteUserClicked: () -> Unit,
-    onReferralCodeValueChanged: (String) -> Unit,
+    onInviteCodeValueChanged: (String) -> Unit,
 ) {
     SimpleBottomDialogUI(StringKey.ReferralProgramCodeDialogTitle.textValue()) {
         item {
@@ -395,7 +413,7 @@ private fun ReferralCodeDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp),
-                onValueChange = onReferralCodeValueChanged,
+                onValueChange = onInviteCodeValueChanged,
                 value = referralCode,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -416,7 +434,12 @@ private fun ReferralCodeDialog(
                 enabled = isInviteUserButtonEnabled,
                 onClick = onInviteUserClicked,
             ) {
-                SimpleButtonContent(text = StringKey.ReferralProgramCodeDialogActionInvite.textValue())
+                AnimatedContent(targetState = isLoading) {
+                    if (it) SimpleButtonContentLoader()
+                    else SimpleButtonContent(
+                        text = StringKey.ReferralProgramCodeDialogActionInvite.textValue()
+                    )
+                }
             }
         }
     }

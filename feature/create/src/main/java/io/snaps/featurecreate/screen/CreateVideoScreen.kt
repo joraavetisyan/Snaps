@@ -78,8 +78,6 @@ import io.snaps.featurecreate.toTextValue
 import io.snaps.featurecreate.viewmodel.CreateVideoViewModel
 import io.snaps.featurecreate.viewmodel.Timing
 import kotlinx.coroutines.launch
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
