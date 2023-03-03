@@ -11,6 +11,7 @@ import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.basefeed.data.CommentRepository
+import io.snaps.coredata.source.GetInstalledAppListUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,6 +22,7 @@ class PopularVideoFeedViewModel @Inject constructor(
     profileRepository: ProfileRepository,
     commentRepository: CommentRepository,
     bottomBarVisibilitySource: BottomBarVisibilitySource,
+    getInstalledAppListUseCase: GetInstalledAppListUseCase,
 ) : VideoFeedViewModel(
     videoFeedType = VideoFeedType.Popular(savedStateHandle.requireArgs<AppRoute.PopularVideoFeed.Args>().query),
     startPosition = savedStateHandle.requireArgs<AppRoute.PopularVideoFeed.Args>().position,
@@ -29,4 +31,5 @@ class PopularVideoFeedViewModel @Inject constructor(
     profileRepository = profileRepository,
     commentRepository = commentRepository,
     bottomBarVisibilitySource = bottomBarVisibilitySource,
+    getInstalledAppListUseCase = getInstalledAppListUseCase,
 )

@@ -81,4 +81,11 @@
         <!--            </intent-filter>-->
         <!--        </service>-->
     </application>
+
+    <queries>
+        <package android:name="com.instagram.android" />
+        <package android:name="com.facebook.katana" />
+        <package android:name="com.twitter.android" />
+    </queries>
+
 </manifest>

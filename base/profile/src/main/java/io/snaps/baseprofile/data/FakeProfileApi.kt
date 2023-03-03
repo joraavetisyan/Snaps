@@ -66,6 +66,7 @@ class FakeProfileApi : ProfileApi {
         questDate = "2023-02-07T02:46:30.3218237+00:00",
         updatedDate = "2023-02-07T02:46:30.3218237+00:00",
         experience = 0,
+        energy = 20,
         quests = listOf(
             QuestItemDto(
                 energyProgress = 2,

@@ -12,8 +12,6 @@ interface TasksRepository {
 
     suspend fun historyTasks(): Effect<List<TaskModel>>
 
-    suspend fun currentTasks(): Effect<List<TaskModel>>
-
     suspend fun taskById(id: Uuid): Effect<TaskModel>
 }
 
@@ -25,14 +23,6 @@ class TasksRepositoryImpl @Inject constructor(
     override suspend fun historyTasks(): Effect<List<TaskModel>> {
         return apiCall(ioDispatcher) {
             tasksApi.historyTasks()
-        }.map {
-            it.toModelList()
-        }
-    }
-
-    override suspend fun currentTasks(): Effect<List<TaskModel>> {
-        return apiCall(ioDispatcher) {
-            tasksApi.currentTasks()
         }.map {
             it.toModelList()
         }

@@ -9,6 +9,7 @@ import io.snaps.basefeed.ui.VideoFeedViewModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.coredata.network.Action
+import io.snaps.coredata.source.GetInstalledAppListUseCase
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import javax.inject.Inject
@@ -21,6 +22,7 @@ class UserVideoFeedViewModel @Inject constructor(
     profileRepository: ProfileRepository,
     commentRepository: CommentRepository,
     bottomBarVisibilitySource: BottomBarVisibilitySource,
+    getInstalledAppListUseCase: GetInstalledAppListUseCase,
 ) : VideoFeedViewModel(
     videoFeedType = VideoFeedType.User(savedStateHandle.requireArgs<AppRoute.UserVideoFeed.Args>().userId),
     startPosition = savedStateHandle.requireArgs<AppRoute.UserVideoFeed.Args>().position,
@@ -29,4 +31,5 @@ class UserVideoFeedViewModel @Inject constructor(
     profileRepository = profileRepository,
     commentRepository = commentRepository,
     bottomBarVisibilitySource = bottomBarVisibilitySource,
+    getInstalledAppListUseCase = getInstalledAppListUseCase,
 )

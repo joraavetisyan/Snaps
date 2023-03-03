@@ -11,8 +11,11 @@ import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.model.SocialNetwork
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.Action
+import io.snaps.coredata.source.AppModel
+import io.snaps.coredata.source.GetInstalledAppListUseCase
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.Job
@@ -34,6 +37,7 @@ abstract class VideoFeedViewModel(
     private val profileRepository: ProfileRepository,
     private val commentRepository: CommentRepository,
     private val bottomBarVisibilitySource: BottomBarVisibilitySource,
+    private val getInstalledAppListUseCase: GetInstalledAppListUseCase,
     val startPosition: Int = 0,
 ) : SimpleViewModel() {
 
@@ -50,6 +54,13 @@ abstract class VideoFeedViewModel(
     private var videoFeedPageModel: VideoFeedPageModel? = null
 
     init {
+        _uiState.update { state ->
+            state.copy(
+                shareDialogItems = getInstalledAppListUseCase.invoke(
+                    SocialNetwork.values().map { it.url }.toList()
+                )
+            )
+        }
         subscribeToProfile()
         subscribeOnVideoFeed()
     }
@@ -168,7 +179,10 @@ abstract class VideoFeedViewModel(
     }
     fun onCommentClicked(clipModel: VideoClipModel) {
         bottomBarVisibilitySource.updateState(false)
-        viewModelScope.launch { _command publish Command.ShowCommentsBottomDialog }
+        _uiState.update {
+            it.copy(bottomDialogType = BottomDialogType.Comments)
+        }
+        viewModelScope.launch { _command publish Command.ShowBottomDialog }
     }
 
     fun onCommentChanged(newValue: TextFieldValue) {
@@ -201,7 +215,22 @@ abstract class VideoFeedViewModel(
         }
     }
 
-    fun onShareClicked(clipModel: VideoClipModel) {
+    fun onShareClicked(clipModel: VideoClipModel) = viewModelScope.launch {
+        bottomBarVisibilitySource.updateState(false)
+        _uiState.update {
+            it.copy(bottomDialogType = BottomDialogType.Share(clipModel.url))
+        }
+        _command publish Command.ShowBottomDialog
+    }
+
+    fun onShareDialogItemClicked(packageName: String) = viewModelScope.launch {
+        _command publish Command.HideBottomDialog
+        val socialNetwork = SocialNetwork.values().first {
+            packageName.contains(it.url)
+        }
+        action.execute {
+            videoFeedRepository.shareInfo(socialNetwork)
+        }
     }
 
     data class UiState(
@@ -211,6 +240,8 @@ abstract class VideoFeedViewModel(
         val comment: TextFieldValue = TextFieldValue(""),
         val videoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
         val commentsUiState: CommentsUiState = CommentsUiState(),
+        val shareDialogItems: List<AppModel> = emptyList(),
+        val bottomDialogType: BottomDialogType = BottomDialogType.Comments,
     ) {
 
         val commentListSize = if (commentsUiState.items.none { it is CommentUiState.Shimmer }) {
@@ -219,9 +250,14 @@ abstract class VideoFeedViewModel(
         } else 0
     }
 
+    sealed class BottomDialogType {
+        object Comments : BottomDialogType()
+        data class Share(val url: String) : BottomDialogType()
+    }
+
     sealed class Command {
-        object ShowCommentsBottomDialog : Command()
-        object HideCommentsBottomDialog : Command()
+        object ShowBottomDialog : Command()
+        object HideBottomDialog : Command()
         object ShowCommentInputBottomDialog : Command()
         object HideCommentInputBottomDialog : Command()
         data class ScrollToPosition(val position: Int) : Command()

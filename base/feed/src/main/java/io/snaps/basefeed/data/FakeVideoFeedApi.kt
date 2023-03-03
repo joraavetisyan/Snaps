@@ -1,6 +1,7 @@
 package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.AddVideoRequestDto
+import io.snaps.basefeed.data.model.ShareInfoRequestDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.mock.mockDelay
@@ -24,6 +25,7 @@ class FakeVideoFeedApi : VideoFeedApi {
             data = List(count) {
                 VideoFeedItemResponseDto(
                     url = rVideos.random(),
+                    internalId = "${popularGeneration}video$it",
                     entityId = "${generation}video$it",
                     createdDate = "",
                     viewsCount = rInt,
@@ -32,6 +34,7 @@ class FakeVideoFeedApi : VideoFeedApi {
                     title = "title $it",
                     description = "description $it",
                     authorUserId = "authorUserId$it",
+                    thumbnailUrl = "https://picsum.photos/177/222",
                 )
             }
         ).also { generation++ }
@@ -49,6 +52,7 @@ class FakeVideoFeedApi : VideoFeedApi {
                 VideoFeedItemResponseDto(
                     url = rVideos.random(),
                     entityId = "${popularGeneration}video$it",
+                    internalId = "${popularGeneration}video$it",
                     createdDate = "",
                     viewsCount = rInt,
                     commentsCount = rInt,
@@ -56,6 +60,7 @@ class FakeVideoFeedApi : VideoFeedApi {
                     title = "title $it",
                     description = "description $it",
                     authorUserId = "authorUserId$it",
+                    thumbnailUrl = "https://picsum.photos/177/222",
                 )
             }
         ).also { popularGeneration++ }
@@ -70,8 +75,29 @@ class FakeVideoFeedApi : VideoFeedApi {
         )
     }
 
-    override suspend fun addVideo(body: AddVideoRequestDto): BaseResponse<Completable> {
+    override suspend fun addVideo(body: AddVideoRequestDto): BaseResponse<VideoFeedItemResponseDto> {
         log("Requesting add video")
+        delay(mockDelay)
+        return BaseResponse(
+            actualTimestamp = 1L,
+            data = VideoFeedItemResponseDto(
+                url = rVideos.random(),
+                entityId = "${popularGeneration}video",
+                internalId = "${popularGeneration}video",
+                createdDate = "",
+                viewsCount = rInt,
+                commentsCount = rInt,
+                likesCount = rInt,
+                title = "title",
+                description = "description",
+                authorUserId = "authorUserId",
+                thumbnailUrl = "https://picsum.photos/177/222",
+            ),
+        )
+    }
+
+    override suspend fun shareInfo(body: ShareInfoRequestDto): BaseResponse<Completable> {
+        log("Requesting share video")
         delay(mockDelay)
         return BaseResponse(
             actualTimestamp = 1L,

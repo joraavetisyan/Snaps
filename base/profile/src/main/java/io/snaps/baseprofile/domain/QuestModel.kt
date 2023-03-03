@@ -1,6 +1,7 @@
 package io.snaps.baseprofile.domain
 
 import io.snaps.baseprofile.data.model.QuestType
+import io.snaps.corecommon.model.SocialNetwork
 
 data class QuestModel(
     val energy: Int,
@@ -9,5 +10,5 @@ data class QuestModel(
     val count: Int,
     val madeCount: Int,
     val completed: Boolean,
-    val network: String?,
+    val network: SocialNetwork?,
 )

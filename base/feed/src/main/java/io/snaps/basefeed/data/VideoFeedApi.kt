@@ -1,6 +1,7 @@
 package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.AddVideoRequestDto
+import io.snaps.basefeed.data.model.ShareInfoRequestDto
 import io.snaps.coredata.network.BaseResponse
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.corecommon.model.Completable
@@ -33,5 +34,10 @@ interface VideoFeedApi {
     @POST("video")
     suspend fun addVideo(
         @Body body: AddVideoRequestDto,
+    ): BaseResponse<VideoFeedItemResponseDto>
+
+    @POST("share-info")
+    suspend fun shareInfo(
+        @Body body: ShareInfoRequestDto,
     ): BaseResponse<Completable>
 }

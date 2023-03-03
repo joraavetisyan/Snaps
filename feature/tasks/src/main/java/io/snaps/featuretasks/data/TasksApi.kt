@@ -11,9 +11,6 @@ interface TasksApi {
     @GET("tasks/history")
     suspend fun historyTasks(): BaseResponse<List<TaskItemResponseDto>>
 
-    @GET("tasks/current")
-    suspend fun currentTasks(): BaseResponse<List<TaskItemResponseDto>>
-
     @GET("task")
     suspend fun task(
         @Query("taskId") taskId: Uuid,

@@ -74,3 +74,12 @@ data class WalletModel(
     @SerialName("coinValue") val coinValue: String,
     @SerialName("fiatValue") val fiatValue: String,
 )
+
+@Serializable
+enum class SocialNetwork(
+    val url: String
+) {
+    Instagram("com.instagram.android"),
+    Facebook("com.facebook.katana"),
+    Twitter("com.twitter.android"),
+}

@@ -18,15 +18,6 @@ class FakeTasksApi : TasksApi {
         }
     }
 
-    override suspend fun currentTasks(): BaseResponse<List<TaskItemResponseDto>> {
-        return BaseResponse(
-            actualTimestamp = 0L,
-            data = getTasks()
-        ).also {
-            delay(mockDelay)
-        }
-    }
-
     override suspend fun task(taskId: Uuid): BaseResponse<TaskItemResponseDto> {
         return BaseResponse(
             actualTimestamp = 0L,

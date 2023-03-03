@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -65,6 +66,8 @@ import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseplayer.ui.ReelPlayer
 import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.ext.startShareVideoIntent
 import io.snaps.corecommon.ext.toFormatDecimal
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coreui.viewmodel.collectAsCommand
@@ -73,6 +76,8 @@ import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.scroll.DetectScroll
 import io.snaps.coreuicompose.uikit.scroll.ScrollInfo
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
+import io.snaps.coreuicompose.uikit.status.ShareBottomDialog
+import io.snaps.coreuicompose.uikit.status.ShareBottomDialogItem
 import io.snaps.coreuitheme.compose.AppTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -106,7 +111,8 @@ fun VideoClipScreen(
     }
 
     val coroutineScope = rememberCoroutineScope()
-    val commentsSheetState = rememberModalBottomSheetState(
+    val context = LocalContext.current
+    val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true,
     )
@@ -116,7 +122,7 @@ fun VideoClipScreen(
     )
 
     LaunchedEffect(Unit) {
-        snapshotFlow { commentsSheetState.currentValue }.collect {
+        snapshotFlow { sheetState.currentValue }.collect {
             if (it == ModalBottomSheetValue.Hidden) {
                 viewModel.onBottomSheetHidden()
             }
@@ -137,8 +143,8 @@ fun VideoClipScreen(
 
     viewModel.command.collectAsCommand {
         when (it) {
-            VideoFeedViewModel.Command.ShowCommentsBottomDialog -> commentsSheetState.showSheet()
-            VideoFeedViewModel.Command.HideCommentsBottomDialog -> commentsSheetState.hideSheet()
+            VideoFeedViewModel.Command.ShowBottomDialog -> sheetState.showSheet()
+            VideoFeedViewModel.Command.HideBottomDialog -> sheetState.hideSheet()
             VideoFeedViewModel.Command.ShowCommentInputBottomDialog -> {
                 commentInputSheetState.showSheet()
                 focusRequester.requestFocus()
@@ -155,7 +161,7 @@ fun VideoClipScreen(
         }
     }
 
-    BackHandler(enabled = commentsSheetState.isVisible) {
+    BackHandler(enabled = sheetState.isVisible) {
         if (commentInputSheetState.isVisible) {
             if (focusRequester.freeFocus()) {
                 hideKeyboard()
@@ -163,7 +169,7 @@ fun VideoClipScreen(
                 commentInputSheetState.hideSheet()
             }
         } else {
-            commentsSheetState.hideSheet()
+            sheetState.hideSheet()
         }
     }
 
@@ -183,17 +189,35 @@ fun VideoClipScreen(
         },
     ) {
         ModalBottomSheetLayout(
-            sheetState = commentsSheetState,
+            sheetState = sheetState,
             sheetContent = {
-                CommentsScreen(
-                    uiState = uiState,
-                    onCommentInputClicked = viewModel::onCommentInputClick,
-                    onCloseClicked = commentsSheetState::hideSheet,
-                    onReplyClicked = commentInputSheetState::showSheet,
-                    onEmojiClicked = viewModel::onEmojiClicked,
-                    onSendClicked = viewModel::onCommentSendClick,
-                    onCommentChanged = viewModel::onCommentChanged,
-                )
+                when (uiState.bottomDialogType) {
+                    VideoFeedViewModel.BottomDialogType.Comments -> CommentsScreen(
+                        uiState = uiState,
+                        onCommentInputClicked = viewModel::onCommentInputClick,
+                        onCloseClicked = sheetState::hideSheet,
+                        onReplyClicked = commentInputSheetState::showSheet,
+                        onEmojiClicked = viewModel::onEmojiClicked,
+                        onSendClicked = viewModel::onCommentSendClick,
+                        onCommentChanged = viewModel::onCommentChanged,
+                    )
+                    is VideoFeedViewModel.BottomDialogType.Share -> ShareBottomDialog(
+                        header = "Share".textValue(),
+                        items = uiState.shareDialogItems.map { app ->
+                            ShareBottomDialogItem(
+                                name = app.name,
+                                icon = app.drawable,
+                                clickListener = {
+                                    context.startShareVideoIntent(
+                                        url = (uiState.bottomDialogType as VideoFeedViewModel.BottomDialogType.Share).url,
+                                        packageName = app.packageName,
+                                    )
+                                    viewModel.onShareDialogItemClicked(app.packageName)
+                                }
+                            )
+                        }
+                    )
+                }
             },
         ) {
             val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())

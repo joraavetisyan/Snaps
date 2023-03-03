@@ -1,6 +1,7 @@
 package io.snaps.baseprofile.data.model
 
 import io.snaps.corecommon.model.DateTime
+import io.snaps.corecommon.model.SocialNetwork
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -10,6 +11,7 @@ data class QuestInfoResponseDto(
     @SerialName("questDate") val questDate: DateTime,
     @SerialName("updatedDate") val updatedDate: DateTime,
     @SerialName("experience") val experience: Int,
+    @SerialName("energy") val energy: Int,
 )
 
 @Serializable
@@ -20,7 +22,7 @@ data class QuestItemDto(
     @SerialName("madeCount") val madeCount: Int,
 
     // For SocialPost
-    @SerialName("network") val network: String?,
+    @SerialName("network") val network: SocialNetwork?,
 )
 
 @Serializable

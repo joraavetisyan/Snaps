@@ -1,10 +1,13 @@
 package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.AddVideoRequestDto
+import io.snaps.basefeed.data.model.ShareInfoRequestDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
+import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
+import io.snaps.corecommon.model.SocialNetwork
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.PagedLoaderParams
@@ -23,7 +26,9 @@ interface VideoFeedRepository {
 
     suspend fun like(videoId: Uuid): Effect<Completable>
 
-    suspend fun addVideo(title: String, description: String, fileId: Uuid): Effect<Completable>
+    suspend fun addVideo(title: String, description: String, fileId: Uuid): Effect<VideoClipModel>
+
+    suspend fun shareInfo(socialNetwork: SocialNetwork): Effect<Completable>
 }
 
 class VideoFeedRepositoryImpl @Inject constructor(
@@ -70,7 +75,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
         title: String,
         description: String,
         fileId: Uuid,
-    ): Effect<Completable> {
+    ): Effect<VideoClipModel> {
         return apiCall(ioDispatcher) {
             videoFeedApi.addVideo(
                 AddVideoRequestDto(
@@ -78,6 +83,16 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     description = description,
                     thumbnailFileId = fileId,
                 )
+            )
+        }.map {
+            it.toModel()
+        }
+    }
+
+    override suspend fun shareInfo(socialNetwork: SocialNetwork): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            videoFeedApi.shareInfo(
+                body = ShareInfoRequestDto(socialNetwork)
             )
         }
     }
