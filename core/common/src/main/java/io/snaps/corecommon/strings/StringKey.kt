@@ -120,6 +120,7 @@ enum class StringKey {
     TasksTitleHistory,
     TasksTitleMessageCurrent,
     TasksTitleMessageHistory,
+    TasksTitleRemainingTime,
 
     TaskWatchVideoTitle,
     TaskWatchVideoFieldJobCompleted,

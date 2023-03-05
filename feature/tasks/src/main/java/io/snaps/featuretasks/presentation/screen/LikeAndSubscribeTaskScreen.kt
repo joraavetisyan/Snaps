@@ -35,6 +35,7 @@ import io.snaps.coreuicompose.uikit.other.ShimmerTile
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.coreuicompose.uikit.other.SimpleCard
+import io.snaps.featuretasks.presentation.ui.TaskProgress
 import io.snaps.featuretasks.presentation.ui.TaskToolbar
 import io.snaps.featuretasks.presentation.viewmodel.TaskViewModel
 

@@ -1,18 +1,16 @@
 package io.snaps.featuretasks.data
 
-import io.snaps.featuretasks.data.model.TaskItemResponseDto
+import io.snaps.corecommon.date.toOffsetLocalDateTime
+import io.snaps.featuretasks.data.model.HistoryTaskItemResponseDto
 import io.snaps.featuretasks.domain.TaskModel
+import java.time.ZonedDateTime
 
-fun List<TaskItemResponseDto>.toModelList() = map(TaskItemResponseDto::toTaskModel)
+fun List<HistoryTaskItemResponseDto>.toModelList() = map(HistoryTaskItemResponseDto::toTaskModel)
 
-fun TaskItemResponseDto.toTaskModel() = TaskModel(
+fun HistoryTaskItemResponseDto.toTaskModel() = TaskModel(
     id = id,
-    title = title,
-    description = description,
-    type = type,
+    userId = userId,
+    date = requireNotNull(ZonedDateTime.parse(date)).toOffsetLocalDateTime(),
     energy = energy,
-    energyProgress = energyProgress,
-    count = count ?: 0,
-    madeCount = count ?: 0,
-    done = done,
+    experience = experience,
 )

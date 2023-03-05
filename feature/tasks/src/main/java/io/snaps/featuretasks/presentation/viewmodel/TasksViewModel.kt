@@ -10,12 +10,16 @@ import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.featuretasks.data.TasksRepository
+import io.snaps.featuretasks.domain.TaskModel
+import io.snaps.featuretasks.presentation.HistoryTasksUiState
+import io.snaps.featuretasks.presentation.toHistoryTasksUiState
 import io.snaps.featuretasks.presentation.toTaskTileState
 import io.snaps.featuretasks.presentation.ui.TaskTileState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
@@ -38,6 +42,7 @@ class TasksViewModel @Inject constructor(
     init {
         subscribeToCurrentQuests()
         subscribeToHistoryQuests()
+        loadCurrentTasks()
     }
 
     private fun subscribeToCurrentQuests() {
@@ -45,21 +50,23 @@ class TasksViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     current = state.toTaskTileState(
-                        onReloadClicked = ::onHistoryReloadClicked,
-                        onItemClicked = ::onItemClicked,
+                        onReloadClicked = ::onCurrentReloadClicked,
+                        onItemClicked = ::onCurrentTaskItemClicked,
                     )
                 )
             }
         }.launchIn(viewModelScope)
     }
 
-    private fun subscribeToHistoryQuests() { // todo
-        profileRepository.currentQuestsState.onEach { state ->
+    private fun subscribeToHistoryQuests() {
+        tasksRepository.getHistoryTasksState().map { state ->
             _uiState.update {
                 it.copy(
-                    history = state.toTaskTileState(
-                        onReloadClicked = ::onCurrentReloadClicked,
-                        onItemClicked = ::onItemClicked,
+                    history = state.toHistoryTasksUiState(
+                        shimmerListSize = 6,
+                        onReloadClicked = ::onHistoryReloadClicked,
+                        onListEndReaching = ::onListEndReaching,
+                        onItemClicked = ::onHistoryTaskItemClicked,
                     )
                 )
             }
@@ -72,13 +79,23 @@ class TasksViewModel @Inject constructor(
         }
     }
 
-    private fun onCurrentReloadClicked() = viewModelScope.launch {
+    private fun loadCurrentTasks() = viewModelScope.launch {
         action.execute {
             profileRepository.updateData()
         }
     }
 
-    private fun onItemClicked(quest: QuestModel) = viewModelScope.launch {
+    private fun onCurrentReloadClicked() {
+        loadCurrentTasks()
+    }
+
+    private fun onListEndReaching() = viewModelScope.launch {
+        action.execute {
+            tasksRepository.loadNextHistoryTaskPage()
+        }
+    }
+
+    private fun onCurrentTaskItemClicked(quest: QuestModel) = viewModelScope.launch {
         val args = AppRoute.TaskArgs(
             energy = quest.energy,
             energyProgress = quest.energyProgress,
@@ -95,9 +112,13 @@ class TasksViewModel @Inject constructor(
         _command publish command
     }
 
+    private fun onHistoryTaskItemClicked(task: TaskModel) = viewModelScope.launch {
+        // todo
+    }
+
     data class UiState(
         val current: List<TaskTileState> = List(6) { TaskTileState.Shimmer },
-        val history: List<TaskTileState> = List(6) { TaskTileState.Shimmer },
+        val history: HistoryTasksUiState = HistoryTasksUiState(),
     )
 
     sealed class Command {

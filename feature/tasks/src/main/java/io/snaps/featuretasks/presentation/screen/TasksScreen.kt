@@ -49,6 +49,8 @@ import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.coreuicompose.uikit.other.TitleSlider
+import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
+import io.snaps.featuretasks.presentation.historyTasksItems
 import io.snaps.featuretasks.presentation.viewmodel.TasksViewModel
 import kotlinx.coroutines.launch
 
@@ -142,19 +144,27 @@ private fun TasksScreen(
                 count = pages.size,
                 state = pagerState,
             ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    if (pagerState.currentPage == 0) {
+                if (pagerState.currentPage == 0) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
                         items(uiState.current) {
                             it.Content(modifier = Modifier)
                         }
-                    } else {
-                        items(uiState.history) {
-                            it.Content(modifier = Modifier)
-                        }
+                    }
+                } else {
+                    ScrollEndDetectLazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        onScrollEndDetected = uiState.history.onListEndReaching
+                    ) {
+                        historyTasksItems(
+                            uiState = uiState.history,
+                            modifier = Modifier,
+                        )
                     }
                 }
             }

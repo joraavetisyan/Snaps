@@ -1,16 +1,24 @@
 package io.snaps.featuretasks.data
 
+import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import io.snaps.featuretasks.domain.TaskModel
+import io.snaps.featuretasks.domain.TaskPageModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 interface TasksRepository {
 
-    suspend fun historyTasks(): Effect<List<TaskModel>>
+    fun getHistoryTasksState(): StateFlow<TaskPageModel>
+
+    suspend fun refreshHistoryTasks(): Effect<Completable>
+
+    suspend fun loadNextHistoryTaskPage(): Effect<Completable>
 
     suspend fun taskById(id: Uuid): Effect<TaskModel>
 }
@@ -18,15 +26,25 @@ interface TasksRepository {
 class TasksRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val tasksApi: TasksApi,
+    private val loaderFactory: HistoryTasksLoaderFactory,
 ) : TasksRepository {
 
-    override suspend fun historyTasks(): Effect<List<TaskModel>> {
-        return apiCall(ioDispatcher) {
-            tasksApi.historyTasks()
-        }.map {
-            it.toModelList()
+    private fun getLoader(): HistoryTasksLoader {
+        return loaderFactory.get(Unit) {
+            PagedLoaderParams(
+                action = { from, count ->
+                    tasksApi.historyTasks(from = from, count = count)
+                },
+                pageSize = 20,
+            )
         }
     }
+
+    override fun getHistoryTasksState(): StateFlow<TaskPageModel> = getLoader().state
+
+    override suspend fun refreshHistoryTasks(): Effect<Completable> = getLoader().refresh()
+
+    override suspend fun loadNextHistoryTaskPage(): Effect<Completable> = getLoader().loadNext()
 
     override suspend fun taskById(id: Uuid): Effect<TaskModel> {
         return apiCall(ioDispatcher) {

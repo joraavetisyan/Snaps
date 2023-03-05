@@ -63,7 +63,7 @@ class FakeProfileApi : ProfileApi {
     )
 
     private fun getQuestInfo() = QuestInfoResponseDto(
-        questDate = "2023-02-07T02:46:30.3218237+00:00",
+        questDate = "2023-03-06T00:00:00+00:00",
         updatedDate = "2023-02-07T02:46:30.3218237+00:00",
         experience = 0,
         energy = 20,

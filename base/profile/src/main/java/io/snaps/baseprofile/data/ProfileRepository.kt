@@ -5,7 +5,7 @@ import androidx.core.net.toFile
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.domain.CoinsModel
 import io.snaps.baseprofile.domain.ProfileModel
-import io.snaps.baseprofile.domain.QuestModel
+import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
@@ -37,7 +37,7 @@ interface ProfileRepository {
 
     val state: StateFlow<State<ProfileModel>>
 
-    val currentQuestsState: StateFlow<State<List<QuestModel>>>
+    val currentQuestsState: StateFlow<State<QuestInfoModel>>
 
     suspend fun updateData(): Effect<Completable>
 
@@ -69,7 +69,7 @@ class ProfileRepositoryImpl @Inject constructor(
         when (it) {
             is Loading -> Loading()
             is Effect -> when {
-                it.isSuccess -> Effect.success(it.requireData.quests)
+                it.isSuccess -> Effect.success(it.requireData.questInfo)
                 else -> Effect.error(requireNotNull(it.errorOrNull))
             }
         }

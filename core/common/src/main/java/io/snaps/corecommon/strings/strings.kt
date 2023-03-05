@@ -327,6 +327,9 @@ internal val strings = mapOf(
     key(StringKey.TasksTitleMessageHistory) to mapOf(
         SupportedLanguageKey.En to "Here you can see the history of your tasks and your progress.",
     ),
+    key(StringKey.TasksTitleRemainingTime) to mapOf(
+        SupportedLanguageKey.En to "Until the end of the round: %s",
+    ),
 
     key(StringKey.TaskWatchVideoTitle) to mapOf(
         SupportedLanguageKey.En to "Watch short videos",

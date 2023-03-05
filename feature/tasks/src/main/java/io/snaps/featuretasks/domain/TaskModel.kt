@@ -1,16 +1,15 @@
 package io.snaps.featuretasks.domain
 
+import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.model.Uuid
-import io.snaps.featuretasks.data.model.TaskType
+import java.time.LocalDateTime
 
 data class TaskModel(
     val id: Uuid,
-    val title: String,
-    val description: String,
+    val userId: Uuid,
+    val date: LocalDateTime,
+    val experience: Int,
     val energy: Int,
-    val energyProgress: Int,
-    val type: TaskType,
-    val count: Int,
-    val madeCount: Int,
-    val done: Boolean,
+    val energyProgress: Int = 5, // todo
+    val completed: Boolean = rBool, // todo
 )

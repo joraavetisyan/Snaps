@@ -11,6 +11,7 @@ import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 enum class DateTimeFormat(val code: String) {
 
@@ -50,6 +51,14 @@ fun LocalDateTime.toStringValue(): String = when {
     ).toString()
     this.year == LocalDate.now().year -> toLocalDate().format("MMMM dd")
     else -> toLocalDate().format("MMMM dd, yyyy")
+}
+
+fun Long.toTimeFormat(): String {
+    val hours = TimeUnit.MILLISECONDS.toHours(this)
+    val minutes = TimeUnit.MILLISECONDS.toMinutes(this) - TimeUnit.HOURS.toMinutes(hours)
+    val seconds = TimeUnit.MILLISECONDS.toSeconds(this) -
+            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(this))
+    return String.format("%02d:%02d:%02d", hours, minutes, seconds)
 }
 
 private fun LocalDate.format(pattern: String) = this.format(DateTimeFormatter.ofPattern(pattern))
