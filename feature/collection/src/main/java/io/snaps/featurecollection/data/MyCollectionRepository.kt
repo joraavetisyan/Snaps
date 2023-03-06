@@ -3,12 +3,13 @@ package io.snaps.featurecollection.data
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
+import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.State
-import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.tryPublish
+import io.snaps.featurecollection.data.model.MintNftRequestDto
 import io.snaps.featurecollection.domain.NftModel
 import io.snaps.featurecollection.domain.RankModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,9 +20,9 @@ import javax.inject.Inject
 
 interface MyCollectionRepository {
 
-    val nftCollectionState: StateFlow<State<NftModel>>
+    val nftCollectionState: StateFlow<State<List<NftModel>>>
 
-    val mysteryBoxCollectionState: StateFlow<State<NftModel>>
+    val mysteryBoxCollectionState: StateFlow<State<List<NftModel>>>
 
     suspend fun getRanks(): Effect<List<RankModel>>
 
@@ -29,7 +30,7 @@ interface MyCollectionRepository {
 
     suspend fun loadMysteryBoxCollection(): Effect<Completable>
 
-    suspend fun addNft(rankId: Uuid): Effect<Completable>
+    suspend fun mintNft(type: NftType): Effect<Completable>
 }
 
 class MyCollectionRepositoryImpl @Inject constructor(
@@ -38,25 +39,25 @@ class MyCollectionRepositoryImpl @Inject constructor(
     private val userDataStorage: UserDataStorage,
 ) : MyCollectionRepository {
 
-    private val _nftCollectionState = MutableStateFlow<State<NftModel>>(Loading())
+    private val _nftCollectionState = MutableStateFlow<State<List<NftModel>>>(Loading())
     override val nftCollectionState = _nftCollectionState.asStateFlow()
 
-    private val _mysteryBoxCollectionState = MutableStateFlow<State<NftModel>>(Loading())
+    private val _mysteryBoxCollectionState = MutableStateFlow<State<List<NftModel>>>(Loading())
     override val mysteryBoxCollectionState = _mysteryBoxCollectionState.asStateFlow()
 
     override suspend fun getRanks(): Effect<List<RankModel>> {
         return apiCall(ioDispatcher) {
-            myCollectionApi.ranks()
+            myCollectionApi.nft()
         }.map {
-            it.toModelList()
+            it.toRankModelList()
         }
     }
 
     override suspend fun loadNftCollection(): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            myCollectionApi.nftCollection()
+            myCollectionApi.userNftCollection()
         }.map {
-            it.toModel()
+            it.toNftModelList()
         }.also {
             _nftCollectionState tryPublish it
         }.toCompletable()
@@ -64,19 +65,22 @@ class MyCollectionRepositoryImpl @Inject constructor(
 
     override suspend fun loadMysteryBoxCollection(): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            myCollectionApi.nftCollection()
+            myCollectionApi.userNftCollection()
         }.map {
-            it.toModel()
+            it.toNftModelList()
         }.also {
             _mysteryBoxCollectionState tryPublish it
         }.toCompletable()
     }
 
-    override suspend fun addNft(rankId: Uuid): Effect<Completable> {
+    override suspend fun mintNft(type: NftType): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            myCollectionApi.addNft(rankId)
+            myCollectionApi.mintNft(
+                body = MintNftRequestDto(type),
+            )
         }.doOnSuccess {
             userDataStorage.hasNft = true
+            loadNftCollection()
         }
     }
 }

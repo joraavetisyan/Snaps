@@ -35,15 +35,22 @@ class MyCollectionViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     init {
-        subscribeOnNft()
-        subscribeOnMysteryBox()
-        loadNft()
-        loadMysteryBox()
+        viewModelScope.launch {
+            action.execute {
+                myCollectionRepository.getRanks()
+            }.doOnSuccess {
+                subscribeOnNft(it.size)
+                subscribeOnMysteryBox(it.size)
+                loadNft()
+                loadMysteryBox()
+            }
+        }
     }
 
-    private fun subscribeOnNft() {
+    private fun subscribeOnNft(maxCount: Int) {
         myCollectionRepository.nftCollectionState.map {
             it.toNftCollectionItemState(
+                maxCount = maxCount,
                 onAddItemClicked = ::onAddItemClicked,
                 onReloadClicked = ::onNftReloadClicked,
             )
@@ -52,9 +59,10 @@ class MyCollectionViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun subscribeOnMysteryBox() {
+    private fun subscribeOnMysteryBox(maxCount: Int) {
         myCollectionRepository.mysteryBoxCollectionState.map {
             it.toMysteryBoxCollectionItemState(
+                maxCount = maxCount,
                 onAddItemClicked = ::onAddItemClicked,
                 onReloadClicked = ::onMysteryBoxReloadClicked,
             )

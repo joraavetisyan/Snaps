@@ -1,17 +1,13 @@
 package io.snaps.featurecollection.domain
 
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.model.NftType
 
 data class NftModel(
-    val items: List<NftItem>,
-    val maxCount: Int,
-)
-
-data class NftItem(
-    val type: String,
-    val price: String,
+    val type: NftType,
+    val price: Int,
     val image: ImageValue,
-    val dailyReward: String,
-    val dailyUnlock: String,
-    val dailyConsumption: String,
+    val dailyReward: Int,
+    val dailyUnlock: Double,
+    val dailyConsumption: Double,
 )

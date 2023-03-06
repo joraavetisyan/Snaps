@@ -1,36 +1,34 @@
 package io.snaps.featurecollection.data
 
 import io.snaps.corecommon.container.ImageValue
-import io.snaps.featurecollection.data.model.NftItemDto
-import io.snaps.featurecollection.data.model.NftResponseDto
-import io.snaps.featurecollection.data.model.RankItemResponseDto
-import io.snaps.featurecollection.domain.NftItem
+import io.snaps.corecommon.mock.rBool
+import io.snaps.corecommon.mock.rDouble
+import io.snaps.corecommon.mock.rImage
+import io.snaps.corecommon.mock.rInt
+import io.snaps.featurecollection.data.model.NftItemResponseDto
+import io.snaps.featurecollection.data.model.UserNftItemResponseDto
 import io.snaps.featurecollection.domain.NftModel
 import io.snaps.featurecollection.domain.RankModel
 
-fun List<RankItemResponseDto>.toModelList() = map(RankItemResponseDto::toModel)
+fun List<NftItemResponseDto>.toRankModelList() = map(NftItemResponseDto::toModel)
 
-fun RankItemResponseDto.toModel() = RankModel(
-    id = id,
+private fun NftItemResponseDto.toModel() = RankModel(
     type = type,
-    price = price,
-    image = ImageValue.Url(image),
+    price = rInt, // todo
+    image = ImageValue.Url(rImage), // todo
     dailyReward = dailyReward,
     dailyUnlock = dailyUnlock,
     dailyConsumption = dailyConsumption,
-    isSelected = isSelected,
+    isSelected = rBool, // todo
 )
 
-fun NftResponseDto.toModel() = NftModel(
-    items = items.map(NftItemDto::toModel),
-    maxCount = maxCount,
-)
+fun List<UserNftItemResponseDto>.toNftModelList() = map(UserNftItemResponseDto::toModel)
 
-fun NftItemDto.toModel() = NftItem(
+private fun UserNftItemResponseDto.toModel() = NftModel(
     type = type,
-    price = price,
-    image = ImageValue.Url(image),
-    dailyReward = dailyReward,
-    dailyUnlock = dailyUnlock,
-    dailyConsumption = dailyConsumption,
+    price = rInt, // todo
+    image = ImageValue.Url(rImage), // todo
+    dailyConsumption = rDouble, // todo
+    dailyUnlock = rDouble, // todo
+    dailyReward = rInt, // todo
 )

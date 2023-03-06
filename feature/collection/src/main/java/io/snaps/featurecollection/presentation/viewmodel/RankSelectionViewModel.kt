@@ -3,6 +3,7 @@ package io.snaps.featurecollection.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.MainHeaderHandler
+import io.snaps.corecommon.model.NftType
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
@@ -53,9 +54,9 @@ class RankSelectionViewModel @Inject constructor(
     }
 
     private fun onItemClicked(rank: RankModel) = viewModelScope.launch {
-        if (rank.type == "Free") { // todo type
+        if (rank.type == NftType.Free) {
             action.execute {
-                myCollectionRepository.addNft(rank.id)
+                myCollectionRepository.mintNft(rank.type)
             }.doOnSuccess {
                 _command publish Command.OpenMainScreen
             }

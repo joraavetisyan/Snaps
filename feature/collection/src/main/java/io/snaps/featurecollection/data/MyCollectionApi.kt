@@ -1,27 +1,27 @@
 package io.snaps.featurecollection.data
 
 import io.snaps.corecommon.model.Completable
-import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
-import io.snaps.featurecollection.data.model.NftResponseDto
-import io.snaps.featurecollection.data.model.RankItemResponseDto
+import io.snaps.featurecollection.data.model.MintNftRequestDto
+import io.snaps.featurecollection.data.model.NftItemResponseDto
+import io.snaps.featurecollection.data.model.UserNftItemResponseDto
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Path
 
 interface MyCollectionApi {
 
-    @GET("nft")
-    suspend fun nftCollection(): BaseResponse<NftResponseDto>
+    @GET("user/nft")
+    suspend fun userNftCollection(): BaseResponse<List<UserNftItemResponseDto>>
 
     @GET("mystery-box")
-    suspend fun mysteryBoxCollection(): BaseResponse<NftResponseDto>
+    suspend fun mysteryBoxCollection(): BaseResponse<List<UserNftItemResponseDto>> // todo
 
-    @GET("rank")
-    suspend fun ranks(): BaseResponse<List<RankItemResponseDto>>
+    @GET("nft")
+    suspend fun nft(): BaseResponse<List<NftItemResponseDto>>
 
-    @POST("nft/{rankId}")
-    suspend fun addNft(
-        @Path("rankId") rankId: Uuid,
+    @POST("user/nft/mint")
+    suspend fun mintNft(
+        @Body body: MintNftRequestDto,
     ): BaseResponse<Completable>
 }

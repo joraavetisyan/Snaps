@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import io.snaps.baseprofile.ui.WorthWidget
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.addIf
@@ -38,7 +39,7 @@ import io.snaps.coreuitheme.compose.LocalStringHolder
 sealed class RankTileState : TileState {
 
     data class Data(
-        val type: String,
+        val type: NftType,
         val price: String,
         val image: ImageValue,
         val dailyReward: String,
@@ -105,7 +106,7 @@ private fun Data(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
-                    text = data.type,
+                    text = data.type.name,
                     style = AppTheme.specificTypography.labelMedium,
                 )
                 WorthWidget(ImageValue.ResImage(R.drawable.img_coin_silver) to data.price)

@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.defaultTileRipple
@@ -38,7 +39,7 @@ import io.snaps.coreuitheme.compose.LocalStringHolder
 sealed class CollectionItemState : TileState {
 
     data class Nft(
-        val type: String,
+        val type: NftType,
         val price: String,
         val image: ImageValue,
         val dailyReward: String,
@@ -103,7 +104,7 @@ private fun Nft(
 
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = data.type,
+            text = data.type.name,
             style = AppTheme.specificTypography.labelMedium,
         )
         Spacer(modifier = Modifier.height(8.dp))

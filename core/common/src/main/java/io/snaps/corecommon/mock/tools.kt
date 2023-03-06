@@ -16,3 +16,4 @@ const val mockDelay = 2000L
 
 val rInt get() = Random.nextInt(from = 0, until = 200000)
 val rBool get() = Random.nextBoolean()
+val rDouble get() = Random.nextDouble(0.0, 1.0)

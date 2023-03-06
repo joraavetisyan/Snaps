@@ -93,3 +93,19 @@ enum class QuestType {
     SocialShare,
     SocialPost,
 }
+
+@Serializable
+enum class NftType {
+    Free,
+    Newbee,
+    Viewer,
+    Follower,
+    Sub,
+    Sponsor,
+    Influencer,
+    FamousGuy,
+    Star,
+    Rockstar,
+    SuperStar,
+    Legend,
+}
