@@ -121,10 +121,25 @@ enum class StringKey {
     TasksTitleMessageCurrent,
     TasksTitleMessageHistory,
     TasksTitleRemainingTime,
+    TaskFieldJobCompleted,
 
     TaskWatchVideoTitle,
-    TaskWatchVideoFieldJobCompleted,
-    TaskLikeAndSubscribeTitle,
+    TaskWatchVideoDescription,
+
+    TaskLikeTitle,
+    TaskLikeDescription,
+
+    TaskSubscribeTitle,
+    TaskSubscribeDescription,
+
+    TaskPublishVideoTitle,
+    TaskPublishVideoDescription,
+
+    TaskSocialPostTitle,
+    TaskSocialPostDescription,
+
+    TaskSocialShareTitle,
+    TaskSocialShareDescription,
 
     TaskShareTitle,
 

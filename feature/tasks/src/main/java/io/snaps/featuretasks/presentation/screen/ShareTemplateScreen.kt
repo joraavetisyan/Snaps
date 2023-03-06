@@ -35,18 +35,18 @@ import io.snaps.coreuicompose.uikit.duplicate.ActionIconData
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featuretasks.ScreenNavigator
-import io.snaps.featuretasks.presentation.viewmodel.TaskViewModel
+import io.snaps.featuretasks.presentation.viewmodel.ShareTemplateViewModel
 
 @Composable
-fun ShareTaskScreen(
+fun ShareTemplateScreen(
     navHostController: NavHostController,
 ) {
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
-    val viewModel = hiltViewModel<TaskViewModel>()
+    val viewModel = hiltViewModel<ShareTemplateViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
 
-    ShareTaskScreen(
+    ShareTemplateScreen(
         uiState = uiState,
         onBackClicked = router::back,
         onSaveButtonClicked = viewModel::onSaveButtonClicked,
@@ -56,8 +56,8 @@ fun ShareTaskScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ShareTaskScreen(
-    uiState: TaskViewModel.UiState,
+private fun ShareTemplateScreen(
+    uiState: ShareTemplateViewModel.UiState,
     onBackClicked: () -> Boolean,
     onShareIconClicked: () -> Unit,
     onSaveButtonClicked: () -> Unit,

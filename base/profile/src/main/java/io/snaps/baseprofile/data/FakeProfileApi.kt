@@ -3,13 +3,13 @@ package io.snaps.baseprofile.data
 import io.snaps.baseprofile.data.model.QuestDto
 import io.snaps.baseprofile.data.model.QuestInfoResponseDto
 import io.snaps.baseprofile.data.model.QuestItemDto
-import io.snaps.baseprofile.data.model.QuestType
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.mock.rInt
 import io.snaps.corecommon.model.Completable
+import io.snaps.corecommon.model.QuestType
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
 import okhttp3.MultipartBody

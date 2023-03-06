@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package io.snaps.featuretasks.presentation.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,10 +27,14 @@ import androidx.navigation.NavHostController
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.QuestType
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
+import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.coreuicompose.uikit.other.SimpleCard
@@ -41,35 +42,53 @@ import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.featuretasks.presentation.ui.TaskProgress
 import io.snaps.featuretasks.presentation.ui.TaskToolbar
-import io.snaps.featuretasks.presentation.viewmodel.TaskViewModel
+import io.snaps.featuretasks.presentation.viewmodel.TaskDetailsViewModel
 
 @Composable
-fun WatchVideoTaskScreen(
+fun TaskDetailsScreen(
     navHostController: NavHostController,
 ) {
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
-    val viewModel = hiltViewModel<TaskViewModel>()
+    val viewModel = hiltViewModel<TaskDetailsViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
 
-    WatchVideoTaskScreen(
+    viewModel.command.collectAsCommand {
+        when (it) {
+            TaskDetailsViewModel.Command.OpenShareTemplate -> router.toShareTemplateScreen()
+            TaskDetailsViewModel.Command.OpenCreateVideo -> router.toCreateVideoScreen()
+            TaskDetailsViewModel.Command.OpenMainVideoFeed -> router.toMainVideoFeedScreen()
+        }
+    }
+
+    TaskDetailsScreen(
         uiState = uiState,
         onBackClicked = router::back,
+        onStartButtonClicked = viewModel::onStartButtonClicked,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun WatchVideoTaskScreen(
-    uiState: TaskViewModel.UiState,
+private fun TaskDetailsScreen(
+    uiState: TaskDetailsViewModel.UiState,
     onBackClicked: () -> Boolean,
+    onStartButtonClicked: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val title = when (uiState.type) {
+        QuestType.Like -> StringKey.TaskLikeTitle
+        QuestType.PublishVideo -> StringKey.TaskPublishVideoTitle
+        QuestType.SocialPost -> StringKey.TaskSocialPostTitle
+        QuestType.SocialShare -> StringKey.TaskSocialShareTitle
+        QuestType.Subscribe -> StringKey.TaskSubscribeTitle
+        QuestType.Watch -> StringKey.TaskWatchVideoTitle
+    }.textValue()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TaskToolbar(
-                title = StringKey.TaskWatchVideoTitle.textValue(),
+                title = title,
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 progress = uiState.energy,
                 scrollBehavior = scrollBehavior,
@@ -83,7 +102,11 @@ private fun WatchVideoTaskScreen(
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Content(uiState = uiState)
+            Content(
+                uiState = uiState,
+                onStartButtonClicked = onStartButtonClicked,
+
+            )
             uiState.messageBannerState?.Content(modifier = Modifier)
             if (uiState.isLoading) {
                 Shimmer()
@@ -94,18 +117,41 @@ private fun WatchVideoTaskScreen(
 
 @Composable
 private fun Content(
-    uiState: TaskViewModel.UiState,
+    uiState: TaskDetailsViewModel.UiState,
+    onStartButtonClicked: () -> Unit,
 ) {
+    val description = when (uiState.type) {
+        QuestType.Like -> StringKey.TaskLikeDescription
+        QuestType.PublishVideo -> StringKey.TaskPublishVideoDescription
+        QuestType.SocialPost -> StringKey.TaskSocialPostDescription
+        QuestType.SocialShare -> StringKey.TaskSocialShareDescription
+        QuestType.Subscribe -> StringKey.TaskSubscribeDescription
+        QuestType.Watch -> StringKey.TaskWatchVideoDescription
+    }.textValue()
     SimpleCard {
         TaskProgress(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .padding(top = 16.dp),
             progress = uiState.energyProgress,
             maxValue = uiState.energy,
         )
         Text(
-            modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 16.dp),
-            text = uiState.description,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+            text = description.get(),
             style = AppTheme.specificTypography.bodySmall,
         )
+        if (!uiState.completed) {
+            SimpleButtonActionM(
+                onClick = onStartButtonClicked,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp),
+            ) {
+                SimpleButtonContent(text = StringKey.ActionStart.textValue())
+            }
+        }
     }
     if (uiState.completed) {
         TaskCompletedMessage()
@@ -139,7 +185,7 @@ private fun TaskCompletedMessage() {
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                StringKey.TaskWatchVideoFieldJobCompleted.textValue().get(),
+                StringKey.TaskFieldJobCompleted.textValue().get(),
                 color = AppTheme.specificColorScheme.textGreen,
                 style = AppTheme.specificTypography.bodySmall,
             )

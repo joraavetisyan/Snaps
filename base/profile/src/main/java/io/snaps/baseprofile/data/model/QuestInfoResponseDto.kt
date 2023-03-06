@@ -1,6 +1,7 @@
 package io.snaps.baseprofile.data.model
 
 import io.snaps.corecommon.model.DateTime
+import io.snaps.corecommon.model.QuestType
 import io.snaps.corecommon.model.SocialNetwork
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -31,13 +32,3 @@ data class QuestDto(
     @SerialName("type") val type: QuestType,
     @SerialName("energy") val energy: Int,
 )
-
-@Serializable
-enum class QuestType {
-    Like,
-    PublishVideo,
-    Subscribe,
-    Watch,
-    SocialShare,
-    SocialPost,
-}

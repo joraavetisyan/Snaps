@@ -18,11 +18,12 @@ import io.snaps.coreuicompose.uikit.other.Progress
 
 @Composable
 fun TaskProgress(
+    modifier: Modifier = Modifier,
     progress: Int,
     maxValue: Int = 100,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {

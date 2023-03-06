@@ -1,11 +1,11 @@
 package io.snaps.featuretasks.presentation
 
-import io.snaps.baseprofile.data.model.QuestType
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.corecommon.date.toLong
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
+import io.snaps.corecommon.model.QuestType
 import io.snaps.corecommon.model.State
 import io.snaps.featuretasks.presentation.ui.TaskTileState
 

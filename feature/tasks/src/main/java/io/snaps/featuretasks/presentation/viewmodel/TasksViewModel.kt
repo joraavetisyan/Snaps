@@ -3,7 +3,6 @@ package io.snaps.featuretasks.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
-import io.snaps.baseprofile.data.model.QuestType
 import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -96,20 +95,14 @@ class TasksViewModel @Inject constructor(
     }
 
     private fun onCurrentTaskItemClicked(quest: QuestModel) = viewModelScope.launch {
-        val args = AppRoute.TaskArgs(
-            energy = quest.energy,
-            energyProgress = quest.energyProgress,
-            completed = quest.completed,
+        _command publish Command.OpenTaskDetailsScreen(
+            AppRoute.TaskDetails.Args(
+                type = quest.type,
+                energy = quest.energy,
+                energyProgress = quest.energyProgress,
+                completed = quest.completed,
+            )
         )
-        val command = when (quest.type) {
-            QuestType.Like -> Command.OpenLikeAndSubscribeTaskScreen(args)
-            QuestType.PublishVideo -> Command.OpenPublishVideoTaskScreen(args)
-            QuestType.SocialPost -> Command.OpenShareTaskScreen(args)
-            QuestType.Subscribe -> Command.OpenLikeAndSubscribeTaskScreen(args)
-            QuestType.SocialShare -> Command.OpenSocialShareTaskScreen(args)
-            QuestType.Watch -> Command.OpenWatchVideoTaskScreen(args)
-        }
-        _command publish command
     }
 
     private fun onHistoryTaskItemClicked(task: TaskModel) = viewModelScope.launch {
@@ -122,11 +115,6 @@ class TasksViewModel @Inject constructor(
     )
 
     sealed class Command {
-        data class OpenFindPointsTaskScreen(val args: AppRoute.TaskArgs) : Command()
-        data class OpenLikeAndSubscribeTaskScreen(val args: AppRoute.TaskArgs) : Command()
-        data class OpenShareTaskScreen(val args: AppRoute.TaskArgs) : Command()
-        data class OpenWatchVideoTaskScreen(val args: AppRoute.TaskArgs) : Command()
-        data class OpenPublishVideoTaskScreen(val args: AppRoute.TaskArgs) : Command()
-        data class OpenSocialShareTaskScreen(val args: AppRoute.TaskArgs) : Command()
+        data class OpenTaskDetailsScreen(val args: AppRoute.TaskDetails.Args) : Command()
     }
 }

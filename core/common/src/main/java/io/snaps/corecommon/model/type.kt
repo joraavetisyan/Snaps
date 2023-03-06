@@ -83,3 +83,13 @@ enum class SocialNetwork(
     Facebook("com.facebook.katana"),
     Twitter("com.twitter.android"),
 }
+
+@Serializable
+enum class QuestType {
+    Like,
+    PublishVideo,
+    Subscribe,
+    Watch,
+    SocialShare,
+    SocialPost,
+}

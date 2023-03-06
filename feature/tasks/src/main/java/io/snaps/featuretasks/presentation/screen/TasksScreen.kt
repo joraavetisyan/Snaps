@@ -65,12 +65,7 @@ fun TasksScreen(
 
     viewModel.command.collectAsCommand {
         when (it) {
-            is TasksViewModel.Command.OpenWatchVideoTaskScreen -> router.toWatchVideoTaskScreen(it.args)
-            is TasksViewModel.Command.OpenShareTaskScreen -> router.toShareTaskScreen(it.args)
-            is TasksViewModel.Command.OpenFindPointsTaskScreen -> router.toFindPointsTaskScreen(it.args)
-            is TasksViewModel.Command.OpenLikeAndSubscribeTaskScreen -> router.toLikeAndSubscribeTaskScreen(it.args)
-            is TasksViewModel.Command.OpenSocialShareTaskScreen -> { /*todo*/ }
-            is TasksViewModel.Command.OpenPublishVideoTaskScreen -> { /*todo*/ }
+            is TasksViewModel.Command.OpenTaskDetailsScreen -> router.toTaskDetailsScreen(it.args)
         }
     }
 
@@ -159,7 +154,7 @@ private fun TasksScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(12.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
-                        onScrollEndDetected = uiState.history.onListEndReaching
+                        onScrollEndDetected = uiState.history.onListEndReaching,
                     ) {
                         historyTasksItems(
                             uiState = uiState.history,

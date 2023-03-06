@@ -8,52 +8,37 @@ import io.snaps.corenavigation.base.FeatureNavDirection
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
-import io.snaps.featuretasks.presentation.screen.FindPointsTaskScreen
-import io.snaps.featuretasks.presentation.screen.LikeAndSubscribeTaskScreen
-import io.snaps.featuretasks.presentation.screen.ShareTaskScreen
+import io.snaps.featuretasks.presentation.screen.FindPointsScreen
+import io.snaps.featuretasks.presentation.screen.ShareTemplateScreen
+import io.snaps.featuretasks.presentation.screen.TaskDetailsScreen
 import io.snaps.featuretasks.presentation.screen.TasksScreen
-import io.snaps.featuretasks.presentation.screen.WatchVideoTaskScreen
 import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) :
     Navigator(navHostController) {
 
-    fun toShareTaskScreen(
-        args: AppRoute.TaskArgs,
+    fun toShareTemplateScreen() = navHostController.navigate(AppRoute.ShareTemplate)
+
+    fun toFindPointsScreen() = navHostController.navigate(AppRoute.FindPoints)
+
+    fun toTaskDetailsScreen(
+        args: AppRoute.TaskDetails.Args,
     ) = navHostController navigate FeatureNavDirection(
-        AppRoute.ShareTask,
+        AppRoute.TaskDetails,
         args,
     )
 
-    fun toLikeAndSubscribeTaskScreen(
-        args: AppRoute.TaskArgs,
-    ) = navHostController navigate FeatureNavDirection(
-        AppRoute.LikeAndSubscribeTask,
-        args,
-    )
+    fun toMainVideoFeedScreen() = navHostController.navigate(AppRoute.MainBottomBar.MainTab1Start)
 
-    fun toFindPointsTaskScreen(
-        args: AppRoute.TaskArgs,
-    ) = navHostController navigate FeatureNavDirection(
-        AppRoute.FindPointsTask,
-        args,
-    )
-
-    fun toWatchVideoTaskScreen(
-        args: AppRoute.TaskArgs,
-    ) = navHostController navigate FeatureNavDirection(
-        AppRoute.WatchVideoTask,
-        args,
-    )
+    fun toCreateVideoScreen() = navHostController.navigate(AppRoute.CreateVideo)
 }
 
 class TasksFeatureProviderImpl @Inject constructor() : TasksFeatureProvider {
 
     override fun NavGraphBuilder.tasksGraph(controller: NavHostController) {
         composable(AppRoute.MainBottomBar.MainTab3Start) { TasksScreen(controller) }
-        composable(AppRoute.ShareTask) { ShareTaskScreen(controller) }
-        composable(AppRoute.LikeAndSubscribeTask) { LikeAndSubscribeTaskScreen(controller) }
-        composable(AppRoute.FindPointsTask) { FindPointsTaskScreen(controller) }
-        composable(AppRoute.WatchVideoTask) { WatchVideoTaskScreen(controller) }
+        composable(AppRoute.ShareTemplate) { ShareTemplateScreen(controller) }
+        composable(AppRoute.TaskDetails) { TaskDetailsScreen(controller) }
+        composable(AppRoute.FindPoints) { FindPointsScreen(controller) }
     }
 }

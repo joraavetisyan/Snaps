@@ -1,6 +1,6 @@
 package io.snaps.baseprofile.domain
 
-import io.snaps.baseprofile.data.model.QuestType
+import io.snaps.corecommon.model.QuestType
 import io.snaps.corecommon.model.SocialNetwork
 import java.time.LocalDateTime
 

@@ -3,6 +3,7 @@ package io.snaps.corenavigation
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import io.snaps.corecommon.model.QuestType
 import io.snaps.corecommon.model.SubsType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.WalletModel
@@ -125,20 +126,20 @@ object AppRoute {
         )
     }
 
-    @Serializable
-    data class TaskArgs(
-        val energy: Int,
-        val energyProgress: Int,
-        val completed: Boolean,
-    )
+    object FindPoints : Route("FindPoints")
 
-    object FindPointsTask : RouteWithArg("FindPointsTask") // need pass TaskArgs
+    object ShareTemplate : Route("ShareTemplate")
 
-    object LikeAndSubscribeTask : RouteWithArg("LikeAndSubscribeTask") // need pass TaskArgs
+    object TaskDetails : RouteWithArg("TaskDetails") {
 
-    object ShareTask : RouteWithArg("ShareTask") // need pass TaskArgs
-
-    object WatchVideoTask : RouteWithArg("WatchVideoTask") // need pass TaskArgs
+        @Serializable
+        data class Args(
+            val type: QuestType,
+            val energy: Int,
+            val energyProgress: Int,
+            val completed: Boolean,
+        )
+    }
 
     object PopularVideoFeed : RouteWithArg("PopularVideoFeed") {
 

@@ -330,16 +330,50 @@ internal val strings = mapOf(
     key(StringKey.TasksTitleRemainingTime) to mapOf(
         SupportedLanguageKey.En to "Until the end of the round: %s",
     ),
+    key(StringKey.TaskFieldJobCompleted) to mapOf(
+        SupportedLanguageKey.En to "Job completed successfully",
+    ),
 
     key(StringKey.TaskWatchVideoTitle) to mapOf(
         SupportedLanguageKey.En to "Watch short videos",
     ),
-    key(StringKey.TaskWatchVideoFieldJobCompleted) to mapOf(
-        SupportedLanguageKey.En to "Job completed successfully",
+    key(StringKey.TaskWatchVideoDescription) to mapOf(
+        SupportedLanguageKey.En to "Watch at least 50 videos with a retention of at least 70%% to get 15 energy points.",
     ),
 
-    key(StringKey.TaskLikeAndSubscribeTitle) to mapOf(
-        SupportedLanguageKey.En to "Like and subscribe ",
+    key(StringKey.TaskLikeTitle) to mapOf(
+        SupportedLanguageKey.En to "Like",
+    ),
+    key(StringKey.TaskLikeDescription) to mapOf(
+        SupportedLanguageKey.En to "At least 10 likes",
+    ),
+
+    key(StringKey.TaskSubscribeTitle) to mapOf(
+        SupportedLanguageKey.En to "Subscribe",
+    ),
+    key(StringKey.TaskSubscribeDescription) to mapOf(
+        SupportedLanguageKey.En to "At least 5 subscriptions",
+    ),
+
+    key(StringKey.TaskPublishVideoTitle) to mapOf(
+        SupportedLanguageKey.En to "Post video to your profile",
+    ),
+    key(StringKey.TaskPublishVideoDescription) to mapOf(
+        SupportedLanguageKey.En to "The minimum video length is 5 seconds, the maximum video length is 1 minute = 15 energy points.",
+    ),
+
+    key(StringKey.TaskSocialPostTitle) to mapOf(
+        SupportedLanguageKey.En to "Post to Instagram",
+    ),
+    key(StringKey.TaskSocialPostDescription) to mapOf(
+        SupportedLanguageKey.En to "Post a post/story to Instagram with a template generated inside the app.",
+    ),
+
+    key(StringKey.TaskSocialShareTitle) to mapOf(
+        SupportedLanguageKey.En to "Social share",
+    ),
+    key(StringKey.TaskSocialShareDescription) to mapOf(
+        SupportedLanguageKey.En to "Share your video with friends in messengers",
     ),
 
     key(StringKey.TaskShareTitle) to mapOf(

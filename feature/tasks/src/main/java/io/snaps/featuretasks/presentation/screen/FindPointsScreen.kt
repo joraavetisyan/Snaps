@@ -58,20 +58,20 @@ import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.coreuicompose.uikit.other.SimpleCard
-import io.snaps.featuretasks.presentation.viewmodel.TaskViewModel
 import io.snaps.coreuicompose.uikit.other.Progress
 import io.snaps.featuretasks.presentation.ui.TaskToolbar
+import io.snaps.featuretasks.presentation.viewmodel.FindPointsViewModel
 
 @Composable
-fun FindPointsTaskScreen(
+fun FindPointsScreen(
     navHostController: NavHostController,
 ) {
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
-    val viewModel = hiltViewModel<TaskViewModel>()
+    val viewModel = hiltViewModel<FindPointsViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
 
-    FindPointsTaskScreen(
+    FindPointsScreen(
         uiState = uiState,
         onBackClicked = router::back,
         onPointIdChanged = viewModel::onPointIdChanged,
@@ -83,8 +83,8 @@ fun FindPointsTaskScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun FindPointsTaskScreen(
-    uiState: TaskViewModel.UiState,
+private fun FindPointsScreen(
+    uiState: FindPointsViewModel.UiState,
     onBackClicked: () -> Boolean,
     onPointIdChanged: (String) -> Unit,
     onConnectButtonClicked: () -> Unit,
