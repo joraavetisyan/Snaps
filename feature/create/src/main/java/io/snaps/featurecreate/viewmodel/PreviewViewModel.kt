@@ -9,6 +9,7 @@ import io.snaps.basefile.data.FileRepository
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
+import io.snaps.coreui.FileManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +24,7 @@ class PreviewViewModel @Inject constructor(
     private val action: Action,
     private val fileRepository: FileRepository,
     private val videoFeedRepository: VideoFeedRepository,
+    private val fileManager: FileManager,
 ) : SimpleViewModel() {
 
     private val args = savedStateHandle.requireArgs<AppRoute.PreviewVideo.Args>()
@@ -34,10 +36,11 @@ class PreviewViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     fun onProceedClicked() = viewModelScope.launch {
+        val file = fileManager.createFileFromUri(
+            Uri.parse(uiState.value.uri)
+        ) ?: return@launch
         action.execute {
-            fileRepository.uploadFile(
-                uri = Uri.parse(uiState.value.uri)
-            )
+            fileRepository.uploadFile(file)
         }.doOnSuccess {
             // todo
             videoFeedRepository.addVideo(

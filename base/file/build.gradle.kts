@@ -9,4 +9,5 @@ lifecycle()
 dependencies {
     implementation(projects.coreCommon)
     implementation(projects.coreData)
+    implementation(projects.coreUi)
 }

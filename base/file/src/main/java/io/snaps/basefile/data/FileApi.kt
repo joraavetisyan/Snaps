@@ -12,13 +12,14 @@ import retrofit2.http.Part
 import retrofit2.http.Query
 import retrofit2.http.Streaming
 
+
 interface FileApi {
 
     @Multipart
     @POST("file")
     suspend fun upload(
-        @Part file: MultipartBody.Part,
-    ): BaseResponse<UploadFileResponseDto>
+        @Part files: MultipartBody.Part,
+    ): BaseResponse<List<UploadFileResponseDto>>
 
     @Streaming
     @GET("file")

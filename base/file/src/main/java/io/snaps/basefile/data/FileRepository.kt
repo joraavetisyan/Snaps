@@ -9,17 +9,18 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.apiCall
+import io.snaps.coreui.FileManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 import java.io.InputStream
 import javax.inject.Inject
 
 interface FileRepository {
 
-    suspend fun uploadFile(uri: Uri): Effect<FileModel>
+    suspend fun uploadFile(file: File): Effect<FileModel>
 
     suspend fun downloadFile(fileId: Uuid): Effect<InputStream>
 }
@@ -28,11 +29,11 @@ class FileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val api: FileApi,
+    private val fileManager: FileManager,
 ) : FileRepository {
 
-    override suspend fun uploadFile(uri: Uri): Effect<FileModel> {
-        val file = uri.buildUpon().scheme("file").build().toFile()
-        val mediaType = "multipart/form-data".toMediaType()
+    override suspend fun uploadFile(file: File): Effect<FileModel> {
+        val mediaType = fileManager.getMimeType(file.path) ?: MultipartBody.FORM
 
         val multipartBody = MultipartBody.Part.createFormData(
             name = "files",
@@ -42,10 +43,7 @@ class FileRepositoryImpl @Inject constructor(
         return apiCall(ioDispatcher) {
             api.upload(multipartBody)
         }.map {
-            it.toFileModel()
-        }.doOnError { error, data ->
-            Log.e("errorUpload", error.code.toString())
-            Log.e("errorUpload", error.message.toString())
+            it.first().toFileModel()
         }
     }
 

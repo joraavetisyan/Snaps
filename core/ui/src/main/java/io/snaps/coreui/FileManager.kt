@@ -6,10 +6,15 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.provider.OpenableColumns
+import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import java.io.File
+import java.io.FileOutputStream
 import java.io.InputStream
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets
@@ -25,6 +30,34 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
     fun deleteFile(uri: Uri?) {
         uri ?: return
         contentResolver().delete(uri, null, null)
+    }
+
+    fun getMimeType(path: String): MediaType? {
+        return (MimeTypeMap.getSingleton()
+            .getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(path))
+            .orEmpty())
+            .toMediaTypeOrNull()
+    }
+
+    fun createFileFromUri(uri: Uri): File? {
+        return getNameFromUri(uri)?.let {
+            val tempFile = File(context.cacheDir, it)
+            var inputStream: InputStream? = null
+            var outputStream: FileOutputStream? = null
+            try {
+                tempFile.createNewFile()
+                outputStream = FileOutputStream(tempFile)
+                inputStream = contentResolver().openInputStream(uri)
+                inputStream?.copyTo(outputStream)
+                outputStream.flush()
+                tempFile
+            } catch (e: Exception) {
+                null
+            } finally {
+                inputStream?.close()
+                outputStream?.close()
+            }
+        }
     }
 
     fun createPublicFile(type: FileType): Uri {
@@ -125,6 +158,18 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
     private fun generateName(type: FileType) = when (type) {
         FileType.Pictures -> "image_" + getRandomId() + ".jpeg"
         FileType.Videos -> "video_" + getRandomId() + ".mp4"
+    }
+
+    private fun getNameFromUri(uri: Uri): String? {
+        return contentResolver()
+            .query(uri, null, null, null, null)
+            ?.run {
+                val nameIndex = getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                moveToFirst()
+                val fileName = getString(nameIndex)
+                close()
+                return@run fileName
+            }
     }
 }
 
