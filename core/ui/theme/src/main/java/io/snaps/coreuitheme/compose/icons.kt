@@ -2,6 +2,7 @@ package io.snaps.coreuitheme.compose
 
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.PlayArrow
@@ -55,6 +56,7 @@ object SpecificIcons {
     val chooseImage: IconValue = vector(Icons.Rounded.BrowseGallery)
     val reload: IconValue = vector(Icons.Rounded.Try)
     val search: IconValue = vector(Icons.Rounded.Search)
+    val arrowDropDown: IconValue = vector(Icons.Filled.ArrowDropDown)
 
     val camera: IconValue = resource(R.drawable.ic_camera)
     val cameraTimer: IconValue = resource(R.drawable.ic_camera_timer)

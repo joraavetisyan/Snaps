@@ -47,7 +47,7 @@ fun CommentPageModel.toCommentsUiState(
         )
         loadedPageItems.isEmpty() -> CommentsUiState(
             emptyState = EmptyListTileState(
-                message = "No data".textValue(),
+                title = "No data".textValue(),
                 image = ImageValue.ResImage(R.drawable.img_diamonds),
             )
         )

@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -18,10 +19,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
@@ -37,10 +41,12 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -50,26 +56,37 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.basewallet.domain.TotalBalanceModel
+import io.snaps.corecommon.R
 import io.snaps.corecommon.container.IconValue
+import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
+import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
+import io.snaps.coreuicompose.uikit.other.TitleSlider
+import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
 import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewallet.ScreenNavigator
+import io.snaps.featurewallet.data.model.TransactionType
+import io.snaps.featurewallet.domain.Reward
 import io.snaps.featurewallet.viewmodel.WalletViewModel
 import kotlinx.coroutines.launch
 
@@ -140,11 +157,12 @@ fun WalletScreen(
             onTopUpClicked = viewModel::onTopUpClicked,
             onWithdrawClicked = viewModel::onWithdrawClicked,
             onExchangeClicked = viewModel::onExchangeClicked,
+            onDropdownMenuItemClicked = viewModel::onDropdownMenuItemClicked,
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
 private fun WalletScreen(
     uiState: WalletViewModel.UiState,
@@ -154,8 +172,16 @@ private fun WalletScreen(
     onTopUpClicked: () -> Unit,
     onWithdrawClicked: () -> Unit,
     onExchangeClicked: () -> Unit,
+    onDropdownMenuItemClicked: (TransactionType) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+
+    val wallet = StringKey.WalletTitle.textValue()
+    val awards = StringKey.WalletTitleAwards.textValue()
+
+    val pagerState = rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = AppTheme.specificColorScheme.uiContentBg,
@@ -169,7 +195,7 @@ private fun WalletScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                    .padding(horizontal = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
@@ -178,73 +204,273 @@ private fun WalletScreen(
                     contentDescription = null,
                     modifier = Modifier.clickable { onBackClicked() }
                 )
-                Text(
-                    text = StringKey.WalletTitle.textValue().get(),
-                    style = AppTheme.specificTypography.titleMedium,
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center,
+                TitleSlider(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    items = listOf(wallet, awards),
+                    selectedItemIndex = pagerState.currentPage,
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(it)
+                        }
+                    },
                 )
             }
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(vertical = 16.dp)
+            HorizontalPager(
+                count = 2,
+                state = pagerState,
             ) {
-                Balance(
-                    totalBalance = uiState.totalBalance,
-                    address = uiState.address,
-                    onAddressCopyClicked = { onAddressCopyClicked(uiState.address) },
-                )
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .padding(top = 12.dp, bottom = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    OperationType(
-                        title = StringKey.WalletTitleTopUp.textValue().get().text,
-                        image = AppTheme.specificIcons.topUp,
-                        onClick = onTopUpClicked,
+                when (currentPage) {
+                    0 -> Wallet(
+                        uiState = uiState,
+                        onAddressCopyClicked = onAddressCopyClicked,
+                        onTopUpClicked = onTopUpClicked,
+                        onWithdrawClicked = onWithdrawClicked,
+                        onExchangeClicked = onExchangeClicked,
                     )
-                    OperationType(
-                        title = StringKey.WalletTitleWithdraw.textValue().get().text,
-                        image = AppTheme.specificIcons.withdraw,
-                        onClick = onWithdrawClicked,
-                    )
-                    OperationType(
-                        title = StringKey.WalletTitleExchange.textValue().get().text,
-                        image = AppTheme.specificIcons.exchange,
-                        onClick = onExchangeClicked,
+                    1 -> Awards(
+                        transactions = uiState.transactions,
+                        transactionTypeSelected = uiState.transactionType,
+                        availableReward = uiState.availableReward,
+                        lockedReward = uiState.lockedReward,
+                        onWithdrawClicked = onWithdrawClicked,
+                        onDropdownMenuItemClicked = onDropdownMenuItemClicked,
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Wallet(
+    uiState: WalletViewModel.UiState,
+    onAddressCopyClicked: (WalletAddress) -> Unit,
+    onTopUpClicked: () -> Unit,
+    onWithdrawClicked: () -> Unit,
+    onExchangeClicked: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = 16.dp)
+    ) {
+        Balance(
+            totalBalance = uiState.totalBalance,
+            address = uiState.address,
+            onAddressCopyClicked = { onAddressCopyClicked(uiState.address) },
+        )
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+                .padding(top = 12.dp, bottom = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            OperationType(
+                title = StringKey.WalletTitleTopUp.textValue().get().text,
+                image = AppTheme.specificIcons.topUp,
+                onClick = onTopUpClicked,
+            )
+            OperationType(
+                title = StringKey.WalletTitleWithdraw.textValue().get().text,
+                image = AppTheme.specificIcons.withdraw,
+                onClick = onWithdrawClicked,
+            )
+            OperationType(
+                title = StringKey.WalletTitleExchange.textValue().get().text,
+                image = AppTheme.specificIcons.exchange,
+                onClick = onExchangeClicked,
+            )
+        }
+        Text(
+            text = StringKey.WalletTitleBalance.textValue().get().text,
+            style = AppTheme.specificTypography.titleMedium,
+            color = AppTheme.specificColorScheme.textPrimary,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp)
+        ) {
+            uiState.wallets.forEach { item ->
+                item.Content(
+                    modifier = Modifier
+                        .background(
+                            color = AppTheme.specificColorScheme.white,
+                            shape = AppTheme.shapes.medium,
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = AppTheme.specificColorScheme.grey.copy(alpha = 0.5f),
+                            shape = AppTheme.shapes.medium,
+                        )
+                        .padding(horizontal = 12.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun Awards(
+    transactions: TransactionsUiState,
+    transactionTypeSelected: TransactionType,
+    availableReward: Reward,
+    lockedReward: Reward,
+    onWithdrawClicked: () -> Unit,
+    onDropdownMenuItemClicked: (TransactionType) -> Unit,
+) {
+    val expandedMenu = remember { mutableStateOf(false) }
+    ScrollEndDetectLazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(12.dp),
+        onScrollEndDetected = transactions.onListEndReaching,
+    ) {
+        item {
+            RewardsCard(
+                title = StringKey.WalletTitleAvailableRewards.textValue().get().text,
+                description = StringKey.WalletDescriptionAvailableRewards.textValue(availableReward.currencySymbol).get().text,
+                fiat = availableReward.fiat,
+                coin = availableReward.coin,
+                imageValue = ImageValue.ResImage(R.drawable.img_available_rewards_background),
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            RewardsCard(
+                title = StringKey.WalletTitleLockedRewards.textValue().get().text,
+                description = StringKey.WalletDescriptionLockedRewards.textValue(lockedReward.dateUnlock).get().text,
+                fiat = lockedReward.fiat,
+                coin = lockedReward.coin,
+                imageValue = ImageValue.ResImage(R.drawable.img_locked_rewards_background),
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, bottom = 20.dp)
+                    .border(
+                        width = 1.dp,
+                        color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
+                        shape = AppTheme.shapes.medium,
+                    )
+                    .background(
+                        color = AppTheme.specificColorScheme.white,
+                        shape = AppTheme.shapes.medium,
+                    )
+                    .padding(12.dp)
+                    .defaultTileRipple(onClick = onWithdrawClicked),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    painter = AppTheme.specificIcons.withdraw.get(),
+                    tint = AppTheme.specificColorScheme.white,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .background(
+                            color = AppTheme.specificColorScheme.uiAccent,
+                            shape = CircleShape
+                        )
+                        .padding(12.dp),
+                )
                 Text(
-                    text = StringKey.WalletTitleBalance.textValue().get().text,
+                    text = StringKey.WalletTitleWithdraw.textValue().get().text,
+                    style = AppTheme.specificTypography.titleSmall,
+                    color = AppTheme.specificColorScheme.textPrimary,
+                    modifier = Modifier.padding(start = 20.dp),
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = StringKey.WalletTitleHistory.textValue().get().text,
                     style = AppTheme.specificTypography.titleMedium,
                     color = AppTheme.specificColorScheme.textPrimary,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
                 )
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp)
-                ) {
-                    uiState.wallets.forEach { item ->
-                        item.Content(
-                            modifier = Modifier
-                                .background(
-                                    color = AppTheme.specificColorScheme.white,
-                                    shape = AppTheme.shapes.medium,
-                                )
-                                .border(
-                                    width = 1.dp,
-                                    color = AppTheme.specificColorScheme.grey.copy(alpha = 0.5f),
-                                    shape = AppTheme.shapes.medium,
-                                )
-                                .padding(horizontal = 12.dp),
+                Box {
+                    SimpleButtonGreyS(
+                        modifier = Modifier.padding(vertical = 4.dp),
+                        onClick = { expandedMenu.value = true }
+                    ) {
+                        SimpleButtonContent(
+                            text = transactionTypeSelected.name.textValue(),
+                            iconRight = AppTheme.specificIcons.arrowDropDown,
+                            tint = AppTheme.specificColorScheme.black_80,
+                            textColor = AppTheme.specificColorScheme.black_80,
                         )
+                    }
+                    DropdownMenu(
+                        expanded = expandedMenu.value,
+                        onDismissRequest = { expandedMenu.value = false }) {
+                        TransactionType.values().forEach {
+                            DropdownMenuItem(
+                                onClick = {
+                                    onDropdownMenuItemClicked(it)
+                                    expandedMenu.value = false
+                                },
+                            ) {
+                                Text(
+                                    text = it.name,
+                                    style = AppTheme.specificTypography.bodySmall,
+                                )
+                            }
+                        }
                     }
                 }
             }
+        }
+        transactionsItems(
+            uiState = transactions,
+            modifier = Modifier.padding(bottom = 8.dp),
+        )
+    }
+}
+
+@Composable
+private fun RewardsCard(
+    title: String,
+    description: String,
+    fiat: String,
+    coin: String,
+    imageValue: ImageValue,
+) {
+    Box(
+        modifier = Modifier
+            .clip(AppTheme.shapes.medium)
+            .fillMaxWidth()
+            .height(200.dp),
+    ) {
+        Image(
+            painter = imageValue.get(),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+        )
+        Column(
+            modifier = Modifier.padding(20.dp)
+        ) {
+            Text(
+                text = title,
+                style = AppTheme.specificTypography.bodySmall,
+                color = AppTheme.specificColorScheme.white,
+            )
+            Text(
+                text = coin,
+                style = AppTheme.specificTypography.headlineLarge,
+                color = AppTheme.specificColorScheme.white,
+            )
+            Text(
+                text = fiat,
+                style = AppTheme.specificTypography.bodySmall,
+                color = AppTheme.specificColorScheme.white,
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = description,
+                style = AppTheme.specificTypography.titleMedium,
+                color = AppTheme.specificColorScheme.white,
+                modifier = Modifier.width(200.dp),
+            )
         }
     }
 }

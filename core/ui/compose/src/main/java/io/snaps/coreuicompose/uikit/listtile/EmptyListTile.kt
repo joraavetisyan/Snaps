@@ -19,8 +19,9 @@ import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuitheme.compose.AppTheme
 
 data class EmptyListTileState(
-    val message: TextValue,
-    val image: ImageValue,
+    val title: TextValue,
+    val message: TextValue? = null,
+    val image: ImageValue? = null,
     val modifier: Modifier = Modifier,
 ) : TileState {
 
@@ -40,17 +41,27 @@ fun EmptyListTile(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Image(
-            painter = data.image.get(),
-            modifier = Modifier.size(128.dp),
-            contentDescription = null,
-        )
-        Spacer(modifier = Modifier.height(16.dp))
+        data.image?.let {
+            Image(
+                painter = data.image.get(),
+                modifier = Modifier.size(128.dp),
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
         Text(
-            text = data.message.get(),
-            style = AppTheme.specificTypography.bodyMedium,
-            color = AppTheme.specificColorScheme.textSecondary,
+            text = data.title.get(),
+            style = AppTheme.specificTypography.bodyLarge,
             textAlign = TextAlign.Center,
         )
+        data.message?.let {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = it.get(),
+                style = AppTheme.specificTypography.bodySmall,
+                color = AppTheme.specificColorScheme.textSecondary,
+                textAlign = TextAlign.Center,
+            )
+        }
     }
 }

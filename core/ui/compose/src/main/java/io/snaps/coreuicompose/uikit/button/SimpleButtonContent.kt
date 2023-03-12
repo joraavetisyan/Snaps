@@ -29,6 +29,7 @@ fun SimpleButtonContent(
     iconLeft: IconValue? = null,
     iconRight: IconValue? = null,
     tint: Color = Color.Unspecified,
+    textColor: Color = LocalContentColor.current,
 ) {
     val textPaddingStart = when (iconLeft) {
         null -> 4.dp
@@ -50,7 +51,7 @@ fun SimpleButtonContent(
     text?.get()?.let {
         Text(
             text = it,
-            color = LocalContentColor.current,
+            color = textColor,
             style = LocalTextStyle.current,
             modifier = Modifier
                 .padding(start = textPaddingStart, end = textPaddingEnd)

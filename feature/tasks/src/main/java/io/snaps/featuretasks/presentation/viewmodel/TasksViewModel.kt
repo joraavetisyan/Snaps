@@ -72,9 +72,9 @@ class TasksViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun onHistoryReloadClicked() = viewModelScope.launch { // todo
+    private fun onHistoryReloadClicked() = viewModelScope.launch {
         action.execute {
-            profileRepository.updateData()
+            tasksRepository.refreshHistoryTasks()
         }
     }
 

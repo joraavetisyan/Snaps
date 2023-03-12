@@ -465,6 +465,39 @@ internal val strings = mapOf(
     key(StringKey.WalletDialogTitleTopUp) to mapOf(
         SupportedLanguageKey.En to "Top up %s",
     ),
+    key(StringKey.WalletTitleAwards) to mapOf(
+        SupportedLanguageKey.En to "Awards",
+    ),
+    key(StringKey.WalletTitleAvailableRewards) to mapOf(
+        SupportedLanguageKey.En to "Available Rewards",
+    ),
+    key(StringKey.WalletDescriptionAvailableRewards) to mapOf(
+        SupportedLanguageKey.En to "Awards convertible to %s",
+    ),
+    key(StringKey.WalletTitleLockedRewards) to mapOf(
+        SupportedLanguageKey.En to "Locked Rewards",
+    ),
+    key(StringKey.WalletDescriptionLockedRewards) to mapOf(
+        SupportedLanguageKey.En to "Rewards unlocked %s",
+    ),
+    key(StringKey.WalletTitleHistory) to mapOf(
+        SupportedLanguageKey.En to "History",
+    ),
+    key(StringKey.WalletTitleTransactionsEmpty) to mapOf(
+        SupportedLanguageKey.En to "No transactions yet",
+    ),
+    key(StringKey.WalletMessageTransactionsEmpty) to mapOf(
+        SupportedLanguageKey.En to "Make sure you are sending your tokens to the correct address and the correct BEP-20 network",
+    ),
+    key(StringKey.WalletTitleName) to mapOf(
+        SupportedLanguageKey.En to "Name",
+    ),
+    key(StringKey.WalletTitleQuantity) to mapOf(
+        SupportedLanguageKey.En to "Quantity",
+    ),
+    key(StringKey.WalletTitleDateTransfer) to mapOf(
+        SupportedLanguageKey.En to "Date of transfer",
+    ),
 
     key(StringKey.WithdrawTitle) to mapOf(
         SupportedLanguageKey.En to "Withdraw %s",

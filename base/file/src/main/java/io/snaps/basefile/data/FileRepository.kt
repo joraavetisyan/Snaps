@@ -1,8 +1,5 @@
 package io.snaps.basefile.data
 
-import android.net.Uri
-import android.util.Log
-import androidx.core.net.toFile
 import io.snaps.basefile.domain.FileModel
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid

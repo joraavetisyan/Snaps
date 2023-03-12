@@ -11,5 +11,6 @@ enum class Feature(
     WalletApiMock("WalletApiMock", true),
     TasksApiMock("TasksApiMock", true),
     MyCollectionApiMock("MyCollectionApiMock", true),
+    TransactionsApiMock("TransactionsApiMock", true),
     UNKNOWN
 }

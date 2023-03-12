@@ -11,6 +11,7 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.corecommon.model.WalletModel
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coredata.network.Action
 import io.snaps.coreui.barcode.BarcodeManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
@@ -18,6 +19,11 @@ import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
+import io.snaps.featurewallet.data.TransactionsRepository
+import io.snaps.featurewallet.data.model.TransactionType
+import io.snaps.featurewallet.domain.Reward
+import io.snaps.featurewallet.screen.TransactionsUiState
+import io.snaps.featurewallet.screen.toTransactionsUiState
 import io.snaps.featurewallet.toCellTileStateList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,8 +39,10 @@ import javax.inject.Inject
 class WalletViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
     private val walletRepository: WalletRepository,
+    private val transactionsRepository: TransactionsRepository,
     private val barcodeManager: BarcodeManager,
     private val notificationsSource: NotificationsSource,
+    private val action: Action,
 ) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -46,6 +54,12 @@ class WalletViewModel @Inject constructor(
     private var wallets = listOf<WalletModel>()
 
     init {
+        subscribeToTransactions()
+        subscribeToBalance()
+        subscribeToWallets()
+    }
+
+    private fun subscribeToWallets() {
         walletRepository.activeWallets.onEach { wallets ->
             this.wallets = wallets
             _uiState.update {
@@ -55,8 +69,25 @@ class WalletViewModel @Inject constructor(
                 )
             }
         }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeToBalance() {
         walletRepository.totalBalanceValue.onEach { totalBalance ->
             _uiState.update { it.copy(totalBalance = totalBalance) }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeToTransactions() {
+        transactionsRepository.getTransactionsState(uiState.value.transactionType).onEach { state ->
+            _uiState.update {
+                it.copy(
+                    transactions = state.toTransactionsUiState(
+                        onReloadClicked = ::onTransactionsReloadClicked,
+                        onListEndReaching = ::onListEndReaching,
+                        onClicked = {},
+                    )
+                )
+            }
         }.launchIn(viewModelScope)
     }
 
@@ -86,6 +117,12 @@ class WalletViewModel @Inject constructor(
         }
     }
 
+    fun onDropdownMenuItemClicked(transactionType: TransactionType) {
+        _uiState.update {
+            it.copy(transactionType = transactionType)
+        }
+    }
+
     fun onExchangeClicked() = viewModelScope.launch {
         // todo
     }
@@ -108,6 +145,18 @@ class WalletViewModel @Inject constructor(
         }
     }
 
+    private fun onTransactionsReloadClicked() = viewModelScope.launch {
+        action.execute {
+            transactionsRepository.refreshTransactions(uiState.value.transactionType)
+        }
+    }
+
+    private fun onListEndReaching() = viewModelScope.launch {
+        action.execute {
+            transactionsRepository.loadNextTransactionsPage(uiState.value.transactionType)
+        }
+    }
+
     data class UiState(
         val address: String = "",
         val totalBalance: TotalBalanceModel = TotalBalanceModel.empty,
@@ -118,8 +167,21 @@ class WalletViewModel @Inject constructor(
                 rightPart = RightPart.Shimmer(needRightLine = true),
             )
         },
-        val selectCurrencyBottomDialogItems: List<CellTileState> = emptyList(),
+        val availableReward: Reward = Reward(
+            coin = "16 SNPS",
+            fiat = "≈ 263 USDT",
+            currencySymbol = "SNPS",
+            dateUnlock = "tomorrow",
+        ),
+        val lockedReward: Reward = Reward(
+            coin = "16 SNPS",
+            fiat = "≈ 263 USDT",
+            currencySymbol = "SNPS",
+            dateUnlock = "tomorrow",
+        ),
         val bottomDialogType: BottomDialogType = BottomDialogType.SelectWallet(),
+        val transactions: TransactionsUiState = TransactionsUiState(),
+        val transactionType: TransactionType = TransactionType.All,
     )
 
     sealed class BottomDialogType {

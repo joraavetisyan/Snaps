@@ -48,7 +48,7 @@ fun VideoFeedPageModel.toVideoFeedUiState(
         )
         loadedPageItems.isEmpty() -> VideoFeedUiState(
             emptyState = EmptyListTileState(
-                message = "No data".textValue(),
+                title = "No data".textValue(),
                 image = ImageValue.ResImage(R.drawable.img_diamonds),
             )
         )
