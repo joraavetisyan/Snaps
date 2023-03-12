@@ -7,6 +7,7 @@ import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import io.snaps.featureprofile.data.model.SubscribeRequestDto
+import io.snaps.featureprofile.data.model.SubscriptionItemResponseDto
 import io.snaps.featureprofile.data.model.UnsubscribeRequestDto
 import io.snaps.featureprofile.domain.SubPageModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -46,12 +47,14 @@ class SubsRepositoryImpl @Inject constructor(
                         subsApi.subscriptions(from = from, count = count, userId = it.userId)
                     },
                     pageSize = 20,
+                    mapper = List<SubscriptionItemResponseDto>::toModelList,
                 )
                 is SubType.Subscriber -> PagedLoaderParams(
                     action = { from, count ->
                         subsApi.subscribers(from = from, count = count, userId = it.userId)
                     },
                     pageSize = 20,
+                    mapper = List<SubscriptionItemResponseDto>::toModelList,
                 )
             }
         }

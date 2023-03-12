@@ -9,5 +9,5 @@ data class NftItemResponseDto(
     @SerialName("type") val type: NftType,
     @SerialName("dailyReward") val dailyReward: Int,
     @SerialName("percentGrowingPerDay") val dailyUnlock: Double,
-    @SerialName("dailyMaintenanceCostMultiplier") val dailyConsumption: Double,
+    @SerialName("dailyMaintenanceCost") val dailyConsumption: Double,
 )

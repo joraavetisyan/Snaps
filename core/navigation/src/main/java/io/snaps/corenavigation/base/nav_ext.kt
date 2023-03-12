@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
@@ -45,6 +46,10 @@ fun NavController.navigate(route: Route, builder: NavOptionsBuilder.() -> Unit =
     route = route.path(),
     builder = builder,
 )
+
+fun NavOptionsBuilder.tryPopBackStack(navHostController: NavHostController) {
+    navHostController.currentDestination?.route?.let { popUpTo(it) { inclusive = true } }
+}
 
 inline infix fun <reified ARG> NavController.navigate(direction: FeatureNavDirection<ARG>) =
     navigate(

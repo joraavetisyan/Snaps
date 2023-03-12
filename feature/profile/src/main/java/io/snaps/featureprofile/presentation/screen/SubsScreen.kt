@@ -44,7 +44,7 @@ import io.snaps.coreuicompose.uikit.other.TitleSlider
 import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featureprofile.ScreenNavigator
-import io.snaps.featureprofile.domain.Sub
+import io.snaps.featureprofile.domain.SubModel
 import io.snaps.featureprofile.presentation.viewmodel.SubsViewModel
 import kotlinx.coroutines.launch
 
@@ -76,7 +76,7 @@ fun SubsScreen(
 private fun SubsScreen(
     uiState: SubsViewModel.UiState,
     onBackClicked: () -> Boolean,
-    onUnsubscribeClicked: (Sub) -> Unit,
+    onUnsubscribeClicked: (SubModel) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())

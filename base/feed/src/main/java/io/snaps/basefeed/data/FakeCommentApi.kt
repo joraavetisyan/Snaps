@@ -18,11 +18,11 @@ class FakeCommentApi : CommentApi {
     private var generation = 0
 
     override suspend fun comments(
-        @Query(value = "from") from: Int,
-        @Query(value = "count") count: Int,
-        @Query(value = "videoId") videoId: Uuid
+        videoId: Uuid,
+        from: Int?,
+        count: Int,
     ): BaseResponse<List<CommentResponseDto>> {
-        log("Requesting feed: $count videos with offset $from")
+        log("Requesting comments: $count comments with offset $from")
         delay(mockDelay)
         return BaseResponse(
             actualTimestamp = 1L,
@@ -30,14 +30,9 @@ class FakeCommentApi : CommentApi {
                 CommentResponseDto(
                     id = "${generation}comment$it",
                     videoId = "1",
-                    ownerImage = rImage,
-                    ownerName = "Owner of comment",
                     text = "Comment text",
-                    likes = rInt,
-                    isLiked = rBool,
                     createdDate = "2023-02-20T15:05:59.9105429+00:00",
-                    isOwnerVerified = rBool,
-                    ownerTitle = "Owner title",
+                    userId = "userId$rInt",
                 )
             }
         ).also { generation++ }

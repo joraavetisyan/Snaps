@@ -6,6 +6,7 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
+import io.snaps.featuretasks.data.model.HistoryTaskItemResponseDto
 import io.snaps.featuretasks.domain.TaskModel
 import io.snaps.featuretasks.domain.TaskPageModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -36,6 +37,7 @@ class TasksRepositoryImpl @Inject constructor(
                     tasksApi.historyTasks(from = from, count = count)
                 },
                 pageSize = 20,
+                mapper = List<HistoryTaskItemResponseDto>::toModelList,
             )
         }
     }

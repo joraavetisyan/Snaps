@@ -66,11 +66,13 @@ private fun Item(
     ItemContainer(
         onClick = onClick,
     ) {
-        Image(
-            modifier = Modifier.fillMaxSize(),
-            painter = ImageValue.Url(item.thumbnail).get(),
-            contentDescription = null,
-        )
+        item.thumbnail?.let {
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = ImageValue.Url(it).get(),
+                contentDescription = null,
+            )
+        }
         Row(
             modifier = Modifier
                 .align(Alignment.BottomEnd)

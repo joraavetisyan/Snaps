@@ -5,7 +5,7 @@ import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.coreuicompose.uikit.listtile.EmptyListTileState
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
-import io.snaps.featureprofile.domain.Sub
+import io.snaps.featureprofile.domain.SubModel
 import io.snaps.featureprofile.domain.SubPageModel
 
 sealed interface SubUiState {
@@ -14,7 +14,7 @@ sealed interface SubUiState {
 
     data class Data(
         override val userId: Any,
-        val item: Sub,
+        val item: SubModel,
         val onClicked: () -> Unit,
         val onSubscribeClicked: () -> Unit,
     ) : SubUiState
@@ -33,8 +33,8 @@ data class SubsUiState(
 
 fun SubPageModel.toSubsUiState(
     shimmerListSize: Int,
-    onItemClicked: (Sub) -> Unit,
-    onSubscribeClicked: (Sub) -> Unit,
+    onItemClicked: (SubModel) -> Unit,
+    onSubscribeClicked: (SubModel) -> Unit,
     onReloadClicked: () -> Unit,
     onListEndReaching: () -> Unit,
 ): SubsUiState {

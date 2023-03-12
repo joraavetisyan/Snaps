@@ -1,6 +1,6 @@
 package io.snaps.baseprofile.domain
 
-data class CoinsModel(
+data class StatsModel(
     val energy: String,
     val gold: String,
     val silver: String,

@@ -25,13 +25,13 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.featureprofile.domain.Sub
+import io.snaps.featureprofile.domain.SubModel
 
 @Composable
 fun ConfirmUnsubscribeDialog(
-    data: Sub,
+    data: SubModel,
     onDismissRequest: () -> Unit,
-    onUnsubscribeClicked: (Sub) -> Unit,
+    onUnsubscribeClicked: (SubModel) -> Unit,
 ) {
     val backgroundColor = AppTheme.specificColorScheme.grey
     Dialog(

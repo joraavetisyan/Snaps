@@ -48,30 +48,38 @@ class MnemonicsVerificationViewModel @Inject constructor(
     fun onContinueButtonClicked() = viewModelScope.launch {
         // -3 means no selections added yet
         val firstOrderNumber = _uiState.value.selections.firstOrNull()?.orderNumber ?: -3
-        if (_uiState.value.selections.firstOrNull()?.orderNumber == 9) {
-            action.execute {
-                walletRepository.saveLastConnectedAccount()
-            }.doOnComplete {
-                _command publish Command.OpenCreatedWalletScreen
-            }
-            _command publish Command.OpenCreatedWalletScreen
+        if (firstOrderNumber == 9) {
+            saveAccount()
         } else {
-            val range = (firstOrderNumber + 4)..(firstOrderNumber + 7)
-            val wordPool = _uiState.value.words.mapNotNull {
-                it.takeUnless { it.orderNumber in range }
-            }.shuffled()
-            var sublistStart = 0
-            val selections = range.map { orderNumber ->
-                SelectionUiModel(
-                    orderNumber = orderNumber,
-                    words = (wordPool.subList(sublistStart, sublistStart + 2).also {
-                        sublistStart += 2
-                    } + _uiState.value.words.first { it.orderNumber == orderNumber }).shuffled(),
-                )
-            }
-            _uiState.update {
-                it.copy(selections = selections)
-            }
+            toNextSelection(firstOrderNumber)
+        }
+    }
+
+    private suspend fun saveAccount() {
+        action.execute {
+            walletRepository.saveLastConnectedAccount()
+        }.doOnComplete {
+            _command publish Command.OpenCreatedWalletScreen
+        }
+        _command publish Command.OpenCreatedWalletScreen
+    }
+
+    private fun toNextSelection(firstOrderNumber: Int) {
+        val range = (firstOrderNumber + 4)..(firstOrderNumber + 7)
+        val wordPool = _uiState.value.words.mapNotNull {
+            it.takeUnless { it.orderNumber in range }
+        }.shuffled()
+        var sublistStart = 0
+        val selections = range.map { orderNumber ->
+            SelectionUiModel(
+                orderNumber = orderNumber,
+                words = (wordPool.subList(sublistStart, sublistStart + 2).also {
+                    sublistStart += 2
+                } + _uiState.value.words.first { it.orderNumber == orderNumber }).shuffled(),
+            )
+        }
+        _uiState.update {
+            it.copy(selections = selections)
         }
     }
 

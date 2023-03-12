@@ -15,7 +15,7 @@ sealed interface CommentUiState {
     data class Data(
         override val id: Any,
         val item: CommentModel,
-        val onClicked: () -> Unit,
+        val onClicked: () -> Unit = {},
     ) : CommentUiState
 
     data class Shimmer(override val id: Any) : CommentUiState
@@ -32,7 +32,7 @@ data class CommentsUiState(
 
 fun CommentPageModel.toCommentsUiState(
     shimmerListSize: Int,
-    onClipClicked: (CommentModel) -> Unit,
+    onCommentClicked: (CommentModel) -> Unit,
     onReloadClicked: () -> Unit,
     onListEndReaching: () -> Unit,
 ): CommentsUiState {
@@ -56,7 +56,7 @@ fun CommentPageModel.toCommentsUiState(
                 CommentUiState.Data(
                     id = it.id,
                     item = it,
-                    onClicked = { onClipClicked(it) },
+                    onClicked = { onCommentClicked(it) },
                 )
             }.run {
                 if (nextPage == null) this

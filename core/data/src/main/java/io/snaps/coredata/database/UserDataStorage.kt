@@ -8,8 +8,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 private val PREF_NAME = stringPreferencesKey("PREF_NAME")
-private val PREF_AVATAR = stringPreferencesKey("PREF_AVATAR")
-private val PREF_PHONE = stringPreferencesKey("PREF_PHONE")
 private val PREF_THEME_MODE = stringPreferencesKey("PREF_THEME_MODE")
 
 @Singleton
@@ -20,11 +18,6 @@ class UserDataStorage @Inject constructor(
     val userNameFlow: Flow<String?> get() = provider.userDataStore.get(PREF_NAME)
     suspend fun setUserName(value: String) {
         provider.userDataStore.set(PREF_NAME, value)
-    }
-
-    val userAvatarFlow: Flow<String?> get() = provider.userDataStore.get(PREF_AVATAR)
-    suspend fun setUserAvatar(value: String) {
-        provider.userDataStore.set(PREF_AVATAR, value)
     }
 
     val themeModeFlow: Flow<ThemeMode>

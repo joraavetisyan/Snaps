@@ -7,6 +7,42 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:132799039711:android:a1d89ea85a943ee4ef416a",
+        "android_client_info": {
+          "package_name": "io.snaps.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "132799039711-rd59jfaphbpinbmhrp647hqapp2b6aiu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-n8mGs1D8i_RDbe81oTJ3B03Q3upemME"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "132799039711-rd59jfaphbpinbmhrp647hqapp2b6aiu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "132799039711-6s4uqm6rip0qednq56v61cb1uo5ubgh0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "You.test.You"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:132799039711:android:5ee98415235ea4a0ef416a",
         "android_client_info": {
           "package_name": "io.snaps.android.debug"
@@ -19,6 +55,22 @@
           "android_info": {
             "package_name": "io.snaps.android.debug",
             "certificate_hash": "1fa9fee33119fdb657e3105adcea4cc6e2f0fc7b"
+          }
+        },
+        {
+          "client_id": "132799039711-e0ao7uh5tdus65nm3d1bih20udd4j4ck.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.snaps.android.debug",
+            "certificate_hash": "4e1b39546660ef3141a9e09e4a1a3b093e7ce5de"
+          }
+        },
+        {
+          "client_id": "132799039711-g3fjkbr8b4otoq68dht5vd418pqdnbtc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.snaps.android.debug",
+            "certificate_hash": "f936ba5cba315fe91583d2e7dc64f7684539a65b"
           }
         },
         {

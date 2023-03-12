@@ -1,5 +1,6 @@
 package io.snaps.featureinitialization.presentation.screen
 
+import android.Manifest
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
@@ -38,6 +39,9 @@ import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberPermissionState
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.date.getLocaleDateByPhotoDateFormat
 import io.snaps.corecommon.strings.StringKey
@@ -48,6 +52,7 @@ import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
+import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuicompose.uikit.status.PhotoAlertDialog
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
@@ -88,6 +93,7 @@ fun CreateUserScreen(
     )
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun CreateUserScreen(
     uiState: CreateUserViewModel.UiState,
@@ -112,6 +118,13 @@ private fun CreateUserScreen(
         contract = ActivityResultContracts.TakePicture()
     ) {
         onTakePhotoClicked(imageUri)
+    }
+    val cameraPermissionState = rememberPermissionState(
+        Manifest.permission.CAMERA,
+    ) {
+        if (it) {
+            cameraLauncher.launch(imageUri)
+        }
     }
 
     val context = LocalContext.current
@@ -196,14 +209,20 @@ private fun CreateUserScreen(
         PhotoAlertDialog(
             onDismissRequest = onDismissRequest,
             onTakePhotoClicked = {
-                imageUri = setupOutputUri(imageUri, context)
-                cameraLauncher.launch(imageUri)
+                imageUri = setupOutputUri(context)
+                if (cameraPermissionState.status == PermissionStatus.Granted) {
+                    cameraLauncher.launch(imageUri)
+                } else {
+                    cameraPermissionState.launchPermissionRequest()
+                }
             },
             onPickPhotoClicked = {
                 imagePicker.launch("image/*")
             },
         )
     }
+
+    FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
 
 @Composable
@@ -252,13 +271,9 @@ private fun Photo(
     }
 }
 
-private fun setupOutputUri(outputUri: Uri?, context: Context): Uri? {
-    return if (outputUri == null) {
-        val authorities = "${context.applicationContext?.packageName}$AUTHORITY_SUFFIX"
-        FileProvider.getUriForFile(context, authorities, createImageFile(context))
-    } else {
-        outputUri
-    }
+private fun setupOutputUri(context: Context): Uri? {
+    val authorities = "${context.applicationContext?.packageName}$AUTHORITY_SUFFIX"
+    return FileProvider.getUriForFile(context, authorities, createImageFile(context))
 }
 
 private fun createImageFile(context: Context): File {

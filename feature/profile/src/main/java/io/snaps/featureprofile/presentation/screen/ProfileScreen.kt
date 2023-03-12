@@ -41,7 +41,7 @@ import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureprofile.ScreenNavigator
-import io.snaps.featureprofile.domain.Sub
+import io.snaps.featureprofile.domain.SubModel
 import io.snaps.featureprofile.presentation.viewmodel.ProfileViewModel
 import io.snaps.featureprofile.presentation.viewmodel.SubsViewModel
 
@@ -84,7 +84,7 @@ private fun ProfileScreen(
     onSettingsClicked: () -> Unit,
     onBackClicked: () -> Boolean,
     onSubscribeClicked: () -> Unit,
-    onUnsubscribeClicked: (Sub) -> Unit,
+    onUnsubscribeClicked: (SubModel) -> Unit,
     onDismissRequest: () -> Unit,
     onVideoClipClicked: (Int) -> Unit,
 ) {

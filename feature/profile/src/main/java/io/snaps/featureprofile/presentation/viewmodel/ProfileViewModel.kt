@@ -16,7 +16,7 @@ import io.snaps.corenavigation.base.getArg
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.featureprofile.data.SubsRepository
-import io.snaps.featureprofile.domain.Sub
+import io.snaps.featureprofile.domain.SubModel
 import io.snaps.featureprofile.presentation.screen.UserInfoTileState
 import io.snaps.featureprofile.presentation.toUserInfoTileState
 import kotlinx.coroutines.channels.Channel
@@ -142,7 +142,7 @@ class ProfileViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         dialog = SubsViewModel.Dialog.ConfirmUnsubscribe(
-                            Sub(
+                            SubModel(
                                 userId = requireNotNull(args?.userId),
                                 image = userInfo.profileImage,
                                 name = it.nickname,
@@ -162,7 +162,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun onUnsubscribeClicked(item: Sub) = viewModelScope.launch {
+    fun onUnsubscribeClicked(item: SubModel) = viewModelScope.launch {
         _uiState.update {
             it.copy(
                 dialog = null,
@@ -206,7 +206,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     sealed class Dialog {
-        data class ConfirmUnsubscribe(val data: Sub) : Dialog()
+        data class ConfirmUnsubscribe(val data: SubModel) : Dialog()
     }
 
     enum class UserType {

@@ -49,7 +49,7 @@ class MainHeaderHandlerImplDelegate @Inject constructor(
     }
 
     private fun subscribeToProfile() {
-        profileRepository.state.combine(flow = profileRepository.coinState) { profile, coins ->
+        profileRepository.state.combine(flow = profileRepository.statsState) { profile, coins ->
             mainHeaderState(
                 profile = profile,
                 coins = coins,

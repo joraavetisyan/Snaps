@@ -89,7 +89,7 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
     }
 
     fun createInternalFile(type: FileType): Uri {
-        val file = createFile(generateName(type), getFilesDir(type))
+        val file = createFile(name = generateName(type), dir = getFilesDir(type))
         return FileProvider.getUriForFile(context, getFileProviderAuthority(), file)
     }
 

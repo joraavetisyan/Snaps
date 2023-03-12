@@ -6,7 +6,7 @@ import io.snaps.corecommon.model.Uuid
 
 data class VideoClipModel(
     val id: Uuid,
-    val createdDate: DateTime, // todo
+    val createdDate: DateTime,
     val viewCount: Int,
     val commentCount: Int,
     val likeCount: Int,
@@ -14,6 +14,6 @@ data class VideoClipModel(
     val title: String,
     val description: String,
     val authorId: Uuid,
-    val isLiked: Boolean = true, // todo
-    val thumbnail: FullUrl = "https://picsum.photos/177/222",
+    val isLiked: Boolean,
+    val thumbnail: FullUrl?,
 )

@@ -19,20 +19,19 @@ class TransactionsLoader @AssistedInject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     action: Action,
-    @Assisted private val params: PagedLoaderParams<TransactionItemResponseDto>,
+    @Assisted private val params: PagedLoaderParams<TransactionItemResponseDto, TransactionModel>,
 ) : PagedLoader<TransactionItemResponseDto, TransactionModel>(
     ioDispatcher = ioDispatcher,
     scope = scope,
     action = action,
     params = params,
-    mapper = List<TransactionItemResponseDto>::toModelList,
 )
 
 @AssistedFactory
 abstract class TransactionsLoaderFactory :
     PagedLoaderFactory<TransactionType, TransactionsLoader, TransactionItemResponseDto, TransactionModel>() {
 
-    override fun provide(params: PagedLoaderParams<TransactionItemResponseDto>) = create(params)
+    override fun provide(params: PagedLoaderParams<TransactionItemResponseDto, TransactionModel>) = create(params)
 
-    abstract fun create(params: PagedLoaderParams<TransactionItemResponseDto>): TransactionsLoader
+    abstract fun create(params: PagedLoaderParams<TransactionItemResponseDto, TransactionModel>): TransactionsLoader
 }

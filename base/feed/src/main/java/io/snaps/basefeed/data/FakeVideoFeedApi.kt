@@ -17,7 +17,7 @@ class FakeVideoFeedApi : VideoFeedApi {
     private var generation = 0
     private var popularGeneration = 0
 
-    override suspend fun feed(from: Int, count: Int): BaseResponse<List<VideoFeedItemResponseDto>> {
+    override suspend fun feed(from: Int?, count: Int): BaseResponse<List<VideoFeedItemResponseDto>> {
         log("Requesting feed: $count videos with offset $from")
         delay(mockDelay)
         return BaseResponse(
@@ -41,7 +41,7 @@ class FakeVideoFeedApi : VideoFeedApi {
     }
 
     override suspend fun popularFeed(
-        from: Int,
+        from: Int?,
         count: Int
     ): BaseResponse<List<VideoFeedItemResponseDto>> {
         log("Requesting popular feed: $count videos with offset $from")
@@ -64,6 +64,41 @@ class FakeVideoFeedApi : VideoFeedApi {
                 )
             }
         ).also { popularGeneration++ }
+    }
+
+    override suspend fun likedVideos(
+        from: Int?,
+        count: Int
+    ): BaseResponse<List<VideoFeedItemResponseDto>> {
+        log("Requesting liked videos: $count videos with offset $from")
+        delay(mockDelay)
+        return BaseResponse(
+            actualTimestamp = 1L,
+            data = List(count) {
+                VideoFeedItemResponseDto(
+                    url = rVideos.random(),
+                    entityId = "${popularGeneration}video$it",
+                    internalId = "${popularGeneration}video$it",
+                    createdDate = "",
+                    viewsCount = rInt,
+                    commentsCount = rInt,
+                    likesCount = rInt,
+                    title = "title $it",
+                    description = "description $it",
+                    authorUserId = "authorUserId$it",
+                    thumbnailUrl = "https://picsum.photos/177/222",
+                )
+            }
+        ).also { popularGeneration++ }
+    }
+
+    override suspend fun view(videoId: Uuid): BaseResponse<Completable> {
+        log("Requesting view video")
+        delay(mockDelay)
+        return BaseResponse(
+            actualTimestamp = 1L,
+            data = Completable,
+        )
     }
 
     override suspend fun like(videoId: Uuid): BaseResponse<Completable> {

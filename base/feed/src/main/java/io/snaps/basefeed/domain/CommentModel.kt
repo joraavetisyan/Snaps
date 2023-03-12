@@ -7,12 +7,13 @@ import java.time.LocalDateTime
 data class CommentModel(
     val id: Uuid,
     val videoId: Uuid,
-    val ownerImage: ImageValue,
+    val ownerImage: ImageValue?,
     val ownerName: String,
     val text: String,
-    val likes: Int,
-    val isLiked: Boolean,
     val createdDate: LocalDateTime,
-    val isOwnerVerified: Boolean,
+
+    val isOwnerVerified: Boolean?,
     val ownerTitle: String?,
+    val isLiked: Boolean?,
+    val likes: Int?,
 )

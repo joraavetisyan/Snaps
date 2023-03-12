@@ -34,6 +34,8 @@ enum class SelectorTileStatus {
     Selected, Error, Default,
 }
 
+private val offsetAnimSpec = tween<Float>(30)
+
 @Composable
 fun SelectorTile(
     data: SelectorTileData,
@@ -55,19 +57,10 @@ fun SelectorTile(
     val offsetX = remember { Animatable(0f) }
     LaunchedEffect(data.status) {
         if (data.status == SelectorTileStatus.Error) {
-            repeat(4) {
-                offsetX.animateTo(
-                    targetValue = -5f,
-                    animationSpec = tween(50),
-                )
-                offsetX.animateTo(
-                    targetValue = 5f,
-                    animationSpec = tween(50),
-                )
-                offsetX.animateTo(
-                    targetValue = 0f,
-                    animationSpec = tween(50),
-                )
+            var offset = 5f
+            while (offset >= 0) {
+                offsetX.animateTo(targetValue = -offset, animationSpec = offsetAnimSpec)
+                offsetX.animateTo(targetValue = offset--, animationSpec = offsetAnimSpec)
             }
             data.onAnimationFinished()
         }

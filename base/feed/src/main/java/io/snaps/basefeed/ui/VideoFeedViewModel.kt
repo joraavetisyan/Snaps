@@ -50,6 +50,7 @@ abstract class VideoFeedViewModel(
     private var commentsLoadJob: Job? = null
     private var authorLoadJob: Job? = null
     private var loaded: Boolean = false
+    private var currentVideo: VideoClipModel? = null
 
     private var videoFeedPageModel: VideoFeedPageModel? = null
 
@@ -100,24 +101,33 @@ abstract class VideoFeedViewModel(
     }
 
     fun onScrolledToPosition(position: Int) {
-        val current =
-            _uiState.value.videoFeedUiState.items.getOrNull(position) as? VideoClipUiState.Data
+        val current = _uiState.value.videoFeedUiState.items.getOrNull(position) as? VideoClipUiState.Data
         val videoClip = current?.clip ?: return
+        currentVideo = videoClip
+        onViewed(videoClip)
+        loadComments(videoClip.id)
+        loadAuthor(videoClip.authorId)
+    }
+
+    private fun loadComments(videoId: Uuid) {
         commentsLoadJob?.cancel()
-        commentsLoadJob = commentRepository.getCommentsState(videoClip.id).map {
+        commentsLoadJob = commentRepository.getCommentsState(videoId).map {
             it.toCommentsUiState(
                 shimmerListSize = 10,
-                onClipClicked = {},
+                onCommentClicked = {},
                 onReloadClicked = {},
-                onListEndReaching = { onCommentListEndReaching(videoClip.id) },
+                onListEndReaching = { onCommentListEndReaching(videoId) },
             )
         }.onEach { state ->
             _uiState.update { it.copy(commentsUiState = state) }
         }.launchIn(viewModelScope)
+    }
+
+    private fun loadAuthor(authorId: Uuid) {
         authorLoadJob?.cancel()
         authorLoadJob = viewModelScope.launch {
             action.execute {
-                profileRepository.getUserInfoById(videoClip.authorId)
+                profileRepository.getUserInfoById(authorId)
             }.doOnSuccess { profileModel ->
                 if (!isActive) return@doOnSuccess
                 _uiState.update {
@@ -147,6 +157,12 @@ abstract class VideoFeedViewModel(
         viewModelScope.launch { _command publish Command.OpenProfileScreen(clipModel.authorId) }
     }
 
+    private fun onViewed(clipModel: VideoClipModel) = viewModelScope.launch {
+        action.execute {
+            videoFeedRepository.view(clipModel.id)
+        }
+    }
+
     fun onLikeClicked(clipModel: VideoClipModel) = viewModelScope.launch {
         likeVideoClip(clipModel)
         action.execute {
@@ -159,7 +175,7 @@ abstract class VideoFeedViewModel(
             when (it.id) {
                 clipModel.id -> it.copy(
                     isLiked = !clipModel.isLiked,
-                    likeCount = clipModel.likeCount + 1,
+                    likeCount = clipModel.likeCount + (if (clipModel.isLiked) -1 else 1),
                 )
                 else -> it
             }
@@ -177,6 +193,7 @@ abstract class VideoFeedViewModel(
             )
         }
     }
+
     fun onCommentClicked(clipModel: VideoClipModel) {
         bottomBarVisibilitySource.updateState(false)
         _uiState.update {
@@ -194,15 +211,16 @@ abstract class VideoFeedViewModel(
     }
 
     fun onCommentSendClick() {
-        val comment = uiState.value.commentsUiState.items.firstOrNull() as? CommentUiState.Data ?: return
+        val video = currentVideo ?: return
         viewModelScope.launch {
             action.execute {
                 commentRepository.createComment(
-                    videoId = comment.item.videoId,
+                    videoId = video.id,
                     text = uiState.value.comment.text,
                 ).doOnSuccess {
                     _command publish Command.HideCommentInputBottomDialog
                     _uiState.update { it.copy(comment = TextFieldValue("")) }
+                    loadComments(video.id)
                 }
             }
         }

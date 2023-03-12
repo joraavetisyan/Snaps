@@ -71,10 +71,8 @@ class AppViewModel @Inject constructor(
     }
 
     fun updateAppRoute(path: String?) {
-        path?.let { it ->
-            val route = it.takeWhile { it != ROUTE_ARGS_SEPARATOR }
-            appRouteProvider.updateState(route)
-        }
+        val route = path?.takeWhile { it != ROUTE_ARGS_SEPARATOR } ?: return
+        appRouteProvider.updateState(route)
     }
 
     sealed class StartFlow {

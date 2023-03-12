@@ -2,6 +2,7 @@ package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.ShareInfoRequestDto
+import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseplayer.domain.VideoClipModel
@@ -12,6 +13,7 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
+import io.snaps.coredata.network.cachedApiCall
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
@@ -23,6 +25,8 @@ interface VideoFeedRepository {
     suspend fun refreshFeed(feedType: VideoFeedType): Effect<Completable>
 
     suspend fun loadNextFeedPage(feedType: VideoFeedType): Effect<Completable>
+
+    suspend fun view(videoId: Uuid): Effect<Completable>
 
     suspend fun like(videoId: Uuid): Effect<Completable>
 
@@ -37,23 +41,36 @@ class VideoFeedRepositoryImpl @Inject constructor(
     private val loaderFactory: VideoFeedLoaderFactory,
 ) : VideoFeedRepository {
 
-    private fun getLoader(currencyType: VideoFeedType): VideoFeedLoader {
-        return loaderFactory.get(currencyType) {
-            when (it) {
+    private var likedVideos: List<VideoFeedItemResponseDto>? = null
+
+    private fun getLoader(videoFeedType: VideoFeedType): VideoFeedLoader {
+        return loaderFactory.get(videoFeedType) { type ->
+            when (type) {
                 VideoFeedType.Main -> PagedLoaderParams(
-                    action = videoFeedApi::feed,
+                    action = { from, count -> videoFeedApi.feed(null, count) },
                     pageSize = 3,
+                    mapper = { it.toVideoClipModelList(getLikedVideos()) },
                 )
                 is VideoFeedType.Popular -> PagedLoaderParams(
-                    action = videoFeedApi::popularFeed,
+                    action = { from, count -> videoFeedApi.popularFeed(null, count) },
                     pageSize = 12,
+                    mapper = { it.toVideoClipModelList(getLikedVideos()) },
                 )
                 is VideoFeedType.User -> PagedLoaderParams(
-                    action = videoFeedApi::feed,
+                    action = { from, count -> videoFeedApi.feed(null, count) },
                     pageSize = 15,
+                    mapper = { it.toVideoClipModelList(getLikedVideos()) },
                 )
             }
         }
+    }
+
+    private suspend fun getLikedVideos(): List<VideoFeedItemResponseDto> {
+        return likedVideos ?: apiCall(ioDispatcher) {
+            videoFeedApi.likedVideos(null, 100)
+        }.doOnSuccess {
+            likedVideos = it
+        }.dataOrCache ?: emptyList()
     }
 
     override fun getFeedState(feedType: VideoFeedType): StateFlow<VideoFeedPageModel> =
@@ -64,6 +81,12 @@ class VideoFeedRepositoryImpl @Inject constructor(
 
     override suspend fun loadNextFeedPage(feedType: VideoFeedType): Effect<Completable> =
         getLoader(feedType).loadNext()
+
+    override suspend fun view(videoId: Uuid): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            videoFeedApi.view(videoId)
+        }
+    }
 
     override suspend fun like(videoId: Uuid): Effect<Completable> {
         return apiCall(ioDispatcher) {
@@ -85,7 +108,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
                 )
             )
         }.map {
-            it.toModel()
+            it.toModel(isLiked = false)
         }
     }
 

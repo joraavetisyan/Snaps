@@ -13,9 +13,10 @@ import kotlinx.coroutines.launch
 
 typealias PagedLoaderAction<T> = suspend (from: Int, count: Int) -> BaseResponse<List<T>>
 
-data class PagedLoaderParams<T>(
+data class PagedLoaderParams<T, R>(
     val action: PagedLoaderAction<T>,
     val pageSize: Int,
+    val mapper: suspend (List<T>) -> List<R>,
 )
 
 data class PageModel<T>(
@@ -30,8 +31,7 @@ abstract class PagedLoader<T, R>(
     scope: CoroutineScope,
     private val ioDispatcher: CoroutineDispatcher,
     private val action: Action,
-    private val params: PagedLoaderParams<T>,
-    private val mapper: (List<T>) -> List<R>,
+    private val params: PagedLoaderParams<T, R>,
 ) {
 
     private val _state = MutableStateFlow(initialPageModel)
@@ -65,7 +65,7 @@ abstract class PagedLoader<T, R>(
         }.doOnSuccess { result ->
             _state.update { currentState ->
                 currentState.copy(
-                    loadedPageItems = currentState.loadedPageItems + mapper(result),
+                    loadedPageItems = currentState.loadedPageItems + params.mapper(result),
                     nextPage = if (result.size < params.pageSize) null else nextPage + 1,
                     isLoading = false,
                     pageSize = params.pageSize,
@@ -82,8 +82,8 @@ abstract class PagedLoaderFactory<K, L, T, R> where L : PagedLoader<T, R> {
 
     private val loadersMap: HashMap<K, L> = hashMapOf()
 
-    fun get(key: K, params: (K) -> PagedLoaderParams<T>): L =
+    fun get(key: K, params: (K) -> PagedLoaderParams<T, R>): L =
         loadersMap.getOrPut(key) { provide(params(key)) }
 
-    abstract fun provide(params: PagedLoaderParams<T>): L
+    abstract fun provide(params: PagedLoaderParams<T, R>): L
 }

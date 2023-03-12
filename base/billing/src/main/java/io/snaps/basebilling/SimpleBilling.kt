@@ -36,6 +36,11 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+interface BillingRouter {
+
+    fun openBillingScreen(product: Product, activity: Activity)
+}
+
 interface SimpleBilling : BillingRouter {
 
     val isPaidVersionFlow: StateFlow<Boolean>
@@ -49,11 +54,6 @@ interface SimpleBilling : BillingRouter {
     suspend fun getInAppPurchases(): BillingEffect<List<Purchase>>
 
     suspend fun getSubscribePurchases(): BillingEffect<List<Purchase>>
-}
-
-interface BillingRouter {
-
-    fun openBillingScreen(product: Product, activity: Activity)
 }
 
 class SimpleBillingImpl @Inject constructor(

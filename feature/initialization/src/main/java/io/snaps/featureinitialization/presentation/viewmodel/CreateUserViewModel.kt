@@ -1,13 +1,13 @@
 package io.snaps.featureinitialization.presentation.viewmodel
 
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
-import io.snaps.coreui.FileType
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.channels.Channel
@@ -71,13 +71,10 @@ class CreateUserViewModel @Inject constructor(
     }
 
     fun onStartButtonClicked() = viewModelScope.launch {
-        fileManager.copyFileToInternalStorage(
-            uri = uiState.value.imageUri,
-            fileType = FileType.Pictures,
-        )?.let {
+        uiState.value.imageUri?.let { fileManager.createFileFromUri(it) }?.let {
             action.execute {
                 _uiState.update { it.copy(isLoading = true) }
-                profileRepository.createUser(it, uiState.value.nicknameValue)
+                profileRepository.createUser(it.toUri(), uiState.value.nicknameValue)
             }.doOnComplete {
                 _uiState.update { it.copy(isLoading = false) }
             }.doOnSuccess {
