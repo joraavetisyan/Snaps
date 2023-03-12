@@ -14,12 +14,12 @@ fun List<NftItemResponseDto>.toRankModelList() = map(NftItemResponseDto::toModel
 
 private fun NftItemResponseDto.toModel() = RankModel(
     type = type,
-    price = rInt, // todo
-    image = ImageValue.Url(rImage), // todo
+    price = rInt, // todo absent in api model
+    image = ImageValue.Url(rImage), // todo absent in api model
     dailyReward = dailyReward,
     dailyUnlock = dailyUnlock,
     dailyConsumption = dailyConsumption,
-    isSelected = rBool, // todo
+    isSelected = false, // todo
 )
 
 fun List<UserNftItemResponseDto>.toNftModelList() = map(UserNftItemResponseDto::toModel)

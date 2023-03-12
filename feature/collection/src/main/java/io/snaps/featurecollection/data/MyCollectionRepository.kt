@@ -76,7 +76,7 @@ class MyCollectionRepositoryImpl @Inject constructor(
     override suspend fun mintNft(type: NftType): Effect<Completable> {
         return apiCall(ioDispatcher) {
             myCollectionApi.mintNft(
-                body = MintNftRequestDto(type),
+                body = MintNftRequestDto(type.intType),
             )
         }.doOnSuccess {
             userDataStorage.hasNft = true

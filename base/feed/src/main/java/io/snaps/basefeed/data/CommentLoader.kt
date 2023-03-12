@@ -19,20 +19,19 @@ class CommentLoader @AssistedInject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     action: Action,
-    @Assisted private val params: PagedLoaderParams<CommentResponseDto>,
+    @Assisted private val params: PagedLoaderParams<CommentResponseDto, CommentModel>,
 ) : PagedLoader<CommentResponseDto, CommentModel>(
     ioDispatcher = ioDispatcher,
     scope = scope,
     action = action,
     params = params,
-    mapper = List<CommentResponseDto>::toCommentModelList,
 )
 
 @AssistedFactory
 abstract class CommentLoaderFactory :
     PagedLoaderFactory<Uuid, CommentLoader, CommentResponseDto, CommentModel>() {
 
-    override fun provide(params: PagedLoaderParams<CommentResponseDto>) = create(params)
+    override fun provide(params: PagedLoaderParams<CommentResponseDto, CommentModel>) = create(params)
 
-    abstract fun create(params: PagedLoaderParams<CommentResponseDto>): CommentLoader
+    abstract fun create(params: PagedLoaderParams<CommentResponseDto, CommentModel>): CommentLoader
 }

@@ -4,13 +4,19 @@ import io.snaps.basefeed.data.model.CommentResponseDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.basefeed.domain.CommentModel
 import io.snaps.baseplayer.domain.VideoClipModel
+import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
+import io.snaps.corecommon.model.Uuid
 import java.time.ZonedDateTime
 
-fun List<VideoFeedItemResponseDto>.toVideoClipModelList() = map(VideoFeedItemResponseDto::toModel)
+fun List<VideoFeedItemResponseDto>.toVideoClipModelList(
+    likedVideos: List<VideoFeedItemResponseDto>,
+) = map { dto ->
+    dto.toModel(likedVideos.firstOrNull { it.entityId == dto.entityId } != null)
+}
 
-fun VideoFeedItemResponseDto.toModel() = VideoClipModel(
+fun VideoFeedItemResponseDto.toModel(isLiked: Boolean) = VideoClipModel(
     id = entityId,
     createdDate = createdDate,
     viewCount = viewsCount,
@@ -20,19 +26,26 @@ fun VideoFeedItemResponseDto.toModel() = VideoClipModel(
     title = title,
     description = description,
     authorId = authorUserId,
+    thumbnail = thumbnailUrl,
+    isLiked = isLiked,
 )
 
-fun List<CommentResponseDto>.toCommentModelList() = map(CommentResponseDto::toModel)
+suspend fun List<CommentResponseDto>.toCommentModelList(
+    owner: suspend (Uuid) -> UserInfoResponseDto?,
+) = map { it.toModel(owner(it.userId)) }
 
-fun CommentResponseDto.toModel() = CommentModel(
+fun CommentResponseDto.toModel(
+    owner: UserInfoResponseDto?,
+) = CommentModel(
     id = id,
-    videoId = videoId,
-    ownerImage = ImageValue.Url(ownerImage),
-    ownerName = ownerName,
-    text = text,
-    likes = likes,
-    isLiked = isLiked,
     createdDate = requireNotNull(ZonedDateTime.parse(createdDate)).toOffsetLocalDateTime(),
-    isOwnerVerified = isOwnerVerified,
-    ownerTitle = ownerTitle,
+    videoId = videoId,
+    text = text,
+    ownerImage = owner?.avatarUrl?.let(ImageValue::Url),
+    ownerName = owner?.name.orEmpty(),
+
+    isOwnerVerified = null,
+    ownerTitle = null,
+    likes = null,
+    isLiked = null,
 )

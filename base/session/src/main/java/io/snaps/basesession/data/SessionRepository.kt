@@ -73,13 +73,14 @@ class SessionRepositoryImpl @Inject constructor(
 
     private fun clearData(reason: LogOutReason?) {
         scope.launch {
-            apiCall(ioDispatcher) {
+            /*apiCall(ioDispatcher) {
                 logoutApi.logout(LogoutRequestDto(deviceInfoProvider.getDeviceId()))
-            }
+            }*/
             deviceInfoProvider.resetPushToken()
             tokenStorage.reset()
             userDataStorage.reset(reason)
             userSessionTracker.onLogout()
+            // todo clear wallets
         }
     }
 }

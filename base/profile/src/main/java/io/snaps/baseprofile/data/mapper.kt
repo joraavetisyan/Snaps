@@ -3,7 +3,7 @@ package io.snaps.baseprofile.data
 import io.snaps.baseprofile.data.model.QuestInfoResponseDto
 import io.snaps.baseprofile.data.model.QuestItemDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
-import io.snaps.baseprofile.domain.CoinsModel
+import io.snaps.baseprofile.domain.StatsModel
 import io.snaps.baseprofile.domain.ProfileModel
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.QuestModel
@@ -51,7 +51,7 @@ fun QuestItemDto.toQuestModel() = QuestModel(
 
 fun mainHeaderState(
     profile: State<ProfileModel>,
-    coins: State<CoinsModel>,
+    coins: State<StatsModel>,
     onProfileClicked: () -> Unit,
     onWalletClicked: () -> Unit,
 ) = if (profile is Effect && coins is Effect) {

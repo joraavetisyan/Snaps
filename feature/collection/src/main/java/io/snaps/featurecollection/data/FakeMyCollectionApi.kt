@@ -75,18 +75,21 @@ class FakeMyCollectionApi : MyCollectionApi {
             userId = "$generation userId",
             type = NftType.Free,
             mintedDate = "",
+            isHealthy = false,
         ),
         UserNftItemResponseDto(
             id = "$generation nft",
             userId = "$generation userId",
             type = NftType.FamousGuy,
             mintedDate = "",
+            isHealthy = false,
         ),
         UserNftItemResponseDto(
             id = "$generation nft",
             userId = "$generation userId",
             type = NftType.Follower,
             mintedDate = "",
+            isHealthy = false,
         ),
     )
 }

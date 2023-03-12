@@ -18,20 +18,19 @@ class HistoryTasksLoader @AssistedInject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     action: Action,
-    @Assisted private val params: PagedLoaderParams<HistoryTaskItemResponseDto>,
+    @Assisted private val params: PagedLoaderParams<HistoryTaskItemResponseDto, TaskModel>,
 ) : PagedLoader<HistoryTaskItemResponseDto, TaskModel>(
     ioDispatcher = ioDispatcher,
     scope = scope,
     action = action,
     params = params,
-    mapper = List<HistoryTaskItemResponseDto>::toModelList,
 )
 
 @AssistedFactory
 abstract class HistoryTasksLoaderFactory :
     PagedLoaderFactory<Unit, HistoryTasksLoader, HistoryTaskItemResponseDto, TaskModel>() {
 
-    override fun provide(params: PagedLoaderParams<HistoryTaskItemResponseDto>) = create(params)
+    override fun provide(params: PagedLoaderParams<HistoryTaskItemResponseDto, TaskModel>) = create(params)
 
-    abstract fun create(params: PagedLoaderParams<HistoryTaskItemResponseDto>): HistoryTasksLoader
+    abstract fun create(params: PagedLoaderParams<HistoryTaskItemResponseDto, TaskModel>): HistoryTasksLoader
 }

@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface PurchaseStateProvider {
 
-    val newPurchasesFlow: SharedFlow<List<Purchase>>
-
     val isPayedVersionFlow: StateFlow<Boolean>
+
+    val newPurchasesFlow: SharedFlow<List<Purchase>>
 
     suspend fun getInAppProducts(): BillingEffect<List<Product>>
     suspend fun getSubscribeProducts(): BillingEffect<List<Product>>

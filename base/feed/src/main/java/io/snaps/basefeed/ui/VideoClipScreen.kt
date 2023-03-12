@@ -198,8 +198,6 @@ fun VideoClipScreen(
                         onCloseClicked = sheetState::hideSheet,
                         onReplyClicked = commentInputSheetState::showSheet,
                         onEmojiClicked = viewModel::onEmojiClicked,
-                        onSendClicked = viewModel::onCommentSendClick,
-                        onCommentChanged = viewModel::onCommentChanged,
                     )
                     is VideoFeedViewModel.BottomDialogType.Share -> ShareBottomDialog(
                         header = "Share".textValue(),
@@ -236,7 +234,13 @@ fun VideoClipScreen(
                         state = pagerState,
                         horizontalAlignment = Alignment.CenterHorizontally,
                         itemSpacing = 10.dp,
-                        key = { uiState.videoFeedUiState.items[it].id },
+                        key = {
+                            try {
+                                uiState.videoFeedUiState.items[it].id
+                            } catch (e: IndexOutOfBoundsException) {
+                                e
+                            }
+                        },
                     ) { index ->
                         when (val item = uiState.videoFeedUiState.items[index]) {
                             is VideoClipUiState.Data -> {

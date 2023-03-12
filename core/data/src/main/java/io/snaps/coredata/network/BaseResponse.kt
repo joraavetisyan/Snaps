@@ -8,9 +8,10 @@ import kotlinx.serialization.Serializable
 data class BaseResponse<T>(
     @SerialName("actualTimestamp") val actualTimestamp: Timestamp?,
     @SerialName("data") val data: T?,
+    @SerialName("success") val isSuccess: Boolean = true,
 ) {
 
-    val isSuccessAndHasData get() = data != null
+    val isSuccessAndHasData get() = isSuccess && data != null
 }
 
 @Serializable

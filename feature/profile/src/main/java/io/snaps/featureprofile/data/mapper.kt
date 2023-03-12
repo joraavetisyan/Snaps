@@ -2,11 +2,11 @@ package io.snaps.featureprofile.data
 
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.featureprofile.data.model.SubscriptionItemResponseDto
-import io.snaps.featureprofile.domain.Sub
+import io.snaps.featureprofile.domain.SubModel
 
 fun List<SubscriptionItemResponseDto>.toModelList() = map(SubscriptionItemResponseDto::toSubModel)
 
-fun SubscriptionItemResponseDto.toSubModel() = Sub(
+fun SubscriptionItemResponseDto.toSubModel() = SubModel(
     userId = userId,
     image = ImageValue.Url(imageUrl),
     name = name,

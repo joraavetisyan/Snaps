@@ -35,14 +35,10 @@ fun BuyNftScreen(
     val viewModel = hiltViewModel<BuyNftViewModel>()
     val context = LocalContext.current
 
-    viewModel.command.collectAsCommand {
-        when (it) {
-            is BuyNftViewModel.Command.OpenBillingScreen -> viewModel.openBillingScreen(it.product, context as Activity)
-        }
-    }
+    viewModel.command.collectAsCommand {}
 
     BuyNftScreen(
-        onBuyClicked = viewModel::onBuyClicked,
+        onBuyClicked = { viewModel.onBuyClicked(context as Activity) },
     )
 }
 

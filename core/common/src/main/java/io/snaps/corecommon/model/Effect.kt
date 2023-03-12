@@ -1,5 +1,8 @@
 package io.snaps.corecommon.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 object Completable
 
 sealed class State<out T : Any> {

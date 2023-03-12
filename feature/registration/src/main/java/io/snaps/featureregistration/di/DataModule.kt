@@ -6,7 +6,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.snaps.basesources.featuretoggle.Feature
+import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.coredata.network.ApiConfig
+import io.snaps.coredata.network.ApiService
 import io.snaps.featureregistration.data.AuthApi
 import io.snaps.featureregistration.data.AuthRepository
 import io.snaps.featureregistration.data.AuthRepositoryImpl
@@ -19,7 +22,13 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun authApi(apiConfig: ApiConfig): AuthApi = FakeAuthApi()
+    fun authApi(config: ApiConfig, feature: FeatureToggle): AuthApi =
+        if (feature.isEnabled(Feature.AuthApiMock)) FakeAuthApi()
+        else config
+            .serviceBuilder(AuthApi::class.java)
+            .service(ApiService.General)
+            .interceptor(config.commonHeaderInterceptor)
+            .build()
 
     @Provides
     @Singleton

@@ -19,20 +19,19 @@ class VideoFeedLoader @AssistedInject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     action: Action,
-    @Assisted private val params: PagedLoaderParams<VideoFeedItemResponseDto>,
+    @Assisted private val params: PagedLoaderParams<VideoFeedItemResponseDto, VideoClipModel>,
 ) : PagedLoader<VideoFeedItemResponseDto, VideoClipModel>(
     ioDispatcher = ioDispatcher,
     scope = scope,
     action = action,
     params = params,
-    mapper = List<VideoFeedItemResponseDto>::toVideoClipModelList,
 )
 
 @AssistedFactory
 abstract class VideoFeedLoaderFactory :
     PagedLoaderFactory<VideoFeedType, VideoFeedLoader, VideoFeedItemResponseDto, VideoClipModel>() {
 
-    override fun provide(params: PagedLoaderParams<VideoFeedItemResponseDto>) = create(params)
+    override fun provide(params: PagedLoaderParams<VideoFeedItemResponseDto, VideoClipModel>) = create(params)
 
-    abstract fun create(params: PagedLoaderParams<VideoFeedItemResponseDto>): VideoFeedLoader
+    abstract fun create(params: PagedLoaderParams<VideoFeedItemResponseDto, VideoClipModel>): VideoFeedLoader
 }

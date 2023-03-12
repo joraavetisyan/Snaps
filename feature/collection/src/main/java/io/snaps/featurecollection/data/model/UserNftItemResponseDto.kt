@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 data class UserNftItemResponseDto(
     @SerialName("id") val id: Uuid,
     @SerialName("userId") val userId: Uuid,
-    @SerialName("nftGoogleType") val type: NftType,
+    @SerialName("nftGlassesType") val type: NftType,
     @SerialName("mintedDate") val mintedDate: DateTime,
+    @SerialName("isHealthy") val isHealthy: Boolean,
 )

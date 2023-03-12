@@ -37,7 +37,7 @@ class BarcodeManager @Inject constructor(
         }
     }
 
-    fun dp(dp: Float, context: Context?) = context?.let {
+    private fun dp(dp: Float, context: Context?) = context?.let {
         val density = context.resources.displayMetrics.density
         if (dp == 0f) 0 else ceil((density * dp).toDouble()).toInt()
     } ?: dp.toInt()

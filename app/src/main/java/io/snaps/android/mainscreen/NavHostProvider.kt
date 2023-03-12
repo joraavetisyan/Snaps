@@ -73,7 +73,7 @@ class NavHostProvider @Inject constructor(
             with(bottomBarFeatureProvider) {
                 bottomBarGraph(
                     route = AppRoute.MainBottomBar,
-                    items = mainBottomBarItems
+                    items = mainBottomBarItems,
                 ) { controller ->
                     with(walletFeatureProvider) { walletGraph(controller) }
                     with(createFeatureProvider) { createGraph(controller) }

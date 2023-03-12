@@ -7,13 +7,16 @@ import io.snaps.corenavigation.InitializationFeatureProvider
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
+import io.snaps.corenavigation.base.tryPopBackStack
 import io.snaps.featureinitialization.presentation.screen.CreateUserScreen
 import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) :
     Navigator(navHostController) {
 
-    fun toRankSelectionScreen() = navHostController.navigate(AppRoute.RankSelection)
+    fun toRankSelectionScreen() = navHostController.navigate(AppRoute.RankSelection) {
+        tryPopBackStack(navHostController)
+    }
 
     fun toMainScreen() = navHostController.navigate(AppRoute.MainBottomBar)
 }
