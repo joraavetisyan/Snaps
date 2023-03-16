@@ -118,7 +118,7 @@ private fun InputRow(
         SimpleTextField(
             value = value,
             onValueChange = onValueChange,
-            placeholder = { Text(text = StringKey.PopularVideosHint.textValue().get()) },
+            placeholder = { Text(text = StringKey.CommentsHint.textValue().get()) },
             modifier = Modifier
                 .addIf(focusRequester != null) {
                     focusRequester(focusRequester!!)

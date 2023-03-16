@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.corecommon.container.ImageValue
@@ -70,6 +71,7 @@ private fun Item(
             Image(
                 modifier = Modifier.fillMaxSize(),
                 painter = ImageValue.Url(it).get(),
+                contentScale = ContentScale.Crop,
                 contentDescription = null,
             )
         }

@@ -33,11 +33,11 @@ fun Project.common() {
             }
             create(BuildTypes.alpha) {
                 initWith(getByName(BuildTypes.debug))
-                isMinifyEnabled = true
+                isMinifyEnabled = false
                 proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             }
             getByName(BuildTypes.release) {
-                isMinifyEnabled = true
+                isMinifyEnabled = false
                 proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             }
         }

@@ -70,16 +70,16 @@ enum class QuestType {
 
 @Serializable
 enum class NftType(val intType: Int) {
-    Free(0),
-    Newbee(1),
-    Viewer(2),
-    Follower(3),
-    Sub(4),
-    Sponsor(5),
-    Influencer(6),
-    FamousGuy(7),
-    Star(8),
-    Rockstar(9),
-    SuperStar(10),
-    Legend(11),
+    @SerialName("Free") Free(0),
+    @SerialName("Newbee") Newbie(1),
+    @SerialName("Viewer") Viewer(2),
+    @SerialName("Follower") Follower(3),
+    @SerialName("Sub") Sub(4),
+    @SerialName("Sponsor") Sponsor(5),
+    @SerialName("Influencer") Influencer(6),
+    @SerialName("FamousGuy") FamousGuy(7),
+    @SerialName("Star") Star(8),
+    @SerialName("Rockstar") Rockstar(9),
+    @SerialName("SuperStar") SuperStar(10),
+    @SerialName("Legend") Legend(11),
 }

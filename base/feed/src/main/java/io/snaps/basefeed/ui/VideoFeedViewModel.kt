@@ -121,6 +121,7 @@ abstract class VideoFeedViewModel(
         }.onEach { state ->
             _uiState.update { it.copy(commentsUiState = state) }
         }.launchIn(viewModelScope)
+        viewModelScope.launch { action.execute { commentRepository.refreshComments(videoId) } }
     }
 
     private fun loadAuthor(authorId: Uuid) {
@@ -262,10 +263,7 @@ abstract class VideoFeedViewModel(
         val bottomDialogType: BottomDialogType = BottomDialogType.Comments,
     ) {
 
-        val commentListSize = if (commentsUiState.items.none { it is CommentUiState.Shimmer }) {
-            // -1 to not count the progress indicator
-            (commentsUiState.items.size - 1).coerceAtLeast(0)
-        } else 0
+        val commentListSize = commentsUiState.items.filterIsInstance<CommentUiState.Data>().size
     }
 
     sealed class BottomDialogType {

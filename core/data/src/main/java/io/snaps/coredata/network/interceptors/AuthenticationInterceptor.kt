@@ -6,7 +6,6 @@ import okhttp3.Response
 import java.io.IOException
 
 private const val AUTHORIZATION_HEADER = "Authorization"
-private const val BEARER = "Bearer"
 
 class AuthenticationInterceptor(
     private val tokenStorage: TokenStorage,
@@ -17,7 +16,7 @@ class AuthenticationInterceptor(
         val originalRequest = chain.request()
         val customRequest = chain.request().newBuilder()
             .method(originalRequest.method, originalRequest.body)
-            .header(AUTHORIZATION_HEADER, "$BEARER ${tokenStorage.authToken}")
+            .header(AUTHORIZATION_HEADER, "${tokenStorage.authToken}")
             .build()
 
         return chain.proceed(customRequest)
