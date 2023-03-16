@@ -71,7 +71,9 @@ private fun CollectionItem(
     when (data) {
         is CollectionItemState.Nft -> Nft(modifier, data)
         is CollectionItemState.Shimmer -> Shimmer(modifier = modifier)
-        is CollectionItemState.Error -> MessageBannerState.defaultState(onClick = data.onClick)
+        is CollectionItemState.Error -> MessageBannerState
+            .defaultState(onClick = data.onClick)
+            .Content(modifier = modifier)
         is CollectionItemState.AddItem -> AddItem(modifier = modifier, onClick = data.onClick)
         is CollectionItemState.MysteryBox -> MysteryBox(modifier, data)
     }

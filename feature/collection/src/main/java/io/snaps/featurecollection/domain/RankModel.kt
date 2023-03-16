@@ -5,10 +5,11 @@ import io.snaps.corecommon.model.NftType
 
 data class RankModel(
     val type: NftType,
-    val price: Int,
     val image: ImageValue,
     val dailyReward: Int,
     val dailyUnlock: Double,
     val dailyConsumption: Double,
-    val isSelected: Boolean,
+    val isAvailableToPurchase: Boolean,
+    val costInUsd: Int,
+    val costInRealTokens: Int,
 )

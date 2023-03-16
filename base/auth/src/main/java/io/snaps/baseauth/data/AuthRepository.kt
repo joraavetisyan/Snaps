@@ -1,5 +1,6 @@
-package io.snaps.featureregistration.data
+package io.snaps.baseauth.data
 
+import android.util.Log
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -7,10 +8,7 @@ import com.google.firebase.auth.FirebaseUser
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
-import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.TokenStorage
-import io.snaps.coredata.network.apiCall
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -30,8 +28,6 @@ interface AuthRepository {
 }
 
 class AuthRepositoryImpl @Inject constructor(
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val api: AuthApi,
     private val auth: FirebaseAuth,
     private val tokenStorage: TokenStorage,
 ) : AuthRepository {
@@ -77,20 +73,14 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun AuthResult.handleAuthResult(): Effect<Completable> {
+    private fun AuthResult.handleAuthResult(): Effect<Completable> {
         val token = user?.getIdToken(false)?.result?.token
         return if (token != null) {
-            auth(token)
+            tokenStorage.authToken = token
+            Log.e("authToken", token)
+            Effect.completable
         } else {
             Effect.error(AppError.Unknown())
         }
-    }
-
-    private suspend fun auth(token: String): Effect<Completable> {
-        return apiCall(ioDispatcher) {
-            api.auth(token)
-        }.doOnSuccess {
-            tokenStorage.authToken = it
-        }.toCompletable()
     }
 }

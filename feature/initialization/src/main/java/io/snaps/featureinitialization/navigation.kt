@@ -18,7 +18,9 @@ internal class ScreenNavigator(navHostController: NavHostController) :
         tryPopBackStack(navHostController)
     }
 
-    fun toMainScreen() = navHostController.navigate(AppRoute.MainBottomBar)
+    fun toMainScreen() = navHostController.navigate(AppRoute.MainBottomBar) {
+        tryPopBackStack(navHostController)
+    }
 }
 
 class InitializationFeatureProviderImpl @Inject constructor() : InitializationFeatureProvider {

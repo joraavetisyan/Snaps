@@ -8,7 +8,9 @@ import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
+import io.snaps.featurewallet.domain.RewardModel
 import io.snaps.featurewallet.domain.TransactionModel
+import io.snaps.featurewallet.screen.RewardsTileState
 import io.snaps.featurewallet.screen.TransactionTileState
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -29,6 +31,11 @@ fun WalletModel.toCellTileState(
         fiatCurrency = this.fiatValue,
     ),
     clickListener = onClick?.let { { it.invoke(this) } },
+)
+
+fun RewardModel.toRewardsTileState() = listOf(
+    RewardsTileState.Locked(lockedTokensBalance = lockedTokensBalance),
+    RewardsTileState.Unlocked(unlockedTokensBalance = unlockedTokensBalance)
 )
 
 fun List<TransactionModel>.toTransactionList(

@@ -51,7 +51,7 @@ fun WalletImportScreen(
 
     viewModel.command.collectAsCommand {
         when (it) {
-            WalletImportViewModel.Command.OpenCreatedWalletScreen -> router.toWalletConnectedScreen()
+            WalletImportViewModel.Command.OpenCreateUserScreen -> router.toCreateUserScreen()
         }
     }
 

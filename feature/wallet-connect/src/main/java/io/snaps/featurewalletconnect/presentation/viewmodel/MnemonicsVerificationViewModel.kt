@@ -61,7 +61,6 @@ class MnemonicsVerificationViewModel @Inject constructor(
         }.doOnComplete {
             _command publish Command.OpenCreatedWalletScreen
         }
-        _command publish Command.OpenCreatedWalletScreen
     }
 
     private fun toNextSelection(firstOrderNumber: Int) {

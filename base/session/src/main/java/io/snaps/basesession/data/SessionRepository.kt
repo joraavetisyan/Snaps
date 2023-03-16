@@ -1,5 +1,6 @@
 package io.snaps.basesession.data
 
+import com.google.firebase.auth.FirebaseAuth
 import io.snaps.baseprofile.data.UserSessionTracker
 import io.snaps.basesession.data.model.LogoutRequestDto
 import io.snaps.basesources.DeviceInfoProvider
@@ -15,6 +16,7 @@ import io.snaps.coredata.network.apiCall
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 interface SessionRepository {
@@ -40,6 +42,7 @@ class SessionRepositoryImpl @Inject constructor(
     private val refreshApi: RefreshApi,
     private val pinCodeWrapper: PinCodeWrapper,
     private val deviceInfoProvider: DeviceInfoProvider,
+    private val auth: FirebaseAuth,
 ) : SessionRepository {
 
     /*
@@ -56,7 +59,14 @@ class SessionRepositoryImpl @Inject constructor(
     * используется refresh токен из оперативной памяти
     * */
     override suspend fun refresh(): Effect<Completable> {
-        return login()
+        val token = auth.currentUser?.getIdToken(false)?.await()?.token
+        if (token != null) {
+            tokenStorage.authToken = token
+            onLogin()
+        } else {
+            logout()
+        }
+        return Effect.completable
     }
 
     override fun onLogin() {

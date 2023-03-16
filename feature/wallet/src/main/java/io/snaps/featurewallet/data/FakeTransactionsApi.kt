@@ -2,6 +2,7 @@ package io.snaps.featurewallet.data
 
 import io.snaps.corecommon.mock.mockDelay
 import io.snaps.coredata.network.BaseResponse
+import io.snaps.featurewallet.data.model.BalanceResponseDto
 import io.snaps.featurewallet.data.model.TransactionItemResponseDto
 import io.snaps.featurewallet.data.model.TransactionType
 import kotlinx.coroutines.delay
@@ -16,6 +17,18 @@ class FakeTransactionsApi : TransactionsApi {
         return BaseResponse(
             actualTimestamp = 0L,
             data = getTransactions()
+        ).also {
+            delay(mockDelay)
+        }
+    }
+
+    override suspend fun balance(): BaseResponse<BalanceResponseDto> {
+        return BaseResponse(
+            actualTimestamp = 0L,
+            data = BalanceResponseDto(
+                lockedTokensBalance = 1,
+                unlockedTokensBalance = 1,
+            )
         ).also {
             delay(mockDelay)
         }

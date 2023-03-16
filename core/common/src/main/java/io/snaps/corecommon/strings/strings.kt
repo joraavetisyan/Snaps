@@ -472,13 +472,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Available Rewards",
     ),
     key(StringKey.WalletDescriptionAvailableRewards) to mapOf(
-        SupportedLanguageKey.En to "Awards convertible to %s",
+        SupportedLanguageKey.En to "Awards convertible to SNPS",
     ),
     key(StringKey.WalletTitleLockedRewards) to mapOf(
         SupportedLanguageKey.En to "Locked Rewards",
     ),
     key(StringKey.WalletDescriptionLockedRewards) to mapOf(
-        SupportedLanguageKey.En to "Rewards unlocked %s",
+        SupportedLanguageKey.En to "Rewards unlocked tomorrow",
     ),
     key(StringKey.WalletTitleHistory) to mapOf(
         SupportedLanguageKey.En to "History",

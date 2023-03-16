@@ -2,7 +2,9 @@ package io.snaps.featurecollection.data
 
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.mock.mockDelay
+import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.mock.rDouble
+import io.snaps.corecommon.mock.rImage
 import io.snaps.corecommon.mock.rInt
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.NftType
@@ -64,6 +66,10 @@ class FakeMyCollectionApi : MyCollectionApi {
                     dailyReward = rInt,
                     dailyUnlock = rDouble,
                     dailyConsumption = rDouble,
+                    costInUsd = rInt,
+                    costInRealTokens = rInt,
+                    isAvailableToPurchase = rBool,
+                    pathToImage = rImage,
                 )
             )
         }
@@ -73,21 +79,24 @@ class FakeMyCollectionApi : MyCollectionApi {
         UserNftItemResponseDto(
             id = "$generation nft",
             userId = "$generation userId",
-            type = NftType.Free,
+            tokenId = null,
+            type = getRanks()[0],
             mintedDate = "",
             isHealthy = false,
         ),
         UserNftItemResponseDto(
             id = "$generation nft",
             userId = "$generation userId",
-            type = NftType.FamousGuy,
+            tokenId = null,
+            type = getRanks()[1],
             mintedDate = "",
             isHealthy = false,
         ),
         UserNftItemResponseDto(
             id = "$generation nft",
             userId = "$generation userId",
-            type = NftType.Follower,
+            tokenId = null,
+            type = getRanks()[2],
             mintedDate = "",
             isHealthy = false,
         ),

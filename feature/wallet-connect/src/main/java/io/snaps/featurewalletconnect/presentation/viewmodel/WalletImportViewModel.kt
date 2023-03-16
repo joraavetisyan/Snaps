@@ -31,7 +31,7 @@ class WalletImportViewModel @Inject constructor(
             action.execute {
                 walletRepository.importAccount(_uiState.value.words)
             }.doOnSuccess {
-                _command publish Command.OpenCreatedWalletScreen
+                _command publish Command.OpenCreateUserScreen
             }.doOnError { _, _ ->
                 _uiState.update { it.copy(hasError = true) }
             }
@@ -55,6 +55,6 @@ class WalletImportViewModel @Inject constructor(
 
     sealed interface Command {
 
-        object OpenCreatedWalletScreen : Command
+        object OpenCreateUserScreen : Command
     }
 }

@@ -3,11 +3,11 @@ package io.snaps.featureregistration.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthCredential
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.baseauth.data.AuthRepository
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
-import io.snaps.featureregistration.data.AuthRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -51,6 +51,10 @@ fun NavOptionsBuilder.tryPopBackStack(navHostController: NavHostController) {
     navHostController.currentDestination?.route?.let { popUpTo(it) { inclusive = true } }
 }
 
+fun NavOptionsBuilder.tryPopBackStack(route: String) {
+    popUpTo(route) { inclusive = true }
+}
+
 inline infix fun <reified ARG> NavController.navigate(direction: FeatureNavDirection<ARG>) =
     navigate(
         route = direction.route.path(direction.arg.toDefaultFormat()),

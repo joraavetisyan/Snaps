@@ -21,10 +21,11 @@ import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.featurewallet.data.TransactionsRepository
 import io.snaps.featurewallet.data.model.TransactionType
-import io.snaps.featurewallet.domain.Reward
+import io.snaps.featurewallet.screen.RewardsTileState
 import io.snaps.featurewallet.screen.TransactionsUiState
 import io.snaps.featurewallet.screen.toTransactionsUiState
 import io.snaps.featurewallet.toCellTileStateList
+import io.snaps.featurewallet.toRewardsTileState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -57,6 +58,7 @@ class WalletViewModel @Inject constructor(
         subscribeToTransactions()
         subscribeToBalance()
         subscribeToWallets()
+        loadRewards()
     }
 
     private fun subscribeToWallets() {
@@ -89,6 +91,26 @@ class WalletViewModel @Inject constructor(
                 )
             }
         }.launchIn(viewModelScope)
+    }
+
+    private fun loadRewards() = viewModelScope.launch {
+        action.execute {
+            transactionsRepository.loadReward()
+        }.doOnSuccess { reward ->
+            _uiState.update {
+                it.copy(rewards = reward.toRewardsTileState())
+            }
+        }.doOnError { _, _ ->
+            _uiState.update {
+                it.copy(
+                    rewards = listOf(
+                        RewardsTileState.Error(
+                            clickListener = ::onRewardReloadClicked,
+                        ) ,
+                    )
+                )
+            }
+        }
     }
 
     fun onTopUpClicked() {
@@ -157,6 +179,10 @@ class WalletViewModel @Inject constructor(
         }
     }
 
+    private fun onRewardReloadClicked() {
+        loadRewards()
+    }
+
     data class UiState(
         val address: String = "",
         val totalBalance: TotalBalanceModel = TotalBalanceModel.empty,
@@ -167,18 +193,7 @@ class WalletViewModel @Inject constructor(
                 rightPart = RightPart.Shimmer(needRightLine = true),
             )
         },
-        val availableReward: Reward = Reward(
-            coin = "16 SNPS",
-            fiat = "≈ 263 USDT",
-            currencySymbol = "SNPS",
-            dateUnlock = "tomorrow",
-        ),
-        val lockedReward: Reward = Reward(
-            coin = "16 SNPS",
-            fiat = "≈ 263 USDT",
-            currencySymbol = "SNPS",
-            dateUnlock = "tomorrow",
-        ),
+        val rewards: List<RewardsTileState> = List(2) { RewardsTileState.Shimmer },
         val bottomDialogType: BottomDialogType = BottomDialogType.SelectWallet(),
         val transactions: TransactionsUiState = TransactionsUiState(),
         val transactionType: TransactionType = TransactionType.All,

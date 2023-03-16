@@ -1,5 +1,6 @@
 package io.snaps.featurecollection.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.MainHeaderHandler
@@ -38,9 +39,10 @@ class MyCollectionViewModel @Inject constructor(
         viewModelScope.launch {
             action.execute {
                 myCollectionRepository.getRanks()
-            }.doOnSuccess {
-                subscribeOnNft(it.size)
-                subscribeOnMysteryBox(it.size)
+            }.doOnSuccess { ranks ->
+                val availableToPurchaseNfts = ranks.count { it.isAvailableToPurchase }
+                subscribeOnNft(availableToPurchaseNfts)
+                subscribeOnMysteryBox(availableToPurchaseNfts)
                 loadNft()
                 loadMysteryBox()
             }

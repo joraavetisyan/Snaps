@@ -25,12 +25,12 @@ private fun RankModel.toRankTileState(
     onItemClicked: (RankModel) -> Unit,
 ) = RankTileState.Data(
     type = type,
-    price = if (price == 0) "Free" else "$price${FiatCurrency.USD.symbol}",
+    price = if (costInUsd == 0) "Free" else "$costInUsd${FiatCurrency.USD.symbol}",
     image = image,
     dailyReward = "${dailyReward * 100}${FiatCurrency.USD.symbol}",
     dailyUnlock = "${dailyUnlock * 100}%",
     dailyConsumption = "${dailyConsumption * 100}%",
-    isSelected = isSelected,
+    isAvailableToPurchase = isAvailableToPurchase,
     clickListener = { onItemClicked(this) },
 )
 
@@ -74,7 +74,7 @@ fun State<List<NftModel>>.toMysteryBoxCollectionItemState(
 
 private fun NftModel.toNftCollectionItemState() = CollectionItemState.Nft(
     type = type,
-    price = if (price == 0) "Free" else "$price${FiatCurrency.USD.symbol}",
+    price = if (costInUsd == 0) "Free" else "$costInUsd${FiatCurrency.USD.symbol}",
     image = image,
     dailyReward = "${dailyReward * 100}${FiatCurrency.USD.symbol}",
     dailyUnlock = "${dailyUnlock * 100}%",

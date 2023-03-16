@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -46,7 +45,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -63,9 +61,7 @@ import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.basewallet.domain.TotalBalanceModel
-import io.snaps.corecommon.R
 import io.snaps.corecommon.container.IconValue
-import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.WalletAddress
@@ -86,7 +82,6 @@ import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewallet.ScreenNavigator
 import io.snaps.featurewallet.data.model.TransactionType
-import io.snaps.featurewallet.domain.Reward
 import io.snaps.featurewallet.viewmodel.WalletViewModel
 import kotlinx.coroutines.launch
 
@@ -229,9 +224,8 @@ private fun WalletScreen(
                     )
                     1 -> Awards(
                         transactions = uiState.transactions,
+                        rewards = uiState.rewards,
                         transactionTypeSelected = uiState.transactionType,
-                        availableReward = uiState.availableReward,
-                        lockedReward = uiState.lockedReward,
                         onWithdrawClicked = onWithdrawClicked,
                         onDropdownMenuItemClicked = onDropdownMenuItemClicked,
                     )
@@ -315,8 +309,7 @@ private fun Wallet(
 private fun Awards(
     transactions: TransactionsUiState,
     transactionTypeSelected: TransactionType,
-    availableReward: Reward,
-    lockedReward: Reward,
+    rewards: List<RewardsTileState>,
     onWithdrawClicked: () -> Unit,
     onDropdownMenuItemClicked: (TransactionType) -> Unit,
 ) {
@@ -326,26 +319,14 @@ private fun Awards(
         contentPadding = PaddingValues(12.dp),
         onScrollEndDetected = transactions.onListEndReaching,
     ) {
+        items(rewards) {
+            it.Content(modifier = Modifier.padding(bottom = 12.dp))
+        }
         item {
-            RewardsCard(
-                title = StringKey.WalletTitleAvailableRewards.textValue().get().text,
-                description = StringKey.WalletDescriptionAvailableRewards.textValue(availableReward.currencySymbol).get().text,
-                fiat = availableReward.fiat,
-                coin = availableReward.coin,
-                imageValue = ImageValue.ResImage(R.drawable.img_available_rewards_background),
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            RewardsCard(
-                title = StringKey.WalletTitleLockedRewards.textValue().get().text,
-                description = StringKey.WalletDescriptionLockedRewards.textValue(lockedReward.dateUnlock).get().text,
-                fiat = lockedReward.fiat,
-                coin = lockedReward.coin,
-                imageValue = ImageValue.ResImage(R.drawable.img_locked_rewards_background),
-            )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp, bottom = 20.dp)
+                    .padding(bottom = 20.dp)
                     .border(
                         width = 1.dp,
                         color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
@@ -424,54 +405,6 @@ private fun Awards(
             uiState = transactions,
             modifier = Modifier.padding(bottom = 8.dp),
         )
-    }
-}
-
-@Composable
-private fun RewardsCard(
-    title: String,
-    description: String,
-    fiat: String,
-    coin: String,
-    imageValue: ImageValue,
-) {
-    Box(
-        modifier = Modifier
-            .clip(AppTheme.shapes.medium)
-            .fillMaxWidth()
-            .height(200.dp),
-    ) {
-        Image(
-            painter = imageValue.get(),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-        )
-        Column(
-            modifier = Modifier.padding(20.dp)
-        ) {
-            Text(
-                text = title,
-                style = AppTheme.specificTypography.bodySmall,
-                color = AppTheme.specificColorScheme.white,
-            )
-            Text(
-                text = coin,
-                style = AppTheme.specificTypography.headlineLarge,
-                color = AppTheme.specificColorScheme.white,
-            )
-            Text(
-                text = fiat,
-                style = AppTheme.specificTypography.bodySmall,
-                color = AppTheme.specificColorScheme.white,
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = description,
-                style = AppTheme.specificTypography.titleMedium,
-                color = AppTheme.specificColorScheme.white,
-                modifier = Modifier.width(200.dp),
-            )
-        }
     }
 }
 

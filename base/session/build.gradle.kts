@@ -15,6 +15,7 @@ dependencies {
 
     implementation(projects.baseProfile)
     implementation(projects.baseSources)
+    implementation(projects.baseAuth)
 
     implementation(*Libs.bundle.firebase)
     implementation(*Libs.bundle.preference)
