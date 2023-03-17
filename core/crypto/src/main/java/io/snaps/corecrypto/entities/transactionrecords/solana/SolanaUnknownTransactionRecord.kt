@@ -1,8 +1,8 @@
 package io.snaps.corecrypto.entities.transactionrecords.solana
 
-import io.snaps.corecrypto.other.TransactionSource
 import io.horizontalsystems.marketkit.models.Token
 import io.horizontalsystems.solanakit.models.Transaction
+import io.snaps.corecrypto.other.TransactionSource
 
 class SolanaUnknownTransactionRecord(
         transaction: Transaction,

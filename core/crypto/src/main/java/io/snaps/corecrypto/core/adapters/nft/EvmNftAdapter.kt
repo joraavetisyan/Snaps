@@ -1,13 +1,13 @@
 package io.snaps.corecrypto.core.adapters.nft
 
-import io.snaps.corecrypto.entities.nft.EvmNftRecord
-import io.snaps.corecrypto.entities.nft.NftRecord
-import io.snaps.corecrypto.entities.nft.NftUid
 import io.horizontalsystems.ethereumkit.models.Address
 import io.horizontalsystems.ethereumkit.models.TransactionData
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.nftkit.core.NftKit
 import io.horizontalsystems.nftkit.models.NftBalance
+import io.snaps.corecrypto.entities.nft.EvmNftRecord
+import io.snaps.corecrypto.entities.nft.NftRecord
+import io.snaps.corecrypto.entities.nft.NftUid
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.math.BigInteger

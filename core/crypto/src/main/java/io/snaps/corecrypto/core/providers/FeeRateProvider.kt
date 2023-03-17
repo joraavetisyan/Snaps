@@ -1,10 +1,10 @@
 package io.snaps.corecrypto.core.providers
 
-import io.snaps.corecrypto.core.FeeRatePriority
-import io.snaps.corecrypto.core.IFeeRateProvider
 import io.horizontalsystems.feeratekit.FeeRateKit
 import io.horizontalsystems.feeratekit.model.FeeProviderConfig
 import io.reactivex.Single
+import io.snaps.corecrypto.core.FeeRatePriority
+import io.snaps.corecrypto.core.IFeeRateProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.math.BigInteger

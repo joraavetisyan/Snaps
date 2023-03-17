@@ -1,9 +1,9 @@
 package io.snaps.corecrypto.entities.transactionrecords.binancechain
 
-import io.snaps.corecrypto.entities.TransactionValue
-import io.snaps.corecrypto.other.TransactionSource
 import io.horizontalsystems.binancechainkit.models.TransactionInfo
 import io.horizontalsystems.marketkit.models.Token
+import io.snaps.corecrypto.entities.TransactionValue
+import io.snaps.corecrypto.other.TransactionSource
 
 class BinanceChainOutgoingTransactionRecord(
     transaction: TransactionInfo,

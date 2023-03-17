@@ -1,9 +1,13 @@
 package io.snaps.corecrypto.core.managers
 
+import io.horizontalsystems.ethereumkit.models.Chain
+import io.horizontalsystems.marketkit.models.Blockchain
+import io.horizontalsystems.marketkit.models.BlockchainType
+import io.horizontalsystems.marketkit.models.Token
+import io.horizontalsystems.marketkit.models.TokenQuery
+import io.horizontalsystems.marketkit.models.TokenType
 import io.snaps.corecrypto.core.factories.EvmAccountManagerFactory
 import io.snaps.corecrypto.other.BackgroundManager
-import io.horizontalsystems.ethereumkit.models.Chain
-import io.horizontalsystems.marketkit.models.*
 
 class EvmBlockchainManager(
     private val backgroundManager: BackgroundManager,

@@ -1,11 +1,6 @@
 package io.snaps.corecrypto.core.storage.migrations
 
 import android.os.Parcelable
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
-import io.horizontalsystems.marketkit.models.BlockchainType
-import io.horizontalsystems.marketkit.models.TokenQuery
-import io.horizontalsystems.marketkit.models.TokenType
 import kotlinx.parcelize.Parcelize
 
 private sealed class CoinType : Parcelable {

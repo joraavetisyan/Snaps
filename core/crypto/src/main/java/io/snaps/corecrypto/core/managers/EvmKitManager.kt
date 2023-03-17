@@ -2,17 +2,15 @@ package io.snaps.corecrypto.core.managers
 
 import android.os.Handler
 import android.os.Looper
-import io.snaps.corecrypto.core.CryptoKit
-import io.snaps.corecrypto.core.UnsupportedAccountException
-import io.snaps.corecrypto.core.subscribeIO
-import io.snaps.corecrypto.core.supportedNftTypes
-import io.snaps.corecrypto.entities.Account
-import io.snaps.corecrypto.entities.AccountType
-import io.snaps.corecrypto.other.BackgroundManager
 import io.horizontalsystems.erc20kit.core.Erc20Kit
 import io.horizontalsystems.ethereumkit.core.EthereumKit
 import io.horizontalsystems.ethereumkit.core.signer.Signer
-import io.horizontalsystems.ethereumkit.models.*
+import io.horizontalsystems.ethereumkit.models.Address
+import io.horizontalsystems.ethereumkit.models.Chain
+import io.horizontalsystems.ethereumkit.models.FullTransaction
+import io.horizontalsystems.ethereumkit.models.GasPrice
+import io.horizontalsystems.ethereumkit.models.RpcSource
+import io.horizontalsystems.ethereumkit.models.TransactionData
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.nftkit.core.NftKit
 import io.horizontalsystems.nftkit.models.NftType
@@ -23,6 +21,13 @@ import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import io.snaps.corecrypto.core.CryptoKit
+import io.snaps.corecrypto.core.UnsupportedAccountException
+import io.snaps.corecrypto.core.subscribeIO
+import io.snaps.corecrypto.core.supportedNftTypes
+import io.snaps.corecrypto.entities.Account
+import io.snaps.corecrypto.entities.AccountType
+import io.snaps.corecrypto.other.BackgroundManager
 import java.net.URL
 
 class EvmKitManager(

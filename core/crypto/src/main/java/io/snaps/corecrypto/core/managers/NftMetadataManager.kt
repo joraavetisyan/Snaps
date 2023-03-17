@@ -1,11 +1,15 @@
 package io.snaps.corecrypto.core.managers
 
+import io.horizontalsystems.marketkit.models.BlockchainType
 import io.snaps.corecrypto.core.providers.AppConfigProvider
 import io.snaps.corecrypto.core.providers.nft.INftProvider
 import io.snaps.corecrypto.core.providers.nft.OpenSeaNftProvider
 import io.snaps.corecrypto.core.storage.NftStorage
-import io.snaps.corecrypto.entities.nft.*
-import io.horizontalsystems.marketkit.models.BlockchainType
+import io.snaps.corecrypto.entities.nft.NftAddressMetadata
+import io.snaps.corecrypto.entities.nft.NftAssetBriefMetadata
+import io.snaps.corecrypto.entities.nft.NftAssetShortMetadata
+import io.snaps.corecrypto.entities.nft.NftKey
+import io.snaps.corecrypto.entities.nft.NftUid
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow

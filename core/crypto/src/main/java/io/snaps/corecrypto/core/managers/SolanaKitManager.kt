@@ -2,11 +2,6 @@ package io.snaps.corecrypto.core.managers
 
 import android.os.Handler
 import android.os.Looper
-import io.snaps.corecrypto.core.UnsupportedAccountException
-import io.snaps.corecrypto.core.subscribeIO
-import io.snaps.corecrypto.entities.Account
-import io.snaps.corecrypto.entities.AccountType
-import io.snaps.corecrypto.other.BackgroundManager
 import io.horizontalsystems.solanakit.Signer
 import io.horizontalsystems.solanakit.SolanaKit
 import io.reactivex.Observable
@@ -14,6 +9,11 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
 import io.snaps.corecrypto.core.CryptoKit
+import io.snaps.corecrypto.core.UnsupportedAccountException
+import io.snaps.corecrypto.core.subscribeIO
+import io.snaps.corecrypto.entities.Account
+import io.snaps.corecrypto.entities.AccountType
+import io.snaps.corecrypto.other.BackgroundManager
 import kotlinx.coroutines.rx2.asObservable
 
 class SolanaKitManager(

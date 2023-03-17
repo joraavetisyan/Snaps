@@ -1,8 +1,8 @@
 package io.snaps.corecrypto.walletconnect.version1
 
+import io.reactivex.subjects.PublishSubject
 import io.snaps.corecrypto.core.managers.WalletConnectInteractor
 import io.snaps.corecrypto.walletconnect.entity.WalletConnectSession
-import io.reactivex.subjects.PublishSubject
 
 class WC1SessionKillManager(
     session: WalletConnectSession

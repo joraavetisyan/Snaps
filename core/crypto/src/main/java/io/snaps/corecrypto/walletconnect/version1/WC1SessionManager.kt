@@ -1,14 +1,14 @@
 package io.snaps.corecrypto.walletconnect.version1
 
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.PublishSubject
 import io.snaps.corecrypto.core.IAccountManager
 import io.snaps.corecrypto.core.managers.EvmSyncSourceManager
 import io.snaps.corecrypto.core.subscribeIO
 import io.snaps.corecrypto.walletconnect.entity.WalletConnectSession
 import io.snaps.corecrypto.walletconnect.storage.WC1SessionStorage
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.PublishSubject
 
 class WC1SessionManager(
     private val storage: WC1SessionStorage,

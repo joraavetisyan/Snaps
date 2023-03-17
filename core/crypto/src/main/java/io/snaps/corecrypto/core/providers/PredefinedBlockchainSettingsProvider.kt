@@ -1,10 +1,10 @@
 package io.snaps.corecrypto.core.providers
 
+import io.horizontalsystems.marketkit.models.BlockchainType
 import io.snaps.corecrypto.core.managers.RestoreSettings
 import io.snaps.corecrypto.core.managers.RestoreSettingsManager
 import io.snaps.corecrypto.core.managers.ZcashBirthdayProvider
 import io.snaps.corecrypto.entities.Account
-import io.horizontalsystems.marketkit.models.BlockchainType
 
 class PredefinedBlockchainSettingsProvider(
     private val manager: RestoreSettingsManager,

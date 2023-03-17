@@ -1,11 +1,15 @@
 package io.snaps.corecrypto.core.managers
 
+import io.horizontalsystems.marketkit.models.Token
+import io.horizontalsystems.marketkit.models.TokenQuery
 import io.snaps.corecrypto.core.IEnabledWalletStorage
 import io.snaps.corecrypto.core.IWalletStorage
 import io.snaps.corecrypto.core.customCoinUid
-import io.snaps.corecrypto.entities.*
-import io.horizontalsystems.marketkit.models.Token
-import io.horizontalsystems.marketkit.models.TokenQuery
+import io.snaps.corecrypto.entities.Account
+import io.snaps.corecrypto.entities.CoinSettings
+import io.snaps.corecrypto.entities.ConfiguredToken
+import io.snaps.corecrypto.entities.EnabledWallet
+import io.snaps.corecrypto.entities.Wallet
 
 class WalletStorage(
     private val marketKit: MarketKitWrapper,

@@ -1,7 +1,13 @@
 package io.snaps.corecrypto.core.managers
 
 import io.snaps.corecrypto.core.IAccountCleaner
-import io.snaps.corecrypto.core.adapters.*
+import io.snaps.corecrypto.core.adapters.BinanceAdapter
+import io.snaps.corecrypto.core.adapters.BitcoinAdapter
+import io.snaps.corecrypto.core.adapters.BitcoinCashAdapter
+import io.snaps.corecrypto.core.adapters.DashAdapter
+import io.snaps.corecrypto.core.adapters.Eip20Adapter
+import io.snaps.corecrypto.core.adapters.EvmAdapter
+import io.snaps.corecrypto.core.adapters.SolanaAdapter
 import io.snaps.corecrypto.core.adapters.zcash.ZcashAdapter
 
 class AccountCleaner(private val testMode: Boolean) : IAccountCleaner {

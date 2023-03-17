@@ -1,11 +1,11 @@
 package io.snaps.corecrypto.core.storage
 
+import io.reactivex.Flowable
 import io.snaps.corecrypto.core.IAccountsStorage
 import io.snaps.corecrypto.entities.Account
 import io.snaps.corecrypto.entities.AccountOrigin
 import io.snaps.corecrypto.entities.AccountType
 import io.snaps.corecrypto.entities.ActiveAccount
-import io.reactivex.Flowable
 
 class AccountsStorage(appDatabase: AppDatabase) : IAccountsStorage {
 

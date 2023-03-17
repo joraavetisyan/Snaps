@@ -2,10 +2,6 @@ package io.snaps.featurecollection.data
 
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
-import io.snaps.corecommon.mock.rBool
-import io.snaps.corecommon.mock.rDouble
-import io.snaps.corecommon.mock.rImage
-import io.snaps.corecommon.mock.rInt
 import io.snaps.featurecollection.data.model.NftItemResponseDto
 import io.snaps.featurecollection.data.model.UserNftItemResponseDto
 import io.snaps.featurecollection.domain.NftModel

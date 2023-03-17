@@ -1,9 +1,9 @@
 package io.snaps.corecrypto.entities.transactionrecords.evm
 
-import io.snaps.corecrypto.entities.TransactionValue
-import io.snaps.corecrypto.other.TransactionSource
 import io.horizontalsystems.ethereumkit.models.Transaction
 import io.horizontalsystems.marketkit.models.Token
+import io.snaps.corecrypto.entities.TransactionValue
+import io.snaps.corecrypto.other.TransactionSource
 
 class SwapTransactionRecord(
     transaction: Transaction,

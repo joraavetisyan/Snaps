@@ -1,11 +1,22 @@
 package io.snaps.corecrypto.core.providers.nft
 
-import io.snaps.corecrypto.R
+import io.horizontalsystems.marketkit.models.BlockchainType
+import io.horizontalsystems.marketkit.models.NftPrice
+import io.horizontalsystems.marketkit.models.Token
+import io.horizontalsystems.marketkit.models.TokenQuery
+import io.horizontalsystems.marketkit.models.TokenType
 import io.snaps.corecrypto.core.managers.MarketKitWrapper
 import io.snaps.corecrypto.core.providers.AppConfigProvider
-import io.snaps.corecrypto.entities.nft.*
+import io.snaps.corecrypto.entities.nft.NftAddressMetadata
+import io.snaps.corecrypto.entities.nft.NftAssetBriefMetadata
+import io.snaps.corecrypto.entities.nft.NftAssetMetadata
+import io.snaps.corecrypto.entities.nft.NftAssetShortMetadata
+import io.snaps.corecrypto.entities.nft.NftCollectionMetadata
+import io.snaps.corecrypto.entities.nft.NftCollectionShortMetadata
+import io.snaps.corecrypto.entities.nft.NftContractMetadata
+import io.snaps.corecrypto.entities.nft.NftEventMetadata
 import io.snaps.corecrypto.entities.nft.NftEventMetadata.EventType
-import io.horizontalsystems.marketkit.models.*
+import io.snaps.corecrypto.entities.nft.NftUid
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.*

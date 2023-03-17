@@ -1,7 +1,7 @@
 package io.snaps.corecrypto.core.factories
 
-import io.snaps.corecrypto.core.utils.AddressParser
 import io.horizontalsystems.marketkit.models.BlockchainType
+import io.snaps.corecrypto.core.utils.AddressParser
 
 class AddressParserFactory {
     fun parser(blockchainType: BlockchainType) = when (blockchainType) {

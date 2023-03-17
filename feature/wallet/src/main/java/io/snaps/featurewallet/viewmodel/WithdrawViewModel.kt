@@ -42,9 +42,7 @@ class WithdrawViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(
         UiState(
             walletModel = args.wallet,
-            availableAmount = "${
-                walletRepository.getAvailableBalance(args.wallet).toString()
-            } ${args.wallet.symbol}",
+            availableAmount = "${walletRepository.getAvailableBalance(args.wallet)} ${args.wallet.symbol}",
         )
     )
     val uiState = _uiState.asStateFlow()

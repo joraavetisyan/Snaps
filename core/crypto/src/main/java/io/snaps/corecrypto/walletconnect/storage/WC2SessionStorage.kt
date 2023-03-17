@@ -1,7 +1,7 @@
 package io.snaps.corecrypto.walletconnect.storage
 
-import io.snaps.corecrypto.walletconnect.entity.WalletConnectV2Session
 import io.snaps.corecrypto.core.storage.AppDatabase
+import io.snaps.corecrypto.walletconnect.entity.WalletConnectV2Session
 
 class WC2SessionStorage(appDatabase: AppDatabase) {
 

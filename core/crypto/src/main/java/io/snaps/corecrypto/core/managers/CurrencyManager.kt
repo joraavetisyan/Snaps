@@ -1,9 +1,9 @@
 package io.snaps.corecrypto.core.managers
 
+import io.reactivex.subjects.PublishSubject
 import io.snaps.corecrypto.core.ILocalStorage
 import io.snaps.corecrypto.core.providers.AppConfigProvider
 import io.snaps.corecrypto.entities.Currency
-import io.reactivex.subjects.PublishSubject
 
 class CurrencyManager(private val localStorage: ILocalStorage, private val appConfigProvider: AppConfigProvider) {
 

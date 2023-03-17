@@ -7,7 +7,6 @@ import dagger.hilt.components.SingletonComponent
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.core.IAccountFactory
 import io.snaps.corecrypto.core.IAccountManager
-import io.snaps.corecrypto.core.ISendBinanceAdapter
 import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.IWordsManager
 import io.snaps.corecrypto.core.managers.PassphraseValidator
@@ -18,11 +17,8 @@ import io.snaps.corecrypto.core.providers.BalanceCache
 import io.snaps.corecrypto.core.providers.BalanceService
 import io.snaps.corecrypto.core.providers.BalanceViewItemFactory
 import io.snaps.corecrypto.core.providers.BalanceXRateRepository
-import io.snaps.corecrypto.core.providers.ISendEvmTransactionService
 import io.snaps.corecrypto.core.providers.ITotalBalance
 import io.snaps.corecrypto.core.providers.PredefinedBlockchainSettingsProvider
-import io.snaps.corecrypto.core.providers.SendBinanceFeeService
-import io.snaps.corecrypto.core.providers.SendEvmTransactionService
 import io.snaps.corecrypto.core.providers.TotalBalance
 import io.snaps.corecrypto.core.providers.TotalService
 

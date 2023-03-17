@@ -3,9 +3,9 @@ package io.snaps.corecrypto.core.managers
 import android.annotation.SuppressLint
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
-import io.snaps.corecrypto.core.INetworkManager
 import io.reactivex.Flowable
 import io.reactivex.Single
+import io.snaps.corecrypto.core.INetworkManager
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

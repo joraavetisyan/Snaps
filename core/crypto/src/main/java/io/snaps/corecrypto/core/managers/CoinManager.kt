@@ -1,9 +1,9 @@
 package io.snaps.corecrypto.core.managers
 
-import io.snaps.corecrypto.core.ICoinManager
-import io.snaps.corecrypto.core.IWalletManager
 import io.horizontalsystems.marketkit.models.Token
 import io.horizontalsystems.marketkit.models.TokenQuery
+import io.snaps.corecrypto.core.ICoinManager
+import io.snaps.corecrypto.core.IWalletManager
 
 class CoinManager(
     private val marketKit: MarketKitWrapper,

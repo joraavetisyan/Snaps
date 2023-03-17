@@ -15,11 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.corecommon.R
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
@@ -42,7 +42,7 @@ sealed class RewardsTileState : TileState {
     data class Error(val clickListener: () -> Unit) : RewardsTileState()
 
     @Composable
-    override fun  Content(modifier: Modifier) {
+    override fun Content(modifier: Modifier) {
         RewardsTile(modifier, this)
     }
 }

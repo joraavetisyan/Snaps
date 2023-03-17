@@ -2,7 +2,6 @@ package io.snaps.basesession.data
 
 import com.google.firebase.auth.FirebaseAuth
 import io.snaps.baseprofile.data.UserSessionTracker
-import io.snaps.basesession.data.model.LogoutRequestDto
 import io.snaps.basesources.DeviceInfoProvider
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
@@ -12,7 +11,6 @@ import io.snaps.coredata.crypto.PinCodeWrapper
 import io.snaps.coredata.database.LogOutReason
 import io.snaps.coredata.database.TokenStorage
 import io.snaps.coredata.database.UserDataStorage
-import io.snaps.coredata.network.apiCall
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

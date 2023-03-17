@@ -19,8 +19,7 @@ enum class Timing(val seconds: Int) {
 }
 
 @HiltViewModel
-class CreateVideoViewModel @Inject constructor(
-) : SimpleViewModel() {
+class CreateVideoViewModel @Inject constructor() : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()

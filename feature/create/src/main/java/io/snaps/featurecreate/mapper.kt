@@ -21,7 +21,7 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.featurecreate.viewmodel.Timing
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 

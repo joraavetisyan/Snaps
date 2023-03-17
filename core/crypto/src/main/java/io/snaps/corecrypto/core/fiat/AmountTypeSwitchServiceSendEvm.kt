@@ -1,11 +1,11 @@
 package io.snaps.corecrypto.core.fiat
 
-import io.snaps.corecrypto.core.Clearable
-import io.snaps.corecrypto.core.subscribeIO
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
+import io.snaps.corecrypto.core.Clearable
+import io.snaps.corecrypto.core.subscribeIO
 
 class AmountTypeSwitchServiceSendEvm(
         amountType: AmountType = AmountType.Coin

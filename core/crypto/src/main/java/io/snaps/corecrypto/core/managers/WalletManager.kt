@@ -1,5 +1,8 @@
 package io.snaps.corecrypto.core.managers
 
+import io.horizontalsystems.marketkit.models.BlockchainType
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.PublishSubject
 import io.snaps.corecrypto.core.IAccountManager
 import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.IWalletStorage
@@ -7,9 +10,6 @@ import io.snaps.corecrypto.core.subscribeIO
 import io.snaps.corecrypto.entities.Account
 import io.snaps.corecrypto.entities.EnabledWallet
 import io.snaps.corecrypto.entities.Wallet
-import io.horizontalsystems.marketkit.models.BlockchainType
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.PublishSubject
 
 class WalletManager(
     private val accountManager: IAccountManager,

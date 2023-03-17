@@ -1,10 +1,10 @@
 package io.snaps.corecrypto.core.adapters
 
+import io.horizontalsystems.solanakit.Signer
 import io.snaps.corecrypto.core.IAdapter
 import io.snaps.corecrypto.core.IBalanceAdapter
 import io.snaps.corecrypto.core.IReceiveAdapter
 import io.snaps.corecrypto.core.managers.SolanaKitWrapper
-import io.horizontalsystems.solanakit.Signer
 
 abstract class BaseSolanaAdapter(
         solanaKitWrapper: SolanaKitWrapper,

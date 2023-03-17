@@ -1,5 +1,9 @@
 package io.snaps.corecrypto.core.managers
 
+import io.horizontalsystems.marketkit.models.BlockchainType
+import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.BehaviorSubject
 import io.snaps.corecrypto.core.IAdapter
 import io.snaps.corecrypto.core.IAdapterManager
 import io.snaps.corecrypto.core.ITransactionsAdapter
@@ -7,10 +11,6 @@ import io.snaps.corecrypto.core.factories.AdapterFactory
 import io.snaps.corecrypto.core.subscribeIO
 import io.snaps.corecrypto.entities.Wallet
 import io.snaps.corecrypto.other.TransactionSource
-import io.horizontalsystems.marketkit.models.BlockchainType
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.BehaviorSubject
 import java.util.concurrent.ConcurrentHashMap
 
 class TransactionAdapterManager(

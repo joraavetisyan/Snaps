@@ -1,15 +1,15 @@
 package io.snaps.corecrypto.core.adapters
 
-import io.snaps.corecrypto.core.AdapterState
-import io.snaps.corecrypto.core.CryptoKit
-import io.snaps.corecrypto.core.BalanceData
-import io.snaps.corecrypto.core.ICoinManager
-import io.snaps.corecrypto.core.managers.EvmKitWrapper
 import io.horizontalsystems.ethereumkit.core.EthereumKit
 import io.horizontalsystems.ethereumkit.models.Address
 import io.horizontalsystems.ethereumkit.models.Chain
 import io.horizontalsystems.ethereumkit.models.TransactionData
 import io.reactivex.Flowable
+import io.snaps.corecrypto.core.AdapterState
+import io.snaps.corecrypto.core.BalanceData
+import io.snaps.corecrypto.core.CryptoKit
+import io.snaps.corecrypto.core.ICoinManager
+import io.snaps.corecrypto.core.managers.EvmKitWrapper
 import java.math.BigInteger
 
 class EvmAdapter(evmKitWrapper: EvmKitWrapper, coinManager: ICoinManager) :

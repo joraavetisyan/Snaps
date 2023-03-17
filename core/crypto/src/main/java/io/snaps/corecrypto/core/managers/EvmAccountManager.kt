@@ -1,12 +1,5 @@
 package io.snaps.corecrypto.core.managers
 
-import io.snaps.corecrypto.core.IAccountManager
-import io.snaps.corecrypto.core.IWalletManager
-import io.snaps.corecrypto.core.storage.EvmAccountStateDao
-import io.snaps.corecrypto.entities.Account
-import io.snaps.corecrypto.entities.AccountOrigin
-import io.snaps.corecrypto.entities.EnabledWallet
-import io.snaps.corecrypto.entities.EvmAccountState
 import io.horizontalsystems.erc20kit.core.DataProvider
 import io.horizontalsystems.erc20kit.events.TransferEventInstance
 import io.horizontalsystems.ethereumkit.core.EthereumKit
@@ -21,11 +14,25 @@ import io.horizontalsystems.oneinchkit.decorations.OneInchDecoration
 import io.horizontalsystems.oneinchkit.decorations.OneInchSwapDecoration
 import io.horizontalsystems.oneinchkit.decorations.OneInchUnoswapDecoration
 import io.horizontalsystems.uniswapkit.decorations.SwapDecoration
-import kotlinx.coroutines.*
+import io.snaps.corecrypto.core.IAccountManager
+import io.snaps.corecrypto.core.IWalletManager
+import io.snaps.corecrypto.core.storage.EvmAccountStateDao
+import io.snaps.corecrypto.entities.Account
+import io.snaps.corecrypto.entities.AccountOrigin
+import io.snaps.corecrypto.entities.EnabledWallet
+import io.snaps.corecrypto.entities.EvmAccountState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.cancellable
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.rx2.asFlow
 import kotlinx.coroutines.rx2.await
+import kotlinx.coroutines.withContext
 import java.math.BigInteger
 import java.util.concurrent.Executors
 

@@ -1,9 +1,9 @@
 package io.snaps.corecrypto.core.storage
 
+import io.horizontalsystems.marketkit.models.BlockchainType
 import io.snaps.corecrypto.entities.BlockchainSettingRecord
 import io.snaps.corecrypto.entities.BtcRestoreMode
 import io.snaps.corecrypto.entities.TransactionDataSortMode
-import io.horizontalsystems.marketkit.models.BlockchainType
 
 class BlockchainSettingsStorage(appDatabase: AppDatabase) {
 

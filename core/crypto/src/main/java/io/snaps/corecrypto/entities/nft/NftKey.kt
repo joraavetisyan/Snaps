@@ -1,7 +1,7 @@
 package io.snaps.corecrypto.entities.nft
 
-import io.snaps.corecrypto.entities.Account
 import io.horizontalsystems.marketkit.models.BlockchainType
+import io.snaps.corecrypto.entities.Account
 
 data class NftKey(
     val account: Account,

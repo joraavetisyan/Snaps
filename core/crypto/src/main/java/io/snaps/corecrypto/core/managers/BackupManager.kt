@@ -1,8 +1,8 @@
 package io.snaps.corecrypto.core.managers
 
+import io.reactivex.Flowable
 import io.snaps.corecrypto.core.IAccountManager
 import io.snaps.corecrypto.core.IBackupManager
-import io.reactivex.Flowable
 
 class BackupManager(private val accountManager: IAccountManager) : IBackupManager {
 

@@ -3,17 +3,15 @@ package io.snaps.baseprofile.data
 import android.net.Uri
 import androidx.core.net.toFile
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
-import io.snaps.baseprofile.domain.StatsModel
 import io.snaps.baseprofile.domain.ProfileModel
 import io.snaps.baseprofile.domain.QuestInfoModel
-import io.snaps.corecommon.model.AppError
+import io.snaps.baseprofile.domain.StatsModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.generateCurrentDateTime
-import io.snaps.corecommon.model.generateRequestId
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.UserDataStorage
@@ -31,7 +29,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
 import javax.inject.Inject
 
 interface ProfileRepository {

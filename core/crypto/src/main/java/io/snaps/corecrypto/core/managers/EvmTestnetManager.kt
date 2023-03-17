@@ -1,8 +1,13 @@
 package io.snaps.corecrypto.core.managers
 
-import io.snaps.corecrypto.core.ILocalStorage
-import io.horizontalsystems.marketkit.models.*
+import io.horizontalsystems.marketkit.models.Blockchain
+import io.horizontalsystems.marketkit.models.BlockchainType
+import io.horizontalsystems.marketkit.models.Coin
+import io.horizontalsystems.marketkit.models.Token
+import io.horizontalsystems.marketkit.models.TokenQuery
+import io.horizontalsystems.marketkit.models.TokenType
 import io.reactivex.subjects.PublishSubject
+import io.snaps.corecrypto.core.ILocalStorage
 
 class EvmTestnetManager(private val localStorage: ILocalStorage) {
     val allBlockchainTypes = listOf(BlockchainType.EthereumGoerli)

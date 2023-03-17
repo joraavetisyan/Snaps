@@ -1,11 +1,11 @@
 package io.snaps.corecrypto.core.managers
 
-import io.snaps.corecrypto.core.ICoinManager
-import io.snaps.corecrypto.core.ILocalStorage
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.marketkit.models.Token
 import io.horizontalsystems.marketkit.models.TokenQuery
 import io.horizontalsystems.marketkit.models.TokenType
+import io.snaps.corecrypto.core.ICoinManager
+import io.snaps.corecrypto.core.ILocalStorage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

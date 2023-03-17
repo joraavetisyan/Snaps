@@ -1,11 +1,11 @@
 package io.snaps.corecrypto.core.managers
 
+import io.horizontalsystems.marketkit.models.TokenQuery
 import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.defaultSettingsArray
 import io.snaps.corecrypto.entities.Account
 import io.snaps.corecrypto.entities.ConfiguredToken
 import io.snaps.corecrypto.entities.Wallet
-import io.horizontalsystems.marketkit.models.TokenQuery
 
 class WalletActivator(
     private val walletManager: IWalletManager,

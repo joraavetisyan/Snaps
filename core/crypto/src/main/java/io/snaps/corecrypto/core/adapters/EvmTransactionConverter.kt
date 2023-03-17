@@ -1,13 +1,5 @@
 package io.snaps.corecrypto.core.adapters
 
-import io.snaps.corecrypto.core.ICoinManager
-import io.snaps.corecrypto.core.managers.EvmKitWrapper
-import io.snaps.corecrypto.core.managers.EvmLabelManager
-import io.snaps.corecrypto.core.tokenIconPlaceholder
-import io.snaps.corecrypto.entities.TransactionValue
-import io.snaps.corecrypto.entities.nft.NftUid
-import io.snaps.corecrypto.entities.transactionrecords.evm.*
-import io.snaps.corecrypto.other.TransactionSource
 import io.horizontalsystems.erc20kit.decorations.ApproveEip20Decoration
 import io.horizontalsystems.erc20kit.decorations.OutgoingEip20Decoration
 import io.horizontalsystems.erc20kit.events.TokenInfo
@@ -33,6 +25,22 @@ import io.horizontalsystems.oneinchkit.decorations.OneInchSwapDecoration
 import io.horizontalsystems.oneinchkit.decorations.OneInchUnknownDecoration
 import io.horizontalsystems.oneinchkit.decorations.OneInchUnoswapDecoration
 import io.horizontalsystems.uniswapkit.decorations.SwapDecoration
+import io.snaps.corecrypto.core.ICoinManager
+import io.snaps.corecrypto.core.managers.EvmKitWrapper
+import io.snaps.corecrypto.core.managers.EvmLabelManager
+import io.snaps.corecrypto.core.tokenIconPlaceholder
+import io.snaps.corecrypto.entities.TransactionValue
+import io.snaps.corecrypto.entities.nft.NftUid
+import io.snaps.corecrypto.entities.transactionrecords.evm.ApproveTransactionRecord
+import io.snaps.corecrypto.entities.transactionrecords.evm.ContractCallTransactionRecord
+import io.snaps.corecrypto.entities.transactionrecords.evm.ContractCreationTransactionRecord
+import io.snaps.corecrypto.entities.transactionrecords.evm.EvmIncomingTransactionRecord
+import io.snaps.corecrypto.entities.transactionrecords.evm.EvmOutgoingTransactionRecord
+import io.snaps.corecrypto.entities.transactionrecords.evm.EvmTransactionRecord
+import io.snaps.corecrypto.entities.transactionrecords.evm.ExternalContractCallTransactionRecord
+import io.snaps.corecrypto.entities.transactionrecords.evm.SwapTransactionRecord
+import io.snaps.corecrypto.entities.transactionrecords.evm.UnknownSwapTransactionRecord
+import io.snaps.corecrypto.other.TransactionSource
 import java.math.BigDecimal
 import java.math.BigInteger
 

@@ -1,5 +1,13 @@
 package io.snaps.corecrypto.core.adapters
 
+import io.horizontalsystems.ethereumkit.core.EthereumKit
+import io.horizontalsystems.ethereumkit.core.hexStringToByteArray
+import io.horizontalsystems.ethereumkit.models.Chain
+import io.horizontalsystems.ethereumkit.models.TransactionTag
+import io.horizontalsystems.marketkit.models.Token
+import io.horizontalsystems.marketkit.models.TokenType
+import io.reactivex.Flowable
+import io.reactivex.Single
 import io.snaps.corecrypto.core.AdapterState
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.core.ICoinManager
@@ -10,14 +18,6 @@ import io.snaps.corecrypto.entities.LastBlockInfo
 import io.snaps.corecrypto.entities.transactionrecords.TransactionRecord
 import io.snaps.corecrypto.other.FilterTransactionType
 import io.snaps.corecrypto.other.TransactionSource
-import io.horizontalsystems.ethereumkit.core.EthereumKit
-import io.horizontalsystems.ethereumkit.core.hexStringToByteArray
-import io.horizontalsystems.ethereumkit.models.Chain
-import io.horizontalsystems.ethereumkit.models.TransactionTag
-import io.horizontalsystems.marketkit.models.Token
-import io.horizontalsystems.marketkit.models.TokenType
-import io.reactivex.Flowable
-import io.reactivex.Single
 
 class EvmTransactionsAdapter(
     val evmKitWrapper: EvmKitWrapper,

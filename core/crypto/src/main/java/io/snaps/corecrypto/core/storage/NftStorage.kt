@@ -1,10 +1,20 @@
 package io.snaps.corecrypto.core.storage
 
-import io.snaps.corecrypto.core.managers.MarketKitWrapper
-import io.snaps.corecrypto.entities.nft.*
 import io.horizontalsystems.marketkit.models.NftPrice
 import io.horizontalsystems.marketkit.models.Token
 import io.horizontalsystems.marketkit.models.TokenQuery
+import io.snaps.corecrypto.core.managers.MarketKitWrapper
+import io.snaps.corecrypto.entities.nft.NftAddressMetadata
+import io.snaps.corecrypto.entities.nft.NftAssetBriefMetadata
+import io.snaps.corecrypto.entities.nft.NftAssetBriefMetadataRecord
+import io.snaps.corecrypto.entities.nft.NftAssetRecord
+import io.snaps.corecrypto.entities.nft.NftAssetShortMetadata
+import io.snaps.corecrypto.entities.nft.NftCollectionRecord
+import io.snaps.corecrypto.entities.nft.NftCollectionShortMetadata
+import io.snaps.corecrypto.entities.nft.NftKey
+import io.snaps.corecrypto.entities.nft.NftMetadataSyncRecord
+import io.snaps.corecrypto.entities.nft.NftPriceRecord
+import io.snaps.corecrypto.entities.nft.NftUid
 
 class NftStorage(
     private val nftDao: NftDao,

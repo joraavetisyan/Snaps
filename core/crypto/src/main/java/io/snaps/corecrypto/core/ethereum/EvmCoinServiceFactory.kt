@@ -1,13 +1,13 @@
 package io.snaps.corecrypto.core.ethereum
 
-import io.snaps.corecrypto.core.ICoinManager
-import io.snaps.corecrypto.core.managers.CurrencyManager
-import io.snaps.corecrypto.core.managers.EvmTestnetManager
-import io.snaps.corecrypto.core.managers.MarketKitWrapper
 import io.horizontalsystems.ethereumkit.models.Address
 import io.horizontalsystems.marketkit.models.Token
 import io.horizontalsystems.marketkit.models.TokenQuery
 import io.horizontalsystems.marketkit.models.TokenType
+import io.snaps.corecrypto.core.ICoinManager
+import io.snaps.corecrypto.core.managers.CurrencyManager
+import io.snaps.corecrypto.core.managers.EvmTestnetManager
+import io.snaps.corecrypto.core.managers.MarketKitWrapper
 
 class EvmCoinServiceFactory(
     private val baseToken: Token,

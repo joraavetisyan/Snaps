@@ -1,16 +1,16 @@
 package io.snaps.corecrypto.core.managers
 
 import android.net.Uri
-import io.snaps.corecrypto.core.providers.AppConfigProvider
-import io.snaps.corecrypto.core.storage.BlockchainSettingsStorage
-import io.snaps.corecrypto.core.storage.EvmSyncSourceStorage
-import io.snaps.corecrypto.entities.EvmSyncSource
-import io.snaps.corecrypto.entities.EvmSyncSourceRecord
 import io.horizontalsystems.ethereumkit.models.RpcSource
 import io.horizontalsystems.ethereumkit.models.TransactionSource
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import io.snaps.corecrypto.core.providers.AppConfigProvider
+import io.snaps.corecrypto.core.storage.BlockchainSettingsStorage
+import io.snaps.corecrypto.core.storage.EvmSyncSourceStorage
+import io.snaps.corecrypto.entities.EvmSyncSource
+import io.snaps.corecrypto.entities.EvmSyncSourceRecord
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

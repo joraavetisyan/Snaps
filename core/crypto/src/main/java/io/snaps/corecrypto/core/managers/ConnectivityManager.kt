@@ -5,9 +5,9 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import io.reactivex.subjects.PublishSubject
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.other.BackgroundManager
-import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

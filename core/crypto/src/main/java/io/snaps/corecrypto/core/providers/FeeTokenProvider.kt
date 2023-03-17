@@ -1,10 +1,10 @@
 package io.snaps.corecrypto.core.providers
 
-import io.snaps.corecrypto.core.managers.MarketKitWrapper
-import io.snaps.corecrypto.core.protocolType
 import io.horizontalsystems.marketkit.models.Token
 import io.horizontalsystems.marketkit.models.TokenQuery
 import io.horizontalsystems.marketkit.models.TokenType
+import io.snaps.corecrypto.core.managers.MarketKitWrapper
+import io.snaps.corecrypto.core.protocolType
 
 class FeeTokenProvider(
     private val marketKit: MarketKitWrapper

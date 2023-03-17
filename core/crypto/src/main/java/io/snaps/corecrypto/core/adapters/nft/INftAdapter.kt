@@ -1,9 +1,9 @@
 package io.snaps.corecrypto.core.adapters.nft
 
-import io.snaps.corecrypto.entities.nft.NftRecord
-import io.snaps.corecrypto.entities.nft.NftUid
 import io.horizontalsystems.ethereumkit.models.Address
 import io.horizontalsystems.ethereumkit.models.TransactionData
+import io.snaps.corecrypto.entities.nft.NftRecord
+import io.snaps.corecrypto.entities.nft.NftUid
 import kotlinx.coroutines.flow.Flow
 import java.math.BigInteger
 

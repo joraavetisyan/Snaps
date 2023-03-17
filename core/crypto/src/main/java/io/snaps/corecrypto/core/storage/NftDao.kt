@@ -1,12 +1,8 @@
 package io.snaps.corecrypto.core.storage
 
 import androidx.room.*
-import io.snaps.corecrypto.entities.nft.NftAssetRecord
-import io.snaps.corecrypto.entities.nft.NftCollectionRecord
-import io.snaps.corecrypto.entities.nft.NftMetadataSyncRecord
-import io.snaps.corecrypto.entities.nft.NftUid
-import io.snaps.corecrypto.entities.nft.*
 import io.horizontalsystems.marketkit.models.BlockchainType
+import io.snaps.corecrypto.entities.nft.*
 
 @Dao
 interface NftDao {

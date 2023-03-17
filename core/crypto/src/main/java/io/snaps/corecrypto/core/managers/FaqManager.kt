@@ -1,11 +1,15 @@
 package io.snaps.corecrypto.core.managers
 
-import com.google.gson.*
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
+import io.reactivex.Single
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.entities.Faq
 import io.snaps.corecrypto.entities.FaqMap
-import io.reactivex.Single
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.lang.reflect.Type

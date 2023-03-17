@@ -1,11 +1,11 @@
 package io.snaps.corecrypto.entities.transactionrecords.evm
 
+import io.horizontalsystems.ethereumkit.models.Transaction
+import io.horizontalsystems.marketkit.models.Token
 import io.snaps.corecrypto.core.adapters.BaseEvmAdapter
 import io.snaps.corecrypto.entities.TransactionValue
 import io.snaps.corecrypto.entities.transactionrecords.TransactionRecord
 import io.snaps.corecrypto.other.TransactionSource
-import io.horizontalsystems.ethereumkit.models.Transaction
-import io.horizontalsystems.marketkit.models.Token
 import java.math.BigDecimal
 
 open class EvmTransactionRecord(transaction: Transaction, baseToken: Token, source: TransactionSource, val foreignTransaction: Boolean = false, spam: Boolean = false) :

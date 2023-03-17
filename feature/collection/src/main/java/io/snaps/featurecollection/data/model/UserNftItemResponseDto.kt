@@ -1,7 +1,6 @@
 package io.snaps.featurecollection.data.model
 
 import io.snaps.corecommon.model.DateTime
-import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.Uuid
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

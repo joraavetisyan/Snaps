@@ -1,11 +1,11 @@
 package io.snaps.corecrypto.core.managers
 
-import io.snaps.corecrypto.core.storage.BlockchainSettingsStorage
 import io.horizontalsystems.marketkit.models.Blockchain
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.solanakit.models.RpcSource
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import io.snaps.corecrypto.core.storage.BlockchainSettingsStorage
 
 class SolanaRpcSourceManager(
         private val blockchainSettingsStorage: BlockchainSettingsStorage,

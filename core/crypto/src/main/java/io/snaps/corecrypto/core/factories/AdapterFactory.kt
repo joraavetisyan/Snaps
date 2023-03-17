@@ -1,18 +1,35 @@
 package io.snaps.corecrypto.core.factories
 
 import android.content.Context
-import io.snaps.corecrypto.core.IAdapter
-import io.snaps.corecrypto.core.ICoinManager
-import io.snaps.corecrypto.core.ITransactionsAdapter
-import io.snaps.corecrypto.core.adapters.*
-import io.snaps.corecrypto.core.adapters.zcash.ZcashAdapter
-import io.snaps.corecrypto.core.managers.*
-import io.snaps.corecrypto.entities.Wallet
-import io.snaps.corecrypto.other.TransactionSource
-import io.snaps.corecrypto.other.BackgroundManager
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.marketkit.models.TokenQuery
 import io.horizontalsystems.marketkit.models.TokenType
+import io.snaps.corecrypto.core.IAdapter
+import io.snaps.corecrypto.core.ICoinManager
+import io.snaps.corecrypto.core.ITransactionsAdapter
+import io.snaps.corecrypto.core.adapters.BinanceAdapter
+import io.snaps.corecrypto.core.adapters.BitcoinAdapter
+import io.snaps.corecrypto.core.adapters.BitcoinCashAdapter
+import io.snaps.corecrypto.core.adapters.DashAdapter
+import io.snaps.corecrypto.core.adapters.Eip20Adapter
+import io.snaps.corecrypto.core.adapters.EvmAdapter
+import io.snaps.corecrypto.core.adapters.EvmTransactionsAdapter
+import io.snaps.corecrypto.core.adapters.LitecoinAdapter
+import io.snaps.corecrypto.core.adapters.SolanaAdapter
+import io.snaps.corecrypto.core.adapters.SolanaTransactionConverter
+import io.snaps.corecrypto.core.adapters.SolanaTransactionsAdapter
+import io.snaps.corecrypto.core.adapters.SplAdapter
+import io.snaps.corecrypto.core.adapters.zcash.ZcashAdapter
+import io.snaps.corecrypto.core.managers.BinanceKitManager
+import io.snaps.corecrypto.core.managers.BtcBlockchainManager
+import io.snaps.corecrypto.core.managers.EvmBlockchainManager
+import io.snaps.corecrypto.core.managers.EvmLabelManager
+import io.snaps.corecrypto.core.managers.EvmSyncSourceManager
+import io.snaps.corecrypto.core.managers.RestoreSettingsManager
+import io.snaps.corecrypto.core.managers.SolanaKitManager
+import io.snaps.corecrypto.entities.Wallet
+import io.snaps.corecrypto.other.BackgroundManager
+import io.snaps.corecrypto.other.TransactionSource
 
 class AdapterFactory(
     private val context: Context,

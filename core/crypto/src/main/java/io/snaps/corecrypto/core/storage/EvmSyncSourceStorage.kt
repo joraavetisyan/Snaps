@@ -1,7 +1,7 @@
 package io.snaps.corecrypto.core.storage
 
-import io.snaps.corecrypto.entities.EvmSyncSourceRecord
 import io.horizontalsystems.marketkit.models.BlockchainType
+import io.snaps.corecrypto.entities.EvmSyncSourceRecord
 
 class EvmSyncSourceStorage(appDatabase: AppDatabase) {
 

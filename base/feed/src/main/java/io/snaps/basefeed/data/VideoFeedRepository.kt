@@ -8,7 +8,6 @@ import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseplayer.domain.VideoClipModel
-import io.snaps.baseprofile.data.toProfileModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.SocialNetwork
@@ -17,13 +16,11 @@ import io.snaps.corecommon.model.generateCurrentDateTime
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
-import io.snaps.coreui.viewmodel.tryPublish
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.StateFlow
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 interface VideoFeedRepository {

@@ -106,7 +106,7 @@ class WalletViewModel @Inject constructor(
                     rewards = listOf(
                         RewardsTileState.Error(
                             clickListener = ::onRewardReloadClicked,
-                        ) ,
+                        ),
                     )
                 )
             }

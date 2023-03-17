@@ -1,8 +1,13 @@
 package io.snaps.corecrypto.core.providers.nft
 
-import io.snaps.corecrypto.entities.nft.*
-import io.snaps.corecrypto.entities.nft.NftEventMetadata.EventType
 import io.horizontalsystems.marketkit.models.BlockchainType
+import io.snaps.corecrypto.entities.nft.NftAddressMetadata
+import io.snaps.corecrypto.entities.nft.NftAssetBriefMetadata
+import io.snaps.corecrypto.entities.nft.NftAssetMetadata
+import io.snaps.corecrypto.entities.nft.NftCollectionMetadata
+import io.snaps.corecrypto.entities.nft.NftEventMetadata
+import io.snaps.corecrypto.entities.nft.NftEventMetadata.EventType
+import io.snaps.corecrypto.entities.nft.NftUid
 
 interface INftProvider {
     val title: String

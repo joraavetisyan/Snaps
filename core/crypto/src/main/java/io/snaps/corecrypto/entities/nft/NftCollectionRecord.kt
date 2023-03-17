@@ -3,8 +3,8 @@ package io.snaps.corecrypto.entities.nft
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import io.snaps.corecrypto.core.storage.AccountRecord
 import io.horizontalsystems.marketkit.models.BlockchainType
+import io.snaps.corecrypto.core.storage.AccountRecord
 
 @Entity(
     primaryKeys = ["blockchainType", "accountId", "uid"],

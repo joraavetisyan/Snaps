@@ -1,12 +1,12 @@
 package io.snaps.corecrypto.core.managers
 
-import io.snaps.corecrypto.core.IAccountManager
-import io.snaps.corecrypto.core.IWalletManager
-import io.snaps.corecrypto.entities.EnabledWallet
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.marketkit.models.TokenQuery
 import io.horizontalsystems.marketkit.models.TokenType
 import io.horizontalsystems.solanakit.models.FullTokenAccount
+import io.snaps.corecrypto.core.IAccountManager
+import io.snaps.corecrypto.core.IWalletManager
+import io.snaps.corecrypto.entities.EnabledWallet
 
 class SolanaWalletManager(
         private val walletManager: IWalletManager,

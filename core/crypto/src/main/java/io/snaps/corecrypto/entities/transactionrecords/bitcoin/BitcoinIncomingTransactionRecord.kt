@@ -1,9 +1,9 @@
 package io.snaps.corecrypto.entities.transactionrecords.bitcoin
 
+import io.horizontalsystems.marketkit.models.Token
 import io.snaps.corecrypto.entities.TransactionValue
 import io.snaps.corecrypto.other.TransactionLockInfo
 import io.snaps.corecrypto.other.TransactionSource
-import io.horizontalsystems.marketkit.models.Token
 import java.math.BigDecimal
 
 class BitcoinIncomingTransactionRecord(

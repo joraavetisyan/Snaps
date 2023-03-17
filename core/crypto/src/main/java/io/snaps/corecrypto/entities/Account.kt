@@ -1,9 +1,12 @@
 package io.snaps.corecrypto.entities
 
 import android.os.Parcelable
-import io.horizontalsystems.hdwalletkit.*
+import io.horizontalsystems.hdwalletkit.HDExtendedKey
+import io.horizontalsystems.hdwalletkit.HDWallet
+import io.horizontalsystems.hdwalletkit.Language
+import io.horizontalsystems.hdwalletkit.Mnemonic
+import io.horizontalsystems.hdwalletkit.WordList
 import io.snaps.corecrypto.core.managers.PassphraseValidator
-import io.snaps.corecrypto.core.providers.Translator
 import io.snaps.corecrypto.core.shorten
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize

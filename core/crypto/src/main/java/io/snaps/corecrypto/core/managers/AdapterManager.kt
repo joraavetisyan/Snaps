@@ -2,9 +2,6 @@ package io.snaps.corecrypto.core.managers
 
 import android.os.Handler
 import android.os.HandlerThread
-import io.snaps.corecrypto.core.*
-import io.snaps.corecrypto.core.factories.AdapterFactory
-import io.snaps.corecrypto.entities.Wallet
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.marketkit.models.Token
 import io.reactivex.BackpressureStrategy
@@ -12,6 +9,14 @@ import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
+import io.snaps.corecrypto.core.IAdapter
+import io.snaps.corecrypto.core.IAdapterManager
+import io.snaps.corecrypto.core.IBalanceAdapter
+import io.snaps.corecrypto.core.IReceiveAdapter
+import io.snaps.corecrypto.core.IWalletManager
+import io.snaps.corecrypto.core.factories.AdapterFactory
+import io.snaps.corecrypto.core.subscribeIO
+import io.snaps.corecrypto.entities.Wallet
 import java.util.concurrent.ConcurrentHashMap
 
 class AdapterManager(

@@ -1,14 +1,14 @@
 package io.snaps.corecrypto.core.providers.nft
 
+import io.horizontalsystems.marketkit.models.BlockchainType
+import io.horizontalsystems.marketkit.models.NftPrice
+import io.horizontalsystems.marketkit.models.TokenQuery
+import io.horizontalsystems.marketkit.models.TokenType
 import io.snaps.corecrypto.core.managers.APIClient
 import io.snaps.corecrypto.core.managers.MarketKitWrapper
 import io.snaps.corecrypto.entities.nft.NftAssetMetadata
 import io.snaps.corecrypto.entities.nft.NftEventMetadata
 import io.snaps.corecrypto.entities.nft.NftUid
-import io.horizontalsystems.marketkit.models.BlockchainType
-import io.horizontalsystems.marketkit.models.NftPrice
-import io.horizontalsystems.marketkit.models.TokenQuery
-import io.horizontalsystems.marketkit.models.TokenType
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

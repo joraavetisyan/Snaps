@@ -4,12 +4,12 @@ import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.db.entity.PendingTransaction
 import cash.z.ecc.android.sdk.db.entity.hasRawTransactionId
 import cash.z.ecc.android.sdk.db.entity.isMined
-import io.snaps.corecrypto.other.FilterTransactionType
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
+import io.snaps.corecrypto.other.FilterTransactionType
 import kotlin.math.min
 
 class ZcashTransactionsProvider(private val receiveAddress: String) {

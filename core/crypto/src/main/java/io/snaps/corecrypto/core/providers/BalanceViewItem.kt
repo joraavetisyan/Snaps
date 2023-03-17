@@ -11,7 +11,6 @@ import io.snaps.corecrypto.core.swappable
 import io.snaps.corecrypto.entities.Currency
 import io.snaps.corecrypto.entities.Wallet
 import io.snaps.corecrypto.other.iconUrl
-import io.snaps.corecrypto.walletconnect.other.BalanceViewType
 import java.math.BigDecimal
 
 @Immutable

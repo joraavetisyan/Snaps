@@ -1,14 +1,6 @@
 package io.snaps.corecrypto.core.adapters
 
 import android.content.Context
-import io.snaps.corecrypto.core.AdapterState
-import io.snaps.corecrypto.core.CryptoKit
-import io.snaps.corecrypto.core.BalanceData
-import io.snaps.corecrypto.core.ICoinManager
-import io.snaps.corecrypto.core.managers.EvmKitWrapper
-import io.snaps.corecrypto.core.managers.EvmLabelManager
-import io.snaps.corecrypto.entities.Wallet
-import io.snaps.corecrypto.entities.transactionrecords.TransactionRecord
 import io.horizontalsystems.erc20kit.core.Erc20Kit
 import io.horizontalsystems.ethereumkit.core.EthereumKit.SyncState
 import io.horizontalsystems.ethereumkit.models.Address
@@ -18,6 +10,14 @@ import io.horizontalsystems.ethereumkit.models.TransactionData
 import io.horizontalsystems.marketkit.models.Token
 import io.reactivex.Flowable
 import io.reactivex.Single
+import io.snaps.corecrypto.core.AdapterState
+import io.snaps.corecrypto.core.BalanceData
+import io.snaps.corecrypto.core.CryptoKit
+import io.snaps.corecrypto.core.ICoinManager
+import io.snaps.corecrypto.core.managers.EvmKitWrapper
+import io.snaps.corecrypto.core.managers.EvmLabelManager
+import io.snaps.corecrypto.entities.Wallet
+import io.snaps.corecrypto.entities.transactionrecords.TransactionRecord
 import java.math.BigDecimal
 import java.math.BigInteger
 

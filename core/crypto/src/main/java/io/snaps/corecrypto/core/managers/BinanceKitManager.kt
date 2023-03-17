@@ -1,12 +1,12 @@
 package io.snaps.corecrypto.core.managers
 
+import io.horizontalsystems.binancechainkit.BinanceChainKit
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.core.IBinanceKitManager
 import io.snaps.corecrypto.core.UnsupportedAccountException
 import io.snaps.corecrypto.entities.Account
 import io.snaps.corecrypto.entities.AccountType
 import io.snaps.corecrypto.entities.Wallet
-import io.horizontalsystems.binancechainkit.BinanceChainKit
 
 class BinanceKitManager(
         private val testMode: Boolean

@@ -1,10 +1,10 @@
 package io.snaps.corecrypto.entities
 
 import android.os.Parcelable
-import io.snaps.corecrypto.core.protocolType
-import io.snaps.corecrypto.other.TransactionSource
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.marketkit.models.Token
+import io.snaps.corecrypto.core.protocolType
+import io.snaps.corecrypto.other.TransactionSource
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
