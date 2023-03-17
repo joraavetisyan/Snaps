@@ -6,13 +6,14 @@ import io.snaps.featurewallet.data.model.BalanceResponseDto
 import io.snaps.featurewallet.data.model.TransactionItemResponseDto
 import io.snaps.featurewallet.data.model.TransactionType
 import kotlinx.coroutines.delay
+import retrofit2.http.Query
 
 class FakeTransactionsApi : TransactionsApi {
 
     override suspend fun transactions(
-        from: Int,
-        count: Int,
-        transactionType: TransactionType
+        @Query(value = "from") from: String?,
+        @Query(value = "count") count: Int,
+        @Query(value = "transactionType") transactionType: TransactionType,
     ): BaseResponse<List<TransactionItemResponseDto>> {
         return BaseResponse(
             actualTimestamp = 0L,

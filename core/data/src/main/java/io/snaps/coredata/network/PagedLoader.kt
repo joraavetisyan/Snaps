@@ -11,18 +11,22 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-typealias PagedLoaderAction<T> = suspend (from: Int, count: Int) -> BaseResponse<List<T>>
+/**
+ * [from] - eg, id of last item, null if nothing loaded yet
+ */
+typealias PagedLoaderAction<T> = suspend (from: String?, count: Int) -> BaseResponse<List<T>>
 
 data class PagedLoaderParams<T, R>(
     val action: PagedLoaderAction<T>,
     val pageSize: Int,
+    val nextPageIdFactory: (T) -> String,
     val mapper: suspend (List<T>) -> List<R>,
 )
 
 data class PageModel<T>(
     val pageSize: Int,
     val loadedPageItems: List<T> = emptyList(),
-    val nextPage: Int? = 0,
+    val nextPageId: String? = "", // empty string for the first page
     val isLoading: Boolean = false,
     val error: AppError? = null,
 )
@@ -52,21 +56,25 @@ abstract class PagedLoader<T, R>(
     suspend fun loadNext(): Effect<Completable> = action.execute { load() }
 
     private suspend fun load(): Effect<Completable> {
-        val nextPage = _state.value.nextPage ?: return Effect.completable
+        val nextPageId = _state.value.nextPageId ?: return Effect.completable
 
         if (_state.value.isLoading) return Effect.completable
 
         _state.update { it.copy(isLoading = true, error = null) }
         return apiCall(ioDispatcher) {
             params.action(
-                nextPage * params.pageSize,
+                nextPageId.ifEmpty { null },
                 params.pageSize,
             )
         }.doOnSuccess { result ->
             _state.update { currentState ->
                 currentState.copy(
                     loadedPageItems = currentState.loadedPageItems + params.mapper(result),
-                    nextPage = if (result.size < params.pageSize) null else nextPage + 1,
+                    nextPageId = if (result.size < params.pageSize) {
+                        null
+                    } else {
+                        result.lastOrNull()?.let { params.nextPageIdFactory(it) }
+                    },
                     isLoading = false,
                     pageSize = params.pageSize,
                     error = null,

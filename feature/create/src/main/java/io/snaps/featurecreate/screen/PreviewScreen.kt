@@ -22,6 +22,7 @@ import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
+import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.featurecreate.ScreenNavigator
 import io.snaps.featurecreate.viewmodel.PreviewViewModel
 
@@ -34,7 +35,11 @@ fun PreviewScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
-    viewModel.command.collectAsCommand {}
+    viewModel.command.collectAsCommand {
+        when (it) {
+            PreviewViewModel.Command.CloseScreen -> router.back()
+        }
+    }
 
     PreviewScreen(
         uiState = uiState,
@@ -73,4 +78,5 @@ private fun PreviewScreen(
             }
         }
     }
+    FullScreenLoaderUi(isLoading = uiState.isLoading)
 }

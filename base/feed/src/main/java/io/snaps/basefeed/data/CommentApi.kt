@@ -13,11 +13,10 @@ import retrofit2.http.Query
 
 interface CommentApi {
 
-    // todo api cannot accept from, throws, so null for now
     @GET("video/{videoId}/comments")
     suspend fun comments(
         @Path("videoId") videoId: Uuid,
-        @Query("from") from: Int?,
+        @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<CommentResponseDto>>
 

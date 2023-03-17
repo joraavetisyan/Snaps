@@ -11,6 +11,7 @@ import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 class FakeCommentApi : CommentApi {
@@ -18,9 +19,9 @@ class FakeCommentApi : CommentApi {
     private var generation = 0
 
     override suspend fun comments(
-        videoId: Uuid,
-        from: Int?,
-        count: Int,
+        @Path(value = "videoId") videoId: Uuid,
+        @Query(value = "from") from: Uuid?,
+        @Query(value = "count") count: Int,
     ): BaseResponse<List<CommentResponseDto>> {
         log("Requesting comments: $count comments with offset $from")
         delay(mockDelay)

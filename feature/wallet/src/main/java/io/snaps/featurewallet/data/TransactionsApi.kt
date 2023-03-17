@@ -11,7 +11,7 @@ interface TransactionsApi {
 
     @GET("transactions")
     suspend fun transactions(
-        @Query("from") from: Int,
+        @Query("from") from: String?,
         @Query("count") count: Int,
         @Query("transactionType") transactionType: TransactionType,
     ): BaseResponse<List<TransactionItemResponseDto>>

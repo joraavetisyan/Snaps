@@ -70,7 +70,7 @@ fun TaskPageModel.toHistoryTasksUiState(
                     onClicked = { onItemClicked(it) },
                 )
             }.run {
-                if (nextPage == null) this
+                if (nextPageId == null) this
                 else this.plus(HistoryTaskUiState.Progress())
             },
             onListEndReaching = onListEndReaching,

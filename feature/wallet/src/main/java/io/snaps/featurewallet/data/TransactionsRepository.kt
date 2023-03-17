@@ -36,6 +36,7 @@ class TransactionsRepositoryImpl @Inject constructor(
                     transactionsApi.transactions(from = from, count = count, transactionType = it)
                 },
                 pageSize = 20,
+                nextPageIdFactory = { it.id },
                 mapper = { it.toModelList() }
             )
         }

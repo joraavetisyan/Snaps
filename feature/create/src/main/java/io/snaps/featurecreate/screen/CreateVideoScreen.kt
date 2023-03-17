@@ -220,7 +220,7 @@ fun BoxScope.PermissionGrantedContent(
                     is VideoRecordEvent.Finalize -> {
                         val uri = event.outputResults.outputUri
                         if (uri != Uri.EMPTY) {
-                            onRecordFinished(uri.toString())
+                            onRecordFinished(uri.path!!)
                         }
                         onRecordingClicked(false)
                     }

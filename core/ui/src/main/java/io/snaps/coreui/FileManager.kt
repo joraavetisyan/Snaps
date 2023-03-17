@@ -2,6 +2,7 @@ package io.snaps.coreui
 
 import android.content.ContentValues
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -18,7 +19,7 @@ import java.io.FileOutputStream
 import java.io.InputStream
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets
-import java.util.Calendar
+import java.util.*
 import javax.inject.Inject
 
 private const val PublicAppDirectoryName = "SNAPS"
@@ -57,6 +58,22 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
                 inputStream?.close()
                 outputStream?.close()
             }
+        }
+    }
+
+    fun createFileFromBitmap(bitmap: Bitmap): File? {
+        val tempFile =
+            createTempFile(generateName(FileType.Pictures), getCacheDir(FileType.Pictures))
+        var outputStream: FileOutputStream? = null
+        return try {
+            tempFile.createNewFile()
+            outputStream = FileOutputStream(tempFile)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            tempFile
+        } catch (e: Exception) {
+            null
+        } finally {
+            outputStream?.close()
         }
     }
 

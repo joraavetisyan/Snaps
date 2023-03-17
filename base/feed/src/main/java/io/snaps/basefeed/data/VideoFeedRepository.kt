@@ -1,21 +1,29 @@
 package io.snaps.basefeed.data
 
+import android.net.Uri
+import androidx.core.net.toFile
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.ShareInfoRequestDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseplayer.domain.VideoClipModel
+import io.snaps.baseprofile.data.toProfileModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.SocialNetwork
 import io.snaps.corecommon.model.Uuid
+import io.snaps.corecommon.model.generateCurrentDateTime
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
-import io.snaps.coredata.network.cachedApiCall
+import io.snaps.coreui.viewmodel.tryPublish
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.StateFlow
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 interface VideoFeedRepository {
@@ -32,6 +40,8 @@ interface VideoFeedRepository {
 
     suspend fun addVideo(title: String, description: String, fileId: Uuid): Effect<VideoClipModel>
 
+    suspend fun uploadVideo(uri: Uri, videoId: Uuid): Effect<Completable>
+
     suspend fun shareInfo(socialNetwork: SocialNetwork): Effect<Completable>
 }
 
@@ -47,18 +57,21 @@ class VideoFeedRepositoryImpl @Inject constructor(
         return loaderFactory.get(videoFeedType) { type ->
             when (type) {
                 VideoFeedType.Main -> PagedLoaderParams(
-                    action = { from, count -> videoFeedApi.feed(null, count) },
+                    action = { from, count -> videoFeedApi.feed(from, count) },
                     pageSize = 3,
+                    nextPageIdFactory = { it.entityId },
                     mapper = { it.toVideoClipModelList(getLikedVideos()) },
                 )
                 is VideoFeedType.Popular -> PagedLoaderParams(
-                    action = { from, count -> videoFeedApi.popularFeed(null, count) },
+                    action = { from, count -> videoFeedApi.popularFeed(from, count) },
                     pageSize = 12,
+                    nextPageIdFactory = { it.entityId },
                     mapper = { it.toVideoClipModelList(getLikedVideos()) },
                 )
                 is VideoFeedType.User -> PagedLoaderParams(
-                    action = { from, count -> videoFeedApi.feed(null, count) },
+                    action = { from, count -> videoFeedApi.feed(from, count) },
                     pageSize = 15,
+                    nextPageIdFactory = { it.entityId },
                     mapper = { it.toVideoClipModelList(getLikedVideos()) },
                 )
             }
@@ -109,6 +122,21 @@ class VideoFeedRepositoryImpl @Inject constructor(
             )
         }.map {
             it.toModel(isLiked = false)
+        }
+    }
+
+    override suspend fun uploadVideo(uri: Uri, videoId: Uuid): Effect<Completable> {
+        val file = uri.buildUpon().scheme("file").build().toFile()
+        val mediaType = "multipart/form-data".toMediaType()
+
+        val multipartBody = MultipartBody.Part.createFormData(
+            name = "videoFile",
+            filename = "file_${generateCurrentDateTime()}.mp4",
+            body = file.asRequestBody(mediaType),
+        )
+
+        return apiCall(ioDispatcher) {
+            videoFeedApi.uploadVideo(file = multipartBody, videoId = videoId)
         }
     }
 

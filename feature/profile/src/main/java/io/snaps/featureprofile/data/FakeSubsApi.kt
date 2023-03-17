@@ -20,7 +20,7 @@ class FakeSubsApi : SubsApi {
 
     override suspend fun subscribers(
         @Query(value = "userId") userId: Uuid?,
-        @Query(value = "from") from: Int,
+        @Query(value = "from") from: Uuid?,
         @Query(value = "count") count: Int,
     ): BaseResponse<List<SubscriptionItemResponseDto>> {
         log("Requesting subscribers: $count subscribers with offset $from")
@@ -40,7 +40,7 @@ class FakeSubsApi : SubsApi {
 
     override suspend fun subscriptions(
         @Query(value = "userId") userId: Uuid?,
-        @Query(value = "from") from: Int,
+        @Query(value = "from") from: Uuid?,
         @Query(value = "count") count: Int,
     ): BaseResponse<List<SubscriptionItemResponseDto>> {
         log("Requesting subscriptions: $count subscriptions with offset $from")

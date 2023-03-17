@@ -1,5 +1,6 @@
 package io.snaps.featuretasks.data
 
+import io.snaps.corecommon.model.DateTime
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import io.snaps.featuretasks.data.model.HistoryTaskItemResponseDto
@@ -10,7 +11,7 @@ interface TasksApi {
 
     @GET("quest-history")
     suspend fun historyTasks(
-        @Query("from") from: Int,
+        @Query("from") from: DateTime?,
         @Query("count") count: Int,
     ): BaseResponse<List<HistoryTaskItemResponseDto>>
 

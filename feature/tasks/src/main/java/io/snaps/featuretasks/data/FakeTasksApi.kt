@@ -1,6 +1,7 @@
 package io.snaps.featuretasks.data
 
 import io.snaps.corecommon.mock.mockDelay
+import io.snaps.corecommon.model.DateTime
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import io.snaps.featuretasks.data.model.HistoryTaskItemResponseDto
@@ -10,7 +11,7 @@ import retrofit2.http.Query
 class FakeTasksApi : TasksApi {
 
     override suspend fun historyTasks(
-        @Query(value = "from") from: Int,
+        @Query(value = "from") from: DateTime?,
         @Query(value = "count") count: Int
     ): BaseResponse<List<HistoryTaskItemResponseDto>> {
         return BaseResponse(

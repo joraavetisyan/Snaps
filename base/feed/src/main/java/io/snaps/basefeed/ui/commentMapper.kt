@@ -59,7 +59,7 @@ fun CommentPageModel.toCommentsUiState(
                     onClicked = { onCommentClicked(it) },
                 )
             }.run {
-                if (nextPage == null) this
+                if (nextPageId == null) this
                 else this.plus(CommentUiState.Progress())
             },
             onListEndReaching = onListEndReaching,

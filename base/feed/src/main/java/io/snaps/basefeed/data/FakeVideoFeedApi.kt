@@ -11,13 +11,18 @@ import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
+import okhttp3.MultipartBody
+import retrofit2.http.Query
 
 class FakeVideoFeedApi : VideoFeedApi {
 
     private var generation = 0
     private var popularGeneration = 0
 
-    override suspend fun feed(from: Int?, count: Int): BaseResponse<List<VideoFeedItemResponseDto>> {
+    override suspend fun feed(
+        @Query(value = "from") from: Uuid?,
+        @Query(value = "count") count: Int,
+    ): BaseResponse<List<VideoFeedItemResponseDto>> {
         log("Requesting feed: $count videos with offset $from")
         delay(mockDelay)
         return BaseResponse(
@@ -41,8 +46,8 @@ class FakeVideoFeedApi : VideoFeedApi {
     }
 
     override suspend fun popularFeed(
-        from: Int?,
-        count: Int
+        @Query(value = "from") from: Uuid?,
+        @Query(value = "count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>> {
         log("Requesting popular feed: $count videos with offset $from")
         delay(mockDelay)
@@ -67,8 +72,8 @@ class FakeVideoFeedApi : VideoFeedApi {
     }
 
     override suspend fun likedVideos(
-        from: Int?,
-        count: Int
+        @Query(value = "from") from: Uuid?,
+        @Query(value = "count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>> {
         log("Requesting liked videos: $count videos with offset $from")
         delay(mockDelay)
@@ -93,7 +98,7 @@ class FakeVideoFeedApi : VideoFeedApi {
     }
 
     override suspend fun view(videoId: Uuid): BaseResponse<Completable> {
-        log("Requesting view video")
+        log("Requesting view video $videoId")
         delay(mockDelay)
         return BaseResponse(
             actualTimestamp = 1L,
@@ -102,7 +107,7 @@ class FakeVideoFeedApi : VideoFeedApi {
     }
 
     override suspend fun like(videoId: Uuid): BaseResponse<Completable> {
-        log("Requesting like video")
+        log("Requesting like video $videoId")
         delay(mockDelay)
         return BaseResponse(
             actualTimestamp = 1L,
@@ -128,6 +133,18 @@ class FakeVideoFeedApi : VideoFeedApi {
                 authorUserId = "authorUserId",
                 thumbnailUrl = "https://picsum.photos/177/222",
             ),
+        )
+    }
+
+    override suspend fun uploadVideo(
+        file: MultipartBody.Part,
+        videoId: Uuid
+    ): BaseResponse<Completable> {
+        log("Requesting upload video")
+        delay(mockDelay)
+        return BaseResponse(
+            actualTimestamp = 1L,
+            data = Completable,
         )
     }
 

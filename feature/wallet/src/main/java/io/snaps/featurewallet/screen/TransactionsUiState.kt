@@ -89,7 +89,7 @@ fun TransactionPageModel.toTransactionsUiState(
         )
         else -> TransactionsUiState(
             transactions = loadedPageItems.toTransactionList(onClicked).run {
-                if (nextPage == null) this
+                if (nextPageId == null) this
                 else this.plus(TransactionTileState.Progress)
             },
             onListEndReaching = onListEndReaching,

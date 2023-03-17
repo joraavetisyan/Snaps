@@ -40,20 +40,22 @@ class SubsRepositoryImpl @Inject constructor(
 ) : SubsRepository {
 
     private fun getLoader(subType: SubType): SubsLoader {
-        return loaderFactory.get(subType) {
-            when (it) {
+        return loaderFactory.get(subType) { type ->
+            when (type) {
                 is SubType.Subscription -> PagedLoaderParams(
                     action = { from, count ->
-                        subsApi.subscriptions(from = from, count = count, userId = it.userId)
+                        subsApi.subscriptions(from = from, count = count, userId = type.userId)
                     },
                     pageSize = 20,
+                    nextPageIdFactory = { it.userId },
                     mapper = List<SubscriptionItemResponseDto>::toModelList,
                 )
                 is SubType.Subscriber -> PagedLoaderParams(
                     action = { from, count ->
-                        subsApi.subscribers(from = from, count = count, userId = it.userId)
+                        subsApi.subscribers(from = from, count = count, userId = type.userId)
                     },
                     pageSize = 20,
+                    nextPageIdFactory = { it.userId },
                     mapper = List<SubscriptionItemResponseDto>::toModelList,
                 )
             }

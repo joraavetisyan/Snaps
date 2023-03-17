@@ -62,7 +62,7 @@ fun SubPageModel.toSubsUiState(
                     onSubscribeClicked = { onSubscribeClicked(it) }
                 )
             }.run {
-                if (nextPage == null) this
+                if (nextPageId == null) this
                 else this.plus(SubUiState.Progress())
             },
             onListEndReaching = onListEndReaching,

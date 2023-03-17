@@ -33,10 +33,9 @@ class TasksRepositoryImpl @Inject constructor(
     private fun getLoader(): HistoryTasksLoader {
         return loaderFactory.get(Unit) {
             PagedLoaderParams(
-                action = { from, count ->
-                    tasksApi.historyTasks(from = from, count = count)
-                },
+                action = { from, count -> tasksApi.historyTasks(from = from, count = count) },
                 pageSize = 20,
+                nextPageIdFactory = { it.date },
                 mapper = List<HistoryTaskItemResponseDto>::toModelList,
             )
         }

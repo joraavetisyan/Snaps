@@ -16,14 +16,14 @@ interface SubsApi {
     @GET("subscribes")
     suspend fun subscribers(
         @Query("userId") userId: Uuid? = null,
-        @Query("from") from: Int,
+        @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<SubscriptionItemResponseDto>>
 
     @GET("subscriptions")
     suspend fun subscriptions(
         @Query("userId") userId: Uuid? = null,
-        @Query("from") from: Int,
+        @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<SubscriptionItemResponseDto>>
 
