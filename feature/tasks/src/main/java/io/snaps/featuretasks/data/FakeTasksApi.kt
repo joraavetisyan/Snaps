@@ -1,7 +1,11 @@
 package io.snaps.featuretasks.data
 
+import io.snaps.baseprofile.data.model.QuestDto
+import io.snaps.baseprofile.data.model.QuestItemDto
 import io.snaps.corecommon.mock.mockDelay
+import io.snaps.corecommon.mock.rInt
 import io.snaps.corecommon.model.DateTime
+import io.snaps.corecommon.model.QuestType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import io.snaps.featuretasks.data.model.HistoryTaskItemResponseDto
@@ -37,28 +41,256 @@ class FakeTasksApi : TasksApi {
             userId = "1",
             energy = 20,
             experience = 0,
-            date = "2023-03-01T00:00:00+00:00"
+            date = "2023-03-01T00:00:00+00:00",
+            quests = listOf(
+                QuestItemDto(
+                    energyProgress = 2,
+                    completed = true,
+                    madeCount = rInt,
+                    network = null,
+                    quest = QuestDto(
+                        count = 20,
+                        type = QuestType.Like,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 2,
+                    completed = false,
+                    madeCount = rInt,
+                    network = null,
+                    quest = QuestDto(
+                        count = rInt,
+                        type = QuestType.PublishVideo,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 0,
+                    completed = false,
+                    madeCount = 0,
+                    network = null,
+                    quest = QuestDto(
+                        count = 20,
+                        type = QuestType.Watch,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 1,
+                    completed = false,
+                    madeCount = 0,
+                    network = null,
+                    quest = QuestDto(
+                        count = 5,
+                        type = QuestType.Subscribe,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 1,
+                    completed = false,
+                    madeCount = rInt,
+                    network = null,
+                    quest = QuestDto(
+                        count = rInt,
+                        type = QuestType.SocialPost,
+                        energy = 20,
+                    )
+                ),
+            )
         ),
         HistoryTaskItemResponseDto(
             id = "2",
             userId = "2",
             energy = 20,
             experience = 0,
-            date = "2023-03-01T00:00:00+00:00"
+            date = "2023-03-01T00:00:00+00:00",
+            quests = listOf(
+                QuestItemDto(
+                    energyProgress = 2,
+                    completed = true,
+                    madeCount = rInt,
+                    network = null,
+                    quest = QuestDto(
+                        count = 20,
+                        type = QuestType.Like,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 2,
+                    completed = false,
+                    madeCount = rInt,
+                    network = null,
+                    quest = QuestDto(
+                        count = rInt,
+                        type = QuestType.PublishVideo,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 0,
+                    completed = false,
+                    madeCount = 0,
+                    network = null,
+                    quest = QuestDto(
+                        count = 20,
+                        type = QuestType.Watch,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 1,
+                    completed = false,
+                    madeCount = 0,
+                    network = null,
+                    quest = QuestDto(
+                        count = 5,
+                        type = QuestType.Subscribe,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 1,
+                    completed = false,
+                    madeCount = rInt,
+                    network = null,
+                    quest = QuestDto(
+                        count = rInt,
+                        type = QuestType.SocialPost,
+                        energy = 20,
+                    )
+                ),
+            )
         ),
         HistoryTaskItemResponseDto(
             id = "3",
             userId = "3",
             energy = 20,
             experience = 0,
-            date = "2023-03-01T00:00:00+00:00"
+            date = "2023-03-01T00:00:00+00:00",
+            quests = listOf(
+                QuestItemDto(
+                    energyProgress = 2,
+                    completed = true,
+                    madeCount = rInt,
+                    network = null,
+                    quest = QuestDto(
+                        count = 20,
+                        type = QuestType.Like,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 2,
+                    completed = false,
+                    madeCount = rInt,
+                    network = null,
+                    quest = QuestDto(
+                        count = rInt,
+                        type = QuestType.PublishVideo,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 0,
+                    completed = false,
+                    madeCount = 0,
+                    network = null,
+                    quest = QuestDto(
+                        count = 20,
+                        type = QuestType.Watch,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 1,
+                    completed = false,
+                    madeCount = 0,
+                    network = null,
+                    quest = QuestDto(
+                        count = 5,
+                        type = QuestType.Subscribe,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 1,
+                    completed = false,
+                    madeCount = rInt,
+                    network = null,
+                    quest = QuestDto(
+                        count = rInt,
+                        type = QuestType.SocialPost,
+                        energy = 20,
+                    )
+                ),
+            )
         ),
         HistoryTaskItemResponseDto(
             id = "4",
             userId = "4",
             energy = 20,
             experience = 0,
-            date = "2023-03-01T00:00:00+00:00"
+            date = "2023-03-01T00:00:00+00:00",
+            quests = listOf(
+                QuestItemDto(
+                    energyProgress = 2,
+                    completed = true,
+                    madeCount = rInt,
+                    network = null,
+                    quest = QuestDto(
+                        count = 20,
+                        type = QuestType.Like,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 2,
+                    completed = false,
+                    madeCount = rInt,
+                    network = null,
+                    quest = QuestDto(
+                        count = rInt,
+                        type = QuestType.PublishVideo,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 0,
+                    completed = false,
+                    madeCount = 0,
+                    network = null,
+                    quest = QuestDto(
+                        count = 20,
+                        type = QuestType.Watch,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 1,
+                    completed = false,
+                    madeCount = 0,
+                    network = null,
+                    quest = QuestDto(
+                        count = 5,
+                        type = QuestType.Subscribe,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    energyProgress = 1,
+                    completed = false,
+                    madeCount = rInt,
+                    network = null,
+                    quest = QuestDto(
+                        count = rInt,
+                        type = QuestType.SocialPost,
+                        energy = 20,
+                    )
+                ),
+            )
         ),
     )
 }

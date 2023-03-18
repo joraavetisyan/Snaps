@@ -1,6 +1,5 @@
 package io.snaps.baseauth.data
 
-import android.util.Log
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -77,7 +76,6 @@ class AuthRepositoryImpl @Inject constructor(
         val token = user?.getIdToken(false)?.result?.token
         return if (token != null) {
             tokenStorage.authToken = token
-            Log.e("authToken", token)
             Effect.completable
         } else {
             Effect.error(AppError.Unknown())

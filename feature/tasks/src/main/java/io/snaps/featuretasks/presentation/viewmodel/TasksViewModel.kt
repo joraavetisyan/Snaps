@@ -9,7 +9,6 @@ import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.featuretasks.data.TasksRepository
-import io.snaps.featuretasks.domain.TaskModel
 import io.snaps.featuretasks.presentation.HistoryTasksUiState
 import io.snaps.featuretasks.presentation.toHistoryTasksUiState
 import io.snaps.featuretasks.presentation.toTaskTileState
@@ -105,8 +104,8 @@ class TasksViewModel @Inject constructor(
         )
     }
 
-    private fun onHistoryTaskItemClicked(task: TaskModel) = viewModelScope.launch {
-        // todo
+    private fun onHistoryTaskItemClicked(task: QuestModel) = viewModelScope.launch {
+        onCurrentTaskItemClicked(task)
     }
 
     data class UiState(

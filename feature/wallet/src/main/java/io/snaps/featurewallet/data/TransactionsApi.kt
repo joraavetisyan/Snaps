@@ -9,7 +9,7 @@ import retrofit2.http.Query
 
 interface TransactionsApi {
 
-    @GET("transactions")
+    @GET("user/balance/history")
     suspend fun transactions(
         @Query("from") from: String?,
         @Query("count") count: Int,
