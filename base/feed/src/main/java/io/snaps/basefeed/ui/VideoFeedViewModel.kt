@@ -49,7 +49,7 @@ abstract class VideoFeedViewModel(
 
     private var commentsLoadJob: Job? = null
     private var authorLoadJob: Job? = null
-    private var loaded: Boolean = false
+    private var loaded: Boolean = false // to track load for the first item
     private var currentVideo: VideoClipModel? = null
 
     private var videoFeedPageModel: VideoFeedPageModel? = null
@@ -121,7 +121,6 @@ abstract class VideoFeedViewModel(
         }.onEach { state ->
             _uiState.update { it.copy(commentsUiState = state) }
         }.launchIn(viewModelScope)
-        viewModelScope.launch { action.execute { commentRepository.refreshComments(videoId) } }
     }
 
     private fun loadAuthor(authorId: Uuid) {
@@ -221,9 +220,15 @@ abstract class VideoFeedViewModel(
                 ).doOnSuccess {
                     _command publish Command.HideCommentInputBottomDialog
                     _uiState.update { it.copy(comment = TextFieldValue("")) }
-                    loadComments(video.id)
+                    refreshComments(video)
                 }
             }
+        }
+    }
+
+    private fun refreshComments(video: VideoClipModel) {
+        viewModelScope.launch {
+            action.execute { commentRepository.refreshComments(video.id) }
         }
     }
 
