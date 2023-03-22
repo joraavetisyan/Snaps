@@ -1,12 +1,13 @@
 package io.snaps.baseprofile.data
 
+import io.snaps.baseprofile.data.model.BalanceResponseDto
 import io.snaps.baseprofile.data.model.QuestInfoResponseDto
 import io.snaps.baseprofile.data.model.QuestItemDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
-import io.snaps.baseprofile.domain.StatsModel
-import io.snaps.baseprofile.domain.UserInfoModel
+import io.snaps.baseprofile.domain.BalanceModel
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.QuestModel
+import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
@@ -33,6 +34,11 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
     totalPublication = null,
 )
 
+fun BalanceResponseDto.toModel() = BalanceModel(
+    unlocked = unlockedTokensBalance,
+    locked = lockedTokensBalance,
+)
+
 fun QuestInfoResponseDto.toQuestInfoModel() = QuestInfoModel(
     quests = quests.map(QuestItemDto::toQuestModel),
     questDate = requireNotNull(ZonedDateTime.parse(questDate)).toOffsetLocalDateTime(),
@@ -50,17 +56,16 @@ fun QuestItemDto.toQuestModel() = QuestModel(
 
 fun mainHeaderState(
     profile: State<UserInfoModel>,
-    coins: State<StatsModel>,
+    coins: State<BalanceModel>,
     onProfileClicked: () -> Unit,
     onWalletClicked: () -> Unit,
 ) = if (profile is Effect && coins is Effect) {
     if (profile.isSuccess && coins.isSuccess) {
         MainHeaderState.Data(
             profileImage = profile.requireData.avatar,
-            energy = coins.requireData.energy,
-            gold = coins.requireData.gold,
-            silver = coins.requireData.silver,
-            bronze = coins.requireData.bronze,
+            energy = profile.requireData.questInfo.totalEnergy.toString(),
+            unlocked = coins.requireData.unlocked.toString(),
+            locked = coins.requireData.locked.toString(),
             onProfileClicked = onProfileClicked,
             onWalletClicked = onWalletClicked,
         )

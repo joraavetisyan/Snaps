@@ -32,6 +32,8 @@ internal class ScreenNavigator(navHostController: NavHostController) :
         route = AppRoute.Profile,
         arg = AppRoute.Profile.Args(userId),
     )
+
+    fun toWalletScreen() = navHostController.navigate(AppRoute.Wallet)
 }
 
 class CollectionFeatureProviderImpl @Inject constructor() : CollectionFeatureProvider {

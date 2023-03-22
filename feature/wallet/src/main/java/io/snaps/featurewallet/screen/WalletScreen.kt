@@ -81,7 +81,7 @@ import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
 import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewallet.ScreenNavigator
-import io.snaps.featurewallet.data.model.TransactionType
+import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.featurewallet.viewmodel.WalletViewModel
 import kotlinx.coroutines.launch
 

@@ -30,11 +30,11 @@ import io.snaps.coreuitheme.compose.AppTheme
 sealed class RewardsTileState : TileState {
 
     data class Locked(
-        val lockedTokensBalance: Int,
+        val lockedTokensBalance: String,
     ) : RewardsTileState()
 
     data class Unlocked(
-        val unlockedTokensBalance: Int,
+        val unlockedTokensBalance: String,
     ) : RewardsTileState()
 
     object Shimmer : RewardsTileState()
@@ -107,7 +107,7 @@ private fun RewardsCard(
     modifier: Modifier,
     title: TextValue,
     description: TextValue,
-    coin: Int,
+    coin: String,
     imageValue: ImageValue,
 ) {
     Box(

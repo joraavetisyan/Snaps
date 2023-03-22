@@ -1,9 +1,12 @@
 package io.snaps.baseprofile.data
 
+import io.snaps.baseprofile.data.model.BalanceResponseDto
 import io.snaps.baseprofile.data.model.QuestDto
 import io.snaps.baseprofile.data.model.QuestInfoResponseDto
 import io.snaps.baseprofile.data.model.QuestItemDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
+import io.snaps.baseprofile.data.model.TransactionItemResponseDto
+import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.baseprofile.data.model.UserCreateRequestDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.mock.mockDelay
@@ -13,6 +16,7 @@ import io.snaps.corecommon.model.QuestType
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
 import retrofit2.http.Body
+import retrofit2.http.Query
 
 class FakeProfileApi : ProfileApi {
 
@@ -35,6 +39,41 @@ class FakeProfileApi : ProfileApi {
         return BaseResponse(
             actualTimestamp = 0L,
             data = Completable,
+        )
+    }
+
+    override suspend fun transactions(
+        @Query(value = "from") from: String?,
+        @Query(value = "count") count: Int,
+        @Query(value = "transactionType") transactionType: TransactionType,
+    ): BaseResponse<List<TransactionItemResponseDto>> {
+        return BaseResponse(
+            actualTimestamp = 0L,
+            data = getTransactions()
+        ).also {
+            delay(mockDelay)
+        }
+    }
+
+    override suspend fun balance(): BaseResponse<BalanceResponseDto> {
+        return BaseResponse(
+            actualTimestamp = 0L,
+            data = BalanceResponseDto(
+                lockedTokensBalance = 1,
+                unlockedTokensBalance = 1,
+            )
+        ).also {
+            delay(mockDelay)
+        }
+    }
+
+    private fun getTransactions() = List(10) {
+        TransactionItemResponseDto(
+            id = it.toString(),
+            symbol = "BNB",
+            iconUrl = "https://baksman.org/res/exchangebox/uploads/networks/BNB.png",
+            date = "2023-03-01T00:00:00+00:00",
+            coinValue = "0.743",
         )
     }
 

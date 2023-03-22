@@ -49,7 +49,8 @@ class UserDataStorage @Inject constructor(
         }
 
     fun reset(reason: LogOutReason? = null) {
-        // todo
+        isInitialized = false
+        hasNft = false
     }
 }
 

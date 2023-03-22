@@ -1,6 +1,9 @@
 package io.snaps.baseprofile.data
 
+import io.snaps.baseprofile.data.model.BalanceResponseDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
+import io.snaps.baseprofile.data.model.TransactionItemResponseDto
+import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.baseprofile.data.model.UserCreateRequestDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.model.Completable
@@ -26,4 +29,14 @@ interface ProfileApi {
     suspend fun setInviteCode(
         @Body body: SetInviteCodeRequestDto,
     ): BaseResponse<Completable>
+
+    @GET("user/balance/history")
+    suspend fun transactions(
+        @Query("from") from: String?,
+        @Query("count") count: Int,
+        @Query("transactionType") transactionType: TransactionType,
+    ): BaseResponse<List<TransactionItemResponseDto>>
+
+    @GET("user/balance")
+    suspend fun balance(): BaseResponse<BalanceResponseDto>
 }

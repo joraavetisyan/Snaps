@@ -3,7 +3,7 @@ package io.snaps.baseprofile.data
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.UserCreateRequestDto
 import io.snaps.baseprofile.domain.QuestInfoModel
-import io.snaps.baseprofile.domain.StatsModel
+import io.snaps.baseprofile.domain.BalanceModel
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
@@ -30,11 +30,13 @@ interface ProfileRepository {
 
     val state: StateFlow<State<UserInfoModel>>
 
-    val statsState: StateFlow<State<StatsModel>>
+    val balanceState: StateFlow<State<BalanceModel>>
 
     val currentQuestsState: StateFlow<State<QuestInfoModel>>
 
     suspend fun updateData(): Effect<Completable>
+
+    suspend fun updateBalance(): Effect<Completable>
 
     suspend fun getUserInfoById(userId: String): Effect<UserInfoModel>
 
@@ -61,8 +63,8 @@ class ProfileRepositoryImpl @Inject constructor(
     private val _state = MutableStateFlow<State<UserInfoModel>>(Loading())
     override val state = _state.asStateFlow()
 
-    private val _statsState = MutableStateFlow<State<StatsModel>>(Loading())
-    override val statsState = _statsState.asStateFlow()
+    private val _balanceState = MutableStateFlow<State<BalanceModel>>(Loading())
+    override val balanceState = _balanceState.asStateFlow()
 
     override val currentQuestsState = state.map {
         when (it) {
@@ -75,21 +77,24 @@ class ProfileRepositoryImpl @Inject constructor(
     }.likeStateFlow(scope, Loading())
 
     override suspend fun updateData(): Effect<Completable> {
+        _state tryPublish Loading()
         return apiCall(ioDispatcher) {
             api.userInfo()
         }.map {
-            _statsState tryPublish Effect.success(
-                StatsModel(
-                    energy = it.questInfo.energy.toString(),
-                    // todo
-                    gold = "12",
-                    silver = "12",
-                    bronze = "12",
-                )
-            )
             it.toModel()
         }.also {
             _state tryPublish it
+        }.toCompletable()
+    }
+
+    override suspend fun updateBalance(): Effect<Completable> {
+        _balanceState tryPublish Loading()
+        return apiCall(ioDispatcher) {
+            api.balance()
+        }.map {
+            it.toModel()
+        }.also {
+            _balanceState tryPublish it
         }.toCompletable()
     }
 

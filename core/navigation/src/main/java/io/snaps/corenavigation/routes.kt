@@ -24,7 +24,7 @@ sealed class RouteWithArg(value: String) : Route(value) {
     override val pattern = "$value?$DefaultArgKey={$DefaultArgKey}"
     override val arguments = listOf(navArgument(DefaultArgKey) { type = NavType.StringType })
 
-    override fun path(vararg args: Any): String = "$value?$DefaultArgKey=${args.first()}"
+    override fun path(vararg args: Any): String = "$value?$DefaultArgKey=${args.firstOrNull()}"
 }
 
 sealed class Deeplink(protected val value: String) {

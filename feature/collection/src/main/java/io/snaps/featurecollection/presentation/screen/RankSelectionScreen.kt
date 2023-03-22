@@ -65,7 +65,7 @@ fun RankSelectionScreen(
     viewModel.headerCommand.collectAsCommand {
         when (it) {
             MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
-            MainHeaderHandler.Command.OpenWalletScreen -> { /*todo*/ }
+            MainHeaderHandler.Command.OpenWalletScreen -> router.toWalletScreen()
         }
     }
 

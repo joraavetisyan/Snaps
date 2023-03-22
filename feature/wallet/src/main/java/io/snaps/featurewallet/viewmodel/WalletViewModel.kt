@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.MainHeaderHandler
+import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.TotalBalanceModel
@@ -20,7 +22,6 @@ import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.featurewallet.data.TransactionsRepository
-import io.snaps.featurewallet.data.model.TransactionType
 import io.snaps.featurewallet.screen.RewardsTileState
 import io.snaps.featurewallet.screen.TransactionsUiState
 import io.snaps.featurewallet.screen.toTransactionsUiState
@@ -30,6 +31,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
@@ -41,6 +43,7 @@ class WalletViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
     private val walletRepository: WalletRepository,
     private val transactionsRepository: TransactionsRepository,
+    private val profileRepository: ProfileRepository,
     private val barcodeManager: BarcodeManager,
     private val notificationsSource: NotificationsSource,
     private val action: Action,
@@ -57,6 +60,7 @@ class WalletViewModel @Inject constructor(
     init {
         subscribeToTransactions()
         subscribeToBalance()
+        subscribeToRewards()
         subscribeToWallets()
         loadRewards()
     }
@@ -93,24 +97,16 @@ class WalletViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    private fun subscribeToRewards() {
+        profileRepository.balanceState.map {
+            it.toRewardsTileState(::onRewardReloadClicked)
+        }.onEach { rewards ->
+            _uiState.update { it.copy(rewards = rewards) }
+        }.launchIn(viewModelScope)
+    }
+
     private fun loadRewards() = viewModelScope.launch {
-        action.execute {
-            transactionsRepository.loadReward()
-        }.doOnSuccess { reward ->
-            _uiState.update {
-                it.copy(rewards = reward.toRewardsTileState())
-            }
-        }.doOnError { _, _ ->
-            _uiState.update {
-                it.copy(
-                    rewards = listOf(
-                        RewardsTileState.Error(
-                            clickListener = ::onRewardReloadClicked,
-                        ),
-                    )
-                )
-            }
-        }
+        action.execute { profileRepository.updateBalance() }
     }
 
     fun onTopUpClicked() {

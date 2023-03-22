@@ -48,6 +48,8 @@ internal class ScreenNavigator(navHostController: NavHostController) :
         arg = AppRoute.Profile.Args(userId = userId),
     )
 
+    fun toWalletScreen() = navHostController.navigate(AppRoute.Wallet)
+
     fun toUserVideoFeedScreen(userId: Uuid?, position: Int) =
         navHostController navigate FeatureNavDirection(
             route = AppRoute.UserVideoFeed,
@@ -58,7 +60,7 @@ internal class ScreenNavigator(navHostController: NavHostController) :
 class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider {
 
     override fun NavGraphBuilder.profileGraph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.MainTab5Start) { ProfileScreen(controller) }
+        composable(AppRoute.MainBottomBar.MainTab5Start) { ReferralProgramScreen(controller) }
         composable(AppRoute.Profile) { ProfileScreen(controller) }
         composable(AppRoute.ReferralProgramScreen) { ReferralProgramScreen(controller) }
         composable(AppRoute.Settings) { SettingsScreen(controller) }
