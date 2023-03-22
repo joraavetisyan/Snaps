@@ -48,13 +48,15 @@ fun ConfirmUnsubscribeDialog(
                 modifier = Modifier.padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Image(
-                    painter = data.image.get(),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape),
-                )
+                data.image?.let {
+                    Image(
+                        painter = data.image.get(),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(CircleShape),
+                    )
+                }
                 Text(
                     text = StringKey.ConfirmUnsubscribeDialogMessage.textValue(data.name).get(),
                     style = AppTheme.specificTypography.titleSmall,

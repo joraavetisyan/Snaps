@@ -49,6 +49,7 @@ import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -182,12 +183,12 @@ class WalletRepositoryImpl @Inject constructor(
         accountManager.save(account)
         activateDefaultWallets(account)
         predefinedBlockchainSettingsProvider.prepareNew(account, BlockchainType.Zcash)
-        // todo call at appropriate place, here it is always null (subscribe?)
-        return getActiveWalletsReceiveAddresses().firstOrNull().also {
-            if (it == null) log("No address!")
-        }?.let {
-            apiCall(ioDispatcher) { walletApi.save(WalletSaveRequestDto(it)) }
-        }?.toCompletable() ?: Effect.completable
+        while (getActiveWalletsReceiveAddresses().firstOrNull() == null) {
+            delay(200)
+        }
+        return apiCall(ioDispatcher) {
+            walletApi.save(WalletSaveRequestDto(getActiveWalletsReceiveAddresses().first()))
+        }.toCompletable()
     }
 
     override fun getActiveAccount(): Account? {

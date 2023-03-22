@@ -16,6 +16,7 @@ dependencies {
     implementation(projects.baseSession)
     implementation(projects.baseSources)
     implementation(projects.baseAuth)
+    implementation(projects.baseProfile)
 
     implementation(*Libs.bundle.firebase)
     implementation(Libs.bundle.playServices)

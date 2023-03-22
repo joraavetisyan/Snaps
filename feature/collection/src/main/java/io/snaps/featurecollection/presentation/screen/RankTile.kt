@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import io.snaps.baseprofile.ui.WorthWidget
+import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.model.NftType
@@ -109,7 +109,7 @@ private fun Data(
                     text = data.type.name,
                     style = AppTheme.specificTypography.labelMedium,
                 )
-                WorthWidget(ImageValue.ResImage(R.drawable.img_coin_silver) to data.price)
+                ValueWidget(ImageValue.ResImage(R.drawable.img_coin_silver) to data.price)
             }
             Spacer(Modifier.height(4.dp))
             Line(

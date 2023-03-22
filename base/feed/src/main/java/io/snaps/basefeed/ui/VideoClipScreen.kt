@@ -73,6 +73,7 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.scroll.DetectScroll
 import io.snaps.coreuicompose.uikit.scroll.ScrollInfo
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
@@ -313,7 +314,7 @@ private fun PagerScope.VideoClip(
         onMuted = onMuteClicked,
     )
 
-    VideoClipItem(
+    VideoClipItems(
         videoClipModel = item.clip,
         authorProfileAvatar = uiState.authorProfileAvatar,
         onAuthorClicked = onAuthorClicked,
@@ -324,7 +325,7 @@ private fun PagerScope.VideoClip(
 }
 
 @Composable
-private fun VideoClipItem(
+private fun VideoClipItems(
     modifier: Modifier = Modifier,
     videoClipModel: VideoClipModel,
     authorProfileAvatar: ImageValue?,
@@ -457,13 +458,15 @@ private fun VideoClipEndItems(
                 shape = CircleShape,
                 modifier = Modifier.padding(10.dp),
             ) {
-                authorProfileAvatar?.let {
+                if (authorProfileAvatar != null) {
                     Image(
-                        painter = it.get(),
+                        painter = authorProfileAvatar.get(),
                         contentDescription = null,
                         modifier = Modifier.size(60.dp),
                         contentScale = ContentScale.Crop,
                     )
+                } else {
+                    ShimmerTileCircle(size = 60.dp)
                 }
             }
             Icon(

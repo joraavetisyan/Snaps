@@ -15,11 +15,6 @@ class UserDataStorage @Inject constructor(
     private val provider: PreferencesProvider,
 ) {
 
-    val userNameFlow: Flow<String?> get() = provider.userDataStore.get(PREF_NAME)
-    suspend fun setUserName(value: String) {
-        provider.userDataStore.set(PREF_NAME, value)
-    }
-
     val themeModeFlow: Flow<ThemeMode>
         get() = provider.userDataStore.get(PREF_THEME_MODE).map {
             it?.let(ThemeMode::valueOf) ?: ThemeMode.System
@@ -29,6 +24,12 @@ class UserDataStorage @Inject constructor(
         provider.userDataStore.set(PREF_THEME_MODE, value.name)
     }
 
+    var isInitialized: Boolean
+        get() = provider.prefs.getBoolean("isInitialized", false)
+        set(value) = provider.prefs.edit {
+            putBoolean("isInitialized", value)
+        }
+
     var isStartOnBoardingFinished: Boolean
         get() = provider.prefs.getBoolean("isStartOnBoardingFinished", false)
         set(value) = provider.prefs.edit {
@@ -36,7 +37,7 @@ class UserDataStorage @Inject constructor(
         }
 
     var hasNft: Boolean
-        get() = provider.prefs.getBoolean("hasNft", false)
+        get() = provider.prefs.getBoolean("hasNft", true)
         set(value) = provider.prefs.edit {
             putBoolean("hasNft", value)
         }

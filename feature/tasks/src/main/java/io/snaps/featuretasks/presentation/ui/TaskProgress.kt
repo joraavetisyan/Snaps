@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import io.snaps.baseprofile.ui.WorthWidget
+import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.coreuicompose.tools.get
@@ -34,6 +34,6 @@ fun TaskProgress(
             contentScale = ContentScale.Crop,
         )
         Progress(Modifier.weight(1f), progress = progress / maxValue.toFloat())
-        WorthWidget(null to "$progress/$maxValue")
+        ValueWidget(null to "$progress/$maxValue")
     }
 }

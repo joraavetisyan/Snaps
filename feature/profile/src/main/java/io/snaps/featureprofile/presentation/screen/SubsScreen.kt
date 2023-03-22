@@ -97,7 +97,9 @@ private fun SubsScreen(
                 .inset(insetAllExcludeTop()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val subscriptions = StringKey.SubsActionSubscriptions.textValue(uiState.totalSubscribers)
+            val subscriptions = StringKey.SubsActionSubscriptions.textValue(
+                uiState.totalSubscribers
+            )
             val subscribers = StringKey.SubsActionSubscribers.textValue(uiState.totalSubscriptions)
 
             val pages = listOf(uiState.subscriptionsUiState, uiState.subscribersUiState)
@@ -109,9 +111,9 @@ private fun SubsScreen(
                 items = listOf(subscriptions, subscribers),
                 selectedItemIndex = pagerState.currentPage,
                 onClick = {
-                   coroutineScope.launch {
-                       pagerState.animateScrollToPage(it)
-                   }
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(it)
+                    }
                 },
             )
             HorizontalPager(
@@ -165,7 +167,9 @@ private fun Item(
 ) {
     val item = data.item
     CellTileState.Data(
-        leftPart = LeftPart.Logo(item.image) { transformations(CircleCropTransformation()) },
+        leftPart = item.image?.let {
+            LeftPart.Logo(it) { transformations(CircleCropTransformation()) }
+        } ?: LeftPart.Shimmer,
         middlePart = MiddlePart.Data(valueBold = item.name.textValue()),
         rightPart = RightPart.ChipData(
             text = (if (item.isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),

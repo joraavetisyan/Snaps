@@ -31,7 +31,7 @@ class MnemonicsVerificationViewModel @Inject constructor(
         UiState(
             words = args.words.mapIndexed { index, s ->
                 WordUiModel(
-                    text = s, orderNumber = index + 1, status = SelectorTileStatus.Default
+                    text = s, ordinal = index + 1, status = SelectorTileStatus.Default
                 )
             }
         )
@@ -42,39 +42,27 @@ class MnemonicsVerificationViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     init {
-        onContinueButtonClicked()
+        randomize()
     }
 
-    fun onContinueButtonClicked() = viewModelScope.launch {
-        // -3 means no selections added yet
-        val firstOrderNumber = _uiState.value.selections.firstOrNull()?.orderNumber ?: -3
-        if (firstOrderNumber == 9) {
-            saveAccount()
-        } else {
-            toNextSelection(firstOrderNumber)
+    private fun randomize() {
+        val ordinals = (1..args.words.size).toMutableList()
+        val randomOrdinals = mutableListOf<Int>()
+        repeat(4) {
+            val ordinal = ordinals.removeAt((0 until ordinals.size).random())
+            randomOrdinals.add(ordinal)
         }
-    }
-
-    private suspend fun saveAccount() {
-        action.execute {
-            walletRepository.saveLastConnectedAccount()
-        }.doOnComplete {
-            _command publish Command.OpenCreatedWalletScreen
-        }
-    }
-
-    private fun toNextSelection(firstOrderNumber: Int) {
-        val range = (firstOrderNumber + 4)..(firstOrderNumber + 7)
+        randomOrdinals.sort()
         val wordPool = _uiState.value.words.mapNotNull {
-            it.takeUnless { it.orderNumber in range }
+            it.takeUnless { it.ordinal in randomOrdinals }
         }.shuffled()
         var sublistStart = 0
-        val selections = range.map { orderNumber ->
+        val selections = randomOrdinals.map { ordinal ->
             SelectionUiModel(
-                orderNumber = orderNumber,
+                ordinal = ordinal,
                 words = (wordPool.subList(sublistStart, sublistStart + 2).also {
                     sublistStart += 2
-                } + _uiState.value.words.first { it.orderNumber == orderNumber }).shuffled(),
+                } + _uiState.value.words.first { it.ordinal == ordinal }).shuffled(),
             )
         }
         _uiState.update {
@@ -82,11 +70,19 @@ class MnemonicsVerificationViewModel @Inject constructor(
         }
     }
 
+    fun onContinueButtonClicked() = viewModelScope.launch {
+        action.execute {
+            walletRepository.saveLastConnectedAccount()
+        }.doOnComplete {
+            _command publish Command.OpenCreatedWalletScreen
+        }
+    }
+
     fun onWordItemClicked(selection: SelectionUiModel, word: WordUiModel) {
         _uiState.update { state ->
             state.copy(
                 selections = state.selections.map { item ->
-                    if (item.orderNumber == selection.orderNumber && !item.isSelected()) {
+                    if (item.ordinal == selection.ordinal && !item.isSelected()) {
                         item.copy(
                             words = item.words.map {
                                 if (it.text == word.text) {
@@ -109,7 +105,7 @@ class MnemonicsVerificationViewModel @Inject constructor(
     fun onAnimationFinished(selection: SelectionUiModel, word: WordUiModel) {
         _uiState.update { state ->
             val newPhrases = state.selections.map { item ->
-                if (item.orderNumber == selection.orderNumber) {
+                if (item.ordinal == selection.ordinal) {
                     item.copy(
                         words = item.words.map {
                             if (it != word) it
@@ -137,17 +133,17 @@ class MnemonicsVerificationViewModel @Inject constructor(
 }
 
 data class SelectionUiModel(
-    val orderNumber: Int,
+    val ordinal: Int,
     val words: List<WordUiModel>,
 ) {
 
-    fun isCorrect(word: WordUiModel) = word.orderNumber == orderNumber
+    fun isCorrect(word: WordUiModel) = word.ordinal == ordinal
 
     fun isSelected() = words.first(::isCorrect).status == SelectorTileStatus.Selected
 }
 
 data class WordUiModel(
-    val orderNumber: Int,
+    val ordinal: Int,
     val text: String,
     val status: SelectorTileStatus,
 )

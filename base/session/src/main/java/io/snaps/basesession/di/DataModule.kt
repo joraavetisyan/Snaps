@@ -1,16 +1,15 @@
 package io.snaps.basesession.di
 
-import io.snaps.basesession.data.LogoutApi
-import io.snaps.basesession.data.RefreshApi
-import io.snaps.basesession.data.SessionRepository
-import io.snaps.basesession.data.SessionRepositoryImpl
-import io.snaps.coredata.network.ApiConfig
-import io.snaps.coredata.network.ApiService
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.snaps.basesession.data.LogoutApi
+import io.snaps.basesession.data.SessionRepository
+import io.snaps.basesession.data.SessionRepositoryImpl
+import io.snaps.coredata.network.ApiConfig
+import io.snaps.coredata.network.ApiService
 import javax.inject.Singleton
 
 @Module
@@ -23,13 +22,6 @@ class DataModule {
         .service(ApiService.General)
         .interceptor(config.commonHeaderInterceptor)
         .interceptor(config.authenticationInterceptor)
-        .build()
-
-    @Provides
-    @Singleton
-    fun refreshApi(config: ApiConfig) = config.serviceBuilder(RefreshApi::class.java)
-        .service(ApiService.General)
-        .interceptor(config.commonHeaderInterceptor)
         .build()
 }
 

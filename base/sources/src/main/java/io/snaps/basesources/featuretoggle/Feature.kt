@@ -4,14 +4,14 @@ enum class Feature(
     val key: String = "",
     val defaultValue: Boolean = true,
 ) {
-    AuthApiMock("AuthApiMock", true),
-    ProfileApiMock("ProfileApiMock", true),
+    AuthApiMock("AuthApiMock", false),
+    ProfileApiMock("ProfileApiMock", false),
     FeedApiMock("FeedApiMock", false),
     CommentApiMock("CommentApiMock", false),
     SubsApiMock("SubsApiMock", false),
     WalletApiMock("WalletApiMock", false),
     TasksApiMock("TasksApiMock", false),
-    MyCollectionApiMock("MyCollectionApiMock", true),
-    TransactionsApiMock("TransactionsApiMock", true),
+    MyCollectionApiMock("MyCollectionApiMock", false),
+    TransactionsApiMock("TransactionsApiMock", false),
     UNKNOWN
 }

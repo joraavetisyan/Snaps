@@ -20,7 +20,7 @@ data class QuestItemDto(
     @SerialName("energyProgress") val energyProgress: Int,
     @SerialName("completed") val completed: Boolean,
     @SerialName("quest") val quest: QuestDto,
-    @SerialName("madeCount") val madeCount: Int,
+    @SerialName("madeCount") val madeCount: Int?,
 
     // For SocialPost
     @SerialName("network") val network: SocialNetwork?,
@@ -28,7 +28,7 @@ data class QuestItemDto(
 
 @Serializable
 data class QuestDto(
-    @SerialName("count") val count: Int,
+    @SerialName("count") val count: Int?,
     @SerialName("type") val type: QuestType,
     @SerialName("energy") val energy: Int,
 )

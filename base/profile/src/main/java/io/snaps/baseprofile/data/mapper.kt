@@ -4,7 +4,7 @@ import io.snaps.baseprofile.data.model.QuestInfoResponseDto
 import io.snaps.baseprofile.data.model.QuestItemDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.baseprofile.domain.StatsModel
-import io.snaps.baseprofile.domain.ProfileModel
+import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.baseprofile.ui.MainHeaderState
@@ -14,24 +14,23 @@ import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.State
 import java.time.ZonedDateTime
 
-fun UserInfoResponseDto.toProfileModel() = ProfileModel(
+fun UserInfoResponseDto.toModel() = UserInfoModel(
     entityId = entityId,
     createdDate = requireNotNull(ZonedDateTime.parse(createdDate)).toOffsetLocalDateTime(),
     userId = userId,
     email = email,
     wallet = wallet,
-    name = name,
+    name = name.orEmpty(),
     totalLikes = totalLikes,
     totalSubscribers = totalSubscribers,
     totalSubscriptions = totalSubscriptions,
-    totalPublication = totalPublication,
-    avatar = ImageValue.Url(avatarUrl),
-    hasNft = hasNft,
+    avatar = avatarUrl?.let(ImageValue::Url),
     level = level,
     experience = experience,
     questInfo = questInfo.toQuestInfoModel(),
     inviteCodeRegisteredBy = inviteCodeRegisteredBy,
     ownInviteCode = ownInviteCode,
+    totalPublication = null,
 )
 
 fun QuestInfoResponseDto.toQuestInfoModel() = QuestInfoModel(
@@ -50,7 +49,7 @@ fun QuestItemDto.toQuestModel() = QuestModel(
 )
 
 fun mainHeaderState(
-    profile: State<ProfileModel>,
+    profile: State<UserInfoModel>,
     coins: State<StatsModel>,
     onProfileClicked: () -> Unit,
     onWalletClicked: () -> Unit,

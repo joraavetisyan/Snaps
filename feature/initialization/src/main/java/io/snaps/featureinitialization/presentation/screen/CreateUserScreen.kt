@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Environment
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -42,6 +43,7 @@ import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
+import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.date.getLocaleDateByPhotoDateFormat
 import io.snaps.corecommon.strings.StringKey
@@ -176,6 +178,11 @@ private fun CreateUserScreen(
                 imageUri = imageUri,
                 onDeleteClick = onDeleteClicked,
             )
+        } else if (uiState.avatar != null) {
+            Photo(
+                imageValue = uiState.avatar,
+                onDeleteClick = onDeleteClicked,
+            )
         }
         if (uiState.photoStatus == CreateUserViewModel.PhotoStatus.NotUploaded) {
             SimpleButtonActionM(
@@ -190,7 +197,7 @@ private fun CreateUserScreen(
             }
         }
         Spacer(modifier = Modifier.weight(1f))
-        if (uiState.photoStatus == CreateUserViewModel.PhotoStatus.Uploaded) {
+        if (uiState.isStartButtonEnabled) {
             SimpleButtonActionM(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -227,7 +234,8 @@ private fun CreateUserScreen(
 
 @Composable
 private fun Photo(
-    imageUri: Uri?,
+    imageUri: Uri? = null,
+    imageValue: ImageValue? = null,
     onDeleteClick: () -> Unit,
 ) {
     Row(
@@ -241,14 +249,26 @@ private fun Photo(
             )
             .padding(12.dp),
     ) {
-        AsyncImage(
-            model = imageUri,
-            modifier = Modifier
-                .size(44.dp)
-                .clip(AppTheme.shapes.medium),
-            contentDescription = "Selected image",
-            contentScale = ContentScale.Crop,
-        )
+        imageUri?.let {
+            AsyncImage(
+                model = imageUri,
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(AppTheme.shapes.medium),
+                contentDescription = "Selected image",
+                contentScale = ContentScale.Crop,
+            )
+        }
+        imageValue?.let {
+            Image(
+                painter = imageValue.get(),
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(AppTheme.shapes.medium),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+            )
+        }
         Text(
             text = LocalStringHolder.current(StringKey.CreateUserFieldPhotoUploaded),
             color = AppTheme.specificColorScheme.textPrimary,

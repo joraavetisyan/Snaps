@@ -7,7 +7,6 @@ import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
-import io.snaps.coredata.crypto.PinCodeWrapper
 import io.snaps.coredata.database.LogOutReason
 import io.snaps.coredata.database.TokenStorage
 import io.snaps.coredata.database.UserDataStorage
@@ -36,26 +35,15 @@ class SessionRepositoryImpl @Inject constructor(
     private val userSessionTracker: UserSessionTracker,
     private val tokenStorage: TokenStorage,
     private val userDataStorage: UserDataStorage,
-    private val logoutApi: LogoutApi,
-    private val refreshApi: RefreshApi,
-    private val pinCodeWrapper: PinCodeWrapper,
     private val deviceInfoProvider: DeviceInfoProvider,
     private val auth: FirebaseAuth,
 ) : SessionRepository {
 
-    /*
-    * обновление токенов при авторизации.
-    * используется refresh токен, полученный при авторизации (через ввод pin кода или биометрию)
-    * */
     override suspend fun login(): Effect<Completable> {
         onLogin()
         return Effect.completable
     }
 
-    /*
-    * обновление токенов без участия пользователя.
-    * используется refresh токен из оперативной памяти
-    * */
     override suspend fun refresh(): Effect<Completable> {
         val token = auth.currentUser?.getIdToken(false)?.await()?.token
         if (token != null) {

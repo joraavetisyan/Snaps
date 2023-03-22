@@ -4,16 +4,15 @@ import io.snaps.baseprofile.data.model.QuestDto
 import io.snaps.baseprofile.data.model.QuestInfoResponseDto
 import io.snaps.baseprofile.data.model.QuestItemDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
+import io.snaps.baseprofile.data.model.UserCreateRequestDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.mock.mockDelay
-import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.mock.rInt
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.QuestType
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import retrofit2.http.Body
 
 class FakeProfileApi : ProfileApi {
 
@@ -24,10 +23,7 @@ class FakeProfileApi : ProfileApi {
         )
     }
 
-    override suspend fun createUser(
-        file: MultipartBody.Part,
-        userName: RequestBody
-    ): BaseResponse<UserInfoResponseDto> {
+    override suspend fun createUser(@Body body: UserCreateRequestDto): BaseResponse<UserInfoResponseDto> {
         return BaseResponse(
             actualTimestamp = 0L,
             data = getUserInfo(null),
@@ -51,10 +47,8 @@ class FakeProfileApi : ProfileApi {
         name = "Вадим",
         totalLikes = 4,
         avatarUrl = "https://lh3.googleusercontent.com/a/AEdFTp5fj_vYT-nRYQ9RXjKbZniPZoLGlZ0ViZ9pX-ij5A=s96-c",
-        totalPublication = 23,
         totalSubscribers = 12,
         totalSubscriptions = 10,
-        hasNft = rBool,
         experience = 0,
         level = 1,
         questInfo = getQuestInfo(),

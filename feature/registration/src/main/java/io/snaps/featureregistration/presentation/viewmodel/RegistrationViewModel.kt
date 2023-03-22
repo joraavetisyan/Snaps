@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthCredential
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseauth.data.AuthRepository
+import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class RegistrationViewModel @Inject constructor(
     private val sessionRepository: SessionRepository,
     private val authRepository: AuthRepository,
+    private val profileRepository: ProfileRepository,
     private val action: Action,
 ) : SimpleViewModel() {
 
@@ -105,7 +107,7 @@ class RegistrationViewModel @Inject constructor(
         action.execute {
             authRepository.signInWithCredential(authCredential)
         }.doOnSuccess {
-            sessionRepository.onLogin()
+            handleAuth()
         }
     }
 
@@ -113,7 +115,7 @@ class RegistrationViewModel @Inject constructor(
         action.execute {
             authRepository.signInWithCredential(authCredential)
         }.doOnSuccess {
-            sessionRepository.onLogin()
+            handleAuth()
         }
     }
 
@@ -124,7 +126,17 @@ class RegistrationViewModel @Inject constructor(
                 password = uiState.value.passwordValue,
             )
         }.doOnSuccess {
-            sessionRepository.onLogin()
+            handleAuth()
+        }
+    }
+
+    private suspend fun handleAuth() {
+        action.execute {
+            profileRepository.updateData().doOnSuccess {
+                sessionRepository.onLogin()
+            }.doOnError { _, _ ->
+                sessionRepository.logout()
+            }
         }
     }
 

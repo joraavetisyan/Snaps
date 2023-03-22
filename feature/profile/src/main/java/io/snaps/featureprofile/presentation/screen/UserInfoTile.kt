@@ -37,11 +37,11 @@ import io.snaps.coreuitheme.compose.LocalStringHolder
 sealed class UserInfoTileState : TileState {
 
     data class Data(
-        val profileImage: ImageValue,
+        val profileImage: ImageValue?,
         val likes: String,
         val subscribers: String,
         val subscriptions: String,
-        val publication: String,
+        val publication: String?,
         val onSubscribersClick: () -> Unit,
         val onSubscriptionsClick: () -> Unit,
     ) : UserInfoTileState()
@@ -85,8 +85,10 @@ private fun Data(
                 name = LocalStringHolder.current(StringKey.ProfileTitleSubscriptions),
                 onClick = data.onSubscriptionsClick,
             )
-            VerticalDivider()
-            StatsLine(data.publication, LocalStringHolder.current(StringKey.ProfileTitlePublication))
+            data.publication?.let {
+                VerticalDivider()
+                StatsLine(it, LocalStringHolder.current(StringKey.ProfileTitlePublication))
+            }
         }
         Card(
             shape = CircleShape,
@@ -94,12 +96,16 @@ private fun Data(
                 .align(Alignment.TopCenter)
                 .padding(bottom = 76.dp),
         ) {
-            Image(
-                painter = data.profileImage.get(),
-                contentDescription = null,
-                modifier = Modifier.size(76.dp),
-                contentScale = ContentScale.Crop,
-            )
+            if (data.profileImage != null) {
+                Image(
+                    painter = data.profileImage.get(),
+                    contentDescription = null,
+                    modifier = Modifier.size(76.dp),
+                    contentScale = ContentScale.Crop,
+                )
+            } else {
+                ShimmerTileCircle(size = 76.dp)
+            }
         }
     }
 }

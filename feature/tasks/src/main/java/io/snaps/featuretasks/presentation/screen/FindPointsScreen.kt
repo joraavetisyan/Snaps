@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.transform.CircleCropTransformation
-import io.snaps.baseprofile.ui.WorthWidget
+import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
@@ -157,7 +157,7 @@ private fun FindPointsScreen(
                             )
                         }
                     }
-                    WorthWidget(null to "LVL 1")
+                    ValueWidget(null to "LVL 1")
                 }
             }
 

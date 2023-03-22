@@ -132,11 +132,7 @@ class WalletViewModel @Inject constructor(
     }
 
     fun onWithdrawClicked() {
-        showWalletSelectBottomDialog {
-            viewModelScope.launch {
-                _command publish Command.OpenWithdrawScreen(it)
-            }
-        }
+        // todo
     }
 
     fun onDropdownMenuItemClicked(transactionType: TransactionType) {

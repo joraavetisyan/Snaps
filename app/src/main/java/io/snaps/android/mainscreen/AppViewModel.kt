@@ -14,7 +14,6 @@ import io.snaps.corenavigation.base.ROUTE_ARGS_SEPARATOR
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreuicompose.uikit.status.BannerMessage
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -42,7 +41,7 @@ class AppViewModel @Inject constructor(
             )
             UserSessionTracker.State.Active -> StartFlow.AuthorizedFlow(
                 needsWalletConnect = walletRepository.getActiveAccount() == null,
-                needsInitialization = userDataStorage.userNameFlow.firstOrNull() == null,
+                needsInitialization = !userDataStorage.isInitialized,
                 needsRanking = !userDataStorage.hasNft,
             )
         }

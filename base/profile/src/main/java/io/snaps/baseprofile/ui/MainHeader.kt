@@ -26,7 +26,7 @@ import io.snaps.coreuicompose.uikit.listtile.RightPart
 sealed interface MainHeaderState {
 
     data class Data(
-        val profileImage: ImageValue,
+        val profileImage: ImageValue?,
         val energy: String,
         val gold: String,
         val silver: String,
@@ -54,17 +54,19 @@ fun MainHeader(
                 shape = CircleShape,
                 modifier = Modifier.defaultTileRipple(onClick = state.onProfileClicked),
             ) {
-                Image(
-                    painter = state.profileImage.get(),
-                    contentDescription = null,
-                    modifier = Modifier.size(44.dp),
-                    contentScale = ContentScale.Crop,
-                )
+                state.profileImage?.let {
+                    Image(
+                        painter = state.profileImage.get(),
+                        contentDescription = null,
+                        modifier = Modifier.size(44.dp),
+                        contentScale = ContentScale.Crop,
+                    )
+                }
             }
             Spacer(Modifier.weight(1f))
             EnergyWidget(state.energy)
             Spacer(Modifier.width(4.dp))
-            WorthWidget(
+            ValueWidget(
                 ImageValue.ResImage(R.drawable.img_coin_silver) to state.silver,
                 ImageValue.ResImage(R.drawable.img_coin_gold) to state.gold,
                 ImageValue.ResImage(R.drawable.img_coin_bronze) to state.bronze,

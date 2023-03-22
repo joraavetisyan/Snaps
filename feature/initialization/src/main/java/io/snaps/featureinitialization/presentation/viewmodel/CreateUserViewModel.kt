@@ -1,15 +1,16 @@
 package io.snaps.featureinitialization.presentation.viewmodel
 
 import android.net.Uri
-import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.corecommon.container.ImageValue
 import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
+import io.snaps.featureinitialization.domain.CreateUserInteractor
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,9 +22,10 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateUserViewModel @Inject constructor(
     private val fileManager: FileManager,
-    private val profileRepository: ProfileRepository,
+    private val interactor: CreateUserInteractor,
     private val action: Action,
     private val userDataStorage: UserDataStorage,
+    private val profileRepository: ProfileRepository,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -31,6 +33,16 @@ class CreateUserViewModel @Inject constructor(
 
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
+
+    init {
+        viewModelScope.launch {
+            profileRepository.updateData().doOnSuccess {
+                profileRepository.state.value.dataOrCache?.let { user ->
+                    _uiState.update { it.copy(nicknameValue = user.name, avatar = user.avatar) }
+                }
+            }
+        }
+    }
 
     fun onUploadPhotoClicked() {
         _uiState.update { it.copy(isDialogVisible = true) }
@@ -48,6 +60,7 @@ class CreateUserViewModel @Inject constructor(
                     PhotoStatus.Uploaded
                 } else PhotoStatus.NotUploaded,
                 imageUri = imageUri,
+                avatar = null,
             )
         }
     }
@@ -60,13 +73,14 @@ class CreateUserViewModel @Inject constructor(
                     PhotoStatus.Uploaded
                 } else PhotoStatus.NotUploaded,
                 imageUri = imageUri,
+                avatar = null,
             )
         }
     }
 
     fun onDeleteClicked() {
         _uiState.update {
-            it.copy(photoStatus = PhotoStatus.NotUploaded)
+            it.copy(photoStatus = PhotoStatus.NotUploaded, avatar = null)
         }
     }
 
@@ -74,16 +88,27 @@ class CreateUserViewModel @Inject constructor(
         uiState.value.imageUri?.let { fileManager.createFileFromUri(it) }?.let {
             action.execute {
                 _uiState.update { it.copy(isLoading = true) }
-                profileRepository.createUser(it.toUri(), uiState.value.nicknameValue)
+                interactor.createUser(avatarFile = it, userName = uiState.value.nicknameValue)
             }.doOnComplete {
                 _uiState.update { it.copy(isLoading = false) }
             }.doOnSuccess {
-                if (userDataStorage.hasNft) {
-                    _command publish Command.OpenRankSelectionScreen
-                } else {
-                    _command publish Command.OpenMainScreen
-                }
+                handleCreate()
             }
+        } ?: kotlin.run {
+            val currentName = profileRepository.state.value.dataOrCache?.name
+            val enteredName = uiState.value.nicknameValue
+            if (currentName == enteredName && uiState.value.avatar != null) {
+                handleCreate()
+            }
+        }
+    }
+
+    private suspend fun handleCreate() {
+        interactor.saveInitialized()
+        if (userDataStorage.hasNft) {
+            _command publish Command.OpenRankSelectionScreen
+        } else {
+            _command publish Command.OpenMainScreen
         }
     }
 
@@ -96,6 +121,7 @@ class CreateUserViewModel @Inject constructor(
     data class UiState(
         val isLoading: Boolean = false,
         val isDialogVisible: Boolean = false,
+        val avatar: ImageValue? = null,
         val nicknameValue: String = "",
         val imageUri: Uri? = null,
         val photoStatus: PhotoStatus = PhotoStatus.NotUploaded,
@@ -103,7 +129,7 @@ class CreateUserViewModel @Inject constructor(
 
         val isStartButtonEnabled
             get() = nicknameValue.isNotBlank()
-                    && photoStatus == PhotoStatus.Uploaded
+                    && (photoStatus == PhotoStatus.Uploaded || avatar != null)
     }
 
     enum class PhotoStatus {

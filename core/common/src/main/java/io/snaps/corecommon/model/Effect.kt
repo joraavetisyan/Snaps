@@ -93,6 +93,13 @@ class Effect<DATA : Any> private constructor(
         is Error<DATA> -> error(value.error, value.cache?.let { transform(it) })
     }
 
+    suspend fun <OUT : Any> flatMap(
+        transform: suspend (value: DATA) -> Effect<OUT>,
+    ): Effect<OUT> = when (value) {
+        is Success<DATA> -> transform(value.data)
+        is Error<DATA> -> error(value.error)
+    }
+
     fun toCompletable() = when (value) {
         is Success<DATA> -> completable
         is Error<DATA> -> error(value.error)

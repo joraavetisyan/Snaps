@@ -146,7 +146,7 @@ private fun SelectionBlock(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "${selection.orderNumber}.",
+            text = "${selection.ordinal}.",
             color = AppTheme.specificColorScheme.textSecondary,
             style = AppTheme.specificTypography.titleSmall,
             modifier = Modifier.padding(start = 24.dp),

@@ -1,17 +1,16 @@
 package io.snaps.baseprofile.data
 
-import android.net.Uri
-import androidx.core.net.toFile
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
-import io.snaps.baseprofile.domain.ProfileModel
+import io.snaps.baseprofile.data.model.UserCreateRequestDto
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.StatsModel
+import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
-import io.snaps.corecommon.model.generateCurrentDateTime
+import io.snaps.corecommon.model.WalletAddress
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.UserDataStorage
@@ -25,15 +24,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 interface ProfileRepository {
 
-    val state: StateFlow<State<ProfileModel>>
+    val state: StateFlow<State<UserInfoModel>>
 
     val statsState: StateFlow<State<StatsModel>>
 
@@ -41,9 +36,15 @@ interface ProfileRepository {
 
     suspend fun updateData(): Effect<Completable>
 
-    suspend fun getUserInfoById(userId: String): Effect<ProfileModel>
+    suspend fun getUserInfoById(userId: String): Effect<UserInfoModel>
 
-    suspend fun createUser(uri: Uri, userName: String): Effect<Completable>
+    suspend fun createUser(
+        fileId: Uuid,
+        userName: String,
+        walletAddress: WalletAddress,
+    ): Effect<Completable>
+
+    fun saveInitialized()
 
     suspend fun setInviteCode(inviteCode: String): Effect<Completable>
 
@@ -57,7 +58,7 @@ class ProfileRepositoryImpl @Inject constructor(
     private val userDataStorage: UserDataStorage,
 ) : ProfileRepository {
 
-    private val _state = MutableStateFlow<State<ProfileModel>>(Loading())
+    private val _state = MutableStateFlow<State<UserInfoModel>>(Loading())
     override val state = _state.asStateFlow()
 
     private val _statsState = MutableStateFlow<State<StatsModel>>(Loading())
@@ -86,41 +87,42 @@ class ProfileRepositoryImpl @Inject constructor(
                     bronze = "12",
                 )
             )
-            it.toProfileModel()
+            it.toModel()
         }.also {
             _state tryPublish it
         }.toCompletable()
     }
 
-    override suspend fun getUserInfoById(userId: String): Effect<ProfileModel> {
+    override suspend fun getUserInfoById(userId: String): Effect<UserInfoModel> {
         return apiCall(ioDispatcher) {
             api.userInfo(userId)
         }.map {
-            it.toProfileModel()
+            it.toModel()
         }
     }
 
-    override suspend fun createUser(uri: Uri, userName: String): Effect<Completable> {
-        val file = uri.buildUpon().scheme("file").build().toFile()
-        val mediaType = "multipart/form-data".toMediaType()
-        val name = userName.toRequestBody(mediaType)
-
-        val multipartBody = MultipartBody.Part.createFormData(
-            name = "file",
-            filename = "file_${generateCurrentDateTime()}.jpg",
-            body = file.asRequestBody(mediaType),
-        )
-
+    override suspend fun createUser(
+        fileId: Uuid,
+        userName: String,
+        walletAddress: WalletAddress,
+    ): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            api.createUser(file = multipartBody, userName = name)
-        }.doOnSuccess {
-            userDataStorage.setUserName(it.name)
-            userDataStorage.hasNft = !it.hasNft
+            api.createUser(
+                UserCreateRequestDto(
+                    name = userName,
+                    avatarUrl = "http://51.250.36.197:5100/api/v1/file?fileId=$fileId", // todo
+                    wallet = walletAddress,
+                )
+            )
         }.map {
-            it.toProfileModel()
+            it.toModel()
         }.also {
             _state tryPublish it
         }.toCompletable()
+    }
+
+    override fun saveInitialized() {
+        userDataStorage.isInitialized = true
     }
 
     override suspend fun setInviteCode(inviteCode: String): Effect<Completable> {
