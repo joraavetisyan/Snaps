@@ -7,6 +7,8 @@ import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
 import io.snaps.featurewallet.data.TransactionsRepository
 import io.snaps.featurewallet.data.TransactionsRepositoryImpl
+import io.snaps.featurewallet.domain.WalletInteractor
+import io.snaps.featurewallet.domain.WalletInteractorImpl
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -15,4 +17,8 @@ interface DataBindModule {
     @Binds
     @ViewModelScoped
     fun transactionsRepository(bind: TransactionsRepositoryImpl): TransactionsRepository
+
+    @Binds
+    @ViewModelScoped
+    fun walletInteractor(bind: WalletInteractorImpl): WalletInteractor
 }

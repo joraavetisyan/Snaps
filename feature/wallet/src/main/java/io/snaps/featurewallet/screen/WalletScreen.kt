@@ -58,6 +58,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import io.snaps.baseprofile.data.MainHeaderHandler
+import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.basewallet.domain.TotalBalanceModel
@@ -81,7 +82,6 @@ import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
 import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewallet.ScreenNavigator
-import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.featurewallet.viewmodel.WalletViewModel
 import kotlinx.coroutines.launch
 
@@ -151,6 +151,7 @@ fun WalletScreen(
             onAddressCopyClicked = ::onAddressCopyClicked,
             onTopUpClicked = viewModel::onTopUpClicked,
             onWithdrawClicked = viewModel::onWithdrawClicked,
+            onRewardsWithdrawClicked = viewModel::onRewardsWithdrawClicked,
             onExchangeClicked = viewModel::onExchangeClicked,
             onDropdownMenuItemClicked = viewModel::onDropdownMenuItemClicked,
         )
@@ -166,6 +167,7 @@ private fun WalletScreen(
     onAddressCopyClicked: (WalletAddress) -> Unit,
     onTopUpClicked: () -> Unit,
     onWithdrawClicked: () -> Unit,
+    onRewardsWithdrawClicked: () -> Unit,
     onExchangeClicked: () -> Unit,
     onDropdownMenuItemClicked: (TransactionType) -> Unit,
 ) {
@@ -226,7 +228,7 @@ private fun WalletScreen(
                         transactions = uiState.transactions,
                         rewards = uiState.rewards,
                         transactionTypeSelected = uiState.transactionType,
-                        onWithdrawClicked = onWithdrawClicked,
+                        onWithdrawClicked = onRewardsWithdrawClicked,
                         onDropdownMenuItemClicked = onDropdownMenuItemClicked,
                     )
                 }

@@ -38,7 +38,8 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import io.snaps.corecommon.container.ImageValue
+import io.snaps.baseprofile.data.MainHeaderHandler
+import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
@@ -46,10 +47,10 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
-import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.coreuicompose.uikit.other.TitleSlider
 import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
+import io.snaps.coreuitheme.compose.AppTheme
+import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.featuretasks.presentation.historyTasksItems
 import io.snaps.featuretasks.presentation.viewmodel.TasksViewModel
 import kotlinx.coroutines.launch
@@ -62,6 +63,7 @@ fun TasksScreen(
     val viewModel = hiltViewModel<TasksViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
+    val mainHeaderState by viewModel.headerUiState.collectAsState()
 
     viewModel.command.collectAsCommand {
         when (it) {
@@ -71,6 +73,7 @@ fun TasksScreen(
 
     TasksScreen(
         uiState = uiState,
+        mainHeaderState = mainHeaderState,
     )
 }
 
@@ -78,6 +81,7 @@ fun TasksScreen(
 @Composable
 private fun TasksScreen(
     uiState: TasksViewModel.UiState,
+    mainHeaderState: MainHeaderHandler.UiState,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -106,12 +110,14 @@ private fun TasksScreen(
                 Card(
                     shape = CircleShape,
                 ) {
-                    Image(
-                        painter = ImageValue.Url("https://picsum.photos/44").get(),
-                        contentDescription = null,
-                        modifier = Modifier.size(44.dp),
-                        contentScale = ContentScale.Crop,
-                    )
+                    (mainHeaderState.value as? MainHeaderState.Data)?.profileImage?.let {
+                        Image(
+                            painter = it.get(),
+                            contentDescription = null,
+                            modifier = Modifier.size(44.dp),
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
                 }
                 TitleSlider(
                     modifier = Modifier.padding(horizontal = 16.dp),
@@ -189,5 +195,5 @@ private fun Titles(title1: TextValue, title2: TextValue) {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun Preview() {
-    TasksScreen(uiState = TasksViewModel.UiState())
+    TasksScreen(uiState = TasksViewModel.UiState(), mainHeaderState = MainHeaderHandler.UiState())
 }

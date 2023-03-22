@@ -22,6 +22,8 @@ import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.featurewallet.data.TransactionsRepository
+import io.snaps.featurewallet.domain.InsufficientBalanceError
+import io.snaps.featurewallet.domain.WalletInteractor
 import io.snaps.featurewallet.screen.RewardsTileState
 import io.snaps.featurewallet.screen.TransactionsUiState
 import io.snaps.featurewallet.screen.toTransactionsUiState
@@ -47,6 +49,7 @@ class WalletViewModel @Inject constructor(
     private val barcodeManager: BarcodeManager,
     private val notificationsSource: NotificationsSource,
     private val action: Action,
+    private val walletInteractor: WalletInteractor,
 ) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -128,7 +131,27 @@ class WalletViewModel @Inject constructor(
     }
 
     fun onWithdrawClicked() {
-        // todo
+        showWalletSelectBottomDialog {
+            viewModelScope.launch {
+                _command publish Command.OpenWithdrawScreen(it)
+            }
+        }
+    }
+
+    fun onRewardsWithdrawClicked() {
+        viewModelScope.launch {
+            action.execute {
+                walletInteractor.claim()
+            }.doOnSuccess {
+                profileRepository.updateBalance()
+            }.doOnError { error, _ ->
+                when (error.cause) {
+                    InsufficientBalanceError -> notificationsSource.sendError(
+                        StringKey.WalletErrorInsufficientBalance.textValue()
+                    )
+                }
+            }
+        }
     }
 
     fun onDropdownMenuItemClicked(transactionType: TransactionType) {

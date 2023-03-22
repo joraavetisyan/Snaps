@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UnsubscribeRequestDto(
-    @SerialName("subscriptionId") val subscriptionId: Uuid,
+    @SerialName("userId") val subscriptionId: Uuid,
 )

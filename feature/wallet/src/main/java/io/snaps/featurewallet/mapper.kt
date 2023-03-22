@@ -44,7 +44,7 @@ fun State<BalanceModel>.toRewardsTileState(
             isSuccess -> requireData.toRewardsTileState()
             else -> listOf(RewardsTileState.Error(clickListener = onRewardReloadClicked))
         }
-        is Loading -> emptyList()
+        is Loading -> List(2) { RewardsTileState.Shimmer }
     }
 }
 
