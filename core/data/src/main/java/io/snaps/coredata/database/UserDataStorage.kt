@@ -37,7 +37,7 @@ class UserDataStorage @Inject constructor(
         }
 
     var hasNft: Boolean
-        get() = provider.prefs.getBoolean("hasNft", true)
+        get() = provider.prefs.getBoolean("hasNft", false)
         set(value) = provider.prefs.edit {
             putBoolean("hasNft", value)
         }
