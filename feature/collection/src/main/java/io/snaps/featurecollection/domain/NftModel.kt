@@ -15,8 +15,8 @@ data class NftModel(
     val dailyUnlock: Double,
     val dailyConsumption: Double,
     val isAvailableToPurchase: Boolean,
-    val costInUsd: Int,
-    val costInRealTokens: Int,
+    val costInUsd: Int?,
+    val costInRealTokens: Int?,
     val mintedDate: LocalDateTime,
     val isHealthy: Boolean,
 )

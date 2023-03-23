@@ -6,10 +6,10 @@ import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.mock.rDouble
 import io.snaps.corecommon.mock.rImage
 import io.snaps.corecommon.mock.rInt
-import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.NftType
 import io.snaps.coredata.network.BaseResponse
 import io.snaps.featurecollection.data.model.MintNftRequestDto
+import io.snaps.featurecollection.data.model.MintNftResponseDto
 import io.snaps.featurecollection.data.model.NftItemResponseDto
 import io.snaps.featurecollection.data.model.UserNftItemResponseDto
 import kotlinx.coroutines.delay
@@ -49,12 +49,14 @@ class FakeMyCollectionApi : MyCollectionApi {
         )
     }
 
-    override suspend fun mintNft(body: MintNftRequestDto): BaseResponse<Completable> {
+    override suspend fun mintNft(body: MintNftRequestDto): BaseResponse<MintNftResponseDto> {
         log("Requesting add nft")
         delay(mockDelay)
         return BaseResponse(
             actualTimestamp = 1L,
-            data = Completable,
+            data = MintNftResponseDto(
+                tokenId = rInt,
+            ),
         )
     }
 

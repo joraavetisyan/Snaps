@@ -10,8 +10,8 @@ import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
 import io.snaps.corenavigation.base.tryPopBackStack
-import io.snaps.featurecollection.presentation.screen.BuyNftScreen
 import io.snaps.featurecollection.presentation.screen.MyCollectionScreen
+import io.snaps.featurecollection.presentation.screen.PurchaseScreen
 import io.snaps.featurecollection.presentation.screen.RankSelectionScreen
 import javax.inject.Inject
 
@@ -24,7 +24,12 @@ internal class ScreenNavigator(navHostController: NavHostController) :
         tryPopBackStack(navHostController)
     }
 
-    fun toBuyNftScreen() = navHostController.navigate(AppRoute.BuyNft)
+    fun toPurchaseScreen(
+        args: AppRoute.Purchase.Args
+    ) = navHostController navigate FeatureNavDirection(
+        route = AppRoute.Purchase,
+        arg = args,
+    )
 
     fun toProfileScreen(
         userId: Uuid? = null,
@@ -39,6 +44,6 @@ class CollectionFeatureProviderImpl @Inject constructor() : CollectionFeaturePro
     override fun NavGraphBuilder.collectionGraph(controller: NavHostController) {
         composable(AppRoute.RankSelection) { RankSelectionScreen(controller) }
         composable(AppRoute.MainBottomBar.MainTab4Start) { MyCollectionScreen(controller) }
-        composable(AppRoute.BuyNft) { BuyNftScreen(controller) }
+        composable(AppRoute.Purchase) { PurchaseScreen(controller) }
     }
 }

@@ -1,5 +1,6 @@
 package io.snaps.featurecollection.presentation
 
+import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FiatCurrency
 import io.snaps.corecommon.model.Loading
@@ -9,27 +10,30 @@ import io.snaps.featurecollection.domain.RankModel
 import io.snaps.featurecollection.presentation.screen.CollectionItemState
 import io.snaps.featurecollection.presentation.screen.RankTileState
 
-fun Effect<List<RankModel>>.toRankTileState(
+fun State<List<RankModel>>.toRankTileState(
     onItemClicked: (RankModel) -> Unit,
     onReloadClicked: () -> Unit,
-) = when {
-    isSuccess -> {
-        requireData.map {
-            it.toRankTileState(onItemClicked = onItemClicked)
+) = when (this) {
+    is Loading -> List(6) { RankTileState.Shimmer }
+    is Effect -> when {
+        isSuccess -> {
+            requireData.map {
+                it.toRankTileState(onItemClicked = onItemClicked)
+            }
         }
+        else -> listOf(RankTileState.Error(onClick = onReloadClicked))
     }
-    else -> listOf(RankTileState.Error(onClick = onReloadClicked))
 }
 
 private fun RankModel.toRankTileState(
     onItemClicked: (RankModel) -> Unit,
 ) = RankTileState.Data(
     type = type,
-    price = if (costInUsd == 0) "Free" else "$costInUsd${FiatCurrency.USD.symbol}",
+    price = costInUsd?.costToString() ?: "",
     image = image,
-    dailyReward = "${dailyReward * 100}${FiatCurrency.USD.symbol}",
-    dailyUnlock = "${dailyUnlock * 100}%",
-    dailyConsumption = "${dailyConsumption * 100}%",
+    dailyReward = "$dailyReward${FiatCurrency.USD.symbol}",
+    dailyUnlock = dailyUnlock.toPercentageFormat(),
+    dailyConsumption = dailyUnlock.toPercentageFormat(),
     isAvailableToPurchase = isAvailableToPurchase,
     clickListener = { onItemClicked(this) },
 )
@@ -74,13 +78,15 @@ fun State<List<NftModel>>.toMysteryBoxCollectionItemState(
 
 private fun NftModel.toNftCollectionItemState() = CollectionItemState.Nft(
     type = type,
-    price = if (costInUsd == 0) "Free" else "$costInUsd${FiatCurrency.USD.symbol}",
+    price = costInUsd?.costToString() ?: "",
     image = image,
-    dailyReward = "${dailyReward * 100}${FiatCurrency.USD.symbol}",
-    dailyUnlock = "${dailyUnlock * 100}%",
-    dailyConsumption = "${dailyConsumption * 100}%",
+    dailyReward = "$dailyReward${FiatCurrency.USD.symbol}",
+    dailyUnlock = dailyUnlock.toPercentageFormat(),
+    dailyConsumption = dailyUnlock.toPercentageFormat(),
 )
 
 private fun NftModel.toMysteryBoxCollectionItemState() = CollectionItemState.MysteryBox(
     image = image,
 )
+
+private fun Int.costToString() = if (this == 0) "Free" else "$this${FiatCurrency.USD.symbol}"

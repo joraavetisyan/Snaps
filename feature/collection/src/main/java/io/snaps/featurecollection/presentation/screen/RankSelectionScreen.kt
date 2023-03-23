@@ -58,7 +58,7 @@ fun RankSelectionScreen(
     viewModel.command.collectAsCommand {
         when (it) {
             RankSelectionViewModel.Command.OpenMainScreen -> router.toMainScreen()
-            RankSelectionViewModel.Command.OpenBuyNft -> router.toBuyNftScreen()
+            is RankSelectionViewModel.Command.OpenPurchase -> router.toPurchaseScreen(it.args)
         }
     }
 

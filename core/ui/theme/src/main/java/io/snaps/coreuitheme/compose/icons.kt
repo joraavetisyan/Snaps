@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.rounded.AccountCircle
@@ -57,6 +58,7 @@ object SpecificIcons {
     val reload: IconValue = vector(Icons.Rounded.Try)
     val search: IconValue = vector(Icons.Rounded.Search)
     val arrowDropDown: IconValue = vector(Icons.Filled.ArrowDropDown)
+    val info: IconValue = vector(Icons.Outlined.Info)
 
     val camera: IconValue = resource(R.drawable.ic_camera)
     val cameraTimer: IconValue = resource(R.drawable.ic_camera_timer)

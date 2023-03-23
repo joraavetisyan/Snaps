@@ -219,6 +219,7 @@ enum class StringKey {
     RankSelectionTitleDailyReward,
     RankSelectionTitleDailyUnlock,
     RankSelectionTitleDailyConsumption,
+    RankSelectionMessageNotAvailable,
 
     CreateVideoActionGrantPerms,
     CreateVideoActionFlip,
@@ -226,4 +227,14 @@ enum class StringKey {
 
     PreviewVideoActionDiscard,
     PreviewVideoActionProceed,
+
+    PurchaseTitle,
+    PurchaseTitlePrice,
+    PurchaseTitleDailyReward,
+    PurchaseDescriptionDailyReward,
+    PurchaseMessageDailyReward,
+    PurchaseTitleDailyUnlock,
+    PurchaseDescriptionDailyUnlock,
+    PurchaseMessageDailyUnlock,
+    PurchaseAction,
 }

@@ -1,8 +1,8 @@
 package io.snaps.featurecollection.data
 
-import io.snaps.corecommon.model.Completable
 import io.snaps.coredata.network.BaseResponse
 import io.snaps.featurecollection.data.model.MintNftRequestDto
+import io.snaps.featurecollection.data.model.MintNftResponseDto
 import io.snaps.featurecollection.data.model.NftItemResponseDto
 import io.snaps.featurecollection.data.model.UserNftItemResponseDto
 import retrofit2.http.Body
@@ -23,5 +23,5 @@ interface MyCollectionApi {
     @POST("user/nft/mint")
     suspend fun mintNft(
         @Body body: MintNftRequestDto,
-    ): BaseResponse<Completable>
+    ): BaseResponse<MintNftResponseDto>
 }

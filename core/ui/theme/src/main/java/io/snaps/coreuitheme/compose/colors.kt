@@ -13,6 +13,8 @@ internal val LightSpecificColorScheme = SpecificColorScheme(
     uiContentBg = Color(0xFFFAFAFA),
     uiSystemRed = Color(0xFFE95252),
     uiSystemGreen = Color(0xFFBFFBC5),
+    uiSystemYellow = Color(0xFFEEBE14),
+
     uiDisabledLabel = Color(0xFFB1B3C0),
 
     textPrimary = Color(0xFF080920),
@@ -49,6 +51,7 @@ data class SpecificColorScheme(
     val uiSystemGreen: Color,
     val uiContentBg: Color,
     val uiDisabledLabel: Color,
+    val uiSystemYellow: Color,
 
     val textPrimary: Color,
     val textSecondary: Color,

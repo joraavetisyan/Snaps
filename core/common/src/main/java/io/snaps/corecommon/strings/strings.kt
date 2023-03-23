@@ -591,6 +591,9 @@ internal val strings = mapOf(
     key(StringKey.RankSelectionTitleDailyConsumption) to mapOf(
         SupportedLanguageKey.En to "Daily consumption",
     ),
+    key(StringKey.RankSelectionMessageNotAvailable) to mapOf(
+        SupportedLanguageKey.En to "Not available for purchase",
+    ),
 
     key(StringKey.CreateVideoActionGrantPerms) to mapOf(
         SupportedLanguageKey.En to "Grant permissions",
@@ -607,5 +610,33 @@ internal val strings = mapOf(
     ),
     key(StringKey.PreviewVideoActionProceed) to mapOf(
         SupportedLanguageKey.En to "Proceed",
+    ),
+
+    key(StringKey.PurchaseTitle) to mapOf(
+        SupportedLanguageKey.En to "Buy",
+    ),
+    key(StringKey.PurchaseAction) to mapOf(
+        SupportedLanguageKey.En to "Purchase",
+    ),
+    key(StringKey.PurchaseTitlePrice) to mapOf(
+        SupportedLanguageKey.En to "Price:",
+    ),
+    key(StringKey.PurchaseTitleDailyReward) to mapOf(
+        SupportedLanguageKey.En to "Daily Reward",
+    ),
+    key(StringKey.PurchaseDescriptionDailyReward) to mapOf(
+        SupportedLanguageKey.En to "Estimated daily reward in tokens when completing tasks",
+    ),
+    key(StringKey.PurchaseMessageDailyReward) to mapOf(
+        SupportedLanguageKey.En to "This value is only an estimate of the rank and is subject to change.",
+    ),
+    key(StringKey.PurchaseTitleDailyUnlock) to mapOf(
+        SupportedLanguageKey.En to "Daily Unlock",
+    ),
+    key(StringKey.PurchaseDescriptionDailyUnlock) to mapOf(
+        SupportedLanguageKey.En to "You can transfer %s of the available SNAPS rewards  to main wallet. After receiving tokens, they can be exchanged or withdrawn.",
+    ),
+    key(StringKey.PurchaseMessageDailyUnlock) to mapOf(
+        SupportedLanguageKey.En to "The remaining SNAPS tokens are frozen and stored in a locked wallet.",
     ),
 )

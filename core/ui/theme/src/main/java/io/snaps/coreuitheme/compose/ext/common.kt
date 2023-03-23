@@ -53,6 +53,8 @@ fun ColorScheme.toSpecificColorScheme(isLight: Boolean) = SpecificColorScheme(
     else DarkSpecificColorScheme.uiSystemGreen,
     uiDisabledLabel = if (isLight) LightSpecificColorScheme.uiDisabledLabel
     else DarkSpecificColorScheme.uiDisabledLabel,
+    uiSystemYellow = if (isLight) LightSpecificColorScheme.uiSystemYellow
+    else DarkSpecificColorScheme.uiSystemYellow,
 
     textPrimary = onSurface,
     textSecondary = if (isLight) LightSpecificColorScheme.textSecondary

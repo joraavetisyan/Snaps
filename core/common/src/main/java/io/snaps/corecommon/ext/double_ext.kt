@@ -17,3 +17,5 @@ fun Double.round(places: Int = 2): Double {
         .setScale(places, RoundingMode.HALF_UP)
         .toDouble()
 }
+
+fun Double.toPercentageFormat() = "${(this * 100).round()}%"

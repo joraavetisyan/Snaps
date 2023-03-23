@@ -37,9 +37,10 @@ class MyCollectionViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             action.execute {
-                myCollectionRepository.getRanks()
-            }.doOnSuccess { ranks ->
-                val availableToPurchaseNfts = ranks.count { it.isAvailableToPurchase }
+                myCollectionRepository.loadRanks()
+            }.doOnSuccess {
+                val availableToPurchaseNfts = myCollectionRepository.ranksState.value.dataOrCache
+                    ?.count { it.isAvailableToPurchase } ?: 0
                 subscribeOnNft(availableToPurchaseNfts)
                 subscribeOnMysteryBox(availableToPurchaseNfts)
                 loadNft()

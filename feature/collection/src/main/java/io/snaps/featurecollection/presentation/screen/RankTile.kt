@@ -78,9 +78,8 @@ private fun Data(
 ) {
     Container(
         modifier = modifier
+            .defaultTileRipple(onClick = data.clickListener, padding = 0.dp)
             .addIf(!data.isAvailableToPurchase) {
-                defaultTileRipple(onClick = data.clickListener, padding = 0.dp)
-            }.addIf(data.isAvailableToPurchase) {
                 drawWithCache {
                     onDrawWithContent {
                         drawContent()
@@ -109,7 +108,9 @@ private fun Data(
                     text = data.type.name,
                     style = AppTheme.specificTypography.labelMedium,
                 )
-                ValueWidget(ImageValue.ResImage(R.drawable.img_coin_silver) to data.price)
+                if (data.price.isNotEmpty()) {
+                    ValueWidget(ImageValue.ResImage(R.drawable.img_coin_silver) to data.price)
+                }
             }
             Spacer(Modifier.height(4.dp))
             Line(

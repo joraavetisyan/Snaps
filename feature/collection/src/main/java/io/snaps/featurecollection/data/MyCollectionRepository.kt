@@ -5,6 +5,8 @@ import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.State
+import io.snaps.corecommon.model.Uuid
+import io.snaps.corecommon.model.WalletAddress
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.apiCall
@@ -24,13 +26,19 @@ interface MyCollectionRepository {
 
     val mysteryBoxCollectionState: StateFlow<State<List<NftModel>>>
 
-    suspend fun getRanks(): Effect<List<RankModel>>
+    val ranksState: StateFlow<State<List<RankModel>>>
+
+    suspend fun loadRanks(): Effect<Completable>
 
     suspend fun loadNftCollection(): Effect<Completable>
 
     suspend fun loadMysteryBoxCollection(): Effect<Completable>
 
-    suspend fun mintNft(type: NftType): Effect<Completable>
+    suspend fun mintNft(
+        type: NftType,
+        purchaseId: Uuid,
+        walletAddress: WalletAddress,
+    ): Effect<Int>
 }
 
 class MyCollectionRepositoryImpl @Inject constructor(
@@ -45,12 +53,17 @@ class MyCollectionRepositoryImpl @Inject constructor(
     private val _mysteryBoxCollectionState = MutableStateFlow<State<List<NftModel>>>(Loading())
     override val mysteryBoxCollectionState = _mysteryBoxCollectionState.asStateFlow()
 
-    override suspend fun getRanks(): Effect<List<RankModel>> {
+    private val _ranksState = MutableStateFlow<State<List<RankModel>>>(Loading())
+    override val ranksState = _ranksState.asStateFlow()
+
+    override suspend fun loadRanks(): Effect<Completable> {
         return apiCall(ioDispatcher) {
             myCollectionApi.nft()
         }.map {
             it.toRankModelList()
-        }
+        }.also {
+            _ranksState tryPublish it
+        }.toCompletable()
     }
 
     override suspend fun loadNftCollection(): Effect<Completable> {
@@ -73,14 +86,25 @@ class MyCollectionRepositoryImpl @Inject constructor(
         }.toCompletable()
     }
 
-    override suspend fun mintNft(type: NftType): Effect<Completable> {
+    override suspend fun mintNft(
+        type: NftType,
+        purchaseId: Uuid,
+        walletAddress: WalletAddress,
+    ): Effect<Int> {
         return apiCall(ioDispatcher) {
             myCollectionApi.mintNft(
-                body = MintNftRequestDto(type.intType),
+                body = MintNftRequestDto(
+                    nftType = type.intType,
+                    purchaseId = purchaseId,
+                    wallet = walletAddress,
+                ),
             )
         }.doOnSuccess {
             userDataStorage.hasNft = true
             loadNftCollection()
+            loadRanks()
+        }.map {
+            it.tokenId
         }
     }
 }

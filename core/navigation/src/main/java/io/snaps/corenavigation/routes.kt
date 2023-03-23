@@ -3,6 +3,8 @@ package io.snaps.corenavigation
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import io.snaps.corecommon.model.FullUrl
+import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.QuestType
 import io.snaps.corecommon.model.SubsType
 import io.snaps.corecommon.model.Uuid
@@ -161,5 +163,15 @@ object AppRoute {
 
     object RankSelection : Route("RankSelection")
 
-    object BuyNft : Route("BuyNft")
+    object Purchase : RouteWithArg("Purchase") {
+
+        @Serializable
+        data class Args(
+            val type: NftType,
+            val image: FullUrl,
+            val dailyReward: Int,
+            val dailyUnlock: Double,
+            val costInUsd: Int,
+        )
+    }
 }
