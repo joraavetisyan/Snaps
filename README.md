@@ -1,11 +1,10 @@
-# Simple project
+# Snaps project
 
-Starter project with functional modules on the next stack:
+Project with functional modules on the next stack:
 + kotlin, coroutines
 + mvvm, hilt, compose, navigation component
 + retrofit 2, kotlinx-serialization, coil, room
 + junit, espresso
-+ gitlab ci
 
 ## Has the following features
 
@@ -49,3 +48,21 @@ Access to the Tracker object is through AnalyticsTrackerHolder.
 
 #### Naming
 + Provider/Source - a Source provide data in a stream, a Provider through getters
+
+# Нейминг строк
+Схема нейминга для строк-элементов ui: местоТипНазвание
+- место: название экрана (если общее - опускается) + диалог, bottom sheet и т.п (screenName_, screenNameDialogName_, screenNameBottomSheetName_)
+- тип:
+    1. title - название экрана, заголовки полей и т.п
+    2. message - сообщение
+    3. hint - подсказки (в тесктовых полях, под полем)
+    4. field - какое-то конкретное значение (напр.: значения в списке, названия валют)
+    5. action - названия кнопок и т.п
+    6. error - ошибка
+- название: название строки (если единственное такого типа на экране - можно опустить; также можно опустить, если это название экрана)
+
+Пример:
+- RegistrationMessagePrivacyPolicy
+- RegistrationActionPrivacyPolicy
+- WalletErrorInsufficientBalance
+- WalletDialogTitleTopUp

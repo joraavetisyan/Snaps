@@ -1,12 +1,11 @@
 package io.snaps.featurewallet.data
 
+import io.snaps.baseprofile.data.ProfileApi
+import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.PagedLoaderParams
-import io.snaps.coredata.network.apiCall
-import io.snaps.featurewallet.data.model.TransactionType
-import io.snaps.featurewallet.domain.RewardModel
 import io.snaps.featurewallet.domain.TransactionPageModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.StateFlow
@@ -19,13 +18,11 @@ interface TransactionsRepository {
     suspend fun refreshTransactions(transactionType: TransactionType): Effect<Completable>
 
     suspend fun loadNextTransactionsPage(transactionType: TransactionType): Effect<Completable>
-
-    suspend fun loadReward(): Effect<RewardModel>
 }
 
 class TransactionsRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val transactionsApi: TransactionsApi,
+    private val profileApi: ProfileApi,
     private val loaderFactory: TransactionsLoaderFactory,
 ) : TransactionsRepository {
 
@@ -33,7 +30,7 @@ class TransactionsRepositoryImpl @Inject constructor(
         return loaderFactory.get(transactionType) {
             PagedLoaderParams(
                 action = { from, count ->
-                    transactionsApi.transactions(from = from, count = count, transactionType = it)
+                    profileApi.transactions(from = from, count = count, transactionType = it)
                 },
                 pageSize = 20,
                 nextPageIdFactory = { it.id },
@@ -52,13 +49,5 @@ class TransactionsRepositoryImpl @Inject constructor(
 
     override suspend fun loadNextTransactionsPage(transactionType: TransactionType): Effect<Completable> {
         return getLoader(transactionType).loadNext()
-    }
-
-    override suspend fun loadReward(): Effect<RewardModel> {
-        return apiCall(ioDispatcher) {
-            transactionsApi.balance()
-        }.map {
-            it.toRewardModel()
-        }
     }
 }

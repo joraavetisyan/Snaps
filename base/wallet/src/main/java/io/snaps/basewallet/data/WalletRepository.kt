@@ -8,6 +8,7 @@ import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.marketkit.models.TokenQuery
 import io.horizontalsystems.marketkit.models.TokenType
 import io.reactivex.disposables.CompositeDisposable
+import io.snaps.basewallet.data.model.ClaimRequestDto
 import io.snaps.basewallet.data.model.WalletSaveRequestDto
 import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.corecommon.ext.log
@@ -75,11 +76,15 @@ interface WalletRepository {
 
     fun getActiveAccount(): Account?
 
+    fun getMnemonics(): List<String>
+
     fun getActiveWalletsReceiveAddresses(): List<WalletAddress>
 
     fun getAvailableBalance(wallet: WalletModel): String?
 
     fun send(amount: String, address: WalletAddress, wallet: WalletModel): Effect<SendHandler>
+
+    suspend fun claim(amount: Int): Effect<Completable>
 }
 
 class WalletRepositoryImpl @Inject constructor(
@@ -198,6 +203,12 @@ class WalletRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getMnemonics(): List<String> {
+        return getActiveAccount()?.let {
+            (it.type as AccountType.Mnemonic).words
+        } ?: emptyList()
+    }
+
     private fun getWallets(): List<Wallet> {
         val account = getActiveAccount() ?: return emptyList()
         return walletManager.getWallets(account)
@@ -285,6 +296,12 @@ class WalletRepositoryImpl @Inject constructor(
     private fun adapter(wallet: WalletModel): ISendEthereumAdapter? {
         return getWallets().firstOrNull { it.coin.uid == wallet.coinUid }?.let {
             CryptoKit.adapterManager.getAdapterForWallet(it) as ISendEthereumAdapter
+        }
+    }
+
+    override suspend fun claim(amount: Int): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            walletApi.claim(ClaimRequestDto(amount))
         }
     }
 }

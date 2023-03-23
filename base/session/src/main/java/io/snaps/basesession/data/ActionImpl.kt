@@ -28,7 +28,8 @@ class ActionImpl @Inject constructor(
         val effect = try {
             coroutineScope {
                 var effect = block()
-                if (needProcessErrors && effect.errorOrNull?.code == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                // todo HTTP_UNAUTHORIZED
+                if (needProcessErrors && effect.errorOrNull?.code == HttpURLConnection.HTTP_INTERNAL_ERROR) {
                     sessionRepository.refresh()
                     effect = block()
                 }

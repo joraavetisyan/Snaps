@@ -44,12 +44,12 @@ class MainHeaderHandlerImplDelegate @Inject constructor(
     override val headerCommand = _command.receiveAsFlow()
 
     init {
-        subscribeToProfile()
-        updateProfile()
+        subscribeToData()
+        updateData()
     }
 
-    private fun subscribeToProfile() {
-        profileRepository.state.combine(flow = profileRepository.statsState) { profile, coins ->
+    private fun subscribeToData() {
+        profileRepository.state.combine(flow = profileRepository.balanceState) { profile, coins ->
             mainHeaderState(
                 profile = profile,
                 coins = coins,
@@ -69,7 +69,10 @@ class MainHeaderHandlerImplDelegate @Inject constructor(
         _command.trySend(MainHeaderHandler.Command.OpenWalletScreen)
     }
 
-    private fun updateProfile() {
-        scope.launch { profileRepository.updateData() }
+    private fun updateData() {
+        scope.launch {
+            profileRepository.updateData()
+            profileRepository.updateBalance()
+        }
     }
 }

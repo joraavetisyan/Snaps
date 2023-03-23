@@ -9,8 +9,8 @@ import io.snaps.coredata.network.Action
 import io.snaps.coredata.network.PagedLoader
 import io.snaps.coredata.network.PagedLoaderFactory
 import io.snaps.coredata.network.PagedLoaderParams
-import io.snaps.featurewallet.data.model.TransactionItemResponseDto
-import io.snaps.featurewallet.data.model.TransactionType
+import io.snaps.baseprofile.data.model.TransactionItemResponseDto
+import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.featurewallet.domain.TransactionModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

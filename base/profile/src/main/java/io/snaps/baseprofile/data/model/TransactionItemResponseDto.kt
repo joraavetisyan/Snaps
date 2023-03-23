@@ -1,4 +1,4 @@
-package io.snaps.featurewallet.data.model
+package io.snaps.baseprofile.data.model
 
 import io.snaps.corecommon.model.DateTime
 import io.snaps.corecommon.model.FullUrl

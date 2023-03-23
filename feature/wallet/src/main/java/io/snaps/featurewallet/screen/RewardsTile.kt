@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
@@ -30,11 +30,11 @@ import io.snaps.coreuitheme.compose.AppTheme
 sealed class RewardsTileState : TileState {
 
     data class Locked(
-        val lockedTokensBalance: Int,
+        val lockedTokensBalance: String,
     ) : RewardsTileState()
 
     data class Unlocked(
-        val unlockedTokensBalance: Int,
+        val unlockedTokensBalance: String,
     ) : RewardsTileState()
 
     object Shimmer : RewardsTileState()
@@ -107,7 +107,7 @@ private fun RewardsCard(
     modifier: Modifier,
     title: TextValue,
     description: TextValue,
-    coin: Int,
+    coin: String,
     imageValue: ImageValue,
 ) {
     Box(
@@ -119,10 +119,11 @@ private fun RewardsCard(
         Image(
             painter = imageValue.get(),
             contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.matchParentSize(),
+            contentScale = ContentScale.Crop,
         )
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(20.dp),
         ) {
             Text(
                 text = title.get(),

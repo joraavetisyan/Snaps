@@ -28,9 +28,8 @@ sealed interface MainHeaderState {
     data class Data(
         val profileImage: ImageValue?,
         val energy: String,
-        val gold: String,
-        val silver: String,
-        val bronze: String,
+        val locked: String,
+        val unlocked: String,
         val onProfileClicked: () -> Unit,
         val onWalletClicked: () -> Unit,
     ) : MainHeaderState
@@ -67,9 +66,8 @@ fun MainHeader(
             EnergyWidget(state.energy)
             Spacer(Modifier.width(4.dp))
             ValueWidget(
-                ImageValue.ResImage(R.drawable.img_coin_silver) to state.silver,
-                ImageValue.ResImage(R.drawable.img_coin_gold) to state.gold,
-                ImageValue.ResImage(R.drawable.img_coin_bronze) to state.bronze,
+                ImageValue.ResImage(R.drawable.img_coin_locked) to state.locked,
+                ImageValue.ResImage(R.drawable.img_coin_gold) to state.unlocked,
                 modifier = Modifier.defaultTileRipple(onClick = state.onWalletClicked),
             )
         }
@@ -89,9 +87,8 @@ private fun Preview() {
         state = MainHeaderState.Data(
             profileImage = ImageValue.Url("https://picsum.photos/44"),
             energy = "12",
-            gold = "12",
-            silver = "12",
-            bronze = "12",
+            unlocked = "12",
+            locked = "12",
             onProfileClicked = {},
             onWalletClicked = {},
         )

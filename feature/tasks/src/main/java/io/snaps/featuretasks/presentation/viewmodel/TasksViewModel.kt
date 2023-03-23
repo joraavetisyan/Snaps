@@ -2,6 +2,7 @@ package io.snaps.featuretasks.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.coredata.network.Action
@@ -27,9 +28,10 @@ import javax.inject.Inject
 @HiltViewModel
 class TasksViewModel @Inject constructor(
     private val action: Action,
+    private val mainHeaderHandler: MainHeaderHandler,
     private val profileRepository: ProfileRepository,
     private val tasksRepository: TasksRepository,
-) : SimpleViewModel() {
+) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandler {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()

@@ -498,6 +498,9 @@ internal val strings = mapOf(
     key(StringKey.WalletTitleDateTransfer) to mapOf(
         SupportedLanguageKey.En to "Date of transfer",
     ),
+    key(StringKey.WalletErrorInsufficientBalance) to mapOf(
+        SupportedLanguageKey.En to "Token balance is zero",
+    ),
 
     key(StringKey.WithdrawTitle) to mapOf(
         SupportedLanguageKey.En to "Withdraw %s",

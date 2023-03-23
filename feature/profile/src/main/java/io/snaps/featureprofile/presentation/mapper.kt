@@ -6,6 +6,9 @@ import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.featureprofile.presentation.screen.UserInfoTileState
+import io.snaps.featureprofile.presentation.viewmodel.Phrase
+
+fun List<String>.toPhrases() = mapIndexed { i, s -> Phrase(orderNumber = i + 1, text = s) }
 
 fun State<UserInfoModel>.toUserInfoTileState(
     onSubscribersClick: () -> Unit,

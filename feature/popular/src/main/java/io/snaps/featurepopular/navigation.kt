@@ -23,6 +23,8 @@ internal class ScreenNavigator(navHostController: NavHostController) :
         arg = AppRoute.Profile.Args(userId = userId),
     )
 
+    fun toWalletScreen() = navHostController.navigate(AppRoute.Wallet)
+
     fun toPopularVideoFeedScreen(query: String, position: Int) =
         navHostController navigate FeatureNavDirection(
             route = AppRoute.PopularVideoFeed,

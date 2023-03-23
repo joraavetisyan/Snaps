@@ -1,14 +1,17 @@
 package io.snaps.featurewallet
 
+import io.snaps.baseprofile.domain.BalanceModel
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.Effect
+import io.snaps.corecommon.model.Loading
+import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.WalletModel
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
-import io.snaps.featurewallet.domain.RewardModel
 import io.snaps.featurewallet.domain.TransactionModel
 import io.snaps.featurewallet.screen.RewardsTileState
 import io.snaps.featurewallet.screen.TransactionTileState
@@ -33,9 +36,21 @@ fun WalletModel.toCellTileState(
     clickListener = onClick?.let { { it.invoke(this) } },
 )
 
-fun RewardModel.toRewardsTileState() = listOf(
-    RewardsTileState.Locked(lockedTokensBalance = lockedTokensBalance),
-    RewardsTileState.Unlocked(unlockedTokensBalance = unlockedTokensBalance)
+fun State<BalanceModel>.toRewardsTileState(
+    onRewardReloadClicked: () -> Unit,
+): List<RewardsTileState> {
+    return when (this) {
+        is Effect -> when {
+            isSuccess -> requireData.toRewardsTileState()
+            else -> listOf(RewardsTileState.Error(clickListener = onRewardReloadClicked))
+        }
+        is Loading -> List(2) { RewardsTileState.Shimmer }
+    }
+}
+
+fun BalanceModel.toRewardsTileState() = listOf(
+    RewardsTileState.Locked(lockedTokensBalance = locked.toString()),
+    RewardsTileState.Unlocked(unlockedTokensBalance = unlocked.toString())
 )
 
 fun List<TransactionModel>.toTransactionList(
