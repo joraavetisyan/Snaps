@@ -31,10 +31,12 @@ sealed class RewardsTileState : TileState {
 
     data class Locked(
         val lockedTokensBalance: String,
+        val balanceInUsd: String,
     ) : RewardsTileState()
 
     data class Unlocked(
         val unlockedTokensBalance: String,
+        val balanceInUsd: String,
     ) : RewardsTileState()
 
     object Shimmer : RewardsTileState()
@@ -58,6 +60,7 @@ fun RewardsTile(
             title = StringKey.WalletTitleAvailableRewards.textValue(),
             description = StringKey.WalletDescriptionAvailableRewards.textValue(),
             coin = data.unlockedTokensBalance,
+            coinInUsd = data.balanceInUsd,
             imageValue = ImageValue.ResImage(R.drawable.img_available_rewards_background)
         )
         is RewardsTileState.Locked -> RewardsCard(
@@ -65,6 +68,7 @@ fun RewardsTile(
             title = StringKey.WalletTitleLockedRewards.textValue(),
             description = StringKey.WalletDescriptionLockedRewards.textValue(),
             coin = data.lockedTokensBalance,
+            coinInUsd = data.balanceInUsd,
             imageValue = ImageValue.ResImage(R.drawable.img_locked_rewards_background)
         )
         is RewardsTileState.Shimmer -> Shimmer(modifier = modifier)
@@ -108,6 +112,7 @@ private fun RewardsCard(
     title: TextValue,
     description: TextValue,
     coin: String,
+    coinInUsd: String,
     imageValue: ImageValue,
 ) {
     Box(
@@ -133,6 +138,11 @@ private fun RewardsCard(
             Text(
                 text = "$coin SNPS",
                 style = AppTheme.specificTypography.headlineLarge,
+                color = AppTheme.specificColorScheme.white,
+            )
+            Text(
+                text = "≈ $coinInUsd USDT",
+                style = AppTheme.specificTypography.bodySmall,
                 color = AppTheme.specificColorScheme.white,
             )
             Spacer(modifier = Modifier.weight(1f))

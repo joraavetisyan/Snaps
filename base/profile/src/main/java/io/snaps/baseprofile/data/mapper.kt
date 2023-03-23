@@ -37,6 +37,7 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
 fun BalanceResponseDto.toModel() = BalanceModel(
     unlocked = unlockedTokensBalance,
     locked = lockedTokensBalance,
+    exchangeRate = exchangeRate,
 )
 
 fun QuestInfoResponseDto.toQuestInfoModel() = QuestInfoModel(

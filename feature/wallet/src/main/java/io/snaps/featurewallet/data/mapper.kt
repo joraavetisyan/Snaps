@@ -11,8 +11,8 @@ fun List<TransactionItemResponseDto>.toModelList() =
 
 private fun TransactionItemResponseDto.toTransactionModel() = TransactionModel(
     id = id,
-    icon = ImageValue.Url(iconUrl),
+    icon = ImageValue.Url("https://baksman.org/res/exchangebox/uploads/networks/BNB.png"), // todo
     date = requireNotNull(ZonedDateTime.parse(date)).toOffsetLocalDateTime(),
-    coinValue = coinValue,
-    symbol = symbol,
+    balanceChange = balanceChange,
+    symbol = "BNB", // todo
 )

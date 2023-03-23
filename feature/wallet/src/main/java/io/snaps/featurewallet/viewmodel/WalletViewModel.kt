@@ -87,7 +87,7 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun subscribeToTransactions() {
-        transactionsRepository.getTransactionsState(uiState.value.transactionType).onEach { state ->
+        transactionsRepository.getTransactionsState().onEach { state ->
             _uiState.update {
                 it.copy(
                     transactions = state.toTransactionsUiState(
@@ -184,13 +184,13 @@ class WalletViewModel @Inject constructor(
 
     private fun onTransactionsReloadClicked() = viewModelScope.launch {
         action.execute {
-            transactionsRepository.refreshTransactions(uiState.value.transactionType)
+            transactionsRepository.refreshTransactions()
         }
     }
 
     private fun onListEndReaching() = viewModelScope.launch {
         action.execute {
-            transactionsRepository.loadNextTransactionsPage(uiState.value.transactionType)
+            transactionsRepository.loadNextTransactionsPage()
         }
     }
 

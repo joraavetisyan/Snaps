@@ -35,7 +35,7 @@ sealed class TransactionTileState(val key: Any) : TileState {
     data class Data(
         val id: Uuid,
         val coinSymbol: TextValue,
-        val coins: TextValue,
+        val coins: Int,
         val icon: ImageValue,
         val dateTime: TextValue,
         val clickListener: () -> Unit,
@@ -121,7 +121,7 @@ private fun Data(
             )
         }
         Text(
-            text = data.coins.get(),
+            text = data.coins.toString(),
             style = AppTheme.specificTypography.bodySmall,
         )
         Text(

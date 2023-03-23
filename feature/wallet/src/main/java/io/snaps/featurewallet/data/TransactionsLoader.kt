@@ -10,7 +10,6 @@ import io.snaps.coredata.network.PagedLoader
 import io.snaps.coredata.network.PagedLoaderFactory
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.baseprofile.data.model.TransactionItemResponseDto
-import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.featurewallet.domain.TransactionModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -29,7 +28,7 @@ class TransactionsLoader @AssistedInject constructor(
 
 @AssistedFactory
 abstract class TransactionsLoaderFactory :
-    PagedLoaderFactory<TransactionType, TransactionsLoader, TransactionItemResponseDto, TransactionModel>() {
+    PagedLoaderFactory<Unit, TransactionsLoader, TransactionItemResponseDto, TransactionModel>() {
 
     override fun provide(params: PagedLoaderParams<TransactionItemResponseDto, TransactionModel>) = create(params)
 

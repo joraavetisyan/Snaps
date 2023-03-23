@@ -9,5 +9,5 @@ data class TransactionModel(
     val date: LocalDateTime,
     val symbol: String,
     val icon: ImageValue,
-    val coinValue: String,
+    val balanceChange: Int,
 )

@@ -7,4 +7,5 @@ import kotlinx.serialization.Serializable
 data class BalanceResponseDto(
     @SerialName("lockedTokensBalance") val lockedTokensBalance: Int,
     @SerialName("unlockedTokensBalance") val unlockedTokensBalance: Int,
+    @SerialName("exchangeRate") val exchangeRate: Double,
 )

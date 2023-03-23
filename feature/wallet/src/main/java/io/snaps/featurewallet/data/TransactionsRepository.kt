@@ -1,7 +1,6 @@
 package io.snaps.featurewallet.data
 
 import io.snaps.baseprofile.data.ProfileApi
-import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.coredata.coroutine.IoDispatcher
@@ -13,11 +12,11 @@ import javax.inject.Inject
 
 interface TransactionsRepository {
 
-    fun getTransactionsState(transactionType: TransactionType): StateFlow<TransactionPageModel>
+    fun getTransactionsState(): StateFlow<TransactionPageModel>
 
-    suspend fun refreshTransactions(transactionType: TransactionType): Effect<Completable>
+    suspend fun refreshTransactions(): Effect<Completable>
 
-    suspend fun loadNextTransactionsPage(transactionType: TransactionType): Effect<Completable>
+    suspend fun loadNextTransactionsPage(): Effect<Completable>
 }
 
 class TransactionsRepositoryImpl @Inject constructor(
@@ -26,11 +25,11 @@ class TransactionsRepositoryImpl @Inject constructor(
     private val loaderFactory: TransactionsLoaderFactory,
 ) : TransactionsRepository {
 
-    private fun getLoader(transactionType: TransactionType): TransactionsLoader {
-        return loaderFactory.get(transactionType) {
+    private fun getLoader(): TransactionsLoader {
+        return loaderFactory.get(Unit) {
             PagedLoaderParams(
                 action = { from, count ->
-                    profileApi.transactions(from = from, count = count, transactionType = it)
+                    profileApi.transactions(from = from, count = count)
                 },
                 pageSize = 20,
                 nextPageIdFactory = { it.id },
@@ -39,15 +38,15 @@ class TransactionsRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getTransactionsState(transactionType: TransactionType): StateFlow<TransactionPageModel> {
-        return getLoader(transactionType).state
+    override fun getTransactionsState(): StateFlow<TransactionPageModel> {
+        return getLoader().state
     }
 
-    override suspend fun refreshTransactions(transactionType: TransactionType): Effect<Completable> {
-        return getLoader(transactionType).refresh()
+    override suspend fun refreshTransactions(): Effect<Completable> {
+        return getLoader().refresh()
     }
 
-    override suspend fun loadNextTransactionsPage(transactionType: TransactionType): Effect<Completable> {
-        return getLoader(transactionType).loadNext()
+    override suspend fun loadNextTransactionsPage(): Effect<Completable> {
+        return getLoader().loadNext()
     }
 }

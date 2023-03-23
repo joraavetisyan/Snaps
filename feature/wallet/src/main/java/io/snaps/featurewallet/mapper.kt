@@ -4,6 +4,8 @@ import io.snaps.baseprofile.domain.BalanceModel
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.ext.round
+import io.snaps.corecommon.ext.toStringValue
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
@@ -49,8 +51,14 @@ fun State<BalanceModel>.toRewardsTileState(
 }
 
 fun BalanceModel.toRewardsTileState() = listOf(
-    RewardsTileState.Locked(lockedTokensBalance = locked.toString()),
-    RewardsTileState.Unlocked(unlockedTokensBalance = unlocked.toString())
+    RewardsTileState.Unlocked(
+        unlockedTokensBalance = unlocked.toString(),
+        balanceInUsd = (unlocked * exchangeRate).round().toStringValue(),
+    ),
+    RewardsTileState.Locked(
+        lockedTokensBalance = locked.toString(),
+        balanceInUsd = (locked * exchangeRate).round().toStringValue(),
+    ),
 )
 
 fun List<TransactionModel>.toTransactionList(
@@ -63,7 +71,7 @@ fun TransactionModel.toTransactionTile(
     id = id,
     icon = icon,
     coinSymbol = symbol.textValue(),
-    coins = coinValue.textValue(),
+    coins = balanceChange,
     dateTime = date.toStringValue(),
     clickListener = { onClicked(this) },
 )

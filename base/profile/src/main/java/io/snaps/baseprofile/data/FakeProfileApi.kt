@@ -45,7 +45,6 @@ class FakeProfileApi : ProfileApi {
     override suspend fun transactions(
         @Query(value = "from") from: String?,
         @Query(value = "count") count: Int,
-        @Query(value = "transactionType") transactionType: TransactionType,
     ): BaseResponse<List<TransactionItemResponseDto>> {
         return BaseResponse(
             actualTimestamp = 0L,
@@ -61,6 +60,7 @@ class FakeProfileApi : ProfileApi {
             data = BalanceResponseDto(
                 lockedTokensBalance = 1,
                 unlockedTokensBalance = 1,
+                exchangeRate = 342.01,
             )
         ).also {
             delay(mockDelay)
@@ -70,10 +70,10 @@ class FakeProfileApi : ProfileApi {
     private fun getTransactions() = List(10) {
         TransactionItemResponseDto(
             id = it.toString(),
-            symbol = "BNB",
-            iconUrl = "https://baksman.org/res/exchangebox/uploads/networks/BNB.png",
             date = "2023-03-01T00:00:00+00:00",
-            coinValue = "0.743",
+            balanceChange = rInt,
+            type = TransactionType.Withdrawal,
+            userId = it.toString(),
         )
     }
 
