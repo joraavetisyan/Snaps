@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MintNftResponseDto(
-    @SerialName("tokenId") val tokenId: Int,
+    @SerialName("tokenId") val tokenId: Int?,
 )

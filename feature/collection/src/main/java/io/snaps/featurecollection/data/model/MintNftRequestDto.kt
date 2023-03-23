@@ -10,5 +10,5 @@ import kotlinx.serialization.Serializable
 data class MintNftRequestDto(
     @SerialName("nftType") val nftType: NftTypeInt,
     @SerialName("wallet") val wallet: WalletAddress,
-    @SerialName("purchaseId") val purchaseId: Uuid,
+    @SerialName("purchaseId") val purchaseId: Uuid?,
 )

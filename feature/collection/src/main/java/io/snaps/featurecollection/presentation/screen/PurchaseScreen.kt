@@ -60,7 +60,11 @@ fun PurchaseScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
-    viewModel.command.collectAsCommand {}
+    viewModel.command.collectAsCommand {
+        when (it) {
+            PurchaseViewModel.Command.OpenMainScreen -> router.toMainScreen()
+        }
+    }
 
     PurchaseScreen(
         uiState = uiState,

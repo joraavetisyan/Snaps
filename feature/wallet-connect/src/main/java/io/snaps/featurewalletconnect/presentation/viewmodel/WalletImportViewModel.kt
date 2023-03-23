@@ -29,7 +29,7 @@ class WalletImportViewModel @Inject constructor(
     fun onContinueButtonClicked() {
         viewModelScope.launch {
             action.execute {
-                walletRepository.importAccount(_uiState.value.words)
+                walletRepository.importAccount(_uiState.value.words.map { it.trim().lowercase() })
             }.doOnSuccess {
                 _command publish Command.OpenCreateUserScreen
             }.doOnError { _, _ ->

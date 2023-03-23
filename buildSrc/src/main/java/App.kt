@@ -15,5 +15,5 @@ object App {
 
     private var major = 0
     private var minor = 0
-    private var patch = 2
+    private var patch = 3
 }

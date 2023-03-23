@@ -177,7 +177,6 @@ class WalletRepositoryImpl @Inject constructor(
                 backedUp = true,
             )
             saveLastConnectedAccount()
-            Effect.completable
         } catch (checksumException: Exception) {
             Effect.error(AppError.Unknown(cause = InvalidMnemonicsException))
         }
@@ -188,6 +187,7 @@ class WalletRepositoryImpl @Inject constructor(
         accountManager.save(account)
         activateDefaultWallets(account)
         predefinedBlockchainSettingsProvider.prepareNew(account, BlockchainType.Zcash)
+        // fixme better way
         while (getActiveWalletsReceiveAddresses().firstOrNull() == null) {
             delay(200)
         }

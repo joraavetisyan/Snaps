@@ -33,7 +33,10 @@ fun TaskProgress(
             modifier = Modifier.size(24.dp),
             contentScale = ContentScale.Crop,
         )
-        Progress(Modifier.weight(1f), progress = progress / maxValue.toFloat())
+        Progress(
+            modifier = Modifier.weight(1f),
+            progress = (progress / maxValue.toFloat()).takeUnless { it.isNaN() } ?: 0f,
+        )
         ValueWidget(null to "$progress/$maxValue")
     }
 }

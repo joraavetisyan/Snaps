@@ -14,6 +14,7 @@ import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.SimpleViewModel
+import io.snaps.coreui.viewmodel.publish
 import io.snaps.featurecollection.data.MyCollectionRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,16 +71,33 @@ class PurchaseViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun onBuyClicked(activity: Activity) = viewModelScope.launch {
-        val products = purchaseStateProvider.getInAppProducts().data.orEmpty().firstOrNull {
-            it.details.sku == args.type.name
-        }
-        products?.let {
-            billingRouter.openBillingScreen(it, activity)
+    fun onBuyClicked(activity: Activity) {
+        viewModelScope.launch {
+            if (args.type == NftType.Free) {
+                action.execute {
+                    collectionRepository.mintNft(
+                        type = NftType.Free,
+                        walletAddress = walletRepository.getActiveWalletsReceiveAddresses().first(),
+                        purchaseId = null,
+                    )
+                }.doOnComplete {
+                    _uiState.update { it.copy(isLoading = false) }
+                    _command publish Command.OpenMainScreen
+                }
+            } else {
+                val products = purchaseStateProvider.getInAppProducts().data.orEmpty().firstOrNull {
+                    it.details.sku == args.type.name
+                }
+                products?.let {
+                    billingRouter.openBillingScreen(it, activity)
+                }
+            }
         }
     }
 
-    sealed class Command
+    sealed class Command {
+        object OpenMainScreen : Command()
+    }
 
     data class UiState(
         val isLoading: Boolean = false,

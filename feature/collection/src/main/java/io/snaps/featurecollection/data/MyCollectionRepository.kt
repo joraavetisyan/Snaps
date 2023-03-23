@@ -36,9 +36,9 @@ interface MyCollectionRepository {
 
     suspend fun mintNft(
         type: NftType,
-        purchaseId: Uuid,
+        purchaseId: Uuid?,
         walletAddress: WalletAddress,
-    ): Effect<Int>
+    ): Effect<Completable>
 }
 
 class MyCollectionRepositoryImpl @Inject constructor(
@@ -88,9 +88,9 @@ class MyCollectionRepositoryImpl @Inject constructor(
 
     override suspend fun mintNft(
         type: NftType,
-        purchaseId: Uuid,
+        purchaseId: Uuid?,
         walletAddress: WalletAddress,
-    ): Effect<Int> {
+    ): Effect<Completable> {
         return apiCall(ioDispatcher) {
             myCollectionApi.mintNft(
                 body = MintNftRequestDto(
@@ -103,8 +103,6 @@ class MyCollectionRepositoryImpl @Inject constructor(
             userDataStorage.hasNft = true
             loadNftCollection()
             loadRanks()
-        }.map {
-            it.tokenId
-        }
+        }.toCompletable()
     }
 }
