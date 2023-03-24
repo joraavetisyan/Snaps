@@ -13,5 +13,5 @@ class HistoryTaskItemResponseDto(
     @SerialName("date") val date: DateTime,
     @SerialName("experience") val experience: Int,
     @SerialName("energy") val energy: Int,
-    @SerialName("quests") val quests: List<QuestItemDto>,
+    @SerialName("quests") val quests: List<QuestItemDto>?,
 )

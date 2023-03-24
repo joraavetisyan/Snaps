@@ -14,5 +14,5 @@ fun HistoryTaskItemResponseDto.toTaskModel() = TaskModel(
     userId = userId,
     date = requireNotNull(ZonedDateTime.parse(date)).toOffsetLocalDateTime(),
     experience = experience,
-    quests = quests.map(QuestItemDto::toQuestModel),
+    quests = quests?.map(QuestItemDto::toQuestModel),
 )

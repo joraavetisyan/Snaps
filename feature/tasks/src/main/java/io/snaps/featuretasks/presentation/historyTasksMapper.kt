@@ -66,14 +66,14 @@ fun TaskPageModel.toHistoryTasksUiState(
         )
         else -> HistoryTasksUiState(
             items = loadedPageItems.flatMap { taskModel ->
-                taskModel.quests.map {
+                taskModel.quests?.map {
                     HistoryTaskUiState.Data(
                         id = taskModel.id,
                         date = taskModel.date,
                         item = it,
                         onClicked = { onItemClicked(it) },
                     )
-                }
+                } ?: emptyList()
             }.run {
                 if (nextPageId == null) this
                 else this.plus(HistoryTaskUiState.Progress())

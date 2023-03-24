@@ -9,5 +9,5 @@ data class TaskModel(
     val userId: Uuid,
     val date: LocalDateTime,
     val experience: Int,
-    val quests: List<QuestModel>,
+    val quests: List<QuestModel>?,
 )

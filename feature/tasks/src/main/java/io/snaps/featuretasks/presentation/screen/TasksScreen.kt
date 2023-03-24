@@ -174,7 +174,12 @@ private fun TasksScreen(
                 } else {
                     ScrollEndDetectLazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(12.dp),
+                        contentPadding = PaddingValues(
+                            top = 12.dp,
+                            start = 12.dp,
+                            end = 12.dp,
+                            bottom = 60.dp,
+                        ),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         onScrollEndDetected = uiState.history.onListEndReaching,
                     ) {
