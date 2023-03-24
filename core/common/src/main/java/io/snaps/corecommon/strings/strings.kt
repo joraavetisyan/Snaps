@@ -16,6 +16,9 @@ internal val strings = mapOf(
     key(StringKey.ActionContinue) to mapOf(
         SupportedLanguageKey.En to "Continue",
     ),
+    key(StringKey.ActionCancel) to mapOf(
+        SupportedLanguageKey.En to "Cancel",
+    ),
 
     key(StringKey.ErrorLoadFail) to mapOf(
         SupportedLanguageKey.En to "Error while loading",
@@ -465,8 +468,8 @@ internal val strings = mapOf(
     key(StringKey.WalletDialogTitleTopUp) to mapOf(
         SupportedLanguageKey.En to "Top up %s",
     ),
-    key(StringKey.WalletTitleAwards) to mapOf(
-        SupportedLanguageKey.En to "Awards",
+    key(StringKey.WalletTitleRewards) to mapOf(
+        SupportedLanguageKey.En to "Rewards",
     ),
     key(StringKey.WalletTitleAvailableRewards) to mapOf(
         SupportedLanguageKey.En to "Available Rewards",
@@ -614,6 +617,15 @@ internal val strings = mapOf(
     key(StringKey.PreviewVideoActionProceed) to mapOf(
         SupportedLanguageKey.En to "Proceed",
     ),
+    key(StringKey.PreviewVideoMessageSuccess) to mapOf(
+        SupportedLanguageKey.En to "Video uploaded successfully",
+    ),
+    key(StringKey.PreviewVideoHintTitle) to mapOf(
+        SupportedLanguageKey.En to "Enter video title",
+    ),
+    key(StringKey.PreviewVideoHintDescription) to mapOf(
+        SupportedLanguageKey.En to "Enter video description",
+    ),
 
     key(StringKey.PurchaseTitle) to mapOf(
         SupportedLanguageKey.En to "Buy",
@@ -623,6 +635,9 @@ internal val strings = mapOf(
     ),
     key(StringKey.PurchaseTitlePrice) to mapOf(
         SupportedLanguageKey.En to "Price:",
+    ),
+    key(StringKey.PurchaseTitleNotAvailable) to mapOf(
+        SupportedLanguageKey.En to "Not available for mint",
     ),
     key(StringKey.PurchaseTitleDailyReward) to mapOf(
         SupportedLanguageKey.En to "Daily Reward",

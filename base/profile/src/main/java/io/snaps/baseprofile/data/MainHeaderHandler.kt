@@ -2,6 +2,7 @@ package io.snaps.baseprofile.data
 
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
+import io.snaps.coredata.network.Action
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -35,6 +36,7 @@ interface MainHeaderHandler {
 class MainHeaderHandlerImplDelegate @Inject constructor(
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val profileRepository: ProfileRepository,
+    private val action: Action,
 ) : MainHeaderHandler {
 
     private val _uiState = MutableStateFlow(MainHeaderHandler.UiState())
@@ -71,8 +73,8 @@ class MainHeaderHandlerImplDelegate @Inject constructor(
 
     private fun updateData() {
         scope.launch {
-            profileRepository.updateData()
-            profileRepository.updateBalance()
+            action.execute { profileRepository.updateData() }
+            action.execute { profileRepository.updateBalance() }
         }
     }
 }

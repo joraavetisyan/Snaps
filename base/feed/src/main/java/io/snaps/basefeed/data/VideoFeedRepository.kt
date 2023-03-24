@@ -66,7 +66,13 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     mapper = { it.toVideoClipModelList(getLikedVideos()) },
                 )
                 is VideoFeedType.User -> PagedLoaderParams(
-                    action = { from, count -> videoFeedApi.feed(from, count) },
+                    action = { from, count ->
+                        if (type.userId != null) {
+                            videoFeedApi.userFeed(type.userId, from, count)
+                        } else {
+                            videoFeedApi.myFeed(from, count)
+                        }
+                    },
                     pageSize = 15,
                     nextPageIdFactory = { it.entityId },
                     mapper = { it.toVideoClipModelList(getLikedVideos()) },

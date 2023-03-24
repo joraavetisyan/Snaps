@@ -112,9 +112,9 @@ class CreateUserViewModel @Inject constructor(
         }
     }
 
-    fun onNickNameValueChanged(nickname: String) {
+    fun onNickNameValueChanged(value: String) {
         _uiState.update {
-            it.copy(nicknameValue = nickname)
+            it.copy(nicknameValue = value)
         }
     }
 

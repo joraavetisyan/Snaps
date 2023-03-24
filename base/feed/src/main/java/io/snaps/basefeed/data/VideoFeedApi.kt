@@ -23,6 +23,19 @@ interface VideoFeedApi {
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
 
+    @GET("user/{userId}/video")
+    suspend fun userFeed(
+        @Path("userId") userId: Uuid,
+        @Query("from") from: Uuid?,
+        @Query("count") count: Int,
+    ): BaseResponse<List<VideoFeedItemResponseDto>>
+
+    @GET("user/video")
+    suspend fun myFeed(
+        @Query("from") from: Uuid?,
+        @Query("count") count: Int,
+    ): BaseResponse<List<VideoFeedItemResponseDto>>
+
     @GET("popular-video-feed")
     suspend fun popularFeed(
         @Query("from") from: Uuid?,

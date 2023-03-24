@@ -63,7 +63,7 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.VerticalPager
 import com.google.accompanist.pager.rememberPagerState
 import io.snaps.baseplayer.domain.VideoClipModel
-import io.snaps.baseplayer.ui.ReelPlayer
+import io.snaps.baseplayer.ui.VideoPlayer
 import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
@@ -306,8 +306,8 @@ private fun PagerScope.VideoClip(
         }
     }
 
-    ReelPlayer(
-        videoClipUrl = item.clip.url,
+    VideoPlayer(
+        networkUrl = item.clip.url,
         shouldPlay = shouldPlay,
         isMuted = uiState.isMuted,
         isScrolling = pagerState.isScrollInProgress,

@@ -45,6 +45,7 @@ class PurchaseViewModel @Inject constructor(
             cost = "${args.costInUsd}${FiatCurrency.USD.symbol}",
             dailyUnlock = args.dailyUnlock * 100,
             dailyReward = args.dailyReward,
+            isAvailableToPurchase = args.isAvailableToPurchase,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -86,17 +87,13 @@ class PurchaseViewModel @Inject constructor(
                 }
             } else {
                 val products = purchaseStateProvider.getInAppProducts().data.orEmpty().firstOrNull {
-                    it.details.sku == args.type.name
+                    it.details.sku == args.type.storeId
                 }
                 products?.let {
                     billingRouter.openBillingScreen(it, activity)
                 }
             }
         }
-    }
-
-    sealed class Command {
-        object OpenMainScreen : Command()
     }
 
     data class UiState(
@@ -106,5 +103,10 @@ class PurchaseViewModel @Inject constructor(
         val cost: String,
         val dailyReward: Int,
         val dailyUnlock: Double,
+        val isAvailableToPurchase: Boolean,
     )
+
+    sealed class Command {
+        object OpenMainScreen : Command()
+    }
 }
