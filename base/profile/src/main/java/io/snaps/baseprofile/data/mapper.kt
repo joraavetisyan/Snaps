@@ -53,6 +53,8 @@ fun QuestItemDto.toQuestModel() = QuestModel(
     type = quest.type,
     completed = completed,
     network = network,
+    count = quest.count,
+    madeCount = madeCount,
 )
 
 fun mainHeaderState(

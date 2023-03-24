@@ -1,5 +1,9 @@
-package io.snaps.featurecollection.data
+package io.snaps.basenft.data
 
+import io.snaps.basenft.data.model.MintNftRequestDto
+import io.snaps.basenft.data.model.MintNftResponseDto
+import io.snaps.basenft.data.model.NftItemResponseDto
+import io.snaps.basenft.data.model.UserNftItemResponseDto
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rBool
@@ -8,29 +12,14 @@ import io.snaps.corecommon.mock.rImage
 import io.snaps.corecommon.mock.rInt
 import io.snaps.corecommon.model.NftType
 import io.snaps.coredata.network.BaseResponse
-import io.snaps.featurecollection.data.model.MintNftRequestDto
-import io.snaps.featurecollection.data.model.MintNftResponseDto
-import io.snaps.featurecollection.data.model.NftItemResponseDto
-import io.snaps.featurecollection.data.model.UserNftItemResponseDto
 import kotlinx.coroutines.delay
 
-class FakeMyCollectionApi : MyCollectionApi {
+class FakeNftApi : NftApi {
 
     private var generation = 0
 
     override suspend fun userNftCollection(): BaseResponse<List<UserNftItemResponseDto>> {
         log("Requesting nft")
-        delay(mockDelay)
-        return BaseResponse(
-            actualTimestamp = 1L,
-            data = getUserNft()
-        ).also {
-            generation++
-        }
-    }
-
-    override suspend fun mysteryBoxCollection(): BaseResponse<List<UserNftItemResponseDto>> {
-        log("Requesting mystery box")
         delay(mockDelay)
         return BaseResponse(
             actualTimestamp = 1L,
@@ -83,7 +72,7 @@ class FakeMyCollectionApi : MyCollectionApi {
             userId = "$generation userId",
             tokenId = null,
             type = getRanks()[0],
-            mintedDate = "",
+            mintedDate = "2023-02-07T02:46:30.3218237+00:00",
             isHealthy = false,
         ),
         UserNftItemResponseDto(
@@ -91,7 +80,7 @@ class FakeMyCollectionApi : MyCollectionApi {
             userId = "$generation userId",
             tokenId = null,
             type = getRanks()[1],
-            mintedDate = "",
+            mintedDate = "2023-02-07T02:46:30.3218237+00:00",
             isHealthy = false,
         ),
         UserNftItemResponseDto(
@@ -99,7 +88,7 @@ class FakeMyCollectionApi : MyCollectionApi {
             userId = "$generation userId",
             tokenId = null,
             type = getRanks()[2],
-            mintedDate = "",
+            mintedDate = "2023-02-07T02:46:30.3218237+00:00",
             isHealthy = false,
         ),
     )

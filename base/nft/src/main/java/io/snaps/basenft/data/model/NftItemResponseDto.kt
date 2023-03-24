@@ -1,4 +1,4 @@
-package io.snaps.featurecollection.data.model
+package io.snaps.basenft.data.model
 
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.NftType

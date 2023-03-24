@@ -1,25 +1,23 @@
 package io.snaps.featuretasks.presentation.ui
 
-import android.os.CountDownTimer
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import io.snaps.baseprofile.ui.EnergyWidget
+import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.date.toTimeFormat
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.defaultTileRipple
@@ -33,18 +31,12 @@ import io.snaps.coreuitheme.compose.AppTheme
 sealed class TaskTileState : TileState {
 
     data class Data(
-        val title: String,
-        val description: String,
+        val title: TextValue,
+        val description: TextValue,
         val energy: Int,
         val energyProgress: Int,
-        val done: Boolean,
+        val done: Boolean = false,
         val clickListener: () -> Unit,
-    ) : TaskTileState()
-
-    data class RemainingTime(
-        val time: Long,
-        val energy: Int,
-        val energyProgress: Int,
     ) : TaskTileState()
 
     object Shimmer : TaskTileState()
@@ -64,9 +56,10 @@ fun TaskTile(
 ) {
     when (data) {
         is TaskTileState.Data -> Data(modifier, data)
-        is TaskTileState.RemainingTime -> RemainingTime(modifier, data)
         TaskTileState.Shimmer -> Shimmer(modifier)
-        is TaskTileState.Error -> MessageBannerState.defaultState(onClick = data.clickListener)
+        is TaskTileState.Error -> MessageBannerState
+            .defaultState(onClick = data.clickListener)
+            .Content(modifier = modifier)
     }
 }
 
@@ -78,78 +71,96 @@ private fun Data(
     Container(
         modifier = modifier.defaultTileRipple(onClick = data.clickListener),
     ) {
-        Column(
+        Row(
             modifier = modifier
-                .weight(1f)
-                .padding(end = 8.dp),
+                .padding(horizontal = 12.dp)
+                .padding(top = 12.dp),
         ) {
-            Text(
-                text = data.title,
-                color = AppTheme.specificColorScheme.textPrimary,
-                style = AppTheme.specificTypography.labelMedium,
-            )
-            Text(
-                text = data.description,
-                color = AppTheme.specificColorScheme.textSecondary,
-                style = AppTheme.specificTypography.labelSmall,
+            Column(
+                modifier = modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
+            ) {
+                Text(
+                    text = data.title.get(),
+                    color = AppTheme.specificColorScheme.textPrimary,
+                    style = AppTheme.specificTypography.labelMedium,
+                )
+                Text(
+                    text = data.description.get(),
+                    color = AppTheme.specificColorScheme.textSecondary,
+                    style = AppTheme.specificTypography.labelSmall,
+                )
+            }
+            EnergyWidget(
+                value = "${data.energyProgress}/${data.energy}",
+                isFull = data.energyProgress == data.energy,
             )
         }
-        EnergyWidget(
-            value = "${data.energyProgress}/${data.energy}",
-            isFull = data.done,
+        if (!data.done) {
+            if (data.energyProgress < data.energy && data.energyProgress > 0) {
+                Spacer(modifier = Modifier.height(12.dp))
+                TaskInProgressMessage()
+            } else if (data.energyProgress == data.energy) {
+                Spacer(modifier = Modifier.height(12.dp))
+                TaskCompletedMessage()
+            }
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+    }
+}
+
+@Composable
+private fun TaskCompletedMessage() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .background(
+                color = AppTheme.specificColorScheme.uiSystemGreen.copy(alpha = 0.2f),
+                shape = AppTheme.shapes.medium,
+            )
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Icon(
+            painter = AppTheme.specificIcons.checkCircle.get(),
+            contentDescription = null,
+            tint = AppTheme.specificColorScheme.uiSystemGreen,
+        )
+        Text(
+            text = StringKey.TasksMessageTaskCounted.textValue().get(),
+            color = AppTheme.specificColorScheme.textGreen,
+            style = AppTheme.specificTypography.bodySmall,
         )
     }
 }
 
 @Composable
-private fun RemainingTime(
-    modifier: Modifier = Modifier,
-    data: TaskTileState.RemainingTime,
-) {
-    val milliseconds = data.time - System.currentTimeMillis()
-    val time = remember { mutableStateOf(milliseconds.toTimeFormat()) }
-    val countDownTimer = object : CountDownTimer(milliseconds, 1000) {
-        override fun onTick(millisUntilFinished: Long) {
-            time.value = millisUntilFinished.toTimeFormat()
-        }
-        override fun onFinish() = Unit
-    }
-
-    DisposableEffect(key1 = Unit) {
-        countDownTimer.start()
-        onDispose {
-            countDownTimer.cancel()
-        }
-    }
-
-    val remainingTime = StringKey.TasksTitleRemainingTime.textValue(time.value).get()
-    val title = buildAnnotatedString {
-        append(remainingTime)
-        val startIndex = remainingTime.indexOf(time.value)
-        val endIndex = startIndex + time.value.length
-        addStyle(
-            style = SpanStyle(color = AppTheme.specificColorScheme.textLink, textDecoration = TextDecoration.None),
-            start = startIndex,
-            end = endIndex,
+private fun TaskInProgressMessage() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .background(
+                color = AppTheme.specificColorScheme.uiSystemYellow.copy(alpha = 0.2f),
+                shape = AppTheme.shapes.medium,
+            )
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Icon(
+            painter = AppTheme.specificIcons.infoRounded.get(),
+            contentDescription = null,
+            tint = AppTheme.specificColorScheme.uiSystemYellow,
         )
-    }
-    SimpleCard(modifier = modifier) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Text(
-                text = title,
-                color = AppTheme.specificColorScheme.textPrimary,
-                style = AppTheme.specificTypography.labelMedium,
-            )
-            TaskProgress(
-                progress = data.energyProgress,
-                maxValue = data.energy,
-            )
-        }
+        Text(
+            text = StringKey.TasksMessageTaskInProgress.textValue().get(),
+            color = AppTheme.specificColorScheme.uiSystemYellow,
+            style = AppTheme.specificTypography.bodySmall,
+        )
     }
 }
 
@@ -171,14 +182,11 @@ private fun Shimmer(
 @Composable
 private fun Container(
     modifier: Modifier,
-    content: @Composable RowScope.() -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
-    SimpleCard(modifier = modifier) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            content = content,
-        )
-    }
+    SimpleCard(
+        modifier = modifier.fillMaxWidth(),
+        color = AppTheme.specificColorScheme.white,
+        content = content,
+    )
 }

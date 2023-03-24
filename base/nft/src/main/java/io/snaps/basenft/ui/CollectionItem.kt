@@ -1,4 +1,4 @@
-package io.snaps.featurecollection.presentation.screen
+package io.snaps.basenft.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -103,7 +103,6 @@ private fun Nft(
                 contentScale = ContentScale.Crop,
             )
         }
-
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = data.type.name,

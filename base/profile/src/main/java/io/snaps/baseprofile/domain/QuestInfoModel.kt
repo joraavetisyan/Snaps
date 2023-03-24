@@ -17,4 +17,6 @@ data class QuestModel(
     val type: QuestType,
     val completed: Boolean,
     val network: SocialNetwork?,
+    val madeCount: Int?,
+    val count: Int?,
 )

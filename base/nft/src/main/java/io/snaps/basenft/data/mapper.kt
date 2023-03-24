@@ -1,11 +1,11 @@
-package io.snaps.featurecollection.data
+package io.snaps.basenft.data
 
+import io.snaps.basenft.data.model.NftItemResponseDto
+import io.snaps.basenft.data.model.UserNftItemResponseDto
+import io.snaps.basenft.domain.NftModel
+import io.snaps.basenft.domain.RankModel
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
-import io.snaps.featurecollection.data.model.NftItemResponseDto
-import io.snaps.featurecollection.data.model.UserNftItemResponseDto
-import io.snaps.featurecollection.domain.NftModel
-import io.snaps.featurecollection.domain.RankModel
 import java.time.ZonedDateTime
 
 fun List<NftItemResponseDto>.toRankModelList() = map(NftItemResponseDto::toModel)

@@ -1,4 +1,4 @@
-package io.snaps.featurecollection.data.model
+package io.snaps.basenft.data.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

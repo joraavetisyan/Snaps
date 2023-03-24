@@ -1,14 +1,9 @@
-package io.snaps.featurecollection.domain
+package io.snaps.basenft.domain
 
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.model.NftType
-import io.snaps.corecommon.model.Uuid
-import java.time.LocalDateTime
 
-data class NftModel(
-    val id: Uuid,
-    val tokenId: Uuid?,
-    val userId: Uuid,
+data class RankModel(
     val type: NftType,
     val image: ImageValue,
     val dailyReward: Int,
@@ -17,6 +12,4 @@ data class NftModel(
     val isAvailableToPurchase: Boolean,
     val costInUsd: Int?,
     val costInRealTokens: Int?,
-    val mintedDate: LocalDateTime,
-    val isHealthy: Boolean,
 )

@@ -2,6 +2,9 @@ package io.snaps.featuretasks.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.basenft.data.NftRepository
+import io.snaps.basenft.ui.CollectionItemState
+import io.snaps.basenft.ui.toNftCollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.domain.QuestModel
@@ -11,8 +14,11 @@ import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.featuretasks.data.TasksRepository
 import io.snaps.featuretasks.presentation.HistoryTasksUiState
+import io.snaps.featuretasks.presentation.energyProgress
 import io.snaps.featuretasks.presentation.toHistoryTasksUiState
+import io.snaps.featuretasks.presentation.toRemainingTimeTileState
 import io.snaps.featuretasks.presentation.toTaskTileState
+import io.snaps.featuretasks.presentation.ui.RemainingTimeTileState
 import io.snaps.featuretasks.presentation.ui.TaskTileState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +37,7 @@ class TasksViewModel @Inject constructor(
     private val mainHeaderHandler: MainHeaderHandler,
     private val profileRepository: ProfileRepository,
     private val tasksRepository: TasksRepository,
+    private val nftRepository: NftRepository,
 ) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandler {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -42,7 +49,23 @@ class TasksViewModel @Inject constructor(
     init {
         subscribeToCurrentQuests()
         subscribeToHistoryQuests()
+        subscribeToUserNftCollection()
         loadCurrentTasks()
+        loadUserNftCollection()
+    }
+
+    private fun subscribeToUserNftCollection() {
+        nftRepository.nftCollectionState.onEach { state ->
+            _uiState.update {
+                it.copy(
+                    userNftCollection = state.toNftCollectionItemState(
+                        maxCount = 0,
+                        onAddItemClicked = {},
+                        onReloadClicked = ::onUserNftReloadClicked,
+                    )
+                )
+            }
+        }.launchIn(viewModelScope)
     }
 
     private fun subscribeToCurrentQuests() {
@@ -52,7 +75,8 @@ class TasksViewModel @Inject constructor(
                     current = state.toTaskTileState(
                         onReloadClicked = ::onCurrentReloadClicked,
                         onItemClicked = ::onCurrentTaskItemClicked,
-                    )
+                    ),
+                    remainingTime = state.toRemainingTimeTileState(),
                 )
             }
         }.launchIn(viewModelScope)
@@ -85,8 +109,18 @@ class TasksViewModel @Inject constructor(
         }
     }
 
+    private fun loadUserNftCollection() = viewModelScope.launch {
+        action.execute {
+            nftRepository.updateNftCollection()
+        }
+    }
+
     private fun onCurrentReloadClicked() {
         loadCurrentTasks()
+    }
+
+    private fun onUserNftReloadClicked() {
+        loadUserNftCollection()
     }
 
     private fun onListEndReaching() = viewModelScope.launch {
@@ -100,8 +134,8 @@ class TasksViewModel @Inject constructor(
             AppRoute.TaskDetails.Args(
                 type = quest.type,
                 energy = quest.energy,
-                energyProgress = quest.energyProgress,
-                completed = quest.completed,
+                energyProgress = quest.energyProgress(),
+                completed = quest.energyProgress() == quest.energy,
             )
         )
     }
@@ -113,6 +147,8 @@ class TasksViewModel @Inject constructor(
     data class UiState(
         val current: List<TaskTileState> = List(6) { TaskTileState.Shimmer },
         val history: HistoryTasksUiState = HistoryTasksUiState(),
+        val remainingTime: RemainingTimeTileState = RemainingTimeTileState.Shimmer,
+        val userNftCollection: List<CollectionItemState> = List(6) { CollectionItemState.Shimmer },
     )
 
     sealed class Command {

@@ -20,27 +20,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
-import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
-import io.snaps.coreuicompose.uikit.other.TitleSlider
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurecollection.ScreenNavigator
 import io.snaps.featurecollection.presentation.viewmodel.MyCollectionViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun MyCollectionScreen(
@@ -71,13 +64,6 @@ private fun MyCollectionScreen(
     headerState: MainHeaderHandler.UiState,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val current = StringKey.MyCollectionTitleSlideNft.textValue()
-    val history = StringKey.MyCollectionTitleSlideMysteryBox.textValue()
-
-    val pages = listOf(uiState.nft, uiState.mysteryBox)
-    val pagerState = rememberPagerState()
-
-    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -90,37 +76,20 @@ private fun MyCollectionScreen(
         ) {
             MainHeader(state = headerState.value)
             Header()
-            Spacer(modifier = Modifier.height(12.dp))
-            TitleSlider(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                items = listOf(current, history),
-                selectedItemIndex = pagerState.currentPage,
-                onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(it)
-                    }
-                },
-            )
-            HorizontalPager(
-                count = pages.size,
-                state = pagerState,
+            LazyVerticalGrid(
+                modifier = Modifier.fillMaxSize(),
+                columns = GridCells.Fixed(2),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(
+                    top = 12.dp,
+                    start = 12.dp,
+                    end = 12.dp,
+                    bottom = 60.dp,
+                ),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                LazyVerticalGrid(
-                    modifier = Modifier.fillMaxSize(),
-                    columns = GridCells.Fixed(2),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    if (pagerState.currentPage == 0) {
-                        items(uiState.nft) {
-                            it.Content(modifier = Modifier)
-                        }
-                    } else {
-                        items(uiState.mysteryBox) {
-                            it.Content(modifier = Modifier)
-                        }
-                    }
+                items(uiState.nft) {
+                    it.Content(modifier = Modifier)
                 }
             }
         }

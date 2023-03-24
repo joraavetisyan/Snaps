@@ -2,6 +2,8 @@ package io.snaps.featurecollection.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.basenft.data.NftRepository
+import io.snaps.basenft.domain.RankModel
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.container.textValue
@@ -11,8 +13,6 @@ import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
-import io.snaps.featurecollection.data.MyCollectionRepository
-import io.snaps.featurecollection.domain.RankModel
 import io.snaps.featurecollection.presentation.screen.RankTileState
 import io.snaps.featurecollection.presentation.toRankTileState
 import kotlinx.coroutines.channels.Channel
@@ -29,7 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RankSelectionViewModel @Inject constructor(
     private val action: Action,
-    private val myCollectionRepository: MyCollectionRepository,
+    private val nftRepository: NftRepository,
     private val notificationsSource: NotificationsSource,
     mainHeaderHandlerDelegate: MainHeaderHandler,
 ) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
@@ -46,7 +46,7 @@ class RankSelectionViewModel @Inject constructor(
     }
 
     private fun subscribeOnRanks() {
-        myCollectionRepository.ranksState.map {
+        nftRepository.ranksState.map {
             it.toRankTileState(
                 onItemClicked = ::onItemClicked,
                 onReloadClicked = ::onReloadClicked,
@@ -58,7 +58,7 @@ class RankSelectionViewModel @Inject constructor(
 
     private fun loadRanks() = viewModelScope.launch {
         action.execute {
-            myCollectionRepository.loadRanks()
+            nftRepository.updateRanks()
         }
     }
 

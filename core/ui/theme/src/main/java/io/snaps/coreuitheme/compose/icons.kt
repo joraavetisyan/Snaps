@@ -12,6 +12,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.AutoMode
 import androidx.compose.material.icons.rounded.BrowseGallery
+import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.CreditCard
 import androidx.compose.material.icons.rounded.CurrencyExchange
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Fingerprint
 import androidx.compose.material.icons.rounded.FlipCameraAndroid
 import androidx.compose.material.icons.rounded.HeartBroken
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.NavigateNext
 import androidx.compose.material.icons.rounded.Phone
@@ -59,6 +61,8 @@ object SpecificIcons {
     val search: IconValue = vector(Icons.Rounded.Search)
     val arrowDropDown: IconValue = vector(Icons.Filled.ArrowDropDown)
     val info: IconValue = vector(Icons.Outlined.Info)
+    val infoRounded: IconValue = vector(Icons.Rounded.Info)
+    val checkCircle: IconValue = vector(Icons.Rounded.CheckCircle)
 
     val camera: IconValue = resource(R.drawable.ic_camera)
     val cameraTimer: IconValue = resource(R.drawable.ic_camera_timer)

@@ -104,6 +104,7 @@ class FakeProfileApi : ProfileApi {
             QuestItemDto(
                 energyProgress = 2,
                 completed = true,
+                done = null,
                 madeCount = rInt,
                 network = null,
                 quest = QuestDto(
@@ -114,6 +115,7 @@ class FakeProfileApi : ProfileApi {
             ),
             QuestItemDto(
                 energyProgress = 2,
+                done = null,
                 completed = false,
                 madeCount = rInt,
                 network = null,
@@ -126,6 +128,7 @@ class FakeProfileApi : ProfileApi {
             QuestItemDto(
                 energyProgress = 0,
                 completed = false,
+                done = null,
                 madeCount = 0,
                 network = null,
                 quest = QuestDto(
@@ -137,6 +140,7 @@ class FakeProfileApi : ProfileApi {
             QuestItemDto(
                 energyProgress = 1,
                 completed = false,
+                done = null,
                 madeCount = 0,
                 network = null,
                 quest = QuestDto(
@@ -148,6 +152,7 @@ class FakeProfileApi : ProfileApi {
             QuestItemDto(
                 energyProgress = 1,
                 completed = false,
+                done = null,
                 madeCount = rInt,
                 network = null,
                 quest = QuestDto(

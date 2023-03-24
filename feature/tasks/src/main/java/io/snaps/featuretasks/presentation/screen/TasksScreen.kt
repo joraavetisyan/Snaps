@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
@@ -38,6 +40,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.TextValue
@@ -47,11 +50,13 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
+import io.snaps.coreuicompose.uikit.other.SimpleCard
 import io.snaps.coreuicompose.uikit.other.TitleSlider
 import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.featuretasks.presentation.historyTasksItems
+import io.snaps.featuretasks.presentation.ui.RemainingTimeTileState
 import io.snaps.featuretasks.presentation.viewmodel.TasksViewModel
 import kotlinx.coroutines.launch
 
@@ -148,9 +153,20 @@ private fun TasksScreen(
                 if (pagerState.currentPage == 0) {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(12.dp),
+                        contentPadding = PaddingValues(
+                            top = 12.dp,
+                            start = 12.dp,
+                            end = 12.dp,
+                            bottom = 60.dp,
+                        ),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
+                        item {
+                           NftBlock(
+                               userNtfCollection = uiState.userNftCollection,
+                               remainingTime = uiState.remainingTime,
+                           )
+                        }
                         items(uiState.current) {
                             it.Content(modifier = Modifier)
                         }
@@ -188,6 +204,32 @@ private fun Titles(title1: TextValue, title2: TextValue) {
             style = AppTheme.specificTypography.titleSmall,
             color = AppTheme.specificColorScheme.textSecondary,
         )
+    }
+}
+
+@Composable
+private fun NftBlock(
+    userNtfCollection: List<CollectionItemState>,
+    remainingTime: RemainingTimeTileState,
+) {
+    SimpleCard(
+        modifier = Modifier.fillMaxWidth(),
+        color = AppTheme.specificColorScheme.white,
+    ) {
+        remainingTime.Content(
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+                .padding(top = 12.dp),
+        )
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(12.dp),
+        ) {
+            items(userNtfCollection) {
+                it.Content(modifier = Modifier.width(180.dp))
+            }
+        }
     }
 }
 

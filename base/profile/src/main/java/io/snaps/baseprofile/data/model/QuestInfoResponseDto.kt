@@ -21,6 +21,7 @@ data class QuestItemDto(
     @SerialName("completed") val completed: Boolean,
     @SerialName("quest") val quest: QuestDto,
     @SerialName("madeCount") val madeCount: Int?,
+    @SerialName("done") val done: Boolean?,
 
     // For SocialPost
     @SerialName("network") val network: SocialNetwork?,

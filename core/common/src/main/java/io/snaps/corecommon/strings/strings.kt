@@ -328,10 +328,46 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Here you can see the history of your tasks and your progress.",
     ),
     key(StringKey.TasksTitleRemainingTime) to mapOf(
-        SupportedLanguageKey.En to "Until the end of the round: %s",
+        SupportedLanguageKey.En to "Until the end of the round",
     ),
     key(StringKey.TaskFieldJobCompleted) to mapOf(
         SupportedLanguageKey.En to "Job completed successfully",
+    ),
+    key(StringKey.TasksMessageTaskCounted) to mapOf(
+        SupportedLanguageKey.En to "Task counted",
+    ),
+    key(StringKey.TasksMessageTaskInProgress) to mapOf(
+        SupportedLanguageKey.En to "Task will be counted if it's completed in full",
+    ),
+    key(StringKey.TasksTitleWatchVideo) to mapOf(
+        SupportedLanguageKey.En to "Watch 20 videos",
+    ),
+    key(StringKey.TasksDescriptionWatchVideo) to mapOf(
+        SupportedLanguageKey.En to "Watch at least 20 videos from the feed",
+    ),
+    key(StringKey.TasksTitleLike) to mapOf(
+        SupportedLanguageKey.En to "Like",
+    ),
+    key(StringKey.TasksDescriptionLike) to mapOf(
+        SupportedLanguageKey.En to "Like your favourite videos",
+    ),
+    key(StringKey.TasksTitlePublishVideo) to mapOf(
+        SupportedLanguageKey.En to "Post video",
+    ),
+    key(StringKey.TasksDescriptionPublishVideo) to mapOf(
+        SupportedLanguageKey.En to "Post a short video to your profile",
+    ),
+    key(StringKey.TasksTitleSubscribe) to mapOf(
+        SupportedLanguageKey.En to "Subscribe to authors",
+    ),
+    key(StringKey.TasksDescriptionSubscribe) to mapOf(
+        SupportedLanguageKey.En to "Subscribe to authors you like",
+    ),
+    key(StringKey.TasksTitleSocialPost) to mapOf(
+        SupportedLanguageKey.En to "Share Snaps",
+    ),
+    key(StringKey.TasksDescriptionSocialPost) to mapOf(
+        SupportedLanguageKey.En to "Share Snaps on Instagram",
     ),
 
     key(StringKey.TaskWatchVideoTitle) to mapOf(

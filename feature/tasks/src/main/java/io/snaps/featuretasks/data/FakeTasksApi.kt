@@ -46,6 +46,7 @@ class FakeTasksApi : TasksApi {
                 QuestItemDto(
                     energyProgress = 2,
                     completed = true,
+                    done = null,
                     madeCount = rInt,
                     network = null,
                     quest = QuestDto(
@@ -58,6 +59,7 @@ class FakeTasksApi : TasksApi {
                     energyProgress = 2,
                     completed = false,
                     madeCount = rInt,
+                    done = null,
                     network = null,
                     quest = QuestDto(
                         count = rInt,
@@ -68,6 +70,7 @@ class FakeTasksApi : TasksApi {
                 QuestItemDto(
                     energyProgress = 0,
                     completed = false,
+                    done = null,
                     madeCount = 0,
                     network = null,
                     quest = QuestDto(
@@ -80,6 +83,7 @@ class FakeTasksApi : TasksApi {
                     energyProgress = 1,
                     completed = false,
                     madeCount = 0,
+                    done = null,
                     network = null,
                     quest = QuestDto(
                         count = 5,
@@ -92,6 +96,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     madeCount = rInt,
                     network = null,
+                    done = null,
                     quest = QuestDto(
                         count = rInt,
                         type = QuestType.SocialPost,
@@ -111,6 +116,7 @@ class FakeTasksApi : TasksApi {
                     energyProgress = 2,
                     completed = true,
                     madeCount = rInt,
+                    done = null,
                     network = null,
                     quest = QuestDto(
                         count = 20,
@@ -123,6 +129,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     madeCount = rInt,
                     network = null,
+                    done = null,
                     quest = QuestDto(
                         count = rInt,
                         type = QuestType.PublishVideo,
@@ -132,6 +139,7 @@ class FakeTasksApi : TasksApi {
                 QuestItemDto(
                     energyProgress = 0,
                     completed = false,
+                    done = null,
                     madeCount = 0,
                     network = null,
                     quest = QuestDto(
@@ -145,6 +153,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     madeCount = 0,
                     network = null,
+                    done = null,
                     quest = QuestDto(
                         count = 5,
                         type = QuestType.Subscribe,
@@ -154,6 +163,7 @@ class FakeTasksApi : TasksApi {
                 QuestItemDto(
                     energyProgress = 1,
                     completed = false,
+                    done = null,
                     madeCount = rInt,
                     network = null,
                     quest = QuestDto(
@@ -174,6 +184,7 @@ class FakeTasksApi : TasksApi {
                 QuestItemDto(
                     energyProgress = 2,
                     completed = true,
+                    done = null,
                     madeCount = rInt,
                     network = null,
                     quest = QuestDto(
@@ -185,6 +196,7 @@ class FakeTasksApi : TasksApi {
                 QuestItemDto(
                     energyProgress = 2,
                     completed = false,
+                    done = null,
                     madeCount = rInt,
                     network = null,
                     quest = QuestDto(
@@ -196,6 +208,7 @@ class FakeTasksApi : TasksApi {
                 QuestItemDto(
                     energyProgress = 0,
                     completed = false,
+                    done = null,
                     madeCount = 0,
                     network = null,
                     quest = QuestDto(
@@ -207,6 +220,7 @@ class FakeTasksApi : TasksApi {
                 QuestItemDto(
                     energyProgress = 1,
                     completed = false,
+                    done = null,
                     madeCount = 0,
                     network = null,
                     quest = QuestDto(
@@ -218,6 +232,7 @@ class FakeTasksApi : TasksApi {
                 QuestItemDto(
                     energyProgress = 1,
                     completed = false,
+                    done = null,
                     madeCount = rInt,
                     network = null,
                     quest = QuestDto(
@@ -238,6 +253,7 @@ class FakeTasksApi : TasksApi {
                 QuestItemDto(
                     energyProgress = 2,
                     completed = true,
+                    done = null,
                     madeCount = rInt,
                     network = null,
                     quest = QuestDto(
@@ -249,6 +265,7 @@ class FakeTasksApi : TasksApi {
                 QuestItemDto(
                     energyProgress = 2,
                     completed = false,
+                    done = null,
                     madeCount = rInt,
                     network = null,
                     quest = QuestDto(
@@ -260,6 +277,7 @@ class FakeTasksApi : TasksApi {
                 QuestItemDto(
                     energyProgress = 0,
                     completed = false,
+                    done = null,
                     madeCount = 0,
                     network = null,
                     quest = QuestDto(
@@ -271,6 +289,7 @@ class FakeTasksApi : TasksApi {
                 QuestItemDto(
                     energyProgress = 1,
                     completed = false,
+                    done = null,
                     madeCount = 0,
                     network = null,
                     quest = QuestDto(
@@ -282,6 +301,7 @@ class FakeTasksApi : TasksApi {
                 QuestItemDto(
                     energyProgress = 1,
                     completed = false,
+                    done = null,
                     madeCount = rInt,
                     network = null,
                     quest = QuestDto(

@@ -1,4 +1,4 @@
-package io.snaps.featurecollection.data.model
+package io.snaps.basenft.data.model
 
 import io.snaps.corecommon.model.NftTypeInt
 import io.snaps.corecommon.model.Uuid

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basebilling.BillingRouter
 import io.snaps.basebilling.PurchaseStateProvider
+import io.snaps.basenft.data.NftRepository
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.model.FiatCurrency
@@ -15,7 +16,6 @@ import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
-import io.snaps.featurecollection.data.MyCollectionRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,7 +32,7 @@ class PurchaseViewModel @Inject constructor(
     private val purchaseStateProvider: PurchaseStateProvider,
     private val billingRouter: BillingRouter,
     private val walletRepository: WalletRepository,
-    private val collectionRepository: MyCollectionRepository,
+    private val nftRepository: NftRepository,
     savedStateHandle: SavedStateHandle,
 ) : SimpleViewModel() {
 
@@ -60,7 +60,7 @@ class PurchaseViewModel @Inject constructor(
         purchaseStateProvider.newPurchasesFlow.onEach {
             _uiState.update { it.copy(isLoading = true) }
             action.execute {
-                collectionRepository.mintNft(
+                nftRepository.mintNft(
                     type = args.type,
                     walletAddress = walletRepository.getActiveWalletsReceiveAddresses().first(),
                     purchaseId = it.first().orderId
@@ -75,7 +75,7 @@ class PurchaseViewModel @Inject constructor(
         viewModelScope.launch {
             if (args.type == NftType.Free) {
                 action.execute {
-                    collectionRepository.mintNft(
+                    nftRepository.mintNft(
                         type = NftType.Free,
                         walletAddress = walletRepository.getActiveWalletsReceiveAddresses().first(),
                         purchaseId = null,

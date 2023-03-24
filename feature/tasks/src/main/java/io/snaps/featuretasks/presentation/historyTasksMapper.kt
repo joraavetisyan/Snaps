@@ -90,11 +90,11 @@ fun LazyListScope.historyTasksItems(
     items(uiState.items) {
         when (it) {
             is HistoryTaskUiState.Data -> TaskTileState.Data(
-                title = "Name tasks", // todo
-                description = it.date.toStringValue(),
+                title = it.item.type.toTaskTitle(),
+                description = it.date.toStringValue().textValue(),
                 energy = it.item.energy,
-                energyProgress = it.item.energyProgress,
-                done = it.item.completed,
+                energyProgress = it.item.energyProgress(),
+                done = true,
                 clickListener = it.onClicked,
             ).Content(modifier = modifier)
             is HistoryTaskUiState.Shimmer -> TaskTileState.Shimmer.Content(modifier = modifier)
