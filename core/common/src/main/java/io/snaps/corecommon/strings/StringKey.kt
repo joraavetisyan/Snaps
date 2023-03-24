@@ -7,6 +7,7 @@ enum class StringKey {
     ActionReply,
     ActionReload,
     ActionContinue,
+    ActionCancel,
 
     ErrorLoadFail,
 
@@ -186,7 +187,7 @@ enum class StringKey {
     WalletTitleQuantity,
     WalletTitleDateTransfer,
     WalletTitleTransactionsEmpty,
-    WalletTitleAwards,
+    WalletTitleRewards,
     WalletTitleAvailableRewards,
     WalletTitleLockedRewards,
     WalletFieldTotal,
@@ -240,9 +241,13 @@ enum class StringKey {
 
     PreviewVideoActionDiscard,
     PreviewVideoActionProceed,
+    PreviewVideoMessageSuccess,
+    PreviewVideoHintTitle,
+    PreviewVideoHintDescription,
 
     PurchaseTitle,
     PurchaseTitlePrice,
+    PurchaseTitleNotAvailable,
     PurchaseTitleDailyReward,
     PurchaseDescriptionDailyReward,
     PurchaseMessageDailyReward,

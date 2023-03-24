@@ -171,7 +171,8 @@ object AppRoute {
             val image: FullUrl,
             val dailyReward: Int,
             val dailyUnlock: Double,
-            val costInUsd: Int,
+            val costInUsd: Int?,
+            val isAvailableToPurchase: Boolean,
         )
     }
 }

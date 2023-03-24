@@ -28,6 +28,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
@@ -38,15 +39,24 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun ReelPlayer(
-    videoClipUrl: FullUrl? = null,
-    videoClipUri: String? = null,
+fun VideoPlayer(
+    networkUrl: FullUrl? = null,
+    localUri: String? = null,
     shouldPlay: Boolean,
     isMuted: Boolean = true,
     onMuted: (Boolean) -> Unit = {},
     isScrolling: Boolean = false,
+    isRepeat: Boolean = true,
 ) {
-    val exoPlayer = rememberExoPlayerWithLifecycle(videoClipUrl, videoClipUri)
+    require(networkUrl == null || localUri == null) {
+        "Don't provide both local and network sources!"
+    }
+
+    val exoPlayer = rememberExoPlayerWithLifecycle(
+        networkUrl = networkUrl,
+        localUri = localUri,
+        isRepeat = isRepeat,
+    )
     val playerView = rememberPlayerView(exoPlayer)
     var volumeIconVisibility by remember { mutableStateOf(false) }
     /*var likeIconVisibility by remember { mutableStateOf(false) }*/
@@ -135,24 +145,26 @@ fun ReelPlayer(
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 private fun rememberExoPlayerWithLifecycle(
-    url: String?,
-    uri: String?,
+    networkUrl: String?,
+    localUri: String?,
+    isRepeat: Boolean,
 ): ExoPlayer {
     val context = LocalContext.current
-    val exoPlayer = remember(url ?: uri) {
+    val exoPlayer = remember(networkUrl ?: localUri) {
         ExoPlayer.Builder(context).build().apply {
             videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
-            repeatMode = Player.REPEAT_MODE_ONE
+            repeatMode = if (isRepeat) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
             setHandleAudioBecomingNoisy(true)
-            if (url != null) {
+            if (networkUrl != null) {
                 val defaultDataSource = DefaultHttpDataSource.Factory()
                 val source = ProgressiveMediaSource.Factory(defaultDataSource)
-                    .createMediaSource(MediaItem.fromUri(url))
+                    .createMediaSource(MediaItem.fromUri(networkUrl))
                 setMediaSource(source)
-            } else if (uri != null) {
-                setMediaItem(
-                    MediaItem.fromUri(uri)
-                )
+            } else if (localUri != null) {
+                val defaultDataSource = DefaultDataSource.Factory(context)
+                val source = ProgressiveMediaSource.Factory(defaultDataSource)
+                    .createMediaSource(MediaItem.fromUri(localUri))
+                setMediaSource(source)
             }
             prepare()
         }

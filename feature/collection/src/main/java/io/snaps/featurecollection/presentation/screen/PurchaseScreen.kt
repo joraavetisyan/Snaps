@@ -93,13 +93,15 @@ private fun PurchaseScreen(
             )
         },
         floatingActionButton = {
-            SimpleButtonActionM(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
-                onClick = onBuyClicked,
-            ) {
-                SimpleButtonContent(text = StringKey.PurchaseAction.textValue())
+            if (uiState.isAvailableToPurchase) {
+                SimpleButtonActionM(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    onClick = onBuyClicked,
+                ) {
+                    SimpleButtonContent(text = StringKey.PurchaseAction.textValue())
+                }
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
@@ -130,16 +132,24 @@ private fun PurchaseScreen(
                         text = uiState.nftType.name,
                         style = AppTheme.specificTypography.labelMedium,
                     )
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(20.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
+                    if (uiState.isAvailableToPurchase) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(20.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = StringKey.PurchaseTitlePrice.textValue().get(),
+                                style = AppTheme.specificTypography.labelSmall,
+                                color = AppTheme.specificColorScheme.textSecondary,
+                            )
+                            ValueWidget(ImageValue.ResImage(R.drawable.img_coin_silver) to uiState.cost)
+                        }
+                    } else {
                         Text(
-                            text = StringKey.PurchaseTitlePrice.textValue().get(),
+                            text = StringKey.PurchaseTitleNotAvailable.textValue().get(),
                             style = AppTheme.specificTypography.labelSmall,
                             color = AppTheme.specificColorScheme.textSecondary,
                         )
-                        ValueWidget(ImageValue.ResImage(R.drawable.img_coin_silver) to uiState.cost)
                     }
                 }
             }

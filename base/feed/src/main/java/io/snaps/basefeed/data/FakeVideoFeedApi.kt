@@ -5,8 +5,8 @@ import io.snaps.basefeed.data.model.ShareInfoRequestDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.mock.mockDelay
-import io.snaps.corecommon.mock.rVideos
 import io.snaps.corecommon.mock.rInt
+import io.snaps.corecommon.mock.rVideos
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
@@ -18,6 +18,8 @@ class FakeVideoFeedApi : VideoFeedApi {
 
     private var generation = 0
     private var popularGeneration = 0
+    private var myGeneration = 0
+    private var userGeneration = 0
 
     override suspend fun feed(
         @Query(value = "from") from: Uuid?,
@@ -27,22 +29,47 @@ class FakeVideoFeedApi : VideoFeedApi {
         delay(mockDelay)
         return BaseResponse(
             actualTimestamp = 1L,
-            data = List(count) {
-                VideoFeedItemResponseDto(
-                    url = rVideos.random(),
-                    internalId = "${popularGeneration}video$it",
-                    entityId = "${generation}video$it",
-                    createdDate = "",
-                    viewsCount = rInt,
-                    commentsCount = rInt,
-                    likesCount = rInt,
-                    title = "title $it",
-                    description = "description $it",
-                    authorUserId = "authorUserId$it",
-                    thumbnailUrl = "https://picsum.photos/177/222",
-                )
-            }
+            data = List(count) { videoFeedItemResponseDto(it, generation) }
         ).also { generation++ }
+    }
+
+    private fun videoFeedItemResponseDto(it: Int, generation: Int) = VideoFeedItemResponseDto(
+        url = rVideos.random(),
+        internalId = "${generation}video$it",
+        entityId = "${generation}video$it",
+        createdDate = "",
+        viewsCount = rInt,
+        commentsCount = rInt,
+        likesCount = rInt,
+        title = "title $it",
+        description = "description $it",
+        authorUserId = "authorUserId$it",
+        thumbnailUrl = "https://picsum.photos/177/222",
+    )
+
+    override suspend fun myFeed(
+        from: Uuid?,
+        count: Int
+    ): BaseResponse<List<VideoFeedItemResponseDto>> {
+        log("Requesting my feed: $count videos with offset $from")
+        delay(mockDelay)
+        return BaseResponse(
+            actualTimestamp = 1L,
+            data = List(count) { videoFeedItemResponseDto(it, myGeneration) }
+        ).also { myGeneration++ }
+    }
+
+    override suspend fun userFeed(
+        userId: Uuid,
+        from: Uuid?,
+        count: Int
+    ): BaseResponse<List<VideoFeedItemResponseDto>> {
+        log("Requesting user $userId feed: $count videos with offset $from")
+        delay(mockDelay)
+        return BaseResponse(
+            actualTimestamp = 1L,
+            data = List(count) { videoFeedItemResponseDto(it, userGeneration) }
+        ).also { userGeneration++ }
     }
 
     override suspend fun popularFeed(
@@ -53,21 +80,7 @@ class FakeVideoFeedApi : VideoFeedApi {
         delay(mockDelay)
         return BaseResponse(
             actualTimestamp = 1L,
-            data = List(count) {
-                VideoFeedItemResponseDto(
-                    url = rVideos.random(),
-                    entityId = "${popularGeneration}video$it",
-                    internalId = "${popularGeneration}video$it",
-                    createdDate = "",
-                    viewsCount = rInt,
-                    commentsCount = rInt,
-                    likesCount = rInt,
-                    title = "title $it",
-                    description = "description $it",
-                    authorUserId = "authorUserId$it",
-                    thumbnailUrl = "https://picsum.photos/177/222",
-                )
-            }
+            data = List(count) { videoFeedItemResponseDto(it, popularGeneration) }
         ).also { popularGeneration++ }
     }
 
@@ -79,22 +92,8 @@ class FakeVideoFeedApi : VideoFeedApi {
         delay(mockDelay)
         return BaseResponse(
             actualTimestamp = 1L,
-            data = List(count) {
-                VideoFeedItemResponseDto(
-                    url = rVideos.random(),
-                    entityId = "${popularGeneration}video$it",
-                    internalId = "${popularGeneration}video$it",
-                    createdDate = "",
-                    viewsCount = rInt,
-                    commentsCount = rInt,
-                    likesCount = rInt,
-                    title = "title $it",
-                    description = "description $it",
-                    authorUserId = "authorUserId$it",
-                    thumbnailUrl = "https://picsum.photos/177/222",
-                )
-            }
-        ).also { popularGeneration++ }
+            data = List(count) { videoFeedItemResponseDto(it, 0) }
+        )
     }
 
     override suspend fun view(videoId: Uuid): BaseResponse<Completable> {

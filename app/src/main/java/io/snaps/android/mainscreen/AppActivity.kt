@@ -1,5 +1,7 @@
 package io.snaps.android.mainscreen
 
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.annotation.CallSuper
@@ -32,9 +34,11 @@ class AppActivity : FragmentActivity() {
 
     private var shouldKeepSplashScreen = true
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         WindowCompat.setDecorFitsSystemWindows(window, false)
         installSplashScreen().setKeepOnScreenCondition { shouldKeepSplashScreen }
         setContent {

@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.res.Configuration
 import android.net.Uri
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraSelector.DEFAULT_BACK_CAMERA
 import androidx.camera.core.CameraSelector.DEFAULT_FRONT_CAMERA
@@ -27,6 +29,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -52,6 +56,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -68,6 +73,7 @@ import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
+import io.snaps.coreuicompose.uikit.button.SimpleButtonInlineL
 import io.snaps.coreuicompose.uikit.button.SimpleButtonLightS
 import io.snaps.coreuicompose.uikit.other.Progress
 import io.snaps.coreuitheme.compose.AppTheme
@@ -76,7 +82,8 @@ import io.snaps.featurecreate.createVideoCaptureUseCase
 import io.snaps.featurecreate.startRecordingVideo
 import io.snaps.featurecreate.toTextValue
 import io.snaps.featurecreate.viewmodel.CreateVideoViewModel
-import io.snaps.featurecreate.viewmodel.Timing
+import io.snaps.featurecreate.viewmodel.RecordDelay
+import io.snaps.featurecreate.viewmodel.RecordTiming
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -104,14 +111,21 @@ fun CreateVideoScreen(
 
     BackHandler(enabled = !uiState.isRecording) {}
 
+    val videoPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { it?.path?.let(router::toPreviewScreen) },
+    )
+
     CreateVideoScreen(
         isPermissionGranted = permissionState.allPermissionsGranted,
         uiState = uiState,
-        onSelectFileClicked = {},
+        onSelectFileClicked = { videoPicker.launch("video/*") },
         onCloseClicked = router::back,
+        onDelayCanceled = viewModel::onDelayCanceled,
+        onRecordDelaySelected = viewModel::onRecordDelaySelected,
         onGrantPermissionClicked = permissionState::launchMultiplePermissionRequest,
         onTimingSelected = viewModel::onTimingSelected,
-        onRecordingClicked = viewModel::onRecordingClicked,
+        onRecordingStartClicked = viewModel::onRecordingStartClicked,
         onCameraChanged = viewModel::onCameraChanged,
         onRecordFinished = router::toPreviewScreen,
         onRecorded = viewModel::onRecorded,
@@ -124,10 +138,12 @@ private fun CreateVideoScreen(
     isPermissionGranted: Boolean,
     uiState: CreateVideoViewModel.UiState,
     onCloseClicked: () -> Unit,
+    onDelayCanceled: () -> Unit,
+    onRecordDelaySelected: (RecordDelay) -> Unit,
     onGrantPermissionClicked: () -> Unit,
     onSelectFileClicked: () -> Unit,
-    onTimingSelected: (Timing) -> Unit,
-    onRecordingClicked: (Boolean) -> Unit,
+    onTimingSelected: (RecordTiming) -> Unit,
+    onRecordingStartClicked: (((Boolean) -> Unit) -> Unit) -> Unit,
     onCameraChanged: (Boolean) -> Unit,
     onRecordFinished: (String) -> Unit,
     onRecorded: (Long) -> Unit,
@@ -147,9 +163,10 @@ private fun CreateVideoScreen(
                         .padding(12.dp),
                     uiState = uiState,
                     onCloseClicked = onCloseClicked,
+                    onRecordDelaySelected = onRecordDelaySelected,
                     onSelectFileClicked = onSelectFileClicked,
                     onTimingSelected = onTimingSelected,
-                    onRecordingClicked = onRecordingClicked,
+                    onRecordingStartClicked = onRecordingStartClicked,
                     onRecordFinished = onRecordFinished,
                     onCameraChanged = onCameraChanged,
                     onRecorded = onRecorded,
@@ -161,6 +178,8 @@ private fun CreateVideoScreen(
             }
         }
     }
+
+    DelayTimer(delayValue = uiState.delayValue, onDelayCanceled = onDelayCanceled)
 }
 
 @Composable
@@ -182,9 +201,10 @@ fun BoxScope.PermissionGrantedContent(
     modifier: Modifier,
     uiState: CreateVideoViewModel.UiState,
     onCloseClicked: () -> Unit,
+    onRecordDelaySelected: (RecordDelay) -> Unit,
     onSelectFileClicked: () -> Unit,
-    onTimingSelected: (Timing) -> Unit,
-    onRecordingClicked: (Boolean) -> Unit,
+    onTimingSelected: (RecordTiming) -> Unit,
+    onRecordingStartClicked: (((Boolean) -> Unit) -> Unit) -> Unit,
     onCameraChanged: (Boolean) -> Unit,
     onRecordFinished: (String) -> Unit,
     onRecorded: (Long) -> Unit,
@@ -209,23 +229,25 @@ fun BoxScope.PermissionGrantedContent(
     }
 
     fun start() {
-        videoCapture.value?.let {
-            recording = context.startRecordingVideo(it) { event ->
-                when (event) {
-                    is VideoRecordEvent.Start -> {
-                        onRecordingClicked(true)
-                    }
-                    is VideoRecordEvent.Pause -> {}
-                    is VideoRecordEvent.Resume -> {}
-                    is VideoRecordEvent.Finalize -> {
-                        val uri = event.outputResults.outputUri
-                        if (uri != Uri.EMPTY) {
-                            onRecordFinished(uri.path!!)
+        onRecordingStartClicked { onRecordingStatusChanged ->
+            videoCapture.value?.let {
+                recording = context.startRecordingVideo(it) { event ->
+                    when (event) {
+                        is VideoRecordEvent.Start -> {
+                            onRecordingStatusChanged(true)
                         }
-                        onRecordingClicked(false)
-                    }
-                    is VideoRecordEvent.Status -> {
-                        onRecorded(event.recordingStats.recordedDurationNanos)
+                        is VideoRecordEvent.Pause -> {}
+                        is VideoRecordEvent.Resume -> {}
+                        is VideoRecordEvent.Finalize -> {
+                            val uri = event.outputResults.outputUri
+                            if (uri != Uri.EMPTY) {
+                                onRecordFinished(uri.path!!)
+                            }
+                            onRecordingStatusChanged(false)
+                        }
+                        is VideoRecordEvent.Status -> {
+                            onRecorded(event.recordingStats.recordedDurationNanos)
+                        }
                     }
                 }
             }
@@ -267,7 +289,9 @@ fun BoxScope.PermissionGrantedContent(
         Box(modifier = Modifier.fillMaxSize()) {
             if (!uiState.isRecording) {
                 Actions(
+                    selectedRecordDelay = uiState.selectedDelay,
                     onCloseClicked = onCloseClicked,
+                    onRecordDelaySelected = onRecordDelaySelected,
                 )
             }
             Column(
@@ -296,7 +320,9 @@ fun BoxScope.PermissionGrantedContent(
 
 @Composable
 private fun BoxScope.Actions(
+    selectedRecordDelay: RecordDelay,
     onCloseClicked: () -> Unit,
+    onRecordDelaySelected: (RecordDelay) -> Unit,
 ) {
     IconButton(
         onClick = onCloseClicked,
@@ -309,29 +335,61 @@ private fun BoxScope.Actions(
             tint = AppTheme.specificColorScheme.white,
         )
     }
-    IconButton(
-        onClick = { /*TODO*/ },
+    Row(
         modifier = Modifier.align(Alignment.TopEnd),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Image(
-            painter = AppTheme.specificIcons.cameraTimer.get(),
-            contentDescription = null,
-            modifier = Modifier.size(36.dp),
-        )
+        if (selectedRecordDelay != RecordDelay._0) {
+            Text(
+                selectedRecordDelay.toTextValue().get(),
+                color = AppTheme.specificColorScheme.white,
+                modifier = Modifier.padding(end = 8.dp),
+            )
+        }
+        Column {
+            var isMenuExpanded by remember { mutableStateOf(false) }
+            IconButton(
+                onClick = { isMenuExpanded = !isMenuExpanded },
+            ) {
+                Image(
+                    painter = AppTheme.specificIcons.cameraTimer.get(),
+                    contentDescription = null,
+                    modifier = Modifier.size(36.dp),
+                )
+            }
+            DropdownMenu(
+                expanded = isMenuExpanded,
+                onDismissRequest = { isMenuExpanded = false },
+            ) {
+                RecordDelay.values().forEach {
+                    DropdownMenuItem(
+                        onClick = {
+                            onRecordDelaySelected(it)
+                            isMenuExpanded = false
+                        },
+                    ) {
+                        Text(
+                            text = it.toTextValue().get(),
+                            style = AppTheme.specificTypography.bodySmall,
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
 @Composable
 private fun Timings(
     uiState: CreateVideoViewModel.UiState,
-    onTimingSelected: (Timing) -> Unit,
+    onTimingSelected: (RecordTiming) -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Timing.values().forEach {
+        RecordTiming.values().forEach {
             if (uiState.isSelected(it)) {
                 SimpleButtonActionS(onClick = {}) {
                     SimpleButtonContent(text = it.toTextValue())
@@ -341,7 +399,7 @@ private fun Timings(
                     SimpleButtonContent(text = it.toTextValue())
                 }
             }
-            if (it != Timing.values().last()) {
+            if (it != RecordTiming.values().last()) {
                 Spacer(Modifier.width(16.dp))
             }
         }
@@ -361,7 +419,7 @@ private fun Controls(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        TextButton(
+        IconTextButton(
             isVisible = !uiState.isRecording,
             iconValue = AppTheme.specificIcons.flipCamera,
             onClicked = onChangeCameraClicked,
@@ -390,7 +448,7 @@ private fun Controls(
                     .size(140.dp),
             )
         }
-        TextButton(
+        IconTextButton(
             isVisible = !uiState.isRecording,
             iconValue = AppTheme.specificIcons.picture,
             onClicked = onSelectFileClicked,
@@ -400,7 +458,7 @@ private fun Controls(
 }
 
 @Composable
-private fun TextButton(
+private fun IconTextButton(
     isVisible: Boolean,
     iconValue: IconValue,
     onClicked: () -> Unit,
@@ -422,6 +480,35 @@ private fun TextButton(
             text.get(),
             color = AppTheme.specificColorScheme.white,
         )
+    }
+}
+
+@Composable
+private fun DelayTimer(
+    delayValue: String?,
+    onDelayCanceled: () -> Unit,
+) {
+    if (delayValue != null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(AppTheme.specificColorScheme.white_90),
+        ) {
+            Text(
+                text = delayValue,
+                modifier = Modifier.align(Alignment.Center),
+                color = AppTheme.specificColorScheme.textPrimary,
+                style = AppTheme.specificTypography.displayLarge.copy(fontSize = 124.sp),
+            )
+            SimpleButtonInlineL(
+                onClick = onDelayCanceled,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 24.dp),
+            ) {
+                SimpleButtonContent(text = StringKey.ActionCancel.textValue())
+            }
+        }
     }
 }
 

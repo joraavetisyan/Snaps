@@ -12,14 +12,19 @@ import io.snaps.corecommon.model.State
 import io.snaps.featurecollection.presentation.screen.RankTileState
 
 fun State<List<RankModel>>.toRankTileState(
+    purchasedRanks: List<NftModel>,
     onItemClicked: (RankModel) -> Unit,
     onReloadClicked: () -> Unit,
 ) = when (this) {
     is Loading -> List(6) { RankTileState.Shimmer }
     is Effect -> when {
         isSuccess -> {
-            requireData.map {
-                it.toRankTileState(onItemClicked = onItemClicked)
+            requireData.map { rank ->
+                rank.copy(
+                    isAvailableToPurchase = rank.isAvailableToPurchase && purchasedRanks.none {
+                        it.type == rank.type
+                    }
+                ).toRankTileState(onItemClicked = onItemClicked)
             }
         }
         else -> listOf(RankTileState.Error(onClick = onReloadClicked))
@@ -51,7 +56,7 @@ fun State<List<NftModel>>.toMysteryBoxCollectionItemState(
                 add(it.toMysteryBoxCollectionItemState())
             }
             if (maxCount > requireData.size) {
-               add(CollectionItemState.AddItem(onAddItemClicked))
+                add(CollectionItemState.AddItem(onAddItemClicked))
             }
         }
         else -> listOf(CollectionItemState.Error(onClick = onReloadClicked))

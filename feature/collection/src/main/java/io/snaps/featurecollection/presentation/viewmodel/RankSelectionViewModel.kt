@@ -3,18 +3,18 @@ package io.snaps.featurecollection.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
+import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.baseprofile.data.MainHeaderHandler
-import io.snaps.basesources.NotificationsSource
-import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FullUrl
-import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.featurecollection.presentation.screen.RankTileState
 import io.snaps.featurecollection.presentation.toRankTileState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,10 +28,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RankSelectionViewModel @Inject constructor(
+    mainHeaderHandlerDelegate: MainHeaderHandler,
     private val action: Action,
     private val nftRepository: NftRepository,
-    private val notificationsSource: NotificationsSource,
-    mainHeaderHandlerDelegate: MainHeaderHandler,
 ) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -40,14 +39,25 @@ class RankSelectionViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
+    private var ranksLoadJob: Job? = null
+
     init {
-        subscribeOnRanks()
-        loadRanks()
+        nftRepository.nftCollectionState.onEach {
+            if (it is Effect && it.isSuccess) {
+                subscribeOnRanks(it.requireData)
+                loadRanks()
+            }
+        }.launchIn(viewModelScope)
+        viewModelScope.launch {
+            action.execute { nftRepository.updateNftCollection() }
+        }
     }
 
-    private fun subscribeOnRanks() {
-        nftRepository.ranksState.map {
+    private fun subscribeOnRanks(purchasedRanks: List<NftModel>) {
+        ranksLoadJob?.cancel()
+        ranksLoadJob = nftRepository.ranksState.map {
             it.toRankTileState(
+                purchasedRanks = purchasedRanks,
                 onItemClicked = ::onItemClicked,
                 onReloadClicked = ::onReloadClicked,
             )
@@ -67,19 +77,16 @@ class RankSelectionViewModel @Inject constructor(
     }
 
     private fun onItemClicked(rank: RankModel) = viewModelScope.launch {
-        if (rank.isAvailableToPurchase) {
-            _command publish Command.OpenPurchase(
-                args = AppRoute.Purchase.Args(
-                    type = rank.type,
-                    costInUsd = requireNotNull(rank.costInUsd),
-                    dailyReward = rank.dailyReward,
-                    dailyUnlock = rank.dailyUnlock,
-                    image = rank.image.value as FullUrl,
-                )
+        _command publish Command.OpenPurchase(
+            args = AppRoute.Purchase.Args(
+                type = rank.type,
+                costInUsd = rank.costInUsd,
+                dailyReward = rank.dailyReward,
+                dailyUnlock = rank.dailyUnlock,
+                image = rank.image.value as FullUrl,
+                isAvailableToPurchase = rank.isAvailableToPurchase,
             )
-        } else {
-            notificationsSource.sendMessage(StringKey.RankSelectionMessageNotAvailable.textValue())
-        }
+        )
     }
 
     data class UiState(

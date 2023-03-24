@@ -3,6 +3,7 @@ package io.snaps.basesession.data
 import com.google.firebase.auth.FirebaseAuth
 import io.snaps.baseprofile.data.UserSessionTracker
 import io.snaps.basesources.DeviceInfoProvider
+import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
@@ -45,6 +46,7 @@ class SessionRepositoryImpl @Inject constructor(
     }
 
     override suspend fun refresh(): Effect<Completable> {
+        log("Refreshing token")
         val token = auth.currentUser?.getIdToken(false)?.await()?.token
         if (token != null) {
             tokenStorage.authToken = token
@@ -52,6 +54,7 @@ class SessionRepositoryImpl @Inject constructor(
         } else {
             logout()
         }
+        log("Refresh result: $token")
         return Effect.completable
     }
 

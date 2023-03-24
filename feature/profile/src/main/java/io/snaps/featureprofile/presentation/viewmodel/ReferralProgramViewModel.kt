@@ -5,6 +5,7 @@ import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.baseprofile.data.MainHeaderHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.channels.Channel
@@ -22,6 +23,7 @@ class ReferralProgramViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
     private val profileRepository: ProfileRepository,
     private val action: Action,
+    private val bottomBarVisibilitySource: BottomBarVisibilitySource,
 ) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -48,7 +50,12 @@ class ReferralProgramViewModel @Inject constructor(
         _uiState.update {
             it.copy(bottomDialog = BottomDialog.ReferralCode)
         }
+        bottomBarVisibilitySource.updateState(false)
         _command publish Command.ShowBottomDialog
+    }
+
+    fun onBottomSheetHidden() {
+        bottomBarVisibilitySource.updateState(true)
     }
 
     fun onInviteUserButtonClicked() {

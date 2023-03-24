@@ -43,6 +43,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -174,7 +175,7 @@ private fun WalletScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     val wallet = StringKey.WalletTitle.textValue()
-    val awards = StringKey.WalletTitleAwards.textValue()
+    val awards = StringKey.WalletTitleRewards.textValue()
 
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
@@ -315,7 +316,7 @@ private fun Awards(
     onWithdrawClicked: () -> Unit,
     onDropdownMenuItemClicked: (TransactionType) -> Unit,
 ) {
-    val expandedMenu = remember { mutableStateOf(false) }
+    var isMenuExpanded by remember { mutableStateOf(false) }
     ScrollEndDetectLazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(12.dp),
@@ -374,7 +375,7 @@ private fun Awards(
                 Box {
                     SimpleButtonGreyS(
                         modifier = Modifier.padding(vertical = 4.dp),
-                        onClick = { expandedMenu.value = true }
+                        onClick = { isMenuExpanded = true }
                     ) {
                         SimpleButtonContent(
                             text = transactionTypeSelected.name.textValue(),
@@ -384,13 +385,14 @@ private fun Awards(
                         )
                     }
                     DropdownMenu(
-                        expanded = expandedMenu.value,
-                        onDismissRequest = { expandedMenu.value = false }) {
+                        expanded = isMenuExpanded,
+                        onDismissRequest = { isMenuExpanded = false },
+                    ) {
                         TransactionType.values().forEach {
                             DropdownMenuItem(
                                 onClick = {
                                     onDropdownMenuItemClicked(it)
-                                    expandedMenu.value = false
+                                    isMenuExpanded = false
                                 },
                             ) {
                                 Text(
