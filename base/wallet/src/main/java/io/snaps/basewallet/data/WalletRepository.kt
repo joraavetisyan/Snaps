@@ -58,6 +58,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import java.math.BigInteger
 import javax.inject.Inject
 
 object InvalidMnemonicsException : Exception()
@@ -82,9 +83,16 @@ interface WalletRepository {
 
     fun getAvailableBalance(wallet: WalletModel): String?
 
-    fun send(amount: String, address: WalletAddress, wallet: WalletModel): Effect<SendHandler>
+    fun send(
+        amount: BigInteger,
+        address: WalletAddress,
+        wallet: WalletModel,
+        data: ByteArray = byteArrayOf(),
+    ): Effect<SendHandler>
 
     suspend fun claim(amount: Int): Effect<Completable>
+
+    fun getBnbWalletModel(): WalletModel?
 }
 
 class WalletRepositoryImpl @Inject constructor(
@@ -125,6 +133,7 @@ class WalletRepositoryImpl @Inject constructor(
                 )
                 WalletModel(
                     coinUid = item.wallet.coin.uid,
+                    decimal = item.wallet.decimal,
                     symbol = item.coinCode,
                     iconUrl = item.coinIconUrl,
                     coinValue = item.primaryValue.value,
@@ -132,6 +141,7 @@ class WalletRepositoryImpl @Inject constructor(
                     receiveAddress = CryptoKit.adapterManager.getReceiveAdapterForWallet(
                         item.wallet
                     )?.receiveAddress.orEmpty(),
+                    coinAddress = item.wallet.tokenAddress,
                 )
             } ?: emptyList()
         }.likeStateFlow(scope, emptyList())
@@ -214,6 +224,12 @@ class WalletRepositoryImpl @Inject constructor(
         return walletManager.getWallets(account)
     }
 
+    override fun getBnbWalletModel(): WalletModel? {
+        return activeWallets.value.firstOrNull {
+            it.coinUid == "binancecoin"
+        }
+    }
+
     override fun getActiveWalletsReceiveAddresses(): List<WalletAddress> {
         return getWallets().mapNotNull {
             CryptoKit.adapterManager.getReceiveAdapterForWallet(it)?.receiveAddress
@@ -222,17 +238,19 @@ class WalletRepositoryImpl @Inject constructor(
 
     private fun activateDefaultWallets(account: Account) {
         val tokenQueries = listOf(
-            // boxer
-            "0x192E9321b6244D204D4301AfA507EB29CA84D9ef",
-            // laflix
-            "0x3e3bfa35e81e85be5c65b0c759fe1b6ed6525ec0",
-            // wrapped bnb
+            // SNAPS
+            "0x92677918569A2BEA213Af66b54e0C9B9811d021c",
+            // WBNB
             "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
             // BUSD
             "0xe9e7cea3dedca5984780bafc599bd69add087d56",
+            // USDT
+            "0x55d398326f99059ff775485246999027b3197955",
         ).map {
             TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Eip20(it))
-        }
+        } + listOf(
+            TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Native)
+        )
         walletActivator.activateWallets(account, tokenQueries)
     }
 
@@ -242,12 +260,19 @@ class WalletRepositoryImpl @Inject constructor(
 
     @SuppressLint("CheckResult")
     override fun send(
-        amount: String,
+        amount: BigInteger,
         address: WalletAddress,
         wallet: WalletModel,
+        data: ByteArray,
     ): Effect<SendHandler> {
         lastSendHandler?.stop()
-        val adapter = adapter(wallet) ?: return Effect.error(AppError.Unknown())
+
+        val adapter = adapter(wallet) ?: return Effect.error(
+            AppError.Unknown(
+                cause = IllegalArgumentException("Adapter is null")
+            )
+        )
+
         return try {
             val evmKitWrapper = adapter.evmKitWrapper
             val gasPriceService: IEvmGasPriceService = run {
@@ -262,8 +287,9 @@ class WalletRepositoryImpl @Inject constructor(
             }
             val sendEvmData = SendEvmData(
                 transactionData = adapter.getTransactionData(
+                    amount = amount,
                     address = Address(address),
-                    amount = amount.toBigInteger(),
+                    data = data,
                 ),
             )
             val feeService = run {
@@ -289,7 +315,7 @@ class WalletRepositoryImpl @Inject constructor(
             )
             Effect.success(SendHandlerImpl(service).also { lastSendHandler = it })
         } catch (e: Exception) {
-            Effect.error(AppError.Unknown())
+            Effect.error(AppError.Unknown(cause = e))
         }
     }
 
@@ -312,18 +338,23 @@ interface SendHandler {
 
     fun send()
 
+    fun send(
+        gasPrice: BigInteger,
+        gasLimit: BigInteger,
+    )
+
     fun stop()
 
     sealed class State {
         object Idle : State()
         object Sending : State()
         data class Ready(
-            val fee: String,
-            val total: String,
+            val fee: BigInteger,
+            val total: BigInteger,
         ) : State()
 
         object Sent : State()
-        object Failed : State()
+        data class Failed(val errors: List<Throwable>) : State()
     }
 }
 
@@ -338,29 +369,27 @@ internal class SendHandlerImpl(
     private val disposables = CompositeDisposable()
 
     init {
-        service.stateObservable.subscribeIO {
-            log("Transaction service state: $it")
-            when (it) {
+        service.stateObservable.subscribeIO { serviceState ->
+            log("Transaction service state: $serviceState")
+            when (serviceState) {
                 is SendEvmTransactionService.State.NotReady -> {
-                    _state.update { SendHandler.State.Failed }
+                    _state.update { SendHandler.State.Failed(serviceState.errors) }
                 }
                 is SendEvmTransactionService.State.Ready -> {
                     _state.update {
                         SendHandler.State.Ready(
-                            fee = service.txDataState.transaction?.gasData?.fee?.toString()
-                                .orEmpty(),
-                            total = service.txDataState.transaction?.totalAmount?.toString()
-                                .orEmpty(),
+                            fee = service.txDataState.transaction?.gasData?.fee ?: BigInteger.ZERO,
+                            total = service.txDataState.transaction?.totalAmount ?: BigInteger.ZERO,
                         )
                     }
                 }
             }
         }.let(disposables::add)
-        service.sendStateObservable.subscribeIO {
-            log("Transaction service send state: $it")
-            when (it) {
+        service.sendStateObservable.subscribeIO { serviceSendState ->
+            log("Transaction service send state: $serviceSendState")
+            when (serviceSendState) {
                 is SendEvmTransactionService.SendState.Failed -> {
-                    _state.update { SendHandler.State.Failed }
+                    _state.update { SendHandler.State.Failed(listOf(serviceSendState.error)) }
                 }
                 SendEvmTransactionService.SendState.Idle -> {
                     _state.update { SendHandler.State.Idle }
@@ -377,6 +406,10 @@ internal class SendHandlerImpl(
 
     override fun send() {
         service.send()
+    }
+
+    override fun send(gasPrice: BigInteger, gasLimit: BigInteger) {
+        service.send(gasPrice = gasPrice, gasLimit = gasLimit)
     }
 
     override fun stop() {

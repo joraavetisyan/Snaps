@@ -271,7 +271,7 @@ interface ISendEthereumAdapter {
     val evmKitWrapper: EvmKitWrapper
     val balanceData: BalanceData
 
-    fun getTransactionData(amount: BigInteger, address: Address): TransactionData
+    fun getTransactionData(amount: BigInteger, address: Address, data: ByteArray = byteArrayOf()): TransactionData
 }
 
 interface ISendBinanceAdapter {

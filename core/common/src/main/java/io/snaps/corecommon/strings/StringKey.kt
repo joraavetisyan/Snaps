@@ -209,6 +209,8 @@ enum class StringKey {
     WithdrawActionConfirmTransaction,
     WithdrawActionSendTransaction,
 
+    ExchangeTitle,
+
     ProfileTitle,
     ProfileTitleLikes,
     ProfileTitleSubscribers,

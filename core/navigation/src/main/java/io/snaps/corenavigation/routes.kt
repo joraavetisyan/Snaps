@@ -106,6 +106,14 @@ object AppRoute {
         )
     }
 
+    object Exchange : RouteWithArg("Exchange") {
+
+        @Serializable
+        data class Args(
+            val wallet: WalletModel,
+        )
+    }
+
     object ReferralProgramScreen : Route("ReferralProgramScreen")
 
     object Settings : Route("Settings")

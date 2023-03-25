@@ -9,7 +9,7 @@ import io.snaps.corecrypto.entities.AccountType
 import io.snaps.corecrypto.entities.Wallet
 
 class BinanceKitManager(
-        private val testMode: Boolean
+    private val testMode: Boolean
 ) : IBinanceKitManager {
     private var kit: BinanceChainKit? = null
     private var useCount = 0
@@ -37,7 +37,7 @@ class BinanceKitManager(
 
             useCount = 0
 
-            kit = createKitInstance( accountType, account)
+            kit = createKitInstance(accountType, account)
             currentAccount = account
         }
 
@@ -45,12 +45,21 @@ class BinanceKitManager(
         return kit!!
     }
 
-    private fun createKitInstance(accountType: AccountType.Mnemonic, account: Account): BinanceChainKit {
+    private fun createKitInstance(
+        accountType: AccountType.Mnemonic,
+        account: Account
+    ): BinanceChainKit {
         val networkType = if (testMode)
             BinanceChainKit.NetworkType.TestNet else
             BinanceChainKit.NetworkType.MainNet
 
-        val kit = BinanceChainKit.instance(CryptoKit.instance, accountType.words, accountType.passphrase, account.id, networkType)
+        val kit = BinanceChainKit.instance(
+            context = CryptoKit.instance,
+            words = accountType.words,
+            passphrase = accountType.passphrase,
+            walletId = account.id,
+            networkType = networkType,
+        )
         kit.refresh()
 
         return kit
@@ -67,5 +76,4 @@ class BinanceKitManager(
             currentAccount = null
         }
     }
-
 }

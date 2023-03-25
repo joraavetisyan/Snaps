@@ -52,8 +52,12 @@ class EvmAdapter(evmKitWrapper: EvmKitWrapper, coinManager: ICoinManager) :
 
     // ISendEthereumAdapter
 
-    override fun getTransactionData(amount: BigInteger, address: Address): TransactionData {
-        return TransactionData(address, amount, byteArrayOf())
+    override fun getTransactionData(
+        amount: BigInteger,
+        address: Address,
+        data: ByteArray,
+    ): TransactionData {
+        return TransactionData(to = address, value = amount, input = data)
     }
 
     companion object {

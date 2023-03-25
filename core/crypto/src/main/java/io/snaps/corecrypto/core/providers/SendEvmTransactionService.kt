@@ -2,6 +2,7 @@ package io.snaps.corecrypto.core.providers
 
 import io.horizontalsystems.ethereumkit.decorations.TransactionDecoration
 import io.horizontalsystems.ethereumkit.models.Address
+import io.horizontalsystems.ethereumkit.models.GasPrice
 import io.horizontalsystems.ethereumkit.models.TransactionData
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
@@ -28,6 +29,11 @@ interface ISendEvmTransactionService {
     val ownAddress: Address
 
     fun send()
+    fun send(
+        gasPrice: BigInteger,
+        gasLimit: BigInteger,
+    )
+
     fun methodName(input: ByteArray): String?
 }
 
@@ -103,7 +109,10 @@ class SendEvmTransactionService(
             return
         }
         val transaction = feeService.transactionStatus.dataOrNull ?: return
+        send(transaction)
+    }
 
+    private fun send(transaction: Transaction) {
         sendState = SendState.Sending
         log("sending tx")
 
@@ -121,6 +130,21 @@ class SendEvmTransactionService(
                 log("failed")
             })
             .let { disposable.add(it) }
+    }
+
+    override fun send(
+        gasPrice: BigInteger,
+        gasLimit: BigInteger,
+    ) {
+        send(
+            Transaction(
+                transactionData = sendEvmData.transactionData,
+                gasData = GasData(
+                    gasPrice = GasPrice.Legacy(gasPrice.toLong()),
+                    gasLimit = gasLimit.toLong(),
+                )
+            )
+        )
     }
 
     override fun methodName(input: ByteArray): String? =

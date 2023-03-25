@@ -110,6 +110,7 @@ fun WalletScreen(
             WalletViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             WalletViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
             is WalletViewModel.Command.OpenWithdrawScreen -> router.toWithdrawScreen(it.wallet)
+            is WalletViewModel.Command.OpenExchangeScreen -> router.toExchangeScreen(it.wallet)
         }
     }
 

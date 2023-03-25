@@ -74,6 +74,9 @@ object Libs {
 
     private const val barcodeVersion = "4.3.0"
 
+    private const val trustWeb3Version = "2.0.8"
+    private const val trustWalletCoreVersion = "3.1.20"
+
     object plugin {
         const val application = "com.android.application"
         const val library = "com.android.library"
@@ -247,6 +250,11 @@ object Libs {
         )
 
         const val barcode = "com.journeyapps:zxing-android-embedded:$barcodeVersion"
+
+        val trustWallet = arrayOf(
+            "com.github.trustwallet:trust-web3-provider:$trustWeb3Version",
+            "com.trustwallet:wallet-core:$trustWalletCoreVersion"
+        )
 
         val facebook = arrayOf(
             "com.facebook.android:facebook-android-sdk:$facebookVersion",

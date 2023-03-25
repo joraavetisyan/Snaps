@@ -45,6 +45,7 @@ import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurewallet.ScreenNavigator
+import io.snaps.featurewallet.viewmodel.CryptoSendHandler
 import io.snaps.featurewallet.viewmodel.WithdrawViewModel
 
 @Composable
@@ -56,12 +57,9 @@ fun WithdrawScreen(
 
     val uiState by viewModel.uiState.collectAsState()
     val headerState by viewModel.headerUiState.collectAsState()
+    val cryptoSendState by viewModel.cryptoSendState.collectAsState()
 
-    viewModel.command.collectAsCommand {
-        when (it) {
-            WithdrawViewModel.Command.CloseScreen -> router.back()
-        }
-    }
+    viewModel.command.collectAsCommand {}
 
     viewModel.headerCommand.collectAsCommand {
         when (it) {
@@ -70,8 +68,15 @@ fun WithdrawScreen(
         }
     }
 
+    viewModel.cryptoSendCommand.collectAsCommand {
+        when (it) {
+            CryptoSendHandler.Command.CloseScreen -> router.back()
+        }
+    }
+
     WithdrawScreen(
         uiState = uiState,
+        cryptoSendState = cryptoSendState,
         headerState = headerState.value,
         onBackClicked = router::back,
         onAddressValueChanged = viewModel::onAddressValueChanged,
@@ -80,13 +85,14 @@ fun WithdrawScreen(
         onMaxButtonClicked = viewModel::onMaxButtonClicked,
     )
 
-    FullScreenLoaderUi(isLoading = uiState.isLoading)
+    FullScreenLoaderUi(isLoading = cryptoSendState.isLoading)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WithdrawScreen(
     uiState: WithdrawViewModel.UiState,
+    cryptoSendState: CryptoSendHandler.UiState,
     headerState: MainHeaderState,
     onAddressValueChanged: (String) -> Unit,
     onAmountValueChanged: (String) -> Unit,
@@ -194,7 +200,7 @@ private fun WithdrawScreen(
                     modifier = Modifier.padding(horizontal = 12.dp),
                 )
                 Text(
-                    text = uiState.transactionFee,
+                    text = cryptoSendState.transactionFee,
                     style = AppTheme.specificTypography.bodySmall,
                     color = AppTheme.specificColorScheme.textPrimary,
                     modifier = Modifier
@@ -211,7 +217,7 @@ private fun WithdrawScreen(
                     modifier = Modifier.padding(12.dp),
                 )
                 Text(
-                    text = uiState.totalAmount,
+                    text = cryptoSendState.totalAmount,
                     style = AppTheme.specificTypography.bodySmall,
                     color = AppTheme.specificColorScheme.textPrimary,
                     modifier = Modifier
@@ -224,15 +230,15 @@ private fun WithdrawScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp, vertical = 20.dp),
-                onClick = if (uiState.isSendEnabled) {
-                    uiState.onSendClicked
+                onClick = if (cryptoSendState.isSendEnabled) {
+                    cryptoSendState.onSendClicked
                 } else {
                     onConfirmTransactionClicked
                 },
-                enabled = uiState.isConfirmEnabled || uiState.isSendEnabled,
+                enabled = uiState.isConfirmEnabled || cryptoSendState.isSendEnabled,
             ) {
                 SimpleButtonContent(
-                    text = if (uiState.isSendEnabled) {
+                    text = if (cryptoSendState.isSendEnabled) {
                         StringKey.WithdrawActionSendTransaction
                     } else {
                         StringKey.WithdrawActionConfirmTransaction

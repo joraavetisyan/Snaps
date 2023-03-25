@@ -69,7 +69,7 @@ class Eip20Adapter(
 
     // ISendEthereumAdapter
 
-    override fun getTransactionData(amount: BigInteger, address: Address): TransactionData {
+    override fun getTransactionData(amount: BigInteger, address: Address, data: ByteArray): TransactionData {
         return eip20Kit.buildTransferTransactionData(address, amount)
     }
 

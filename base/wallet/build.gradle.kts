@@ -16,4 +16,5 @@ dependencies {
     implementation(projects.baseSources)
 
     implementation(*Libs.bundle.crypto)
+    implementation(*Libs.bundle.trustWallet)
 }

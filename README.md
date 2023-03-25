@@ -1,5 +1,11 @@
 # Snaps project
 
+## Configuration
+В local.properties добавь два поля:
++ gpr.user=твой ник в гитхабе
++ gpr.key=авториз. токен (добавь в гитхабе в настройках https://github.com/settings/tokens токен (можно непротухающий) и с правами read:packages) - это нужно для библы trust wallet core
+
+## About
 Project with functional modules on the next stack:
 + kotlin, coroutines
 + mvvm, hilt, compose, navigation component

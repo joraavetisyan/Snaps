@@ -41,12 +41,14 @@ enum class SubsType {
 
 @Serializable
 data class WalletModel(
-    @SerialName("coinUid") val coinUid: String,
-    @SerialName("receiveAddress") val receiveAddress: WalletAddress,
-    @SerialName("symbol") val symbol: String,
-    @SerialName("iconUrl") val iconUrl: FullUrl,
-    @SerialName("coinValue") val coinValue: String,
-    @SerialName("fiatValue") val fiatValue: String,
+    val coinUid: String,
+    val receiveAddress: WalletAddress,
+    val symbol: String,
+    val iconUrl: FullUrl,
+    val coinValue: String,
+    val fiatValue: String,
+    val decimal: Int,
+    val coinAddress: String?,
 )
 
 @Serializable
