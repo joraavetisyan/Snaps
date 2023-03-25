@@ -74,7 +74,7 @@ object Libs {
 
     private const val barcodeVersion = "4.3.0"
 
-    private const val trustWeb3Version = "2.0.0-alpha"
+    private const val trustWeb3Version = "2.0.8"
     private const val trustWalletCoreVersion = "3.1.20"
 
     object plugin {

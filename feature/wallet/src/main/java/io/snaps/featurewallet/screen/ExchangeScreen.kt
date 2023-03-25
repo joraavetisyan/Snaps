@@ -22,7 +22,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.basewallet.data.trustwallet.TrustWalletProvider
-import io.snaps.basewallet.data.trustwallet.WebAppInterface
+import io.snaps.basewallet.data.trustwallet.TrustWalletWebAppInterface
+import io.snaps.basewallet.domain.SwapTransactionModel
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
@@ -63,7 +64,7 @@ fun ExchangeScreen(
 private fun ExchangeScreen(
     uiState: ExchangeViewModel.UiState,
     onBackClicked: () -> Boolean,
-    onTransactionSendClicked: (address: String, amount: String) -> Unit,
+    onTransactionSendClicked: (SwapTransactionModel) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val localContext = LocalContext.current
@@ -82,21 +83,20 @@ private fun ExchangeScreen(
             modifier = Modifier.padding(paddingValues),
             factory = { context ->
                 val address = uiState.walletModel.receiveAddress
-                val symbol = uiState.walletModel.symbol
                 WebView.setWebContentsDebuggingEnabled(true)
                 val webView = WebView(context)
-                val webAppInterface = WebAppInterface(
+                val webAppInterface = TrustWalletWebAppInterface(
                     address = address,
                     webView = webView,
                     sendTransaction = onTransactionSendClicked,
                 )
-                webView.addJavascriptInterface(webAppInterface, WebAppInterface.name)
+                webView.addJavascriptInterface(webAppInterface, TrustWalletWebAppInterface.name)
                 webView.settings.run {
                     javaScriptEnabled = true
                     domStorageEnabled = true
                 }
                 val providerJs = TrustWalletProvider.loadProviderJs(localContext as Activity)
-                val initJs = TrustWalletProvider.loadInitJs()
+                val initJs = TrustWalletProvider.loadInitJs(address)
                 val webViewClient = object : WebViewClient() {
                     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                         super.onPageStarted(view, url, favicon)
@@ -114,7 +114,9 @@ private fun ExchangeScreen(
                     }
                 }
                 webView.webViewClient = webViewClient
-                webView.loadUrl(TrustWalletProvider.swapProvideUrl(symbol))
+                webView.loadUrl(
+                    TrustWalletProvider.swapProvideUrl(uiState.walletModel.coinAddress.orEmpty())
+                )
                 webView
             }
         )

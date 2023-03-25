@@ -4,7 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.MainHeaderHandler
+import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.WalletModel
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
@@ -14,6 +16,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,6 +26,7 @@ class WithdrawViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
     sendHandlerDelegate: CryptoSendHandler,
     walletRepository: WalletRepository,
+    private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel(),
     MainHeaderHandler by mainHeaderHandlerDelegate,
     CryptoSendHandler by sendHandlerDelegate {
@@ -40,25 +45,36 @@ class WithdrawViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     fun onAmountValueChanged(amount: String) {
+        disableSend()
         _uiState.update { it.copy(amountValue = amount) }
     }
 
     fun onAddressValueChanged(address: String) {
+        disableSend()
         _uiState.update { it.copy(addressValue = address) }
     }
 
     fun onMaxButtonClicked() {
+        disableSend()
         _uiState.update { state ->
             state.copy(amountValue = state.availableAmount.filter { it.isDigit() || it == '.' })
         }
     }
 
     fun onConfirmTransactionClicked() {
+        val amountBigDecimal = _uiState.value.amountValue.toBigDecimalOrNull()?.takeIf {
+            it > BigDecimal.ZERO
+        }?.movePointRight(args.wallet.decimal)?.toBigInteger() ?: kotlin.run {
+            viewModelScope.launch {
+                notificationsSource.sendError("Invalid amount".textValue())
+            }
+            return
+        }
         onSendClicked(
             scope = viewModelScope,
             wallet = args.wallet,
             address = _uiState.value.addressValue,
-            amount = _uiState.value.amountValue,
+            amount = amountBigDecimal,
         )
     }
 

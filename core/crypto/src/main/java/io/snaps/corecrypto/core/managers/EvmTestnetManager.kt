@@ -25,7 +25,12 @@ class EvmTestnetManager(private val localStorage: ILocalStorage) {
 
         return when (type) {
             BlockchainType.EthereumGoerli -> {
-                Token(Coin("ethereum-goerli", "Ethereum Goerli", "GoerliETH"), blockchain, TokenType.Native, 18)
+                Token(
+                    Coin("ethereum-goerli", "Ethereum Goerli", "GoerliETH"),
+                    blockchain,
+                    TokenType.Native,
+                    18
+                )
             }
             else -> null
         }
@@ -51,7 +56,8 @@ class EvmTestnetManager(private val localStorage: ILocalStorage) {
             val filterText = filter?.lowercase()
             if (filterText != null) {
                 tokens = tokens.filter {
-                    it.coin.name.lowercase().contains(filterText) || it.coin.code.lowercase().contains(filterText)
+                    it.coin.name.lowercase().contains(filterText) || it.coin.code.lowercase()
+                        .contains(filterText)
                 }
             }
             return tokens

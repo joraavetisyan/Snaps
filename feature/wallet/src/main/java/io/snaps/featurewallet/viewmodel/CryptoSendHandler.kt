@@ -4,6 +4,7 @@ import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.SendHandler
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.WalletModel
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.publish
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.math.BigInteger
 import javax.inject.Inject
 
 interface CryptoSendHandler {
@@ -27,12 +29,17 @@ interface CryptoSendHandler {
 
     val cryptoSendCommand: Flow<Command>
 
+    fun disableSend()
+
     fun onSendClicked(
         scope: CoroutineScope,
         wallet: WalletModel,
         address: String,
-        amount: String,
-        sendImmediately: Boolean = false,
+        amount: BigInteger,
+        isSendImmediately: Boolean = false,
+        gasPrice: BigInteger? = null,
+        gasLimit: BigInteger? = null,
+        data: ByteArray = byteArrayOf(),
     )
 
     data class UiState(
@@ -61,14 +68,20 @@ class CryptoSendHandlerImplDelegate @Inject constructor(
     override val cryptoSendCommand = _command.receiveAsFlow()
 
     private var sendJob: Job? = null
-    private var state: SendHandler.State? = null
+
+    override fun disableSend() {
+        _uiState.update { it.copy(isSendEnabled = false, transactionFee = "", totalAmount = "") }
+    }
 
     override fun onSendClicked(
         scope: CoroutineScope,
         wallet: WalletModel,
         address: String,
-        amount: String,
-        sendImmediately: Boolean,
+        amount: BigInteger,
+        isSendImmediately: Boolean,
+        gasPrice: BigInteger?,
+        gasLimit: BigInteger?,
+        data: ByteArray,
     ) {
         sendJob?.cancel()
         scope.launch {
@@ -77,14 +90,15 @@ class CryptoSendHandlerImplDelegate @Inject constructor(
                     amount = amount,
                     address = address,
                     wallet = wallet,
+                    data = data,
                 )
             }.doOnSuccess { handler ->
                 _uiState.update { it.copy(isLoading = true) }
                 sendJob = handler.state.onEach { state ->
-                    this@CryptoSendHandlerImplDelegate.state = state
                     when (state) {
-                        SendHandler.State.Failed -> {
+                        is SendHandler.State.Failed -> {
                             notificationsSource.sendError("Error".textValue())
+                            state.errors.forEach { it.printStackTrace() }
                             _uiState.update { it.copy(isLoading = false) }
                         }
                         SendHandler.State.Idle -> Unit
@@ -94,12 +108,22 @@ class CryptoSendHandlerImplDelegate @Inject constructor(
                         is SendHandler.State.Ready -> {
                             _uiState.update {
                                 it.copy(
-                                    transactionFee = state.fee,
-                                    totalAmount = state.total,
+                                    transactionFee = state.fee.toStringValue(wallet.decimal),
+                                    totalAmount = state.total.toStringValue(wallet.decimal),
                                     isSendEnabled = true,
                                     isLoading = false,
                                     onSendClicked = handler::send,
                                 )
+                            }
+                            if (isSendImmediately) {
+                                if (gasPrice != null && gasLimit != null) {
+                                    handler.send(
+                                        gasLimit = gasLimit,
+                                        gasPrice = gasPrice,
+                                    )
+                                } else {
+                                    handler.send()
+                                }
                             }
                         }
                         SendHandler.State.Sent -> {
@@ -107,11 +131,11 @@ class CryptoSendHandlerImplDelegate @Inject constructor(
                             _command publish CryptoSendHandler.Command.CloseScreen
                         }
                     }
-                    if (sendImmediately) {
-                        handler.send()
-                    }
                 }.launchIn(scope)
             }
         }
     }
+
+    private fun BigInteger.toStringValue(decimal: Int) =
+        toBigDecimal().movePointLeft(decimal).toPlainString()
 }

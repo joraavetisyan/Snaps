@@ -95,7 +95,10 @@ class BinanceAdapter(
     override val lastBlockUpdatedFlowable: Flowable<Unit>
         get() = binanceKit.latestBlockFlowable.map { }
 
-    override fun getTransactionRecordsFlowable(token: Token?, transactionType: FilterTransactionType): Flowable<List<TransactionRecord>> {
+    override fun getTransactionRecordsFlowable(
+        token: Token?,
+        transactionType: FilterTransactionType
+    ): Flowable<List<TransactionRecord>> {
         return try {
             val filter = getBinanceTransactionTypeFilter(transactionType)
             asset.getTransactionsFlowable(filter).map { it.map { transactionRecord(it) } }
@@ -104,7 +107,12 @@ class BinanceAdapter(
         }
     }
 
-    override fun getTransactionsAsync(from: TransactionRecord?, token: Token?, limit: Int, transactionType: FilterTransactionType): Single<List<TransactionRecord>> {
+    override fun getTransactionsAsync(
+        from: TransactionRecord?,
+        token: Token?,
+        limit: Int,
+        transactionType: FilterTransactionType
+    ): Single<List<TransactionRecord>> {
         return try {
             val filter = getBinanceTransactionTypeFilter(transactionType)
             binanceKit
@@ -217,6 +225,5 @@ class BinanceAdapter(
                 if (testMode) BinanceChainKit.NetworkType.TestNet else BinanceChainKit.NetworkType.MainNet
             BinanceChainKit.clear(CryptoKit.instance, networkType, walletId)
         }
-
     }
 }

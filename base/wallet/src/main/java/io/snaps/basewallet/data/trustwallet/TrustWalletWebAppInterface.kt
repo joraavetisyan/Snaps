@@ -2,17 +2,18 @@ package io.snaps.basewallet.data.trustwallet
 
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
+import io.horizontalsystems.ethereumkit.core.hexStringToByteArrayOrNull
+import io.horizontalsystems.ethereumkit.core.stripHexPrefix
+import io.snaps.basewallet.domain.SwapTransactionModel
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.WalletAddress
 import org.json.JSONObject
+import java.math.BigInteger
 
-class WebAppInterface(
+class TrustWalletWebAppInterface(
     private val address: WalletAddress,
     private val webView: WebView,
-    private val sendTransaction: (
-        address: String,
-        amount: String,
-    ) -> Unit,
+    private val sendTransaction: (SwapTransactionModel) -> Unit,
 ) {
 
     companion object {
@@ -41,13 +42,33 @@ class WebAppInterface(
             }
             DAppMethod.SIGNTRANSACTION -> {
                 val param = obj.getJSONObject("object")
+                val data = try {
+                    param.getString("data")
+                } catch (e: Exception) {
+                    log("Error extracting data: ${e.message}")
+                    null
+                }?.hexStringToByteArrayOrNull() ?: kotlin.run {
+                    log("No data found!")
+                    return
+                }
                 val to = param.getString("to")
                 val value = param.getString("value")
+                val valueInt = BigInteger(value.stripHexPrefix(), 16)
                 val gasPrice = param.getString("gasPrice")
-                val gas = param.getString("gas")
-                sendTransaction(to, value)
+                val gasPriceInt = BigInteger(gasPrice.stripHexPrefix(), 16)
+                val gasLimit = param.getString("gas")
+                val gasLimitInt = BigInteger(gasLimit.stripHexPrefix(), 16)
+                sendTransaction(
+                    SwapTransactionModel(
+                        address = to,
+                        amount = valueInt,
+                        gasPrice = gasPriceInt,
+                        gasLimit = gasLimitInt,
+                        data = data,
+                    )
+                )
             }
-            else -> {
+            DAppMethod.UNKNOWN -> {
                 log("Unhandled method: $method")
             }
         }

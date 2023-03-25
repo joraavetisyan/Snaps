@@ -2,6 +2,8 @@ package io.snaps.basewallet.data.trustwallet
 
 import android.app.Activity
 import io.horizontalsystems.ethereumkit.models.Chain
+import io.snaps.basewallet.R
+import io.snaps.corecommon.model.WalletAddress
 
 private const val RpcUrl = "https://bsc-dataseed2.binance.org"
 private const val SwapUrl = "https://pancakeswap.finance/swap?outputCurrency=BNB&inputCurrency=%s"
@@ -10,16 +12,17 @@ object TrustWalletProvider {
 
     fun loadProviderJs(activity: Activity): String {
         return activity.resources
-            .openRawResource(trust.web3jprovider.R.raw.trust_min)
+            .openRawResource(R.raw.trust_min)
             .bufferedReader()
             .use { it.readText() }
     }
 
-    fun loadInitJs(): String {
+    fun loadInitJs(address: WalletAddress): String {
         return """
         (function() {
             var config = {                
                 ethereum: {
+                    address: "$address",
                     chainId: ${Chain.BinanceSmartChain.id},
                     rpcUrl: "$RpcUrl"
                 },
