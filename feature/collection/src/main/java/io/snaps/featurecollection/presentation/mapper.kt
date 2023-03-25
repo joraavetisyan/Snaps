@@ -9,6 +9,7 @@ import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FiatCurrency
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
+import io.snaps.corecommon.model.Uuid
 import io.snaps.featurecollection.presentation.screen.RankTileState
 
 fun State<List<RankModel>>.toRankTileState(
@@ -44,16 +45,17 @@ private fun RankModel.toRankTileState(
     clickListener = { onItemClicked(this) },
 )
 
-fun State<List<NftModel>>.toMysteryBoxCollectionItemState(
+fun State<List<NftModel>>.toNftCollectionItemState(
     maxCount: Int,
     onAddItemClicked: () -> Unit,
     onReloadClicked: () -> Unit,
+    onRepairClicked: (Uuid) -> Unit,
 ) = when (this) {
     is Loading -> List(6) { CollectionItemState.Shimmer }
     is Effect -> when {
         isSuccess -> buildList<CollectionItemState> {
             requireData.forEach {
-                add(it.toMysteryBoxCollectionItemState())
+                add(it.toNftCollectionItemState(onRepairClicked))
             }
             if (maxCount > requireData.size) {
                 add(CollectionItemState.AddItem(onAddItemClicked))
@@ -63,6 +65,15 @@ fun State<List<NftModel>>.toMysteryBoxCollectionItemState(
     }
 }
 
-private fun NftModel.toMysteryBoxCollectionItemState() = CollectionItemState.MysteryBox(
+private fun NftModel.toNftCollectionItemState(
+    onRepairClicked: (Uuid) -> Unit,
+) = CollectionItemState.Nft(
+    type = type,
+    price = costInUsd?.costToString() ?: "",
     image = image,
+    dailyReward = "$dailyReward${FiatCurrency.USD.symbol}",
+    dailyUnlock = dailyUnlock.toPercentageFormat(),
+    dailyConsumption = dailyUnlock.toPercentageFormat(),
+    isHealthy = isHealthy,
+    onRepairClicked = { onRepairClicked(id) },
 )

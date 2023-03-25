@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
@@ -33,6 +34,7 @@ import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.other.ShimmerTile
+import io.snaps.coreuicompose.uikit.other.SimpleCard
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 
@@ -45,6 +47,8 @@ sealed class CollectionItemState : TileState {
         val dailyReward: String,
         val dailyUnlock: String,
         val dailyConsumption: String,
+        val isHealthy: Boolean,
+        val onRepairClicked: () -> Unit,
     ) : CollectionItemState()
 
     data class MysteryBox(
@@ -84,44 +88,88 @@ private fun Nft(
     modifier: Modifier,
     data: CollectionItemState.Nft,
 ) {
-    Container(modifier) {
-        Card(
-            shape = AppTheme.shapes.small,
-            colors = CardDefaults.cardColors(
-                containerColor = AppTheme.specificColorScheme.uiContentBg,
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp),
-        ) {
-            Image(
-                painter = data.image.get(),
-                contentDescription = null,
+    Column(modifier) {
+        Container(Modifier) {
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
-                contentScale = ContentScale.Crop,
+                    .height(100.dp)
+                    .background(
+                        color = AppTheme.specificColorScheme.uiContentBg,
+                        shape = AppTheme.shapes.small,
+                    ),
+            ) {
+                Image(
+                    painter = data.image.get(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    contentScale = ContentScale.Crop,
+                )
+                if (!data.isHealthy) NeedToRepairMessage()
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = data.type.name,
+                style = AppTheme.specificTypography.labelMedium,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Line(
+                name = LocalStringHolder.current(StringKey.RankSelectionTitleDailyReward),
+                value = data.dailyReward,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Line(
+                name = LocalStringHolder.current(StringKey.RankSelectionTitleDailyUnlock),
+                value = data.dailyUnlock,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Line(
+                name = LocalStringHolder.current(StringKey.RankSelectionTitleDailyConsumption),
+                value = data.dailyConsumption,
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        if (!data.isHealthy) RepairButton(onClick = data.onRepairClicked)
+    }
+}
+
+@Composable
+private fun NeedToRepairMessage() {
+    Text(
+        text = StringKey.MyCollectionFieldNeedToRepair.textValue().get(),
+        color = AppTheme.specificColorScheme.white,
+        style = AppTheme.specificTypography.labelMedium,
+        modifier = Modifier
+            .padding(8.dp)
+            .background(
+                color = AppTheme.specificColorScheme.pink,
+                shape = AppTheme.shapes.medium,
+            )
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+    )
+}
+
+@Composable
+private fun RepairButton(
+    onClick: () -> Unit,
+) {
+    SimpleCard(
+        color = AppTheme.specificColorScheme.white,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+            .padding(top = 12.dp)
+            .defaultTileRipple(onClick = onClick)
+    ) {
         Text(
-            text = data.type.name,
+            text = StringKey.MyCollectionActionRepairGlasses.textValue().get(),
+            color = AppTheme.specificColorScheme.pink,
             style = AppTheme.specificTypography.labelMedium,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Line(
-            name = LocalStringHolder.current(StringKey.RankSelectionTitleDailyReward),
-            value = data.dailyReward,
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Line(
-            name = LocalStringHolder.current(StringKey.RankSelectionTitleDailyUnlock),
-            value = data.dailyUnlock,
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Line(
-            name = LocalStringHolder.current(StringKey.RankSelectionTitleDailyConsumption),
-            value = data.dailyConsumption,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            textAlign = TextAlign.Center,
         )
     }
 }

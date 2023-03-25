@@ -14,4 +14,6 @@ dependencies {
     implementation(projects.coreNavigation)
 
     implementation(projects.baseSources)
+    implementation(projects.baseSession)
+    implementation(projects.baseNft)
 }

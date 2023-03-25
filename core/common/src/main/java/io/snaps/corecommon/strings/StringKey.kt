@@ -227,6 +227,8 @@ enum class StringKey {
     MyCollectionTitleSlideNft,
     MyCollectionTitleSlideMysteryBox,
     MyCollectionTitleMysteryBox,
+    MyCollectionFieldNeedToRepair,
+    MyCollectionActionRepairGlasses,
 
     RankSelectionTitle,
     RankSelectionMessage,

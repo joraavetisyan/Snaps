@@ -43,8 +43,7 @@ fun BalanceResponseDto.toModel() = BalanceModel(
 fun QuestInfoResponseDto.toQuestInfoModel() = QuestInfoModel(
     quests = quests.map(QuestItemDto::toQuestModel),
     questDate = requireNotNull(ZonedDateTime.parse(questDate)).toOffsetLocalDateTime(),
-    totalEnergy = energy,
-    totalEnergyProgress = quests.sumOf { it.energyProgress }, // todo,
+    totalEnergy = quests.sumOf { it.quest.energy },
 )
 
 fun QuestItemDto.toQuestModel() = QuestModel(

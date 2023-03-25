@@ -13,18 +13,29 @@ import javax.inject.Singleton
 
 interface AppRouteProvider {
 
-    val state: StateFlow<String>
+    val appRouteState: StateFlow<String>
 
-    fun updateState(state: String)
+    val menuRouteState: StateFlow<String>
+
+    fun updateAppRouteState(state: String)
+
+    fun updateMenuRouteState(state: String)
 }
 
 class AppRouteProviderImpl @Inject constructor() : AppRouteProvider {
 
-    private val _state = MutableStateFlow(AppRoute.MainBottomBar.path())
-    override val state = _state.asStateFlow()
+    private val _appRouteState = MutableStateFlow(AppRoute.MainBottomBar.path())
+    override val appRouteState = _appRouteState.asStateFlow()
 
-    override fun updateState(state: String) {
-        _state.tryEmit(state)
+    private val _menuRouteState = MutableStateFlow(AppRoute.MainBottomBar.MainTab1Start.path())
+    override val menuRouteState = _menuRouteState.asStateFlow()
+
+    override fun updateAppRouteState(state: String) {
+        _appRouteState.tryEmit(state)
+    }
+
+    override fun updateMenuRouteState(state: String) {
+        _menuRouteState.tryEmit(state)
     }
 }
 

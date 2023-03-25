@@ -9,8 +9,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -56,6 +60,8 @@ fun BottomBarScreen(
         navController.switchTo(items.first().route.pattern)
     }
 
+    viewModel.updateMenuRoute(currentBackStackEntry?.destination?.route)
+
     Box(modifier = Modifier.fillMaxSize()) {
         CompositionLocalProvider(LocalBottomNavigationHeight provides 80.dp) {
             NavHost(navController = navController, startDestination = items.first().route.pattern) {
@@ -100,6 +106,10 @@ fun BottomBarScreen(
                             currentDestination?.hierarchy?.any { it.route == screen.route.path() } == true
                         MenuItem(
                             icon = screen.icon,
+                            badgeText = when (screen.route.path()) {
+                                AppRoute.MainBottomBar.MainTab4.path() -> uiState.badgeText
+                                else -> null
+                            },
                             color = if (isSelected) {
                                 AppTheme.specificColorScheme.uiAccent
                             } else {
@@ -126,21 +136,31 @@ private fun NavController.switchTo(route: String) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MenuItem(
     modifier: Modifier = Modifier,
+    badgeText: String? = null,
     icon: IconValue,
     color: Color,
     onClick: () -> Unit,
 ) {
-    IconButton(
-        onClick = onClick,
+    BadgedBox(
+        badge = {
+            if (!badgeText.isNullOrEmpty()) {
+                Badge { Text(badgeText) }
+            }
+        }
     ) {
-        Icon(
-            painter = icon.get(),
-            contentDescription = null,
-            tint = color,
-            modifier = modifier.size(40.dp),
-        )
+        IconButton(
+            onClick = onClick,
+        ) {
+            Icon(
+                painter = icon.get(),
+                contentDescription = null,
+                tint = color,
+                modifier = modifier.size(40.dp),
+            )
+        }
     }
 }

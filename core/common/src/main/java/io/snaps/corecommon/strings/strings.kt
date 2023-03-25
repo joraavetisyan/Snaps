@@ -617,6 +617,12 @@ internal val strings = mapOf(
     key(StringKey.MyCollectionTitleMysteryBox) to mapOf(
         SupportedLanguageKey.En to "Mystery Box",
     ),
+    key(StringKey.MyCollectionFieldNeedToRepair) to mapOf(
+        SupportedLanguageKey.En to "Need to repair",
+    ),
+    key(StringKey.MyCollectionActionRepairGlasses) to mapOf(
+        SupportedLanguageKey.En to "Repair Glasses",
+    ),
 
     key(StringKey.RankSelectionTitle) to mapOf(
         SupportedLanguageKey.En to "Choose a rank for your points",

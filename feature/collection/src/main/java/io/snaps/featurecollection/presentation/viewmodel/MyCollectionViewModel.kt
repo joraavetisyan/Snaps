@@ -4,11 +4,12 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.basenft.ui.CollectionItemState
-import io.snaps.basenft.ui.toNftCollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
+import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
+import io.snaps.featurecollection.presentation.toNftCollectionItemState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -52,6 +53,7 @@ class MyCollectionViewModel @Inject constructor(
                 maxCount = maxCount,
                 onAddItemClicked = ::onAddItemClicked,
                 onReloadClicked = ::onNftReloadClicked,
+                onRepairClicked = ::onRepairClicked,
             )
         }.onEach { state ->
             _uiState.update { it.copy(nft = state) }
@@ -72,7 +74,21 @@ class MyCollectionViewModel @Inject constructor(
         _command publish Command.OpenRankSelectionScreen
     }
 
+    private fun onRepairClicked(glassesId: Uuid) = viewModelScope.launch {
+        _uiState.update {
+            it.copy(isLoading = true)
+        }
+        action.execute {
+            nftRepository.repairGlasses(glassesId)
+        }.doOnComplete {
+            _uiState.update {
+                it.copy(isLoading = false)
+            }
+        }
+    }
+
     data class UiState(
+        val isLoading: Boolean = false,
         val nft: List<CollectionItemState> = List(6) { CollectionItemState.Shimmer },
     )
 

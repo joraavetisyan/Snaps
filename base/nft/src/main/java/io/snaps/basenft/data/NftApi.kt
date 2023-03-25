@@ -3,7 +3,9 @@ package io.snaps.basenft.data
 import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.MintNftResponseDto
 import io.snaps.basenft.data.model.NftItemResponseDto
+import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.data.model.UserNftItemResponseDto
+import io.snaps.corecommon.model.Completable
 import io.snaps.coredata.network.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -21,4 +23,9 @@ interface NftApi {
     suspend fun mintNft(
         @Body body: MintNftRequestDto,
     ): BaseResponse<MintNftResponseDto>
+
+    @POST("user/nft/repair")
+    suspend fun repairGlasses(
+        @Body body: RepairGlassesRequestDto,
+    ): BaseResponse<Completable>
 }

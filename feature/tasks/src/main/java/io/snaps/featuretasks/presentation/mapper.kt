@@ -1,10 +1,15 @@
 package io.snaps.featuretasks.presentation
 
+import io.snaps.basenft.domain.NftModel
+import io.snaps.basenft.ui.CollectionItemState
+import io.snaps.basenft.ui.costToString
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.date.toLong
+import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.Effect
+import io.snaps.corecommon.model.FiatCurrency
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.QuestType
 import io.snaps.corecommon.model.State
@@ -41,7 +46,7 @@ fun State<QuestInfoModel>.toRemainingTimeTileState() = when (this) {
         isSuccess -> RemainingTimeTileState.Data(
             time = requireData.questDate.plusHours(24).toLong(),
             energy = requireData.totalEnergy,
-            energyProgress = requireData.totalEnergyProgress,
+            energyProgress = requireData.quests.sumOf { it.energyProgress() },
         )
         else -> RemainingTimeTileState.Shimmer
     }
@@ -49,7 +54,8 @@ fun State<QuestInfoModel>.toRemainingTimeTileState() = when (this) {
 
 fun QuestModel.energyProgress(): Int {
     return if (madeCount != null && count != null) {
-        madeCount!! / count!! * 20
+        val madeByOne = madeCount!!.toDouble() / count!!.toDouble() * 20
+        madeByOne.toInt()
     } else {
         if (completed) {
             energy
@@ -72,3 +78,28 @@ fun QuestType.toTaskDescription() = when (this) {
     QuestType.Watch -> StringKey.TasksDescriptionWatchVideo.textValue()
     else -> StringKey.TasksDescriptionSocialPost.textValue()
 }
+
+fun State<List<NftModel>>.toNftCollectionItemState(
+    onReloadClicked: () -> Unit,
+) = when (this) {
+    is Loading -> List(6) { CollectionItemState.Shimmer }
+    is Effect -> when {
+        isSuccess -> buildList<CollectionItemState> {
+            requireData.forEach {
+                add(it.toNftCollectionItemState())
+            }
+        }
+        else -> listOf(CollectionItemState.Error(onClick = onReloadClicked))
+    }
+}
+
+private fun NftModel.toNftCollectionItemState() = CollectionItemState.Nft(
+    type = type,
+    price = costInUsd?.costToString() ?: "",
+    image = image,
+    dailyReward = "$dailyReward${FiatCurrency.USD.symbol}",
+    dailyUnlock = dailyUnlock.toPercentageFormat(),
+    dailyConsumption = dailyUnlock.toPercentageFormat(),
+    isHealthy = true,
+    onRepairClicked = {},
+)
