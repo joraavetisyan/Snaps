@@ -9,6 +9,7 @@ import io.snaps.corenavigation.base.FeatureNavDirection
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
+import io.snaps.featurewallet.screen.ExchangeScreen
 import io.snaps.featurewallet.screen.WalletScreen
 import io.snaps.featurewallet.screen.WithdrawScreen
 import javax.inject.Inject
@@ -20,6 +21,11 @@ internal class ScreenNavigator(navHostController: NavHostController) : Navigator
         arg = AppRoute.Withdraw.Args(wallet = walletModel),
     )
 
+    fun toExchangeScreen(walletModel: WalletModel) = navHostController navigate FeatureNavDirection(
+        route = AppRoute.Exchange,
+        arg = AppRoute.Exchange.Args(wallet = walletModel),
+    )
+
     fun toProfileScreen() = navHostController.navigate(AppRoute.Profile)
 }
 
@@ -28,5 +34,6 @@ class WalletFeatureProviderImpl @Inject constructor() : WalletFeatureProvider {
     override fun NavGraphBuilder.walletGraph(controller: NavHostController) {
         composable(AppRoute.Wallet) { WalletScreen(controller) }
         composable(AppRoute.Withdraw) { WithdrawScreen(controller) }
+        composable(AppRoute.Exchange) { ExchangeScreen(controller) }
     }
 }

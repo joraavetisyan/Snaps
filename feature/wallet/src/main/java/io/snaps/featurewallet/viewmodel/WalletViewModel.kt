@@ -160,8 +160,12 @@ class WalletViewModel @Inject constructor(
         }
     }
 
-    fun onExchangeClicked() = viewModelScope.launch {
-        // todo
+    fun onExchangeClicked() {
+        showWalletSelectBottomDialog {
+            viewModelScope.launch {
+                _command publish Command.OpenExchangeScreen(it)
+            }
+        }
     }
 
     private fun showWalletSelectBottomDialog(onSelected: (WalletModel) -> Unit) =
@@ -229,6 +233,8 @@ class WalletViewModel @Inject constructor(
 
     sealed class Command {
         data class OpenWithdrawScreen(val wallet: WalletModel) : Command()
+        data class OpenExchangeScreen(val wallet: WalletModel) : Command()
+
         object ShowBottomDialog : Command()
         object HideBottomDialog : Command()
     }

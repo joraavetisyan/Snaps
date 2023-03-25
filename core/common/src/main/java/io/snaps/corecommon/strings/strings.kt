@@ -569,6 +569,10 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Send transaction",
     ),
 
+    key(StringKey.ExchangeTitle) to mapOf(
+        SupportedLanguageKey.En to "Trade",
+    ),
+
     key(StringKey.ProfileTitle) to mapOf(
         SupportedLanguageKey.En to "My Profile",
     ),

@@ -123,5 +123,6 @@ dependencies {
     implementation(*Libs.bundle.appUpdater)
     implementation(*Libs.bundle.firebase)
     implementation(Libs.bundle.playServices)
+    implementation(*Libs.bundle.trustWallet)
     implementation(*Libs.bundle.biometric)
 }

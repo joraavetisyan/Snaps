@@ -222,14 +222,14 @@ class WalletRepositoryImpl @Inject constructor(
 
     private fun activateDefaultWallets(account: Account) {
         val tokenQueries = listOf(
-            // boxer
-            "0x192E9321b6244D204D4301AfA507EB29CA84D9ef",
-            // laflix
-            "0x3e3bfa35e81e85be5c65b0c759fe1b6ed6525ec0",
-            // wrapped bnb
+            // SNAPS
+            "0x92677918569A2BEA213Af66b54e0C9B9811d021c",
+            // BNB
             "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
             // BUSD
             "0xe9e7cea3dedca5984780bafc599bd69add087d56",
+            // USDT
+            "0x55d398326f99059ff775485246999027b3197955",
         ).map {
             TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Eip20(it))
         }

@@ -34,6 +34,10 @@ class SnapsApp : Application(), ApplicationCoroutineScopeHolder, ImageLoaderFact
 
     override val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
+    init {
+        System.loadLibrary("TrustWalletCore")
+    }
+
     override fun onCreate() {
         super.onCreate()
 
