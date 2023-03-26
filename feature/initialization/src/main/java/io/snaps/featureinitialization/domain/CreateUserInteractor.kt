@@ -11,8 +11,6 @@ import javax.inject.Inject
 interface CreateUserInteractor {
 
     suspend fun createUser(avatarFile: File, userName: String): Effect<Completable>
-
-    fun saveInitialized()
 }
 
 class CreateUserInteractorImpl @Inject constructor(
@@ -29,9 +27,5 @@ class CreateUserInteractorImpl @Inject constructor(
                 walletAddress = walletRepository.getActiveWalletsReceiveAddresses().first(),
             )
         }
-    }
-
-    override fun saveInitialized() {
-        profileRepository.saveInitialized()
     }
 }

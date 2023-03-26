@@ -1,4 +1,4 @@
-package io.snaps.baseprofile.data
+package io.snaps.basesession.data
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
@@ -6,7 +6,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.snaps.coredata.database.TokenStorage
 import io.snaps.coreui.viewmodel.tryPublish
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +19,7 @@ interface UserSessionTracker {
 
     fun init(lifecycle: Lifecycle)
 
-    fun onLogin()
+    fun onLogin(state: State.Active)
 
     fun onLogout()
 
@@ -28,28 +27,25 @@ interface UserSessionTracker {
 
         object NotActive : State() // Not registered/authorized
 
-        object Active : State() // Registered/authorized
+        sealed class Active : State() { // Registered/authorized
+            object NeedsWalletConnect : Active() // Registered/authorized, but not connected to wallet
+            object NeedsInitialization : Active() // Registered/authorized, connected to wallet, but not initialized
+            object NeedsRanking : Active() // Registered/authorized, connected to wallet, initialized, but not ranked
+            object Ready : Active() // Registered/authorized, connected to wallet, initialized, ranked
+        }
     }
 }
 
 @Singleton
-class UserSessionTrackerImpl @Inject constructor(
-    tokenStorage: TokenStorage,
-) : UserSessionTracker, DefaultLifecycleObserver {
+class UserSessionTrackerImpl @Inject constructor() : UserSessionTracker, DefaultLifecycleObserver {
 
     private val _state = MutableStateFlow<UserSessionTracker.State>(
         UserSessionTracker.State.NotActive
     )
     override val state = _state.asStateFlow()
 
-    init {
-        if (tokenStorage.authToken != null) {
-            _state tryPublish UserSessionTracker.State.Active
-        }
-    }
-
-    override fun onLogin() {
-        _state tryPublish UserSessionTracker.State.Active
+    override fun onLogin(state: UserSessionTracker.State.Active) {
+        _state tryPublish state
     }
 
     override fun onLogout() {

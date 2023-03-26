@@ -1,6 +1,5 @@
 package io.snaps.featurewalletconnect.presentation.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,6 +35,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
+import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewalletconnect.ScreenNavigator
 import io.snaps.featurewalletconnect.presentation.viewmodel.WalletImportViewModel
@@ -49,11 +49,7 @@ fun WalletImportScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
-    viewModel.command.collectAsCommand {
-        when (it) {
-            WalletImportViewModel.Command.OpenCreateUserScreen -> router.toCreateUserScreen()
-        }
-    }
+    viewModel.command.collectAsCommand {}
 
     WalletImportScreen(
         uiState = uiState,
@@ -61,9 +57,10 @@ fun WalletImportScreen(
         onPhraseValueChanged = viewModel::onPhraseValueChanged,
         onBackClicked = router::back
     )
+    FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WalletImportScreen(
     uiState: WalletImportViewModel.UiState,

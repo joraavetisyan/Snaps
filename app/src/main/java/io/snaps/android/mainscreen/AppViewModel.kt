@@ -2,12 +2,11 @@ package io.snaps.android.mainscreen
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.snaps.baseprofile.data.UserSessionTracker
+import io.snaps.basesession.data.UserSessionTracker
 import io.snaps.basesession.ActiveAppZoneProvider
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesources.LocaleSource
 import io.snaps.basesources.NotificationsSource
-import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.strings.StringHolder
 import io.snaps.coredata.database.UserDataStorage
 import io.snaps.corenavigation.base.ROUTE_ARGS_SEPARATOR
@@ -27,7 +26,6 @@ class AppViewModel @Inject constructor(
     notificationsSource: NotificationsSource,
     private val userDataStorage: UserDataStorage,
     private val appRouteProvider: AppRouteProvider,
-    private val walletRepository: WalletRepository,
 ) : SimpleViewModel() {
 
     val stringHolderState = localeSource.stateFlow
@@ -39,10 +37,10 @@ class AppViewModel @Inject constructor(
             UserSessionTracker.State.NotActive -> StartFlow.RegistrationFlow(
                 needsStartOnBoarding = !userDataStorage.isStartOnBoardingFinished,
             )
-            UserSessionTracker.State.Active -> StartFlow.AuthorizedFlow(
-                needsWalletConnect = walletRepository.getActiveAccount() == null,
-                needsInitialization = !userDataStorage.isInitialized,
-                needsRanking = !userDataStorage.hasNft,
+            is UserSessionTracker.State.Active -> StartFlow.AuthorizedFlow(
+                needsWalletConnect = userSession is UserSessionTracker.State.Active.NeedsWalletConnect,
+                needsInitialization = userSession is UserSessionTracker.State.Active.NeedsInitialization,
+                needsRanking = userSession is UserSessionTracker.State.Active.NeedsRanking,
             )
         }
     }.likeStateFlow(

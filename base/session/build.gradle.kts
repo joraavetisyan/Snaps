@@ -16,6 +16,8 @@ dependencies {
     implementation(projects.baseProfile)
     implementation(projects.baseSources)
     implementation(projects.baseAuth)
+    implementation(projects.baseWallet)
+    implementation(projects.baseNft)
 
     implementation(*Libs.bundle.firebase)
     implementation(*Libs.bundle.preference)

@@ -52,12 +52,14 @@ suspend inline fun <reified T : Any> apiCall(
     }
 }
 
-inline fun <reified T : Any> BaseResponse<T>.toEffect() = when {
-    data != null -> Effect.success(data = data)
-    else -> when (T::class) {
-        Completable::class -> Effect.success(Completable as T)
-        else -> Effect.error(error = AppError.Unknown())
+inline fun <reified T : Any> BaseResponse<T>.toEffect(): Effect<T> {
+    if (isSuccess) {
+        when {
+            data != null -> return Effect.success(data)
+            T::class == Completable::class -> return Effect.success(Completable as T)
+        }
     }
+    return Effect.error(error = AppError.Unknown())
 }
 
 @OptIn(ExperimentalSerializationApi::class)

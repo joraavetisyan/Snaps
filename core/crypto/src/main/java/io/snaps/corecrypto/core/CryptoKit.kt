@@ -351,7 +351,7 @@ class CryptoKit : CoreApp(), WorkConfiguration.Provider {
                 accountManager.loadAccounts()
                 walletManager.loadWallets()
                 adapterManager.preloadAdapters()
-                // clear unused accounts
+                // clear deleted accounts
                 accountManager.clearAccounts()
 
                 AppVersionManager(

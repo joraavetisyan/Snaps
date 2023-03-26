@@ -15,6 +15,7 @@ import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
+import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.corecommon.model.WalletModel
 import io.snaps.corecrypto.core.AdapterState
@@ -69,13 +70,17 @@ interface WalletRepository {
 
     val activeWallets: StateFlow<List<WalletModel>>
 
-    fun createAccount(): List<String>
+    fun createAccount(userId: Uuid): List<String>
 
-    suspend fun importAccount(words: List<String>): Effect<Completable>
+    suspend fun importAccount(userId: Uuid, words: List<String>): Effect<Completable>
 
     suspend fun saveLastConnectedAccount(): Effect<Completable>
 
-    fun getActiveAccount(): Account?
+    fun hasAccount(userId: Uuid): Boolean
+
+    fun setAccountActive(userId: Uuid)
+
+    fun setAccountInactive()
 
     fun getMnemonics(): List<String>
 
@@ -157,9 +162,10 @@ class WalletRepositoryImpl @Inject constructor(
         totalBalance.start(scope)
     }
 
-    override fun createAccount(): List<String> {
+    override fun createAccount(userId: Uuid): List<String> {
         val accountType = mnemonicAccountType(12)
         account = accountFactory.account(
+            id = userId,
             name = "Wallet",
             type = accountType,
             origin = AccountOrigin.Created,
@@ -176,11 +182,12 @@ class WalletRepositoryImpl @Inject constructor(
         return AccountType.Mnemonic(words, "".normalizeNFKD())
     }
 
-    override suspend fun importAccount(words: List<String>): Effect<Completable> {
+    override suspend fun importAccount(userId: Uuid, words: List<String>): Effect<Completable> {
         return try {
             wordsManager.validateChecksumStrict(words)
             val accountType = AccountType.Mnemonic(words, "".normalizeNFKD())
             account = accountFactory.account(
+                id = userId,
                 name = "Wallet",
                 type = accountType,
                 origin = AccountOrigin.Restored,
@@ -206,17 +213,29 @@ class WalletRepositoryImpl @Inject constructor(
         }.toCompletable()
     }
 
-    override fun getActiveAccount(): Account? {
-        return accountManager.activeAccount ?: run {
-            log("No active account")
-            null
-        }
+    override fun hasAccount(userId: Uuid): Boolean {
+        return accountManager.account(userId) != null
+    }
+
+    override fun setAccountActive(userId: Uuid) {
+        accountManager.setActiveAccountId(userId)
+    }
+
+    override fun setAccountInactive() {
+        accountManager.setActiveAccountId(null)
     }
 
     override fun getMnemonics(): List<String> {
         return getActiveAccount()?.let {
             (it.type as AccountType.Mnemonic).words
         } ?: emptyList()
+    }
+
+    private fun getActiveAccount(): Account? {
+        return accountManager.activeAccount ?: run {
+            log("No active account")
+            null
+        }
     }
 
     private fun getWallets(): List<Wallet> {

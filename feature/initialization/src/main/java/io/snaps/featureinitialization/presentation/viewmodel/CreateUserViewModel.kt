@@ -4,12 +4,11 @@ import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.basesession.data.SessionRepository
 import io.snaps.corecommon.container.ImageValue
-import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
-import io.snaps.coreui.viewmodel.publish
 import io.snaps.featureinitialization.domain.CreateUserInteractor
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,8 +23,8 @@ class CreateUserViewModel @Inject constructor(
     private val fileManager: FileManager,
     private val interactor: CreateUserInteractor,
     private val action: Action,
-    private val userDataStorage: UserDataStorage,
     private val profileRepository: ProfileRepository,
+    private val sessionRepository: SessionRepository,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -36,10 +35,8 @@ class CreateUserViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            profileRepository.updateData().doOnSuccess {
-                profileRepository.state.value.dataOrCache?.let { user ->
-                    _uiState.update { it.copy(nicknameValue = user.name, avatar = user.avatar) }
-                }
+            profileRepository.updateData().doOnSuccess { user ->
+                _uiState.update { it.copy(nicknameValue = user.name, avatar = user.avatar) }
             }
         }
     }
@@ -103,13 +100,8 @@ class CreateUserViewModel @Inject constructor(
         }
     }
 
-    private suspend fun handleCreate() {
-        interactor.saveInitialized()
-        if (userDataStorage.hasNft) {
-            _command publish Command.OpenRankSelectionScreen
-        } else {
-            _command publish Command.OpenMainScreen
-        }
+    private fun handleCreate() {
+        sessionRepository.checkStatus()
     }
 
     fun onNickNameValueChanged(value: String) {

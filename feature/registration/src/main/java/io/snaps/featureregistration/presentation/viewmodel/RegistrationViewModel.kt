@@ -135,7 +135,7 @@ class RegistrationViewModel @Inject constructor(
             profileRepository.updateData().doOnSuccess {
                 sessionRepository.onLogin()
             }.doOnError { _, _ ->
-                sessionRepository.logout()
+                sessionRepository.onLogout()
             }
         }
     }

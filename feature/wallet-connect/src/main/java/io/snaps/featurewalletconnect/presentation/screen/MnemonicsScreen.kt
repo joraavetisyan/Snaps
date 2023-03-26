@@ -37,6 +37,7 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
+import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurewalletconnect.ScreenNavigator
@@ -62,6 +63,8 @@ fun MnemonicsScreen(
         onContinueButtonClicked = viewModel::onContinueButtonClicked,
         onBackClicked = router::back,
     )
+
+    FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,6 +94,7 @@ private fun MnemonicsScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp, vertical = 24.dp),
                 onClick = onContinueButtonClicked,
+                enabled = uiState.isContinueButtonEnabled,
             ) {
                 SimpleButtonContent(text = StringKey.ActionContinue.textValue())
             }

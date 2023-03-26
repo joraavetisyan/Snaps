@@ -7,9 +7,7 @@ import io.snaps.corenavigation.WalletConnectFeatureProvider
 import io.snaps.corenavigation.base.FeatureNavDirection
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
-import io.snaps.corenavigation.base.createRoute
 import io.snaps.corenavigation.base.navigate
-import io.snaps.corenavigation.base.tryPopBackStack
 import io.snaps.featurewalletconnect.presentation.screen.MnemonicListVerificationScreen
 import io.snaps.featurewalletconnect.presentation.screen.MnemonicsScreen
 import io.snaps.featurewalletconnect.presentation.screen.WalletConnectScreen
@@ -33,10 +31,6 @@ internal class ScreenNavigator(navHostController: NavHostController) :
     )
 
     fun toWalletConnectedScreen() = navHostController.navigate(AppRoute.WalletConnected)
-
-    fun toCreateUserScreen() = navHostController.navigate(AppRoute.UserCreate) {
-        tryPopBackStack(createRoute(AppRoute.WalletConnect))
-    }
 }
 
 class WalletConnectFeatureProviderImpl @Inject constructor() : WalletConnectFeatureProvider {

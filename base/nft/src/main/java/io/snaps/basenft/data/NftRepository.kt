@@ -34,7 +34,7 @@ interface NftRepository {
 
     suspend fun updateRanks(): Effect<Completable>
 
-    suspend fun updateNftCollection(): Effect<Completable>
+    suspend fun updateNftCollection(): Effect<List<NftModel>>
 
     suspend fun mintNft(
         type: NftType,
@@ -82,14 +82,14 @@ class NftRepositoryImpl @Inject constructor(
         }.toCompletable()
     }
 
-    override suspend fun updateNftCollection(): Effect<Completable> {
+    override suspend fun updateNftCollection(): Effect<List<NftModel>> {
         return apiCall(ioDispatcher) {
             nftApi.userNftCollection()
         }.map {
             it.toNftModelList()
         }.also {
             _nftCollectionState tryPublish it
-        }.toCompletable()
+        }
     }
 
     override suspend fun mintNft(
@@ -106,7 +106,6 @@ class NftRepositoryImpl @Inject constructor(
                 ),
             )
         }.doOnSuccess {
-            userDataStorage.hasNft = true
             updateNftCollection()
             updateRanks()
         }.toCompletable()

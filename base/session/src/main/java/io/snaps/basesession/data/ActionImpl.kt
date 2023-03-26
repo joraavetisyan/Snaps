@@ -56,7 +56,7 @@ class ActionImpl @Inject constructor(
             is AppError.Unknown -> notificationsSource.sendError(error)
             is AppError.Custom -> when (error.code) {
                 HttpURLConnection.HTTP_UNAUTHORIZED -> {
-                    sessionRepository.logout()
+                    sessionRepository.onLogout()
                     notificationsSource.sendError(error)
                 }
                 else -> {}

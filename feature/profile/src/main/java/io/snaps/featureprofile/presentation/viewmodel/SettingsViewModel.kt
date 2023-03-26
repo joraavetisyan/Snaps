@@ -37,7 +37,7 @@ class SettingsViewModel @Inject constructor(
     fun onDeleteAccountClicked() { /*todo*/ }
 
     fun onLogoutClicked() {
-        sessionRepository.logout()
+        sessionRepository.onLogout()
     }
 
     private fun onWalletItemClicked() = viewModelScope.launch {

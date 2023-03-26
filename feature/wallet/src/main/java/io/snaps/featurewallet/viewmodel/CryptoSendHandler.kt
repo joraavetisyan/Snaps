@@ -4,7 +4,6 @@ import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.SendHandler
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.WalletModel
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.publish

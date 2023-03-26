@@ -1,17 +1,16 @@
 package io.snaps.basesession.data
 
 import com.google.firebase.auth.FirebaseAuth
-import io.snaps.baseprofile.data.UserSessionTracker
+import io.snaps.basenft.data.NftRepository
+import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.DeviceInfoProvider
-import io.snaps.corecommon.ext.log
+import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
-import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.LogOutReason
 import io.snaps.coredata.database.TokenStorage
 import io.snaps.coredata.database.UserDataStorage
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -19,50 +18,95 @@ import javax.inject.Inject
 
 interface SessionRepository {
 
-    suspend fun login(): Effect<Completable>
-
     suspend fun refresh(): Effect<Completable>
+
+    fun checkStatus()
 
     fun onLogin()
 
-    fun logout()
+    fun onLogout()
 
     fun forceLogout(reason: LogOutReason)
 }
 
 class SessionRepositoryImpl @Inject constructor(
     @ApplicationCoroutineScope private val scope: CoroutineScope,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val userSessionTracker: UserSessionTracker,
     private val tokenStorage: TokenStorage,
     private val userDataStorage: UserDataStorage,
     private val deviceInfoProvider: DeviceInfoProvider,
     private val auth: FirebaseAuth,
+    private val profileRepository: ProfileRepository,
+    private val walletRepository: WalletRepository,
+    private val nftRepository: NftRepository,
 ) : SessionRepository {
 
-    override suspend fun login(): Effect<Completable> {
-        onLogin()
-        return Effect.completable
+    init {
+        checkStatus()
+    }
+
+    override fun checkStatus() {
+        val userId: String? = auth.currentUser?.uid
+        if (tokenStorage.authToken != null && userId != null) {
+            checkWallet(userId)
+        }
+    }
+
+    private fun checkWallet(userId: String) {
+        if (!walletRepository.hasAccount(userId)) {
+            userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsWalletConnect)
+            return
+        }
+        scope.launch {
+            checkUser().doOnSuccess { ready ->
+                if (ready) {
+                    userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
+                }
+            }.doOnError { _, _ ->
+                // todo should open Main?
+                userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
+            }
+        }
+    }
+
+    private suspend fun checkUser() = profileRepository.updateData().flatMap {
+        if (it.name.isBlank() || it.avatar == null) {
+            userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsInitialization)
+            Effect.success(false)
+        } else {
+            checkNft()
+        }
+    }
+
+    private suspend fun checkNft() = nftRepository.updateNftCollection().flatMap {
+        if (it.isEmpty()) {
+            userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsRanking)
+            Effect.success(false)
+        } else {
+            Effect.success(true)
+        }
     }
 
     override suspend fun refresh(): Effect<Completable> {
-        log("Refreshing token")
         val token = auth.currentUser?.getIdToken(false)?.await()?.token
         if (token != null) {
             tokenStorage.authToken = token
-            onLogin()
         } else {
-            logout()
+            onLogout()
         }
-        log("Refresh result: $token")
         return Effect.completable
     }
 
     override fun onLogin() {
-        userSessionTracker.onLogin()
+        auth.currentUser?.uid?.let {
+            if (walletRepository.hasAccount(it)) {
+                walletRepository.setAccountActive(it)
+            }
+        }
+        checkStatus()
     }
 
-    override fun logout() {
+    override fun onLogout() {
         clearData(null)
     }
 
@@ -71,15 +115,13 @@ class SessionRepositoryImpl @Inject constructor(
     }
 
     private fun clearData(reason: LogOutReason?) {
+        auth.signOut()
+        walletRepository.setAccountInactive()
         scope.launch {
-            /*apiCall(ioDispatcher) {
-                logoutApi.logout(LogoutRequestDto(deviceInfoProvider.getDeviceId()))
-            }*/
             deviceInfoProvider.resetPushToken()
             tokenStorage.reset()
             userDataStorage.reset(reason)
             userSessionTracker.onLogout()
-            // todo clear wallets
         }
     }
 }

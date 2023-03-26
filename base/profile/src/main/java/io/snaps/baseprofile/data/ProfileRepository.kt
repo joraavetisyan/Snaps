@@ -2,8 +2,8 @@ package io.snaps.baseprofile.data
 
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.UserCreateRequestDto
-import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.BalanceModel
+import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
@@ -13,7 +13,6 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
-import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreui.viewmodel.tryPublish
@@ -34,7 +33,7 @@ interface ProfileRepository {
 
     val currentQuestsState: StateFlow<State<QuestInfoModel>>
 
-    suspend fun updateData(): Effect<Completable>
+    suspend fun updateData(): Effect<UserInfoModel>
 
     suspend fun updateBalance(): Effect<Completable>
 
@@ -46,8 +45,6 @@ interface ProfileRepository {
         walletAddress: WalletAddress,
     ): Effect<Completable>
 
-    fun saveInitialized()
-
     suspend fun setInviteCode(inviteCode: String): Effect<Completable>
 
     fun isCurrentUser(userId: Uuid): Boolean
@@ -57,7 +54,6 @@ class ProfileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val api: ProfileApi,
-    private val userDataStorage: UserDataStorage,
 ) : ProfileRepository {
 
     private val _state = MutableStateFlow<State<UserInfoModel>>(Loading())
@@ -76,7 +72,7 @@ class ProfileRepositoryImpl @Inject constructor(
         }
     }.likeStateFlow(scope, Loading())
 
-    override suspend fun updateData(): Effect<Completable> {
+    override suspend fun updateData(): Effect<UserInfoModel> {
         _state tryPublish Loading()
         return apiCall(ioDispatcher) {
             api.userInfo()
@@ -84,7 +80,7 @@ class ProfileRepositoryImpl @Inject constructor(
             it.toModel()
         }.also {
             _state tryPublish it
-        }.toCompletable()
+        }
     }
 
     override suspend fun updateBalance(): Effect<Completable> {
@@ -124,10 +120,6 @@ class ProfileRepositoryImpl @Inject constructor(
         }.also {
             _state tryPublish it
         }.toCompletable()
-    }
-
-    override fun saveInitialized() {
-        userDataStorage.isInitialized = true
     }
 
     override suspend fun setInviteCode(inviteCode: String): Effect<Completable> {

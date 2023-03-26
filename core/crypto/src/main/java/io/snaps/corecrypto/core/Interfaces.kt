@@ -12,6 +12,7 @@ import io.horizontalsystems.solanakit.models.FullTransaction
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.snaps.corecommon.model.Uuid
 import io.snaps.corecrypto.core.adapters.zcash.ZcashAdapter
 import io.snaps.corecrypto.core.managers.ActiveAccountState
 import io.snaps.corecrypto.core.managers.Bep2TokenInfoService
@@ -133,10 +134,13 @@ interface IBackupManager {
 }
 
 interface IAccountFactory {
-    fun account(name: String, type: AccountType, origin: AccountOrigin, backedUp: Boolean): Account
-    fun watchAccount(name: String, type: AccountType): Account
-    fun getNextWatchAccountName(): String
-    fun getNextAccountName(): String
+    fun account(
+        id: Uuid,
+        name: String,
+        type: AccountType,
+        origin: AccountOrigin,
+        backedUp: Boolean,
+    ): Account
 }
 
 interface IWalletStorage {
@@ -271,7 +275,11 @@ interface ISendEthereumAdapter {
     val evmKitWrapper: EvmKitWrapper
     val balanceData: BalanceData
 
-    fun getTransactionData(amount: BigInteger, address: Address, data: ByteArray = byteArrayOf()): TransactionData
+    fun getTransactionData(
+        amount: BigInteger,
+        address: Address,
+        data: ByteArray = byteArrayOf()
+    ): TransactionData
 }
 
 interface ISendBinanceAdapter {

@@ -9,10 +9,7 @@ data class BaseResponse<T>(
     @SerialName("actualTimestamp") val actualTimestamp: Timestamp?,
     @SerialName("data") val data: T?,
     @SerialName("success") val isSuccess: Boolean = true,
-) {
-
-    val isSuccessAndHasData get() = isSuccess && data != null
-}
+)
 
 @Serializable
 data class ErrorResponse(
