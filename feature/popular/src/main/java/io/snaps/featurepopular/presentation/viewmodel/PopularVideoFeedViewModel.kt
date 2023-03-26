@@ -24,7 +24,7 @@ class PopularVideoFeedViewModel @Inject constructor(
     bottomBarVisibilitySource: BottomBarVisibilitySource,
     getInstalledAppListUseCase: GetInstalledAppListUseCase,
 ) : VideoFeedViewModel(
-    videoFeedType = VideoFeedType.Popular(savedStateHandle.requireArgs<AppRoute.PopularVideoFeed.Args>().query),
+    videoFeedType = VideoFeedType.Popular,
     startPosition = savedStateHandle.requireArgs<AppRoute.PopularVideoFeed.Args>().position,
     action = action,
     videoFeedRepository = videoFeedRepository,

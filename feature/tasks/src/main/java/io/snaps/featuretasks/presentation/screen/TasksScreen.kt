@@ -70,6 +70,13 @@ fun TasksScreen(
     val uiState by viewModel.uiState.collectAsState()
     val mainHeaderState by viewModel.headerUiState.collectAsState()
 
+    viewModel.headerCommand.collectAsCommand {
+        when (it) {
+            MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
+            MainHeaderHandler.Command.OpenWalletScreen -> router.toWalletScreen()
+        }
+    }
+
     viewModel.command.collectAsCommand {
         when (it) {
             is TasksViewModel.Command.OpenTaskDetailsScreen -> router.toTaskDetailsScreen(it.args)

@@ -90,7 +90,8 @@ private fun PopularVideosScreen(
                 style = AppTheme.specificTypography.titleLarge,
                 modifier = Modifier.padding(12.dp),
             )
-            SimpleTextField(value = uiState.query,
+            SimpleTextField(
+                value = uiState.query,
                 onValueChange = onSearchQueryChanged,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -104,7 +105,9 @@ private fun PopularVideosScreen(
                         contentDescription = null,
                         tint = AppTheme.specificColorScheme.darkGrey,
                     )
-                })
+                },
+                maxLines = 1,
+            )
             VideoFeedGrid(
                 columnCount = 2,
                 uiState = uiState.videoFeedUiState,

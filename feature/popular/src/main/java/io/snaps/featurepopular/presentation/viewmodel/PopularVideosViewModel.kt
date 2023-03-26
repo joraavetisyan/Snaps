@@ -47,7 +47,28 @@ class PopularVideosViewModel @Inject constructor(
 
     private fun search(query: String) {
         subscribeJob?.cancel()
-        subscribeJob = videoFeedRepository.getFeedState(VideoFeedType.Popular(query)).map {
+        if (query.isBlank()) {
+            subscribeOnPopularFeed()
+        } else {
+            subscribeOnAllVideo(query.trim())
+        }
+    }
+
+    private fun subscribeOnPopularFeed() {
+        subscribeJob = videoFeedRepository.getFeedState(VideoFeedType.Popular).map {
+            it.toVideoFeedUiState(
+                shimmerListSize = 6,
+                onClipClicked = ::onClipClicked,
+                onReloadClicked = ::onPopularVideoReloadClicked,
+                onListEndReaching = ::onPopularVideoListEndReaching,
+            )
+        }.onEach { state ->
+            _uiState.update { it.copy(videoFeedUiState = state) }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeOnAllVideo(query: String) {
+        subscribeJob = videoFeedRepository.getFeedState(VideoFeedType.All(query)).map {
             it.toVideoFeedUiState(
                 shimmerListSize = 6,
                 onClipClicked = ::onClipClicked,
@@ -61,12 +82,30 @@ class PopularVideosViewModel @Inject constructor(
 
     private fun onClipClicked(clip: VideoClipModel) {}
 
-    private fun onReloadClicked() {}
+    private fun onPopularVideoReloadClicked() = viewModelScope.launch {
+        action.execute {
+            videoFeedRepository.refreshFeed(VideoFeedType.Popular)
+        }
+    }
+
+    private fun onPopularVideoListEndReaching() {
+        viewModelScope.launch {
+            action.execute {
+                videoFeedRepository.loadNextFeedPage(VideoFeedType.Popular)
+            }
+        }
+    }
+
+    private fun onReloadClicked() = viewModelScope.launch {
+        action.execute {
+            videoFeedRepository.refreshFeed(VideoFeedType.All(uiState.value.query))
+        }
+    }
 
     private fun onListEndReaching() {
         viewModelScope.launch {
             action.execute {
-                videoFeedRepository.loadNextFeedPage(VideoFeedType.Popular(_uiState.value.query))
+                videoFeedRepository.loadNextFeedPage(VideoFeedType.All(uiState.value.query))
             }
         }
     }

@@ -96,6 +96,19 @@ class FakeVideoFeedApi : VideoFeedApi {
         )
     }
 
+    override suspend fun videos(
+        searchString: String?,
+        from: Uuid?,
+        count: Int
+    ): BaseResponse<List<VideoFeedItemResponseDto>> {
+        log("Requesting video: $count videos with offset $from")
+        delay(mockDelay)
+        return BaseResponse(
+            actualTimestamp = 1L,
+            data = List(count) { videoFeedItemResponseDto(it, generation) }
+        ).also { generation++ }
+    }
+
     override suspend fun view(videoId: Uuid): BaseResponse<Completable> {
         log("Requesting view video $videoId")
         delay(mockDelay)

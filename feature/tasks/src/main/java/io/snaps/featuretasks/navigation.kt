@@ -2,6 +2,7 @@ package io.snaps.featuretasks
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import io.snaps.corecommon.model.Uuid
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.TasksFeatureProvider
 import io.snaps.corenavigation.base.FeatureNavDirection
@@ -31,6 +32,15 @@ internal class ScreenNavigator(navHostController: NavHostController) :
     fun toMainVideoFeedScreen() = navHostController.navigate(AppRoute.MainBottomBar.MainTab1Start)
 
     fun toCreateVideoScreen() = navHostController.navigate(AppRoute.CreateVideo)
+
+    fun toProfileScreen(
+        userId: Uuid? = null,
+    ) = navHostController navigate FeatureNavDirection(
+        route = AppRoute.Profile,
+        arg = AppRoute.Profile.Args(userId = userId),
+    )
+
+    fun toWalletScreen() = navHostController.navigate(AppRoute.Wallet)
 }
 
 class TasksFeatureProviderImpl @Inject constructor() : TasksFeatureProvider {

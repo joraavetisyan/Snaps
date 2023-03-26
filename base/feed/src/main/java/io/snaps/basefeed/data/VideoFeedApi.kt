@@ -49,6 +49,13 @@ interface VideoFeedApi {
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
 
+    @GET("video")
+    suspend fun videos(
+        @Query("searchString") query: String?,
+        @Query("from") from: Uuid?,
+        @Query("count") count: Int,
+    ): BaseResponse<List<VideoFeedItemResponseDto>>
+
     @POST("video/{videoId}/like")
     suspend fun like(
         @Path("videoId") videoId: Uuid,

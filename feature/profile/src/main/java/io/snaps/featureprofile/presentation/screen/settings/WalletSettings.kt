@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.textValue
@@ -51,6 +52,13 @@ fun WalletSettingsScreen(
 
     val uiState by viewModel.uiState.collectAsState()
     val headerState by viewModel.headerUiState.collectAsState()
+
+    viewModel.headerCommand.collectAsCommand {
+        when (it) {
+            MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
+            MainHeaderHandler.Command.OpenWalletScreen -> router.toWalletScreen()
+        }
+    }
 
     viewModel.command.collectAsCommand {
         when (it) {

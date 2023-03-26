@@ -45,6 +45,13 @@ fun MyCollectionScreen(
     val uiState by viewModel.uiState.collectAsState()
     val headerState by viewModel.headerUiState.collectAsState()
 
+    viewModel.headerCommand.collectAsCommand {
+        when (it) {
+            MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
+            MainHeaderHandler.Command.OpenWalletScreen -> router.toWalletScreen()
+        }
+    }
+
     viewModel.command.collectAsCommand {
         when (it) {
             is MyCollectionViewModel.Command.OpenRankSelectionScreen -> router.toRankSelectionScreen()
