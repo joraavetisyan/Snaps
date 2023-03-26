@@ -102,6 +102,8 @@ enum class StringKey {
     ReferralProgramCodeDialogMessage,
     ReferralProgramCodeDialogActionInvite,
     ReferralProgramCodeDialogHintEnterCode,
+    ReferralProgramMessageReferralCodeCopied,
+    ReferralProgramMessageReferralLinkCopied,
 
     SettingsTitle,
     SettingsTitleWallet,

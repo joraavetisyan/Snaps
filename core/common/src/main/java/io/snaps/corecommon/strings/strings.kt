@@ -279,6 +279,12 @@ internal val strings = mapOf(
     key(StringKey.ReferralProgramDialogActionClose) to mapOf(
         SupportedLanguageKey.En to "Close",
     ),
+    key(StringKey.ReferralProgramMessageReferralCodeCopied) to mapOf(
+        SupportedLanguageKey.En to "Referral code copied!",
+    ),
+    key(StringKey.ReferralProgramMessageReferralLinkCopied) to mapOf(
+        SupportedLanguageKey.En to "Referral link copied!",
+    ),
 
     key(StringKey.SettingsTitle) to mapOf(
         SupportedLanguageKey.En to "Settings",

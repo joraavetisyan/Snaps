@@ -29,3 +29,9 @@ fun Locale.toSupportedLanguageKey() =
 
 internal fun key(stringKey: StringKey) = stringKey.name
 internal fun key(stringKey: StringKey, pluralKey: PluralKey) = "${stringKey.name}_${pluralKey.name}"
+
+fun String.addPrefix(prefix: String, ignoreEmpty: Boolean = false): String {
+    if(this.isEmpty() && ignoreEmpty) return this
+    else if(this.startsWith(prefix)) return this
+    return "$prefix$this"
+}

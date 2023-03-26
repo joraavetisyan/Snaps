@@ -6,6 +6,10 @@ import io.snaps.baseprofile.data.MainHeaderHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomBarVisibilitySource
+import io.snaps.basesources.NotificationsSource
+import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.strings.StringKey
+import io.snaps.corecommon.strings.addPrefix
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.channels.Channel
@@ -24,6 +28,7 @@ class ReferralProgramViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val action: Action,
     private val bottomBarVisibilitySource: BottomBarVisibilitySource,
+    private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -39,8 +44,10 @@ class ReferralProgramViewModel @Inject constructor(
     private fun subscribeOnCurrentUser() {
         profileRepository.state.onEach { state ->
             _uiState.update {
+                val inviteCode = state.dataOrCache?.ownInviteCode.orEmpty()
                 it.copy(
-                    referralCode = state.dataOrCache?.ownInviteCode.orEmpty(),
+                    referralCode = inviteCode.addPrefix("#"),
+                    referralLink = inviteCode.addPrefix("https://snaps.io/"),
                 )
             }
         }.launchIn(viewModelScope)
@@ -93,10 +100,22 @@ class ReferralProgramViewModel @Inject constructor(
         }
     }
 
+    fun onReferralCodeCopied() {
+        viewModelScope.launch {
+            notificationsSource.sendMessage(StringKey.ReferralProgramMessageReferralCodeCopied.textValue())
+        }
+    }
+
+    fun onReferralLinkCopied() {
+        viewModelScope.launch {
+            notificationsSource.sendMessage(StringKey.ReferralProgramMessageReferralLinkCopied.textValue())
+        }
+    }
+
     data class UiState(
         val isLoading: Boolean = false,
         val referralCode: String = "",
-        val referralLink: String = "https://djx...edns9m24",
+        val referralLink: String = "",
         val inviteCodeValue: String = "",
         val bottomDialog: BottomDialog = BottomDialog.ReferralCode,
         val isInviteUserDialogVisibility: Boolean = false,

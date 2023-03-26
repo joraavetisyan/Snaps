@@ -51,7 +51,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -73,6 +72,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonContentLoader
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
+import io.snaps.coreuicompose.uikit.text.MiddleEllipsisText
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureprofile.ScreenNavigator
@@ -143,13 +143,15 @@ fun ReferralProgramScreen(
             onEnterCodeClicked = viewModel::onEnterCodeClicked,
             onReferralCodeClicked = {
                 clipboardManager.setText(
-                    AnnotatedString(uiState.referralCode)
+                    AnnotatedString(uiState.referralCode.removePrefix("#"))
                 )
+                viewModel.onReferralCodeCopied()
             },
             onReferralLinkClicked = {
                 clipboardManager.setText(
                     AnnotatedString(uiState.referralLink)
                 )
+                viewModel.onReferralLinkCopied()
             },
             onInviteUserButtonClicked = viewModel::onInviteUserButtonClicked,
             onDismissRequest = viewModel::onDismissRequest,
@@ -189,7 +191,8 @@ private fun ReferralProgramScreen(
             Column(
                 modifier = Modifier
                     .padding(vertical = 12.dp)
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 60.dp),
             ) {
                 ReferralCodeCard(onEnterCodeClicked = onEnterCodeClicked)
                 Spacer(modifier = Modifier.height(16.dp))
@@ -380,14 +383,12 @@ private fun CopyButton(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
+            MiddleEllipsisText(
                 text = value,
                 style = AppTheme.specificTypography.bodyLarge,
                 modifier = Modifier
                     .weight(1f, fill = false)
                     .padding(horizontal = 8.dp),
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
             )
             Icon(
                 painter = AppTheme.specificIcons.copy.get(),
