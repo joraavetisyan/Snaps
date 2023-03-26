@@ -27,7 +27,9 @@ interface UserSessionTracker {
 
         object NotActive : State() // Not registered/authorized
 
-        sealed class Active : State() { // Registered/authorized
+        // Registered/authorized
+        sealed class Active : State() {
+            object Checking : Active() // Checking user status
             object NeedsWalletConnect : Active() // Registered/authorized, but not connected to wallet
             object NeedsInitialization : Active() // Registered/authorized, connected to wallet, but not initialized
             object NeedsRanking : Active() // Registered/authorized, connected to wallet, initialized, but not ranked

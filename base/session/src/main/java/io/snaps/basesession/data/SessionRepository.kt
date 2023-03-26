@@ -48,6 +48,7 @@ class SessionRepositoryImpl @Inject constructor(
     override fun checkStatus() {
         val userId: String? = auth.currentUser?.uid
         if (tokenStorage.authToken != null && userId != null) {
+            userSessionTracker.onLogin(UserSessionTracker.State.Active.Checking)
             checkWallet(userId)
         }
     }

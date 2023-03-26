@@ -1,8 +1,12 @@
 package io.snaps.featurecreate.viewmodel
 
+import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.coreui.FileManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
+import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -33,7 +37,9 @@ enum class RecordDelay(val seconds: Int) {
 }
 
 @HiltViewModel
-class CreateVideoViewModel @Inject constructor() : SimpleViewModel() {
+class CreateVideoViewModel @Inject constructor(
+    private val fileManager: FileManager,
+) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -99,6 +105,14 @@ class CreateVideoViewModel @Inject constructor() : SimpleViewModel() {
         }
     }
 
+    fun onVideoSelected(uri: Uri) {
+        fileManager.createFileFromUri(uri)?.toUri()?.path?.let { filePath ->
+            viewModelScope.launch {
+                _command publish Command.OpenPreviewScreen(filePath)
+            }
+        }
+    }
+
     data class UiState(
         val progress: Float = 0f,
         val isRecording: Boolean = false,
@@ -111,5 +125,7 @@ class CreateVideoViewModel @Inject constructor() : SimpleViewModel() {
         fun isSelected(recordTiming: RecordTiming) = selectedRecordTiming == recordTiming
     }
 
-    sealed class Command
+    sealed class Command {
+        data class OpenPreviewScreen(val uri: String) : Command()
+    }
 }

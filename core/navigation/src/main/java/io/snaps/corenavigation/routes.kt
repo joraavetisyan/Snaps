@@ -58,6 +58,8 @@ object AppRoute {
 
     object Registration : Route("Registration")
 
+    object Checking : Route("Checking")
+
     object WalletConnect : Route("WalletConnect")
 
     object WalletCreate : Route("WalletCreate")

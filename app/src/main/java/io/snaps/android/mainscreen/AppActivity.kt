@@ -67,6 +67,7 @@ class AppActivity : FragmentActivity() {
                 )
                 is AppViewModel.StartFlow.AuthorizedFlow -> navHostProvider.AuthorizedGraph(
                     navController = navController,
+                    isChecking = currentFlow.isChecking,
                     needsWalletConnect = currentFlow.needsWalletConnect,
                     needsInitialization = currentFlow.needsInitialization,
                     needsRanking = currentFlow.needsRanking,

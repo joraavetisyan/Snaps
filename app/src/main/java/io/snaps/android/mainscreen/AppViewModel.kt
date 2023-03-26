@@ -38,6 +38,7 @@ class AppViewModel @Inject constructor(
                 needsStartOnBoarding = !userDataStorage.isStartOnBoardingFinished,
             )
             is UserSessionTracker.State.Active -> StartFlow.AuthorizedFlow(
+                isChecking = userSession is UserSessionTracker.State.Active.Checking,
                 needsWalletConnect = userSession is UserSessionTracker.State.Active.NeedsWalletConnect,
                 needsInitialization = userSession is UserSessionTracker.State.Active.NeedsInitialization,
                 needsRanking = userSession is UserSessionTracker.State.Active.NeedsRanking,
@@ -79,6 +80,7 @@ class AppViewModel @Inject constructor(
         ) : StartFlow()
 
         data class AuthorizedFlow(
+            val isChecking: Boolean,
             val needsWalletConnect: Boolean,
             val needsInitialization: Boolean,
             val needsRanking: Boolean,

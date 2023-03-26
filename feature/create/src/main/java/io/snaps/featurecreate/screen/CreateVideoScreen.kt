@@ -96,7 +96,11 @@ fun CreateVideoScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
-    viewModel.command.collectAsCommand {}
+    viewModel.command.collectAsCommand {
+        when (it) {
+            is CreateVideoViewModel.Command.OpenPreviewScreen -> router.toPreviewScreen(it.uri)
+        }
+    }
 
     val permissionState = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -113,7 +117,11 @@ fun CreateVideoScreen(
 
     val videoPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
-        onResult = { it?.path?.let(router::toPreviewScreen) },
+        onResult = {
+            if (it != null) {
+                viewModel.onVideoSelected(it)
+            }
+        },
     )
 
     CreateVideoScreen(

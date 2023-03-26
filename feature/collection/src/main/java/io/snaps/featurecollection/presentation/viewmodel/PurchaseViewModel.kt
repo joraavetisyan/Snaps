@@ -86,10 +86,9 @@ class PurchaseViewModel @Inject constructor(
                     _command publish Command.OpenMainScreen
                 }
             } else {
-                val products = purchaseStateProvider.getInAppProducts().data.orEmpty().firstOrNull {
+                purchaseStateProvider.getInAppProducts().data.orEmpty().firstOrNull {
                     it.details.sku == args.type.storeId
-                }
-                products?.let {
+                }?.let {
                     billingRouter.openBillingScreen(it, activity)
                 }
             }
