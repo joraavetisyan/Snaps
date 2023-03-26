@@ -59,6 +59,12 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     nextPageIdFactory = { it.entityId },
                     mapper = { it.toVideoClipModelList(getLikedVideos()) },
                 )
+                VideoFeedType.UserLiked -> PagedLoaderParams(
+                    action = { from, count -> videoFeedApi.likedVideos(from, count) },
+                    pageSize = 15,
+                    nextPageIdFactory = { it.entityId },
+                    mapper = { videoFeed -> videoFeed.map { it.toModel(true) } },
+                )
                 is VideoFeedType.Popular -> PagedLoaderParams(
                     action = { from, count -> videoFeedApi.popularFeed(from, count) },
                     pageSize = 12,

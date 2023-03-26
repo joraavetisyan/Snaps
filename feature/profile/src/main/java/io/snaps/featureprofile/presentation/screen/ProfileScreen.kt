@@ -1,6 +1,9 @@
 package io.snaps.featureprofile.presentation.screen
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -23,7 +26,10 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -34,6 +40,7 @@ import io.snaps.basefeed.ui.VideoFeedGrid
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.button.SimpleChip
 import io.snaps.coreuicompose.uikit.duplicate.ActionIconData
@@ -61,6 +68,9 @@ fun ProfileScreen(
             is ProfileViewModel.Command.OpenUserVideoFeedScreen -> {
                 router.toUserVideoFeedScreen(userId = it.userId, position = it.position)
             }
+            is ProfileViewModel.Command.OpenUserLikedVideoFeedScreen -> {
+                router.toUserLikedVideoFeedScreen(position = it.position)
+            }
         }
     }
 
@@ -73,10 +83,11 @@ fun ProfileScreen(
         onDismissRequest = viewModel::onDismissRequest,
         onUnsubscribeClicked = viewModel::onUnsubscribeClicked,
         onVideoClipClicked = viewModel::onVideoClipClicked,
+        onUserLikedVideoClipClicked = viewModel::onUserLikedVideoClipClicked,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 private fun ProfileScreen(
     uiState: ProfileViewModel.UiState,
@@ -87,6 +98,7 @@ private fun ProfileScreen(
     onUnsubscribeClicked: (SubModel) -> Unit,
     onDismissRequest: () -> Unit,
     onVideoClipClicked: (Int) -> Unit,
+    onUserLikedVideoClipClicked: (Int) -> Unit,
 ) {
     val title = when (uiState.userType) {
         ProfileViewModel.UserType.Other -> "@${uiState.nickname}"
@@ -121,7 +133,6 @@ private fun ProfileScreen(
             if (uiState.userType == ProfileViewModel.UserType.Current) {
                 FloatingActionButton(
                     onClick = onCreateVideoScreenClicked,
-                    modifier = Modifier.padding(bottom = 100.dp),
                     shape = CircleShape,
                     containerColor = AppTheme.specificColorScheme.uiAccent,
                 ) {
@@ -137,11 +148,11 @@ private fun ProfileScreen(
         Column(
             modifier = Modifier.padding(paddingValues),
         ) {
+            var selectedItemIndex by remember { mutableStateOf(0) }
+
             uiState.userInfoTileState.Content(modifier = Modifier)
+            Spacer(modifier = Modifier.height(12.dp))
             if (uiState.userType == ProfileViewModel.UserType.Other) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Actions()
-                Spacer(modifier = Modifier.height(12.dp))
                 SimpleChip(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -151,13 +162,28 @@ private fun ProfileScreen(
                     label = (if (uiState.isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),
                     onClick = onSubscribeClicked,
                 )
+            } else {
+                Actions(
+                    selectedItemIndex = selectedItemIndex,
+                    onGalleryIconClicked = { selectedItemIndex = 0 },
+                    onLikeIconClicked = { selectedItemIndex = 1 },
+                )
             }
             Spacer(modifier = Modifier.height(12.dp))
-            VideoFeedGrid(
-                columnCount = 3,
-                uiState = uiState.videoFeedUiState,
-                onClick = onVideoClipClicked,
-            )
+            AnimatedContent(targetState = selectedItemIndex) {
+                when (it) {
+                    0 -> VideoFeedGrid(
+                        columnCount = 3,
+                        uiState = uiState.videoFeedUiState,
+                        onClick = onVideoClipClicked,
+                    )
+                    else -> VideoFeedGrid(
+                        columnCount = 3,
+                        uiState = uiState.userLikedVideoFeedUiState,
+                        onClick = onUserLikedVideoClipClicked,
+                    )
+                }
+            }
         }
     }
     when (uiState.dialog) {
@@ -171,7 +197,11 @@ private fun ProfileScreen(
 }
 
 @Composable
-private fun Actions() {
+private fun Actions(
+    selectedItemIndex: Int,
+    onGalleryIconClicked: () -> Unit,
+    onLikeIconClicked: () -> Unit,
+) {
     Divider()
     Row(
         modifier = Modifier
@@ -179,27 +209,45 @@ private fun Actions() {
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
-        Icon(
-            painter = AppTheme.specificIcons.gallery.get(),
-            contentDescription = null,
-            tint = AppTheme.specificColorScheme.darkGrey,
+        Box(
             modifier = Modifier
-                .padding(vertical = 8.dp)
-                .size(28.dp),
-        )
+                .weight(1f)
+                .doOnClick(onClick = onGalleryIconClicked),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                painter = AppTheme.specificIcons.gallery.get(),
+                contentDescription = null,
+                tint = if (selectedItemIndex == 0) {
+                    AppTheme.specificColorScheme.uiAccent
+                } else AppTheme.specificColorScheme.darkGrey,
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .size(28.dp),
+            )
+        }
         Divider(
             modifier = Modifier
                 .fillMaxHeight()
                 .width(1.dp)
         )
-        Icon(
-            painter = AppTheme.specificIcons.like.get(),
-            contentDescription = null,
-            tint = AppTheme.specificColorScheme.darkGrey,
+        Box(
             modifier = Modifier
-                .padding(vertical = 8.dp)
-                .size(28.dp),
-        )
+                .weight(1f)
+                .doOnClick(onClick = onLikeIconClicked),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                painter = AppTheme.specificIcons.like.get(),
+                contentDescription = null,
+                tint = if (selectedItemIndex == 1) {
+                    AppTheme.specificColorScheme.uiAccent
+                } else AppTheme.specificColorScheme.darkGrey,
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .size(28.dp),
+            )
+        }
     }
     Divider()
 }

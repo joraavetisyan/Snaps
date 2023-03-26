@@ -171,6 +171,14 @@ object AppRoute {
         )
     }
 
+    object UserLikedVideoFeed : RouteWithArg("UserLikedVideoFeed") {
+
+        @Serializable
+        data class Args(
+            val position: Int,
+        )
+    }
+
     object RankSelection : Route("RankSelection")
 
     object Purchase : RouteWithArg("Purchase") {

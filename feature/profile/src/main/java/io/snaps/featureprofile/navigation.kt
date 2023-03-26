@@ -11,6 +11,7 @@ import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
 import io.snaps.featureprofile.presentation.screen.ProfileScreen
 import io.snaps.featureprofile.presentation.screen.SubsScreen
+import io.snaps.featureprofile.presentation.screen.UserLikedVideoFeedScreen
 import io.snaps.featureprofile.presentation.screen.UserVideoFeedScreen
 import io.snaps.featureprofile.presentation.screen.settings.BackupWalletKeyScreen
 import io.snaps.featureprofile.presentation.screen.settings.ReferralProgramScreen
@@ -55,6 +56,12 @@ internal class ScreenNavigator(navHostController: NavHostController) :
             route = AppRoute.UserVideoFeed,
             arg = AppRoute.UserVideoFeed.Args(userId = userId, position = position),
         )
+
+    fun toUserLikedVideoFeedScreen(position: Int) =
+        navHostController navigate FeatureNavDirection(
+            route = AppRoute.UserLikedVideoFeed,
+            arg = AppRoute.UserLikedVideoFeed.Args(position = position),
+        )
 }
 
 class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider {
@@ -70,5 +77,6 @@ class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider 
         composable(AppRoute.Profile) { ProfileScreen(controller) }
         composable(AppRoute.Subs) { SubsScreen(controller) }
         composable(AppRoute.UserVideoFeed) { UserVideoFeedScreen(controller) }
+        composable(AppRoute.UserLikedVideoFeed) { UserLikedVideoFeedScreen(controller) }
     }
 }

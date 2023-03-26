@@ -6,6 +6,8 @@ sealed interface VideoFeedType {
 
     object Main : VideoFeedType
 
+    object UserLiked : VideoFeedType
+
     data class Popular(val query: String) : VideoFeedType
 
     /** [userId]=null -> authed user */

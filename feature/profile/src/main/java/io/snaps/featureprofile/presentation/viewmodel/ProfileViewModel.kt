@@ -58,6 +58,7 @@ class ProfileViewModel @Inject constructor(
             loadCurrentUser()
         }
         subscribeOnFeed()
+        subscribeOnUserLikedFeed()
     }
 
     private fun subscribeOnCurrentUser() {
@@ -115,7 +116,7 @@ class ProfileViewModel @Inject constructor(
             it.toVideoFeedUiState(
                 shimmerListSize = 12,
                 onClipClicked = {},
-                onReloadClicked = {},
+                onReloadClicked = ::onFeedReloadClicked,
                 onListEndReaching = ::onListEndReaching,
             )
         }.onEach { state ->
@@ -128,6 +129,39 @@ class ProfileViewModel @Inject constructor(
             action.execute {
                 videoFeedRepository.loadNextFeedPage(VideoFeedType.User(args?.userId))
             }
+        }
+    }
+
+    private fun onFeedReloadClicked() = viewModelScope.launch {
+        action.execute {
+            videoFeedRepository.refreshFeed(VideoFeedType.User(args?.userId))
+        }
+    }
+
+    private fun subscribeOnUserLikedFeed() {
+        videoFeedRepository.getFeedState(VideoFeedType.UserLiked).map {
+            it.toVideoFeedUiState(
+                shimmerListSize = 12,
+                onClipClicked = {},
+                onReloadClicked = ::onUserLikedFeedReloadClicked,
+                onListEndReaching = ::onUserLikedListEndReaching,
+            )
+        }.onEach { state ->
+            _uiState.update { it.copy(userLikedVideoFeedUiState = state) }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun onUserLikedListEndReaching() {
+        viewModelScope.launch {
+            action.execute {
+                videoFeedRepository.loadNextFeedPage(VideoFeedType.UserLiked)
+            }
+        }
+    }
+
+    private fun onUserLikedFeedReloadClicked() = viewModelScope.launch {
+        action.execute {
+            videoFeedRepository.refreshFeed(VideoFeedType.UserLiked)
         }
     }
 
@@ -189,6 +223,14 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun onUserLikedVideoClipClicked(position: Int) {
+        viewModelScope.launch {
+            _command publish Command.OpenUserLikedVideoFeedScreen(
+                position = position,
+            )
+        }
+    }
+
     data class UiState(
         val isLoading: Boolean = true,
         val userInfoTileState: UserInfoTileState = UserInfoTileState.Shimmer,
@@ -196,6 +238,7 @@ class ProfileViewModel @Inject constructor(
         val isSubscribed: Boolean = false,
         val userType: UserType = UserType.Current,
         val videoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
+        val userLikedVideoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
         val dialog: SubsViewModel.Dialog? = null,
     )
 
@@ -203,6 +246,7 @@ class ProfileViewModel @Inject constructor(
         object OpenSettingsScreen : Command()
         data class OpenSubsScreen(val args: AppRoute.Subs.Args) : Command()
         data class OpenUserVideoFeedScreen(val userId: Uuid?, val position: Int) : Command()
+        data class OpenUserLikedVideoFeedScreen(val position: Int) : Command()
     }
 
     sealed class Dialog {
