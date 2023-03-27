@@ -67,7 +67,7 @@ class ReferralProgramViewModel @Inject constructor(
 
     fun onInviteUserButtonClicked() {
         _uiState.update {
-            it.copy(isInviteUserDialogVisibility = true)
+            it.copy(isInviteUserDialogVisible = true)
         }
     }
 
@@ -90,13 +90,13 @@ class ReferralProgramViewModel @Inject constructor(
 
     fun onDismissRequest() {
         _uiState.update {
-            it.copy(isInviteUserDialogVisibility = false)
+            it.copy(isInviteUserDialogVisible = false)
         }
     }
 
     fun onCloseDialogClicked() {
         _uiState.update {
-            it.copy(isInviteUserDialogVisibility = false)
+            it.copy(isInviteUserDialogVisible = false)
         }
     }
 
@@ -118,8 +118,9 @@ class ReferralProgramViewModel @Inject constructor(
         val referralLink: String = "",
         val inviteCodeValue: String = "",
         val bottomDialog: BottomDialog = BottomDialog.ReferralCode,
-        val isInviteUserDialogVisibility: Boolean = false,
+        val isInviteUserDialogVisible: Boolean = false,
     ) {
+
         val isReferralCodeValid get() = inviteCodeValue.isNotBlank()
     }
 

@@ -19,6 +19,9 @@ internal val strings = mapOf(
     key(StringKey.ActionCancel) to mapOf(
         SupportedLanguageKey.En to "Cancel",
     ),
+    key(StringKey.ActionClose) to mapOf(
+        SupportedLanguageKey.En to "Close",
+    ),
 
     key(StringKey.ErrorLoadFail) to mapOf(
         SupportedLanguageKey.En to "Error while loading",
@@ -156,6 +159,12 @@ internal val strings = mapOf(
     ),
     key(StringKey.MnemonicsMessage) to mapOf(
         SupportedLanguageKey.En to "Please save these 12 words on a piece of paper. Mind their order when notings them down. Keep it in secure place.",
+    ),
+    key(StringKey.DeviceNotSecuredDialogTitle) to mapOf(
+        SupportedLanguageKey.En to "Security error",
+    ),
+    key(StringKey.DeviceNotSecuredDialogMessage) to mapOf(
+        SupportedLanguageKey.En to "Please set lock screen on your device to protect your seed phrase",
     ),
 
     key(StringKey.VerificationTitle) to mapOf(

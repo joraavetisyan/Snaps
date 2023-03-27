@@ -32,6 +32,7 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
+import io.snaps.coreuicompose.uikit.status.SimpleAlertDialogUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurewalletconnect.ScreenNavigator
@@ -60,6 +61,7 @@ fun MnemonicListVerificationScreen(
         onBackClicked = router::back,
         onWordItemClicked = viewModel::onWordItemClicked,
         onAnimationFinished = viewModel::onAnimationFinished,
+        onDialogDismissRequested = viewModel::onDialogDismissRequested,
     )
 }
 
@@ -69,6 +71,7 @@ private fun MnemonicListVerificationScreen(
     uiState: MnemonicsVerificationViewModel.UiState,
     onContinueButtonClicked: () -> Unit,
     onBackClicked: () -> Boolean,
+    onDialogDismissRequested: () -> Unit,
     onWordItemClicked: (SelectionUiModel, WordUiModel) -> Unit,
     onAnimationFinished: (SelectionUiModel, WordUiModel) -> Unit,
 ) {
@@ -125,6 +128,15 @@ private fun MnemonicListVerificationScreen(
                 Spacer(modifier = Modifier.height(12.dp))
             }
         }
+    }
+    when (uiState.dialog) {
+        MnemonicsVerificationViewModel.Dialog.DeviceNotSecured -> SimpleAlertDialogUi(
+            text = StringKey.DeviceNotSecuredDialogMessage.textValue(),
+            title = StringKey.DeviceNotSecuredDialogTitle.textValue(),
+            buttonText = StringKey.ActionClose.textValue(),
+            onClickRequest = onDialogDismissRequested,
+        )
+        null -> Unit
     }
 }
 

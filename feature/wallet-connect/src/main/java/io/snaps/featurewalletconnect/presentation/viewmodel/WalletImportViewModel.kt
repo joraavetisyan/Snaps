@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.basewallet.data.WalletRepository
+import io.snaps.basewallet.domain.DeviceNotSecuredException
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import kotlinx.coroutines.channels.Channel
@@ -33,35 +34,49 @@ class WalletImportViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             action.execute {
-                profileRepository.updateData().flatMap { user ->
-                    walletRepository.importAccount(
-                        userId = user.userId,
-                        words = _uiState.value.words.map { it.trim().lowercase() }
-                    )
+                // todo to interactor
+                profileRepository.updateData()
+                    .flatMap { user ->
+                        walletRepository.importAccount(
+                            userId = user.userId,
+                            words = _uiState.value.words.map { it.trim().lowercase() }
+                        )
+                    }.flatMap {
+                        sessionRepository.checkStatus()
+                    }
+            }.doOnError { error, _ ->
+                if (error.cause is DeviceNotSecuredException) {
+                    _uiState.update { it.copy(dialog = Dialog.DeviceNotSecured, isLoading = false) }
+                } else {
+                    _uiState.update { it.copy(isLoading = false) }
                 }
-            }.doOnSuccess {
-                sessionRepository.checkStatus()
-            }.doOnError { _, _ ->
-                _uiState.update { it.copy(hasError = true, isLoading = false) }
             }
         }
+    }
+
+    fun onDialogDismissRequested() {
+        _uiState.update { it.copy(dialog = null) }
     }
 
     fun onPhraseValueChanged(phrase: String, index: Int) {
         _uiState.update {
             val newPhrases = it.words.mapIndexed { i, s -> if (index == i) phrase else s }
-            it.copy(hasError = false, words = newPhrases)
+            it.copy(words = newPhrases)
         }
     }
 
     data class UiState(
         val isLoading: Boolean = false,
-        val hasError: Boolean = false,
         val words: List<String> = List(12) { "" },
+        val dialog: Dialog? = null,
     ) {
 
-        val isContinueButtonEnabled get() = !hasError && words.all(String::isNotBlank)
+        val isContinueButtonEnabled get() = words.all(String::isNotBlank)
     }
 
     sealed interface Command
+
+    enum class Dialog {
+        DeviceNotSecured,
+    }
 }

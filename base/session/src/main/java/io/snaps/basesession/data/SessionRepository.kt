@@ -20,9 +20,9 @@ interface SessionRepository {
 
     suspend fun refresh(): Effect<Completable>
 
-    fun checkStatus()
+    suspend fun checkStatus(): Effect<Completable>
 
-    fun onLogin()
+    suspend fun onLogin(): Effect<Completable>
 
     fun onLogout()
 
@@ -42,34 +42,39 @@ class SessionRepositoryImpl @Inject constructor(
 ) : SessionRepository {
 
     init {
-        checkStatus()
+        scope.launch { checkStatus() }
     }
 
-    override fun checkStatus() {
+    override suspend fun checkStatus(): Effect<Completable> {
         val userId: String? = auth.currentUser?.uid
         if (tokenStorage.authToken != null && userId != null) {
             userSessionTracker.onLogin(UserSessionTracker.State.Active.Checking)
-            checkWallet(userId)
+            return checkWallet(userId)
         }
+        return Effect.completable
     }
 
-    private fun checkWallet(userId: String) {
+    /**
+     * Check if user has wallet connected
+     */
+    private suspend fun checkWallet(userId: String): Effect<Completable> {
         if (!walletRepository.hasAccount(userId)) {
             userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsWalletConnect)
-            return
+            return Effect.completable
         }
-        scope.launch {
-            checkUser().doOnSuccess { ready ->
-                if (ready) {
-                    userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
-                }
-            }.doOnError { _, _ ->
-                // todo should open Main?
+        return checkUser().doOnSuccess { ready ->
+            if (ready) {
                 userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
             }
-        }
+        }.doOnError { _, _ ->
+            // todo should we really open Main here?
+            userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
+        }.toCompletable()
     }
 
+    /**
+     * Check if user has name and avatar
+     */
     private suspend fun checkUser() = profileRepository.updateData().flatMap {
         if (it.name.isBlank() || it.avatar == null) {
             userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsInitialization)
@@ -79,6 +84,9 @@ class SessionRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * Check if user has NFTs in collection
+     */
     private suspend fun checkNft() = nftRepository.updateNftCollection().flatMap {
         if (it.isEmpty()) {
             userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsRanking)
@@ -98,13 +106,13 @@ class SessionRepositoryImpl @Inject constructor(
         return Effect.completable
     }
 
-    override fun onLogin() {
+    override suspend fun onLogin(): Effect<Completable> {
         auth.currentUser?.uid?.let {
             if (walletRepository.hasAccount(it)) {
                 walletRepository.setAccountActive(it)
             }
         }
-        checkStatus()
+        return checkStatus()
     }
 
     override fun onLogout() {

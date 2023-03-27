@@ -237,7 +237,7 @@ private fun ReferralProgramScreen(
             }
         }
 
-        if (uiState.isInviteUserDialogVisibility) {
+        if (uiState.isInviteUserDialogVisible) {
             DialogUi(
                 title = StringKey.ReferralProgramInviteDialogTitle.textValue(),
                 message = StringKey.ReferralProgramInviteDialogMessage.textValue(),

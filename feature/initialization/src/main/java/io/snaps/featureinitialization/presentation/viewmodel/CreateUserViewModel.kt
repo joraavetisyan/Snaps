@@ -101,7 +101,11 @@ class CreateUserViewModel @Inject constructor(
     }
 
     private fun handleCreate() {
-        sessionRepository.checkStatus()
+        viewModelScope.launch {
+            action.execute {
+                sessionRepository.checkStatus()
+            }
+        }
     }
 
     fun onNickNameValueChanged(value: String) {
@@ -128,8 +132,5 @@ class CreateUserViewModel @Inject constructor(
         Uploaded, NotUploaded,
     }
 
-    sealed class Command {
-        object OpenRankSelectionScreen : Command()
-        object OpenMainScreen : Command()
-    }
+    sealed class Command
 }

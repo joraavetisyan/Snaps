@@ -8,6 +8,7 @@ enum class StringKey {
     ActionReload,
     ActionContinue,
     ActionCancel,
+    ActionClose,
 
     ErrorLoadFail,
 
@@ -82,6 +83,9 @@ enum class StringKey {
 
     MnemonicsTitle,
     MnemonicsMessage,
+
+    DeviceNotSecuredDialogTitle,
+    DeviceNotSecuredDialogMessage,
 
     VerificationTitle,
     VerificationMessage,

@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basewallet.data.WalletRepository
+import io.snaps.basewallet.domain.DeviceNotSecuredException
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
@@ -73,9 +74,17 @@ class MnemonicsVerificationViewModel @Inject constructor(
     fun onContinueButtonClicked() = viewModelScope.launch {
         action.execute {
             walletRepository.saveLastConnectedAccount()
-        }.doOnComplete {
+        }.doOnSuccess {
             _command publish Command.OpenCreatedWalletScreen
+        }.doOnError { error, _ ->
+            if (error.cause is DeviceNotSecuredException) {
+                _uiState.update { it.copy(dialog = Dialog.DeviceNotSecured) }
+            }
         }
+    }
+
+    fun onDialogDismissRequested() {
+        _uiState.update { it.copy(dialog = null) }
     }
 
     fun onWordItemClicked(selection: SelectionUiModel, word: WordUiModel) {
@@ -121,6 +130,7 @@ class MnemonicsVerificationViewModel @Inject constructor(
     data class UiState(
         val words: List<WordUiModel> = emptyList(),
         val selections: List<SelectionUiModel> = emptyList(),
+        val dialog: Dialog? = null,
     ) {
 
         val isContinueButtonEnabled
@@ -129,6 +139,10 @@ class MnemonicsVerificationViewModel @Inject constructor(
 
     sealed class Command {
         object OpenCreatedWalletScreen : Command()
+    }
+
+    enum class Dialog {
+        DeviceNotSecured,
     }
 }
 

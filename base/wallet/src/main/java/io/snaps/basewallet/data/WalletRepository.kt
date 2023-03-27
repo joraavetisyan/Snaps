@@ -10,6 +10,8 @@ import io.horizontalsystems.marketkit.models.TokenType
 import io.reactivex.disposables.CompositeDisposable
 import io.snaps.basewallet.data.model.ClaimRequestDto
 import io.snaps.basewallet.data.model.WalletSaveRequestDto
+import io.snaps.basewallet.domain.DeviceNotSecuredException
+import io.snaps.basewallet.domain.InvalidMnemonicsException
 import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.AppError
@@ -60,9 +62,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import java.math.BigInteger
+import java.security.InvalidAlgorithmParameterException
 import javax.inject.Inject
 
-object InvalidMnemonicsException : Exception()
+private const val messageNotSecured = "java.lang.IllegalStateException: Secure lock screen must be enabled to create keys requiring user authentication"
 
 interface WalletRepository {
 
@@ -194,14 +197,21 @@ class WalletRepositoryImpl @Inject constructor(
                 backedUp = true,
             )
             saveLastConnectedAccount()
-        } catch (checksumException: Exception) {
+        } catch (checksumException: Exception /*todo specify exception*/) {
             Effect.error(AppError.Unknown(cause = InvalidMnemonicsException))
         }
     }
 
     override suspend fun saveLastConnectedAccount(): Effect<Completable> {
         val account = account ?: return Effect.error(AppError.Unknown("No account was created!"))
-        accountManager.save(account)
+        try {
+            accountManager.save(account)
+        } catch (e: InvalidAlgorithmParameterException) {
+            if (e.message == messageNotSecured) {
+                return Effect.error(AppError.Custom(cause = DeviceNotSecuredException))
+            }
+            return Effect.error(AppError.Unknown(cause = e))
+        }
         activateDefaultWallets(account)
         predefinedBlockchainSettingsProvider.prepareNew(account, BlockchainType.Zcash)
         // fixme better way

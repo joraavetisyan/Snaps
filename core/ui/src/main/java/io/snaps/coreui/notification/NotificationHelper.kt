@@ -39,15 +39,13 @@ class NotificationHelperImpl @Inject constructor(
 ) : NotificationHelper {
 
     init {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channels = NotificationHelper.Channels.values().map {
-                NotificationChannel(it.getId(context), it.channelName, NotificationManager.IMPORTANCE_DEFAULT).apply {
-                    description = it.channelDescription
-                }
+        val channels = NotificationHelper.Channels.values().map {
+            NotificationChannel(it.getId(context), it.channelName, NotificationManager.IMPORTANCE_DEFAULT).apply {
+                description = it.channelDescription
             }
-
-            notificationManager.createNotificationChannels(channels)
         }
+
+        notificationManager.createNotificationChannels(channels)
     }
 
     override fun showSimpleNotification(model: NotificationHelper.Model) {

@@ -76,12 +76,7 @@ fun CreateUserScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
-    viewModel.command.collectAsCommand {
-        when (it) {
-            CreateUserViewModel.Command.OpenRankSelectionScreen -> router.toRankSelectionScreen()
-            CreateUserViewModel.Command.OpenMainScreen -> router.toMainScreen()
-        }
-    }
+    viewModel.command.collectAsCommand {}
 
     CreateUserScreen(
         uiState = uiState,

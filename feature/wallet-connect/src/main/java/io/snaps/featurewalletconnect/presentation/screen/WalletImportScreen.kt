@@ -36,8 +36,10 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
+import io.snaps.coreuicompose.uikit.status.SimpleAlertDialogUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewalletconnect.ScreenNavigator
+import io.snaps.featurewalletconnect.presentation.viewmodel.MnemonicsVerificationViewModel
 import io.snaps.featurewalletconnect.presentation.viewmodel.WalletImportViewModel
 
 @Composable
@@ -55,7 +57,8 @@ fun WalletImportScreen(
         uiState = uiState,
         onContinueButtonClicked = viewModel::onContinueButtonClicked,
         onPhraseValueChanged = viewModel::onPhraseValueChanged,
-        onBackClicked = router::back
+        onBackClicked = router::back,
+        onDialogDismissRequested = viewModel::onDialogDismissRequested,
     )
     FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
@@ -67,6 +70,7 @@ private fun WalletImportScreen(
     onContinueButtonClicked: () -> Unit,
     onPhraseValueChanged: (String, Int) -> Unit,
     onBackClicked: () -> Boolean,
+    onDialogDismissRequested: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -141,5 +145,14 @@ private fun WalletImportScreen(
                 SimpleButtonContent(text = StringKey.ActionContinue.textValue())
             }
         }
+    }
+    when (uiState.dialog) {
+        WalletImportViewModel.Dialog.DeviceNotSecured -> SimpleAlertDialogUi(
+            text = StringKey.DeviceNotSecuredDialogMessage.textValue(),
+            title = StringKey.DeviceNotSecuredDialogTitle.textValue(),
+            buttonText = StringKey.ActionClose.textValue(),
+            onClickRequest = onDialogDismissRequested,
+        )
+        null -> Unit
     }
 }
