@@ -75,8 +75,9 @@ sealed class RightPart : TileState {
     ) : RightPart()
 
     data class Shimmer(
-        val needRightCircle: Boolean = false,
-        val needRightLine: Boolean = false,
+        val needCircle: Boolean = false,
+        val needLine: Boolean = false,
+        val needBoldLine: Boolean = false,
         val needAdditionalInfo: Boolean = false,
     ) : RightPart()
 
@@ -205,24 +206,29 @@ fun RightPartTile(modifier: Modifier, data: RightPart) {
                 )
             }
             is RightPart.Shimmer -> {
-                if (data.needRightCircle) {
+                if (data.needCircle) {
                     ShimmerTileCircle(size = RightPartTileConfig.IconSize)
                 }
-                if (data.needRightLine) {
+                if (data.needLine) {
                     ShimmerTileLine(
                         width = ShimmerTileConfig.WidthExtraSmall,
                         height = RightPartTileConfig.rightPartTextStyle().lineHeight.value.dp,
-                        modifier = Modifier.addIf(data.needRightCircle) { padding(top = 4.dp) }
+                        modifier = Modifier.addIf(data.needCircle) { padding(top = 4.dp) }
+                    )
+                }
+                if (data.needBoldLine) {
+                    ShimmerTileLine(
+                        width = ShimmerTileConfig.WidthExtraSmall,
+                        height = RightPartTileConfig.rightPartTextStyle().lineHeight.value.dp.times(2),
+                        modifier = Modifier.addIf(data.needCircle) { padding(top = 4.dp) }
                     )
                 }
                 if (data.needAdditionalInfo) {
                     ShimmerTileLine(
                         width = ShimmerTileConfig.WidthExtraSmall,
                         height = RightPartTileConfig.rightPartAdditionalTextStyle().lineHeight.value.dp,
-                        modifier = Modifier.addIf(data.needRightCircle || data.needRightLine) {
-                            padding(
-                                top = 4.dp
-                            )
+                        modifier = Modifier.addIf(data.needCircle || data.needLine) {
+                            padding(top = 4.dp)
                         }
                     )
                 }

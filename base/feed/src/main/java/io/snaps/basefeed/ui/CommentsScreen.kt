@@ -106,7 +106,7 @@ fun CommentsScreen(
                                     needValueLine = true,
                                     needAdditionalInfo = true,
                                 ),
-                                rightPart = RightPart.Shimmer(needRightCircle = true),
+                                rightPart = RightPart.Shimmer(needCircle = true),
                             )
                         )
                         is CommentUiState.Progress -> Box(modifier = Modifier.fillMaxWidth()) {
