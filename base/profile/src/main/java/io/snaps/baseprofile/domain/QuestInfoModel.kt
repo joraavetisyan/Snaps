@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 data class QuestInfoModel(
     val quests: List<QuestModel>,
     val totalEnergy: Int,
+    val totalEnergyProgress: Int,
     val questDate: LocalDateTime,
 )
 
