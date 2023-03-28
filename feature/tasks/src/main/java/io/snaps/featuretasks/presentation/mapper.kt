@@ -44,9 +44,9 @@ fun State<QuestInfoModel>.toRemainingTimeTileState() = when (this) {
     is Loading -> RemainingTimeTileState.Shimmer
     is Effect -> when {
         isSuccess -> RemainingTimeTileState.Data(
-            time = requireData.questDate.plusHours(24).toLong(),
+            time = requireData.questDate.toLong(),
             energy = requireData.totalEnergy,
-            energyProgress = requireData.quests.sumOf { it.energyProgress() },
+            energyProgress = requireData.totalEnergyProgress,
         )
         else -> RemainingTimeTileState.Shimmer
     }

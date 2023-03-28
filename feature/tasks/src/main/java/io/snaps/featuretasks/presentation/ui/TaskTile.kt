@@ -101,7 +101,7 @@ private fun Data(
             if (data.energyProgress < data.energy && data.energyProgress > 0) {
                 Spacer(modifier = Modifier.height(12.dp))
                 TaskInProgressMessage()
-            } else if (data.energyProgress == data.energy) {
+            } else if (data.energyProgress >= data.energy) {
                 Spacer(modifier = Modifier.height(12.dp))
                 TaskCompletedMessage()
             }

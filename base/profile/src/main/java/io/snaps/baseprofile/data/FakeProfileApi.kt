@@ -93,6 +93,7 @@ class FakeProfileApi : ProfileApi {
         questInfo = getQuestInfo(),
         ownInviteCode = "#42GJXE8QM",
         inviteCodeRegisteredBy = null,
+        instagramUserId = null,
     )
 
     private fun getQuestInfo() = QuestInfoResponseDto(

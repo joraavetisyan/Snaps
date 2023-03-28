@@ -21,4 +21,5 @@ data class UserInfoModel(
     val questInfo: QuestInfoModel,
     val inviteCodeRegisteredBy: String?,
     val ownInviteCode: String?,
+    val instagramUserId: Uuid?,
 )

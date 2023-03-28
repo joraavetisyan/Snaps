@@ -32,6 +32,7 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
     inviteCodeRegisteredBy = inviteCodeRegisteredBy,
     ownInviteCode = ownInviteCode,
     totalPublication = null,
+    instagramUserId = instagramUserId,
 )
 
 fun BalanceResponseDto.toModel() = BalanceModel(
@@ -44,6 +45,7 @@ fun QuestInfoResponseDto.toQuestInfoModel() = QuestInfoModel(
     quests = quests.map(QuestItemDto::toQuestModel),
     questDate = requireNotNull(ZonedDateTime.parse(questDate)).toOffsetLocalDateTime(),
     totalEnergy = quests.sumOf { it.quest.energy },
+    totalEnergyProgress = quests.sumOf { it.energyProgress() }
 )
 
 fun QuestItemDto.toQuestModel() = QuestModel(
@@ -56,6 +58,17 @@ fun QuestItemDto.toQuestModel() = QuestModel(
     madeCount = madeCount,
 )
 
+private fun QuestItemDto.energyProgress(): Int {
+    return if (madeCount != null && quest.count != null) {
+        val madeByOne = madeCount.toDouble() / quest.count.toDouble() * 20
+        madeByOne.toInt()
+    } else {
+        if (completed) {
+            quest.energy
+        } else 0
+    }
+}
+
 fun mainHeaderState(
     profile: State<UserInfoModel>,
     coins: State<BalanceModel>,
@@ -65,7 +78,7 @@ fun mainHeaderState(
     if (profile.isSuccess && coins.isSuccess) {
         MainHeaderState.Data(
             profileImage = profile.requireData.avatar,
-            energy = profile.requireData.questInfo.totalEnergy.toString(),
+            energy = profile.requireData.questInfo.totalEnergyProgress.toString(),
             unlocked = coins.requireData.unlocked.toString(),
             locked = coins.requireData.locked.toString(),
             onProfileClicked = onProfileClicked,
