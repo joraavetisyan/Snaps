@@ -209,7 +209,7 @@ class WalletViewModel @Inject constructor(
             CellTileState.Shimmer(
                 leftPart = LeftPart.Shimmer,
                 middlePart = MiddlePart.Shimmer(needValueLine = true, needHeaderLine = true),
-                rightPart = RightPart.Shimmer(needRightLine = true),
+                rightPart = RightPart.Shimmer(needLine = true),
             )
         },
         val rewards: List<RewardsTileState> = List(2) { RewardsTileState.Shimmer },

@@ -174,7 +174,7 @@ private fun Shimmer(
             needDescriptionLine = true,
         ).Content(modifier = Modifier)
         RightPart.Shimmer(
-            needRightLine = true,
+            needLine = true,
         ).Content(modifier = Modifier)
     }
 }

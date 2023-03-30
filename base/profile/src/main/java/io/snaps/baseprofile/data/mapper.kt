@@ -84,7 +84,10 @@ fun mainHeaderState(
             onProfileClicked = onProfileClicked,
             onWalletClicked = onWalletClicked,
         )
-    } else MainHeaderState.Error
+    } else MainHeaderState.Error(
+        onProfileClicked = onProfileClicked,
+        onWalletClicked = onWalletClicked,
+    )
 } else {
     MainHeaderState.Shimmer
 }

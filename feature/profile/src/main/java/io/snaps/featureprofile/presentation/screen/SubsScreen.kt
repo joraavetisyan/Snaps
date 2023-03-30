@@ -135,7 +135,7 @@ private fun SubsScreen(
                                     middlePart = MiddlePart.Shimmer(
                                         needValueLine = true,
                                     ),
-                                    rightPart = RightPart.Shimmer(needRightCircle = true),
+                                    rightPart = RightPart.Shimmer(needCircle = true),
                                 )
                             )
                             is SubUiState.Progress -> Box(modifier = Modifier.fillMaxWidth()) {
