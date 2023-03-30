@@ -161,6 +161,11 @@ enum class StringKey {
     TaskSocialShareDescription,
 
     TaskShareTitle,
+    TaskShareTitleConnectInstagram,
+    TaskShareActionConnect,
+    TaskShareActionSavePhoto,
+    TaskShareActionPostToInstagram,
+    TaskShareMessagePhotoSaved,
 
     TaskFindPointsTitle,
     TaskFindPointsTitleConnectInstagram,

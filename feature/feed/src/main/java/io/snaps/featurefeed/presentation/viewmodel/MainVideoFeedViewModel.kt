@@ -9,7 +9,6 @@ import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.coredata.network.Action
 import io.snaps.basefeed.data.CommentRepository
-import io.snaps.coredata.source.GetInstalledAppListUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,7 +19,6 @@ class MainVideoFeedViewModel @Inject constructor(
     profileRepository: ProfileRepository,
     commentRepository: CommentRepository,
     bottomBarVisibilitySource: BottomBarVisibilitySource,
-    getInstalledAppListUseCase: GetInstalledAppListUseCase,
 ) : VideoFeedViewModel(
     videoFeedType = VideoFeedType.Main,
     action = action,
@@ -28,5 +26,4 @@ class MainVideoFeedViewModel @Inject constructor(
     profileRepository = profileRepository,
     commentRepository = commentRepository,
     bottomBarVisibilitySource = bottomBarVisibilitySource,
-    getInstalledAppListUseCase = getInstalledAppListUseCase,
 ), MainHeaderHandler by mainHeaderHandlerDelegate

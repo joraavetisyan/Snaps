@@ -67,6 +67,15 @@ class FakeProfileApi : ProfileApi {
         }
     }
 
+    override suspend fun connectInstagram(): BaseResponse<Completable> {
+        return BaseResponse(
+            actualTimestamp = 0L,
+            data = Completable
+        ).also {
+            delay(mockDelay)
+        }
+    }
+
     private fun getTransactions() = List(10) {
         TransactionItemResponseDto(
             id = it.toString(),

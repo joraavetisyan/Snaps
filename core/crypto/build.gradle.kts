@@ -17,4 +17,5 @@ dependencies {
     implementation(*Libs.bundle.cryptoPreference)
     implementation(*Libs.bundle.biometric)
     implementation(*Libs.bundle.crypto)
+    implementation(*Libs.bundle.gson)
 }

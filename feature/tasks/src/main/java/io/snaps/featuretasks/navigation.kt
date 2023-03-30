@@ -13,6 +13,7 @@ import io.snaps.featuretasks.presentation.screen.FindPointsScreen
 import io.snaps.featuretasks.presentation.screen.ShareTemplateScreen
 import io.snaps.featuretasks.presentation.screen.TaskDetailsScreen
 import io.snaps.featuretasks.presentation.screen.TasksScreen
+import io.snaps.featuretasks.presentation.screen.WebViewScreen
 import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) :
@@ -41,6 +42,8 @@ internal class ScreenNavigator(navHostController: NavHostController) :
     )
 
     fun toWalletScreen() = navHostController.navigate(AppRoute.Wallet)
+
+    fun toWebView() = navHostController.navigate(AppRoute.WebView)
 }
 
 class TasksFeatureProviderImpl @Inject constructor() : TasksFeatureProvider {
@@ -50,5 +53,6 @@ class TasksFeatureProviderImpl @Inject constructor() : TasksFeatureProvider {
         composable(AppRoute.ShareTemplate) { ShareTemplateScreen(controller) }
         composable(AppRoute.TaskDetails) { TaskDetailsScreen(controller) }
         composable(AppRoute.FindPoints) { FindPointsScreen(controller) }
+        composable(AppRoute.WebView) { WebViewScreen(controller) }
     }
 }

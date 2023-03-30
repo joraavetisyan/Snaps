@@ -37,4 +37,7 @@ interface ProfileApi {
 
     @GET("user/balance")
     suspend fun balance(): BaseResponse<BalanceResponseDto>
+
+    @POST("connect-instagram")
+    suspend fun connectInstagram(): BaseResponse<Completable> // todo
 }

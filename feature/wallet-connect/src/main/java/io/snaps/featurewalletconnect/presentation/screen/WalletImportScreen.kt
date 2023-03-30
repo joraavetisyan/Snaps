@@ -39,7 +39,6 @@ import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuicompose.uikit.status.SimpleAlertDialogUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewalletconnect.ScreenNavigator
-import io.snaps.featurewalletconnect.presentation.viewmodel.MnemonicsVerificationViewModel
 import io.snaps.featurewalletconnect.presentation.viewmodel.WalletImportViewModel
 
 @Composable

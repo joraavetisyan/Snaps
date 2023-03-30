@@ -14,6 +14,8 @@ import io.snaps.featuretasks.data.FakeTasksApi
 import io.snaps.featuretasks.data.TasksApi
 import io.snaps.featuretasks.data.TasksRepository
 import io.snaps.featuretasks.data.TasksRepositoryImpl
+import io.snaps.featuretasks.domain.ConnectInstagramInteractor
+import io.snaps.featuretasks.domain.ConnectInstagramInteractorImpl
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -38,4 +40,8 @@ interface DataBindModule {
     @Binds
     @ViewModelScoped
     fun tasksRepository(bind: TasksRepositoryImpl): TasksRepository
+
+    @Binds
+    @ViewModelScoped
+    fun connectInteractor(bind: ConnectInstagramInteractorImpl): ConnectInstagramInteractor
 }

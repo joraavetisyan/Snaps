@@ -13,6 +13,7 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreui.viewmodel.tryPublish
@@ -48,12 +49,17 @@ interface ProfileRepository {
     suspend fun setInviteCode(inviteCode: String): Effect<Completable>
 
     fun isCurrentUser(userId: Uuid): Boolean
+
+    suspend fun connectInstagram(instagramUserId: String, username: String): Effect<Completable>
+
+    suspend fun disconnectInstagram(): Effect<Completable>
 }
 
 class ProfileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val api: ProfileApi,
+    private val userDataStorage: UserDataStorage,
 ) : ProfileRepository {
 
     private val _state = MutableStateFlow<State<UserInfoModel>>(Loading())
@@ -140,5 +146,29 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override fun isCurrentUser(userId: Uuid): Boolean {
         return _state.value.dataOrCache?.userId == userId
+    }
+
+    override suspend fun connectInstagram(instagramUserId: String, username: String): Effect<Completable> {
+        userDataStorage.instagramUsername = username
+        _state.update {
+            if (it is Effect && it.isSuccess) {
+                Effect.success(it.requireData.copy(instagramUserId = instagramUserId))
+            } else {
+                it
+            }
+        }
+        return Effect.completable
+    }
+
+    override suspend fun disconnectInstagram(): Effect<Completable> {
+        userDataStorage.instagramUsername = ""
+        _state.update {
+            if (it is Effect && it.isSuccess) {
+                Effect.success(it.requireData.copy(instagramUserId = null))
+            } else {
+                it
+            }
+        }
+        return Effect.completable
     }
 }

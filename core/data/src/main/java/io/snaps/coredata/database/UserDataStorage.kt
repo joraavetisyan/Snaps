@@ -35,6 +35,12 @@ class UserDataStorage @Inject constructor(
             putInt("lastCheckedAvailableVersionCode", value)
         }
 
+    var instagramUsername: String
+        get() = provider.prefs.getString("instagramUsername", "").orEmpty()
+        set(value) = provider.prefs.edit {
+            putString("instagramUsername", value)
+        }
+
     fun reset(reason: LogOutReason? = null) {
     }
 }

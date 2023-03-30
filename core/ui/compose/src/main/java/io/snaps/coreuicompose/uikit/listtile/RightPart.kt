@@ -119,7 +119,7 @@ fun RightPartTile(modifier: Modifier, data: RightPart) {
                     .padding(6.dp),
             )
             is RightPart.DeleteIcon -> Icon(
-                painter = AppTheme.specificIcons.error.get(),
+                painter = AppTheme.specificIcons.close.get(),
                 tint = Color.Unspecified,
                 contentDescription = null,
                 modifier = Modifier

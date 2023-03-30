@@ -33,11 +33,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.basefeed.ui.VideoFeedGrid
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.ext.startShareLinkIntent
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.doOnClick
@@ -105,6 +107,7 @@ private fun ProfileScreen(
         ProfileViewModel.UserType.Current -> LocalStringHolder.current(StringKey.ProfileTitle)
     }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val context = LocalContext.current
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -124,7 +127,11 @@ private fun ProfileScreen(
                     ActionIconData(
                         icon = AppTheme.specificIcons.share,
                         color = AppTheme.specificColorScheme.darkGrey,
-                        onClick = {},
+                        onClick = {
+                            if (uiState.shareLink.isNotEmpty()) {
+                                context.startShareLinkIntent(uiState.shareLink)
+                            }
+                        },
                     ),
                 ),
             )

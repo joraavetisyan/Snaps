@@ -15,7 +15,6 @@ import io.snaps.corecommon.model.SocialNetwork
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.Action
 import io.snaps.coredata.source.AppModel
-import io.snaps.coredata.source.GetInstalledAppListUseCase
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.Job
@@ -37,7 +36,6 @@ abstract class VideoFeedViewModel(
     private val profileRepository: ProfileRepository,
     private val commentRepository: CommentRepository,
     private val bottomBarVisibilitySource: BottomBarVisibilitySource,
-    private val getInstalledAppListUseCase: GetInstalledAppListUseCase,
     val startPosition: Int = 0,
 ) : SimpleViewModel() {
 
@@ -55,13 +53,6 @@ abstract class VideoFeedViewModel(
     private var videoFeedPageModel: VideoFeedPageModel? = null
 
     init {
-        _uiState.update { state ->
-            state.copy(
-                shareDialogItems = getInstalledAppListUseCase.invoke(
-                    SocialNetwork.values().map { it.url }.toList()
-                )
-            )
-        }
         subscribeToProfile()
         subscribeOnVideoFeed()
     }
@@ -239,14 +230,6 @@ abstract class VideoFeedViewModel(
         }
     }
 
-    fun onShareClicked(clipModel: VideoClipModel) = viewModelScope.launch {
-        bottomBarVisibilitySource.updateState(false)
-        _uiState.update {
-            it.copy(bottomDialogType = BottomDialogType.Share(clipModel.url))
-        }
-        _command publish Command.ShowBottomDialog
-    }
-
     fun onShareDialogItemClicked(packageName: String) = viewModelScope.launch {
         _command publish Command.HideBottomDialog
         val socialNetwork = SocialNetwork.values().first {
@@ -273,7 +256,6 @@ abstract class VideoFeedViewModel(
 
     sealed class BottomDialogType {
         object Comments : BottomDialogType()
-        data class Share(val url: String) : BottomDialogType()
     }
 
     sealed class Command {

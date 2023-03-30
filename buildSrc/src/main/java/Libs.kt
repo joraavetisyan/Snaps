@@ -243,10 +243,13 @@ object Libs {
             "com.walletconnect:sign:2.7.1",*/
             "androidx.work:work-runtime-ktx:2.7.1",
             "cash.z.ecc.android:zcash-android-sdk:1.9.0-beta04",
-            "com.google.code.gson:gson:2.9.0",
             "com.squareup.retrofit2:converter-gson:2.9.0",
             "com.squareup.retrofit2:adapter-rxjava2:2.9.0",
             "com.squareup.retrofit2:converter-scalars:2.9.0",
+        )
+
+        val gson = arrayOf(
+            "com.google.code.gson:gson:2.9.0",
         )
 
         const val barcode = "com.journeyapps:zxing-android-embedded:$barcodeVersion"

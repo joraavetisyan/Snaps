@@ -29,6 +29,8 @@ import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.inset
+import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
@@ -81,7 +83,8 @@ private fun MyCollectionScreen(
         Column(
             modifier = Modifier
                 .background(color = AppTheme.specificColorScheme.uiContentBg)
-                .padding(it),
+                .padding(it)
+                .inset(insetAll()),
         ) {
             MainHeader(state = headerState.value)
             Header()
@@ -93,7 +96,7 @@ private fun MyCollectionScreen(
                     top = 12.dp,
                     start = 12.dp,
                     end = 12.dp,
-                    bottom = 60.dp,
+                    bottom = 100.dp,
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {

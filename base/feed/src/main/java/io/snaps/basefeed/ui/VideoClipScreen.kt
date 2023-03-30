@@ -66,8 +66,7 @@ import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseplayer.ui.VideoPlayer
 import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.ImageValue
-import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.ext.startShareVideoIntent
+import io.snaps.corecommon.ext.startShareLinkIntent
 import io.snaps.corecommon.ext.toFormatDecimal
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coreui.viewmodel.collectAsCommand
@@ -77,8 +76,6 @@ import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.scroll.DetectScroll
 import io.snaps.coreuicompose.uikit.scroll.ScrollInfo
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
-import io.snaps.coreuicompose.uikit.status.ShareBottomDialog
-import io.snaps.coreuicompose.uikit.status.ShareBottomDialogItem
 import io.snaps.coreuitheme.compose.AppTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -200,22 +197,6 @@ fun VideoClipScreen(
                         onReplyClicked = commentInputSheetState::showSheet,
                         onEmojiClicked = viewModel::onEmojiClicked,
                     )
-                    is VideoFeedViewModel.BottomDialogType.Share -> ShareBottomDialog(
-                        header = "Share".textValue(),
-                        items = uiState.shareDialogItems.map { app ->
-                            ShareBottomDialogItem(
-                                name = app.name,
-                                icon = app.drawable,
-                                clickListener = {
-                                    context.startShareVideoIntent(
-                                        url = (uiState.bottomDialogType as VideoFeedViewModel.BottomDialogType.Share).url,
-                                        packageName = app.packageName,
-                                    )
-                                    viewModel.onShareDialogItemClicked(app.packageName)
-                                }
-                            )
-                        }
-                    )
                 }
             },
         ) {
@@ -254,7 +235,9 @@ fun VideoClipScreen(
                                     onAuthorClicked = viewModel::onAuthorClicked,
                                     onLikeClicked = viewModel::onLikeClicked,
                                     onCommentClicked = viewModel::onCommentClicked,
-                                    onShareClicked = viewModel::onShareClicked,
+                                    onShareClicked = {
+                                        context.startShareLinkIntent(it.url, it.title)
+                                    },
                                 )
                             }
                             is VideoClipUiState.Shimmer -> FullScreenLoaderUi(isLoading = true)

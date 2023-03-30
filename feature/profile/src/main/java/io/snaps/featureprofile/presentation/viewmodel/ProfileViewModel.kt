@@ -70,6 +70,9 @@ class ProfileViewModel @Inject constructor(
                         onSubscriptionsClick = { onSubscribersClicked(SubsType.Subscriptions) }
                     ),
                     nickname = state.dataOrCache?.name.orEmpty(),
+                    shareLink = state.dataOrCache?.userId?.let { userId ->
+                        "https://snapsapp.io/blogger/$userId"
+                    }.orEmpty()
                 )
             }
         }.launchIn(viewModelScope)
@@ -240,6 +243,7 @@ class ProfileViewModel @Inject constructor(
         val videoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
         val userLikedVideoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
         val dialog: SubsViewModel.Dialog? = null,
+        val shareLink: String = "",
     )
 
     sealed class Command {

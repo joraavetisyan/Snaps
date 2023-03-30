@@ -193,4 +193,6 @@ object AppRoute {
             val isAvailableToPurchase: Boolean,
         )
     }
+
+    object WebView : Route("WebView")
 }

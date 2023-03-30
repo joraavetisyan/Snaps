@@ -433,6 +433,21 @@ internal val strings = mapOf(
     key(StringKey.TaskShareTitle) to mapOf(
         SupportedLanguageKey.En to "Share Template",
     ),
+    key(StringKey.TaskShareTitleConnectInstagram) to mapOf(
+        SupportedLanguageKey.En to "Connect Instagram",
+    ),
+    key(StringKey.TaskShareActionConnect) to mapOf(
+        SupportedLanguageKey.En to "Connect",
+    ),
+    key(StringKey.TaskShareActionSavePhoto) to mapOf(
+        SupportedLanguageKey.En to "Save photo to camera roll",
+    ),
+    key(StringKey.TaskShareActionPostToInstagram) to mapOf(
+        SupportedLanguageKey.En to "I made a post in Instagram",
+    ),
+    key(StringKey.TaskShareMessagePhotoSaved) to mapOf(
+        SupportedLanguageKey.En to "Photo saved",
+    ),
 
     key(StringKey.TaskFindPointsTitle) to mapOf(
         SupportedLanguageKey.En to "Find points",

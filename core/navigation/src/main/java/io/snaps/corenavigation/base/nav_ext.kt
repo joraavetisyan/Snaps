@@ -1,6 +1,8 @@
 package io.snaps.corenavigation.base
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -12,6 +14,16 @@ import androidx.navigation.navDeepLink
 import io.snaps.corenavigation.Deeplink
 import io.snaps.corenavigation.Route
 import io.snaps.corenavigation.RouteWithArg
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -55,8 +67,34 @@ fun NavOptionsBuilder.tryPopBackStack(route: String) {
     popUpTo(route) { inclusive = true }
 }
 
+fun <T> NavController.popBackStackWithResult(result: T) {
+    previousBackStackEntry?.savedStateHandle?.set(RESULT_KEY, result)
+    popBackStack()
+}
+
 inline infix fun <reified ARG> NavController.navigate(direction: FeatureNavDirection<ARG>) =
     navigate(
         route = direction.route.path(direction.arg.toDefaultFormat()),
         builder = direction.optionsBuilder,
     )
+
+fun <T> NavController.resultFlow(): Flow<T>? {
+    return currentBackStackEntry?.savedStateHandle?.getLiveData<T>(RESULT_KEY)?.asFlow()?.onEach {
+        currentBackStackEntry?.savedStateHandle?.remove<T>(RESULT_KEY)
+    }
+}
+
+@OptIn(DelicateCoroutinesApi::class)
+private fun <T> LiveData<T>.asFlow(): Flow<T> = callbackFlow {
+    val observer = Observer<T> {
+        trySend(it)
+    }
+    withContext(Dispatchers.Main.immediate) {
+        observeForever(observer)
+    }
+    awaitClose {
+        GlobalScope.launch(Dispatchers.Main.immediate) {
+            removeObserver(observer)
+        }
+    }
+}.conflate()

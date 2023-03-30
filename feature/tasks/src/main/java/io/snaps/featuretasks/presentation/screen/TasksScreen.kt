@@ -47,6 +47,7 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
@@ -70,13 +71,6 @@ fun TasksScreen(
     val uiState by viewModel.uiState.collectAsState()
     val mainHeaderState by viewModel.headerUiState.collectAsState()
 
-    viewModel.headerCommand.collectAsCommand {
-        when (it) {
-            MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
-            MainHeaderHandler.Command.OpenWalletScreen -> router.toWalletScreen()
-        }
-    }
-
     viewModel.command.collectAsCommand {
         when (it) {
             is TasksViewModel.Command.OpenTaskDetailsScreen -> router.toTaskDetailsScreen(it.args)
@@ -86,6 +80,7 @@ fun TasksScreen(
     TasksScreen(
         uiState = uiState,
         mainHeaderState = mainHeaderState,
+        onProfileImageClicked = router::toProfileScreen,
     )
 }
 
@@ -94,6 +89,7 @@ fun TasksScreen(
 private fun TasksScreen(
     uiState: TasksViewModel.UiState,
     mainHeaderState: MainHeaderHandler.UiState,
+    onProfileImageClicked: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -120,6 +116,7 @@ private fun TasksScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Card(
+                    modifier = Modifier.defaultTileRipple(onClick = onProfileImageClicked),
                     shape = CircleShape,
                 ) {
                     (mainHeaderState.value as? MainHeaderState.Data)?.profileImage?.let {
@@ -157,15 +154,16 @@ private fun TasksScreen(
                 count = pages.size,
                 state = pagerState,
             ) {
+                val contentPadding = PaddingValues(
+                    top = 12.dp,
+                    start = 12.dp,
+                    end = 12.dp,
+                    bottom = 100.dp,
+                )
                 if (pagerState.currentPage == 0) {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(
-                            top = 12.dp,
-                            start = 12.dp,
-                            end = 12.dp,
-                            bottom = 60.dp,
-                        ),
+                        contentPadding = contentPadding,
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         item {
@@ -181,12 +179,7 @@ private fun TasksScreen(
                 } else {
                     ScrollEndDetectLazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(
-                            top = 12.dp,
-                            start = 12.dp,
-                            end = 12.dp,
-                            bottom = 60.dp,
-                        ),
+                        contentPadding = contentPadding,
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         onScrollEndDetected = uiState.history.onListEndReaching,
                     ) {
@@ -249,5 +242,9 @@ private fun NftBlock(
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun Preview() {
-    TasksScreen(uiState = TasksViewModel.UiState(), mainHeaderState = MainHeaderHandler.UiState())
+    TasksScreen(
+        uiState = TasksViewModel.UiState(),
+        mainHeaderState = MainHeaderHandler.UiState(),
+        onProfileImageClicked = {},
+    )
 }

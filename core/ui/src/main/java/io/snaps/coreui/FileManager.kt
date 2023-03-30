@@ -77,6 +77,15 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
         }
     }
 
+    fun saveMediaToExternalStorage(bitmap: Bitmap): Uri? {
+        val uri = createPublicFile(FileType.Pictures)
+        contentResolver().openOutputStream(uri)?.use {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+            return uri
+        }
+        return null
+    }
+
     fun createPublicFile(type: FileType): Uri {
         fun createPublicFileViaFileProvider(type: FileType): Uri {
             val file = createFile(generateName(type), getPublicDir(type))
@@ -133,6 +142,10 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
         } finally {
             inputStream?.close()
         }
+    }
+
+    fun getUriForFile(file: File): Uri {
+        return FileProvider.getUriForFile(context, getFileProviderAuthority(), file)
     }
 
     private fun copyFile(uri: Uri?, newFileUri: Uri): Uri? {

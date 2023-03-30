@@ -183,17 +183,17 @@ private fun ReferralProgramScreen(
                 .inset(insetAll()),
         ) {
             MainHeader(state = headerState)
-            Text(
-                text = StringKey.ReferralProgramTitle.textValue().get(),
-                style = AppTheme.specificTypography.headlineLarge,
-                modifier = Modifier.padding(12.dp),
-            )
             Column(
                 modifier = Modifier
                     .padding(vertical = 12.dp)
                     .verticalScroll(rememberScrollState())
-                    .padding(bottom = 60.dp),
+                    .padding(bottom = 100.dp),
             ) {
+                Text(
+                    text = StringKey.ReferralProgramTitle.textValue().get(),
+                    style = AppTheme.specificTypography.headlineLarge,
+                    modifier = Modifier.padding(12.dp),
+                )
                 ReferralCodeCard(onEnterCodeClicked = onEnterCodeClicked)
                 Spacer(modifier = Modifier.height(16.dp))
                 CopyButton(
