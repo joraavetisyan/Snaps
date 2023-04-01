@@ -24,7 +24,6 @@ import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
-import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.coreuicompose.uikit.other.SimpleCard
 import io.snaps.coreuitheme.compose.AppTheme
 
@@ -172,10 +171,7 @@ private fun Shimmer(
         MiddlePart.Shimmer(
             needValueLine = true,
             needDescriptionLine = true,
-        ).Content(modifier = Modifier)
-        RightPart.Shimmer(
-            needLine = true,
-        ).Content(modifier = Modifier)
+        ).Content(modifier = Modifier.padding(12.dp))
     }
 }
 

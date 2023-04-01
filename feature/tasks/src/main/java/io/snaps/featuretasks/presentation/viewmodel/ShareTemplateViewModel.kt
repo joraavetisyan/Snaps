@@ -158,7 +158,7 @@ class ShareTemplateViewModel @Inject constructor(
         val instagramConnectTileState: CellTileState = CellTileState.Shimmer(
             leftPart = LeftPart.Shimmer,
             middlePart = MiddlePart.Shimmer(needValueLine = true),
-            rightPart = RightPart.Shimmer(needRightLine = true),
+            rightPart = RightPart.Shimmer(needLine = true),
         ),
         val qr: Bitmap?,
     )

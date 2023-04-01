@@ -83,7 +83,9 @@ class ProfileRepositoryImpl @Inject constructor(
         return apiCall(ioDispatcher) {
             api.userInfo()
         }.map {
-            it.toModel()
+            it.toModel().copy(
+                instagramUserId = userDataStorage.instagramId,
+            )
         }.also {
             _state tryPublish it
         }
@@ -150,6 +152,7 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun connectInstagram(instagramUserId: String, username: String): Effect<Completable> {
         userDataStorage.instagramUsername = username
+        userDataStorage.instagramId = instagramUserId
         _state.update {
             if (it is Effect && it.isSuccess) {
                 Effect.success(it.requireData.copy(instagramUserId = instagramUserId))
@@ -162,6 +165,7 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun disconnectInstagram(): Effect<Completable> {
         userDataStorage.instagramUsername = ""
+        userDataStorage.instagramId = null
         _state.update {
             if (it is Effect && it.isSuccess) {
                 Effect.success(it.requireData.copy(instagramUserId = null))
