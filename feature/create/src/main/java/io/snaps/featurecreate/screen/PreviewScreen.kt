@@ -130,7 +130,10 @@ private fun PreviewScreen(
                 SimpleButtonActionM(onClick = { onBackClicked() }) {
                     SimpleButtonContent(text = StringKey.PreviewVideoActionDiscard.textValue())
                 }
-                SimpleButtonActionM(onClick = onProceedClicked) {
+                SimpleButtonActionM(
+                    onClick = onProceedClicked,
+                    enabled = uiState.isProceedEnabled,
+                ) {
                     SimpleButtonContent(text = StringKey.PreviewVideoActionProceed.textValue())
                 }
             }

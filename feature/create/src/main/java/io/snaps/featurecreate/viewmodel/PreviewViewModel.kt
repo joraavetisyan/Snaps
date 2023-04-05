@@ -74,12 +74,8 @@ class PreviewViewModel @Inject constructor(
     private suspend fun addVideo(fileModel: FileModel, uri: Uri) {
         action.execute {
             videoFeedRepository.addVideo(
-                title = _uiState.value.titleValue.trim().takeUnless {
-                    it.isBlank()
-                } ?: "Title",
-                description = _uiState.value.descriptionValue.trim().takeUnless {
-                    it.isBlank()
-                } ?: "Description",
+                title = _uiState.value.titleValue.trim(),
+                description = _uiState.value.descriptionValue.trim(),
                 fileId = fileModel.id,
             ).doOnSuccess {
                 videoFeedRepository.uploadVideo(uri, it.id)
@@ -110,7 +106,10 @@ class PreviewViewModel @Inject constructor(
         val isLoading: Boolean = false,
         val titleValue: String = "",
         val descriptionValue: String = "",
-    )
+    ) {
+
+        val isProceedEnabled = titleValue.isNotBlank() && descriptionValue.isNotBlank()
+    }
 
     sealed class Command {
         object CloseScreen : Command()

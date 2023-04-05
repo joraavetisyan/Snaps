@@ -11,7 +11,6 @@ import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.corecommon.container.ImageValue
-import io.snaps.corecommon.model.SocialNetwork
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.Action
 import io.snaps.coredata.source.AppModel
@@ -149,7 +148,7 @@ abstract class VideoFeedViewModel(
     }
 
     private fun onViewed(clipModel: VideoClipModel) = viewModelScope.launch {
-        action.execute {
+        action.execute(needProcessErrors = false) {
             videoFeedRepository.view(clipModel.id)
         }
     }
@@ -173,16 +172,7 @@ abstract class VideoFeedViewModel(
         } ?: emptyList()
 
         videoFeedPageModel = videoFeedPageModel?.copy(loadedPageItems = videoClips)
-        _uiState.update {
-            it.copy(
-                videoFeedUiState = videoFeedPageModel?.toVideoFeedUiState(
-                    shimmerListSize = 1,
-                    onClipClicked = ::onClipClicked,
-                    onReloadClicked = ::onReloadClicked,
-                    onListEndReaching = ::onListEndReaching,
-                ) ?: VideoFeedUiState(),
-            )
-        }
+        applyVideoClipToState()
     }
 
     fun onCommentClicked(clipModel: VideoClipModel) {
@@ -207,14 +197,29 @@ abstract class VideoFeedViewModel(
             action.execute {
                 commentRepository.createComment(
                     videoId = video.id,
-                    text = uiState.value.comment.text,
+                    text = uiState.value.comment.text.trim(),
                 ).doOnSuccess {
                     _command publish Command.HideCommentInputBottomDialog
                     _uiState.update { it.copy(comment = TextFieldValue("")) }
                     refreshComments(video)
+                    updateCommentCount(video)
                 }
             }
         }
+    }
+
+    private fun updateCommentCount(video: VideoClipModel) {
+        val videoClips = videoFeedPageModel?.loadedPageItems?.map {
+            when (it.id) {
+                video.id -> it.copy(
+                    commentCount = video.commentCount + 1
+                )
+                else -> it
+            }
+        } ?: emptyList()
+
+        videoFeedPageModel = videoFeedPageModel?.copy(loadedPageItems = videoClips)
+        applyVideoClipToState()
     }
 
     private fun refreshComments(video: VideoClipModel) {
@@ -223,20 +228,23 @@ abstract class VideoFeedViewModel(
         }
     }
 
+    private fun applyVideoClipToState() {
+        _uiState.update {
+            it.copy(
+                videoFeedUiState = videoFeedPageModel?.toVideoFeedUiState(
+                    shimmerListSize = 1,
+                    onClipClicked = ::onClipClicked,
+                    onReloadClicked = ::onReloadClicked,
+                    onListEndReaching = ::onListEndReaching,
+                ) ?: VideoFeedUiState(),
+            )
+        }
+    }
+
     fun onEmojiClicked(emoji: String) {
         _uiState.update {
             val newText = it.comment.text + emoji
             it.copy(comment = TextFieldValue(text = newText, selection = TextRange(newText.length)))
-        }
-    }
-
-    fun onShareDialogItemClicked(packageName: String) = viewModelScope.launch {
-        _command publish Command.HideBottomDialog
-        val socialNetwork = SocialNetwork.values().first {
-            packageName.contains(it.url)
-        }
-        action.execute {
-            videoFeedRepository.shareInfo(socialNetwork)
         }
     }
 
@@ -252,6 +260,8 @@ abstract class VideoFeedViewModel(
     ) {
 
         val commentListSize = commentsUiState.items.filterIsInstance<CommentUiState.Data>().size
+
+        val isCommentSendEnabled get() = comment.text.isNotBlank()
     }
 
     sealed class BottomDialogType {

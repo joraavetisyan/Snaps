@@ -61,6 +61,7 @@ fun CommentsScreen(
                 profileImage = uiState.profileAvatar,
                 value = uiState.comment,
                 onValueChange = {},
+                isSendEnabled = false,
                 isEditable = false,
                 onEmojiClick = { onEmojiClicked(it) },
                 onInputClick = onCommentInputClicked,

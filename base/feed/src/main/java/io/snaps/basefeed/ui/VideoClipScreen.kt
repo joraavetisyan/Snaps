@@ -179,6 +179,7 @@ fun VideoClipScreen(
                 profileImage = uiState.profileAvatar,
                 value = uiState.comment,
                 onValueChange = viewModel::onCommentChanged,
+                isSendEnabled = uiState.isCommentSendEnabled,
                 isEditable = true,
                 onEmojiClick = viewModel::onEmojiClicked,
                 onInputClick = {},

@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -38,6 +39,7 @@ import io.snaps.coreuitheme.compose.AppTheme
 fun CommentInput(
     profileImage: ImageValue?,
     value: TextFieldValue,
+    isSendEnabled: Boolean,
     onValueChange: (TextFieldValue) -> Unit,
     isEditable: Boolean,
     onEmojiClick: (String) -> Unit,
@@ -60,6 +62,7 @@ fun CommentInput(
                 value = value,
                 onValueChange = onValueChange,
                 onSendClick = onSendClick,
+                isSendEnabled = isSendEnabled,
             )
             EmojiRow(onEmojiClick = onEmojiClick)
         } else {
@@ -70,6 +73,7 @@ fun CommentInput(
                 value = value,
                 onValueChange = onValueChange,
                 onSendClick = null,
+                isSendEnabled = isSendEnabled,
             )
         }
     }
@@ -94,6 +98,7 @@ private fun InputRow(
     onClick: (() -> Unit)?,
     profileImage: ImageValue?,
     value: TextFieldValue,
+    isSendEnabled: Boolean,
     onValueChange: (TextFieldValue) -> Unit,
     onSendClick: (() -> Unit)?,
     focusRequester: FocusRequester? = null,
@@ -132,11 +137,16 @@ private fun InputRow(
         )
         onSendClick?.let {
             Spacer(modifier = Modifier.width(8.dp))
-            IconButton(onClick = onSendClick) {
+            IconButton(
+                onClick = onSendClick,
+                enabled = isSendEnabled,
+            ) {
                 Icon(
                     painter = AppTheme.specificIcons.send.get(),
                     contentDescription = null,
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier
+                        .size(32.dp)
+                        .addIf(!isSendEnabled) { alpha(0.5f) },
                     tint = Color.Unspecified,
                 )
             }
