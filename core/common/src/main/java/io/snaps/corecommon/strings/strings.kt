@@ -233,10 +233,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Referral program",
     ),
 
-    key(StringKey.PopularVideosTitle) to mapOf(
-        SupportedLanguageKey.En to "Popular video",
+    key(StringKey.SearchVideosTitle) to mapOf(
+        SupportedLanguageKey.En to "Videos",
     ),
-    key(StringKey.PopularVideosHint) to mapOf(
+    key(StringKey.SearchProfilesTitle) to mapOf(
+        SupportedLanguageKey.En to "Profiles",
+    ),
+    key(StringKey.SearchHint) to mapOf(
         SupportedLanguageKey.En to "Search",
     ),
 

@@ -116,7 +116,7 @@ dependencies {
     implementation(projects.featureCollection)
     implementation(projects.featureTasks)
     implementation(projects.featureFeed)
-    implementation(projects.featurePopular)
+    implementation(projects.featureSearch)
     implementation(projects.featureCreate)
 
     implementation(*Libs.bundle.splashscreen)

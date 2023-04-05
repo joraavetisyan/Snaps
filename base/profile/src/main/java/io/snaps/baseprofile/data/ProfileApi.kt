@@ -40,4 +40,11 @@ interface ProfileApi {
 
     @POST("connect-instagram")
     suspend fun connectInstagram(): BaseResponse<Completable> // todo
+
+    @GET("user")
+    suspend fun users(
+        @Query("searchString") query: String?,
+        @Query("from") from: String?,
+        @Query("count") count: Int,
+    ): BaseResponse<List<UserInfoResponseDto>>
 }

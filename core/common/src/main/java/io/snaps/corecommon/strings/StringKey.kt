@@ -61,8 +61,9 @@ enum class StringKey {
     PhotoDialogActionTakePhoto,
     PhotoDialogActionCancel,
 
-    PopularVideosTitle,
-    PopularVideosHint,
+    SearchHint,
+    SearchVideosTitle,
+    SearchProfilesTitle,
 
     WalletImportTitle,
     WalletImportMessageEnterPhrases,

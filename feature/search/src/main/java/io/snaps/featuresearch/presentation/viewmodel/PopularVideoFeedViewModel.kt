@@ -1,4 +1,4 @@
-package io.snaps.featurepopular.presentation.viewmodel
+package io.snaps.featuresearch.presentation.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel

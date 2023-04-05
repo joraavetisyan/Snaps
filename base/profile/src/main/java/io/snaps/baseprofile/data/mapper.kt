@@ -15,6 +15,8 @@ import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.State
 import java.time.ZonedDateTime
 
+fun List<UserInfoResponseDto>.toModelList() = map(UserInfoResponseDto::toModel)
+
 fun UserInfoResponseDto.toModel() = UserInfoModel(
     entityId = entityId,
     createdDate = requireNotNull(ZonedDateTime.parse(createdDate)).toOffsetLocalDateTime(),

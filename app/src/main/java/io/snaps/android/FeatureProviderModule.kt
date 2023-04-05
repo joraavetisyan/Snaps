@@ -19,7 +19,7 @@ import io.snaps.featurebottombar.BottomBarFeatureProviderImpl
 import io.snaps.featurecollection.CollectionFeatureProviderImpl
 import io.snaps.featurefeed.FeedFeatureProviderImpl
 import io.snaps.featureinitialization.InitializationFeatureProviderImpl
-import io.snaps.featurepopular.PopularFeatureProviderImpl
+import io.snaps.featuresearch.PopularFeatureProviderImpl
 import io.snaps.featureprofile.ProfileFeatureProviderImpl
 import io.snaps.featureregistration.presentation.RegistrationFeatureProviderImpl
 import io.snaps.featuretasks.TasksFeatureProviderImpl

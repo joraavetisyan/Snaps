@@ -5,6 +5,7 @@ import io.snaps.baseprofile.data.model.UserCreateRequestDto
 import io.snaps.baseprofile.domain.BalanceModel
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.UserInfoModel
+import io.snaps.baseprofile.domain.UsersPageModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
@@ -14,6 +15,7 @@ import io.snaps.corecommon.model.WalletAddress
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.UserDataStorage
+import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreui.viewmodel.tryPublish
@@ -33,6 +35,12 @@ interface ProfileRepository {
     val balanceState: StateFlow<State<BalanceModel>>
 
     val currentQuestsState: StateFlow<State<QuestInfoModel>>
+
+    fun getUsersState(query: String): StateFlow<UsersPageModel>
+
+    suspend fun refreshUsers(query: String): Effect<Completable>
+
+    suspend fun loadNextUsersPage(query: String): Effect<Completable>
 
     suspend fun updateData(): Effect<UserInfoModel>
 
@@ -60,6 +68,7 @@ class ProfileRepositoryImpl @Inject constructor(
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val api: ProfileApi,
     private val userDataStorage: UserDataStorage,
+    private val loaderFactory: UsersLoaderFactory,
 ) : ProfileRepository {
 
     private val _state = MutableStateFlow<State<UserInfoModel>>(Loading())
@@ -77,6 +86,23 @@ class ProfileRepositoryImpl @Inject constructor(
             }
         }
     }.likeStateFlow(scope, Loading())
+
+    private fun getLoader(query: String): UsersLoader {
+        return loaderFactory.get(query) {
+            PagedLoaderParams(
+                action = { from, count -> api.users(query, from, count) },
+                pageSize = 20,
+                nextPageIdFactory = { it.entityId },
+                mapper = { it.toModelList() },
+            )
+        }
+    }
+
+    override fun getUsersState(query: String): StateFlow<UsersPageModel> = getLoader(query).state
+
+    override suspend fun refreshUsers(query: String): Effect<Completable> = getLoader(query).refresh()
+
+    override suspend fun loadNextUsersPage(query: String): Effect<Completable> = getLoader(query).loadNext()
 
     override suspend fun updateData(): Effect<UserInfoModel> {
         _state tryPublish Loading()

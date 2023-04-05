@@ -1,4 +1,4 @@
-package io.snaps.featurepopular.presentation.screen
+package io.snaps.featuresearch.presentation.screen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -6,8 +6,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.basefeed.ui.VideoClipScreen
 import io.snaps.corecommon.model.Uuid
-import io.snaps.featurepopular.ScreenNavigator
-import io.snaps.featurepopular.presentation.viewmodel.PopularVideoFeedViewModel
+import io.snaps.featuresearch.ScreenNavigator
+import io.snaps.featuresearch.presentation.viewmodel.PopularVideoFeedViewModel
 
 @Composable
 fun PopularVideoFeedScreen(

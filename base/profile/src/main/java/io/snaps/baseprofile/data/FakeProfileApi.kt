@@ -76,6 +76,19 @@ class FakeProfileApi : ProfileApi {
         }
     }
 
+    override suspend fun users(
+        query: String?,
+        from: String?,
+        count: Int
+    ): BaseResponse<List<UserInfoResponseDto>> {
+        return BaseResponse(
+            actualTimestamp = 0L,
+            data = List(10) {
+                getUserInfo("user $it")
+            },
+        )
+    }
+
     private fun getTransactions() = List(10) {
         TransactionItemResponseDto(
             id = it.toString(),

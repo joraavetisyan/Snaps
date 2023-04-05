@@ -1,4 +1,4 @@
-package io.snaps.featurepopular
+package io.snaps.featuresearch
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -9,8 +9,8 @@ import io.snaps.corenavigation.base.FeatureNavDirection
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
-import io.snaps.featurepopular.presentation.screen.PopularVideoFeedScreen
-import io.snaps.featurepopular.presentation.screen.PopularVideosScreen
+import io.snaps.featuresearch.presentation.screen.PopularVideoFeedScreen
+import io.snaps.featuresearch.presentation.screen.SearchScreen
 import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) :
@@ -35,7 +35,7 @@ internal class ScreenNavigator(navHostController: NavHostController) :
 class PopularFeatureProviderImpl @Inject constructor() : PopularFeatureProvider {
 
     override fun NavGraphBuilder.popularGraph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.MainTab2Start) { PopularVideosScreen(controller) }
+        composable(AppRoute.MainBottomBar.MainTab2Start) { SearchScreen(controller) }
         composable(AppRoute.PopularVideoFeed) { PopularVideoFeedScreen(controller) }
     }
 }
