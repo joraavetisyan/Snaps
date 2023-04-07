@@ -13,6 +13,7 @@ import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.State
+import java.lang.Integer.min
 import java.time.ZonedDateTime
 
 fun List<UserInfoResponseDto>.toModelList() = map(UserInfoResponseDto::toModel)
@@ -47,7 +48,9 @@ fun QuestInfoResponseDto.toQuestInfoModel() = QuestInfoModel(
     quests = quests.map(QuestItemDto::toQuestModel),
     questDate = requireNotNull(ZonedDateTime.parse(questDate)).toOffsetLocalDateTime(),
     totalEnergy = quests.sumOf { it.quest.energy },
-    totalEnergyProgress = quests.sumOf { it.energyProgress() }
+    totalEnergyProgress = quests
+        .filter { it.energyProgress() == it.quest.energy }
+        .sumOf { it.quest.energy },
 )
 
 fun QuestItemDto.toQuestModel() = QuestModel(
@@ -63,7 +66,7 @@ fun QuestItemDto.toQuestModel() = QuestModel(
 private fun QuestItemDto.energyProgress(): Int {
     return if (madeCount != null && quest.count != null) {
         val madeByOne = madeCount.toDouble() / quest.count.toDouble() * 20
-        madeByOne.toInt()
+        min(madeByOne.toInt(), quest.energy)
     } else {
         if (completed) {
             quest.energy

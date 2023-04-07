@@ -46,7 +46,7 @@ fun State<QuestInfoModel>.toRemainingTimeTileState() = when (this) {
         isSuccess -> RemainingTimeTileState.Data(
             time = requireData.questDate.toLong(),
             energy = requireData.totalEnergy,
-            energyProgress = requireData.totalEnergyProgress,
+            energyProgress = requireData.quests.sumOf { it.energyProgress() },
         )
         else -> RemainingTimeTileState.Shimmer
     }
@@ -55,7 +55,7 @@ fun State<QuestInfoModel>.toRemainingTimeTileState() = when (this) {
 fun QuestModel.energyProgress(): Int {
     return if (madeCount != null && count != null) {
         val madeByOne = madeCount!!.toDouble() / count!!.toDouble() * 20
-        madeByOne.toInt()
+        Integer.min(madeByOne.toInt(), energy)
     } else {
         if (completed) {
             energy
