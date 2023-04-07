@@ -2,6 +2,7 @@ package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.ShareInfoRequestDto
+import io.snaps.basefeed.data.model.UserLikedVideoFeedItemResponseDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.mock.mockDelay
@@ -87,12 +88,17 @@ class FakeVideoFeedApi : VideoFeedApi {
     override suspend fun likedVideos(
         @Query(value = "from") from: Uuid?,
         @Query(value = "count") count: Int,
-    ): BaseResponse<List<VideoFeedItemResponseDto>> {
+    ): BaseResponse<List<UserLikedVideoFeedItemResponseDto>> {
         log("Requesting liked videos: $count videos with offset $from")
         delay(mockDelay)
         return BaseResponse(
             actualTimestamp = 1L,
-            data = List(count) { videoFeedItemResponseDto(it, 0) }
+            data = List(count) {
+                UserLikedVideoFeedItemResponseDto(
+                    entityId = "${generation}video$it",
+                    video = videoFeedItemResponseDto(it, 0)
+                )
+            }
         )
     }
 

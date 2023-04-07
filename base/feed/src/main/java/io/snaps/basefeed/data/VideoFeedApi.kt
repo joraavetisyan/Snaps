@@ -2,6 +2,7 @@ package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.ShareInfoRequestDto
+import io.snaps.basefeed.data.model.UserLikedVideoFeedItemResponseDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Uuid
@@ -47,7 +48,7 @@ interface VideoFeedApi {
     suspend fun likedVideos(
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
-    ): BaseResponse<List<VideoFeedItemResponseDto>>
+    ): BaseResponse<List<UserLikedVideoFeedItemResponseDto>>
 
     @GET("video")
     suspend fun videos(

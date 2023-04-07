@@ -4,7 +4,7 @@ import android.net.Uri
 import androidx.core.net.toFile
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.ShareInfoRequestDto
-import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
+import io.snaps.basefeed.data.model.UserLikedVideoFeedItemResponseDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseplayer.domain.VideoClipModel
@@ -14,6 +14,7 @@ import io.snaps.corecommon.model.SocialNetwork
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.generateCurrentDateTime
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.network.PagedLoader
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import kotlinx.coroutines.CoroutineDispatcher
@@ -46,54 +47,60 @@ class VideoFeedRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val videoFeedApi: VideoFeedApi,
     private val loaderFactory: VideoFeedLoaderFactory,
+    private val userLikedVideoFeedLoaderFactory: UserLikedVideoFeedLoaderFactory,
 ) : VideoFeedRepository {
 
-    private var likedVideos: List<VideoFeedItemResponseDto>? = null
+    private var likedVideos: List<UserLikedVideoFeedItemResponseDto>? = null
 
-    private fun getLoader(videoFeedType: VideoFeedType): VideoFeedLoader {
-        return loaderFactory.get(videoFeedType) { type ->
-            when (type) {
-                VideoFeedType.Main -> PagedLoaderParams(
-                    action = { from, count -> videoFeedApi.feed(from, count) },
-                    pageSize = 3,
-                    nextPageIdFactory = { it.entityId },
-                    mapper = { it.toVideoClipModelList(getLikedVideos()) },
-                )
-                VideoFeedType.UserLiked -> PagedLoaderParams(
+    private fun getLoader(videoFeedType: VideoFeedType): PagedLoader<*, VideoClipModel> {
+        return when (videoFeedType) {
+            is VideoFeedType.UserLiked -> userLikedVideoFeedLoaderFactory.get(Unit) {
+                PagedLoaderParams(
                     action = { from, count -> videoFeedApi.likedVideos(from, count) },
                     pageSize = 15,
                     nextPageIdFactory = { it.entityId },
-                    mapper = { videoFeed -> videoFeed.map { it.toModel(true) } },
+                    mapper = { videoFeed -> videoFeed.map { it.video.toModel(true) } },
                 )
-                VideoFeedType.Popular -> PagedLoaderParams(
-                    action = { from, count -> videoFeedApi.popularFeed(from, count) },
-                    pageSize = 12,
-                    nextPageIdFactory = { it.entityId },
-                    mapper = { it.toVideoClipModelList(getLikedVideos()) },
-                )
-                is VideoFeedType.User -> PagedLoaderParams(
-                    action = { from, count ->
-                        if (type.userId != null) {
-                            videoFeedApi.userFeed(type.userId, from, count)
-                        } else {
-                            videoFeedApi.myFeed(from, count)
-                        }
-                    },
-                    pageSize = 15,
-                    nextPageIdFactory = { it.entityId },
-                    mapper = { it.toVideoClipModelList(getLikedVideos()) },
-                )
-                is VideoFeedType.All -> PagedLoaderParams(
-                    action = { from, count -> videoFeedApi.videos(type.query, from, count) },
-                    pageSize = 12,
-                    nextPageIdFactory = { it.entityId },
-                    mapper = { it.toVideoClipModelList(getLikedVideos()) },
-                )
+            }
+            else -> loaderFactory.get(videoFeedType) { type ->
+                when (type) {
+                    VideoFeedType.Main -> PagedLoaderParams(
+                        action = { from, count -> videoFeedApi.feed(from, count) },
+                        pageSize = 3,
+                        nextPageIdFactory = { it.entityId },
+                        mapper = { it.toVideoClipModelList(getLikedVideos()) },
+                    )
+                    is VideoFeedType.Popular -> PagedLoaderParams(
+                        action = { from, count -> videoFeedApi.popularFeed(from, count) },
+                        pageSize = 12,
+                        nextPageIdFactory = { it.entityId },
+                        mapper = { it.toVideoClipModelList(getLikedVideos()) },
+                    )
+                    is VideoFeedType.User -> PagedLoaderParams(
+                        action = { from, count ->
+                            if (type.userId != null) {
+                                videoFeedApi.userFeed(type.userId, from, count)
+                            } else {
+                                videoFeedApi.myFeed(from, count)
+                            }
+                        },
+                        pageSize = 15,
+                        nextPageIdFactory = { it.entityId },
+                        mapper = { it.toVideoClipModelList(getLikedVideos()) },
+                    )
+                    is VideoFeedType.All -> PagedLoaderParams(
+                        action = { from, count -> videoFeedApi.videos(type.query, from, count) },
+                        pageSize = 12,
+                        nextPageIdFactory = { it.entityId },
+                        mapper = { it.toVideoClipModelList(getLikedVideos()) },
+                    )
+                    is VideoFeedType.UserLiked -> throw IllegalStateException("Unknown video type")
+                }
             }
         }
     }
 
-    private suspend fun getLikedVideos(): List<VideoFeedItemResponseDto> {
+    private suspend fun getLikedVideos(): List<UserLikedVideoFeedItemResponseDto> {
         return likedVideos ?: apiCall(ioDispatcher) {
             videoFeedApi.likedVideos(null, 100)
         }.doOnSuccess {

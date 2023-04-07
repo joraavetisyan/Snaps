@@ -1,6 +1,7 @@
 package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.CommentResponseDto
+import io.snaps.basefeed.data.model.UserLikedVideoFeedItemResponseDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.basefeed.domain.CommentModel
 import io.snaps.baseplayer.domain.VideoClipModel
@@ -11,9 +12,9 @@ import io.snaps.corecommon.model.Uuid
 import java.time.ZonedDateTime
 
 fun List<VideoFeedItemResponseDto>.toVideoClipModelList(
-    likedVideos: List<VideoFeedItemResponseDto>,
+    likedVideos: List<UserLikedVideoFeedItemResponseDto>,
 ) = map { dto ->
-    dto.toModel(likedVideos.firstOrNull { it.entityId == dto.entityId } != null)
+    dto.toModel(likedVideos.firstOrNull { it.video.entityId == dto.entityId } != null)
 }
 
 fun VideoFeedItemResponseDto.toModel(isLiked: Boolean) = VideoClipModel(
