@@ -11,6 +11,7 @@ import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.corecommon.model.SubsType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.Action
+import io.snaps.corenavigation.AppDeeplink
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.getArg
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -71,8 +72,8 @@ class ProfileViewModel @Inject constructor(
                     ),
                     nickname = state.dataOrCache?.name.orEmpty(),
                     shareLink = state.dataOrCache?.userId?.let { userId ->
-                        "https://snapsapp.io/blogger/$userId"
-                    }.orEmpty()
+                        AppDeeplink.generateSharingLink(AppDeeplink.Profile(userId))
+                    }
                 )
             }
         }.launchIn(viewModelScope)
@@ -243,7 +244,7 @@ class ProfileViewModel @Inject constructor(
         val videoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
         val userLikedVideoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
         val dialog: SubsViewModel.Dialog? = null,
-        val shareLink: String = "",
+        val shareLink: String? = null,
     )
 
     sealed class Command {

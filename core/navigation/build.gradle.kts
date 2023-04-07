@@ -13,4 +13,5 @@ dependencies {
     implementation(projects.coreCommon)
 
     implementation(*Libs.bundle.browser)
+    implementation(*Libs.bundle.firebase)
 }

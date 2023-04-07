@@ -18,7 +18,11 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.dynamiclinks.ktx.dynamicLinks
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
+import io.snaps.corenavigation.AppDeeplink
+import io.snaps.corenavigation.base.navigate
 import io.snaps.coreuicompose.tools.SystemBarsIconsColor
 import io.snaps.coreuicompose.uikit.status.MessageBannerUi
 import io.snaps.coreuitheme.compose.AppTheme
@@ -65,13 +69,20 @@ class AppActivity : FragmentActivity() {
                     navController = navController,
                     needsStartOnBoarding = currentFlow.needsStartOnBoarding,
                 )
-                is AppViewModel.StartFlow.AuthorizedFlow -> navHostProvider.AuthorizedGraph(
-                    navController = navController,
-                    isChecking = currentFlow.isChecking,
-                    needsWalletConnect = currentFlow.needsWalletConnect,
-                    needsInitialization = currentFlow.needsInitialization,
-                    needsRanking = currentFlow.needsRanking,
-                )
+                is AppViewModel.StartFlow.AuthorizedFlow -> {
+                    navHostProvider.AuthorizedGraph(
+                        navController = navController,
+                        isChecking = currentFlow.isChecking,
+                        needsWalletConnect = currentFlow.needsWalletConnect,
+                        needsInitialization = currentFlow.needsInitialization,
+                        needsRanking = currentFlow.needsRanking,
+                    )
+                    Firebase.dynamicLinks
+                        .getDynamicLink(intent)
+                        .addOnSuccessListener {
+                            navController.navigate(AppDeeplink.parse(it?.link.toString()))
+                        }
+                }
             }
             viewModel.updateAppRoute(navBackStackEntry?.destination?.route)
             MessageBannerUi(notification)

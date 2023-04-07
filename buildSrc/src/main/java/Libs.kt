@@ -43,6 +43,7 @@ object Libs {
     private const val analyticsVersion = "21.2.0"
     private const val messagingVersion = "23.1.1"
     private const val configVersion = "21.2.1"
+    private const val dynamicLinksVersion = "21.1.0"
 
     private const val playServicesVersion = "20.4.1"
 
@@ -141,6 +142,7 @@ object Libs {
             "com.google.firebase:firebase-analytics-ktx:$analyticsVersion",
             "com.google.firebase:firebase-messaging-ktx:$messagingVersion",
             "com.google.firebase:firebase-config-ktx:$configVersion",
+            "com.google.firebase:firebase-dynamic-links-ktx:$dynamicLinksVersion"
         )
 
         val composeCompiler = arrayOf("androidx.compose.compiler:compiler:$composeCompilerVersion")

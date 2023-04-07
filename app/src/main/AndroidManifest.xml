@@ -45,8 +45,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="io.snaps.android"
-                    android:scheme="app" />
+                    android:host="snapsapp.io"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
 

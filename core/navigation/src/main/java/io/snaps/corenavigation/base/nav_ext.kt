@@ -11,6 +11,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
+import io.snaps.corenavigation.AppDeeplink
+import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.Deeplink
 import io.snaps.corenavigation.Route
 import io.snaps.corenavigation.RouteWithArg
@@ -58,6 +60,17 @@ fun NavController.navigate(route: Route, builder: NavOptionsBuilder.() -> Unit =
     route = route.path(),
     builder = builder,
 )
+
+fun NavController.navigate(deeplink: Deeplink?, builder: NavOptionsBuilder.() -> Unit = {}) {
+    when (deeplink) {
+        is AppDeeplink.Profile -> this navigate FeatureNavDirection(
+            route = AppRoute.Profile,
+            arg = AppRoute.Profile.Args(deeplink.userId),
+            optionsBuilder = builder,
+        )
+        null -> Unit
+    }
+}
 
 fun NavOptionsBuilder.tryPopBackStack(navHostController: NavHostController) {
     navHostController.currentDestination?.route?.let { popUpTo(it) { inclusive = true } }

@@ -1,8 +1,15 @@
 package io.snaps.corenavigation
 
+import android.net.Uri
+import androidx.core.net.toUri
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.google.firebase.dynamiclinks.ktx.androidParameters
+import com.google.firebase.dynamiclinks.ktx.dynamicLink
+import com.google.firebase.dynamiclinks.ktx.dynamicLinks
+import com.google.firebase.ktx.Firebase
+import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.QuestType
@@ -33,7 +40,7 @@ sealed class Deeplink(protected val value: String) {
 
     open val pattern: String = value
 
-    open fun path(vararg args: Any): String = value
+    open fun path(): String = value
 }
 
 object AppRoute {
@@ -195,4 +202,39 @@ object AppRoute {
     }
 
     object WebView : Route("WebView")
+}
+
+object AppDeeplink {
+
+    private val BaseUri = "https://snapsapp.io".toUri()
+
+    private fun pathProfile() = "${BaseUri}blogger"
+
+    fun parse(deeplink: String?): Deeplink? {
+        val result = when {
+            deeplink == null -> null
+            deeplink.startsWith(pathProfile()) -> deeplink.removePrefix("${pathProfile()}/").let(::Profile)
+            else -> null
+        }
+        log("Deep link parsed: $deeplink into $result")
+        return result
+    }
+
+    fun generateSharingLink(deeplink: Deeplink): String {
+        val dynamicLink = Firebase.dynamicLinks.dynamicLink {
+            link = Uri.parse(deeplink.path())
+            domainUriPrefix = BaseUri.toString()
+            androidParameters {
+                build()
+            }
+            buildDynamicLink()
+        }
+        return dynamicLink.uri.toString()
+    }
+
+    data class Profile(val userId: Uuid) : Deeplink(pathProfile()) {
+
+        override val pattern = "$value/{$DefaultArgKey}"
+        override fun path() = "$value/%s".format(userId)
+    }
 }
