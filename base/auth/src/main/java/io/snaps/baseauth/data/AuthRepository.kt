@@ -3,6 +3,7 @@ package io.snaps.baseauth.data
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
@@ -53,6 +54,8 @@ class AuthRepositoryImpl @Inject constructor(
             auth.createUserWithEmailAndPassword(email, password)
                 .await()
                 .handleAuthResult()
+        } catch (e: FirebaseAuthException) {
+            Effect.error(AppError.Custom(displayMessage = e.localizedMessage, cause = e))
         } catch (e: Exception) {
             Effect.error(AppError.Unknown(cause = e))
         }
@@ -67,6 +70,8 @@ class AuthRepositoryImpl @Inject constructor(
             auth.signInWithEmailAndPassword(email, password)
                 .await()
                 .handleAuthResult()
+        } catch (e: FirebaseAuthException) {
+            Effect.error(AppError.Custom(displayMessage = e.localizedMessage, cause = e))
         } catch (e: Exception) {
             Effect.error(AppError.Unknown(cause = e))
         }

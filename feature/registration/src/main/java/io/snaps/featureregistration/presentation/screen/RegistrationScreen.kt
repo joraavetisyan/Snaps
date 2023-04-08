@@ -129,7 +129,7 @@ fun RegistrationScreen(
                 override fun onSuccess(result: LoginResult) {
                     val token = result.accessToken.token
                     val credential = FacebookAuthProvider.getCredential(token)
-                    viewModel.signInWithWithFacebook(credential)
+                    viewModel.signInWithFacebook(credential)
                 }
 
                 override fun onCancel() = Unit
