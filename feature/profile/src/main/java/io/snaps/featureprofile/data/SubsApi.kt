@@ -1,5 +1,6 @@
 package io.snaps.featureprofile.data
 
+import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
@@ -26,6 +27,12 @@ interface SubsApi {
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<SubscriptionItemResponseDto>>
+
+    @GET("subscriptions")
+    suspend fun subscriptions(
+        @Query("from") from: Uuid?,
+        @Query("count") count: Int,
+    ): BaseResponse<List<UserInfoResponseDto>>
 
     @POST("subscribe")
     suspend fun subscribe(

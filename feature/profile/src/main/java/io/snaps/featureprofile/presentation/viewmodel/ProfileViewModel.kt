@@ -60,6 +60,7 @@ class ProfileViewModel @Inject constructor(
         }
         subscribeOnFeed()
         subscribeOnUserLikedFeed()
+        loadSubscriptions()
     }
 
     private fun subscribeOnCurrentUser() {
@@ -82,6 +83,17 @@ class ProfileViewModel @Inject constructor(
     private fun loadCurrentUser() = viewModelScope.launch {
         action.execute {
             profileRepository.updateData()
+        }
+    }
+
+    private fun loadSubscriptions() = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true) }
+        val subscriptions = subsRepository.getSubscriptions()
+        _uiState.update {
+            it.copy(
+                isSubscribed = subscriptions.firstOrNull { it.userId == args?.userId } != null,
+                isLoading = false,
+            )
         }
     }
 

@@ -1,9 +1,12 @@
 package io.snaps.featureprofile.data
 
+import io.snaps.baseprofile.data.model.QuestInfoResponseDto
+import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.mock.rImage
+import io.snaps.corecommon.mock.rInt
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
@@ -56,6 +59,43 @@ class FakeSubsApi : SubsApi {
                 )
             }
         ).also { subscriptionGeneration++ }
+    }
+
+    override suspend fun subscriptions(
+        from: Uuid?,
+        count: Int
+    ): BaseResponse<List<UserInfoResponseDto>> {
+        log("Requesting subscribers: $count subscribers with offset $from")
+        delay(mockDelay)
+        return BaseResponse(
+            actualTimestamp = 1L,
+            data = List(count) {
+                UserInfoResponseDto(
+                    entityId = "${subscriberGeneration}entity$it",
+                    userId = "${subscriberGeneration}subscriber$it",
+                    email = "$it email",
+                    wallet = "$it wallet",
+                    createdDate = "",
+                    avatarUrl = rImage,
+                    name = "$it subscriber",
+                    experience = 0,
+                    level = 1,
+                    instagramUserId = null,
+                    ownInviteCode = null,
+                    inviteCodeRegisteredBy = null,
+                    questInfo = QuestInfoResponseDto(
+                        quests = emptyList(),
+                        questDate = "",
+                        updatedDate = "",
+                        experience = 0,
+                        energy = 20,
+                    ),
+                    totalLikes = rInt,
+                    totalSubscribers = rInt,
+                    totalSubscriptions = rInt,
+                )
+            }
+        ).also { subscriberGeneration++ }
     }
 
     override suspend fun subscribe(body: SubscribeRequestDto): BaseResponse<Completable> {

@@ -159,7 +159,7 @@ private fun ProfileScreen(
 
             uiState.userInfoTileState.Content(modifier = Modifier)
             Spacer(modifier = Modifier.height(12.dp))
-            if (uiState.userType == ProfileViewModel.UserType.Other) {
+            if (uiState.userType == ProfileViewModel.UserType.Other && !uiState.isLoading) {
                 SimpleChip(
                     modifier = Modifier
                         .fillMaxWidth()

@@ -4,7 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 import io.snaps.basefeed.data.CommentApi
 import io.snaps.basefeed.data.CommentRepository
 import io.snaps.basefeed.data.CommentRepositoryImpl
@@ -17,14 +18,13 @@ import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.coredata.network.ApiConfig
 import io.snaps.coredata.network.ApiService
-import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 class DataModule {
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun videoFeedApi(config: ApiConfig, feature: FeatureToggle): VideoFeedApi =
         if (feature.isEnabled(Feature.FeedApiMock)) FakeVideoFeedApi()
         else config
@@ -35,7 +35,7 @@ class DataModule {
             .build()
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun commentApi(config: ApiConfig, feature: FeatureToggle): CommentApi =
         if (feature.isEnabled(Feature.CommentApiMock)) FakeCommentApi()
         else config
@@ -47,14 +47,14 @@ class DataModule {
 }
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 interface DataBindModule {
 
     @Binds
-    @Singleton
+    @ViewModelScoped
     fun videoFeedRepository(bind: VideoFeedRepositoryImpl): VideoFeedRepository
 
     @Binds
-    @Singleton
+    @ViewModelScoped
     fun commentRepository(bind: CommentRepositoryImpl): CommentRepository
 }

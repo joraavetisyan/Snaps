@@ -1,5 +1,6 @@
 package io.snaps.featureprofile.data
 
+import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
@@ -31,6 +32,8 @@ interface SubsRepository {
     suspend fun subscribe(toSubscribeUserId: Uuid): Effect<Completable>
 
     suspend fun unsubscribe(subscriptionId: Uuid): Effect<Completable>
+
+    suspend fun getSubscriptions(): List<UserInfoResponseDto>
 }
 
 class SubsRepositoryImpl @Inject constructor(
@@ -38,6 +41,8 @@ class SubsRepositoryImpl @Inject constructor(
     private val subsApi: SubsApi,
     private val loaderFactory: SubsLoaderFactory,
 ) : SubsRepository {
+
+    private var subscriptions: List<UserInfoResponseDto>? = null
 
     private fun getLoader(subType: SubType): SubsLoader {
         return loaderFactory.get(subType) { type ->
@@ -94,5 +99,13 @@ class SubsRepositoryImpl @Inject constructor(
                 UnsubscribeRequestDto(subscriptionId = subscriptionId)
             )
         }
+    }
+
+     override suspend fun getSubscriptions(): List<UserInfoResponseDto> {
+        return subscriptions ?: apiCall(ioDispatcher) {
+            subsApi.subscriptions(null, 100)
+        }.doOnSuccess {
+            subscriptions = it
+        }.dataOrCache ?: emptyList()
     }
 }
