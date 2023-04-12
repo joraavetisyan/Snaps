@@ -150,7 +150,7 @@ private fun RewardsCard(
                 text = description.get(),
                 style = AppTheme.specificTypography.titleMedium,
                 color = AppTheme.specificColorScheme.white,
-                modifier = Modifier.width(200.dp),
+                modifier = Modifier.width(220.dp),
             )
         }
     }

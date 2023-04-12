@@ -11,6 +11,8 @@ import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
+import io.snaps.corecommon.ext.round
+import io.snaps.corecommon.ext.toStringValue
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.State
 import java.lang.Integer.min
@@ -84,8 +86,8 @@ fun mainHeaderState(
         MainHeaderState.Data(
             profileImage = profile.requireData.avatar,
             energy = profile.requireData.questInfo.totalEnergyProgress.toString(),
-            unlocked = coins.requireData.unlocked.toString(),
-            locked = coins.requireData.locked.toString(),
+            unlocked = coins.requireData.unlocked.round().toStringValue(),
+            locked = coins.requireData.locked.round().toStringValue(),
             onProfileClicked = onProfileClicked,
             onWalletClicked = onWalletClicked,
         )

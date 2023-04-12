@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ClaimRequestDto(
-    @SerialName("amount") val amount: Int,
+    @SerialName("amount") val amount: Double,
 )

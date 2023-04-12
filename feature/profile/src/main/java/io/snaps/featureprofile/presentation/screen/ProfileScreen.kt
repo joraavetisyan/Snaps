@@ -26,9 +26,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -86,6 +84,8 @@ fun ProfileScreen(
         onUnsubscribeClicked = viewModel::onUnsubscribeClicked,
         onVideoClipClicked = viewModel::onVideoClipClicked,
         onUserLikedVideoClipClicked = viewModel::onUserLikedVideoClipClicked,
+        onLikeIconClicked = viewModel::onLikeIconClicked,
+        onGalleryIconClicked = viewModel::onGalleryIconClicked,
     )
 }
 
@@ -101,6 +101,8 @@ private fun ProfileScreen(
     onDismissRequest: () -> Unit,
     onVideoClipClicked: (Int) -> Unit,
     onUserLikedVideoClipClicked: (Int) -> Unit,
+    onLikeIconClicked: () -> Unit,
+    onGalleryIconClicked: () -> Unit,
 ) {
     val title = when (uiState.userType) {
         ProfileViewModel.UserType.Other -> "@${uiState.nickname}"
@@ -155,8 +157,6 @@ private fun ProfileScreen(
         Column(
             modifier = Modifier.padding(paddingValues),
         ) {
-            var selectedItemIndex by remember { mutableStateOf(0) }
-
             uiState.userInfoTileState.Content(modifier = Modifier)
             Spacer(modifier = Modifier.height(12.dp))
             if (uiState.userType == ProfileViewModel.UserType.Other && !uiState.isLoading) {
@@ -171,13 +171,13 @@ private fun ProfileScreen(
                 )
             } else {
                 Actions(
-                    selectedItemIndex = selectedItemIndex,
-                    onGalleryIconClicked = { selectedItemIndex = 0 },
-                    onLikeIconClicked = { selectedItemIndex = 1 },
+                    selectedItemIndex = uiState.selectedItemIndex,
+                    onGalleryIconClicked = onGalleryIconClicked,
+                    onLikeIconClicked = onLikeIconClicked,
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
-            AnimatedContent(targetState = selectedItemIndex) {
+            AnimatedContent(targetState = uiState.selectedItemIndex) {
                 when (it) {
                     0 -> VideoFeedGrid(
                         columnCount = 3,

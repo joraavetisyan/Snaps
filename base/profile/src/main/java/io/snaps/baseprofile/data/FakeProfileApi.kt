@@ -59,8 +59,8 @@ class FakeProfileApi : ProfileApi {
         return BaseResponse(
             actualTimestamp = 0L,
             data = BalanceResponseDto(
-                lockedTokensBalance = 1,
-                unlockedTokensBalance = 1,
+                lockedTokensBalance = 1.0,
+                unlockedTokensBalance = 1.0,
                 exchangeRate = 342.01,
             )
         ).also {

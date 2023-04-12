@@ -58,6 +58,7 @@ class ProfileViewModel @Inject constructor(
             subscribeOnCurrentUser()
             loadCurrentUser()
         }
+        loadVideoFeed()
         subscribeOnFeed()
         subscribeOnUserLikedFeed()
         loadSubscriptions()
@@ -175,6 +176,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    private fun loadVideoFeed() {
+        onUserLikedFeedReloadClicked()
+        onFeedReloadClicked()
+    }
+
     private fun onUserLikedFeedReloadClicked() = viewModelScope.launch {
         action.execute {
             videoFeedRepository.refreshFeed(VideoFeedType.UserLiked)
@@ -247,6 +253,18 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun onGalleryIconClicked() {
+        _uiState.update {
+            it.copy(selectedItemIndex = 0)
+        }
+    }
+
+    fun onLikeIconClicked() {
+        _uiState.update {
+            it.copy(selectedItemIndex = 1)
+        }
+    }
+
     data class UiState(
         val isLoading: Boolean = true,
         val userInfoTileState: UserInfoTileState = UserInfoTileState.Shimmer,
@@ -257,6 +275,7 @@ class ProfileViewModel @Inject constructor(
         val userLikedVideoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
         val dialog: SubsViewModel.Dialog? = null,
         val shareLink: String? = null,
+        val selectedItemIndex: Int = 0,
     )
 
     sealed class Command {

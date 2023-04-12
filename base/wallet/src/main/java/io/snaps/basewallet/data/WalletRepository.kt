@@ -98,7 +98,7 @@ interface WalletRepository {
         data: ByteArray = byteArrayOf(),
     ): Effect<SendHandler>
 
-    suspend fun claim(amount: Int): Effect<Completable>
+    suspend fun claim(amount: Double): Effect<Completable>
 
     fun getBnbWalletModel(): WalletModel?
 }
@@ -354,7 +354,7 @@ class WalletRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun claim(amount: Int): Effect<Completable> {
+    override suspend fun claim(amount: Double): Effect<Completable> {
         return apiCall(ioDispatcher) {
             walletApi.claim(ClaimRequestDto(amount))
         }
