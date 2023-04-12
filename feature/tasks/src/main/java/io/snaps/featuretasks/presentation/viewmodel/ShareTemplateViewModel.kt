@@ -66,7 +66,7 @@ class ShareTemplateViewModel @Inject constructor(
         profileRepository.state.onEach { state ->
             state.dataOrCache?.let { user ->
                 _uiState.update {
-                    it.copy(instagramConnectTileState = instagramTileState(user.instagramUserId))
+                    it.copy(instagramConnectTileState = instagramTileState(user.instagramId))
                 }
             }
         }.launchIn(viewModelScope)
@@ -137,6 +137,9 @@ class ShareTemplateViewModel @Inject constructor(
             _command publish Command.OpenShareToInstagramDialog(
                 uri = fileManager.getUriForFile(it)
             )
+            action.execute(needProcessErrors = false) {
+                tasksRepository.postToInstagram()
+            }
         }
     }
 

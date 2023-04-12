@@ -35,7 +35,7 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
     inviteCodeRegisteredBy = inviteCodeRegisteredBy,
     ownInviteCode = ownInviteCode,
     totalPublication = null,
-    instagramUserId = instagramUserId,
+    instagramId = instagramId,
 )
 
 fun BalanceResponseDto.toModel() = BalanceModel(
@@ -58,7 +58,7 @@ fun QuestItemDto.toQuestModel() = QuestModel(
     energy = quest.energy,
     type = quest.type,
     completed = completed,
-    network = network,
+    status = status,
     count = quest.count,
     madeCount = madeCount,
 )

@@ -80,7 +80,7 @@ class FakeSubsApi : SubsApi {
                     name = "$it subscriber",
                     experience = 0,
                     level = 1,
-                    instagramUserId = null,
+                    instagramId = null,
                     ownInviteCode = null,
                     inviteCodeRegisteredBy = null,
                     questInfo = QuestInfoResponseDto(

@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.baseSources)
     implementation(projects.baseNft)
     implementation(projects.baseSession)
+    implementation(projects.baseWallet)
 
     implementation(*Libs.bundle.gson)
 }

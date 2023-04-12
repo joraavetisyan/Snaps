@@ -1,5 +1,6 @@
 package io.snaps.baseprofile.data
 
+import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.UserCreateRequestDto
 import io.snaps.baseprofile.domain.BalanceModel
@@ -8,6 +9,7 @@ import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.domain.UsersPageModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
+import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
@@ -58,9 +60,19 @@ interface ProfileRepository {
 
     fun isCurrentUser(userId: Uuid): Boolean
 
-    suspend fun connectInstagram(instagramUserId: String, username: String): Effect<Completable>
+    suspend fun connectInstagram(
+        instagramId: String,
+        instagramUsername: String,
+        name: String,
+        walletAddress: WalletAddress,
+        avatar: FullUrl,
+    ): Effect<Completable>
 
-    suspend fun disconnectInstagram(): Effect<Completable>
+    suspend fun disconnectInstagram(
+        name: String,
+        walletAddress: WalletAddress,
+        avatar: FullUrl,
+    ): Effect<Completable>
 }
 
 class ProfileRepositoryImpl @Inject constructor(
@@ -109,9 +121,7 @@ class ProfileRepositoryImpl @Inject constructor(
         return apiCall(ioDispatcher) {
             api.userInfo()
         }.map {
-            it.toModel().copy(
-                instagramUserId = userDataStorage.instagramId,
-            )
+            it.toModel()
         }.also {
             _state tryPublish it
         }
@@ -176,29 +186,57 @@ class ProfileRepositoryImpl @Inject constructor(
         return _state.value.dataOrCache?.userId == userId
     }
 
-    override suspend fun connectInstagram(instagramUserId: String, username: String): Effect<Completable> {
-        userDataStorage.instagramUsername = username
-        userDataStorage.instagramId = instagramUserId
-        _state.update {
-            if (it is Effect && it.isSuccess) {
-                Effect.success(it.requireData.copy(instagramUserId = instagramUserId))
-            } else {
-                it
+    override suspend fun connectInstagram(
+        instagramId: String,
+        instagramUsername: String,
+        name: String,
+        walletAddress: WalletAddress,
+        avatar: FullUrl,
+    ): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            api.connectInstagram(
+                ConnectInstagramRequestDto(
+                    instagramId = instagramId,
+                    wallet = walletAddress,
+                    name = name,
+                    avatarUrl = avatar,
+                )
+            )
+        }.doOnSuccess {
+            userDataStorage.instagramUsername = instagramUsername
+            _state.update {
+                if (it is Effect && it.isSuccess) {
+                    Effect.success(it.requireData.copy(instagramId = instagramId))
+                } else {
+                    it
+                }
             }
-        }
-        return Effect.completable
+        }.toCompletable()
     }
 
-    override suspend fun disconnectInstagram(): Effect<Completable> {
-        userDataStorage.instagramUsername = ""
-        userDataStorage.instagramId = null
-        _state.update {
-            if (it is Effect && it.isSuccess) {
-                Effect.success(it.requireData.copy(instagramUserId = null))
-            } else {
-                it
+    override suspend fun disconnectInstagram(
+        name: String,
+        walletAddress: WalletAddress,
+        avatar: FullUrl,
+    ): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            api.connectInstagram(
+                ConnectInstagramRequestDto(
+                    instagramId = null,
+                    wallet = walletAddress,
+                    name = name,
+                    avatarUrl = avatar,
+                )
+            )
+        }.doOnSuccess {
+            userDataStorage.instagramUsername = ""
+            _state.update {
+                if (it is Effect && it.isSuccess) {
+                    Effect.success(it.requireData.copy(instagramId = null))
+                } else {
+                    it
+                }
             }
-        }
-        return Effect.completable
+        }.toCompletable()
     }
 }

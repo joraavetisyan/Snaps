@@ -3,6 +3,7 @@ package io.snaps.featuretasks.presentation
 import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.basenft.ui.costToString
+import io.snaps.baseprofile.data.model.SocialPostStatus
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.corecommon.container.textValue
@@ -15,6 +16,7 @@ import io.snaps.corecommon.model.QuestType
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.featuretasks.presentation.ui.RemainingTimeTileState
+import io.snaps.featuretasks.presentation.ui.TaskStatus
 import io.snaps.featuretasks.presentation.ui.TaskTileState
 
 fun State<QuestInfoModel>.toTaskTileState(
@@ -37,6 +39,7 @@ private fun QuestModel.toTaskTileState(
     energyProgress = this.energyProgress(),
     title = type.toTaskTitle(),
     description = type.toTaskDescription(),
+    status = status(),
     clickListener = { onItemClicked(this) },
 )
 
@@ -77,6 +80,18 @@ fun QuestType.toTaskDescription() = when (this) {
     QuestType.Subscribe -> StringKey.TasksDescriptionSubscribe.textValue()
     QuestType.Watch -> StringKey.TasksDescriptionWatchVideo.textValue()
     else -> StringKey.TasksDescriptionSocialPost.textValue()
+}
+
+fun QuestModel.status(): TaskStatus? = when (status) {
+    SocialPostStatus.Success -> TaskStatus.Credited
+    SocialPostStatus.NotPosted -> TaskStatus.NotPosted
+    SocialPostStatus.WaitForVerification -> TaskStatus.WaitForVerification
+    SocialPostStatus.Rejected -> TaskStatus.Rejected
+    null -> if (energyProgress() == energy) {
+        TaskStatus.Credited
+    } else if (energyProgress() > 0) {
+        TaskStatus.InProgress
+    } else null
 }
 
 fun State<List<NftModel>>.toNftCollectionItemState(

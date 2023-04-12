@@ -24,5 +24,5 @@ class UserInfoResponseDto(
     @SerialName("inviteCodeRegisteredBy") val inviteCodeRegisteredBy: String?,
     @SerialName("ownInviteCode") val ownInviteCode: String?,
     @SerialName("level") val level: Int,
-    @SerialName("instagramUserId") val instagramUserId: Uuid?,
+    @SerialName("instagramId") val instagramId: Uuid?,
 )

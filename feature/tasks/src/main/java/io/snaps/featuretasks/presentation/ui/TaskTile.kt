@@ -27,6 +27,14 @@ import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.other.SimpleCard
 import io.snaps.coreuitheme.compose.AppTheme
 
+enum class TaskStatus {
+    Credited,
+    InProgress,
+    Rejected,
+    NotPosted,
+    WaitForVerification,
+}
+
 sealed class TaskTileState : TileState {
 
     data class Data(
@@ -34,7 +42,7 @@ sealed class TaskTileState : TileState {
         val description: TextValue,
         val energy: Int,
         val energyProgress: Int,
-        val done: Boolean = false,
+        val status: TaskStatus?,
         val clickListener: () -> Unit,
     ) : TaskTileState()
 
@@ -96,54 +104,29 @@ private fun Data(
                 isFull = data.energyProgress == data.energy,
             )
         }
-        if (!data.done) {
-            if (data.energyProgress < data.energy && data.energyProgress > 0) {
-                Spacer(modifier = Modifier.height(12.dp))
-                TaskInProgressMessage()
-            } else if (data.energyProgress >= data.energy) {
-                Spacer(modifier = Modifier.height(12.dp))
-                TaskCompletedMessage()
-            }
+        data.status?.let {
+            Spacer(modifier = Modifier.height(12.dp))
+            TaskStatusMessage(taskStatus = data.status)
         }
         Spacer(modifier = Modifier.height(12.dp))
     }
 }
 
 @Composable
-private fun TaskCompletedMessage() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp)
-            .background(
-                color = AppTheme.specificColorScheme.uiSystemGreen.copy(alpha = 0.2f),
-                shape = AppTheme.shapes.medium,
-            )
-            .padding(horizontal = 12.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Icon(
-            painter = AppTheme.specificIcons.checkCircle.get(),
-            contentDescription = null,
-            tint = AppTheme.specificColorScheme.uiSystemGreen,
-        )
-        Text(
-            text = StringKey.TasksMessageTaskCounted.textValue().get(),
-            color = AppTheme.specificColorScheme.textGreen,
-            style = AppTheme.specificTypography.bodySmall,
-        )
+private fun TaskStatusMessage(
+    taskStatus: TaskStatus,
+) {
+    val color = when (taskStatus) {
+        TaskStatus.Credited -> AppTheme.specificColorScheme.uiSystemGreen
+        TaskStatus.Rejected -> AppTheme.specificColorScheme.uiSystemRed
+        else -> AppTheme.specificColorScheme.uiSystemYellow
     }
-}
-
-@Composable
-private fun TaskInProgressMessage() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
             .background(
-                color = AppTheme.specificColorScheme.uiSystemYellow.copy(alpha = 0.2f),
+                color = color.copy(alpha = 0.2f),
                 shape = AppTheme.shapes.medium,
             )
             .padding(horizontal = 12.dp, vertical = 8.dp),
@@ -151,13 +134,22 @@ private fun TaskInProgressMessage() {
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Icon(
-            painter = AppTheme.specificIcons.infoRounded.get(),
+            painter = when (taskStatus) {
+                TaskStatus.Credited -> AppTheme.specificIcons.checkCircle
+                else -> AppTheme.specificIcons.infoRounded
+            }.get(),
             contentDescription = null,
-            tint = AppTheme.specificColorScheme.uiSystemYellow,
+            tint = color,
         )
         Text(
-            text = StringKey.TasksMessageTaskInProgress.textValue().get(),
-            color = AppTheme.specificColorScheme.uiSystemYellow,
+            text = when (taskStatus) {
+                TaskStatus.Credited -> StringKey.TasksMessageTaskCounted
+                TaskStatus.Rejected -> StringKey.TasksFieldSocialPostRejected
+                TaskStatus.InProgress -> StringKey.TasksMessageTaskInProgress
+                TaskStatus.NotPosted -> StringKey.TasksFieldSocialPostNotPosted
+                TaskStatus.WaitForVerification -> StringKey.TasksFieldSocialPostWaitForVerification
+            }.textValue().get(),
+            color = color,
             style = AppTheme.specificTypography.bodySmall,
         )
     }

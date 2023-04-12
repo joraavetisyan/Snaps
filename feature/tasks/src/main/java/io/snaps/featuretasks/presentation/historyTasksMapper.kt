@@ -94,7 +94,7 @@ fun LazyListScope.historyTasksItems(
                 description = it.date.toStringValue().textValue(),
                 energy = it.item.energy,
                 energyProgress = it.item.energyProgress(),
-                done = true,
+                status = null,
                 clickListener = it.onClicked,
             ).Content(modifier = modifier)
             is HistoryTaskUiState.Shimmer -> TaskTileState.Shimmer.Content(modifier = modifier)

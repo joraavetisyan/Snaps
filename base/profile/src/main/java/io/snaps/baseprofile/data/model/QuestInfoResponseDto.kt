@@ -2,7 +2,6 @@ package io.snaps.baseprofile.data.model
 
 import io.snaps.corecommon.model.DateTime
 import io.snaps.corecommon.model.QuestType
-import io.snaps.corecommon.model.SocialNetwork
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -24,7 +23,7 @@ data class QuestItemDto(
     @SerialName("done") val done: Boolean?,
 
     // For SocialPost
-    @SerialName("network") val network: SocialNetwork?,
+    @SerialName("status") val status: SocialPostStatus?,
 )
 
 @Serializable
@@ -33,3 +32,11 @@ data class QuestDto(
     @SerialName("type") val type: QuestType,
     @SerialName("energy") val energy: Int,
 )
+
+@Serializable
+enum class SocialPostStatus {
+    NotPosted,
+    WaitForVerification,
+    Success,
+    Rejected,
+}

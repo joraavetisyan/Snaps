@@ -142,6 +142,9 @@ enum class StringKey {
     TasksDescriptionSubscribe,
     TasksTitleSocialPost,
     TasksDescriptionSocialPost,
+    TasksFieldSocialPostNotPosted,
+    TasksFieldSocialPostWaitForVerification,
+    TasksFieldSocialPostRejected,
 
     TaskWatchVideoTitle,
     TaskWatchVideoDescription,

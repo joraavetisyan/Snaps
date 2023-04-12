@@ -1,6 +1,7 @@
 package io.snaps.baseprofile.data
 
 import io.snaps.baseprofile.data.model.BalanceResponseDto
+import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.TransactionItemResponseDto
 import io.snaps.baseprofile.data.model.UserCreateRequestDto
@@ -38,8 +39,10 @@ interface ProfileApi {
     @GET("user/balance")
     suspend fun balance(): BaseResponse<BalanceResponseDto>
 
-    @POST("connect-instagram")
-    suspend fun connectInstagram(): BaseResponse<Completable> // todo
+    @POST("user")
+    suspend fun connectInstagram(
+        @Body body: ConnectInstagramRequestDto,
+    ): BaseResponse<UserInfoResponseDto>
 
     @GET("user")
     suspend fun users(

@@ -1,6 +1,7 @@
 package io.snaps.baseprofile.data
 
 import io.snaps.baseprofile.data.model.BalanceResponseDto
+import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.QuestDto
 import io.snaps.baseprofile.data.model.QuestInfoResponseDto
 import io.snaps.baseprofile.data.model.QuestItemDto
@@ -67,10 +68,10 @@ class FakeProfileApi : ProfileApi {
         }
     }
 
-    override suspend fun connectInstagram(): BaseResponse<Completable> {
+    override suspend fun connectInstagram(@Body body: ConnectInstagramRequestDto): BaseResponse<UserInfoResponseDto> {
         return BaseResponse(
             actualTimestamp = 0L,
-            data = Completable
+            data = getUserInfo(null)
         ).also {
             delay(mockDelay)
         }
@@ -115,7 +116,7 @@ class FakeProfileApi : ProfileApi {
         questInfo = getQuestInfo(),
         ownInviteCode = "#42GJXE8QM",
         inviteCodeRegisteredBy = null,
-        instagramUserId = null,
+        instagramId = null,
     )
 
     private fun getQuestInfo() = QuestInfoResponseDto(
@@ -129,7 +130,7 @@ class FakeProfileApi : ProfileApi {
                 completed = true,
                 done = null,
                 madeCount = rInt,
-                network = null,
+                status = null,
                 quest = QuestDto(
                     count = 20,
                     type = QuestType.Like,
@@ -141,7 +142,7 @@ class FakeProfileApi : ProfileApi {
                 done = null,
                 completed = false,
                 madeCount = rInt,
-                network = null,
+                status = null,
                 quest = QuestDto(
                     count = rInt,
                     type = QuestType.PublishVideo,
@@ -153,7 +154,7 @@ class FakeProfileApi : ProfileApi {
                 completed = false,
                 done = null,
                 madeCount = 0,
-                network = null,
+                status = null,
                 quest = QuestDto(
                     count = 20,
                     type = QuestType.Watch,
@@ -165,7 +166,7 @@ class FakeProfileApi : ProfileApi {
                 completed = false,
                 done = null,
                 madeCount = 0,
-                network = null,
+                status = null,
                 quest = QuestDto(
                     count = 5,
                     type = QuestType.Subscribe,
@@ -177,7 +178,7 @@ class FakeProfileApi : ProfileApi {
                 completed = false,
                 done = null,
                 madeCount = rInt,
-                network = null,
+                status = null,
                 quest = QuestDto(
                     count = rInt,
                     type = QuestType.SocialPost,

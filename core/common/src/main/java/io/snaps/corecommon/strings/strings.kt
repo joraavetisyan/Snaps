@@ -355,40 +355,49 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Job completed successfully",
     ),
     key(StringKey.TasksMessageTaskCounted) to mapOf(
-        SupportedLanguageKey.En to "Task counted",
+        SupportedLanguageKey.En to "Assignment credited",
     ),
     key(StringKey.TasksMessageTaskInProgress) to mapOf(
-        SupportedLanguageKey.En to "Task will be counted if it's completed in full",
+        SupportedLanguageKey.En to "Assignment will be credited if completed in full",
     ),
     key(StringKey.TasksTitleWatchVideo) to mapOf(
-        SupportedLanguageKey.En to "Watch 20 videos",
+        SupportedLanguageKey.En to "View 20 video",
     ),
     key(StringKey.TasksDescriptionWatchVideo) to mapOf(
-        SupportedLanguageKey.En to "Watch at least 20 videos from the feed",
+        SupportedLanguageKey.En to "View at least 20 videos from the feed",
     ),
     key(StringKey.TasksTitleLike) to mapOf(
         SupportedLanguageKey.En to "Like",
     ),
     key(StringKey.TasksDescriptionLike) to mapOf(
-        SupportedLanguageKey.En to "Like your favourite videos",
+        SupportedLanguageKey.En to "Like videos you like",
     ),
     key(StringKey.TasksTitlePublishVideo) to mapOf(
-        SupportedLanguageKey.En to "Post video",
+        SupportedLanguageKey.En to "Upload video",
     ),
     key(StringKey.TasksDescriptionPublishVideo) to mapOf(
         SupportedLanguageKey.En to "Post a short video to your profile",
     ),
     key(StringKey.TasksTitleSubscribe) to mapOf(
-        SupportedLanguageKey.En to "Subscribe to authors",
+        SupportedLanguageKey.En to "Subscribe",
     ),
     key(StringKey.TasksDescriptionSubscribe) to mapOf(
         SupportedLanguageKey.En to "Subscribe to authors you like",
     ),
     key(StringKey.TasksTitleSocialPost) to mapOf(
-        SupportedLanguageKey.En to "Share Snaps",
+        SupportedLanguageKey.En to "Talk about Snaps",
     ),
     key(StringKey.TasksDescriptionSocialPost) to mapOf(
         SupportedLanguageKey.En to "Share Snaps on Instagram",
+    ),
+    key(StringKey.TasksFieldSocialPostNotPosted) to mapOf(
+        SupportedLanguageKey.En to "Post not yet published",
+    ),
+    key(StringKey.TasksFieldSocialPostWaitForVerification) to mapOf(
+        SupportedLanguageKey.En to "Assignment is waiting for verification",
+    ),
+    key(StringKey.TasksFieldSocialPostRejected) to mapOf(
+        SupportedLanguageKey.En to "Assignment rejected",
     ),
 
     key(StringKey.TaskWatchVideoTitle) to mapOf(

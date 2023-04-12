@@ -4,9 +4,9 @@ import io.snaps.baseprofile.data.model.QuestDto
 import io.snaps.baseprofile.data.model.QuestItemDto
 import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rInt
+import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.DateTime
 import io.snaps.corecommon.model.QuestType
-import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import io.snaps.featuretasks.data.model.HistoryTaskItemResponseDto
 import kotlinx.coroutines.delay
@@ -26,10 +26,10 @@ class FakeTasksApi : TasksApi {
         }
     }
 
-    override suspend fun task(taskId: Uuid): BaseResponse<HistoryTaskItemResponseDto> {
+    override suspend fun instagramPost(): BaseResponse<Completable> {
         return BaseResponse(
             actualTimestamp = 0L,
-            data = getTasks().find { it.id == taskId }
+            data = Completable
         ).also {
             delay(mockDelay)
         }
@@ -48,7 +48,7 @@ class FakeTasksApi : TasksApi {
                     completed = true,
                     done = null,
                     madeCount = rInt,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = 20,
                         type = QuestType.Like,
@@ -60,7 +60,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     madeCount = rInt,
                     done = null,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = rInt,
                         type = QuestType.PublishVideo,
@@ -72,7 +72,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     done = null,
                     madeCount = 0,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = 20,
                         type = QuestType.Watch,
@@ -84,7 +84,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     madeCount = 0,
                     done = null,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = 5,
                         type = QuestType.Subscribe,
@@ -95,7 +95,7 @@ class FakeTasksApi : TasksApi {
                     energyProgress = 1,
                     completed = false,
                     madeCount = rInt,
-                    network = null,
+                    status = null,
                     done = null,
                     quest = QuestDto(
                         count = rInt,
@@ -117,7 +117,7 @@ class FakeTasksApi : TasksApi {
                     completed = true,
                     madeCount = rInt,
                     done = null,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = 20,
                         type = QuestType.Like,
@@ -128,7 +128,7 @@ class FakeTasksApi : TasksApi {
                     energyProgress = 2,
                     completed = false,
                     madeCount = rInt,
-                    network = null,
+                    status = null,
                     done = null,
                     quest = QuestDto(
                         count = rInt,
@@ -141,7 +141,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     done = null,
                     madeCount = 0,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = 20,
                         type = QuestType.Watch,
@@ -152,7 +152,7 @@ class FakeTasksApi : TasksApi {
                     energyProgress = 1,
                     completed = false,
                     madeCount = 0,
-                    network = null,
+                    status = null,
                     done = null,
                     quest = QuestDto(
                         count = 5,
@@ -165,7 +165,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     done = null,
                     madeCount = rInt,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = rInt,
                         type = QuestType.SocialPost,
@@ -186,7 +186,7 @@ class FakeTasksApi : TasksApi {
                     completed = true,
                     done = null,
                     madeCount = rInt,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = 20,
                         type = QuestType.Like,
@@ -198,7 +198,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     done = null,
                     madeCount = rInt,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = rInt,
                         type = QuestType.PublishVideo,
@@ -210,7 +210,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     done = null,
                     madeCount = 0,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = 20,
                         type = QuestType.Watch,
@@ -222,7 +222,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     done = null,
                     madeCount = 0,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = 5,
                         type = QuestType.Subscribe,
@@ -234,7 +234,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     done = null,
                     madeCount = rInt,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = rInt,
                         type = QuestType.SocialPost,
@@ -255,7 +255,7 @@ class FakeTasksApi : TasksApi {
                     completed = true,
                     done = null,
                     madeCount = rInt,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = 20,
                         type = QuestType.Like,
@@ -267,7 +267,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     done = null,
                     madeCount = rInt,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = rInt,
                         type = QuestType.PublishVideo,
@@ -279,7 +279,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     done = null,
                     madeCount = 0,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = 20,
                         type = QuestType.Watch,
@@ -291,7 +291,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     done = null,
                     madeCount = 0,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = 5,
                         type = QuestType.Subscribe,
@@ -303,7 +303,7 @@ class FakeTasksApi : TasksApi {
                     completed = false,
                     done = null,
                     madeCount = rInt,
-                    network = null,
+                    status = null,
                     quest = QuestDto(
                         count = rInt,
                         type = QuestType.SocialPost,
