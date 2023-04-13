@@ -86,12 +86,12 @@ class CreateUserViewModel @Inject constructor(
             action.execute {
                 _uiState.update { it.copy(isLoading = true) }
                 interactor.createUser(avatarFile = it, userName = uiState.value.nicknameValue)
-            }.doOnComplete {
+            }.doOnError { _, _ ->
                 _uiState.update { it.copy(isLoading = false) }
             }.doOnSuccess {
                 handleCreate()
             }
-        } ?: kotlin.run {
+        } ?: run {
             val currentName = profileRepository.state.value.dataOrCache?.name
             val enteredName = uiState.value.nicknameValue
             if (currentName == enteredName && uiState.value.avatar != null) {
@@ -102,8 +102,11 @@ class CreateUserViewModel @Inject constructor(
 
     private fun handleCreate() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
             action.execute {
-                sessionRepository.checkStatus()
+                sessionRepository.onInitialize()
+            }.doOnComplete {
+                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }

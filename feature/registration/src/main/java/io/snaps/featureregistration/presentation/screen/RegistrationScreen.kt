@@ -66,6 +66,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonInlineM
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.other.LinkText
 import io.snaps.coreuicompose.uikit.other.LinkTextData
+import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuicompose.uikit.status.SimpleAlertDialogUi
 import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
 import io.snaps.coreuitheme.compose.AppTheme
@@ -197,6 +198,7 @@ fun RegistrationScreen(
             onEmailVerificationDialogDismissRequest = viewModel::onEmailVerificationDialogDismissRequest,
         )
     }
+    FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
 
 @Composable

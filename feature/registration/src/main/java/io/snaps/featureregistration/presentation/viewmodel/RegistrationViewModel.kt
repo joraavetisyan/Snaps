@@ -139,10 +139,13 @@ class RegistrationViewModel @Inject constructor(
 
     private suspend fun handleAuth() {
         action.execute {
+            _uiState.update { it.copy(isLoading = true) }
             profileRepository.updateData().doOnSuccess {
                 sessionRepository.onLogin()
+                _uiState.update { it.copy(isLoading = false) }
             }.doOnError { _, _ ->
                 sessionRepository.onLogout()
+                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }
@@ -177,6 +180,7 @@ class RegistrationViewModel @Inject constructor(
     }
 
     data class UiState(
+        val isLoading: Boolean = false,
         val bottomDialogType: BottomDialogType = BottomDialogType.SignIn,
         val emailAddressValue: String = "",
         val passwordValue: String = "",

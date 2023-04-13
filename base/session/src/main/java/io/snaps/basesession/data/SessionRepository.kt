@@ -24,6 +24,10 @@ interface SessionRepository {
 
     suspend fun onLogin(): Effect<Completable>
 
+    suspend fun onWalletConnect(): Effect<Completable>
+
+    suspend fun onInitialize(): Effect<Completable>
+
     fun onLogout()
 
     fun forceLogout(reason: LogOutReason)
@@ -111,8 +115,25 @@ class SessionRepositoryImpl @Inject constructor(
             if (walletRepository.hasAccount(it)) {
                 walletRepository.setAccountActive(it)
             }
+            return checkWallet(it)
         }
-        return checkStatus()
+        return Effect.completable
+    }
+
+    override suspend fun onWalletConnect(): Effect<Completable> {
+        return checkUser().doOnSuccess { ready ->
+            if (ready) {
+                userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
+            }
+        }.toCompletable()
+    }
+
+    override suspend fun onInitialize(): Effect<Completable> {
+        return checkNft().doOnSuccess { ready ->
+            if (ready) {
+                userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
+            }
+        }.toCompletable()
     }
 
     override fun onLogout() {
@@ -124,8 +145,10 @@ class SessionRepositoryImpl @Inject constructor(
     }
 
     private fun clearData(reason: LogOutReason?) {
+        auth.currentUser?.uid?.let {
+            walletRepository.deleteAccount(it)
+        }
         auth.signOut()
-        walletRepository.setAccountInactive()
         scope.launch {
             deviceInfoProvider.resetPushToken()
             tokenStorage.reset()

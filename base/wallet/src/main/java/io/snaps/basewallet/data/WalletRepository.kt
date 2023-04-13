@@ -101,6 +101,8 @@ interface WalletRepository {
     suspend fun claim(amount: Double): Effect<Completable>
 
     fun getBnbWalletModel(): WalletModel?
+
+    fun deleteAccount(id: Uuid)
 }
 
 class WalletRepositoryImpl @Inject constructor(
@@ -257,6 +259,10 @@ class WalletRepositoryImpl @Inject constructor(
         return activeWallets.value.firstOrNull {
             it.coinUid == "binancecoin"
         }
+    }
+
+    override fun deleteAccount(id: Uuid) {
+        accountManager.delete(id)
     }
 
     override fun getActiveWalletsReceiveAddresses(): List<WalletAddress> {

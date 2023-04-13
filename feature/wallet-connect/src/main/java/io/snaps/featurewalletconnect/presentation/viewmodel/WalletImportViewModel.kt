@@ -42,7 +42,7 @@ class WalletImportViewModel @Inject constructor(
                             words = _uiState.value.words.map { it.trim().lowercase() }
                         )
                     }.flatMap {
-                        sessionRepository.checkStatus()
+                        sessionRepository.onWalletConnect()
                     }
             }.doOnError { error, _ ->
                 if (error.cause is DeviceNotSecuredException) {
