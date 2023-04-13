@@ -11,11 +11,10 @@ class TransactionItemResponseDto(
     @SerialName("userId") val userId: Uuid,
     @SerialName("createdAt") val date: DateTime,
     @SerialName("type") val type: TransactionType,
-    @SerialName("balanceChange") val balanceChange: Int,
+    @SerialName("balanceChange") val balanceChange: Double,
 )
 
 @Serializable
 enum class TransactionType {
-    All,
     Withdrawal,
 }

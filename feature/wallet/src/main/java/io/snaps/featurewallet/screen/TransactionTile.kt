@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.model.Uuid
@@ -34,8 +35,8 @@ sealed class TransactionTileState(val key: Any) : TileState {
 
     data class Data(
         val id: Uuid,
-        val coinSymbol: TextValue,
-        val coins: Int,
+        val type: TransactionType,
+        val coins: TextValue,
         val icon: ImageValue,
         val dateTime: TextValue,
         val clickListener: () -> Unit,
@@ -105,23 +106,25 @@ private fun Data(
     modifier: Modifier,
 ) {
     Container(modifier) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             Icon(
                 painter = data.icon.get(),
                 tint = Color.Unspecified,
                 contentDescription = null,
                 modifier = Modifier
                     .size(32.dp)
-                    .clip(CircleShape)
-                    .padding(end = 8.dp),
+                    .clip(CircleShape),
             )
             Text(
-                text = data.coinSymbol.get(),
+                text = data.type.name,
                 style = AppTheme.specificTypography.labelMedium,
             )
         }
         Text(
-            text = data.coins.toString(),
+            text = data.coins.get(),
             style = AppTheme.specificTypography.bodySmall,
         )
         Text(

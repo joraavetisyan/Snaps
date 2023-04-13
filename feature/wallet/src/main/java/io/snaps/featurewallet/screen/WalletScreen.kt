@@ -59,7 +59,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import io.snaps.baseprofile.data.MainHeaderHandler
-import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.basewallet.domain.TotalBalanceModel
@@ -171,7 +170,7 @@ private fun WalletScreen(
     onWithdrawClicked: () -> Unit,
     onRewardsWithdrawClicked: () -> Unit,
     onExchangeClicked: () -> Unit,
-    onDropdownMenuItemClicked: (TransactionType) -> Unit,
+    onDropdownMenuItemClicked: (WalletViewModel.FilterOptions) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -227,9 +226,12 @@ private fun WalletScreen(
                         onExchangeClicked = onExchangeClicked,
                     )
                     1 -> Awards(
-                        transactions = uiState.transactions,
+                        transactions = when (uiState.filterOptions) {
+                            WalletViewModel.FilterOptions.Unlocked -> uiState.unlockedTransactions
+                            WalletViewModel.FilterOptions.Locked -> uiState.lockedTransactions
+                        },
                         rewards = uiState.rewards,
-                        transactionTypeSelected = uiState.transactionType,
+                        filterOptions = uiState.filterOptions,
                         onWithdrawClicked = onRewardsWithdrawClicked,
                         onDropdownMenuItemClicked = onDropdownMenuItemClicked,
                     )
@@ -312,10 +314,10 @@ private fun Wallet(
 @Composable
 private fun Awards(
     transactions: TransactionsUiState,
-    transactionTypeSelected: TransactionType,
+    filterOptions: WalletViewModel.FilterOptions,
     rewards: List<RewardsTileState>,
     onWithdrawClicked: () -> Unit,
-    onDropdownMenuItemClicked: (TransactionType) -> Unit,
+    onDropdownMenuItemClicked: (WalletViewModel.FilterOptions) -> Unit,
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     ScrollEndDetectLazyColumn(
@@ -379,7 +381,7 @@ private fun Awards(
                         onClick = { isMenuExpanded = true }
                     ) {
                         SimpleButtonContent(
-                            text = transactionTypeSelected.name.textValue(),
+                            text = filterOptions.name.textValue(),
                             iconRight = AppTheme.specificIcons.arrowDropDown,
                             tint = AppTheme.specificColorScheme.black_80,
                             textColor = AppTheme.specificColorScheme.black_80,
@@ -389,7 +391,7 @@ private fun Awards(
                         expanded = isMenuExpanded,
                         onDismissRequest = { isMenuExpanded = false },
                     ) {
-                        TransactionType.values().forEach {
+                        WalletViewModel.FilterOptions.values().forEach {
                             DropdownMenuItem(
                                 onClick = {
                                     onDropdownMenuItemClicked(it)
@@ -408,7 +410,7 @@ private fun Awards(
         }
         transactionsItems(
             uiState = transactions,
-            modifier = Modifier.padding(bottom = 8.dp),
+            modifier = Modifier.padding(vertical = 8.dp),
         )
     }
 }

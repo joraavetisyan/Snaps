@@ -92,6 +92,7 @@ object SpecificIcons {
     val bnbToken: IconValue = resource(R.drawable.ic_bnb_token)
     val comment: IconValue = resource(R.drawable.ic_comment)
     val addCircled: IconValue = resource(R.drawable.ic_add)
+    val snpToken: IconValue = resource(R.drawable.ic_snp_token)
 }
 
 private fun vector(value: ImageVector) = IconValue.Vector(value)

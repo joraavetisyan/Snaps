@@ -42,9 +42,6 @@ fun LazyListScope.transactionsItems(
     modifier: Modifier = Modifier,
 ) {
     uiState.transactions?.let { state ->
-        item {
-            TransactionHeader()
-        }
         items(
             items = state,
             key = { it.key }

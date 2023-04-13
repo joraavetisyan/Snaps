@@ -10,6 +10,7 @@ import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.WalletModel
+import io.snaps.corecommon.R
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
@@ -69,9 +70,9 @@ fun TransactionModel.toTransactionTile(
     onClicked: (TransactionModel) -> Unit,
 ) = TransactionTileState.Data(
     id = id,
-    icon = icon,
-    coinSymbol = symbol.textValue(),
-    coins = balanceChange,
+    icon = ImageValue.ResImage(R.drawable.ic_snp_token),
+    type = type,
+    coins = "${balanceChange.round().toStringValue()} SNP".textValue(),
     dateTime = date.toStringValue(),
     clickListener = { onClicked(this) },
 )

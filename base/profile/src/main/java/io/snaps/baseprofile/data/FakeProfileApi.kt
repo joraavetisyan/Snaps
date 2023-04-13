@@ -11,13 +11,13 @@ import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.baseprofile.data.model.UserCreateRequestDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.mock.mockDelay
+import io.snaps.corecommon.mock.rDouble
 import io.snaps.corecommon.mock.rInt
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.QuestType
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
 import retrofit2.http.Body
-import retrofit2.http.Query
 
 class FakeProfileApi : ProfileApi {
 
@@ -43,9 +43,21 @@ class FakeProfileApi : ProfileApi {
         )
     }
 
-    override suspend fun transactions(
-        @Query(value = "from") from: String?,
-        @Query(value = "count") count: Int,
+    override suspend fun unlockedTransactions(
+        from: String?,
+        count: Int
+    ): BaseResponse<List<TransactionItemResponseDto>> {
+        return BaseResponse(
+            actualTimestamp = 0L,
+            data = getTransactions()
+        ).also {
+            delay(mockDelay)
+        }
+    }
+
+    override suspend fun lockedTransactions(
+        from: String?,
+        count: Int
     ): BaseResponse<List<TransactionItemResponseDto>> {
         return BaseResponse(
             actualTimestamp = 0L,
@@ -94,7 +106,7 @@ class FakeProfileApi : ProfileApi {
         TransactionItemResponseDto(
             id = it.toString(),
             date = "2023-03-01T00:00:00+00:00",
-            balanceChange = rInt,
+            balanceChange = rDouble,
             type = TransactionType.Withdrawal,
             userId = it.toString(),
         )

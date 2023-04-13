@@ -12,11 +12,11 @@ import javax.inject.Inject
 
 interface TransactionsRepository {
 
-    fun getTransactionsState(): StateFlow<TransactionPageModel>
+    fun getTransactionsState(transactionsType: TransactionsType): StateFlow<TransactionPageModel>
 
-    suspend fun refreshTransactions(): Effect<Completable>
+    suspend fun refreshTransactions(transactionsType: TransactionsType): Effect<Completable>
 
-    suspend fun loadNextTransactionsPage(): Effect<Completable>
+    suspend fun loadNextTransactionsPage(transactionsType: TransactionsType): Effect<Completable>
 }
 
 class TransactionsRepositoryImpl @Inject constructor(
@@ -25,28 +25,38 @@ class TransactionsRepositoryImpl @Inject constructor(
     private val loaderFactory: TransactionsLoaderFactory,
 ) : TransactionsRepository {
 
-    private fun getLoader(): TransactionsLoader {
-        return loaderFactory.get(Unit) {
-            PagedLoaderParams(
-                action = { from, count ->
-                    profileApi.transactions(from = from, count = count)
-                },
-                pageSize = 20,
-                nextPageIdFactory = { it.id },
-                mapper = { it.toModelList() }
-            )
+    private fun getLoader(transactionsType: TransactionsType): TransactionsLoader {
+        return loaderFactory.get(transactionsType) { type ->
+            when (type) {
+                TransactionsType.Unlocked -> PagedLoaderParams(
+                    action = { from, count ->
+                        profileApi.unlockedTransactions(from = from, count = count)
+                    },
+                    pageSize = 12,
+                    nextPageIdFactory = { it.id },
+                    mapper = { it.toModelList() }
+                )
+                TransactionsType.Locked -> PagedLoaderParams(
+                    action = { from, count ->
+                        profileApi.lockedTransactions(from = from, count = count)
+                    },
+                    pageSize = 12,
+                    nextPageIdFactory = { it.id },
+                    mapper = { it.toModelList() }
+                )
+            }
         }
     }
 
-    override fun getTransactionsState(): StateFlow<TransactionPageModel> {
-        return getLoader().state
+    override fun getTransactionsState(transactionsType: TransactionsType): StateFlow<TransactionPageModel> {
+        return getLoader(transactionsType).state
     }
 
-    override suspend fun refreshTransactions(): Effect<Completable> {
-        return getLoader().refresh()
+    override suspend fun refreshTransactions(transactionsType: TransactionsType): Effect<Completable> {
+        return getLoader(transactionsType).refresh()
     }
 
-    override suspend fun loadNextTransactionsPage(): Effect<Completable> {
-        return getLoader().loadNext()
+    override suspend fun loadNextTransactionsPage(transactionsType: TransactionsType): Effect<Completable> {
+        return getLoader(transactionsType).loadNext()
     }
 }

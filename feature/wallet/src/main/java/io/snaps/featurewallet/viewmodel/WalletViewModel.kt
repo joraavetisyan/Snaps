@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
-import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.TotalBalanceModel
@@ -22,6 +21,7 @@ import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.featurewallet.data.TransactionsRepository
+import io.snaps.featurewallet.data.TransactionsType
 import io.snaps.featurewallet.domain.InsufficientBalanceError
 import io.snaps.featurewallet.domain.WalletInteractor
 import io.snaps.featurewallet.screen.RewardsTileState
@@ -61,7 +61,8 @@ class WalletViewModel @Inject constructor(
     private var wallets = listOf<WalletModel>()
 
     init {
-        subscribeToTransactions()
+        subscribeToUnlockedTransactions()
+        subscribeToLockedTransactions()
         subscribeToBalance()
         subscribeToRewards()
         subscribeToWallets()
@@ -86,13 +87,27 @@ class WalletViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun subscribeToTransactions() {
-        transactionsRepository.getTransactionsState().onEach { state ->
+    private fun subscribeToUnlockedTransactions() {
+        transactionsRepository.getTransactionsState(TransactionsType.Unlocked).onEach { state ->
             _uiState.update {
                 it.copy(
-                    transactions = state.toTransactionsUiState(
-                        onReloadClicked = ::onTransactionsReloadClicked,
-                        onListEndReaching = ::onListEndReaching,
+                    unlockedTransactions = state.toTransactionsUiState(
+                        onReloadClicked = ::onUnlockedTransactionsReloadClicked,
+                        onListEndReaching = ::onUnlockedTransactionsListEndReaching,
+                        onClicked = {},
+                    )
+                )
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeToLockedTransactions() {
+        transactionsRepository.getTransactionsState(TransactionsType.Locked).onEach { state ->
+            _uiState.update {
+                it.copy(
+                    lockedTransactions = state.toTransactionsUiState(
+                        onReloadClicked = ::onLockedTransactionsReloadClicked,
+                        onListEndReaching = ::onLockedTransactionsListEndReaching,
                         onClicked = {},
                     )
                 )
@@ -154,9 +169,9 @@ class WalletViewModel @Inject constructor(
         }
     }
 
-    fun onDropdownMenuItemClicked(transactionType: TransactionType) {
+    fun onDropdownMenuItemClicked(filterOptions: FilterOptions) {
         _uiState.update {
-            it.copy(transactionType = transactionType)
+            it.copy(filterOptions = filterOptions)
         }
     }
 
@@ -186,15 +201,27 @@ class WalletViewModel @Inject constructor(
         }
     }
 
-    private fun onTransactionsReloadClicked() = viewModelScope.launch {
+    private fun onUnlockedTransactionsReloadClicked() = viewModelScope.launch {
         action.execute {
-            transactionsRepository.refreshTransactions()
+            transactionsRepository.refreshTransactions(TransactionsType.Unlocked)
         }
     }
 
-    private fun onListEndReaching() = viewModelScope.launch {
+    private fun onUnlockedTransactionsListEndReaching() = viewModelScope.launch {
         action.execute {
-            transactionsRepository.loadNextTransactionsPage()
+            transactionsRepository.loadNextTransactionsPage(TransactionsType.Unlocked)
+        }
+    }
+
+    private fun onLockedTransactionsReloadClicked() = viewModelScope.launch {
+        action.execute {
+            transactionsRepository.refreshTransactions(TransactionsType.Locked)
+        }
+    }
+
+    private fun onLockedTransactionsListEndReaching() = viewModelScope.launch {
+        action.execute {
+            transactionsRepository.loadNextTransactionsPage(TransactionsType.Locked)
         }
     }
 
@@ -214,8 +241,9 @@ class WalletViewModel @Inject constructor(
         },
         val rewards: List<RewardsTileState> = List(2) { RewardsTileState.Shimmer },
         val bottomDialogType: BottomDialogType = BottomDialogType.SelectWallet(),
-        val transactions: TransactionsUiState = TransactionsUiState(),
-        val transactionType: TransactionType = TransactionType.All,
+        val unlockedTransactions: TransactionsUiState = TransactionsUiState(),
+        val lockedTransactions: TransactionsUiState = TransactionsUiState(),
+        val filterOptions: FilterOptions = FilterOptions.Unlocked,
     )
 
     sealed class BottomDialogType {
@@ -229,6 +257,10 @@ class WalletViewModel @Inject constructor(
             val address: WalletAddress,
             val qr: Bitmap?,
         ) : BottomDialogType()
+    }
+
+    enum class FilterOptions {
+        Unlocked, Locked
     }
 
     sealed class Command {

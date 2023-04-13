@@ -30,8 +30,14 @@ interface ProfileApi {
         @Body body: SetInviteCodeRequestDto,
     ): BaseResponse<Completable>
 
-    @GET("user/balance/history")
-    suspend fun transactions(
+    @GET("user/balance/unlocked/history")
+    suspend fun unlockedTransactions(
+        @Query("from") from: String?,
+        @Query("count") count: Int,
+    ): BaseResponse<List<TransactionItemResponseDto>>
+
+    @GET("user/balance/locked/history")
+    suspend fun lockedTransactions(
         @Query("from") from: String?,
         @Query("count") count: Int,
     ): BaseResponse<List<TransactionItemResponseDto>>

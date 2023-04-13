@@ -14,6 +14,13 @@ import io.snaps.featurewallet.domain.TransactionModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 
+sealed interface TransactionsType {
+
+    object Unlocked : TransactionsType
+
+    object Locked : TransactionsType
+}
+
 class TransactionsLoader @AssistedInject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
@@ -28,7 +35,7 @@ class TransactionsLoader @AssistedInject constructor(
 
 @AssistedFactory
 abstract class TransactionsLoaderFactory :
-    PagedLoaderFactory<Unit, TransactionsLoader, TransactionItemResponseDto, TransactionModel>() {
+    PagedLoaderFactory<TransactionsType, TransactionsLoader, TransactionItemResponseDto, TransactionModel>() {
 
     override fun provide(params: PagedLoaderParams<TransactionItemResponseDto, TransactionModel>) = create(params)
 
