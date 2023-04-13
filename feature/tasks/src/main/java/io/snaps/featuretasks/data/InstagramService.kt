@@ -33,7 +33,7 @@ class InstagramService @Inject constructor(
 
     fun getAuthCode(url: String): String? = Uri.parse(url).getQueryParameter("code")
 
-    // todo build http request and response move to core-data
+    // todo move network stuff to core-data
     suspend fun getUserInfo(accessToken: String): Effect<UserResponseDto> = withContext(ioDispatcher) {
         val url = "${BASE_URL}me?fields=id,username&access_token=$accessToken"
         val okHttpClient = OkHttpClient

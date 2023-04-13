@@ -70,15 +70,14 @@ enum class QuestType {
     SocialPost,
 }
 
-// todo store ids
 @Serializable
-enum class NftType(val intType: Int, val storeId: String?) {
+enum class NftType(val intType: NftTypeInt, val storeId: String?) {
     @SerialName("Free") Free(0, null),
-    @SerialName("Newbee") Newbie(1, "iap_newbie_test"),
-    @SerialName("Viewer") Viewer(2, null),
-    @SerialName("Follower") Follower(3, null),
-    @SerialName("Sub") Sub(4, null),
-    @SerialName("Sponsor") Sponsor(5, null),
+    @SerialName("Newbee") Newbie(1, "newbie"),
+    @SerialName("Viewer") Viewer(2, "viewer"),
+    @SerialName("Follower") Follower(3, "follower"),
+    @SerialName("Sub") Sub(4, "sub"),
+    @SerialName("Sponsor") Sponsor(5, "sponsor"),
     @SerialName("Influencer") Influencer(6, null),
     @SerialName("FamousGuy") FamousGuy(7, null),
     @SerialName("Star") Star(8, null),
