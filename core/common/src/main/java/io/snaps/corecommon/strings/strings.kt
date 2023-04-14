@@ -698,6 +698,9 @@ internal val strings = mapOf(
     key(StringKey.CreateVideoActionChoose) to mapOf(
         SupportedLanguageKey.En to "Choose",
     ),
+    key(StringKey.CreateVideoMessageDurationLimit) to mapOf(
+        SupportedLanguageKey.En to "The maximum video duration is 2 minutes!",
+    ),
 
     key(StringKey.PreviewVideoActionDiscard) to mapOf(
         SupportedLanguageKey.En to "Discard",

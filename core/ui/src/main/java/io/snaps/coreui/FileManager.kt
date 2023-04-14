@@ -3,6 +3,7 @@ package io.snaps.coreui
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -21,6 +22,8 @@ import java.io.OutputStream
 import java.nio.charset.StandardCharsets
 import java.util.Calendar
 import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val PublicAppDirectoryName = "SNAPS"
 
@@ -146,6 +149,15 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
 
     fun getUriForFile(file: File): Uri {
         return FileProvider.getUriForFile(context, getFileProviderAuthority(), file)
+    }
+
+    fun getMediaDuration(uri: Uri): Duration? {
+        val retriever = MediaMetadataRetriever().apply {
+            setDataSource(context, uri)
+        }
+        val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+        retriever.release()
+        return time?.toLong()?.milliseconds
     }
 
     private fun copyFile(uri: Uri?, newFileUri: Uri): Uri? {

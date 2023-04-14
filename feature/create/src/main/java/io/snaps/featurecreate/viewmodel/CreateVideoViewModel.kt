@@ -4,6 +4,9 @@ import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.basesources.NotificationsSource
+import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
@@ -21,7 +24,7 @@ import kotlin.time.Duration.Companion.nanoseconds
 
 @Suppress("EnumEntryName")
 enum class RecordTiming(val seconds: Int) {
-    _180(180),
+    _120(120),
     _60(60),
     _15(15),
     ;
@@ -39,6 +42,7 @@ enum class RecordDelay(val seconds: Int) {
 @HiltViewModel
 class CreateVideoViewModel @Inject constructor(
     private val fileManager: FileManager,
+    private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -106,9 +110,15 @@ class CreateVideoViewModel @Inject constructor(
     }
 
     fun onVideoSelected(uri: Uri) {
-        fileManager.createFileFromUri(uri)?.toUri()?.path?.let { filePath ->
-            viewModelScope.launch {
-                _command publish Command.OpenPreviewScreen(filePath)
+        val videoUri = fileManager.createFileFromUri(uri)?.toUri() ?: return
+        val duration = fileManager.getMediaDuration(videoUri)?.inWholeSeconds?.toInt()
+        viewModelScope.launch {
+            if (duration != null && duration > RecordTiming._120.seconds) {
+                notificationsSource.sendError(StringKey.CreateVideoMessageDurationLimit.textValue())
+            } else {
+                videoUri.path?.let { filePath ->
+                    _command publish Command.OpenPreviewScreen(filePath)
+                }
             }
         }
     }
@@ -119,7 +129,7 @@ class CreateVideoViewModel @Inject constructor(
         val isFrontCamera: Boolean = false,
         val selectedDelay: RecordDelay = RecordDelay._0,
         val delayValue: String? = null,
-        val selectedRecordTiming: RecordTiming = RecordTiming._180,
+        val selectedRecordTiming: RecordTiming = RecordTiming._120,
     ) {
 
         fun isSelected(recordTiming: RecordTiming) = selectedRecordTiming == recordTiming

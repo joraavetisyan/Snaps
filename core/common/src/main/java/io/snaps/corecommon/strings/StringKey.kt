@@ -257,6 +257,7 @@ enum class StringKey {
     CreateVideoActionGrantPerms,
     CreateVideoActionFlip,
     CreateVideoActionChoose,
+    CreateVideoMessageDurationLimit,
 
     PreviewVideoActionDiscard,
     PreviewVideoActionProceed,
