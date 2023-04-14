@@ -15,6 +15,11 @@ class TransactionItemResponseDto(
 )
 
 @Serializable
-enum class TransactionType {
-    Withdrawal,
+enum class TransactionType(val title: String) {
+    @SerialName("Withdrawal") Withdrawal("Withdrawal"),
+    @SerialName("Send") Send("Replenishment"),
+    @SerialName("NftReward") NftReward("Nft reward"),
+    @SerialName("GlassesMaintaince") GlassesMaintaince("Glass repair"),
+    @SerialName("GasFee") GasFee("Gas Fee"),
+    @SerialName("none") None("Transaction"),
 }

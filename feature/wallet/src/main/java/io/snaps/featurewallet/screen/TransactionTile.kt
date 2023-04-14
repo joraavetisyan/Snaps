@@ -119,7 +119,7 @@ private fun Data(
                     .clip(CircleShape),
             )
             Text(
-                text = data.type.name,
+                text = data.type.title,
                 style = AppTheme.specificTypography.labelMedium,
             )
         }
