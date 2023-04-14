@@ -2,6 +2,7 @@ package io.snaps.featuresearch.presentation.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.basefeed.data.CommentRepository
 import io.snaps.basefeed.data.VideoFeedRepository
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.ui.VideoFeedViewModel
@@ -10,7 +11,6 @@ import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
-import io.snaps.basefeed.data.CommentRepository
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,7 +22,9 @@ class PopularVideoFeedViewModel @Inject constructor(
     commentRepository: CommentRepository,
     bottomBarVisibilitySource: BottomBarVisibilitySource,
 ) : VideoFeedViewModel(
-    videoFeedType = VideoFeedType.Popular,
+    videoFeedType = savedStateHandle.requireArgs<AppRoute.PopularVideoFeed.Args>().query.let {
+        if (it.isBlank()) VideoFeedType.Popular else VideoFeedType.All(it)
+    },
     startPosition = savedStateHandle.requireArgs<AppRoute.PopularVideoFeed.Args>().position,
     action = action,
     videoFeedRepository = videoFeedRepository,

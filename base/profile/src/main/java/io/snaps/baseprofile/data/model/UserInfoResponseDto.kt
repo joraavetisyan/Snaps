@@ -12,7 +12,7 @@ class UserInfoResponseDto(
     @SerialName("entityId") val entityId: Uuid,
     @SerialName("createdDate") val createdDate: DateTime,
     @SerialName("userId") val userId: Uuid,
-    @SerialName("email") val email: String,
+    @SerialName("email") val email: String?,
     @SerialName("wallet") val wallet: WalletAddress?,
     @SerialName("name") val name: String?,
     @SerialName("totalLikes") val totalLikes: Int,

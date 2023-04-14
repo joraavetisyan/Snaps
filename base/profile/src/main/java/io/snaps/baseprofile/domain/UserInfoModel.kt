@@ -8,7 +8,7 @@ data class UserInfoModel(
     val entityId: Uuid,
     val createdDate: LocalDateTime,
     val userId: Uuid,
-    val email: String,
+    val email: String?,
     val wallet: String?,
     val name: String,
     val totalLikes: Int,
