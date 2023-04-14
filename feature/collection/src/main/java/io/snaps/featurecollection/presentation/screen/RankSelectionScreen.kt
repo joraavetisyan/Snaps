@@ -2,6 +2,7 @@
 
 package io.snaps.featurecollection.presentation.screen
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +38,7 @@ import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
@@ -62,10 +64,12 @@ fun RankSelectionScreen(
         }
     }
 
-    viewModel.headerCommand.collectAsCommand {
-        when (it) {
-            MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
-            MainHeaderHandler.Command.OpenWalletScreen -> router.toWalletScreen()
+    if (uiState.isMainHeaderItemsEnabled) {
+        viewModel.headerCommand.collectAsCommand {
+            when (it) {
+                MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
+                MainHeaderHandler.Command.OpenWalletScreen -> router.toWalletScreen()
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import io.snaps.basenft.data.NftRepository
 import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.baseprofile.data.MainHeaderHandler
+import io.snaps.basesession.AppRouteProvider
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.coredata.network.Action
@@ -31,6 +32,7 @@ class RankSelectionViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
     private val action: Action,
     private val nftRepository: NftRepository,
+    private val appRouteProvider: AppRouteProvider,
 ) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -42,12 +44,19 @@ class RankSelectionViewModel @Inject constructor(
     private var ranksLoadJob: Job? = null
 
     init {
+        _uiState.update {
+            it.copy(
+                isMainHeaderItemsEnabled = appRouteProvider.appRouteState.value == AppRoute.MainBottomBar.path(),
+            )
+        }
+
         nftRepository.nftCollectionState.onEach {
             if (it is Effect && it.isSuccess) {
                 subscribeOnRanks(it.requireData)
                 loadRanks()
             }
         }.launchIn(viewModelScope)
+
         viewModelScope.launch {
             action.execute { nftRepository.updateNftCollection() }
         }
@@ -90,6 +99,7 @@ class RankSelectionViewModel @Inject constructor(
     }
 
     data class UiState(
+        val isMainHeaderItemsEnabled: Boolean = true,
         val ranks: List<RankTileState> = List(6) { RankTileState.Shimmer },
     )
 

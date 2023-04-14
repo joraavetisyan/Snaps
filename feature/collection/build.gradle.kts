@@ -18,4 +18,5 @@ dependencies {
     implementation(projects.baseBilling)
     implementation(projects.baseWallet)
     implementation(projects.baseNft)
+    implementation(projects.baseSession)
 }

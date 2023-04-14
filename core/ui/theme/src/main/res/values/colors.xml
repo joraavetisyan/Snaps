@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="icon_bg">#304FFE</color>
+    <color name="icon_bg">#FFFFFFFF</color>
     <color name="icon_fg">#FFFFFFFF</color>
 
     <color name="colorStatusBar">#00FFFFFF</color>
