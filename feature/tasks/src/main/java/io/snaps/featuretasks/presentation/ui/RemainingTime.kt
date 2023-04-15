@@ -1,6 +1,5 @@
 package io.snaps.featuretasks.presentation.ui
 
-import android.os.CountDownTimer
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,9 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -28,8 +24,6 @@ sealed class RemainingTimeTileState : TileState {
 
     data class Data(
         val time: Long,
-        val energy: Int,
-        val energyProgress: Int,
     ) : RemainingTimeTileState()
 
     object Shimmer : RemainingTimeTileState()
@@ -56,21 +50,6 @@ private fun Data(
     modifier: Modifier = Modifier,
     data: RemainingTimeTileState.Data,
 ) {
-    val milliseconds = data.time - System.currentTimeMillis()
-    val time = remember { mutableStateOf(milliseconds.toTimeFormat()) }
-    val countDownTimer = object : CountDownTimer(milliseconds, 1000) {
-        override fun onTick(millisUntilFinished: Long) {
-            time.value = millisUntilFinished.toTimeFormat()
-        }
-        override fun onFinish() = Unit
-    }
-
-    DisposableEffect(key1 = Unit) {
-        countDownTimer.start()
-        onDispose {
-            countDownTimer.cancel()
-        }
-    }
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -82,15 +61,11 @@ private fun Data(
             textAlign = TextAlign.Center,
         )
         Text(
-            text = time.value,
+            text = data.time.toTimeFormat(),
             style = AppTheme.specificTypography.titleLarge,
             textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(12.dp))
-        TaskProgress(
-            progress = data.energyProgress,
-            maxValue = data.energy,
-        )
     }
 }
 

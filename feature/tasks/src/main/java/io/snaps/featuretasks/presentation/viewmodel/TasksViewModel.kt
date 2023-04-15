@@ -6,8 +6,11 @@ import io.snaps.basenft.data.NftRepository
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.basesession.AppRouteProvider
+import io.snaps.corecommon.date.toLong
+import io.snaps.corecommon.model.State
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -21,7 +24,9 @@ import io.snaps.featuretasks.presentation.toRemainingTimeTileState
 import io.snaps.featuretasks.presentation.toTaskTileState
 import io.snaps.featuretasks.presentation.ui.RemainingTimeTileState
 import io.snaps.featuretasks.presentation.ui.TaskTileState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
@@ -30,8 +35,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class TasksViewModel @Inject constructor(
@@ -48,6 +55,8 @@ class TasksViewModel @Inject constructor(
 
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
+
+    private var roundTimerJob: Job? = null
 
     init {
         subscribeOnMenuRouteState()
@@ -84,9 +93,13 @@ class TasksViewModel @Inject constructor(
                         onReloadClicked = ::onCurrentReloadClicked,
                         onItemClicked = ::onCurrentTaskItemClicked,
                     ),
-                    remainingTime = state.toRemainingTimeTileState(),
+                    totalEnergy = state.dataOrCache?.totalEnergy ?: 0,
+                    totalEnergyProgress = state.dataOrCache?.quests?.sumOf { quest ->
+                        quest.energyProgress()
+                    } ?: 0,
                 )
             }
+            state.startRoundTimer()
         }.launchIn(viewModelScope)
     }
 
@@ -152,11 +165,43 @@ class TasksViewModel @Inject constructor(
         onCurrentTaskItemClicked(task)
     }
 
+    private fun State<QuestInfoModel>.startRoundTimer() {
+        val endRoundTime = this.dataOrCache?.questDate?.toLong().also {
+            if (it == null) {
+                _uiState.update {
+                    it.copy(remainingTime = toRemainingTimeTileState(0))
+                }
+            }
+        } ?: return
+        roundTimerJob?.cancel()
+        roundTimerJob = viewModelScope.launch {
+            var current = endRoundTime - System.currentTimeMillis()
+            while (isActive && current > 0) {
+                _uiState.update {
+                    it.copy(remainingTime = toRemainingTimeTileState(current))
+                }
+                delay(1000L)
+                current -= 1000L
+                if (current <= 0) {
+                    onRoundTimerFinished()
+                }
+            }
+        }
+    }
+
+    private fun onRoundTimerFinished() = viewModelScope.launch {
+        delay(10.seconds) // to restart the round
+        loadCurrentTasks()
+        loadUserNftCollection()
+    }
+
     data class UiState(
         val current: List<TaskTileState> = List(6) { TaskTileState.Shimmer },
         val history: HistoryTasksUiState = HistoryTasksUiState(),
         val remainingTime: RemainingTimeTileState = RemainingTimeTileState.Shimmer,
         val userNftCollection: List<CollectionItemState> = List(6) { CollectionItemState.Shimmer },
+        val totalEnergy: Int = 0,
+        val totalEnergyProgress: Int = 0,
     )
 
     sealed class Command {

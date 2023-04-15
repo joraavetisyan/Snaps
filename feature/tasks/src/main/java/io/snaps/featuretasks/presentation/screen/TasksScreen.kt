@@ -58,6 +58,7 @@ import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.featuretasks.presentation.historyTasksItems
 import io.snaps.featuretasks.presentation.ui.RemainingTimeTileState
+import io.snaps.featuretasks.presentation.ui.TaskProgress
 import io.snaps.featuretasks.presentation.viewmodel.TasksViewModel
 import kotlinx.coroutines.launch
 
@@ -170,6 +171,8 @@ private fun TasksScreen(
                            NftBlock(
                                userNtfCollection = uiState.userNftCollection,
                                remainingTime = uiState.remainingTime,
+                               energy = uiState.totalEnergy,
+                               energyProgress = uiState.totalEnergyProgress,
                            )
                         }
                         items(uiState.current) {
@@ -216,6 +219,8 @@ private fun Titles(title1: TextValue, title2: TextValue) {
 private fun NftBlock(
     userNtfCollection: List<CollectionItemState>,
     remainingTime: RemainingTimeTileState,
+    energy: Int,
+    energyProgress: Int,
 ) {
     SimpleCard(
         modifier = Modifier.fillMaxWidth(),
@@ -226,6 +231,13 @@ private fun NftBlock(
                 .padding(horizontal = 12.dp)
                 .padding(top = 12.dp),
         )
+        if (remainingTime is RemainingTimeTileState.Data) {
+            TaskProgress(
+                modifier = Modifier.padding(horizontal = 12.dp),
+                progress = energyProgress,
+                maxValue = energy,
+            )
+        }
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxWidth(),

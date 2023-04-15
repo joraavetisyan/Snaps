@@ -7,7 +7,6 @@ import io.snaps.baseprofile.data.model.SocialPostStatus
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.date.toLong
 import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FiatCurrency
@@ -43,13 +42,13 @@ private fun QuestModel.toTaskTileState(
     clickListener = { onItemClicked(this) },
 )
 
-fun State<QuestInfoModel>.toRemainingTimeTileState() = when (this) {
+fun State<QuestInfoModel>.toRemainingTimeTileState(
+    remainingTime: Long,
+) = when (this) {
     is Loading -> RemainingTimeTileState.Shimmer
     is Effect -> when {
         isSuccess -> RemainingTimeTileState.Data(
-            time = requireData.questDate.toLong(),
-            energy = requireData.totalEnergy,
-            energyProgress = requireData.quests.sumOf { it.energyProgress() },
+            time = remainingTime,
         )
         else -> RemainingTimeTileState.Shimmer
     }
