@@ -91,6 +91,7 @@ fun QuestModel.status(): TaskStatus? = when (status) {
     } else if (energyProgress() > 0) {
         TaskStatus.InProgress
     } else null
+    SocialPostStatus.NotSendToVerify -> TaskStatus.NotSendToVerify
 }
 
 fun State<List<NftModel>>.toNftCollectionItemState(

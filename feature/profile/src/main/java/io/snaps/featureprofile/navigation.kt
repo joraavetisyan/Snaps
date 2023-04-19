@@ -20,6 +20,8 @@ import io.snaps.featureprofile.presentation.screen.settings.SocialNetworksScreen
 import io.snaps.featureprofile.presentation.screen.settings.WalletSettingsScreen
 import javax.inject.Inject
 
+// todo rename module to referral
+
 internal class ScreenNavigator(navHostController: NavHostController) :
     Navigator(navHostController) {
 

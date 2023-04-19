@@ -45,6 +45,93 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Forgot",
     ),
 
+    key(StringKey.OnboardingRankTitle) to mapOf(
+        SupportedLanguageKey.Ru to "Добро пожаловать в Snaps!",
+        SupportedLanguageKey.En to "Welcome to Snaps!",
+    ),
+    key(StringKey.OnboardingRankText) to mapOf(
+        SupportedLanguageKey.Ru to "Для того, чтобы начать получать награду за каждое действие в приложении выберите себе свои первые NFT очки!",
+        SupportedLanguageKey.En to "To get a reward for every action in the app, choose your first NFT points!",
+    ),
+    key(StringKey.OnboardingRankAction) to mapOf(
+        SupportedLanguageKey.Ru to "Выбрать NFT очки",
+        SupportedLanguageKey.En to "Select NFT",
+    ),
+    key(StringKey.OnboardingPopularTitle) to mapOf(
+        SupportedLanguageKey.Ru to "Популярное",
+        SupportedLanguageKey.En to "Popular",
+    ),
+    key(StringKey.OnboardingPopularText) to mapOf(
+        SupportedLanguageKey.Ru to "Здесь вы найдете видео самых популярных авторов в Snaps! Посмотрите, какие видео сейчас в  тренде!",
+        SupportedLanguageKey.En to "Here you will find videos of the most popular authors in Snaps! Check out what videos are trending right now!",
+    ),
+    key(StringKey.OnboardingPopularAction) to mapOf(
+        SupportedLanguageKey.Ru to "Продолжить",
+        SupportedLanguageKey.En to "Continue",
+    ),
+    key(StringKey.OnboardingTasksTitle) to mapOf(
+        SupportedLanguageKey.Ru to "Задания",
+        SupportedLanguageKey.En to "Tasks",
+    ),
+    key(StringKey.OnboardingTasksText) to mapOf(
+        SupportedLanguageKey.Ru to "Для того, чтобы получать награды в Snaps Вам необходимо успешно завершать эти задания.\n" +
+                "Но перед началом, узнайте подробнее о каждом задании!",
+        SupportedLanguageKey.En to "In order to receive rewards in Snaps, you need to successfully complete these tasks.\n" +
+                "But before you start, learn more about each task!",
+    ),
+    key(StringKey.OnboardingTasksAction) to mapOf(
+        SupportedLanguageKey.Ru to "Узнать про задания",
+        SupportedLanguageKey.En to "Learn about tasks",
+    ),
+    key(StringKey.OnboardingNftTitle) to mapOf(
+        SupportedLanguageKey.Ru to "NFT",
+        SupportedLanguageKey.En to "NFT",
+    ),
+    key(StringKey.OnboardingNftText) to mapOf(
+        SupportedLanguageKey.Ru to "Здесь хранятся все ваши NFT очки. Для начала достаточно NFT очков ранга Free. Это позволит получить первые награды и попробовать себя в экосистеме Snaps!",
+        SupportedLanguageKey.En to "All your NFT are stored here. To get started, NFT of the Free rank are enough. This will allow you to get your first rewards and try yourself in the Snaps ecosystem!",
+    ),
+    key(StringKey.OnboardingNftAction) to mapOf(
+        SupportedLanguageKey.Ru to "Повысить ранг NFT",
+        SupportedLanguageKey.En to "Raise NFT rank",
+    ),
+    key(StringKey.OnboardingReferralTitle) to mapOf(
+        SupportedLanguageKey.Ru to "Рефералы",
+        SupportedLanguageKey.En to "Refferal",
+    ),
+    key(StringKey.OnboardingReferralText) to mapOf(
+        SupportedLanguageKey.Ru to "Вы можете отправить другу Вашу пригласительную ссылку или Ваш реферальный код. Или же если у Вас уже есть реферальный код, то вы можете ввести его в соответсвующем поле. ",
+        SupportedLanguageKey.En to "You can send your invite link or your referral code to a friend. Or if you already have a referral code, then you can enter it in the corresponding field.",
+    ),
+    key(StringKey.OnboardingReferralAction) to mapOf(
+        SupportedLanguageKey.Ru to "Узнать подробнее",
+        SupportedLanguageKey.En to "Learn more",
+    ),
+    key(StringKey.OnboardingWalletTitle) to mapOf(
+        SupportedLanguageKey.Ru to "Кошелек",
+        SupportedLanguageKey.En to "Wallet",
+    ),
+    key(StringKey.OnboardingWalletText) to mapOf(
+        SupportedLanguageKey.Ru to "Это ваш криптовалютный кошелек. Он полностью безопасен, а ключи от него знаете только Вы! Проверьте записали ли Вы Вашу секретную фразу!",
+        SupportedLanguageKey.En to "This is your cryptocurrency wallet. It is completely safe, and only you know the keys to it! Check if you wrote down your secret phrase!",
+    ),
+    key(StringKey.OnboardingWalletAction) to mapOf(
+        SupportedLanguageKey.Ru to "ОК",
+        SupportedLanguageKey.En to "ОК",
+    ),
+    key(StringKey.OnboardingRewardsTitle) to mapOf(
+        SupportedLanguageKey.Ru to "Награды",
+        SupportedLanguageKey.En to "Rewards",
+    ),
+    key(StringKey.OnboardingRewardsText) to mapOf(
+        SupportedLanguageKey.Ru to "Здесь хранятся все Ваши награды! В верхнем кошельке вы увидите награды, которые можете получить прямо сейчас. В заблокированном кошельке награды, которые вы можете забирать постепенно каждый день!",
+        SupportedLanguageKey.En to "All your rewards are stored here! In the upper wallet you will see the rewards that you can get right now. There are rewards in the locked wallet that you can collect gradually every day!",
+    ),
+    key(StringKey.OnboardingRewardsAction) to mapOf(
+        SupportedLanguageKey.Ru to "ОК",
+        SupportedLanguageKey.En to "ОК",
+    ),
+
     key(StringKey.RegistrationTitle) to mapOf(
         SupportedLanguageKey.En to "Login / Registration",
     ),
@@ -392,6 +479,9 @@ internal val strings = mapOf(
     ),
     key(StringKey.TasksFieldSocialPostNotPosted) to mapOf(
         SupportedLanguageKey.En to "Post not yet published",
+    ),
+    key(StringKey.TasksFieldSocialPostNotSendToVerify) to mapOf(
+        SupportedLanguageKey.En to "Post not send for verification",
     ),
     key(StringKey.TasksFieldSocialPostWaitForVerification) to mapOf(
         SupportedLanguageKey.En to "Assignment is waiting for verification",

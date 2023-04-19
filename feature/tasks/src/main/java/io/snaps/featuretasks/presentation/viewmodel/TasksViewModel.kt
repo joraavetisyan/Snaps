@@ -9,7 +9,9 @@ import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.basesession.AppRouteProvider
+import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.corecommon.date.toLong
+import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.State
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -42,13 +44,16 @@ import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class TasksViewModel @Inject constructor(
+    onboardingHandlerDelegate: OnboardingHandler,
     private val action: Action,
     private val mainHeaderHandler: MainHeaderHandler,
     private val profileRepository: ProfileRepository,
     private val tasksRepository: TasksRepository,
     private val nftRepository: NftRepository,
     private val appRouteProvider: AppRouteProvider,
-) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandler {
+) : SimpleViewModel(),
+    MainHeaderHandler by mainHeaderHandler,
+    OnboardingHandler by onboardingHandlerDelegate {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -64,6 +69,7 @@ class TasksViewModel @Inject constructor(
         subscribeToHistoryQuests()
         subscribeToUserNftCollection()
         loadUserNftCollection()
+        checkOnboarding(OnboardingType.Tasks)
     }
 
     private fun subscribeToUserNftCollection() {

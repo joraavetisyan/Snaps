@@ -85,3 +85,13 @@ enum class NftType(val intType: NftTypeInt, val storeId: String?) {
     @SerialName("SuperStar") SuperStar(10, null),
     @SerialName("Legend") Legend(11, null),
 }
+
+enum class OnboardingType {
+    Rank,
+    Popular,
+    Tasks,
+    Nft,
+    Referral,
+    Wallet,
+    Rewards,
+}

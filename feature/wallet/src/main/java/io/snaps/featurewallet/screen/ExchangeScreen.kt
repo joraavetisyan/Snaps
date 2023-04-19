@@ -110,7 +110,7 @@ private fun ExchangeScreen(
                         error: SslError?
                     ) {
                         // Ignore SSL certificate errors
-                        handler?.proceed()
+                        // handler?.proceed()
                     }
                 }
                 webView.webViewClient = webViewClient

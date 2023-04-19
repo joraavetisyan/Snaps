@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.corecommon.model.WalletModel
 import io.snaps.corecommon.strings.StringKey
@@ -43,6 +45,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WalletViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
+    onboardingHandlerDelegate: OnboardingHandler,
     private val walletRepository: WalletRepository,
     private val transactionsRepository: TransactionsRepository,
     private val profileRepository: ProfileRepository,
@@ -50,7 +53,9 @@ class WalletViewModel @Inject constructor(
     private val notificationsSource: NotificationsSource,
     private val action: Action,
     private val walletInteractor: WalletInteractor,
-) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
+) : SimpleViewModel(),
+    MainHeaderHandler by mainHeaderHandlerDelegate,
+    OnboardingHandler by onboardingHandlerDelegate {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -67,6 +72,11 @@ class WalletViewModel @Inject constructor(
         subscribeToRewards()
         subscribeToWallets()
         loadRewards()
+        checkOnboarding(OnboardingType.Wallet)
+    }
+
+    fun onRewardsOpened() {
+        checkOnboarding(OnboardingType.Rewards)
     }
 
     private fun subscribeToWallets() {

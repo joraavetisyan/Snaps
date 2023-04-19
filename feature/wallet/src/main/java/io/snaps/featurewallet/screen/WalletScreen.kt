@@ -38,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -154,6 +155,7 @@ fun WalletScreen(
             onWithdrawClicked = viewModel::onWithdrawClicked,
             onRewardsWithdrawClicked = viewModel::onRewardsWithdrawClicked,
             onExchangeClicked = viewModel::onExchangeClicked,
+            onRewardsOpened = viewModel::onRewardsOpened,
             onDropdownMenuItemClicked = viewModel::onDropdownMenuItemClicked,
         )
     }
@@ -170,6 +172,7 @@ private fun WalletScreen(
     onWithdrawClicked: () -> Unit,
     onRewardsWithdrawClicked: () -> Unit,
     onExchangeClicked: () -> Unit,
+    onRewardsOpened: () -> Unit,
     onDropdownMenuItemClicked: (WalletViewModel.FilterOptions) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -225,12 +228,13 @@ private fun WalletScreen(
                         onWithdrawClicked = onWithdrawClicked,
                         onExchangeClicked = onExchangeClicked,
                     )
-                    1 -> Awards(
+                    1 -> Rewards(
                         transactions = when (uiState.filterOptions) {
                             WalletViewModel.FilterOptions.Unlocked -> uiState.unlockedTransactions
                             WalletViewModel.FilterOptions.Locked -> uiState.lockedTransactions
                         },
                         rewards = uiState.rewards,
+                        onOpened = onRewardsOpened,
                         filterOptions = uiState.filterOptions,
                         onWithdrawClicked = onRewardsWithdrawClicked,
                         onDropdownMenuItemClicked = onDropdownMenuItemClicked,
@@ -312,14 +316,18 @@ private fun Wallet(
 }
 
 @Composable
-private fun Awards(
+private fun Rewards(
     transactions: TransactionsUiState,
     filterOptions: WalletViewModel.FilterOptions,
     rewards: List<RewardsTileState>,
     onWithdrawClicked: () -> Unit,
+    onOpened: () -> Unit,
     onDropdownMenuItemClicked: (WalletViewModel.FilterOptions) -> Unit,
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
+    LaunchedEffect(key1 = Unit) {
+        onOpened()
+    }
     ScrollEndDetectLazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(12.dp),

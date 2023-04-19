@@ -23,6 +23,11 @@ sealed class TextValue {
         val quantity: Int,
         val args: List<Any> = listOf(quantity),
     ) : TextValue()
+
+    companion object {
+
+        val empty get() = "".textValue()
+    }
 }
 
 fun String.textValue(): TextValue = TextValue.Simple(this)

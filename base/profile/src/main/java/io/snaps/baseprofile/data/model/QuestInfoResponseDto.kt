@@ -39,4 +39,5 @@ enum class SocialPostStatus {
     WaitForVerification,
     Success,
     Rejected,
+    NotSendToVerify,
 }

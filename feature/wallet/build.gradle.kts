@@ -16,4 +16,5 @@ dependencies {
     implementation(projects.baseSources)
     implementation(projects.baseProfile)
     implementation(projects.baseWallet)
+    implementation(projects.baseSession)
 }

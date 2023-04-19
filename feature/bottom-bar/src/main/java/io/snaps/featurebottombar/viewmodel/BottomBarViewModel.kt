@@ -4,10 +4,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.basesession.AppRouteProvider
+import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomBarVisibilitySource
+import io.snaps.corecommon.model.OnboardingType
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.base.ROUTE_ARGS_SEPARATOR
 import io.snaps.coreui.viewmodel.SimpleViewModel
+import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,11 +23,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BottomBarViewModel @Inject constructor(
+    onboardingHandlerDelegate: OnboardingHandler,
     private val appRouteProvider: AppRouteProvider,
     private val nftRepository: NftRepository,
     private val action: Action,
     bottomBarVisibilitySource: BottomBarVisibilitySource,
-) : SimpleViewModel() {
+) : SimpleViewModel(), OnboardingHandler by onboardingHandlerDelegate {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -63,10 +67,30 @@ class BottomBarViewModel @Inject constructor(
         appRouteProvider.updateMenuRouteState(route)
     }
 
+    fun onOnboardingDialogActionClicked(type: OnboardingType?) {
+        closeOnboardingDialog()
+        when (type) {
+            OnboardingType.Rank,
+            OnboardingType.Nft -> {
+                viewModelScope.launch {
+                    _command publish Command.OpenNftPurchaseScreen
+                }
+            }
+            OnboardingType.Popular,
+            OnboardingType.Tasks,
+            OnboardingType.Referral,
+            OnboardingType.Wallet,
+            OnboardingType.Rewards,
+            null -> Unit
+        }
+    }
+
     data class UiState(
         val isBottomBarVisible: Boolean = true,
         val badgeText: String = "",
     )
 
-    sealed interface Command
+    sealed interface Command {
+        object OpenNftPurchaseScreen : Command
+    }
 }

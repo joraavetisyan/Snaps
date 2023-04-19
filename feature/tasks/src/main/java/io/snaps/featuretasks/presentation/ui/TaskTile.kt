@@ -33,6 +33,7 @@ enum class TaskStatus {
     Rejected,
     NotPosted,
     WaitForVerification,
+    NotSendToVerify,
 }
 
 sealed class TaskTileState : TileState {
@@ -148,6 +149,7 @@ private fun TaskStatusMessage(
                 TaskStatus.InProgress -> StringKey.TasksMessageTaskInProgress
                 TaskStatus.NotPosted -> StringKey.TasksFieldSocialPostNotPosted
                 TaskStatus.WaitForVerification -> StringKey.TasksFieldSocialPostWaitForVerification
+                TaskStatus.NotSendToVerify -> StringKey.TasksFieldSocialPostNotSendToVerify
             }.textValue().get(),
             color = color,
             style = AppTheme.specificTypography.bodySmall,

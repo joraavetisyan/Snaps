@@ -1,16 +1,18 @@
 package io.snaps.featureprofile.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import io.snaps.coreui.viewmodel.SimpleViewModel
-import io.snaps.baseprofile.data.MainHeaderHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.addPrefix
 import io.snaps.coredata.network.Action
+import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,11 +27,14 @@ import javax.inject.Inject
 @HiltViewModel
 class ReferralProgramViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
+    onboardingHandlerDelegate: OnboardingHandler,
     private val profileRepository: ProfileRepository,
     private val action: Action,
     private val bottomBarVisibilitySource: BottomBarVisibilitySource,
     private val notificationsSource: NotificationsSource,
-) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
+) : SimpleViewModel(),
+    MainHeaderHandler by mainHeaderHandlerDelegate,
+    OnboardingHandler by onboardingHandlerDelegate {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -39,6 +44,7 @@ class ReferralProgramViewModel @Inject constructor(
 
     init {
         subscribeOnCurrentUser()
+        checkOnboarding(OnboardingType.Referral)
     }
 
     private fun subscribeOnCurrentUser() {

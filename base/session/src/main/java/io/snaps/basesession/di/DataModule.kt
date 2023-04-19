@@ -6,6 +6,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.snaps.basesession.data.LogoutApi
+import io.snaps.basesession.data.OnboardingHandler
+import io.snaps.basesession.data.OnboardingHandlerImplDelegate
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.basesession.data.SessionRepositoryImpl
 import io.snaps.coredata.network.ApiConfig
@@ -31,5 +33,9 @@ interface DataBindModule {
 
     @Binds
     @Singleton
-    fun sessionRepository(repository: SessionRepositoryImpl): SessionRepository
+    fun sessionRepository(bind: SessionRepositoryImpl): SessionRepository
+
+    @Binds
+    @Singleton
+    fun onboardingHandler(bind: OnboardingHandlerImplDelegate): OnboardingHandler
 }

@@ -5,6 +5,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
+import io.snaps.basesession.data.OnboardingHandler
+import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -24,9 +26,12 @@ import javax.inject.Inject
 @HiltViewModel
 class MyCollectionViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
+    onboardingHandlerDelegate: OnboardingHandler,
     private val action: Action,
     private val nftRepository: NftRepository,
-) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
+) : SimpleViewModel(),
+    MainHeaderHandler by mainHeaderHandlerDelegate,
+    OnboardingHandler by onboardingHandlerDelegate {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -39,12 +44,14 @@ class MyCollectionViewModel @Inject constructor(
             action.execute {
                 nftRepository.updateRanks()
             }.doOnSuccess {
-                val availableToPurchaseNfts = nftRepository.ranksState.value.dataOrCache
-                    ?.count { it.isAvailableToPurchase } ?: 0
+                val availableToPurchaseNfts =
+                    nftRepository.ranksState.value.dataOrCache?.count { it.isAvailableToPurchase }
+                        ?: 0
                 subscribeOnNft(availableToPurchaseNfts)
                 loadNft()
             }
         }
+        checkOnboarding(OnboardingType.Nft)
     }
 
     private fun subscribeOnNft(maxCount: Int) {

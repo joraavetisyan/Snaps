@@ -7,6 +7,7 @@ import io.snaps.basesources.DeviceInfoProvider
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
+import io.snaps.corecommon.model.OnboardingType
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.database.LogOutReason
 import io.snaps.coredata.database.TokenStorage
@@ -17,6 +18,8 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 interface SessionRepository {
+
+    fun isOnboardingShown(type: OnboardingType): Boolean
 
     suspend fun refresh(): Effect<Completable>
 
@@ -47,6 +50,12 @@ class SessionRepositoryImpl @Inject constructor(
 
     init {
         scope.launch { checkStatus() }
+    }
+
+    override fun isOnboardingShown(type: OnboardingType): Boolean {
+        return userDataStorage.isOnboardingShown(type).also {
+            userDataStorage.setIsOnboardingShown(type, true)
+        }
     }
 
     override suspend fun checkStatus(): Effect<Completable> {

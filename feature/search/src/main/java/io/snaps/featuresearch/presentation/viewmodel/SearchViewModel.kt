@@ -12,6 +12,8 @@ import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.ui.UsersUiState
 import io.snaps.baseprofile.ui.toUsersUiState
+import io.snaps.basesession.data.OnboardingHandler
+import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -33,10 +35,13 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
+    onboardingHandlerDelegate: OnboardingHandler,
     private val videoFeedRepository: VideoFeedRepository,
     private val profileRepository: ProfileRepository,
     private val action: Action,
-) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
+) : SimpleViewModel(),
+    MainHeaderHandler by mainHeaderHandlerDelegate,
+    OnboardingHandler by onboardingHandlerDelegate {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -50,6 +55,7 @@ class SearchViewModel @Inject constructor(
 
     init {
         search("")
+        checkOnboarding(OnboardingType.Popular)
     }
 
     private fun search(query: String) {
