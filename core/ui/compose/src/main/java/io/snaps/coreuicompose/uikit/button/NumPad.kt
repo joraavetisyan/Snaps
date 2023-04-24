@@ -28,12 +28,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.IconValue
-import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.defaultBorder
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.longPress
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.coreuitheme.compose.PreviewAppTheme
 
 class NumPadAction(
@@ -42,7 +40,8 @@ class NumPadAction(
 ) {
     companion object {
 
-        fun biometric(onClick: () -> Unit) = NumPadAction(AppTheme.specificIcons.fingerprint, onClick)
+        fun biometric(onClick: () -> Unit) =
+            NumPadAction(AppTheme.specificIcons.fingerprint, onClick)
 
         fun delete(onClick: () -> Unit) = NumPadAction(AppTheme.specificIcons.delete, onClick)
 
@@ -183,7 +182,7 @@ private fun NumberButton(number: Int, onClick: (Int) -> Unit) {
 
 @Composable
 private fun ForgetButton(onClick: () -> Unit) {
-    Box(contentAlignment = Alignment.Center) {
+    /*Box(contentAlignment = Alignment.Center) {
         Text(
             text = LocalStringHolder.current(StringKey.NumPadForget),
             style = AppTheme.specificTypography.bodySmall,
@@ -196,7 +195,7 @@ private fun ForgetButton(onClick: () -> Unit) {
                 .padding(8.dp)
                 .wrapContentHeight(),
         )
-    }
+    }*/
 }
 
 @Composable

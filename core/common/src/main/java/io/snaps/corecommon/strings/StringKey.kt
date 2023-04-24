@@ -10,13 +10,11 @@ enum class StringKey {
     ActionCancel,
     ActionClose,
 
+    MessageConnectionSuccess,
+
     ErrorLoadFail,
-
-    ConnectionSuccessMessage,
-    ConnectionErrorMessage,
-    UnknownErrorMessage,
-
-    NumPadForget,
+    ErrorConnection,
+    ErrorUnknown,
 
     OnboardingRankTitle,
     OnboardingRankText,

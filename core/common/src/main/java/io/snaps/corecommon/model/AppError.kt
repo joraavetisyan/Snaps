@@ -5,7 +5,7 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 
 sealed class AppError(
-    val defaultMessageKey: StringKey = StringKey.UnknownErrorMessage,
+    val defaultMessageKey: StringKey = StringKey.ErrorUnknown,
     message: String? = null,
     cause: Exception? = null,
     val code: Int? = null,
@@ -34,5 +34,5 @@ sealed class AppError(
 
 fun Exception.makeUserReadableErrorMessage(): TextValue = when (this) {
     is AppError -> makeUserReadableErrorMessage()
-    else -> StringKey.UnknownErrorMessage.textValue()
+    else -> StringKey.ErrorUnknown.textValue()
 }

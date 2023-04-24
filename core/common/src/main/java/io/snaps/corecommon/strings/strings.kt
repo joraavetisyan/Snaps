@@ -27,22 +27,17 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Error while loading",
     ),
 
-    key(StringKey.ConnectionSuccessMessage) to mapOf(
+    key(StringKey.MessageConnectionSuccess) to mapOf(
         SupportedLanguageKey.Ru to "Соединение восстановлено",
         SupportedLanguageKey.En to "Connection restored",
     ),
-    key(StringKey.ConnectionErrorMessage) to mapOf(
+    key(StringKey.ErrorConnection) to mapOf(
         SupportedLanguageKey.Ru to "Отсутствует подключение к сети",
         SupportedLanguageKey.En to "No network connection",
     ),
-    key(StringKey.UnknownErrorMessage) to mapOf(
+    key(StringKey.ErrorUnknown) to mapOf(
         SupportedLanguageKey.Ru to "Произошла ошибка. Попробуйте повторить позднее",
         SupportedLanguageKey.En to "An error has occurred. Try again later",
-    ),
-
-    key(StringKey.NumPadForget) to mapOf(
-        SupportedLanguageKey.Ru to "Забыл код",
-        SupportedLanguageKey.En to "Forgot",
     ),
 
     key(StringKey.OnboardingRankTitle) to mapOf(

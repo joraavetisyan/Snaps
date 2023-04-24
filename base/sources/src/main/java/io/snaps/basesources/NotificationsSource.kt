@@ -60,10 +60,10 @@ class NotificationsSourceImpl @Inject constructor(
         networkStateProvider.state.onEach {
             val state = when (it) {
                 NetworkStateSource.State.Available -> {
-                    NotificationsSource.State.Message(StringKey.ConnectionSuccessMessage.textValue())
+                    NotificationsSource.State.Message(StringKey.MessageConnectionSuccess.textValue())
                 }
                 NetworkStateSource.State.Unavailable -> {
-                    NotificationsSource.State.Error(StringKey.ConnectionErrorMessage.textValue())
+                    NotificationsSource.State.Error(StringKey.ErrorConnection.textValue())
                 }
             }
             if (it == NetworkStateSource.State.Unavailable) {
