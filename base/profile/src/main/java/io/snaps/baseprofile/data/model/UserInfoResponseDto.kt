@@ -25,4 +25,10 @@ class UserInfoResponseDto(
     @SerialName("ownInviteCode") val ownInviteCode: String?,
     @SerialName("level") val level: Int,
     @SerialName("instagramId") val instagramId: Uuid?,
+    @SerialName("paymentsState") val paymentsState: PaymentsState,
 )
+
+enum class PaymentsState {
+    No,
+    InApp,
+}

@@ -1,7 +1,6 @@
 package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.AddVideoRequestDto
-import io.snaps.basefeed.data.model.ShareInfoRequestDto
 import io.snaps.basefeed.data.model.UserLikedVideoFeedItemResponseDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.corecommon.model.Completable
@@ -9,6 +8,7 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import okhttp3.MultipartBody
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -79,8 +79,8 @@ interface VideoFeedApi {
         @Path("videoId") videoId: Uuid,
     ): BaseResponse<Completable>
 
-    @POST("share-info")
-    suspend fun shareInfo(
-        @Body body: ShareInfoRequestDto,
-    ): BaseResponse<Completable>
+    @DELETE("video/{videoId}")
+    suspend fun deleteVideo(
+        @Path("videoId") videoId: Uuid,
+    ): BaseResponse<Completable> // delete user video
 }

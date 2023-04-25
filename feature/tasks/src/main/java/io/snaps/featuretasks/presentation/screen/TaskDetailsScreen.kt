@@ -90,7 +90,10 @@ private fun TaskDetailsScreen(
             TaskToolbar(
                 title = title,
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
-                progress = uiState.energy,
+                progress = when (uiState.type) {
+                    QuestType.SocialPost -> null
+                    else -> uiState.energy
+                },
                 scrollBehavior = scrollBehavior,
             )
         },

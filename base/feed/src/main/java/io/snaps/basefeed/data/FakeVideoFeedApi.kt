@@ -1,7 +1,6 @@
 package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.AddVideoRequestDto
-import io.snaps.basefeed.data.model.ShareInfoRequestDto
 import io.snaps.basefeed.data.model.UserLikedVideoFeedItemResponseDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.corecommon.ext.log
@@ -166,8 +165,8 @@ class FakeVideoFeedApi : VideoFeedApi {
         )
     }
 
-    override suspend fun shareInfo(body: ShareInfoRequestDto): BaseResponse<Completable> {
-        log("Requesting share video")
+    override suspend fun deleteVideo(videoId: Uuid): BaseResponse<Completable> {
+        log("Requesting delete video")
         delay(mockDelay)
         return BaseResponse(
             actualTimestamp = 1L,

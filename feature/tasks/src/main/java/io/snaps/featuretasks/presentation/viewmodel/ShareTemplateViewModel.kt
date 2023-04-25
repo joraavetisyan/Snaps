@@ -133,13 +133,15 @@ class ShareTemplateViewModel @Inject constructor(
     }
 
     fun onPostToInstagramButtonClicked(bitmap: Bitmap) = viewModelScope.launch {
-        fileManager.createFileFromBitmap(bitmap)?.let {
-            _command publish Command.OpenShareToInstagramDialog(
-                uri = fileManager.getUriForFile(it)
-            )
-            action.execute(needProcessErrors = false) {
-                tasksRepository.postToInstagram()
+        val instagramId = profileRepository.state.value.dataOrCache?.instagramId
+        if (instagramId != null) {
+            fileManager.createFileFromBitmap(bitmap)?.let {
+                action.execute {
+                    tasksRepository.postToInstagram()
+                }
             }
+        } else {
+            onConnectClicked()
         }
     }
 
@@ -168,7 +170,6 @@ class ShareTemplateViewModel @Inject constructor(
 
     sealed class Command {
         object OpenWebView : Command()
-        data class OpenShareToInstagramDialog(val uri: Uri) : Command()
         data class OpenShareDialog(val uri: Uri) : Command()
     }
 }

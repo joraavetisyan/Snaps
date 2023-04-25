@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.BottomBarFeatureProvider
 import io.snaps.corenavigation.CollectionFeatureProvider
@@ -93,30 +94,35 @@ class NavHostProvider @Inject constructor(
         get() = listOf(
             BottomBarFeatureProvider.ScreenItem(
                 icon = AppTheme.specificIcons.camera,
+                labelKey = StringKey.BottomBarTitleFeed,
                 route = AppRoute.MainBottomBar.MainTab1,
                 startDestination = AppRoute.MainBottomBar.MainTab1Start,
                 builder = { mainTab1Graph(it) },
             ),
             BottomBarFeatureProvider.ScreenItem(
                 icon = AppTheme.specificIcons.star,
+                labelKey = StringKey.BottomBarTitleSearch,
                 route = AppRoute.MainBottomBar.MainTab2,
                 startDestination = AppRoute.MainBottomBar.MainTab2Start,
                 builder = { mainTab2Graph(it) },
             ),
             BottomBarFeatureProvider.ScreenItem(
                 icon = AppTheme.specificIcons.check,
+                labelKey = StringKey.BottomBarTitleTasks,
                 route = AppRoute.MainBottomBar.MainTab3,
                 startDestination = AppRoute.MainBottomBar.MainTab3Start,
                 builder = { mainTab3Graph(it) },
             ),
             BottomBarFeatureProvider.ScreenItem(
                 icon = AppTheme.specificIcons.picture,
+                labelKey = StringKey.BottomBarTitleNft,
                 route = AppRoute.MainBottomBar.MainTab4,
                 startDestination = AppRoute.MainBottomBar.MainTab4Start,
                 builder = { mainTab4Graph(it) },
             ),
             BottomBarFeatureProvider.ScreenItem(
                 icon = AppTheme.specificIcons.profile,
+                labelKey = StringKey.BottomBarTitleReferrals,
                 route = AppRoute.MainBottomBar.MainTab5,
                 startDestination = AppRoute.MainBottomBar.MainTab5Start,
                 builder = { mainTab5Graph(it) },

@@ -44,7 +44,6 @@ class FakeTasksApi : TasksApi {
             date = "2023-03-01T00:00:00+00:00",
             quests = listOf(
                 QuestItemDto(
-                    energyProgress = 2,
                     completed = true,
                     done = null,
                     madeCount = rInt,
@@ -56,7 +55,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 2,
                     completed = false,
                     madeCount = rInt,
                     done = null,
@@ -68,7 +66,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 0,
                     completed = false,
                     done = null,
                     madeCount = 0,
@@ -80,7 +77,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 1,
                     completed = false,
                     madeCount = 0,
                     done = null,
@@ -92,7 +88,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 1,
                     completed = false,
                     madeCount = rInt,
                     status = null,
@@ -113,7 +108,6 @@ class FakeTasksApi : TasksApi {
             date = "2023-03-01T00:00:00+00:00",
             quests = listOf(
                 QuestItemDto(
-                    energyProgress = 2,
                     completed = true,
                     madeCount = rInt,
                     done = null,
@@ -125,7 +119,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 2,
                     completed = false,
                     madeCount = rInt,
                     status = null,
@@ -137,7 +130,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 0,
                     completed = false,
                     done = null,
                     madeCount = 0,
@@ -149,7 +141,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 1,
                     completed = false,
                     madeCount = 0,
                     status = null,
@@ -161,7 +152,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 1,
                     completed = false,
                     done = null,
                     madeCount = rInt,
@@ -182,7 +172,6 @@ class FakeTasksApi : TasksApi {
             date = "2023-03-01T00:00:00+00:00",
             quests = listOf(
                 QuestItemDto(
-                    energyProgress = 2,
                     completed = true,
                     done = null,
                     madeCount = rInt,
@@ -194,7 +183,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 2,
                     completed = false,
                     done = null,
                     madeCount = rInt,
@@ -206,7 +194,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 0,
                     completed = false,
                     done = null,
                     madeCount = 0,
@@ -218,7 +205,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 1,
                     completed = false,
                     done = null,
                     madeCount = 0,
@@ -230,7 +216,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 1,
                     completed = false,
                     done = null,
                     madeCount = rInt,
@@ -251,7 +236,6 @@ class FakeTasksApi : TasksApi {
             date = "2023-03-01T00:00:00+00:00",
             quests = listOf(
                 QuestItemDto(
-                    energyProgress = 2,
                     completed = true,
                     done = null,
                     madeCount = rInt,
@@ -263,7 +247,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 2,
                     completed = false,
                     done = null,
                     madeCount = rInt,
@@ -275,7 +258,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 0,
                     completed = false,
                     done = null,
                     madeCount = 0,
@@ -287,7 +269,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 1,
                     completed = false,
                     done = null,
                     madeCount = 0,
@@ -299,7 +280,6 @@ class FakeTasksApi : TasksApi {
                     )
                 ),
                 QuestItemDto(
-                    energyProgress = 1,
                     completed = false,
                     done = null,
                     madeCount = rInt,

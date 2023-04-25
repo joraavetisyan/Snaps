@@ -13,7 +13,6 @@ data class QuestInfoModel(
 
 data class QuestModel(
     val energy: Int,
-    val energyProgress: Int,
     val type: QuestType,
     val completed: Boolean,
     val madeCount: Int?,

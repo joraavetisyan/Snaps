@@ -66,16 +66,20 @@ import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseplayer.ui.VideoPlayer
 import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startShareLinkIntent
 import io.snaps.corecommon.ext.toFormatDecimal
 import io.snaps.corecommon.model.Uuid
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.uikit.other.ActionsBottomDialog
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.scroll.DetectScroll
 import io.snaps.coreuicompose.uikit.scroll.ScrollInfo
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
+import io.snaps.coreuicompose.uikit.status.SimpleConfirmDialogUi
 import io.snaps.coreuitheme.compose.AppTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -198,6 +202,10 @@ fun VideoClipScreen(
                         onReplyClicked = commentInputSheetState::showSheet,
                         onEmojiClicked = viewModel::onEmojiClicked,
                     )
+                    VideoFeedViewModel.BottomDialogType.MoreActions -> ActionsBottomDialog(
+                        title = StringKey.VideoClipTitleAction.textValue(),
+                        actions = uiState.actions,
+                    )
                 }
             },
         ) {
@@ -239,6 +247,7 @@ fun VideoClipScreen(
                                     onShareClicked = {
                                         context.startShareLinkIntent(it.url, it.title)
                                     },
+                                    onMoreClicked = viewModel::onMoreClicked,
                                 )
                             }
                             is VideoClipUiState.Shimmer -> FullScreenLoaderUi(isLoading = true)
@@ -248,6 +257,17 @@ fun VideoClipScreen(
                     content?.invoke(this, paddingValues)
                 }
             }
+        }
+    }
+    uiState.dialogType?.let { 
+        when (it) {
+            VideoFeedViewModel.DialogType.ConfirmDeleteVideo -> SimpleConfirmDialogUi(
+                text = StringKey.VideoClipDialogConfirmDeleteMessage.textValue(),
+                confirmButtonText = StringKey.ActionDelete.textValue(),
+                dismissButtonText = StringKey.ActionCancel.textValue(),
+                onDismissRequest = viewModel::onDeleteDismissed,
+                onConfirmRequest = viewModel::onDeleteConfirmed,
+            )
         }
     }
 }
@@ -282,7 +302,8 @@ private fun PagerScope.VideoClip(
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onCommentClicked: (VideoClipModel) -> Unit,
-    onShareClicked: (VideoClipModel) -> Unit
+    onShareClicked: (VideoClipModel) -> Unit,
+    onMoreClicked: () -> Unit,
 ) {
     val shouldPlay by remember(pagerState) {
         derivedStateOf {
@@ -300,11 +321,13 @@ private fun PagerScope.VideoClip(
 
     VideoClipItems(
         videoClipModel = item.clip,
+        isMoreIconVisible = uiState.actions.isNotEmpty(),
         authorProfileAvatar = uiState.authorProfileAvatar,
         onAuthorClicked = onAuthorClicked,
         onLikeClicked = onLikeClicked,
         onCommentClicked = onCommentClicked,
         onShareClicked = onShareClicked,
+        onMoreClicked = onMoreClicked,
     )
 }
 
@@ -312,11 +335,13 @@ private fun PagerScope.VideoClip(
 private fun VideoClipItems(
     modifier: Modifier = Modifier,
     videoClipModel: VideoClipModel,
+    isMoreIconVisible: Boolean,
     authorProfileAvatar: ImageValue?,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onCommentClicked: (VideoClipModel) -> Unit,
     onShareClicked: (VideoClipModel) -> Unit,
+    onMoreClicked: () -> Unit,
 ) {
     Box(modifier = modifier) {
         // Darkening the lower part, so the info items are more contrasted
@@ -330,17 +355,18 @@ private fun VideoClipItems(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.5f)
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 100.dp)
         ) {
             VideoClipInfoItems(
                 clipModel = videoClipModel,
+                isMoreIconVisible = isMoreIconVisible,
                 authorProfileAvatar = authorProfileAvatar,
                 onAuthorClicked = onAuthorClicked,
                 onLikeClicked = onLikeClicked,
                 onCommentClicked = onCommentClicked,
                 onShareClicked = onShareClicked,
+                onMoreClicked = onMoreClicked,
             )
         }
     }
@@ -349,11 +375,13 @@ private fun VideoClipItems(
 @Composable
 private fun VideoClipInfoItems(
     clipModel: VideoClipModel,
+    isMoreIconVisible: Boolean,
     authorProfileAvatar: ImageValue?,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onCommentClicked: (VideoClipModel) -> Unit,
     onShareClicked: (VideoClipModel) -> Unit,
+    onMoreClicked: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxSize(),
@@ -366,11 +394,13 @@ private fun VideoClipInfoItems(
         Spacer(modifier = Modifier.weight(1f))
         VideoClipEndItems(
             clipModel = clipModel,
+            isMoreIconVisible = isMoreIconVisible,
             authorProfileAvatar = authorProfileAvatar,
             onAuthorClicked = onAuthorClicked,
             onLikeClicked = onLikeClicked,
             onCommentClicked = onCommentClicked,
             onShareClicked = onShareClicked,
+            onMoreClicked = onMoreClicked,
         )
     }
 }
@@ -421,11 +451,13 @@ private fun VideoClipBottomItems(
 @Composable
 private fun VideoClipEndItems(
     clipModel: VideoClipModel,
+    isMoreIconVisible: Boolean,
     authorProfileAvatar: ImageValue?,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onCommentClicked: (VideoClipModel) -> Unit,
     onShareClicked: (VideoClipModel) -> Unit,
+    onMoreClicked: () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -486,6 +518,16 @@ private fun VideoClipEndItems(
                 tint = Color.White,
                 modifier = Modifier.size(36.dp),
             )
+        }
+        if (isMoreIconVisible) {
+            IconButton(onClick = onMoreClicked) {
+                Icon(
+                    painter = AppTheme.specificIcons.moreVert.get(),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(36.dp),
+                )
+            }
         }
     }
 }
