@@ -156,10 +156,11 @@ private fun rememberExoPlayerWithLifecycle(
             repeatMode = if (isRepeat) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
             setHandleAudioBecomingNoisy(true)
             if (networkUrl != null) {
-                val defaultDataSource = DefaultHttpDataSource.Factory()
+                /*val defaultDataSource = DefaultHttpDataSource.Factory()
                 val source = ProgressiveMediaSource.Factory(defaultDataSource)
                     .createMediaSource(MediaItem.fromUri(networkUrl))
-                setMediaSource(source)
+                setMediaSource(source)*/
+                setMediaItem(MediaItem.fromUri(networkUrl))
             } else if (localUri != null) {
                 val defaultDataSource = DefaultDataSource.Factory(context)
                 val source = ProgressiveMediaSource.Factory(defaultDataSource)

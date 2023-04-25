@@ -64,7 +64,7 @@ object Libs {
 
     private const val pagerVersion = "0.29.0-alpha"
 
-    private const val mediaVersion = "1.0.0-beta03"
+    private const val mediaVersion = "1.0.1"
 
     private const val cameraxVersion = "1.2.0-beta01"
     private const val guavaVersion = "31.1-android"
@@ -219,6 +219,7 @@ object Libs {
         val media = arrayOf(
             "androidx.media3:media3-exoplayer:$mediaVersion",
             "androidx.media3:media3-ui:$mediaVersion",
+            "androidx.media3:media3-exoplayer-hls:$mediaVersion",
         )
 
         val camerax = arrayOf(
