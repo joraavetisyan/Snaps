@@ -178,13 +178,15 @@ private fun BoxScope.InfoContainer(
 }
 
 @Composable
-private fun StatsLine(
+private fun RowScope.StatsLine(
     value: String,
     name: String,
     onClick: (() -> Unit)? = null,
 ) {
     Column(
-        modifier = Modifier.defaultTileRipple(onClick = onClick),
+        modifier = Modifier
+            .weight(1f)
+            .defaultTileRipple(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(text = value, style = AppTheme.specificTypography.titleSmall)
