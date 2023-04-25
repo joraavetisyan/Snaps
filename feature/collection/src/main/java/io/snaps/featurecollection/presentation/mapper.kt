@@ -4,6 +4,7 @@ import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.basenft.ui.costToString
+import io.snaps.basenft.ui.dailyRewardToString
 import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FiatCurrency
@@ -38,9 +39,9 @@ private fun RankModel.toRankTileState(
     type = type,
     price = costInUsd?.costToString() ?: "",
     image = image,
-    dailyReward = "$dailyReward${FiatCurrency.USD.symbol}",
+    dailyReward = dailyReward.dailyRewardToString(),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
-    dailyConsumption = dailyUnlock.toPercentageFormat(),
+    dailyConsumption = dailyConsumption.toPercentageFormat(),
     isAvailableToPurchase = isAvailableToPurchase,
     clickListener = { onItemClicked(this) },
 )
@@ -71,9 +72,9 @@ private fun NftModel.toNftCollectionItemState(
     type = type,
     price = costInUsd?.costToString() ?: "",
     image = image,
-    dailyReward = "$dailyReward${FiatCurrency.USD.symbol}",
+    dailyReward = dailyReward.dailyRewardToString(),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
-    dailyConsumption = dailyUnlock.toPercentageFormat(),
+    dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthy = isHealthy,
     onRepairClicked = { onRepairClicked(id) },
 )

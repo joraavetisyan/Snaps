@@ -18,7 +18,7 @@ fun Double.round(places: Int = 2): Double {
         .toDouble()
 }
 
-fun Double.toPercentageFormat() = "${(this * 100).round().toStringValue()}%"
+fun Double.toPercentageFormat() = "${(this * 100).round(1).toStringValue()} %"
 
 fun Double.toStringValue(): String {
     var number = this.toString()
