@@ -35,7 +35,6 @@ import androidx.navigation.NavHostController
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startSharePhotoIntent
-import io.snaps.corecommon.ext.startSharePhotoToInstagramIntent
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corenavigation.base.resultFlow
 import io.snaps.coreui.viewmodel.collectAsCommand
@@ -67,7 +66,6 @@ fun ShareTemplateScreen(
         when (it) {
             is ShareTemplateViewModel.Command.OpenWebView -> router.toWebView()
             is ShareTemplateViewModel.Command.OpenShareDialog -> context.startSharePhotoIntent(it.uri)
-            is ShareTemplateViewModel.Command.OpenShareToInstagramDialog -> context.startSharePhotoToInstagramIntent(it.uri)
         }
     }
 
