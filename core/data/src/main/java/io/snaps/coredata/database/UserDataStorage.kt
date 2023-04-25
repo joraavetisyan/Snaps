@@ -53,6 +53,7 @@ class UserDataStorage @Inject constructor(
         }
 
     fun reset(reason: LogOutReason? = null) {
+        instagramUsername = ""
     }
 }
 
