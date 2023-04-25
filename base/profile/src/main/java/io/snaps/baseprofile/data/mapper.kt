@@ -56,7 +56,6 @@ fun QuestInfoResponseDto.toQuestInfoModel() = QuestInfoModel(
 )
 
 fun QuestItemDto.toQuestModel() = QuestModel(
-    energyProgress = energyProgress,
     energy = quest.energy,
     type = quest.type,
     completed = completed,

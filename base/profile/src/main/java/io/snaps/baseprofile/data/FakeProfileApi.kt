@@ -2,6 +2,7 @@ package io.snaps.baseprofile.data
 
 import io.snaps.baseprofile.data.model.BalanceResponseDto
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
+import io.snaps.baseprofile.data.model.PaymentsState
 import io.snaps.baseprofile.data.model.QuestDto
 import io.snaps.baseprofile.data.model.QuestInfoResponseDto
 import io.snaps.baseprofile.data.model.QuestItemDto
@@ -129,16 +130,18 @@ class FakeProfileApi : ProfileApi {
         ownInviteCode = "#42GJXE8QM",
         inviteCodeRegisteredBy = null,
         instagramId = null,
+        paymentsState = PaymentsState.No,
     )
 
     private fun getQuestInfo() = QuestInfoResponseDto(
         questDate = "2023-03-06T00:00:00+00:00",
-        updatedDate = "2023-02-07T02:46:30.3218237+00:00",
+        roundEndDate = "2023-02-07T02:46:30.3218237+00:00",
         experience = 0,
         energy = 20,
+        roundId = "1",
+        id = "",
         quests = listOf(
             QuestItemDto(
-                energyProgress = 2,
                 completed = true,
                 done = null,
                 madeCount = rInt,
@@ -150,7 +153,6 @@ class FakeProfileApi : ProfileApi {
                 )
             ),
             QuestItemDto(
-                energyProgress = 2,
                 done = null,
                 completed = false,
                 madeCount = rInt,
@@ -162,7 +164,6 @@ class FakeProfileApi : ProfileApi {
                 )
             ),
             QuestItemDto(
-                energyProgress = 0,
                 completed = false,
                 done = null,
                 madeCount = 0,
@@ -174,7 +175,6 @@ class FakeProfileApi : ProfileApi {
                 )
             ),
             QuestItemDto(
-                energyProgress = 1,
                 completed = false,
                 done = null,
                 madeCount = 0,
@@ -186,7 +186,6 @@ class FakeProfileApi : ProfileApi {
                 )
             ),
             QuestItemDto(
-                energyProgress = 1,
                 completed = false,
                 done = null,
                 madeCount = rInt,

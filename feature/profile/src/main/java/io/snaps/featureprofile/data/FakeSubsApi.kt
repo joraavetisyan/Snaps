@@ -1,5 +1,6 @@
 package io.snaps.featureprofile.data
 
+import io.snaps.baseprofile.data.model.PaymentsState
 import io.snaps.baseprofile.data.model.QuestInfoResponseDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.ext.log
@@ -86,13 +87,16 @@ class FakeSubsApi : SubsApi {
                     questInfo = QuestInfoResponseDto(
                         quests = emptyList(),
                         questDate = "",
-                        updatedDate = "",
+                        roundEndDate = "",
                         experience = 0,
                         energy = 20,
+                        roundId = "",
+                        id = "",
                     ),
                     totalLikes = rInt,
                     totalSubscribers = rInt,
                     totalSubscriptions = rInt,
+                    paymentsState = PaymentsState.No,
                 )
             }
         ).also { subscriberGeneration++ }
