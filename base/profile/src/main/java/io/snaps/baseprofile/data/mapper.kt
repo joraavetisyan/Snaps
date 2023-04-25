@@ -33,7 +33,7 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
     avatar = avatarUrl?.let(ImageValue::Url),
     level = level,
     experience = experience,
-    questInfo = questInfo.toQuestInfoModel(),
+    questInfo = questInfo?.toQuestInfoModel(),
     inviteCodeRegisteredBy = inviteCodeRegisteredBy,
     ownInviteCode = ownInviteCode,
     totalPublication = null,
@@ -84,7 +84,7 @@ fun mainHeaderState(
     if (profile.isSuccess && coins.isSuccess) {
         MainHeaderState.Data(
             profileImage = profile.requireData.avatar,
-            energy = profile.requireData.questInfo.totalEnergyProgress.toString(),
+            energy = profile.requireData.questInfo?.totalEnergyProgress.toString(),
             unlocked = coins.requireData.unlocked.round().toStringValue(),
             locked = coins.requireData.locked.round().toStringValue(),
             onProfileClicked = onProfileClicked,

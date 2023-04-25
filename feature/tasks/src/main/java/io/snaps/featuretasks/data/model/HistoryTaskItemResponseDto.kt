@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 class HistoryTaskItemResponseDto(
     @SerialName("id") val id: Uuid,
     @SerialName("userId") val userId: Uuid,
-    @SerialName("date") val date: DateTime,
+    @SerialName("createdAt") val date: DateTime,
     @SerialName("experience") val experience: Int,
     @SerialName("energy") val energy: Int,
     @SerialName("quests") val quests: List<QuestItemDto>?,
