@@ -10,7 +10,6 @@ import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.Effect
-import io.snaps.corecommon.model.FiatCurrency
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.QuestType
 import io.snaps.corecommon.model.State

@@ -7,7 +7,6 @@ import io.snaps.basenft.ui.costToString
 import io.snaps.basenft.ui.dailyRewardToString
 import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.Effect
-import io.snaps.corecommon.model.FiatCurrency
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
