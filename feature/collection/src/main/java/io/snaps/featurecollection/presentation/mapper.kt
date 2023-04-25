@@ -47,7 +47,6 @@ private fun RankModel.toRankTileState(
 )
 
 fun State<List<NftModel>>.toNftCollectionItemState(
-    maxCount: Int,
     onAddItemClicked: () -> Unit,
     onReloadClicked: () -> Unit,
     onRepairClicked: (Uuid) -> Unit,
@@ -58,9 +57,7 @@ fun State<List<NftModel>>.toNftCollectionItemState(
             requireData.forEach {
                 add(it.toNftCollectionItemState(onRepairClicked))
             }
-            if (maxCount > requireData.size) {
-                add(CollectionItemState.AddItem(onAddItemClicked))
-            }
+            add(CollectionItemState.AddItem(onAddItemClicked))
         }
         else -> listOf(CollectionItemState.Error(onClick = onReloadClicked))
     }
