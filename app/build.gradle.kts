@@ -118,6 +118,7 @@ dependencies {
     implementation(projects.featureFeed)
     implementation(projects.featureSearch)
     implementation(projects.featureCreate)
+    implementation(projects.featureReferral)
 
     implementation(*Libs.bundle.splashscreen)
     implementation(*Libs.bundle.appUpdater)

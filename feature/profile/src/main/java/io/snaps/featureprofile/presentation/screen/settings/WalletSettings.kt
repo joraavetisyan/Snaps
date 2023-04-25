@@ -37,10 +37,10 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
+import io.snaps.coreuicompose.uikit.other.DiamondDialogButtonData
+import io.snaps.coreuicompose.uikit.other.DiamondDialogUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featureprofile.ScreenNavigator
-import io.snaps.featureprofile.presentation.screen.ButtonData
-import io.snaps.featureprofile.presentation.screen.DialogUi
 import io.snaps.featureprofile.presentation.viewmodel.WalletSettingsViewModel
 
 @Composable
@@ -138,15 +138,15 @@ private fun WalletSettingsScreen(
             }
         }
         if (uiState.isDialogVisibility) {
-            DialogUi(
+            DiamondDialogUi(
                 title = StringKey.WalletSettingsBackupDialogTitle.textValue(),
                 message = StringKey.WalletSettingsBackupDialogMessage.textValue(),
                 onDismissRequest = onDismissRequest,
-                primaryButton = ButtonData(
+                primaryButton = DiamondDialogButtonData(
                     text = StringKey.WalletSettingsBackupDialogAction.textValue(),
                     onClick = onLookButtonClicked,
                 ),
-                secondaryButton = ButtonData(
+                secondaryButton = DiamondDialogButtonData(
                     text = StringKey.ReferralProgramDialogActionClose.textValue(),
                     onClick = onCloseDialogButtonClicked,
                 ),

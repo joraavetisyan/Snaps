@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.presentation.viewmodel
+package io.snaps.featurereferral.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel

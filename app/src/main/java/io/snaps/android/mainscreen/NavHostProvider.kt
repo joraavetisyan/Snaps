@@ -11,8 +11,9 @@ import io.snaps.corenavigation.CollectionFeatureProvider
 import io.snaps.corenavigation.CreateFeatureProvider
 import io.snaps.corenavigation.FeedFeatureProvider
 import io.snaps.corenavigation.InitializationFeatureProvider
-import io.snaps.corenavigation.PopularFeatureProvider
+import io.snaps.corenavigation.SearchFeatureProvider
 import io.snaps.corenavigation.ProfileFeatureProvider
+import io.snaps.corenavigation.ReferralFeatureProvider
 import io.snaps.corenavigation.RegistrationFeatureProvider
 import io.snaps.corenavigation.TasksFeatureProvider
 import io.snaps.corenavigation.WalletConnectFeatureProvider
@@ -28,13 +29,14 @@ class NavHostProvider @Inject constructor(
     private val walletConnectFeatureProvider: WalletConnectFeatureProvider,
     private val initializationFeatureProvider: InitializationFeatureProvider,
     private val bottomBarFeatureProvider: BottomBarFeatureProvider,
-    private val feedFeatureProvider: FeedFeatureProvider,
-    private val popularFeatureProvider: PopularFeatureProvider,
-    private val tasksFeatureProvider: TasksFeatureProvider,
-    private val collectionFeatureProvider: CollectionFeatureProvider,
     private val profileFeatureProvider: ProfileFeatureProvider,
     private val walletFeatureProvider: WalletFeatureProvider,
     private val createFeatureProvider: CreateFeatureProvider,
+    private val feedFeatureProvider: FeedFeatureProvider,
+    private val searchFeatureProvider: SearchFeatureProvider,
+    private val tasksFeatureProvider: TasksFeatureProvider,
+    private val collectionFeatureProvider: CollectionFeatureProvider,
+    private val referralFeatureProvider: ReferralFeatureProvider,
 ) {
 
     @Composable
@@ -75,7 +77,6 @@ class NavHostProvider @Inject constructor(
             with(walletConnectFeatureProvider) { walletConnectGraph(navController) }
             with(initializationFeatureProvider) { initializationGraph(navController) }
             with(collectionFeatureProvider) { collectionGraph(navController) }
-            with(profileFeatureProvider) { profileGraph(navController) }
             with(bottomBarFeatureProvider) {
                 bottomBarGraph(
                     route = AppRoute.MainBottomBar,
@@ -83,6 +84,7 @@ class NavHostProvider @Inject constructor(
                 ) { controller ->
                     with(walletFeatureProvider) { walletGraph(controller) }
                     with(createFeatureProvider) { createGraph(controller) }
+                    with(profileFeatureProvider) { profileGraph(controller) }
                 }
             }
         }
@@ -132,7 +134,7 @@ class NavHostProvider @Inject constructor(
     }
 
     private fun NavGraphBuilder.mainTab2Graph(controller: NavHostController) {
-        with(popularFeatureProvider) { popularGraph(controller) }
+        with(searchFeatureProvider) { searchGraph(controller) }
     }
 
     private fun NavGraphBuilder.mainTab3Graph(controller: NavHostController) {
@@ -144,6 +146,6 @@ class NavHostProvider @Inject constructor(
     }
 
     private fun NavGraphBuilder.mainTab5Graph(controller: NavHostController) {
-        with(profileFeatureProvider) { profileGraph(controller) }
+        with(referralFeatureProvider) { referralGraph(controller) }
     }
 }

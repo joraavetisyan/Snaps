@@ -14,16 +14,12 @@ import io.snaps.featureprofile.presentation.screen.SubsScreen
 import io.snaps.featureprofile.presentation.screen.UserLikedVideoFeedScreen
 import io.snaps.featureprofile.presentation.screen.UserVideoFeedScreen
 import io.snaps.featureprofile.presentation.screen.settings.BackupWalletKeyScreen
-import io.snaps.featureprofile.presentation.screen.settings.ReferralProgramScreen
 import io.snaps.featureprofile.presentation.screen.settings.SettingsScreen
 import io.snaps.featureprofile.presentation.screen.settings.SocialNetworksScreen
 import io.snaps.featureprofile.presentation.screen.settings.WalletSettingsScreen
 import javax.inject.Inject
 
-// todo rename module to referral
-
-internal class ScreenNavigator(navHostController: NavHostController) :
-    Navigator(navHostController) {
+internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController) {
 
     fun toReferralProgramScreen() = navHostController.navigate(AppRoute.ReferralProgramScreen)
 
@@ -69,14 +65,11 @@ internal class ScreenNavigator(navHostController: NavHostController) :
 class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider {
 
     override fun NavGraphBuilder.profileGraph(controller: NavHostController) {
-        composable(AppRoute.MainBottomBar.MainTab5Start) { ReferralProgramScreen(controller) }
         composable(AppRoute.Profile) { ProfileScreen(controller) }
-        composable(AppRoute.ReferralProgramScreen) { ReferralProgramScreen(controller) }
         composable(AppRoute.Settings) { SettingsScreen(controller) }
         composable(AppRoute.SocialNetworks) { SocialNetworksScreen(controller) }
         composable(AppRoute.BackupWalletKey) { BackupWalletKeyScreen(controller) }
         composable(AppRoute.WalletSettings) { WalletSettingsScreen(controller) }
-        composable(AppRoute.Profile) { ProfileScreen(controller) }
         composable(AppRoute.Subs) { SubsScreen(controller) }
         composable(AppRoute.UserVideoFeed) { UserVideoFeedScreen(controller) }
         composable(AppRoute.UserLikedVideoFeed) { UserLikedVideoFeedScreen(controller) }

@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.presentation.screen
+package io.snaps.coreuicompose.uikit.other
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -32,18 +32,18 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
 import io.snaps.coreuitheme.compose.AppTheme
 
-data class ButtonData(
+data class DiamondDialogButtonData(
     val text: TextValue,
     val onClick: () -> Unit,
 )
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun DialogUi(
+fun DiamondDialogUi(
     title: TextValue,
     message: TextValue,
-    primaryButton: ButtonData? = null,
-    secondaryButton: ButtonData? = null,
+    primaryButton: DiamondDialogButtonData? = null,
+    secondaryButton: DiamondDialogButtonData? = null,
     onDismissRequest: () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -131,14 +131,14 @@ fun DialogUi(
 @Composable
 @Preview
 fun Test() {
-    DialogUi(
+    DiamondDialogUi(
         title = "Title".textValue(),
         message = "vjiofjgoi ioghjtohlgjkh fhguygf".textValue(),
-        primaryButton = ButtonData(
+        primaryButton = DiamondDialogButtonData(
             text = "Primary Button".textValue(),
             onClick = {},
         ),
-        secondaryButton = ButtonData(
+        secondaryButton = DiamondDialogButtonData(
             text = "Secondary Button".textValue(),
             onClick = {},
         ),
