@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.presentation.screen.settings
+package io.snaps.featurereferral.presentation.screen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -71,14 +71,14 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContentLoader
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
+import io.snaps.coreuicompose.uikit.other.DiamondDialogButtonData
+import io.snaps.coreuicompose.uikit.other.DiamondDialogUi
 import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
 import io.snaps.coreuicompose.uikit.text.MiddleEllipsisText
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
-import io.snaps.featureprofile.ScreenNavigator
-import io.snaps.featureprofile.presentation.screen.ButtonData
-import io.snaps.featureprofile.presentation.screen.DialogUi
-import io.snaps.featureprofile.presentation.viewmodel.ReferralProgramViewModel
+import io.snaps.featurereferral.ScreenNavigator
+import io.snaps.featurereferral.presentation.viewmodel.ReferralProgramViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -238,11 +238,11 @@ private fun ReferralProgramScreen(
         }
 
         if (uiState.isInviteUserDialogVisible) {
-            DialogUi(
+            DiamondDialogUi(
                 title = StringKey.ReferralProgramInviteDialogTitle.textValue(),
                 message = StringKey.ReferralProgramInviteDialogMessage.textValue(),
                 onDismissRequest = onDismissRequest,
-                secondaryButton = ButtonData(
+                secondaryButton = DiamondDialogButtonData(
                     text = StringKey.ReferralProgramDialogActionClose.textValue(),
                     onClick = onDialogCloseButtonClicked,
                 ),

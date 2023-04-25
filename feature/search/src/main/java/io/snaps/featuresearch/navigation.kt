@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corenavigation.AppRoute
-import io.snaps.corenavigation.PopularFeatureProvider
+import io.snaps.corenavigation.SearchFeatureProvider
 import io.snaps.corenavigation.base.FeatureNavDirection
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
@@ -32,9 +32,9 @@ internal class ScreenNavigator(navHostController: NavHostController) :
         )
 }
 
-class PopularFeatureProviderImpl @Inject constructor() : PopularFeatureProvider {
+class SearchFeatureProviderImpl @Inject constructor() : SearchFeatureProvider {
 
-    override fun NavGraphBuilder.popularGraph(controller: NavHostController) {
+    override fun NavGraphBuilder.searchGraph(controller: NavHostController) {
         composable(AppRoute.MainBottomBar.MainTab2Start) { SearchScreen(controller) }
         composable(AppRoute.PopularVideoFeed) { PopularVideoFeedScreen(controller) }
     }

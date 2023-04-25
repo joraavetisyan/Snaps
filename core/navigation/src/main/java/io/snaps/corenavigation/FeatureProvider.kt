@@ -67,7 +67,12 @@ interface FeedFeatureProvider {
     fun NavGraphBuilder.feedGraph(controller: NavHostController)
 }
 
-interface PopularFeatureProvider {
+interface SearchFeatureProvider {
 
-    fun NavGraphBuilder.popularGraph(controller: NavHostController)
+    fun NavGraphBuilder.searchGraph(controller: NavHostController)
+}
+
+interface ReferralFeatureProvider {
+
+    fun NavGraphBuilder.referralGraph(controller: NavHostController)
 }
