@@ -1,13 +1,9 @@
 package io.snaps.featurebottombar.screen
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -17,7 +13,9 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -26,9 +24,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -41,7 +38,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.corecommon.R
-import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.OnboardingType
@@ -54,11 +50,11 @@ import io.snaps.coreuicompose.tools.LocalBottomNavigationHeight
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.other.OnboardingBottomDialog
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.coreuitheme.compose.BottomNavigationBarShape
+import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurebottombar.viewmodel.BottomBarViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun BottomBarScreen(
     items: List<BottomBarFeatureProvider.ScreenItem>,
@@ -129,43 +125,63 @@ fun BottomBarScreen(
                     AppRoute.MainBottomBar.MainTab4Start,
                     AppRoute.MainBottomBar.MainTab5Start,
                 )
+                val currentRoute = currentDestination?.route?.substringBefore(delimiter = "?")
                 val bottomBarDestination = bottomBarScreens.any {
-                    it.path() == currentDestination?.route?.substringBefore(delimiter = "?")
+                    it.path() == currentRoute
                 }
                 if (uiState.isBottomBarVisible && bottomBarDestination) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceEvenly,
+                    val containerColor = when (currentRoute) {
+                        AppRoute.MainBottomBar.MainTab1Start.path() -> AppTheme.specificColorScheme.black
+                        else -> AppTheme.specificColorScheme.white
+                    }
+                    NavigationBar(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .align(Alignment.BottomCenter)
-                            .padding(horizontal = 12.dp)
-                            .padding(bottom = 20.dp)
-                            .shadow(elevation = 16.dp, shape = BottomNavigationBarShape)
-                            .background(
-                                color = AppTheme.specificColorScheme.white,
-                                shape = BottomNavigationBarShape,
-                            )
-                            .padding(horizontal = 12.dp, vertical = 16.dp),
+                            .align(Alignment.BottomCenter),
+                        containerColor = containerColor,
                     ) {
                         items.forEach { screen ->
                             val isSelected = currentDestination?.hierarchy?.any {
                                 it.route == screen.route.path()
                             } == true
-                            MenuItem(
-                                icon = screen.icon,
-                                badgeText = when (screen.route.path()) {
-                                    AppRoute.MainBottomBar.MainTab4.path() -> uiState.badgeText
-                                    else -> null
+                            val badgeText = when (screen.route.path()) {
+                                AppRoute.MainBottomBar.MainTab4.path() -> uiState.badgeText
+                                else -> null
+                            }
+                            NavigationBarItem(
+                                icon = {
+                                    BadgedBox(
+                                        badge = {
+                                            if (!badgeText.isNullOrEmpty()) {
+                                                Badge { Text(badgeText) }
+                                            }
+                                        }
+                                    ) {
+                                        Icon(
+                                            painter = screen.icon.get(),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(32.dp),
+                                        )
+                                    }
                                 },
-                                color = if (isSelected) {
-                                    AppTheme.specificColorScheme.uiAccent
-                                } else {
-                                    AppTheme.specificColorScheme.darkGrey
+                                label = {
+                                    screen.labelKey?.let {
+                                        Text(
+                                            text = LocalStringHolder.current(it),
+                                            style = AppTheme.specificTypography.labelMedium.copy(
+                                                fontSize = 10.sp
+                                            ),
+                                        )
+                                    }
                                 },
-                                onClick = {
-                                    navController.switchTo(screen.route.path())
-                                },
+                                selected = isSelected,
+                                onClick = { navController.switchTo(screen.route.path()) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    unselectedIconColor = AppTheme.specificColorScheme.darkGrey,
+                                    unselectedTextColor = AppTheme.specificColorScheme.textSecondary,
+                                    selectedTextColor = AppTheme.specificColorScheme.uiAccent,
+                                    indicatorColor = containerColor,
+                                ),
                             )
                         }
                     }
@@ -255,34 +271,5 @@ private fun NavController.switchTo(route: String) {
         }
         restoreState = true
         launchSingleTop = true
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun MenuItem(
-    modifier: Modifier = Modifier,
-    badgeText: String? = null,
-    icon: IconValue,
-    color: Color,
-    onClick: () -> Unit,
-) {
-    BadgedBox(
-        badge = {
-            if (!badgeText.isNullOrEmpty()) {
-                Badge { Text(badgeText) }
-            }
-        }
-    ) {
-        IconButton(
-            onClick = onClick,
-        ) {
-            Icon(
-                painter = icon.get(),
-                contentDescription = null,
-                tint = color,
-                modifier = modifier.size(40.dp),
-            )
-        }
     }
 }
