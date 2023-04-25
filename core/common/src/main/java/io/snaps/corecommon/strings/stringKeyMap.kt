@@ -1,7 +1,7 @@
 package io.snaps.corecommon.strings
 
 fun stringKeyMap(key: StringKey): String {
-    return when(key) {
+    return when (key) {
         StringKey.ActionStart -> TODO()
         StringKey.ActionSave -> TODO()
         StringKey.ActionReply -> TODO()
@@ -256,5 +256,10 @@ fun stringKeyMap(key: StringKey): String {
         StringKey.PurchaseDescriptionDailyUnlock -> TODO()
         StringKey.PurchaseMessageDailyUnlock -> TODO()
         StringKey.PurchaseAction -> TODO()
+        StringKey.BottomBarTitleFeed -> TODO()
+        StringKey.BottomBarTitleSearch -> TODO()
+        StringKey.BottomBarTitleTasks -> TODO()
+        StringKey.BottomBarTitleNft -> TODO()
+        StringKey.BottomBarTitleReferrals -> TODO()
     }
 }

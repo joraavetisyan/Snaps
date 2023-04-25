@@ -22,6 +22,9 @@ internal val strings = mapOf(
     key(StringKey.ActionClose) to mapOf(
         SupportedLanguageKey.En to "Close",
     ),
+    key(StringKey.ActionDelete) to mapOf(
+        SupportedLanguageKey.En to "Delete",
+    ),
 
     key(StringKey.ErrorLoadFail) to mapOf(
         SupportedLanguageKey.En to "Error while loading",
@@ -125,6 +128,27 @@ internal val strings = mapOf(
     key(StringKey.OnboardingRewardsAction) to mapOf(
         SupportedLanguageKey.Ru to "ОК",
         SupportedLanguageKey.En to "ОК",
+    ),
+
+    key(StringKey.BottomBarTitleFeed) to mapOf(
+        SupportedLanguageKey.Ru to "Лента",
+        SupportedLanguageKey.En to "Feed",
+    ),
+    key(StringKey.BottomBarTitleSearch) to mapOf(
+        SupportedLanguageKey.Ru to "Поиск",
+        SupportedLanguageKey.En to "Search",
+    ),
+    key(StringKey.BottomBarTitleTasks) to mapOf(
+        SupportedLanguageKey.Ru to "Задания",
+        SupportedLanguageKey.En to "Tasks",
+    ),
+    key(StringKey.BottomBarTitleNft) to mapOf(
+        SupportedLanguageKey.Ru to "Мои NFT",
+        SupportedLanguageKey.En to "My NFTs",
+    ),
+    key(StringKey.BottomBarTitleReferrals) to mapOf(
+        SupportedLanguageKey.Ru to "Рефералы",
+        SupportedLanguageKey.En to "Referrals",
     ),
 
     key(StringKey.RegistrationTitle) to mapOf(
@@ -832,5 +856,18 @@ internal val strings = mapOf(
     ),
     key(StringKey.PurchaseMessageDailyUnlock) to mapOf(
         SupportedLanguageKey.En to "The remaining SNAPS tokens are frozen and stored in a locked wallet.",
+    ),
+
+    key(StringKey.VideoClipActionDelete) to mapOf(
+        SupportedLanguageKey.En to "Delete video",
+        SupportedLanguageKey.Ru to "Удалить видео",
+    ),
+    key(StringKey.VideoClipTitleAction) to mapOf(
+        SupportedLanguageKey.Ru to "Действия по видео",
+        SupportedLanguageKey.En to "Video actions",
+    ),
+    key(StringKey.VideoClipDialogConfirmDeleteMessage) to mapOf(
+        SupportedLanguageKey.Ru to "Вы уверены, что хотите удалить видео?",
+        SupportedLanguageKey.En to "Are you sure you want to delete video?",
     ),
 )

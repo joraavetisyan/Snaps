@@ -11,11 +11,15 @@ import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.Uuid
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.network.Action
-import io.snaps.coredata.source.AppModel
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
+import io.snaps.coreuicompose.uikit.other.ActionColor
+import io.snaps.coreuicompose.uikit.other.ActionData
+import io.snaps.coreuitheme.compose.AppTheme
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +42,9 @@ abstract class VideoFeedViewModel(
     val startPosition: Int = 0,
 ) : SimpleViewModel() {
 
-    private val _uiState = MutableStateFlow(UiState())
+    private val _uiState = MutableStateFlow(
+        UiState(actions = getActions())
+    )
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
@@ -248,6 +254,57 @@ abstract class VideoFeedViewModel(
         }
     }
 
+    fun onMoreClicked() = viewModelScope.launch {
+        bottomBarVisibilitySource.updateState(false)
+        _uiState.update {
+            it.copy(bottomDialogType = BottomDialogType.MoreActions)
+        }
+        _command publish Command.ShowBottomDialog
+    }
+
+    private fun getActions(): List<ActionData> = listOfNotNull(
+        ActionData(
+            text = StringKey.VideoClipActionDelete.textValue(),
+            icon = AppTheme.specificIcons.delete,
+            color = ActionColor.Negative,
+            onClick = { onDeleteClicked() },
+        ).takeIf { videoFeedType is VideoFeedType.User },
+    )
+
+    private fun onDeleteClicked() = viewModelScope.launch {
+        _command publish Command.HideBottomDialog
+        bottomBarVisibilitySource.updateState(true)
+        _uiState.update {
+            it.copy(dialogType = DialogType.ConfirmDeleteVideo)
+        }
+    }
+
+    fun onDeleteConfirmed() {
+        val video = currentVideo ?: return
+        viewModelScope.launch {
+            action.execute {
+                videoFeedRepository.deleteVideo(video.id)
+            }.doOnSuccess {
+                _uiState.update {
+                    it.copy(dialogType = null)
+                }
+                videoFeedRepository.refreshFeed(videoFeedType)
+                /*val videoClips = videoFeedPageModel?.loadedPageItems?.filter {
+                    it.id != video.id
+                }.orEmpty()
+                videoFeedPageModel = videoFeedPageModel?.copy(loadedPageItems = videoClips)
+                Log.e("videoClips", videoFeedPageModel?.loadedPageItems?.size.toString())
+                applyVideoClipToState()*/
+            }
+        }
+    }
+
+    fun onDeleteDismissed() {
+        _uiState.update {
+            it.copy(dialogType = null)
+        }
+    }
+
     data class UiState(
         val isMuted: Boolean = false,
         val profileAvatar: ImageValue? = null,
@@ -255,8 +312,9 @@ abstract class VideoFeedViewModel(
         val comment: TextFieldValue = TextFieldValue(""),
         val videoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
         val commentsUiState: CommentsUiState = CommentsUiState(),
-        val shareDialogItems: List<AppModel> = emptyList(),
         val bottomDialogType: BottomDialogType = BottomDialogType.Comments,
+        val dialogType: DialogType? = null,
+        val actions: List<ActionData>,
     ) {
 
         val commentListSize = commentsUiState.items.filterIsInstance<CommentUiState.Data>().size
@@ -266,6 +324,11 @@ abstract class VideoFeedViewModel(
 
     sealed class BottomDialogType {
         object Comments : BottomDialogType()
+        object MoreActions : BottomDialogType()
+    }
+
+    sealed class DialogType {
+        object ConfirmDeleteVideo : DialogType()
     }
 
     sealed class Command {

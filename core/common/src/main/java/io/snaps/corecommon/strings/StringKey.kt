@@ -9,6 +9,7 @@ enum class StringKey {
     ActionContinue,
     ActionCancel,
     ActionClose,
+    ActionDelete,
 
     MessageConnectionSuccess,
 
@@ -37,6 +38,12 @@ enum class StringKey {
     OnboardingRewardsTitle,
     OnboardingRewardsText,
     OnboardingRewardsAction,
+
+    BottomBarTitleFeed,
+    BottomBarTitleSearch,
+    BottomBarTitleTasks,
+    BottomBarTitleNft,
+    BottomBarTitleReferrals,
 
     RegistrationMessagePrivacyPolicy,
     RegistrationActionPrivacyPolicy,
@@ -296,4 +303,8 @@ enum class StringKey {
     PurchaseDescriptionDailyUnlock,
     PurchaseMessageDailyUnlock,
     PurchaseAction,
+
+    VideoClipActionDelete,
+    VideoClipTitleAction,
+    VideoClipDialogConfirmDeleteMessage,
 }

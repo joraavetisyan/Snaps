@@ -3,14 +3,12 @@ package io.snaps.basefeed.data
 import android.net.Uri
 import androidx.core.net.toFile
 import io.snaps.basefeed.data.model.AddVideoRequestDto
-import io.snaps.basefeed.data.model.ShareInfoRequestDto
 import io.snaps.basefeed.data.model.UserLikedVideoFeedItemResponseDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
-import io.snaps.corecommon.model.SocialNetwork
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.generateCurrentDateTime
 import io.snaps.coredata.coroutine.IoDispatcher
@@ -40,7 +38,7 @@ interface VideoFeedRepository {
 
     suspend fun uploadVideo(uri: Uri, videoId: Uuid): Effect<Completable>
 
-    suspend fun shareInfo(socialNetwork: SocialNetwork): Effect<Completable>
+    suspend fun deleteVideo(videoId: Uuid): Effect<Completable>
 }
 
 class VideoFeedRepositoryImpl @Inject constructor(
@@ -162,11 +160,9 @@ class VideoFeedRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun shareInfo(socialNetwork: SocialNetwork): Effect<Completable> {
+    override suspend fun deleteVideo(videoId: Uuid): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            videoFeedApi.shareInfo(
-                body = ShareInfoRequestDto(socialNetwork)
-            )
+            videoFeedApi.deleteVideo(videoId)
         }
     }
 }

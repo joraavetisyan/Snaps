@@ -13,7 +13,7 @@ import io.snaps.coreuitheme.compose.AppTheme
 
 @Composable
 fun SimpleConfirmDialogUi(
-    title: TextValue,
+    title: TextValue? = null,
     text: TextValue,
     confirmButtonText: TextValue,
     dismissButtonText: TextValue,
@@ -23,12 +23,14 @@ fun SimpleConfirmDialogUi(
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = {
-            Text(
-                text = title.get(),
-                modifier = Modifier.fillMaxWidth(),
-                style = AppTheme.specificTypography.titleLarge,
-                color = AppTheme.specificColorScheme.textPrimary,
-            )
+            title?.let {
+                Text(
+                    text = it.get(),
+                    modifier = Modifier.fillMaxWidth(),
+                    style = AppTheme.specificTypography.titleLarge,
+                    color = AppTheme.specificColorScheme.textPrimary,
+                )
+            }
         },
         text = {
             Text(
