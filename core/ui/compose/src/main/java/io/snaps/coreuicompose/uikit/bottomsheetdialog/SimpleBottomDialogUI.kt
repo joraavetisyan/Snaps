@@ -4,6 +4,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,10 +36,9 @@ fun SimpleBottomDialogUI(
             .inset(insetAllExcludeTop()),
     ) {
         LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(bottom = 16.dp),
         ) {
             stickyHeader {
                 Column(

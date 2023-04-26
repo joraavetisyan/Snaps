@@ -1,5 +1,6 @@
 package io.snaps.featuresearch.presentation.screen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -24,9 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.transform.CircleCropTransformation
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import io.snaps.basefeed.ui.VideoFeedGrid
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
@@ -40,6 +40,7 @@ import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
+import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.listtile.CellTile
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
@@ -87,7 +88,7 @@ fun SearchScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 private fun SearchScreen(
     uiState: SearchViewModel.UiState,
@@ -108,7 +109,7 @@ private fun SearchScreen(
         Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .inset(insetAll()),
+                .inset(insetAllExcludeTop()),
         ) {
             MainHeader(state = headerState)
             SimpleTextField(
@@ -150,7 +151,7 @@ private fun SearchScreen(
                 },
             )
             HorizontalPager(
-                count = pages.size,
+                pageCount = pages.size,
                 state = pagerState,
             ) {
                 when (it) {

@@ -10,6 +10,7 @@ import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
+import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.corecommon.date.toLong
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.State
@@ -44,16 +45,18 @@ import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class TasksViewModel @Inject constructor(
+    mainHeaderHandler: MainHeaderHandler,
     onboardingHandlerDelegate: OnboardingHandler,
+    bottomDialogBarVisibilityHandlerDelegate: BottomDialogBarVisibilityHandler,
     private val action: Action,
-    private val mainHeaderHandler: MainHeaderHandler,
+    private val appRouteProvider: AppRouteProvider,
     private val profileRepository: ProfileRepository,
     private val tasksRepository: TasksRepository,
     private val nftRepository: NftRepository,
-    private val appRouteProvider: AppRouteProvider,
 ) : SimpleViewModel(),
     MainHeaderHandler by mainHeaderHandler,
-    OnboardingHandler by onboardingHandlerDelegate {
+    OnboardingHandler by onboardingHandlerDelegate,
+    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandlerDelegate {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -201,6 +204,26 @@ class TasksViewModel @Inject constructor(
         loadUserNftCollection()
     }
 
+    fun onCurrentTasksFootnoteClick() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(bottomDialog = BottomDialog.CurrentTasksFootnote) }
+            _command publish Command.ShowBottomDialog
+        }
+    }
+
+    fun onHistoryTasksFootnoteClick() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(bottomDialog = BottomDialog.HistoryTasksFootnote) }
+            _command publish Command.ShowBottomDialog
+        }
+    }
+
+    fun onFootnoteStartClicked() {
+        viewModelScope.launch {
+            _command publish Command.HideBottomDialog
+        }
+    }
+
     data class UiState(
         val current: List<TaskTileState> = List(6) { TaskTileState.Shimmer },
         val history: HistoryTasksUiState = HistoryTasksUiState(),
@@ -208,9 +231,17 @@ class TasksViewModel @Inject constructor(
         val userNftCollection: List<CollectionItemState> = List(6) { CollectionItemState.Shimmer },
         val totalEnergy: Int = 0,
         val totalEnergyProgress: Int = 0,
+        val bottomDialog: BottomDialog = BottomDialog.CurrentTasksFootnote,
     )
 
+    enum class BottomDialog {
+        CurrentTasksFootnote,
+        HistoryTasksFootnote,
+    }
+
     sealed class Command {
+        object ShowBottomDialog : Command()
+        object HideBottomDialog : Command()
         data class OpenTaskDetailsScreen(val args: AppRoute.TaskDetails.Args) : Command()
     }
 }

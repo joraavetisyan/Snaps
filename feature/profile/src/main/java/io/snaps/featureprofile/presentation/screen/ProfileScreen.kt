@@ -1,7 +1,6 @@
 package io.snaps.featureprofile.presentation.screen
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +41,8 @@ import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.tools.inset
+import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.button.SimpleChip
 import io.snaps.coreuicompose.uikit.duplicate.ActionIconData
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
@@ -89,7 +90,7 @@ fun ProfileScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProfileScreen(
     uiState: ProfileViewModel.UiState,
@@ -117,8 +118,7 @@ private fun ProfileScreen(
                 title = {
                     Text(text = title)
                 },
-                navigationIcon = (AppTheme.specificIcons.back to onBackClicked)
-                    .takeIf { uiState.userType == ProfileViewModel.UserType.Other },
+                navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 scrollBehavior = scrollBehavior,
                 actions = listOfNotNull(
                     ActionIconData(
@@ -155,7 +155,9 @@ private fun ProfileScreen(
         },
     ) { paddingValues ->
         Column(
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier
+                .padding(paddingValues)
+                .inset(insetAllExcludeTop()),
         ) {
             uiState.userInfoTileState.Content(modifier = Modifier)
             Spacer(modifier = Modifier.height(12.dp))

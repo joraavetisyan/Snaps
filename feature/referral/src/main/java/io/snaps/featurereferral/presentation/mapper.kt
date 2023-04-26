@@ -4,14 +4,17 @@ import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
-import io.snaps.featurereferral.presentation.viewmodel.ReferralsUiState
+import io.snaps.featurereferral.presentation.screen.ReferralsTileState
 
-fun State<List<UserInfoModel>>.toReferralsUiState(): ReferralsUiState {
+fun State<List<UserInfoModel>>.toReferralsUiState(
+    onReferralClick: (UserInfoModel) -> Unit,
+    onReloadClick: () -> Unit,
+): ReferralsTileState {
     return when (this) {
-        is Loading -> ReferralsUiState.Shimmer
+        is Loading -> ReferralsTileState.Shimmer
         is Effect -> if (isSuccess) {
-            if (requireData.isEmpty()) ReferralsUiState.Empty
-            else ReferralsUiState.Data(requireData)
-        } else ReferralsUiState.Error
+            if (requireData.isEmpty()) ReferralsTileState.Empty
+            else ReferralsTileState.Data(requireData, onReferralClick)
+        } else ReferralsTileState.Error(onReloadClick)
     }
 }

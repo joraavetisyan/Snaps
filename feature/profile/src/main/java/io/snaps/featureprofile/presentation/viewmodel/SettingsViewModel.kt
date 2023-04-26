@@ -1,13 +1,11 @@
 package io.snaps.featureprofile.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import io.snaps.coredata.network.Action
-import io.snaps.coreui.viewmodel.SimpleViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
@@ -21,10 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val action: Action,
     private val sessionRepository: SessionRepository,
-    mainHeaderHandlerDelegate: MainHeaderHandler,
-) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
+) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(
         UiState(items = getItems())
@@ -34,7 +30,8 @@ class SettingsViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
-    fun onDeleteAccountClicked() { /*todo*/ }
+    fun onDeleteAccountClicked() { /*todo*/
+    }
 
     fun onLogoutClicked() {
         sessionRepository.onLogout()
@@ -64,13 +61,13 @@ class SettingsViewModel @Inject constructor(
             rightPart = RightPart.NavigateNextIcon(),
             clickListener = { onWalletItemClicked() },
         ),
-        CellTileState(
+        /*CellTileState(
             middlePart = MiddlePart.Data(
                 value = StringKey.SettingsTitleReferralProgram.textValue(),
             ),
             rightPart = RightPart.NavigateNextIcon(),
             clickListener = { onReferralProgramItemClicked() },
-        ),
+        ),*/
         CellTileState(
             middlePart = MiddlePart.Data(
                 value = StringKey.SettingsTitleSocialNetworks.textValue(),
@@ -94,7 +91,6 @@ class SettingsViewModel @Inject constructor(
     sealed class Command {
         object OpenWalletSettingsScreen : Command()
         object OpenReferralProgramScreen : Command()
-
         object OpenSocialNetworksScreen : Command()
         object OpenAboutProjectScreen : Command()
     }

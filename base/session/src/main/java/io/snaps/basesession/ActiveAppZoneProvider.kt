@@ -21,6 +21,7 @@ interface ActiveAppZoneProvider {
     fun updateState(state: State)
 
     sealed class State {
+        object Idle : State()
         object Registration : State()
         object Authorized : State()
     }

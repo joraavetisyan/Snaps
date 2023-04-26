@@ -9,7 +9,7 @@ import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseprofile.data.ProfileRepository
-import io.snaps.basesources.BottomBarVisibilitySource
+import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.Uuid
@@ -33,14 +33,15 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 abstract class VideoFeedViewModel(
+    bottomDialogBarVisibilityHandlerDelegate: BottomDialogBarVisibilityHandler,
     private val videoFeedType: VideoFeedType,
     private val action: Action,
     private val videoFeedRepository: VideoFeedRepository,
     private val profileRepository: ProfileRepository,
     private val commentRepository: CommentRepository,
-    private val bottomBarVisibilitySource: BottomBarVisibilitySource,
     val startPosition: Int = 0,
-) : SimpleViewModel() {
+) : SimpleViewModel(),
+    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandlerDelegate {
 
     private val _uiState = MutableStateFlow(
         UiState(actions = getActions())
@@ -97,7 +98,8 @@ abstract class VideoFeedViewModel(
     }
 
     fun onScrolledToPosition(position: Int) {
-        val current = _uiState.value.videoFeedUiState.items.getOrNull(position) as? VideoClipUiState.Data
+        val current =
+            _uiState.value.videoFeedUiState.items.getOrNull(position) as? VideoClipUiState.Data
         val videoClip = current?.clip ?: return
         currentVideo = videoClip
         onViewed(videoClip)
@@ -135,10 +137,6 @@ abstract class VideoFeedViewModel(
 
     private fun onCommentListEndReaching(videoId: Uuid) {
         viewModelScope.launch { action.execute { commentRepository.loadNextCommentPage(videoId) } }
-    }
-
-    fun onBottomSheetHidden() {
-        bottomBarVisibilitySource.updateState(true)
     }
 
     fun onCommentInputBottomSheetHidden() {
@@ -182,7 +180,6 @@ abstract class VideoFeedViewModel(
     }
 
     fun onCommentClicked(clipModel: VideoClipModel) {
-        bottomBarVisibilitySource.updateState(false)
         _uiState.update {
             it.copy(bottomDialogType = BottomDialogType.Comments)
         }
@@ -255,7 +252,6 @@ abstract class VideoFeedViewModel(
     }
 
     fun onMoreClicked() = viewModelScope.launch {
-        bottomBarVisibilitySource.updateState(false)
         _uiState.update {
             it.copy(bottomDialogType = BottomDialogType.MoreActions)
         }
@@ -273,7 +269,6 @@ abstract class VideoFeedViewModel(
 
     private fun onDeleteClicked() = viewModelScope.launch {
         _command publish Command.HideBottomDialog
-        bottomBarVisibilitySource.updateState(true)
         _uiState.update {
             it.copy(dialogType = DialogType.ConfirmDeleteVideo)
         }

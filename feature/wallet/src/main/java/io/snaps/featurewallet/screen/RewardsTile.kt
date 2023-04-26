@@ -57,16 +57,16 @@ fun RewardsTile(
     when (data) {
         is RewardsTileState.Unlocked -> RewardsCard(
             modifier = modifier,
-            title = StringKey.WalletTitleAvailableRewards.textValue(),
-            description = StringKey.WalletDescriptionAvailableRewards.textValue(),
+            title = StringKey.RewardsTitleAvailableRewards.textValue(),
+            description = StringKey.RewardsMessageAvailableRewards.textValue(),
             coin = data.unlockedTokensBalance,
             coinInUsd = data.balanceInUsd,
             imageValue = ImageValue.ResImage(R.drawable.img_available_rewards_background)
         )
         is RewardsTileState.Locked -> RewardsCard(
             modifier = modifier,
-            title = StringKey.WalletTitleLockedRewards.textValue(),
-            description = StringKey.WalletDescriptionLockedRewards.textValue(),
+            title = StringKey.RewardsTitleLockedRewards.textValue(),
+            description = StringKey.RewardsMessageLockedRewards.textValue(),
             coin = data.lockedTokensBalance,
             coinInUsd = data.balanceInUsd,
             imageValue = ImageValue.ResImage(R.drawable.img_locked_rewards_background)

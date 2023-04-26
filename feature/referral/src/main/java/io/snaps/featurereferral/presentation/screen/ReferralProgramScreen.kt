@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -41,12 +39,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,9 +56,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import coil.transform.CircleCropTransformation
 import io.snaps.baseprofile.data.MainHeaderHandler
-import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.R
@@ -73,31 +67,28 @@ import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.tools.gradientBackground
 import io.snaps.coreuicompose.tools.inset
-import io.snaps.coreuicompose.tools.insetAll
+import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialogItem
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContentLoader
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
-import io.snaps.coreuicompose.uikit.dialog.DiamondDialogButtonData
 import io.snaps.coreuicompose.uikit.dialog.DiamondDialog
+import io.snaps.coreuicompose.uikit.dialog.DiamondDialogButtonData
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
-import io.snaps.coreuicompose.uikit.listtile.CellTileState
-import io.snaps.coreuicompose.uikit.listtile.EmptyListTileState
-import io.snaps.coreuicompose.uikit.listtile.LeftPart
-import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
-import io.snaps.coreuicompose.uikit.listtile.MiddlePart
-import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.coreuicompose.uikit.other.TitleSlider
-import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
+import io.snaps.coreuicompose.uikit.status.FootnoteUi
+import io.snaps.coreuicompose.uikit.status.InfoBlock
 import io.snaps.coreuicompose.uikit.text.MiddleEllipsisText
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurereferral.ScreenNavigator
 import io.snaps.featurereferral.presentation.viewmodel.ReferralProgramViewModel
-import io.snaps.featurereferral.presentation.viewmodel.ReferralsUiState
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -116,13 +107,10 @@ fun ReferralProgramScreen(
         skipHalfExpanded = true,
     )
 
-    LaunchedEffect(Unit) {
-        snapshotFlow { sheetState.currentValue }.collect {
-            if (it == ModalBottomSheetValue.Hidden) {
-                viewModel.onBottomSheetHidden()
-            }
-        }
-    }
+    ModalBottomSheetTargetStateListener(
+        sheetState = sheetState,
+        onStateToChange = viewModel::onBottomDialogStateChange,
+    )
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -155,23 +143,21 @@ fun ReferralProgramScreen(
                     onInviteCodeValueChanged = viewModel::onInviteCodeValueChanged,
                 )
                 ReferralProgramViewModel.BottomDialog.ReferralQr -> TODO()
-                ReferralProgramViewModel.BottomDialog.ReferralProgram -> {
-                    FootnoteBottomDialog(
-                        FootnoteBottomDialogItem(
-                            image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
-                            title = "Share your referral code/link".textValue(),
-                            text = "Use your referral code or referral link to invite friends to Snaps. The more referrals you have, the more you earn every day! For a direct referral, you get 5% of the level of his rewards every day! For an indirect referral, you get 3% of the level of his rewards every day!".textValue(),
-                        ),
-                        FootnoteBottomDialogItem(
-                            image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
-                            title = "Get an increase in daily earnings".textValue(),
-                            text = "As soon as you have an impressive number of referrals, you will receive a tangible increase in your daily income in addition to the increase from the earnings of the referrals themselves.".textValue(),
-                            onClick = {},
-                            buttonText = "Referral program".textValue(),
-                        )
+                ReferralProgramViewModel.BottomDialog.ReferralProgramFootnote -> FootnoteBottomDialog(
+                    FootnoteBottomDialogItem(
+                        image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+                        title = StringKey.ReferralProgramDialogTitleFootnoteMain1.textValue(),
+                        text = StringKey.ReferralProgramDialogMessageFootnoteMain1.textValue(),
+                    ),
+                    FootnoteBottomDialogItem(
+                        image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+                        title = StringKey.ReferralProgramDialogTitleFootnoteMain2.textValue(),
+                        text = StringKey.ReferralProgramDialogMessageFootnoteMain2.textValue(),
+                        onClick = {},
+                        buttonText = StringKey.ReferralProgramDialogActionFootnoteMain2.textValue(),
                     )
-                }
-                ReferralProgramViewModel.BottomDialog.ReferralsInvited -> TODO()
+                )
+                ReferralProgramViewModel.BottomDialog.ReferralsInvitedFootnote -> ReferralsInvitedBottomDialog()
             }
         },
     ) {
@@ -194,9 +180,8 @@ fun ReferralProgramScreen(
             onInviteUserButtonClicked = viewModel::onInviteUserButtonClicked,
             onDismissRequest = viewModel::onDismissRequest,
             onDialogCloseButtonClicked = viewModel::onCloseDialogClicked,
-            onReferralClick = viewModel::onReferralClick,
-            onReferralsReloadClick = viewModel::onReferralsReloadClick,
             onReferralProgramFootnoteClick = viewModel::onReferralProgramFootnoteClick,
+            onReferralsInvitedFootnoteClick = viewModel::onReferralsInvitedFootnoteClick,
         )
     }
 }
@@ -212,9 +197,8 @@ private fun ReferralProgramScreen(
     onInviteUserButtonClicked: () -> Unit,
     onDismissRequest: () -> Unit,
     onDialogCloseButtonClicked: () -> Unit,
-    onReferralClick: (UserInfoModel) -> Unit,
-    onReferralsReloadClick: () -> Unit,
     onReferralProgramFootnoteClick: () -> Unit,
+    onReferralsInvitedFootnoteClick: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -224,16 +208,15 @@ private fun ReferralProgramScreen(
         Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .inset(insetAll()),
+                .inset(insetAllExcludeTop()),
         ) {
             MainHeader(state = headerState)
 
             val pagerState = rememberPagerState()
             val coroutineScope = rememberCoroutineScope()
 
-            // todo strings
-            val current = "Main".textValue()
-            val history = "My referrals".textValue()
+            val current = StringKey.ReferralProgramTitleSliderMain.textValue()
+            val history = StringKey.ReferralProgramTitleSliderMyReferrals.textValue()
             TitleSlider(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 items = listOf(current, history),
@@ -252,9 +235,8 @@ private fun ReferralProgramScreen(
                 onReferralCodeClicked = onReferralCodeClicked,
                 onReferralLinkClicked = onReferralLinkClicked,
                 onInviteUserButtonClicked = onInviteUserButtonClicked,
-                onReferralClick = onReferralClick,
-                onReferralsReloadClick = onReferralsReloadClick,
                 onReferralProgramFootnoteClick = onReferralProgramFootnoteClick,
+                onReferralsInvitedFootnoteClick = onReferralsInvitedFootnoteClick,
             )
         }
 
@@ -293,9 +275,8 @@ private fun Body(
     onReferralCodeClicked: () -> Unit,
     onReferralLinkClicked: () -> Unit,
     onInviteUserButtonClicked: () -> Unit,
-    onReferralClick: (UserInfoModel) -> Unit,
-    onReferralsReloadClick: () -> Unit,
     onReferralProgramFootnoteClick: () -> Unit,
+    onReferralsInvitedFootnoteClick: () -> Unit,
 ) {
     HorizontalPager(
         pageCount = 2,
@@ -308,9 +289,9 @@ private fun Body(
             when (it) {
                 0 -> {
                     FootnoteUi(
-                        title = StringKey.ReferralProgramTitle.textValue(),
-                        description = "Invite new users and earn even more rewards every day!".textValue(),
-                        action = "How it works?".textValue(),
+                        title = StringKey.ReferralProgramTitleFootnoteMain.textValue(),
+                        description = StringKey.ReferralProgramMessageFootnoteMain.textValue(),
+                        action = StringKey.ActionHowItWorks.textValue(),
                         onClick = onReferralProgramFootnoteClick,
                     )
                     Main(
@@ -323,56 +304,14 @@ private fun Body(
                 }
                 1 -> {
                     FootnoteUi(
-                        title = "Invited referrals".textValue(),
-                        description = "Here you can see all invited referrals. View their activity, the rank and number of their NFTs, and their income growth through the referral program.".textValue(),
-                        action = "How it works?".textValue(),
-                        onClick = {},
+                        title = StringKey.ReferralProgramTitleFootnoteMyReferrals.textValue(),
+                        description = StringKey.ReferralProgramMessageFootnoteMyReferrals.textValue(),
+                        action = StringKey.ActionHowItWorks.textValue(),
+                        onClick = onReferralsInvitedFootnoteClick,
                     )
-                    MyReferrals(
-                        uiState = uiState,
-                        onReferralClick = onReferralClick,
-                        onReferralsReloadClick = onReferralsReloadClick,
-                    )
+                    uiState.referralsTileState.Content(modifier = Modifier)
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun FootnoteUi(
-    title: TextValue,
-    description: TextValue,
-    action: TextValue,
-    onClick: () -> Unit,
-) {
-    Column(
-        modifier = Modifier.padding(12.dp),
-    ) {
-        Text(
-            text = title.get(),
-            style = AppTheme.specificTypography.headlineLarge,
-        )
-        Text(
-            text = description.get(),
-            style = AppTheme.specificTypography.bodyMedium,
-        )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.defaultTileRipple(onClick = onClick),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Icon(
-                painter = AppTheme.specificIcons.question.get(),
-                contentDescription = null,
-                tint = Color.Unspecified,
-                modifier = Modifier.size(24.dp),
-            )
-            Text(
-                text = action.get(),
-                style = AppTheme.specificTypography.titleSmall,
-                color = AppTheme.specificColorScheme.textLink,
-            )
         }
     }
 }
@@ -426,61 +365,6 @@ private fun Main(
             onClick = onInviteUserButtonClicked,
         ) {
             SimpleButtonContent(text = StringKey.ReferralProgramActionInviteUser.textValue())
-        }
-    }
-}
-
-@Composable
-private fun MyReferrals(
-    uiState: ReferralProgramViewModel.UiState,
-    onReferralClick: (UserInfoModel) -> Unit,
-    onReferralsReloadClick: () -> Unit,
-) {
-    when (uiState.referralsUiState) {
-        ReferralsUiState.Shimmer -> {
-            Column {
-                repeat(3) {
-                    CellTileState(
-                        leftPart = LeftPart.Shimmer,
-                        middlePart = MiddlePart.Shimmer(
-                            needValueLine = true,
-                        ),
-                        rightPart = RightPart.Shimmer(needLine = true),
-                    ).Content(modifier = Modifier)
-                }
-            }
-        }
-        is ReferralsUiState.Data -> {
-            LazyColumn {
-                items(uiState.referralsUiState.values, key = { it.entityId }) { model ->
-                    CellTileState(
-                        leftPart = model.avatar?.let {
-                            LeftPart.Logo(it) {
-                                transformations(CircleCropTransformation())
-                            }
-                        },
-                        middlePart = MiddlePart.Data(
-                            value = model.name.textValue(),
-                        ),
-                        rightPart = RightPart.ActionIcon(
-                            source = AppTheme.specificIcons.forward.toImageValue(),
-                            clickListener = { onReferralClick(model) },
-                        ),
-                    ).Content(modifier = Modifier)
-                }
-            }
-        }
-        ReferralsUiState.Empty -> {
-            // todo strings
-            EmptyListTileState(
-                image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
-                title = "No referrals yet".textValue(),
-                message = "You haven't invited any user yet.".textValue(),
-            ).Content(modifier = Modifier)
-        }
-        ReferralsUiState.Error -> {
-            MessageBannerState.defaultState(onClick = onReferralsReloadClick)
-                .Content(modifier = Modifier)
         }
     }
 }
@@ -676,5 +560,100 @@ private fun ReferralCodeDialog(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ReferralsInvitedBottomDialog() {
+    SimpleBottomDialogUI {
+        item {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.padding(horizontal = 16.dp)
+            ) {
+                Image(
+                    painter = ImageValue.ResImage(R.drawable.img_direct_referral_2).get(),
+                    contentDescription = null,
+                    modifier = Modifier.size(320.dp),
+                )
+                Text(
+                    text = StringKey.ReferralProgramDialogTitleFootnoteMyReferrals.textValue().get(),
+                    style = AppTheme.specificTypography.titleLarge,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Text(
+                    text = StringKey.ReferralProgramDialogMessageFootnoteMyReferrals.textValue().get(),
+                    style = AppTheme.specificTypography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                InfoBlock(message = StringKey.ReferralProgramDialogMessageFootnoteMyReferralsDisclaimer.textValue())
+                ReferralLevelBlock(
+                    title = StringKey.ReferralProgramDialogTitleFootnoteMyReferralsLevel1.textValue(),
+                    text = StringKey.ReferralProgramDialogMessageFootnoteMyReferralsLevel1.textValue(),
+                    image = ImageValue.ResImage(R.drawable.img_diamonds),
+                    backgroundColor = AppTheme.specificColorScheme.uiSystemOrange,
+                )
+                ReferralLevelBlock(
+                    title = StringKey.ReferralProgramDialogTitleFootnoteMyReferralsLevel2.textValue(),
+                    text = StringKey.ReferralProgramDialogMessageFootnoteMyReferralsLevel2.textValue(),
+                    image = ImageValue.ResImage(R.drawable.img_diamonds),
+                    backgroundColor = AppTheme.specificColorScheme.uiSystemBlue,
+                )
+                ReferralLevelBlock(
+                    title = StringKey.ReferralProgramDialogTitleFootnoteMyReferralsLevel3.textValue(),
+                    text = StringKey.ReferralProgramDialogMessageFootnoteMyReferralsLevel3.textValue(),
+                    image = ImageValue.ResImage(R.drawable.img_diamonds),
+                    backgroundColor = AppTheme.specificColorScheme.uiSystemPurple,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ReferralLevelBlock(
+    title: TextValue,
+    text: TextValue,
+    image: ImageValue,
+    backgroundColor: Color,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape = AppTheme.shapes.medium)
+            .gradientBackground(
+                colors = listOf(
+                    backgroundColor,
+                    AppTheme.specificColorScheme.uiContentBg,
+                ),
+                angle = 0f,
+            )
+            .padding(all = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = title.get(),
+                style = AppTheme.specificTypography.titleSmall,
+                color = AppTheme.specificColorScheme.white,
+            )
+            Text(
+                text = text.get(),
+                style = AppTheme.specificTypography.labelSmall,
+                color = AppTheme.specificColorScheme.white,
+            )
+        }
+        Image(
+            painter = image.get(),
+            contentDescription = null,
+            modifier = Modifier.size(48.dp),
+        )
     }
 }

@@ -18,13 +18,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
-import io.snaps.coreuicompose.uikit.listtile.CellTileState
-import io.snaps.coreuicompose.uikit.listtile.LeftPart
-import io.snaps.coreuicompose.uikit.listtile.MiddlePart
-import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
+import io.snaps.coreuicompose.uikit.other.ShimmerTileLine
+import io.snaps.coreuitheme.compose.AppTheme
+
+object MainHeaderConfig {
+
+    val AvatarSize = 44.dp
+}
 
 sealed class MainHeaderState {
 
@@ -32,7 +37,7 @@ sealed class MainHeaderState {
     open val onWalletClicked: () -> Unit = {}
 
     data class Data(
-        val profileImage: ImageValue?,
+        val profileImage: ImageValue,
         val energy: String,
         val locked: String,
         val unlocked: String,
@@ -65,15 +70,35 @@ private fun Data(
     modifier: Modifier,
     state: MainHeaderState.Data
 ) {
-    Content(
-        modifier = modifier,
-        profileImage = state.profileImage,
-        energy = state.energy,
-        locked = state.locked,
-        unlocked = state.unlocked,
-        onProfileClicked = state.onProfileClicked,
-        onWalletClicked = state.onWalletClicked,
-    )
+    Container(modifier) {
+        Avatar(
+            onProfileClicked = state.onProfileClicked,
+            imageValue = state.profileImage,
+        )
+        Spacer(Modifier.weight(1f))
+        EnergyWidget(state.energy)
+        Spacer(Modifier.width(4.dp))
+        ValueWidget(
+            ImageValue.ResImage(R.drawable.img_coin_locked) to state.locked,
+            ImageValue.ResImage(R.drawable.img_coin_gold) to state.unlocked,
+            modifier = Modifier.defaultTileRipple(onClick = state.onWalletClicked),
+        )
+    }
+}
+
+@Composable
+private fun Avatar(onProfileClicked: () -> Unit, imageValue: ImageValue) {
+    Card(
+        shape = CircleShape,
+        modifier = Modifier.defaultTileRipple(onClick = onProfileClicked),
+    ) {
+        Image(
+            painter = imageValue.get(),
+            contentDescription = null,
+            modifier = Modifier.size(MainHeaderConfig.AvatarSize),
+            contentScale = ContentScale.Crop,
+        )
+    }
 }
 
 @Composable
@@ -81,61 +106,32 @@ private fun Error(
     modifier: Modifier,
     state: MainHeaderState
 ) {
-    Content(
-        modifier = modifier,
-        profileImage = null,
-        energy = null,
-        locked = null,
-        unlocked = null,
-        onProfileClicked = state.onProfileClicked,
-        onWalletClicked = state.onWalletClicked,
-    )
+    Container(modifier) {
+        Avatar(
+            onProfileClicked = state.onProfileClicked,
+            imageValue = ImageValue.ResImage(R.drawable.img_welcome),
+        )
+        Spacer(Modifier.weight(1f))
+        ValueWidget(null to StringKey.Error.textValue().get().text)
+        Spacer(Modifier.width(4.dp))
+        ValueWidget(
+            null to StringKey.Error.textValue().get().text,
+            modifier = Modifier.defaultTileRipple(onClick = state.onWalletClicked),
+        )
+    }
 }
 
 @Composable
 private fun Shimmer(modifier: Modifier) {
     Container(modifier = modifier) {
-        CellTileState.Shimmer(
-            leftPart = LeftPart.Shimmer,
-            middlePart = MiddlePart.Shimmer(),
-            rightPart = RightPart.Shimmer(needBoldLine = true),
-        ).Content(modifier = Modifier)
-    }
-}
-
-@Composable
-private fun Content(
-    modifier: Modifier,
-    profileImage: ImageValue?,
-    energy: String?,
-    locked: String?,
-    unlocked: String?,
-    onProfileClicked: () -> Unit,
-    onWalletClicked: () -> Unit,
-) {
-    Container(modifier) {
-        Card(
-            shape = CircleShape,
-            modifier = Modifier
-                .defaultTileRipple(onClick = onProfileClicked),
-        ) {
-            if (profileImage != null) Image(
-                painter = profileImage.get(),
-                contentDescription = null,
-                modifier = Modifier.size(44.dp),
-                contentScale = ContentScale.Crop,
-            ) else ShimmerTileCircle(
-                size = 44.dp,
-            )
-        }
-        Spacer(Modifier.weight(1f))
-        EnergyWidget(energy.orEmpty())
-        Spacer(Modifier.width(4.dp))
-        ValueWidget(
-            ImageValue.ResImage(R.drawable.img_coin_locked) to locked.orEmpty(),
-            ImageValue.ResImage(R.drawable.img_coin_gold) to unlocked.orEmpty(),
-            modifier = Modifier.defaultTileRipple(onClick = onWalletClicked),
+        ShimmerTileCircle(
+            modifier = Modifier.padding(AppTheme.specificValues.ripple_inner_padding),
+            size = MainHeaderConfig.AvatarSize,
         )
+        Spacer(Modifier.weight(1f))
+        ShimmerTileLine(width = 50.dp, height = 32.dp)
+        Spacer(Modifier.width(6.dp))
+        ShimmerTileLine(width = 82.dp, height = 32.dp)
     }
 }
 
@@ -158,7 +154,7 @@ private fun Container(
 private fun Preview() {
     MainHeader(
         state = MainHeaderState.Data(
-            profileImage = null,
+            profileImage = ImageValue.ResImage(R.drawable.img_welcome),
             energy = "12",
             unlocked = "12",
             locked = "12",

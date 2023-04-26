@@ -25,14 +25,21 @@ internal val strings = mapOf(
     key(StringKey.ActionDelete) to mapOf(
         SupportedLanguageKey.En to "Delete",
     ),
-
-    key(StringKey.ErrorLoadFail) to mapOf(
-        SupportedLanguageKey.En to "Error while loading",
+    key(StringKey.ActionHowItWorks) to mapOf(
+        SupportedLanguageKey.En to "How it works?",
     ),
 
     key(StringKey.MessageConnectionSuccess) to mapOf(
         SupportedLanguageKey.Ru to "Соединение восстановлено",
         SupportedLanguageKey.En to "Connection restored",
+    ),
+
+    key(StringKey.Error) to mapOf(
+        SupportedLanguageKey.En to "Error",
+        SupportedLanguageKey.Ru to "Ошибка",
+    ),
+    key(StringKey.ErrorLoadFail) to mapOf(
+        SupportedLanguageKey.En to "Error while loading",
     ),
     key(StringKey.ErrorConnection) to mapOf(
         SupportedLanguageKey.Ru to "Отсутствует подключение к сети",
@@ -335,7 +342,7 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Cancel",
     ),
 
-    key(StringKey.ReferralProgramTitle) to mapOf(
+    key(StringKey.ReferralProgramTitleFootnoteMain) to mapOf(
         SupportedLanguageKey.En to "Referral program",
     ),
 
@@ -349,8 +356,17 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Search",
     ),
 
-    key(StringKey.ReferralProgramTitle) to mapOf(
+    key(StringKey.ReferralProgramTitleSliderMain) to mapOf(
+        SupportedLanguageKey.En to "Main",
+    ),
+    key(StringKey.ReferralProgramTitleSliderMyReferrals) to mapOf(
+        SupportedLanguageKey.En to "My referrals",
+    ),
+    key(StringKey.ReferralProgramTitleFootnoteMain) to mapOf(
         SupportedLanguageKey.En to "Referral program",
+    ),
+    key(StringKey.ReferralProgramTitleFootnoteMyReferrals) to mapOf(
+        SupportedLanguageKey.En to "Invited referrals",
     ),
     key(StringKey.ReferralProgramTitleEnterCode) to mapOf(
         SupportedLanguageKey.En to "Enter ref. the code",
@@ -403,6 +419,54 @@ internal val strings = mapOf(
     key(StringKey.ReferralProgramMessageReferralLinkCopied) to mapOf(
         SupportedLanguageKey.En to "Referral link copied!",
     ),
+    key(StringKey.ReferralProgramMessageFootnoteMain) to mapOf(
+        SupportedLanguageKey.En to "Invite new users and earn even more rewards every day!",
+    ),
+    key(StringKey.ReferralProgramMessageFootnoteMyReferrals) to mapOf(
+        SupportedLanguageKey.En to "Here you can see all invited referrals. View their activity, the rank and number of their NFTs, and their income growth through the referral program.",
+    ),
+    key(StringKey.ReferralProgramDialogTitleFootnoteMain1) to mapOf(
+        SupportedLanguageKey.En to "Share your referral code/link",
+    ),
+    key(StringKey.ReferralProgramDialogMessageFootnoteMain1) to mapOf(
+        SupportedLanguageKey.En to "Use your referral code or referral link to invite friends to Snaps. The more referrals you have, the more you earn every day! For a direct referral, you get 5%% of the level of his rewards every day! For an indirect referral, you get 3%% of the level of his rewards every day!",
+    ),
+    key(StringKey.ReferralProgramDialogTitleFootnoteMain2) to mapOf(
+        SupportedLanguageKey.En to "Get an increase in daily earnings",
+    ),
+    key(StringKey.ReferralProgramDialogMessageFootnoteMain2) to mapOf(
+        SupportedLanguageKey.En to "As soon as you have an impressive number of referrals, you will receive a tangible increase in your daily income in addition to the increase from the earnings of the referrals themselves.",
+    ),
+    key(StringKey.ReferralProgramDialogActionFootnoteMain2) to mapOf(
+        SupportedLanguageKey.En to "Referral program",
+    ),
+    key(StringKey.ReferralProgramDialogTitleFootnoteMyReferrals) to mapOf(
+        SupportedLanguageKey.En to "Get a boost in rewards for referred friends.",
+    ),
+    key(StringKey.ReferralProgramDialogMessageFootnoteMyReferrals) to mapOf(
+        SupportedLanguageKey.En to "Invite friends and get an increase in rewards daily. After achieving such results - your daily income will be increased",
+    ),
+    key(StringKey.ReferralProgramDialogMessageFootnoteMyReferralsDisclaimer) to mapOf(
+        SupportedLanguageKey.En to "The increase in referral rewards is valid only for active referrals who log into Snaps every day and collect at least 60 energy points.",
+    ),
+    key(StringKey.ReferralProgramDialogTitleFootnoteMyReferralsLevel1) to mapOf(
+        SupportedLanguageKey.En to "20 Invited Friends",
+    ),
+    key(StringKey.ReferralProgramDialogMessageFootnoteMyReferralsLevel1) to mapOf(
+        SupportedLanguageKey.En to "Daily increase - 1%%",
+    ),
+    key(StringKey.ReferralProgramDialogTitleFootnoteMyReferralsLevel2) to mapOf(
+        SupportedLanguageKey.En to "50 Invited Friends",
+    ),
+    key(StringKey.ReferralProgramDialogMessageFootnoteMyReferralsLevel2) to mapOf(
+        SupportedLanguageKey.En to "Daily increase - 2%%",
+    ),
+    key(StringKey.ReferralProgramDialogTitleFootnoteMyReferralsLevel3) to mapOf(
+        SupportedLanguageKey.En to "100 Invited Friends",
+    ),
+    key(StringKey.ReferralProgramDialogMessageFootnoteMyReferralsLevel3) to mapOf(
+        SupportedLanguageKey.En to "Daily increase - 3%%",
+    ),
 
     key(StringKey.SettingsTitle) to mapOf(
         SupportedLanguageKey.En to "Settings",
@@ -442,23 +506,23 @@ internal val strings = mapOf(
     key(StringKey.TasksTitleSlideHistory) to mapOf(
         SupportedLanguageKey.En to "History",
     ),
-    key(StringKey.TasksTitleCurrent) to mapOf(
-        SupportedLanguageKey.En to "Daily quests",
+    key(StringKey.TasksTitleFootnoteCurrent) to mapOf(
+        SupportedLanguageKey.En to "Complete the task",
     ),
-    key(StringKey.TasksTitleHistory) to mapOf(
+    key(StringKey.TasksTitleFootnoteHistory) to mapOf(
         SupportedLanguageKey.En to "History",
-    ),
-    key(StringKey.TasksTitleMessageCurrent) to mapOf(
-        SupportedLanguageKey.En to "Complete daily tasks to earn energy, which is converted into tokens",
-    ),
-    key(StringKey.TasksTitleMessageHistory) to mapOf(
-        SupportedLanguageKey.En to "Here you can see the history of your tasks and your progress.",
     ),
     key(StringKey.TasksTitleRemainingTime) to mapOf(
         SupportedLanguageKey.En to "Until the end of the round",
     ),
     key(StringKey.TaskFieldJobCompleted) to mapOf(
         SupportedLanguageKey.En to "Job completed successfully",
+    ),
+    key(StringKey.TasksMessageFootnoteCurrent) to mapOf(
+        SupportedLanguageKey.En to "To get the maximum reward, you need to complete tasks and collect 100 energy points.",
+    ),
+    key(StringKey.TasksMessageFootnoteHistory) to mapOf(
+        SupportedLanguageKey.En to "Here you can see the history of your tasks and your progress.",
     ),
     key(StringKey.TasksMessageTaskCounted) to mapOf(
         SupportedLanguageKey.En to "Assignment credited",
@@ -507,6 +571,24 @@ internal val strings = mapOf(
     ),
     key(StringKey.TasksFieldSocialPostRejected) to mapOf(
         SupportedLanguageKey.En to "Assignment rejected",
+    ),
+    key(StringKey.TasksDialogTitleFootnote1) to mapOf(
+        SupportedLanguageKey.En to "Energy",
+    ),
+    key(StringKey.TasksDialogMessageFootnote1) to mapOf(
+        SupportedLanguageKey.En to "You have 24 hours to collect the maximum level of Energy by completing tasks before the end of the timer countdown. Opposite each task, you can see how many energy points you will receive for completing it. If you reach 100 energy points, then for this day you will receive the maximum the number of rewards in accordance with the rank of your NFT points. Every day when the timer is reset, the energy level is also reset. The next day, you need to collect energy points again.",
+    ),
+    key(StringKey.TasksDialogTitleFootnote2) to mapOf(
+        SupportedLanguageKey.En to "Claim your reward",
+    ),
+    key(StringKey.TasksDialogMessageFootnote2) to mapOf(
+        SupportedLanguageKey.En to "After the timer reaches 00:00, your rewards will be available to receive. Rewards will be awarded according to how many energy points you managed to collect in a day. If there were less than 60 energy points, then no rewards will be awarded for this day. Try to collect the maximum amount of energy (100).",
+    ),
+    key(StringKey.TasksDialogTitleFootnote3) to mapOf(
+        SupportedLanguageKey.En to "Increase your income many times over",
+    ),
+    key(StringKey.TasksDialogMessageFootnote3) to mapOf(
+        SupportedLanguageKey.En to "In order to earn more rewards, you need to upgrade your NFT points. With each completed task, you earn XP for your NFT points. The higher the level, the more rewards. Also, increase the rank of your NFT points in order to multiply number of rewards.Create more NFT points to increase the number of rewards.Also try to make your videos popular to get instant rewards for views/subscribers.",
     ),
 
     key(StringKey.TaskWatchVideoTitle) to mapOf(
@@ -631,13 +713,13 @@ internal val strings = mapOf(
     key(StringKey.WalletFieldTotal) to mapOf(
         SupportedLanguageKey.En to "Total",
     ),
-    key(StringKey.WalletTitleTopUp) to mapOf(
+    key(StringKey.WalletActionTopUp) to mapOf(
         SupportedLanguageKey.En to "Top up",
     ),
-    key(StringKey.WalletTitleWithdraw) to mapOf(
+    key(StringKey.WalletActionWithdraw) to mapOf(
         SupportedLanguageKey.En to "Withdraw",
     ),
-    key(StringKey.WalletTitleExchange) to mapOf(
+    key(StringKey.WalletActionExchange) to mapOf(
         SupportedLanguageKey.En to "Exchange",
     ),
     key(StringKey.WalletTitleBalance) to mapOf(
@@ -655,24 +737,6 @@ internal val strings = mapOf(
     key(StringKey.WalletDialogTitleTopUp) to mapOf(
         SupportedLanguageKey.En to "Top up %s",
     ),
-    key(StringKey.WalletTitleRewards) to mapOf(
-        SupportedLanguageKey.En to "Rewards",
-    ),
-    key(StringKey.WalletTitleAvailableRewards) to mapOf(
-        SupportedLanguageKey.En to "Available Rewards",
-    ),
-    key(StringKey.WalletDescriptionAvailableRewards) to mapOf(
-        SupportedLanguageKey.En to "Awards convertible to SNPS",
-    ),
-    key(StringKey.WalletTitleLockedRewards) to mapOf(
-        SupportedLanguageKey.En to "Locked Rewards",
-    ),
-    key(StringKey.WalletDescriptionLockedRewards) to mapOf(
-        SupportedLanguageKey.En to "Rewards unlocked tomorrow",
-    ),
-    key(StringKey.WalletTitleHistory) to mapOf(
-        SupportedLanguageKey.En to "History",
-    ),
     key(StringKey.WalletTitleTransactionsEmpty) to mapOf(
         SupportedLanguageKey.En to "No transactions yet",
     ),
@@ -688,8 +752,48 @@ internal val strings = mapOf(
     key(StringKey.WalletTitleDateTransfer) to mapOf(
         SupportedLanguageKey.En to "Date of transfer",
     ),
-    key(StringKey.WalletErrorInsufficientBalance) to mapOf(
+
+    key(StringKey.RewardsTitle) to mapOf(
+        SupportedLanguageKey.En to "Rewards",
+    ),
+    key(StringKey.RewardsTitleFootnote) to mapOf(
+        SupportedLanguageKey.En to "Get Rewards",
+    ),
+    key(StringKey.RewardsTitleAvailableRewards) to mapOf(
+        SupportedLanguageKey.En to "Available Rewards",
+    ),
+    key(StringKey.RewardsTitleLockedRewards) to mapOf(
+        SupportedLanguageKey.En to "Locked Rewards",
+    ),
+    key(StringKey.RewardsTitleHistory) to mapOf(
+        SupportedLanguageKey.En to "History",
+    ),
+    key(StringKey.RewardsMessageFootnote) to mapOf(
+        SupportedLanguageKey.En to "Get rewards from your unlocked wallet right now. And from the blocked every day a little later.",
+    ),
+    key(StringKey.RewardsMessageAvailableRewards) to mapOf(
+        SupportedLanguageKey.En to "Awards convertible to SNPS",
+    ),
+    key(StringKey.RewardsMessageLockedRewards) to mapOf(
+        SupportedLanguageKey.En to "Rewards unlocked tomorrow",
+    ),
+    key(StringKey.RewardsActionWithdraw) to mapOf(
+        SupportedLanguageKey.En to "Withdraw",
+    ),
+    key(StringKey.RewardsErrorInsufficientBalance) to mapOf(
         SupportedLanguageKey.En to "Token balance is zero",
+    ),
+    key(StringKey.RewardsDialogTitleFootnote1) to mapOf(
+        SupportedLanguageKey.En to "Unlocked Rewards",
+    ),
+    key(StringKey.RewardsDialogTitleFootnote2) to mapOf(
+        SupportedLanguageKey.En to "Locked Rewards",
+    ),
+    key(StringKey.RewardsDialogMessageFootnote1) to mapOf(
+        SupportedLanguageKey.En to "Every day, for completing tasks, you will receive rewards. According to the rank of your NFT points, some of the rewards are available for payment immediately and it is displayed in the 'Unlocked Wallet' (in blue). Press the 'Claim' button and receive rewards on your wallet.",
+    ),
+    key(StringKey.RewardsDialogMessageFootnote2) to mapOf(
+        SupportedLanguageKey.En to "According to the rank of your NFT points, you will receive rewards with a smooth and gradual unlocking. Every day, the rewards from your blocked account will go to the unlocked one and you can pick them up. Every day the unlock gets bigger and after a few days in Snaps you will start getting 100%% reward every day on your unlocked wallet.",
     ),
 
     key(StringKey.WithdrawTitle) to mapOf(

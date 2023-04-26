@@ -18,9 +18,7 @@ import io.snaps.corenavigation.RegistrationFeatureProvider
 import io.snaps.corenavigation.TasksFeatureProvider
 import io.snaps.corenavigation.WalletConnectFeatureProvider
 import io.snaps.corenavigation.WalletFeatureProvider
-import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.createRoute
-import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import javax.inject.Inject
 
@@ -54,14 +52,12 @@ class NavHostProvider @Inject constructor(
     @Composable
     fun AuthorizedGraph(
         navController: NavHostController,
-        isChecking: Boolean,
         needsWalletConnect: Boolean,
         needsInitialization: Boolean,
         needsRanking: Boolean,
     ) = Graph(
         navController = navController,
         startDestinationRoute = when {
-            isChecking -> createRoute(AppRoute.Checking)
             needsWalletConnect -> createRoute(AppRoute.WalletConnect)
             needsInitialization -> createRoute(AppRoute.UserCreate)
             needsRanking -> createRoute(AppRoute.RankSelection)
@@ -72,7 +68,6 @@ class NavHostProvider @Inject constructor(
     @Composable
     fun Graph(navController: NavHostController, startDestinationRoute: String) {
         NavHost(navController = navController, startDestination = startDestinationRoute) {
-            composable(AppRoute.Checking) { FullScreenLoaderUi(true) }
             with(registrationFeatureProvider) { registrationGraph(navController) }
             with(walletConnectFeatureProvider) { walletConnectGraph(navController) }
             with(initializationFeatureProvider) { initializationGraph(navController) }

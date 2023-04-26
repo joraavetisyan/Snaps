@@ -6,6 +6,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.snaps.corecommon.ext.log
 import io.snaps.coreui.viewmodel.tryPublish
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,17 +20,18 @@ interface UserSessionTracker {
 
     fun init(lifecycle: Lifecycle)
 
-    fun onLogin(state: State.Active)
+    fun onLogin(state: State)
 
     fun onLogout()
 
     sealed class State {
 
+        object Idle : State() // Init state
+
         object NotActive : State() // Not registered/authorized
 
         // Registered/authorized
         sealed class Active : State() {
-            object Checking : Active() // Checking user status
             object NeedsWalletConnect : Active() // Registered/authorized, but not connected to wallet
             object NeedsInitialization : Active() // Registered/authorized, connected to wallet, but not initialized
             object NeedsRanking : Active() // Registered/authorized, connected to wallet, initialized, but not ranked
@@ -41,16 +43,20 @@ interface UserSessionTracker {
 @Singleton
 class UserSessionTrackerImpl @Inject constructor() : UserSessionTracker, DefaultLifecycleObserver {
 
-    private val _state = MutableStateFlow<UserSessionTracker.State>(
-        UserSessionTracker.State.NotActive
-    )
+    private val _state = MutableStateFlow<UserSessionTracker.State>(UserSessionTracker.State.Idle)
     override val state = _state.asStateFlow()
 
-    override fun onLogin(state: UserSessionTracker.State.Active) {
+    override fun onLogin(state: UserSessionTracker.State) {
+        logState(state)
         _state tryPublish state
     }
 
+    private fun logState(state: UserSessionTracker.State) {
+        log("UserSessionTrackerState: $state")
+    }
+
     override fun onLogout() {
+        logState(UserSessionTracker.State.NotActive)
         _state tryPublish UserSessionTracker.State.NotActive
     }
 

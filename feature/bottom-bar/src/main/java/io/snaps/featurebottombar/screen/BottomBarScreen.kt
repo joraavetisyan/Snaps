@@ -57,7 +57,7 @@ import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurebottombar.viewmodel.BottomBarViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomBarScreen(
     items: List<BottomBarFeatureProvider.ScreenItem>,
@@ -187,7 +187,6 @@ private fun RowScope.MenuItem(
                 Icon(
                     painter = screenItem.icon.get(),
                     contentDescription = null,
-                    modifier = Modifier.size(32.dp),
                 )
             }
         },
@@ -195,9 +194,6 @@ private fun RowScope.MenuItem(
             screenItem.labelKey?.let {
                 Text(
                     text = LocalStringHolder.current(it),
-                    style = AppTheme.specificTypography.labelMedium.copy(
-                        fontSize = 10.sp
-                    ),
                 )
             }
         },

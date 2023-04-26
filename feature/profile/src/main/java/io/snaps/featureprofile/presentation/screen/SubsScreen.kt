@@ -1,5 +1,6 @@
 package io.snaps.featureprofile.presentation.screen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -26,9 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.transform.CircleCropTransformation
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
@@ -71,7 +71,7 @@ fun SubsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 private fun SubsScreen(
     uiState: SubsViewModel.UiState,
@@ -117,7 +117,7 @@ private fun SubsScreen(
                 },
             )
             HorizontalPager(
-                count = pages.size,
+                pageCount = pages.size,
                 state = pagerState,
             ) {
                 ScrollEndDetectLazyColumn(
@@ -126,7 +126,7 @@ private fun SubsScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     onScrollEndDetected = pages[pagerState.currentPage].onListEndReaching
                 ) {
-                    items(pages[pagerState.currentPage].items, key = { it.userId }) {
+                    items(pages[it].items, key = { it.userId }) {
                         when (it) {
                             is SubUiState.Data -> Item(it)
                             is SubUiState.Shimmer -> CellTile(

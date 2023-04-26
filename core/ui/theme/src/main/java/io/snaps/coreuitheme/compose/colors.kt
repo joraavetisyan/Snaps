@@ -11,9 +11,13 @@ internal val LightColorScheme by lazy { LightSpecificColorScheme.toColorScheme()
 internal val LightSpecificColorScheme = SpecificColorScheme(
     uiAccent = Color(0xFF4669FF),
     uiContentBg = Color(0xFFFAFAFA),
+
     uiSystemRed = Color(0xFFE95252),
     uiSystemGreen = Color(0xFFBFFBC5),
     uiSystemYellow = Color(0xFFEEBE14),
+    uiSystemOrange = Color(0xFFED9356),
+    uiSystemBlue = Color(0xFF71A5D3),
+    uiSystemPurple = Color(0xFFAE82E8),
 
     uiDisabledLabel = Color(0xFFB1B3C0),
 
@@ -49,11 +53,16 @@ internal val DarkSpecificColorScheme = LightSpecificColorScheme
 
 data class SpecificColorScheme(
     val uiAccent: Color,
+    val uiContentBg: Color,
+
     val uiSystemRed: Color,
     val uiSystemGreen: Color,
-    val uiContentBg: Color,
-    val uiDisabledLabel: Color,
     val uiSystemYellow: Color,
+    val uiSystemOrange: Color,
+    val uiSystemBlue: Color,
+    val uiSystemPurple: Color,
+
+    val uiDisabledLabel: Color,
 
     val textPrimary: Color,
     val textSecondary: Color,

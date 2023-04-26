@@ -47,7 +47,6 @@ class AppActivity : FragmentActivity() {
         installSplashScreen().setKeepOnScreenCondition { shouldKeepSplashScreen }
         setContent {
             AppTheme(calculateWindowSizeClass(this)) {
-                SideEffect { shouldKeepSplashScreen = false }
                 SystemBarsIconsColor()
                 AppScreen()
             }
@@ -65,14 +64,18 @@ class AppActivity : FragmentActivity() {
 
         CompositionLocalProvider(LocalStringHolder provides stringHolder) {
             when (val currentFlow = currentFlowState.value) {
-                is AppViewModel.StartFlow.RegistrationFlow -> navHostProvider.NonAuthorizedGraph(
-                    navController = navController,
-                    needsStartOnBoarding = currentFlow.needsStartOnBoarding,
-                )
+                AppViewModel.StartFlow.Idle -> Unit
+                is AppViewModel.StartFlow.RegistrationFlow -> {
+                    SideEffect { shouldKeepSplashScreen = false }
+                    navHostProvider.NonAuthorizedGraph(
+                        navController = navController,
+                        needsStartOnBoarding = currentFlow.needsStartOnBoarding,
+                    )
+                }
                 is AppViewModel.StartFlow.AuthorizedFlow -> {
+                    SideEffect { shouldKeepSplashScreen = false }
                     navHostProvider.AuthorizedGraph(
                         navController = navController,
-                        isChecking = currentFlow.isChecking,
                         needsWalletConnect = currentFlow.needsWalletConnect,
                         needsInitialization = currentFlow.needsInitialization,
                         needsRanking = currentFlow.needsRanking,

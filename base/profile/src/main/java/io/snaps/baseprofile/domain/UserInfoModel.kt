@@ -1,6 +1,7 @@
 package io.snaps.baseprofile.domain
 
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Uuid
 import java.time.LocalDateTime
 
@@ -15,7 +16,8 @@ data class UserInfoModel(
     val totalSubscribers: Int,
     val totalSubscriptions: Int,
     val totalPublication: Int?,
-    val avatar: ImageValue?,
+    val avatarUrl: FullUrl?,
+    val avatar: ImageValue,
     val experience: Int,
     val level: Int,
     val questInfo: QuestInfoModel?,

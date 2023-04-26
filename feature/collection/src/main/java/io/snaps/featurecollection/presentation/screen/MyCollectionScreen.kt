@@ -31,6 +31,7 @@ import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
+import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
@@ -82,9 +83,8 @@ private fun MyCollectionScreen(
     ) {
         Column(
             modifier = Modifier
-                .background(color = AppTheme.specificColorScheme.uiContentBg)
                 .padding(it)
-                .inset(insetAll()),
+                .inset(insetAllExcludeTop()),
         ) {
             MainHeader(state = headerState.value)
             Header()

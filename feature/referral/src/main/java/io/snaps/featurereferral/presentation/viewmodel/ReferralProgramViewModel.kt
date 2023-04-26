@@ -6,7 +6,7 @@ import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.basesession.data.OnboardingHandler
-import io.snaps.basesources.BottomBarVisibilitySource
+import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.OnboardingType
@@ -16,6 +16,7 @@ import io.snaps.corecommon.strings.addPrefix
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
+import io.snaps.featurereferral.presentation.screen.ReferralsTileState
 import io.snaps.featurereferral.presentation.toReferralsUiState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,13 +32,14 @@ import javax.inject.Inject
 class ReferralProgramViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
     onboardingHandlerDelegate: OnboardingHandler,
+    bottomDialogBarVisibilityHandlerDelegate: BottomDialogBarVisibilityHandler,
     private val profileRepository: ProfileRepository,
     private val action: Action,
-    private val bottomBarVisibilitySource: BottomBarVisibilitySource,
     private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel(),
     MainHeaderHandler by mainHeaderHandlerDelegate,
-    OnboardingHandler by onboardingHandlerDelegate {
+    OnboardingHandler by onboardingHandlerDelegate,
+    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandlerDelegate {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -70,7 +72,10 @@ class ReferralProgramViewModel @Inject constructor(
         profileRepository.referralsState.onEach { state ->
             _uiState.update {
                 it.copy(
-                    referralsUiState = state.toReferralsUiState(),
+                    referralsTileState = state.toReferralsUiState(
+                        onReferralClick = ::onReferralClick,
+                        onReloadClick = ::updateReferrals,
+                    ),
                 )
             }
         }.launchIn(viewModelScope)
@@ -84,16 +89,17 @@ class ReferralProgramViewModel @Inject constructor(
         }
     }
 
+    private fun onReferralClick(model: UserInfoModel) {
+        viewModelScope.launch {
+            _command publish Command.OpenUserInfoScreen(model.entityId)
+        }
+    }
+
     fun onEnterCodeClicked() = viewModelScope.launch {
         _uiState.update {
             it.copy(bottomDialog = BottomDialog.ReferralCode)
         }
-        bottomBarVisibilitySource.updateState(false)
         _command publish Command.ShowBottomDialog
-    }
-
-    fun onBottomSheetHidden() {
-        bottomBarVisibilitySource.updateState(true)
     }
 
     fun onInviteUserButtonClicked() {
@@ -143,22 +149,16 @@ class ReferralProgramViewModel @Inject constructor(
         }
     }
 
-    fun onReferralClick(model: UserInfoModel) {
+    fun onReferralProgramFootnoteClick() {
         viewModelScope.launch {
-            _command publish Command.OpenUserInfoScreen(model.entityId)
+            _uiState.update { it.copy(bottomDialog = BottomDialog.ReferralProgramFootnote) }
+            _command publish Command.ShowBottomDialog
         }
     }
 
-    fun onReferralsReloadClick() {
-        updateReferrals()
-    }
-
-    fun onReferralProgramFootnoteClick() {
+    fun onReferralsInvitedFootnoteClick() {
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(bottomDialog = BottomDialog.ReferralProgram)
-            }
-            bottomBarVisibilitySource.updateState(false)
+            _uiState.update { it.copy(bottomDialog = BottomDialog.ReferralsInvitedFootnote) }
             _command publish Command.ShowBottomDialog
         }
     }
@@ -169,7 +169,7 @@ class ReferralProgramViewModel @Inject constructor(
         val referralLink: String = "",
         val inviteCodeValue: String = "",
         val bottomDialog: BottomDialog = BottomDialog.ReferralCode,
-        val referralsUiState: ReferralsUiState = ReferralsUiState.Shimmer,
+        val referralsTileState: ReferralsTileState = ReferralsTileState.Shimmer,
         val isInviteUserDialogVisible: Boolean = false,
     ) {
 
@@ -179,8 +179,8 @@ class ReferralProgramViewModel @Inject constructor(
     enum class BottomDialog {
         ReferralCode,
         ReferralQr,
-        ReferralProgram,
-        ReferralsInvited,
+        ReferralProgramFootnote,
+        ReferralsInvitedFootnote,
     }
 
     sealed class Command {
@@ -188,17 +188,4 @@ class ReferralProgramViewModel @Inject constructor(
         object HideBottomDialog : Command()
         data class OpenUserInfoScreen(val userId: Uuid) : Command()
     }
-}
-
-sealed class ReferralsUiState {
-
-    data class Data(
-        val values: List<UserInfoModel>,
-    ) : ReferralsUiState()
-
-    object Empty : ReferralsUiState()
-
-    object Shimmer : ReferralsUiState()
-
-    object Error : ReferralsUiState()
 }

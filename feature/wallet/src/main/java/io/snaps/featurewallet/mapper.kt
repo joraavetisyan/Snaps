@@ -1,6 +1,7 @@
 package io.snaps.featurewallet
 
 import io.snaps.baseprofile.domain.BalanceModel
+import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
@@ -10,7 +11,6 @@ import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.WalletModel
-import io.snaps.corecommon.R
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
@@ -22,10 +22,12 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 fun List<WalletModel>.toCellTileStateList(
+    snpFiatValue: String? = null,
     onClick: ((WalletModel) -> Unit)? = null,
-): List<CellTileState> = map { it.toCellTileState(onClick) }
+): List<CellTileState> = map { it.toCellTileState(snpFiatValue = snpFiatValue, onClick = onClick) }
 
 fun WalletModel.toCellTileState(
+    snpFiatValue: String? = null,
     onClick: ((WalletModel) -> Unit)?,
 ) = CellTileState(
     middlePart = MiddlePart.Data(
@@ -34,7 +36,7 @@ fun WalletModel.toCellTileState(
     leftPart = LeftPart.Logo(ImageValue.Url(iconUrl)),
     rightPart = RightPart.TextMoney(
         coin = coinValue,
-        fiatCurrency = this.fiatValue,
+        fiatCurrency = if (symbol == "SNAPS") snpFiatValue.orEmpty() else fiatValue,
     ),
     clickListener = onClick?.let { { it.invoke(this) } },
 )

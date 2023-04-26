@@ -48,10 +48,6 @@ class SessionRepositoryImpl @Inject constructor(
     private val nftRepository: NftRepository,
 ) : SessionRepository {
 
-    init {
-        scope.launch { checkStatus() }
-    }
-
     override fun isOnboardingShown(type: OnboardingType): Boolean {
         return userDataStorage.isOnboardingShown(type).also {
             userDataStorage.setIsOnboardingShown(type, true)
@@ -61,9 +57,9 @@ class SessionRepositoryImpl @Inject constructor(
     override suspend fun checkStatus(): Effect<Completable> {
         val userId: String? = auth.currentUser?.uid
         if (tokenStorage.authToken != null && userId != null) {
-            userSessionTracker.onLogin(UserSessionTracker.State.Active.Checking)
             return checkWallet(userId)
         }
+        userSessionTracker.onLogin(UserSessionTracker.State.NotActive)
         return Effect.completable
     }
 
@@ -89,7 +85,7 @@ class SessionRepositoryImpl @Inject constructor(
      * Check if user has name and avatar
      */
     private suspend fun checkUser() = profileRepository.updateData().flatMap {
-        if (it.name.isBlank() || it.avatar == null) {
+        if (it.name.isBlank() || it.avatarUrl == null) {
             userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsInitialization)
             Effect.success(false)
         } else {

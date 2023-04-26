@@ -2,10 +2,8 @@ package io.snaps.featureprofile.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
@@ -20,10 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WalletSettingsViewModel @Inject constructor(
-    private val action: Action,
-    mainHeaderHandlerDelegate: MainHeaderHandler,
-) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
+class WalletSettingsViewModel @Inject constructor() : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(
         UiState(items = getItems())
@@ -54,7 +49,7 @@ class WalletSettingsViewModel @Inject constructor(
 
     private fun onBackupItemClicked() {
         _uiState.update {
-            it.copy(isDialogVisibility = true,)
+            it.copy(isDialogVisibility = true)
         }
     }
 

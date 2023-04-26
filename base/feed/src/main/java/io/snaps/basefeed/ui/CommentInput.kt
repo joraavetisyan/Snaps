@@ -142,7 +142,7 @@ private fun InputRow(
                 enabled = isSendEnabled,
             ) {
                 Icon(
-                    painter = AppTheme.specificIcons.send.get(),
+                    painter = AppTheme.specificIcons.sendCircled.get(),
                     contentDescription = null,
                     modifier = Modifier
                         .size(32.dp)

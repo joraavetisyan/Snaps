@@ -2,6 +2,7 @@ package io.snaps.basefeed.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +20,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -57,11 +61,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.PagerScope
-import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.VerticalPager
-import com.google.accompanist.pager.rememberPagerState
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseplayer.ui.VideoPlayer
 import io.snaps.corecommon.container.IconValue
@@ -75,11 +74,12 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ActionsBottomDialog
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
+import io.snaps.coreuicompose.uikit.dialog.SimpleConfirmDialogUi
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.scroll.DetectScroll
 import io.snaps.coreuicompose.uikit.scroll.ScrollInfo
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
-import io.snaps.coreuicompose.uikit.dialog.SimpleConfirmDialogUi
 import io.snaps.coreuitheme.compose.AppTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -89,10 +89,10 @@ private const val DETECT_THRESHOLD = 1
 
 @Composable
 @OptIn(
-    ExperimentalPagerApi::class,
     ExperimentalMaterial3Api::class,
     ExperimentalMaterialApi::class,
-    ExperimentalComposeUiApi::class
+    ExperimentalComposeUiApi::class,
+    ExperimentalFoundationApi::class,
 )
 fun VideoClipScreen(
     viewModel: VideoFeedViewModel,
@@ -123,13 +123,10 @@ fun VideoClipScreen(
         skipHalfExpanded = true,
     )
 
-    LaunchedEffect(Unit) {
-        snapshotFlow { sheetState.currentValue }.collect {
-            if (it == ModalBottomSheetValue.Hidden) {
-                viewModel.onBottomSheetHidden()
-            }
-        }
-    }
+    ModalBottomSheetTargetStateListener(
+        sheetState = sheetState,
+        onStateToChange = viewModel::onBottomDialogStateChange,
+    )
 
     LaunchedEffect(Unit) {
         snapshotFlow { commentInputSheetState.currentValue }.collect {
@@ -176,6 +173,7 @@ fun VideoClipScreen(
     }
 
     ModalBottomSheetLayout(
+        modifier = Modifier.background(AppTheme.specificColorScheme.black),
         sheetState = commentInputSheetState,
         sheetContent = {
             CommentInput(
@@ -216,15 +214,15 @@ fun VideoClipScreen(
             ) { paddingValues ->
                 Box {
                     ScrollDetector(
+                        pageCount = uiState.videoFeedUiState.items.size,
                         pagerState = pagerState,
                         onListEndReaching = uiState.videoFeedUiState.onListEndReaching,
                     )
 
                     VerticalPager(
-                        count = uiState.videoFeedUiState.items.size,
+                        pageCount = uiState.videoFeedUiState.items.size,
                         state = pagerState,
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        itemSpacing = 10.dp,
                         key = {
                             try {
                                 uiState.videoFeedUiState.items[it].id
@@ -250,7 +248,10 @@ fun VideoClipScreen(
                                     onMoreClicked = viewModel::onMoreClicked,
                                 )
                             }
-                            is VideoClipUiState.Shimmer -> FullScreenLoaderUi(isLoading = true)
+                            is VideoClipUiState.Shimmer -> FullScreenLoaderUi(
+                                isLoading = true,
+                                backgroundColor = AppTheme.specificColorScheme.black,
+                            )
                         }
                     }
 
@@ -259,7 +260,7 @@ fun VideoClipScreen(
             }
         }
     }
-    uiState.dialogType?.let { 
+    uiState.dialogType?.let {
         when (it) {
             VideoFeedViewModel.DialogType.ConfirmDeleteVideo -> SimpleConfirmDialogUi(
                 text = StringKey.VideoClipDialogConfirmDeleteMessage.textValue(),
@@ -272,9 +273,10 @@ fun VideoClipScreen(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ScrollDetector(
+    pageCount: Int,
     pagerState: PagerState,
     onListEndReaching: (() -> Unit)?,
 ) {
@@ -282,8 +284,8 @@ private fun ScrollDetector(
         derivedStateOf {
             val currentPage = pagerState.currentPage
             ScrollInfo(
-                isReachingEnd = currentPage + 1 >= pagerState.pageCount - DETECT_THRESHOLD,
-                totalItemsCount = pagerState.pageCount,
+                isReachingEnd = currentPage + 1 >= pageCount - DETECT_THRESHOLD,
+                totalItemsCount = pageCount,
             )
         }
     }
@@ -291,9 +293,9 @@ private fun ScrollDetector(
     DetectScroll(scrollInfo, onListEndReaching)
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun PagerScope.VideoClip(
+private fun VideoClip(
     pagerState: PagerState,
     index: Int,
     item: VideoClipUiState.Data,
@@ -307,7 +309,11 @@ private fun PagerScope.VideoClip(
 ) {
     val shouldPlay by remember(pagerState) {
         derivedStateOf {
-            (abs(currentPageOffset) < .5 && currentPage == index) || (abs(currentPageOffset) > .5 && pagerState.currentPage == index)
+            val a =
+                abs(pagerState.currentPageOffsetFraction) < 0.5f && pagerState.currentPage == index
+            val b =
+                abs(pagerState.currentPageOffsetFraction) > 0.5f && pagerState.currentPage == index
+            a || b
         }
     }
 

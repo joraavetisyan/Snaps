@@ -2,9 +2,10 @@ package io.snaps.android.mainscreen
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.snaps.basesession.data.UserSessionTracker
 import io.snaps.basesession.ActiveAppZoneProvider
 import io.snaps.basesession.AppRouteProvider
+import io.snaps.basesession.data.SessionRepository
+import io.snaps.basesession.data.UserSessionTracker
 import io.snaps.basesources.LocaleSource
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.strings.StringHolder
@@ -16,6 +17,7 @@ import io.snaps.coreuicompose.uikit.status.BannerMessage
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,9 +26,16 @@ class AppViewModel @Inject constructor(
     activeAppZoneProvider: ActiveAppZoneProvider,
     userSessionTracker: UserSessionTracker,
     notificationsSource: NotificationsSource,
+    sessionRepository: SessionRepository,
     private val userDataStorage: UserDataStorage,
     private val appRouteProvider: AppRouteProvider,
 ) : SimpleViewModel() {
+
+    init {
+        viewModelScope.launch {
+            sessionRepository.checkStatus()
+        }
+    }
 
     val stringHolderState = localeSource.stateFlow
         .map { StringHolder(locale = it) }
@@ -34,20 +43,17 @@ class AppViewModel @Inject constructor(
 
     val currentFlowState = userSessionTracker.state.map { userSession ->
         when (userSession) {
+            UserSessionTracker.State.Idle -> StartFlow.Idle
             UserSessionTracker.State.NotActive -> StartFlow.RegistrationFlow(
                 needsStartOnBoarding = !userDataStorage.isStartOnBoardingFinished,
             )
             is UserSessionTracker.State.Active -> StartFlow.AuthorizedFlow(
-                isChecking = userSession is UserSessionTracker.State.Active.Checking,
                 needsWalletConnect = userSession is UserSessionTracker.State.Active.NeedsWalletConnect,
                 needsInitialization = userSession is UserSessionTracker.State.Active.NeedsInitialization,
                 needsRanking = userSession is UserSessionTracker.State.Active.NeedsRanking,
             )
         }
-    }.likeStateFlow(
-        viewModelScope,
-        StartFlow.RegistrationFlow(!userDataStorage.isStartOnBoardingFinished),
-    )
+    }.likeStateFlow(scope = viewModelScope, initialValue = StartFlow.Idle)
 
     val notificationsState = notificationsSource.state.map {
         when (it) {
@@ -61,6 +67,7 @@ class AppViewModel @Inject constructor(
     init {
         currentFlowState.onEach {
             val state = when (it) {
+                StartFlow.Idle -> ActiveAppZoneProvider.State.Idle
                 is StartFlow.RegistrationFlow -> ActiveAppZoneProvider.State.Registration
                 is StartFlow.AuthorizedFlow -> ActiveAppZoneProvider.State.Authorized
             }
@@ -75,12 +82,13 @@ class AppViewModel @Inject constructor(
 
     sealed class StartFlow {
 
+        object Idle : StartFlow()
+
         data class RegistrationFlow(
             val needsStartOnBoarding: Boolean,
         ) : StartFlow()
 
         data class AuthorizedFlow(
-            val isChecking: Boolean,
             val needsWalletConnect: Boolean,
             val needsInitialization: Boolean,
             val needsRanking: Boolean,

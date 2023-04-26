@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.basefeed.ui.VideoClipScreen
@@ -55,8 +54,7 @@ private fun MainVideoFeedScreen(
             state = mainHeaderState,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(it)
-                .padding(top = 16.dp),
+                .padding(it),
         )
     }
 }

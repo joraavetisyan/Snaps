@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -29,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.baseprofile.ui.ValueWidget
@@ -47,6 +45,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
+import io.snaps.coreuicompose.uikit.status.InfoBlock
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurecollection.ScreenNavigator
 import io.snaps.featurecollection.presentation.viewmodel.PurchaseViewModel
@@ -201,29 +200,6 @@ fun CardBlock(
                 .fillMaxWidth()
                 .padding(top = 4.dp, bottom = 12.dp)
         )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = AppTheme.specificColorScheme.uiSystemYellow.copy(alpha = 0.2f),
-                    shape = AppTheme.shapes.medium,
-                )
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Icon(
-                painter = AppTheme.specificIcons.info.get(),
-                contentDescription = null,
-                tint = AppTheme.specificColorScheme.uiSystemYellow,
-                modifier = Modifier.size(12.dp),
-            )
-            Text(
-                text = message.get(),
-                style = AppTheme.specificTypography.labelSmall,
-                color = AppTheme.specificColorScheme.uiSystemYellow,
-                fontSize = 8.sp,
-            )
-        }
+        InfoBlock(message = message)
     }
 }

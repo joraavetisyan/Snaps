@@ -1,13 +1,11 @@
 package io.snaps.featureprofile.presentation.viewmodel
 
-import io.snaps.coredata.network.Action
-import io.snaps.coreui.viewmodel.SimpleViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.snaps.baseprofile.data.MainHeaderHandler
+import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.corecommon.R
+import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
@@ -19,10 +17,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class SocialNetworksViewModel @Inject constructor(
-    private val action: Action,
-    mainHeaderHandlerDelegate: MainHeaderHandler,
-) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
+class SocialNetworksViewModel @Inject constructor() : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(
         UiState(items = getItems())
@@ -32,9 +27,11 @@ class SocialNetworksViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
-    private fun onDiscordItemClicked() { /*todo*/ }
+    private fun onDiscordItemClicked() { /*todo*/
+    }
 
-    private fun onTelegramItemClicked() { /*todo*/ }
+    private fun onTelegramItemClicked() { /*todo*/
+    }
 
     private fun getItems() = listOf(
         CellTileState(

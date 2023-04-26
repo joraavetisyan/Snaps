@@ -2,43 +2,32 @@ package io.snaps.featureprofile.presentation.screen.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import io.snaps.baseprofile.data.MainHeaderHandler
-import io.snaps.coreuicompose.tools.get
-import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.featureprofile.ScreenNavigator
-import io.snaps.baseprofile.ui.MainHeader
-import io.snaps.baseprofile.ui.MainHeaderState
-import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.inset
-import io.snaps.coreuicompose.tools.insetAll
+import io.snaps.coreuicompose.tools.insetAllExcludeTop
+import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
+import io.snaps.coreuitheme.compose.AppTheme
+import io.snaps.coreuitheme.compose.LocalStringHolder
+import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.featureprofile.presentation.viewmodel.SocialNetworksViewModel
 
 @Composable
@@ -49,18 +38,9 @@ fun SocialNetworksScreen(
     val viewModel = hiltViewModel<SocialNetworksViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
-    val headerState by viewModel.headerUiState.collectAsState()
-
-    viewModel.headerCommand.collectAsCommand {
-        when (it) {
-            MainHeaderHandler.Command.OpenProfileScreen -> router.toProfileScreen()
-            MainHeaderHandler.Command.OpenWalletScreen -> router.toWalletScreen()
-        }
-    }
 
     SocialNetworksScreen(
         uiState = uiState,
-        headerState = headerState.value,
         onBackClicked = router::back,
     )
 }
@@ -69,58 +49,43 @@ fun SocialNetworksScreen(
 @Composable
 private fun SocialNetworksScreen(
     uiState: SocialNetworksViewModel.UiState,
-    headerState: MainHeaderState,
     onBackClicked: () -> Boolean,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = AppTheme.specificColorScheme.uiContentBg,
+        topBar = {
+            SimpleTopAppBar(
+                title = {
+                    Text(text = LocalStringHolder.current(StringKey.SocialNetworksTitle))
+                },
+                navigationIcon = AppTheme.specificIcons.back to onBackClicked,
+                scrollBehavior = scrollBehavior,
+            )
+        },
     ) { paddingValues ->
-        Column(
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 16.dp),
             modifier = Modifier
                 .padding(paddingValues)
-                .inset(insetAll()),
+                .inset(insetAllExcludeTop()),
         ) {
-            MainHeader(state = headerState)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    painter = AppTheme.specificIcons.back.get(),
-                    tint = AppTheme.specificColorScheme.darkGrey,
-                    contentDescription = null,
-                    modifier = Modifier.clickable { onBackClicked() }
+            items(uiState.items) { item ->
+                item.Content(
+                    modifier = Modifier
+                        .background(
+                            color = AppTheme.specificColorScheme.white,
+                            shape = AppTheme.shapes.medium,
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
+                            shape = AppTheme.shapes.medium,
+                        )
+                        .padding(horizontal = 12.dp, vertical = 12.dp),
                 )
-                Text(
-                    text = StringKey.SocialNetworksTitle.textValue().get(),
-                    style = AppTheme.specificTypography.titleMedium,
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center,
-                )
-            }
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 16.dp)
-            ) {
-                items(uiState.items) { item ->
-                    item.Content(
-                        modifier = Modifier
-                            .background(
-                                color = AppTheme.specificColorScheme.white,
-                                shape = AppTheme.shapes.medium,
-                            )
-                            .border(
-                                width = 1.dp,
-                                color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
-                                shape = AppTheme.shapes.medium,
-                            )
-                            .padding(horizontal = 12.dp, vertical = 12.dp),
-                    )
-                }
             }
         }
     }
