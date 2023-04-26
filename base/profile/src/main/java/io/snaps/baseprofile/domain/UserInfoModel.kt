@@ -18,7 +18,7 @@ data class UserInfoModel(
     val avatar: ImageValue?,
     val experience: Int,
     val level: Int,
-    val questInfo: QuestInfoModel,
+    val questInfo: QuestInfoModel?,
     val inviteCodeRegisteredBy: String?,
     val ownInviteCode: String?,
     val instagramId: Uuid?,

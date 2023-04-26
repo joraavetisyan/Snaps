@@ -9,6 +9,7 @@ fun stringKeyMap(key: StringKey): String {
         StringKey.ActionContinue -> TODO()
         StringKey.ActionCancel -> TODO()
         StringKey.ActionClose -> TODO()
+        StringKey.ActionDelete -> TODO()
         StringKey.MessageConnectionSuccess -> TODO()
         StringKey.ErrorLoadFail -> TODO()
         StringKey.ErrorConnection -> TODO()
@@ -261,5 +262,8 @@ fun stringKeyMap(key: StringKey): String {
         StringKey.BottomBarTitleTasks -> TODO()
         StringKey.BottomBarTitleNft -> TODO()
         StringKey.BottomBarTitleReferrals -> TODO()
+        StringKey.VideoClipActionDelete -> TODO()
+        StringKey.VideoClipTitleAction -> TODO()
+        StringKey.VideoClipDialogConfirmDeleteMessage -> TODO()
     }
 }

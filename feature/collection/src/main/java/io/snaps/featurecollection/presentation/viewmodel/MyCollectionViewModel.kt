@@ -40,24 +40,14 @@ class MyCollectionViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     init {
-        viewModelScope.launch {
-            action.execute {
-                nftRepository.updateRanks()
-            }.doOnSuccess {
-                val availableToPurchaseNfts =
-                    nftRepository.ranksState.value.dataOrCache?.count { it.isAvailableToPurchase }
-                        ?: 0
-                subscribeOnNft(availableToPurchaseNfts)
-                loadNft()
-            }
-        }
+        subscribeOnNft()
+        loadNft()
         checkOnboarding(OnboardingType.Nft)
     }
 
-    private fun subscribeOnNft(maxCount: Int) {
+    private fun subscribeOnNft() {
         nftRepository.nftCollectionState.map {
             it.toNftCollectionItemState(
-                maxCount = maxCount,
                 onAddItemClicked = ::onAddItemClicked,
                 onReloadClicked = ::onNftReloadClicked,
                 onRepairClicked = ::onRepairClicked,

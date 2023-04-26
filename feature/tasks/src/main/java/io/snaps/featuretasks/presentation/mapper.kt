@@ -3,13 +3,13 @@ package io.snaps.featuretasks.presentation
 import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.basenft.ui.costToString
+import io.snaps.basenft.ui.dailyRewardToString
 import io.snaps.baseprofile.data.model.SocialPostStatus
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.Effect
-import io.snaps.corecommon.model.FiatCurrency
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.QuestType
 import io.snaps.corecommon.model.State
@@ -112,9 +112,9 @@ private fun NftModel.toNftCollectionItemState() = CollectionItemState.Nft(
     type = type,
     price = costInUsd?.costToString() ?: "",
     image = image,
-    dailyReward = "$dailyReward${FiatCurrency.USD.symbol}",
+    dailyReward = dailyReward.dailyRewardToString(),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
-    dailyConsumption = dailyUnlock.toPercentageFormat(),
+    dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthy = true,
     onRepairClicked = {},
 )

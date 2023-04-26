@@ -93,7 +93,7 @@ class ProfileRepositoryImpl @Inject constructor(
         when (it) {
             is Loading -> Loading()
             is Effect -> when {
-                it.isSuccess -> Effect.success(it.requireData.questInfo)
+                it.isSuccess -> Effect.success(requireNotNull(it.requireData.questInfo))
                 else -> Effect.error(requireNotNull(it.errorOrNull))
             }
         }

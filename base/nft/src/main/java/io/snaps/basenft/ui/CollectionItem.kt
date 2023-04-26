@@ -8,9 +8,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
@@ -252,6 +252,7 @@ private fun Container(
 ) {
     Column(
         modifier = modifier
+            .heightIn(min = 220.dp)
             .background(
                 color = AppTheme.specificColorScheme.white,
                 shape = AppTheme.shapes.medium,
@@ -273,7 +274,7 @@ private fun AddItem(
 ) {
     Box(
         modifier = modifier
-            .aspectRatio(1f)
+            .height(220.dp)
             .background(
                 color = Color.Transparent,
                 shape = AppTheme.shapes.medium,

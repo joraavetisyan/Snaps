@@ -293,7 +293,7 @@ private fun Login(
         )
     }
     Spacer(modifier = Modifier.height(12.dp))
-    SimpleButtonDefaultM(
+    /*SimpleButtonDefaultM(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
@@ -304,7 +304,7 @@ private fun Login(
             text = StringKey.RegistrationActionLoginWithTwitter.textValue(),
             iconLeft = AppTheme.specificIcons.twitter,
         )
-    }
+    }*/
 }
 
 @Composable

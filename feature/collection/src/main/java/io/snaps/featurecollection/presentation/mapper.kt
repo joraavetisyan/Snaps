@@ -4,9 +4,9 @@ import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.basenft.ui.costToString
+import io.snaps.basenft.ui.dailyRewardToString
 import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.Effect
-import io.snaps.corecommon.model.FiatCurrency
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
@@ -38,15 +38,14 @@ private fun RankModel.toRankTileState(
     type = type,
     price = costInUsd?.costToString() ?: "",
     image = image,
-    dailyReward = "$dailyReward${FiatCurrency.USD.symbol}",
+    dailyReward = dailyReward.dailyRewardToString(),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
-    dailyConsumption = dailyUnlock.toPercentageFormat(),
+    dailyConsumption = dailyConsumption.toPercentageFormat(),
     isAvailableToPurchase = isAvailableToPurchase,
     clickListener = { onItemClicked(this) },
 )
 
 fun State<List<NftModel>>.toNftCollectionItemState(
-    maxCount: Int,
     onAddItemClicked: () -> Unit,
     onReloadClicked: () -> Unit,
     onRepairClicked: (Uuid) -> Unit,
@@ -57,9 +56,7 @@ fun State<List<NftModel>>.toNftCollectionItemState(
             requireData.forEach {
                 add(it.toNftCollectionItemState(onRepairClicked))
             }
-            if (maxCount > requireData.size) {
-                add(CollectionItemState.AddItem(onAddItemClicked))
-            }
+            add(CollectionItemState.AddItem(onAddItemClicked))
         }
         else -> listOf(CollectionItemState.Error(onClick = onReloadClicked))
     }
@@ -71,9 +68,9 @@ private fun NftModel.toNftCollectionItemState(
     type = type,
     price = costInUsd?.costToString() ?: "",
     image = image,
-    dailyReward = "$dailyReward${FiatCurrency.USD.symbol}",
+    dailyReward = dailyReward.dailyRewardToString(),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
-    dailyConsumption = dailyUnlock.toPercentageFormat(),
+    dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthy = isHealthy,
     onRepairClicked = { onRepairClicked(id) },
 )
