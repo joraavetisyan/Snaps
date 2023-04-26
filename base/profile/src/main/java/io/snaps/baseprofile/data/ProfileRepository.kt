@@ -3,6 +3,7 @@ package io.snaps.baseprofile.data
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.UserCreateRequestDto
+import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.baseprofile.domain.BalanceModel
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.UserInfoModel
@@ -38,6 +39,8 @@ interface ProfileRepository {
 
     val currentQuestsState: StateFlow<State<QuestInfoModel>>
 
+    val referralsState: StateFlow<State<List<UserInfoModel>>>
+
     fun getUsersState(query: String): StateFlow<UsersPageModel>
 
     suspend fun refreshUsers(query: String): Effect<Completable>
@@ -47,6 +50,8 @@ interface ProfileRepository {
     suspend fun updateData(): Effect<UserInfoModel>
 
     suspend fun updateBalance(): Effect<Completable>
+
+    suspend fun updateReferrals(): Effect<Completable>
 
     suspend fun getUserInfoById(userId: String): Effect<UserInfoModel>
 
@@ -89,6 +94,9 @@ class ProfileRepositoryImpl @Inject constructor(
     private val _balanceState = MutableStateFlow<State<BalanceModel>>(Loading())
     override val balanceState = _balanceState.asStateFlow()
 
+    private val _referralsState = MutableStateFlow<State<List<UserInfoModel>>>(Loading())
+    override val referralsState = _referralsState.asStateFlow()
+
     override val currentQuestsState = state.map {
         when (it) {
             is Loading -> Loading()
@@ -102,7 +110,14 @@ class ProfileRepositoryImpl @Inject constructor(
     private fun getLoader(query: String): UsersLoader {
         return loaderFactory.get(query) {
             PagedLoaderParams(
-                action = { from, count -> api.users(query, from, count) },
+                action = { from, count ->
+                    api.users(
+                        query = query,
+                        from = from,
+                        count = count,
+                        onlyInvited = false,
+                    )
+                },
                 pageSize = 20,
                 nextPageIdFactory = { it.entityId },
                 mapper = { it.toModelList() },
@@ -112,9 +127,11 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override fun getUsersState(query: String): StateFlow<UsersPageModel> = getLoader(query).state
 
-    override suspend fun refreshUsers(query: String): Effect<Completable> = getLoader(query).refresh()
+    override suspend fun refreshUsers(query: String): Effect<Completable> =
+        getLoader(query).refresh()
 
-    override suspend fun loadNextUsersPage(query: String): Effect<Completable> = getLoader(query).loadNext()
+    override suspend fun loadNextUsersPage(query: String): Effect<Completable> =
+        getLoader(query).loadNext()
 
     override suspend fun updateData(): Effect<UserInfoModel> {
         _state tryPublish Loading()
@@ -135,6 +152,17 @@ class ProfileRepositoryImpl @Inject constructor(
             it.toModel()
         }.also {
             _balanceState tryPublish it
+        }.toCompletable()
+    }
+
+    override suspend fun updateReferrals(): Effect<Completable> {
+        _referralsState tryPublish Loading()
+        return apiCall(ioDispatcher) {
+            api.users(query = null, from = null, count = 100, onlyInvited = true)
+        }.map {
+            it.map(UserInfoResponseDto::toModel)
+        }.also {
+            _referralsState tryPublish it
         }.toCompletable()
     }
 

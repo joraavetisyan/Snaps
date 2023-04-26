@@ -19,6 +19,7 @@ import io.snaps.corecommon.model.QuestType
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
 import retrofit2.http.Body
+import retrofit2.http.Query
 
 class FakeProfileApi : ProfileApi {
 
@@ -91,9 +92,10 @@ class FakeProfileApi : ProfileApi {
     }
 
     override suspend fun users(
-        query: String?,
-        from: String?,
-        count: Int
+        @Query(value = "searchString") query: String?,
+        @Query(value = "from") from: String?,
+        @Query(value = "count") count: Int,
+        @Query(value = "onlyInvited") onlyInvited: Boolean,
     ): BaseResponse<List<UserInfoResponseDto>> {
         return BaseResponse(
             actualTimestamp = 0L,

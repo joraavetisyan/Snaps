@@ -1,4 +1,4 @@
-package io.snaps.coreuicompose.uikit.status
+package io.snaps.coreuicompose.uikit.bottomsheetdialog
 
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
@@ -28,7 +28,7 @@ import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
-import io.snaps.coreuicompose.uikit.other.SheetIndicator
+import io.snaps.coreuicompose.uikit.indicator.SheetIndicator
 import io.snaps.coreuitheme.compose.AppTheme
 
 data class ShareBottomDialogItem(

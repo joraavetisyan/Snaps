@@ -36,7 +36,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
-import io.snaps.coreuicompose.uikit.status.SimpleAlertDialogUi
+import io.snaps.coreuicompose.uikit.dialog.SimpleAlertDialogUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewalletconnect.ScreenNavigator
 import io.snaps.featurewalletconnect.presentation.viewmodel.WalletImportViewModel

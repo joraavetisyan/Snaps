@@ -1,4 +1,4 @@
-package io.snaps.coreuicompose.uikit.status
+package io.snaps.coreuicompose.uikit.indicator
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutLinearInEasing

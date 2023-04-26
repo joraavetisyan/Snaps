@@ -1,4 +1,4 @@
-package io.snaps.coreuicompose.uikit.status
+package io.snaps.coreuicompose.uikit.dialog
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog

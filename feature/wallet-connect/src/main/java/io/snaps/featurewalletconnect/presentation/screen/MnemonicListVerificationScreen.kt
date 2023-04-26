@@ -32,7 +32,7 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
-import io.snaps.coreuicompose.uikit.status.SimpleAlertDialogUi
+import io.snaps.coreuicompose.uikit.dialog.SimpleAlertDialogUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurewalletconnect.ScreenNavigator

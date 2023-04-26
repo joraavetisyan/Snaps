@@ -1,4 +1,4 @@
-package io.snaps.coreuicompose.uikit.other
+package io.snaps.coreuicompose.uikit.bottomsheetdialog
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +17,6 @@ import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
-import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
 import io.snaps.coreuitheme.compose.AppTheme
 
 enum class ActionColor {
@@ -35,7 +34,7 @@ fun ActionsBottomDialog(
     title: TextValue,
     actions: List<ActionData>,
 ) {
-    SimpleBottomDialogUI(title) {
+    SimpleBottomDialogUI(header = title) {
         item {
             Spacer(modifier = Modifier.height(8.dp))
         }

@@ -37,8 +37,8 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
-import io.snaps.coreuicompose.uikit.other.DiamondDialogButtonData
-import io.snaps.coreuicompose.uikit.other.DiamondDialogUi
+import io.snaps.coreuicompose.uikit.dialog.DiamondDialogButtonData
+import io.snaps.coreuicompose.uikit.dialog.DiamondDialog
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.featureprofile.presentation.viewmodel.WalletSettingsViewModel
@@ -138,7 +138,7 @@ private fun WalletSettingsScreen(
             }
         }
         if (uiState.isDialogVisibility) {
-            DiamondDialogUi(
+            DiamondDialog(
                 title = StringKey.WalletSettingsBackupDialogTitle.textValue(),
                 message = StringKey.WalletSettingsBackupDialogMessage.textValue(),
                 onDismissRequest = onDismissRequest,

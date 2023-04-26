@@ -2,6 +2,7 @@ package io.snaps.featurebottombar.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -24,10 +25,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
@@ -48,7 +51,7 @@ import io.snaps.corenavigation.base.navigate
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.LocalBottomNavigationHeight
 import io.snaps.coreuicompose.tools.get
-import io.snaps.coreuicompose.uikit.other.OnboardingBottomDialog
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.OnboardingBottomDialog
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurebottombar.viewmodel.BottomBarViewModel
@@ -96,7 +99,7 @@ fun BottomBarScreen(
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-            Dialogs(
+            OnboardingDialog(
                 onboardingState = onboardingState,
                 onClicked = viewModel::onOnboardingDialogActionClicked,
             )
@@ -140,48 +143,13 @@ fun BottomBarScreen(
                             .align(Alignment.BottomCenter),
                         containerColor = containerColor,
                     ) {
-                        items.forEach { screen ->
-                            val isSelected = currentDestination?.hierarchy?.any {
-                                it.route == screen.route.path()
-                            } == true
-                            val badgeText = when (screen.route.path()) {
-                                AppRoute.MainBottomBar.MainTab4.path() -> uiState.badgeText
-                                else -> null
-                            }
-                            NavigationBarItem(
-                                icon = {
-                                    BadgedBox(
-                                        badge = {
-                                            if (!badgeText.isNullOrEmpty()) {
-                                                Badge { Text(badgeText) }
-                                            }
-                                        }
-                                    ) {
-                                        Icon(
-                                            painter = screen.icon.get(),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(32.dp),
-                                        )
-                                    }
-                                },
-                                label = {
-                                    screen.labelKey?.let {
-                                        Text(
-                                            text = LocalStringHolder.current(it),
-                                            style = AppTheme.specificTypography.labelMedium.copy(
-                                                fontSize = 10.sp
-                                            ),
-                                        )
-                                    }
-                                },
-                                selected = isSelected,
-                                onClick = { navController.switchTo(screen.route.path()) },
-                                colors = NavigationBarItemDefaults.colors(
-                                    unselectedIconColor = AppTheme.specificColorScheme.darkGrey,
-                                    unselectedTextColor = AppTheme.specificColorScheme.textSecondary,
-                                    selectedTextColor = AppTheme.specificColorScheme.uiAccent,
-                                    indicatorColor = containerColor,
-                                ),
+                        items.forEach {
+                            MenuItem(
+                                navController = navController,
+                                uiState = uiState,
+                                screenItem = it,
+                                currentDestination = currentDestination,
+                                containerColor = containerColor,
                             )
                         }
                     }
@@ -192,7 +160,60 @@ fun BottomBarScreen(
 }
 
 @Composable
-private fun Dialogs(
+@OptIn(ExperimentalMaterial3Api::class)
+private fun RowScope.MenuItem(
+    navController: NavHostController,
+    uiState: BottomBarViewModel.UiState,
+    screenItem: BottomBarFeatureProvider.ScreenItem,
+    currentDestination: NavDestination?,
+    containerColor: Color,
+) {
+    val isSelected = currentDestination?.hierarchy?.any {
+        it.route == screenItem.route.path()
+    } == true
+    val badgeText = when (screenItem.route.path()) {
+        AppRoute.MainBottomBar.MainTab4.path() -> uiState.badgeText
+        else -> null
+    }
+    NavigationBarItem(
+        icon = {
+            BadgedBox(
+                badge = {
+                    if (!badgeText.isNullOrEmpty()) {
+                        Badge { Text(badgeText) }
+                    }
+                }
+            ) {
+                Icon(
+                    painter = screenItem.icon.get(),
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
+                )
+            }
+        },
+        label = {
+            screenItem.labelKey?.let {
+                Text(
+                    text = LocalStringHolder.current(it),
+                    style = AppTheme.specificTypography.labelMedium.copy(
+                        fontSize = 10.sp
+                    ),
+                )
+            }
+        },
+        selected = isSelected,
+        onClick = { navController.switchTo(screenItem.route.path()) },
+        colors = NavigationBarItemDefaults.colors(
+            unselectedIconColor = AppTheme.specificColorScheme.darkGrey,
+            unselectedTextColor = AppTheme.specificColorScheme.textSecondary,
+            selectedTextColor = AppTheme.specificColorScheme.uiAccent,
+            indicatorColor = containerColor,
+        ),
+    )
+}
+
+@Composable
+private fun OnboardingDialog(
     onboardingState: OnboardingHandler.UiState,
     onClicked: (OnboardingType?) -> Unit,
 ) {

@@ -23,7 +23,6 @@ data class EmptyListTileState(
     val title: TextValue,
     val message: TextValue? = null,
     val image: ImageValue? = null,
-    val modifier: Modifier = Modifier,
 ) : TileState {
 
     @Composable

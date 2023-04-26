@@ -1,4 +1,4 @@
-package io.snaps.coreuicompose.uikit.other
+package io.snaps.coreuicompose.uikit.text
 
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.material3.LocalTextStyle
@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 
 @Composable
-fun MultiLineFadeText(
+fun FadeText(
     text: AnnotatedString,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
@@ -60,9 +60,7 @@ fun MultiLineFadeText(
         style = style,
         modifier = modifier,
         onTextLayout = {
-            textCountInLine = if (maxLines != Int.MAX_VALUE) {
-                it.getLineEnd(maxLines - 1, true)
-            } else text.length
+            if (maxLines != Int.MAX_VALUE) textCountInLine = it.getLineEnd(maxLines - 1, true)
         }
     )
 }

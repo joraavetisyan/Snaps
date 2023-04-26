@@ -10,6 +10,7 @@ import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.AutoMode
 import androidx.compose.material.icons.rounded.BrowseGallery
 import androidx.compose.material.icons.rounded.CheckCircle
@@ -37,6 +38,7 @@ import io.snaps.corecommon.container.IconValue
 
 object SpecificIcons {
     val back: IconValue = vector(Icons.Rounded.ArrowBack)
+    val forward: IconValue = vector(Icons.Rounded.ArrowForward)
     val add: IconValue = vector(Icons.Rounded.Add)
     val account: IconValue = vector(Icons.Rounded.AccountCircle)
     val navigateNext: IconValue = vector(Icons.Rounded.NavigateNext)

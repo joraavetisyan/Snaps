@@ -74,12 +74,12 @@ import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
-import io.snaps.coreuicompose.uikit.other.ActionsBottomDialog
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.ActionsBottomDialog
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.scroll.DetectScroll
 import io.snaps.coreuicompose.uikit.scroll.ScrollInfo
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
-import io.snaps.coreuicompose.uikit.status.SimpleConfirmDialogUi
+import io.snaps.coreuicompose.uikit.dialog.SimpleConfirmDialogUi
 import io.snaps.coreuitheme.compose.AppTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch

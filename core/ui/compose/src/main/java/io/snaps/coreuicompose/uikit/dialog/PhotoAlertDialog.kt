@@ -1,4 +1,4 @@
-package io.snaps.coreuicompose.uikit.status
+package io.snaps.coreuicompose.uikit.dialog
 
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable

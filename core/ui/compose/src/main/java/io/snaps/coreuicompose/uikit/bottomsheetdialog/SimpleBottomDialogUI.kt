@@ -1,4 +1,4 @@
-package io.snaps.coreuicompose.uikit.status
+package io.snaps.coreuicompose.uikit.bottomsheetdialog
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -18,18 +18,18 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
-import io.snaps.coreuicompose.uikit.other.SheetIndicator
+import io.snaps.coreuicompose.uikit.indicator.SheetIndicator
 import io.snaps.coreuitheme.compose.AppTheme
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SimpleBottomDialogUI(
-    header: TextValue,
     modifier: Modifier = Modifier,
+    header: TextValue? = null,
     content: LazyListScope.() -> Unit,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .background(AppTheme.specificColorScheme.white)
             .inset(insetAllExcludeTop()),
     ) {
@@ -45,15 +45,17 @@ fun SimpleBottomDialogUI(
                     modifier = Modifier.padding(top = 16.dp),
                 ) {
                     SheetIndicator()
-                    Text(
-                        text = header.get(),
-                        color = AppTheme.specificColorScheme.textPrimary,
-                        style = AppTheme.specificTypography.headlineSmall,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .padding(top = 8.dp)
-                            .fillMaxWidth(),
-                    )
+                    header?.let {
+                        Text(
+                            text = it.get(),
+                            color = AppTheme.specificColorScheme.textPrimary,
+                            style = AppTheme.specificTypography.headlineSmall,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .padding(top = 8.dp)
+                                .fillMaxWidth(),
+                        )
+                    }
                 }
             }
             content()

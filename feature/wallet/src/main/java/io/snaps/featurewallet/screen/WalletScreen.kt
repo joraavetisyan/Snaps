@@ -80,7 +80,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.other.TitleSlider
 import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
-import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewallet.ScreenNavigator
 import io.snaps.featurewallet.viewmodel.WalletViewModel
@@ -530,7 +530,7 @@ private fun RowScope.OperationType(
 private fun SelectWalletDialog(
     wallets: List<CellTileState>,
 ) {
-    SimpleBottomDialogUI(StringKey.WalletTitleSelectCurrency.textValue()) {
+    SimpleBottomDialogUI(header = StringKey.WalletTitleSelectCurrency.textValue()) {
         item {
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -560,7 +560,7 @@ private fun TopUpDialog(
     address: String,
     onAddressCopyClicked: () -> Unit,
 ) {
-    SimpleBottomDialogUI(title) {
+    SimpleBottomDialogUI(header = title) {
         item {
             Box(
                 modifier = Modifier

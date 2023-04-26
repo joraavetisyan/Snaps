@@ -64,11 +64,11 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonDefaultM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonInlineM
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
-import io.snaps.coreuicompose.uikit.other.LinkText
-import io.snaps.coreuicompose.uikit.other.LinkTextData
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
-import io.snaps.coreuicompose.uikit.status.SimpleAlertDialogUi
-import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
+import io.snaps.coreuicompose.uikit.dialog.SimpleAlertDialogUi
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
+import io.snaps.coreuicompose.uikit.text.LinkText
+import io.snaps.coreuicompose.uikit.text.LinkTextData
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureregistration.presentation.ScreenNavigator
@@ -355,7 +355,7 @@ private fun LoginWithEmailDialog(
     onLoginWithEmailClicked: () -> Unit,
     onSignUpClicked: () -> Unit,
 ) {
-    SimpleBottomDialogUI(StringKey.RegistrationDialogSignInTitle.textValue()) {
+    SimpleBottomDialogUI(header = StringKey.RegistrationDialogSignInTitle.textValue()) {
         item {
             Text(
                 text = LocalStringHolder.current(StringKey.RegistrationDialogSignInMessage),
@@ -434,7 +434,7 @@ private fun RegistrationWithEmailDialog(
     onPrivacyPolicyClicked: () -> Unit,
     onTermsOfUserClicked: () -> Unit,
 ) {
-    SimpleBottomDialogUI(StringKey.RegistrationDialogSignUpTitle.textValue()) {
+    SimpleBottomDialogUI(header = StringKey.RegistrationDialogSignUpTitle.textValue()) {
         item {
             Text(
                 text = LocalStringHolder.current(StringKey.RegistrationDialogSignUpMessage),

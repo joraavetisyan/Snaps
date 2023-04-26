@@ -1,4 +1,4 @@
-package io.snaps.coreuicompose.uikit.other
+package io.snaps.coreuicompose.uikit.dialog
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -16,7 +16,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -37,9 +36,8 @@ data class DiamondDialogButtonData(
     val onClick: () -> Unit,
 )
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun DiamondDialogUi(
+fun DiamondDialog(
     title: TextValue,
     message: TextValue,
     primaryButton: DiamondDialogButtonData? = null,
@@ -131,7 +129,7 @@ fun DiamondDialogUi(
 @Composable
 @Preview
 fun Test() {
-    DiamondDialogUi(
+    DiamondDialog(
         title = "Title".textValue(),
         message = "vjiofjgoi ioghjtohlgjkh fhguygf".textValue(),
         primaryButton = DiamondDialogButtonData(

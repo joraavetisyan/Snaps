@@ -55,5 +55,6 @@ interface ProfileApi {
         @Query("searchString") query: String?,
         @Query("from") from: String?,
         @Query("count") count: Int,
+        @Query("onlyInvited") onlyInvited: Boolean,
     ): BaseResponse<List<UserInfoResponseDto>>
 }

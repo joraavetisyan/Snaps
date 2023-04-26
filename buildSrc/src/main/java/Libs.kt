@@ -23,7 +23,7 @@ object Libs {
     private const val activityVersion = "1.4.0"
     private const val materialVersion = "1.7.0"
     private const val pagingVersion = "3.1.0"
-    private const val accompanistVersion = "0.26.2-beta"
+    private const val accompanistVersion = "0.31.1-alpha"
     private const val coilVersion = "2.1.0"
 
     private const val lifecycleVersion = "2.4.0"
@@ -62,14 +62,10 @@ object Libs {
     private const val espressoVersion = "3.1.0"
     private const val runnerVersion = "1.1.0"
 
-    private const val pagerVersion = "0.29.0-alpha"
-
     private const val mediaVersion = "1.0.1"
 
     private const val cameraxVersion = "1.2.0-beta01"
     private const val guavaVersion = "31.1-android"
-
-    private const val permissionVersion = "0.28.0"
 
     private const val facebookVersion = "16.0.0"
 
@@ -163,12 +159,13 @@ object Libs {
             "androidx.compose.foundation:foundation:$composeFoundationVersion",
             "androidx.compose.foundation:foundation-layout:$composeFoundationVersion",
             "androidx.compose.animation:animation:$composeVersion",
-            "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion",
             "com.google.accompanist:accompanist-pager:$accompanistVersion",
+            "com.google.accompanist:accompanist-pager-indicators:$accompanistVersion",
+            "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion",
             "com.google.accompanist:accompanist-placeholder-material:$accompanistVersion",
+            "com.google.accompanist:accompanist-permissions:$accompanistVersion",
             "io.coil-kt:coil-compose:$coilVersion",
             "io.coil-kt:coil-svg:$coilVersion",
-            "com.google.accompanist:accompanist-permissions:$permissionVersion",
         )
 
         val splashscreen = arrayOf("androidx.core:core-splashscreen:$splashVersion")
@@ -213,9 +210,6 @@ object Libs {
             "com.github.chuckerteam.chucker:library:$chuckVersion",
         )
 
-        val pager = arrayOf(
-            "com.google.accompanist:accompanist-pager:$pagerVersion",
-        )
         val media = arrayOf(
             "androidx.media3:media3-exoplayer:$mediaVersion",
             "androidx.media3:media3-ui:$mediaVersion",

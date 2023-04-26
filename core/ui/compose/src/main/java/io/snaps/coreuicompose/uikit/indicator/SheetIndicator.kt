@@ -1,4 +1,4 @@
-package io.snaps.coreuicompose.uikit.other
+package io.snaps.coreuicompose.uikit.indicator
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

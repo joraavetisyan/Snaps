@@ -1,4 +1,4 @@
-package io.snaps.coreuicompose.uikit.other
+package io.snaps.coreuicompose.uikit.text
 
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.runtime.Composable

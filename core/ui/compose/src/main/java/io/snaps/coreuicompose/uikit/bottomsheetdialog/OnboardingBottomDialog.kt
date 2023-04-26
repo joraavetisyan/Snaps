@@ -1,4 +1,4 @@
-package io.snaps.coreuicompose.uikit.other
+package io.snaps.coreuicompose.uikit.bottomsheetdialog
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +16,6 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
-import io.snaps.coreuicompose.uikit.status.SimpleBottomDialogUI
 import io.snaps.coreuitheme.compose.AppTheme
 
 @Composable
@@ -27,7 +26,7 @@ fun OnboardingBottomDialog(
     buttonText: TextValue,
     onClick: () -> Unit,
 ) {
-    SimpleBottomDialogUI(TextValue.empty) {
+    SimpleBottomDialogUI {
         item {
             Image(
                 painter = image.get(),

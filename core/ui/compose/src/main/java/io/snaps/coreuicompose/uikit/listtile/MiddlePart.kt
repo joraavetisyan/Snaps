@@ -14,7 +14,7 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.addIf
 import io.snaps.coreuicompose.tools.get
-import io.snaps.coreuicompose.uikit.other.MultiLineFadeText
+import io.snaps.coreuicompose.uikit.text.MultiLineFadeText
 import io.snaps.coreuicompose.uikit.other.ShimmerTileConfig
 import io.snaps.coreuicompose.uikit.other.ShimmerTileLine
 import io.snaps.coreuitheme.compose.AppTheme

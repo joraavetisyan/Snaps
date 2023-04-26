@@ -17,8 +17,8 @@ import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
-import io.snaps.coreuicompose.uikit.other.ActionColor
-import io.snaps.coreuicompose.uikit.other.ActionData
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.ActionColor
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.ActionData
 import io.snaps.coreuitheme.compose.AppTheme
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
