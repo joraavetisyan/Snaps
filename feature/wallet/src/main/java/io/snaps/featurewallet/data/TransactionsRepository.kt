@@ -32,7 +32,7 @@ class TransactionsRepositoryImpl @Inject constructor(
                     action = { from, count ->
                         profileApi.unlockedTransactions(from = from, count = count)
                     },
-                    pageSize = 12,
+                    pageSize = 50,
                     nextPageIdFactory = { it.id },
                     mapper = { it.toModelList() }
                 )
@@ -40,7 +40,7 @@ class TransactionsRepositoryImpl @Inject constructor(
                     action = { from, count ->
                         profileApi.lockedTransactions(from = from, count = count)
                     },
-                    pageSize = 12,
+                    pageSize = 50,
                     nextPageIdFactory = { it.id },
                     mapper = { it.toModelList() }
                 )

@@ -89,7 +89,7 @@ abstract class CoreApp {
 
         override lateinit var instance: Application
 
-        override val testMode = true
+        override val testMode = false
     }
 }
 

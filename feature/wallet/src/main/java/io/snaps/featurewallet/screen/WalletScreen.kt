@@ -139,12 +139,12 @@ fun WalletScreen(
                 )
                 WalletViewModel.BottomDialog.RewardsFootnote -> FootnoteBottomDialog(
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+                        image = ImageValue.ResImage(R.drawable.img_guy_eating),
                         title = StringKey.RewardsDialogTitleFootnote1.textValue(),
                         text = StringKey.RewardsDialogMessageFootnote1.textValue(),
                     ),
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+                        image = ImageValue.ResImage(R.drawable.img_guy_glad),
                         title = StringKey.RewardsDialogTitleFootnote2.textValue(),
                         text = StringKey.RewardsDialogMessageFootnote2.textValue(),
                     ),

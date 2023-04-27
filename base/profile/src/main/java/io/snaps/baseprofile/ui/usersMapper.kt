@@ -6,29 +6,6 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.coreuicompose.uikit.listtile.EmptyListTileState
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 
-sealed interface UserUiState {
-
-    val id: Any
-
-    data class Data(
-        override val id: Any,
-        val user: UserInfoModel,
-        val onClicked: () -> Unit,
-    ) : UserUiState
-
-    data class Shimmer(override val id: Any) : UserUiState
-}
-
-data class UsersUiState(
-    val items: List<UserUiState> = emptyList(),
-    val errorState: MessageBannerState? = null,
-    val emptyState: EmptyListTileState? = null,
-    val onListEndReaching: (() -> Unit)? = null,
-) {
-
-    val isData get() = items.any { it is UserUiState.Data }
-}
-
 fun UsersPageModel.toUsersUiState(
     shimmerListSize: Int,
     onUserClicked: (UserInfoModel) -> Unit,
@@ -46,13 +23,13 @@ fun UsersPageModel.toUsersUiState(
         )
         loadedPageItems.isEmpty() -> UsersUiState(
             emptyState = EmptyListTileState(
-                title = "No data".textValue(),
+                title = "No data".textValue(), // todo localize
             )
         )
         else -> UsersUiState(
             items = loadedPageItems.map {
                 UserUiState.Data(
-                    id = it.userId,
+                    key = it.entityId,
                     user = it,
                     onClicked = { onUserClicked(it) },
                 )

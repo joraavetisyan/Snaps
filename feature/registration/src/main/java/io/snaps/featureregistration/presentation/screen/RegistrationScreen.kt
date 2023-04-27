@@ -222,7 +222,7 @@ private fun RegistrationScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
-            painter = ImageValue.ResImage(R.drawable.img_welcome).get(),
+            painter = ImageValue.ResImage(R.drawable.img_guy_welcoming).get(),
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.End)

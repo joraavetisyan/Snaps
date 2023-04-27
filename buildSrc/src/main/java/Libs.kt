@@ -159,7 +159,6 @@ object Libs {
             "androidx.compose.foundation:foundation:$composeFoundationVersion",
             "androidx.compose.foundation:foundation-layout:$composeFoundationVersion",
             "androidx.compose.animation:animation:$composeVersion",
-            "com.google.accompanist:accompanist-pager:$accompanistVersion",
             "com.google.accompanist:accompanist-pager-indicators:$accompanistVersion",
             "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion",
             "com.google.accompanist:accompanist-placeholder-material:$accompanistVersion",

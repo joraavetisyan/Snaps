@@ -311,7 +311,6 @@ class WalletViewModel @Inject constructor(
     sealed class Command {
         data class OpenWithdrawScreen(val wallet: WalletModel) : Command()
         data class OpenExchangeScreen(val wallet: WalletModel) : Command()
-
         object ShowBottomDialog : Command()
         object HideBottomDialog : Command()
     }

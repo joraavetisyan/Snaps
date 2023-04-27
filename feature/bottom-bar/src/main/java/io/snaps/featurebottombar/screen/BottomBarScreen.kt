@@ -27,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -215,7 +214,7 @@ private fun OnboardingDialog(
 ) {
     when (onboardingState.dialogType) {
         OnboardingType.Rank -> OnboardingBottomDialog(
-            image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+            image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
             title = StringKey.OnboardingRankTitle.textValue(),
             text = StringKey.OnboardingRankText.textValue(),
             buttonText = StringKey.OnboardingRankAction.textValue(),
@@ -224,7 +223,7 @@ private fun OnboardingDialog(
             },
         )
         OnboardingType.Popular -> OnboardingBottomDialog(
-            image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+            image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
             title = StringKey.OnboardingPopularTitle.textValue(),
             text = StringKey.OnboardingPopularText.textValue(),
             buttonText = StringKey.OnboardingPopularAction.textValue(),
@@ -233,7 +232,7 @@ private fun OnboardingDialog(
             },
         )
         OnboardingType.Tasks -> OnboardingBottomDialog(
-            image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+            image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
             title = StringKey.OnboardingTasksTitle.textValue(),
             text = StringKey.OnboardingTasksText.textValue(),
             buttonText = StringKey.OnboardingTasksAction.textValue(),
@@ -242,7 +241,7 @@ private fun OnboardingDialog(
             },
         )
         OnboardingType.Nft -> OnboardingBottomDialog(
-            image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+            image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
             title = StringKey.OnboardingNftTitle.textValue(),
             text = StringKey.OnboardingNftText.textValue(),
             buttonText = StringKey.OnboardingNftAction.textValue(),
@@ -251,7 +250,7 @@ private fun OnboardingDialog(
             },
         )
         OnboardingType.Referral -> OnboardingBottomDialog(
-            image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+            image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
             title = StringKey.OnboardingReferralTitle.textValue(),
             text = StringKey.OnboardingReferralText.textValue(),
             buttonText = StringKey.OnboardingReferralAction.textValue(),
@@ -260,7 +259,7 @@ private fun OnboardingDialog(
             },
         )
         OnboardingType.Wallet -> OnboardingBottomDialog(
-            image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+            image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
             title = StringKey.OnboardingWalletTitle.textValue(),
             text = StringKey.OnboardingWalletText.textValue(),
             buttonText = StringKey.OnboardingWalletAction.textValue(),
@@ -269,7 +268,7 @@ private fun OnboardingDialog(
             },
         )
         OnboardingType.Rewards -> OnboardingBottomDialog(
-            image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+            image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
             title = StringKey.OnboardingRewardsTitle.textValue(),
             text = StringKey.OnboardingRewardsText.textValue(),
             buttonText = StringKey.OnboardingRewardsAction.textValue(),

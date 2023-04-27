@@ -271,7 +271,7 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.MyCollectionFieldNeedToRepair -> TODO()
     StringKey.MyCollectionActionRepairGlasses -> TODO()
     StringKey.RankSelectionTitle -> TODO()
-    StringKey.RankSelectionMessage -> TODO()
+    StringKey.RankSelectionActionFootnote -> TODO()
     StringKey.RankSelectionTitleDailyReward -> TODO()
     StringKey.RankSelectionTitleDailyUnlock -> TODO()
     StringKey.RankSelectionTitleDailyConsumption -> TODO()
@@ -298,4 +298,9 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.VideoClipActionDelete -> TODO()
     StringKey.VideoClipTitleAction -> TODO()
     StringKey.VideoClipDialogConfirmDeleteMessage -> TODO()
+    StringKey.RankSelectionDialogTitleFootnote1 -> TODO()
+    StringKey.RankSelectionDialogMessageFootnote1 -> TODO()
+    StringKey.RankSelectionDialogActionFootnote1 -> TODO()
+    StringKey.ReferralProgramTitleNoReferrals -> TODO()
+    StringKey.ReferralProgramMessageNoReferrals -> TODO()
 }

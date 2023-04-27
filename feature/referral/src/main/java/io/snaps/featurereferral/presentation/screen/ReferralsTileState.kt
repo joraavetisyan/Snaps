@@ -12,6 +12,7 @@ import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.EmptyListTileState
@@ -94,13 +95,12 @@ private fun Data(
     }
 }
 
-// todo strings
 @Composable
 private fun Empty() {
     EmptyListTileState(
-        image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
-        title = "No referrals yet".textValue(),
-        message = "You haven't invited any user yet.".textValue(),
+        image = ImageValue.ResImage(R.drawable.img_guy_confused),
+        title = StringKey.ReferralProgramTitleNoReferrals.textValue(),
+        message = StringKey.ReferralProgramMessageNoReferrals.textValue(),
     ).Content(modifier = Modifier)
 }
 

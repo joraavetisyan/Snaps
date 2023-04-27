@@ -5,8 +5,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
-import io.snaps.baseprofile.data.MainHeaderHandler
-import io.snaps.basesession.AppRouteProvider
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.coredata.network.Action
@@ -29,11 +27,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RankSelectionViewModel @Inject constructor(
-    mainHeaderHandlerDelegate: MainHeaderHandler,
     private val action: Action,
     private val nftRepository: NftRepository,
-    private val appRouteProvider: AppRouteProvider,
-) : SimpleViewModel(), MainHeaderHandler by mainHeaderHandlerDelegate {
+) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -44,12 +40,6 @@ class RankSelectionViewModel @Inject constructor(
     private var ranksLoadJob: Job? = null
 
     init {
-        _uiState.update {
-            it.copy(
-                isMainHeaderItemsEnabled = appRouteProvider.appRouteState.value == AppRoute.MainBottomBar.path(),
-            )
-        }
-
         nftRepository.nftCollectionState.onEach {
             if (it is Effect && it.isSuccess) {
                 subscribeOnRanks(it.requireData)
@@ -98,13 +88,32 @@ class RankSelectionViewModel @Inject constructor(
         )
     }
 
+    fun onRankFootnoteClick() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(bottomDialog = BottomDialog.RankFootnote) }
+            _command publish Command.ShowBottomDialog
+        }
+    }
+
+    fun onRaiseNftRankClick() {
+        viewModelScope.launch {
+            _command publish Command.HideBottomDialog
+        }
+    }
+
     data class UiState(
-        val isMainHeaderItemsEnabled: Boolean = true,
         val ranks: List<RankTileState> = List(6) { RankTileState.Shimmer },
-    )
+        val bottomDialog: BottomDialog = BottomDialog.RankFootnote,
+        )
+
+    sealed class BottomDialog {
+        object RankFootnote : BottomDialog()
+    }
 
     sealed class Command {
         object OpenMainScreen : Command()
         data class OpenPurchase(val args: AppRoute.Purchase.Args) : Command()
+        object ShowBottomDialog : Command()
+        object HideBottomDialog : Command()
     }
 }

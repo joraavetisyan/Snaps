@@ -23,7 +23,7 @@ import io.snaps.coreuitheme.compose.AppTheme
 
 @Composable
 fun FootnoteUi(
-    title: TextValue,
+    title: TextValue? = null,
     description: TextValue? = null,
     action: TextValue? = null,
     onClick: (() -> Unit)? = null,
@@ -32,18 +32,20 @@ fun FootnoteUi(
     Column(
         modifier = Modifier.padding(padding),
     ) {
-        Text(
-            text = title.get(),
-            style = AppTheme.specificTypography.headlineMedium,
-        )
+        title?.let {
+            Text(
+                text = title.get(),
+                style = AppTheme.specificTypography.headlineMedium,
+            )
+        }
         description?.let {
             Text(
                 text = description.get(),
                 style = AppTheme.specificTypography.bodyMedium,
+                modifier = Modifier.padding(bottom = 8.dp),
             )
         }
         action?.let {
-            Spacer(modifier = Modifier.height(8.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
