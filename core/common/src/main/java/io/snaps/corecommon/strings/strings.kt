@@ -939,11 +939,18 @@ internal val strings = mapOf(
     key(StringKey.PreviewVideoMessageSuccess) to mapOf(
         SupportedLanguageKey.En to "Video uploaded successfully",
     ),
-    key(StringKey.PreviewVideoHintTitle) to mapOf(
+
+    key(StringKey.UploadVideoTitle) to mapOf(
+        SupportedLanguageKey.En to "Upload",
+    ),
+    key(StringKey.UploadVideoHintTitle) to mapOf(
         SupportedLanguageKey.En to "Enter video title",
     ),
-    key(StringKey.PreviewVideoHintDescription) to mapOf(
+    key(StringKey.UploadVideoHintDescription) to mapOf(
         SupportedLanguageKey.En to "Enter video description",
+    ),
+    key(StringKey.UploadVideoActionPublish) to mapOf(
+        SupportedLanguageKey.En to "Publish",
     ),
 
     key(StringKey.PurchaseTitle) to mapOf(

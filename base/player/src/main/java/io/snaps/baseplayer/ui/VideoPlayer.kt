@@ -10,10 +10,12 @@ import androidx.compose.material.icons.filled.VolumeMute
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,8 +35,10 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.FullUrl
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 @Composable
@@ -44,6 +48,8 @@ fun VideoPlayer(
     shouldPlay: Boolean,
     isMuted: Boolean = true,
     onMuted: (Boolean) -> Unit = {},
+    progressChangePollFrequency: Long = 1000L, /*every 1 second*/
+    onProgressChanged: ((Float) -> Unit)? = null, /*[0f,1f] every second*/
     isScrolling: Boolean = false,
     isRepeat: Boolean = true,
 ) {
@@ -60,6 +66,24 @@ fun VideoPlayer(
     var volumeIconVisibility by remember { mutableStateOf(false) }
     /*var likeIconVisibility by remember { mutableStateOf(false) }*/
     val coroutineScope = rememberCoroutineScope()
+
+    val onProgressChangedRemembered by rememberUpdatedState(onProgressChanged)
+
+    if (onProgressChangedRemembered != null) {
+        LaunchedEffect(exoPlayer) {
+            while (isActive) {
+                onProgressChangedRemembered?.invoke(
+                    try {
+                        exoPlayer.currentPosition.toFloat() / exoPlayer.duration.toFloat()
+                    } catch (e: Exception) {
+                        log(e)
+                        0f
+                    }.coerceIn(0f, 1f)
+                )
+                delay(progressChangePollFrequency)
+            }
+        }
+    }
 
     Box {
         AndroidView(

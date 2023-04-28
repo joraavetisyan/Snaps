@@ -17,4 +17,5 @@ dependencies {
     implementation(projects.baseProfile)
 
     implementation(*Libs.bundle.media)
+    implementation(Libs.bundle.uploadService)
 }

@@ -330,8 +330,11 @@ enum class StringKey {
     PreviewVideoActionDiscard,
     PreviewVideoActionProceed,
     PreviewVideoMessageSuccess,
-    PreviewVideoHintTitle,
-    PreviewVideoHintDescription,
+
+    UploadVideoTitle,
+    UploadVideoHintTitle,
+    UploadVideoHintDescription,
+    UploadVideoActionPublish,
 
     PurchaseTitle,
     PurchaseTitlePrice,

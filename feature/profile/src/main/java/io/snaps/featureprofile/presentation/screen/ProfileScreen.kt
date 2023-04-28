@@ -77,7 +77,7 @@ fun ProfileScreen(
 
     ProfileScreen(
         uiState = uiState,
-        onCreateVideoScreenClicked = router::toCreateVideoScreen,
+        onCreateVideoClicked = router::toCreateVideoScreen,
         onSettingsClicked = viewModel::onSettingsClicked,
         onBackClicked = router::back,
         onSubscribeClicked = viewModel::onSubscribeClicked,
@@ -94,7 +94,7 @@ fun ProfileScreen(
 @Composable
 private fun ProfileScreen(
     uiState: ProfileViewModel.UiState,
-    onCreateVideoScreenClicked: () -> Unit,
+    onCreateVideoClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
     onBackClicked: () -> Boolean,
     onSubscribeClicked: () -> Unit,
@@ -141,7 +141,7 @@ private fun ProfileScreen(
         floatingActionButton = {
             if (uiState.userType == ProfileViewModel.UserType.Current) {
                 FloatingActionButton(
-                    onClick = onCreateVideoScreenClicked,
+                    onClick = onCreateVideoClicked,
                     shape = CircleShape,
                     containerColor = AppTheme.specificColorScheme.uiAccent,
                 ) {

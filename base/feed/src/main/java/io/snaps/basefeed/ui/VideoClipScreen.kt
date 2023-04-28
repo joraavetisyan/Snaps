@@ -97,6 +97,7 @@ private const val DETECT_THRESHOLD = 1
 fun VideoClipScreen(
     viewModel: VideoFeedViewModel,
     onAuthorClicked: (Uuid) -> Unit,
+    onCreateVideoClicked: (() -> Unit)? = null,
     content: @Composable ((BoxScope.(PaddingValues) -> Unit))? = null,
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -246,6 +247,7 @@ fun VideoClipScreen(
                                         context.startShareLinkIntent(it.url, it.title)
                                     },
                                     onMoreClicked = viewModel::onMoreClicked,
+                                    onCreateVideoClicked = onCreateVideoClicked,
                                 )
                             }
                             is VideoClipUiState.Shimmer -> FullScreenLoaderUi(
@@ -306,6 +308,7 @@ private fun VideoClip(
     onCommentClicked: (VideoClipModel) -> Unit,
     onShareClicked: (VideoClipModel) -> Unit,
     onMoreClicked: () -> Unit,
+    onCreateVideoClicked: (() -> Unit)?,
 ) {
     val shouldPlay by remember(pagerState) {
         derivedStateOf {
@@ -334,6 +337,7 @@ private fun VideoClip(
         onCommentClicked = onCommentClicked,
         onShareClicked = onShareClicked,
         onMoreClicked = onMoreClicked,
+        onCreateVideoClicked = onCreateVideoClicked,
     )
 }
 
@@ -348,6 +352,7 @@ private fun VideoClipItems(
     onCommentClicked: (VideoClipModel) -> Unit,
     onShareClicked: (VideoClipModel) -> Unit,
     onMoreClicked: () -> Unit,
+    onCreateVideoClicked: (() -> Unit)?,
 ) {
     Box(modifier = modifier) {
         // Darkening the lower part, so the info items are more contrasted
@@ -373,6 +378,7 @@ private fun VideoClipItems(
                 onCommentClicked = onCommentClicked,
                 onShareClicked = onShareClicked,
                 onMoreClicked = onMoreClicked,
+                onCreateVideoClicked = onCreateVideoClicked,
             )
         }
     }
@@ -388,6 +394,7 @@ private fun VideoClipInfoItems(
     onCommentClicked: (VideoClipModel) -> Unit,
     onShareClicked: (VideoClipModel) -> Unit,
     onMoreClicked: () -> Unit,
+    onCreateVideoClicked: (() -> Unit)?,
 ) {
     Row(
         modifier = Modifier.fillMaxSize(),
@@ -407,6 +414,7 @@ private fun VideoClipInfoItems(
             onCommentClicked = onCommentClicked,
             onShareClicked = onShareClicked,
             onMoreClicked = onMoreClicked,
+            onCreateVideoClicked = onCreateVideoClicked,
         )
     }
 }
@@ -464,6 +472,7 @@ private fun VideoClipEndItems(
     onCommentClicked: (VideoClipModel) -> Unit,
     onShareClicked: (VideoClipModel) -> Unit,
     onMoreClicked: () -> Unit,
+    onCreateVideoClicked: (() -> Unit)?,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -531,6 +540,16 @@ private fun VideoClipEndItems(
                     painter = AppTheme.specificIcons.moreVert.get(),
                     contentDescription = null,
                     tint = Color.White,
+                    modifier = Modifier.size(36.dp),
+                )
+            }
+        }
+        if (onCreateVideoClicked != null) {
+            IconButton(onClick = { onCreateVideoClicked() }) {
+                Icon(
+                    painter = AppTheme.specificIcons.addCircled.get(),
+                    contentDescription = null,
+                    tint = Color.Unspecified,
                     modifier = Modifier.size(36.dp),
                 )
             }

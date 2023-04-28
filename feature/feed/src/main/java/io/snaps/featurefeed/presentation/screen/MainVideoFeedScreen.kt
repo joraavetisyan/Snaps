@@ -35,7 +35,8 @@ fun MainVideoFeedScreen(
 
     MainVideoFeedScreen(
         viewModel = viewModel,
-        onAuthorClicked = { router.toProfileScreen(it) },
+        onAuthorClicked = router::toProfileScreen,
+        onCreateVideoClicked = router::toCreateVideoScreen,
         mainHeaderState = mainHeaderUiState.value,
     )
 }
@@ -44,11 +45,13 @@ fun MainVideoFeedScreen(
 private fun MainVideoFeedScreen(
     viewModel: MainVideoFeedViewModel,
     onAuthorClicked: (Uuid) -> Unit,
+    onCreateVideoClicked: () -> Unit,
     mainHeaderState: MainHeaderState,
 ) {
     VideoClipScreen(
         viewModel = viewModel,
         onAuthorClicked = onAuthorClicked,
+        onCreateVideoClicked = onCreateVideoClicked,
     ) {
         MainHeader(
             state = mainHeaderState,

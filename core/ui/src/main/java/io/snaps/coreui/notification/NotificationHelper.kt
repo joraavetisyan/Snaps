@@ -26,7 +26,9 @@ interface NotificationHelper {
     )
 
     enum class Channels(val channelName: String, val channelDescription: String) {
-        Default("Default", "Default channel");
+        Default("Default", "Default channel"),
+        Upload("Upload", "Upload channel"),
+        ;
 
         fun getId(context: Context) = "${context.packageName}_$name"
     }
@@ -39,7 +41,11 @@ class NotificationHelperImpl @Inject constructor(
 
     init {
         val channels = NotificationHelper.Channels.values().map {
-            NotificationChannel(it.getId(context), it.channelName, NotificationManager.IMPORTANCE_DEFAULT).apply {
+            NotificationChannel(
+                it.getId(context),
+                it.channelName,
+                NotificationManager.IMPORTANCE_DEFAULT,
+            ).apply {
                 description = it.channelDescription
             }
         }

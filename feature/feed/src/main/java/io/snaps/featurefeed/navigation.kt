@@ -23,6 +23,8 @@ internal class ScreenNavigator(navHostController: NavHostController) :
     )
 
     fun toWalletScreen() = navHostController.navigate(AppRoute.Wallet)
+
+    fun toCreateVideoScreen() = navHostController.navigate(AppRoute.CreateVideo)
 }
 
 class FeedFeatureProviderImpl @Inject constructor() : FeedFeatureProvider {

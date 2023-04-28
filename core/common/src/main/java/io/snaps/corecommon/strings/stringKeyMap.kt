@@ -283,8 +283,8 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.PreviewVideoActionDiscard -> TODO()
     StringKey.PreviewVideoActionProceed -> TODO()
     StringKey.PreviewVideoMessageSuccess -> TODO()
-    StringKey.PreviewVideoHintTitle -> TODO()
-    StringKey.PreviewVideoHintDescription -> TODO()
+    StringKey.UploadVideoHintTitle -> TODO()
+    StringKey.UploadVideoHintDescription -> TODO()
     StringKey.PurchaseTitle -> TODO()
     StringKey.PurchaseTitlePrice -> TODO()
     StringKey.PurchaseTitleNotAvailable -> TODO()
@@ -303,4 +303,6 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.RankSelectionDialogActionFootnote1 -> TODO()
     StringKey.ReferralProgramTitleNoReferrals -> TODO()
     StringKey.ReferralProgramMessageNoReferrals -> TODO()
+    StringKey.UploadVideoActionPublish -> TODO()
+    StringKey.UploadVideoTitle -> TODO()
 }
