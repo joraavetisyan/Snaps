@@ -96,19 +96,22 @@ fun QuestModel.status(): TaskStatus? = when (status) {
 
 fun State<List<NftModel>>.toNftCollectionItemState(
     onReloadClicked: () -> Unit,
+    onItemClicked: (NftModel) -> Unit,
 ) = when (this) {
     is Loading -> List(6) { CollectionItemState.Shimmer }
     is Effect -> when {
         isSuccess -> buildList<CollectionItemState> {
             requireData.forEach {
-                add(it.toNftCollectionItemState())
+                add(it.toNftCollectionItemState(onItemClicked))
             }
         }
         else -> listOf(CollectionItemState.Error(onClick = onReloadClicked))
     }
 }
 
-private fun NftModel.toNftCollectionItemState() = CollectionItemState.Nft(
+private fun NftModel.toNftCollectionItemState(
+    onItemClicked: (NftModel) -> Unit,
+) = CollectionItemState.Nft(
     type = type,
     price = costInUsd?.costToString() ?: "",
     image = image,
@@ -117,4 +120,5 @@ private fun NftModel.toNftCollectionItemState() = CollectionItemState.Nft(
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthy = true,
     onRepairClicked = {},
+    onItemClicked = { onItemClicked(this) }
 )

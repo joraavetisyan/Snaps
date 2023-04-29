@@ -3,12 +3,15 @@ package io.snaps.featurecollection.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
+import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.basesession.data.OnboardingHandler
+import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.Action
+import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.featurecollection.presentation.toNftCollectionItemState
@@ -51,6 +54,7 @@ class MyCollectionViewModel @Inject constructor(
                 onAddItemClicked = ::onAddItemClicked,
                 onReloadClicked = ::onNftReloadClicked,
                 onRepairClicked = ::onRepairClicked,
+                onItemClicked = ::onItemClicked,
             )
         }.onEach { state ->
             _uiState.update { it.copy(nft = state) }
@@ -84,6 +88,18 @@ class MyCollectionViewModel @Inject constructor(
         }
     }
 
+    private fun onItemClicked(nftModel: NftModel) {
+        viewModelScope.launch {
+            _command publish Command.OpenNftDetailsScreen(
+                args = AppRoute.NftDetails.Args(
+                    type = nftModel.type,
+                    dailyReward = nftModel.dailyReward,
+                    image = nftModel.image.value as FullUrl,
+                )
+            )
+        }
+    }
+
     data class UiState(
         val isLoading: Boolean = false,
         val nft: List<CollectionItemState> = List(6) { CollectionItemState.Shimmer },
@@ -91,5 +107,6 @@ class MyCollectionViewModel @Inject constructor(
 
     sealed class Command {
         object OpenRankSelectionScreen : Command()
+        data class OpenNftDetailsScreen(val args: AppRoute.NftDetails.Args) : Command()
     }
 }

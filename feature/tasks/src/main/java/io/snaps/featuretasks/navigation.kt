@@ -44,6 +44,13 @@ internal class ScreenNavigator(navHostController: NavHostController) :
     fun toWalletScreen() = navHostController.navigate(AppRoute.Wallet)
 
     fun toWebView() = navHostController.navigate(AppRoute.WebView)
+
+    fun toNftDetailsScreen(
+        args: AppRoute.NftDetails.Args
+    ) = navHostController navigate FeatureNavDirection(
+        route = AppRoute.NftDetails,
+        arg = args,
+    )
 }
 
 class TasksFeatureProviderImpl @Inject constructor() : TasksFeatureProvider {

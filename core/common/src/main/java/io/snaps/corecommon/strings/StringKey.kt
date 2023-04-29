@@ -352,4 +352,12 @@ enum class StringKey {
     VideoClipActionDelete,
     VideoClipTitleAction,
     VideoClipDialogConfirmDeleteMessage,
+
+    NftDetailsDescriptionDailyReward,
+    NftDetailsTitleEarnings,
+    NftDetailsDescriptionEarnings,
+    NftDetailsTitleCondition,
+    NftDetailsDescriptionCondition,
+    NftDetailsTitleLevel,
+    NftDetailsDescriptionLevel,
 }

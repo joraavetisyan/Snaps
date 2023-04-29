@@ -3,6 +3,7 @@ package io.snaps.featuretasks.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
+import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
@@ -12,6 +13,7 @@ import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.corecommon.date.toLong
+import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.State
 import io.snaps.coredata.network.Action
@@ -81,6 +83,7 @@ class TasksViewModel @Inject constructor(
                 it.copy(
                     userNftCollection = state.toNftCollectionItemState(
                         onReloadClicked = ::onUserNftReloadClicked,
+                        onItemClicked = ::onItemClicked,
                     )
                 )
             }
@@ -204,6 +207,18 @@ class TasksViewModel @Inject constructor(
         loadUserNftCollection()
     }
 
+    private fun onItemClicked(nftModel: NftModel) {
+        viewModelScope.launch {
+            _command publish Command.OpenNftDetailsScreen(
+                args = AppRoute.NftDetails.Args(
+                    type = nftModel.type,
+                    dailyReward = nftModel.dailyReward,
+                    image = nftModel.image.value as FullUrl,
+                )
+            )
+        }
+    }
+
     fun onCurrentTasksFootnoteClick() {
         viewModelScope.launch {
             _uiState.update { it.copy(bottomDialog = BottomDialog.CurrentTasksFootnote) }
@@ -243,5 +258,6 @@ class TasksViewModel @Inject constructor(
         object ShowBottomDialog : Command()
         object HideBottomDialog : Command()
         data class OpenTaskDetailsScreen(val args: AppRoute.TaskDetails.Args) : Command()
+        data class OpenNftDetailsScreen(val args: AppRoute.NftDetails.Args) : Command()
     }
 }

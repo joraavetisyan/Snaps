@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class UploadViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,

@@ -49,6 +49,7 @@ sealed class CollectionItemState : TileState {
         val dailyConsumption: String,
         val isHealthy: Boolean,
         val onRepairClicked: () -> Unit,
+        val onItemClicked: () -> Unit,
     ) : CollectionItemState()
 
     data class MysteryBox(
@@ -89,7 +90,12 @@ private fun Nft(
     data: CollectionItemState.Nft,
 ) {
     Column(modifier) {
-        Container(Modifier) {
+        Container(
+            Modifier.defaultTileRipple(
+                onClick = data.onItemClicked,
+                padding = 0.dp,
+            )
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
