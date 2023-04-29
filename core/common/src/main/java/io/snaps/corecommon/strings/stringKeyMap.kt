@@ -298,4 +298,6 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.VideoClipActionDelete -> TODO()
     StringKey.VideoClipTitleAction -> TODO()
     StringKey.VideoClipDialogConfirmDeleteMessage -> TODO()
+    StringKey.TaskShareFieldEarnCryptocurrencies -> TODO()
+    StringKey.TaskShareFieldDownloadApp -> TODO()
 }

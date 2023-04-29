@@ -651,6 +651,12 @@ internal val strings = mapOf(
     key(StringKey.TaskShareMessagePhotoSaved) to mapOf(
         SupportedLanguageKey.En to "Photo saved",
     ),
+    key(StringKey.TaskShareFieldDownloadApp) to mapOf(
+        SupportedLanguageKey.En to "Download the app Snaps",
+    ),
+    key(StringKey.TaskShareFieldEarnCryptocurrencies) to mapOf(
+        SupportedLanguageKey.En to "I play Snaps and\u00A0earn cryptocurrencies",
+    ),
 
     key(StringKey.TaskFindPointsTitle) to mapOf(
         SupportedLanguageKey.En to "Find points",

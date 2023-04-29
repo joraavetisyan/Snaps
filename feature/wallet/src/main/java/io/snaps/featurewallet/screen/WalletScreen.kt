@@ -579,25 +579,13 @@ private fun TopUpDialog(
 ) {
     SimpleBottomDialogUI(header = title) {
         item {
-            Box(
-                modifier = Modifier
-                    .size(164.dp)
-                    .padding(16.dp)
-                    .background(
-                        color = AppTheme.specificColorScheme.white,
-                        shape = AppTheme.shapes.extraLarge,
-                    ),
-            ) {
-                qr?.let {
-                    Image(
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .fillMaxSize(),
-                        bitmap = it.asImageBitmap(),
-                        contentScale = ContentScale.FillWidth,
-                        contentDescription = null,
-                    )
-                }
+            qr?.let {
+                Image(
+                    modifier = Modifier.size(164.dp),
+                    bitmap = it.asImageBitmap(),
+                    contentScale = ContentScale.FillWidth,
+                    contentDescription = null,
+                )
             }
             SimpleButtonGreyM(
                 modifier = Modifier

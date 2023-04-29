@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.TextValue
-import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuitheme.compose.AppTheme
