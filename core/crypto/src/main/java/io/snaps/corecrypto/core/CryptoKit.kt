@@ -1,17 +1,11 @@
 package io.snaps.corecrypto.core
 
-//import com.walletconnect.android.Core
-//import com.walletconnect.android.CoreClient
-//import com.walletconnect.android.relay.ConnectionType
-//import com.walletconnect.sign.client.Sign
-//import com.walletconnect.sign.client.SignClient
-//import io.snaps.corecrypto.walletconnect.version2.WC2Service
-//import io.snaps.corecrypto.walletconnect.version2.WC2SessionManager
 import android.app.Application
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.preference.PreferenceManager
 import io.horizontalsystems.ethereumkit.core.EthereumKit
+import io.horizontalsystems.ethereumkit.models.IS_CRYPTO_IN_TEST_MODE
 import io.horizontalsystems.hdwalletkit.Mnemonic
 import io.reactivex.plugins.RxJavaPlugins
 import io.snaps.corecommon.BuildConfig
@@ -89,7 +83,7 @@ abstract class CoreApp {
 
         override lateinit var instance: Application
 
-        override val testMode = false
+        override val testMode = IS_CRYPTO_IN_TEST_MODE
     }
 }
 

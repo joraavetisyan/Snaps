@@ -10,7 +10,6 @@ import io.horizontalsystems.marketkit.models.Token
 import io.horizontalsystems.marketkit.models.TokenQuery
 import io.horizontalsystems.marketkit.models.TokenType
 import io.horizontalsystems.marketkit.models.TopPlatform
-import io.horizontalsystems.nftkit.models.NftType
 import io.snaps.corecrypto.core.managers.RestoreSettingType
 import io.snaps.corecrypto.entities.AccountType
 import io.snaps.corecrypto.entities.BitcoinCashCoinType
@@ -229,16 +228,6 @@ val BlockchainType.tokenIconPlaceholder: Int
         BlockchainType.ArbitrumOne -> 0
         BlockchainType.Gnosis -> 0
         else -> 0
-    }
-
-val BlockchainType.supportedNftTypes: List<NftType>
-    get() = when (this) {
-        BlockchainType.Ethereum -> listOf(NftType.Eip721, NftType.Eip1155)
-//        BlockchainType.BinanceSmartChain -> listOf(NftType.Eip721)
-//        BlockchainType.Polygon -> listOf(NftType.Eip721, NftType.Eip1155)
-//        BlockchainType.Avalanche -> listOf(NftType.Eip721)
-//        BlockchainType.ArbitrumOne -> listOf(NftType.Eip721)
-        else -> listOf()
     }
 
 val BlockchainType.feePriceScale: FeePriceScale

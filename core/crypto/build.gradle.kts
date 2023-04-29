@@ -10,6 +10,9 @@ dependencies {
     api(*Libs.bundle.requests)
     api(*Libs.bundle.kotlinSerialization)
 
+    implementation(projects.ethereumkit)
+    implementation(projects.erc20kit)
+
     implementation(projects.coreCommon)
 
     implementation(*Libs.bundle.datastore)

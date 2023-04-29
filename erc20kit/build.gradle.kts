@@ -1,0 +1,15 @@
+plugins {
+    id(Libs.plugin.library)
+}
+
+common()
+
+dependencies {
+    implementation("io.reactivex.rxjava2:rxjava:2.2.19")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
+    implementation("androidx.room:room-runtime:2.4.3")
+    implementation("androidx.room:room-rxjava2:2.4.3")
+    kapt("androidx.room:room-compiler:2.4.3")
+
+    implementation(projects.ethereumkit)
+}

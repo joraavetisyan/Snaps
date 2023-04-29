@@ -227,7 +227,7 @@ object Libs {
 
         val crypto = arrayOf(
             "com.github.horizontalsystems:bitcoin-kit-android:d1a55ca",
-            "com.github.horizontalsystems:ethereum-kit-android:7aadf9d",
+            /*"com.github.horizontalsystems:ethereum-kit-android:7aadf9d",*/
             "com.github.horizontalsystems:blockchain-fee-rate-kit-android:501cf1e",
             "com.github.horizontalsystems:binance-chain-kit-android:2a89cad",
             "com.github.horizontalsystems:market-kit-android:97f5bc7",

@@ -39,7 +39,9 @@ class WalletImportViewModel @Inject constructor(
                     .flatMap { user ->
                         walletRepository.importAccount(
                             userId = user.userId,
-                            words = _uiState.value.words.map { it.trim().lowercase() }
+                            words = _uiState.value.words.first().let {
+                                it.trim().split(" ").map { it.lowercase() }
+                            }
                         )
                     }.flatMap {
                         sessionRepository.onWalletConnect()
@@ -71,7 +73,7 @@ class WalletImportViewModel @Inject constructor(
         val dialog: Dialog? = null,
     ) {
 
-        val isContinueButtonEnabled get() = words.all(String::isNotBlank)
+        val isContinueButtonEnabled get() = true // todo
     }
 
     sealed interface Command

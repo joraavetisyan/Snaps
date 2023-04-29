@@ -10,10 +10,6 @@ import io.horizontalsystems.ethereumkit.models.FullTransaction
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.marketkit.models.TokenQuery
 import io.horizontalsystems.marketkit.models.TokenType
-import io.horizontalsystems.oneinchkit.decorations.OneInchDecoration
-import io.horizontalsystems.oneinchkit.decorations.OneInchSwapDecoration
-import io.horizontalsystems.oneinchkit.decorations.OneInchUnoswapDecoration
-import io.horizontalsystems.uniswapkit.decorations.SwapDecoration
 import io.snaps.corecrypto.core.IAccountManager
 import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.storage.EvmAccountStateDao
@@ -102,27 +98,6 @@ class EvmAccountManager(
             when (val decoration = fullTransaction.decoration) {
                 is IncomingDecoration -> {
                     foundTokens.add(FoundToken(TokenType.Native))
-                }
-
-                is SwapDecoration -> {
-                    val tokenOut = decoration.tokenOut
-                    if (tokenOut is SwapDecoration.Token.Eip20Coin) {
-                        foundTokens.add(FoundToken(TokenType.Eip20(tokenOut.address.hex), tokenOut.tokenInfo))
-                    }
-                }
-
-                is OneInchSwapDecoration -> {
-                    val tokenOut = decoration.tokenOut
-                    if (tokenOut is OneInchDecoration.Token.Eip20Coin) {
-                        foundTokens.add(FoundToken(TokenType.Eip20(tokenOut.address.hex), tokenOut.tokenInfo))
-                    }
-                }
-
-                is OneInchUnoswapDecoration -> {
-                    val tokenOut = decoration.tokenOut
-                    if (tokenOut is OneInchDecoration.Token.Eip20Coin) {
-                        foundTokens.add(FoundToken(TokenType.Eip20(tokenOut.address.hex), tokenOut.tokenInfo))
-                    }
                 }
 
                 is UnknownTransactionDecoration -> {

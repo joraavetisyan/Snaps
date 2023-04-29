@@ -12,10 +12,6 @@ import io.horizontalsystems.ethereumkit.models.GasPrice
 import io.horizontalsystems.ethereumkit.models.RpcSource
 import io.horizontalsystems.ethereumkit.models.TransactionData
 import io.horizontalsystems.marketkit.models.BlockchainType
-import io.horizontalsystems.nftkit.core.NftKit
-import io.horizontalsystems.nftkit.models.NftType
-import io.horizontalsystems.oneinchkit.OneInchKit
-import io.horizontalsystems.uniswapkit.UniswapKit
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
@@ -24,7 +20,6 @@ import io.reactivex.subjects.PublishSubject
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.core.UnsupportedAccountException
 import io.snaps.corecrypto.core.subscribeIO
-import io.snaps.corecrypto.core.supportedNftTypes
 import io.snaps.corecrypto.entities.Account
 import io.snaps.corecrypto.entities.AccountType
 import io.snaps.corecrypto.other.BackgroundManager
@@ -134,31 +129,10 @@ class EvmKitManager(
         Erc20Kit.addTransactionSyncer(evmKit)
         Erc20Kit.addDecorators(evmKit)
 
-        UniswapKit.addDecorators(evmKit)
-        OneInchKit.addDecorators(evmKit)
-
-        var nftKit: NftKit? = null
-        val supportedNftTypes = blockchainType.supportedNftTypes
-        if (supportedNftTypes.isNotEmpty()) {
-            val nftKitInstance = NftKit.getInstance(CryptoKit.instance, evmKit)
-            supportedNftTypes.forEach {
-                when (it) {
-                    NftType.Eip721 -> {
-                        nftKitInstance.addEip721TransactionSyncer()
-                        nftKitInstance.addEip721Decorators()
-                    }
-                    NftType.Eip1155 -> {
-                        nftKitInstance.addEip1155TransactionSyncer()
-                        nftKitInstance.addEip1155Decorators()
-                    }
-                }
-            }
-            nftKit = nftKitInstance
-        }
 
         evmKit.start()
 
-        return EvmKitWrapper(evmKit, nftKit, blockchainType, signer)
+        return EvmKitWrapper(evmKit, blockchainType, signer)
     }
 
     @Synchronized
@@ -201,7 +175,6 @@ val RpcSource.urls: List<URL>
 
 class EvmKitWrapper(
     val evmKit: EthereumKit,
-    val nftKit: NftKit?,
     val blockchainType: BlockchainType,
     val signer: Signer?
 ) {
