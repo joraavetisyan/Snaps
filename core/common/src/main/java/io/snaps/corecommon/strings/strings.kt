@@ -425,6 +425,12 @@ internal val strings = mapOf(
     key(StringKey.ReferralProgramMessageFootnoteMyReferrals) to mapOf(
         SupportedLanguageKey.En to "Here you can see all invited referrals. View their activity, the rank and number of their NFTs, and their income growth through the referral program.",
     ),
+    key(StringKey.ReferralProgramTitleNoReferrals) to mapOf(
+        SupportedLanguageKey.En to "No referrals yet",
+    ),
+    key(StringKey.ReferralProgramMessageNoReferrals) to mapOf(
+        SupportedLanguageKey.En to "You haven't invited any user yet.",
+    ),
     key(StringKey.ReferralProgramDialogTitleFootnoteMain1) to mapOf(
         SupportedLanguageKey.En to "Share your referral code/link",
     ),
@@ -892,7 +898,7 @@ internal val strings = mapOf(
     key(StringKey.RankSelectionTitle) to mapOf(
         SupportedLanguageKey.En to "Choose a rank for your points",
     ),
-    key(StringKey.RankSelectionMessage) to mapOf(
+    key(StringKey.RankSelectionActionFootnote) to mapOf(
         SupportedLanguageKey.En to "What is a rank",
     ),
     key(StringKey.RankSelectionTitleDailyReward) to mapOf(
@@ -906,6 +912,15 @@ internal val strings = mapOf(
     ),
     key(StringKey.RankSelectionMessageNotAvailable) to mapOf(
         SupportedLanguageKey.En to "Not available for purchase",
+    ),
+    key(StringKey.RankSelectionDialogTitleFootnote1) to mapOf(
+        SupportedLanguageKey.En to "My glasses",
+    ),
+    key(StringKey.RankSelectionDialogMessageFootnote1) to mapOf(
+        SupportedLanguageKey.En to "All your NFT points are stored here. Free rank NFT points are enough to get started. This will allow you to get your first rewards and try yourself in the Snaps ecosystem!",
+    ),
+    key(StringKey.RankSelectionDialogActionFootnote1) to mapOf(
+        SupportedLanguageKey.En to "Raise NFT Rank",
     ),
 
     key(StringKey.CreateVideoActionGrantPerms) to mapOf(
@@ -930,11 +945,18 @@ internal val strings = mapOf(
     key(StringKey.PreviewVideoMessageSuccess) to mapOf(
         SupportedLanguageKey.En to "Video uploaded successfully",
     ),
-    key(StringKey.PreviewVideoHintTitle) to mapOf(
+
+    key(StringKey.UploadVideoTitle) to mapOf(
+        SupportedLanguageKey.En to "Upload",
+    ),
+    key(StringKey.UploadVideoHintTitle) to mapOf(
         SupportedLanguageKey.En to "Enter video title",
     ),
-    key(StringKey.PreviewVideoHintDescription) to mapOf(
+    key(StringKey.UploadVideoHintDescription) to mapOf(
         SupportedLanguageKey.En to "Enter video description",
+    ),
+    key(StringKey.UploadVideoActionPublish) to mapOf(
+        SupportedLanguageKey.En to "Publish",
     ),
 
     key(StringKey.PurchaseTitle) to mapOf(

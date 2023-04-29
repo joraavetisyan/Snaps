@@ -109,7 +109,7 @@ private fun Error(
     Container(modifier) {
         Avatar(
             onProfileClicked = state.onProfileClicked,
-            imageValue = ImageValue.ResImage(R.drawable.img_welcome),
+            imageValue = ImageValue.ResImage(R.drawable.img_avatar),
         )
         Spacer(Modifier.weight(1f))
         ValueWidget(null to StringKey.Error.textValue().get().text)
@@ -154,7 +154,7 @@ private fun Container(
 private fun Preview() {
     MainHeader(
         state = MainHeaderState.Data(
-            profileImage = ImageValue.ResImage(R.drawable.img_welcome),
+            profileImage = ImageValue.ResImage(R.drawable.img_guy_welcoming),
             energy = "12",
             unlocked = "12",
             locked = "12",

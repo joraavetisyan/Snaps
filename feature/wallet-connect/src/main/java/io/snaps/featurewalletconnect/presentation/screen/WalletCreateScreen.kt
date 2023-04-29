@@ -39,7 +39,7 @@ fun WalletCreateScreen(
         FullScreenMessageUi(
             modifier = Modifier.padding(it),
             data = FullScreenMessage(
-                icon = ImageValue.ResImage(R.drawable.img_create_wallet),
+                icon = ImageValue.ResImage(R.drawable.img_guy_warning),
                 title = StringKey.CreateWalletTitle.textValue(),
                 message = StringKey.CreateWalletMessage.textValue(),
                 primaryButton = FullScreenMessage.ButtonData(

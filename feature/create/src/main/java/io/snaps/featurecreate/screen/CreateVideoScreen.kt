@@ -113,7 +113,7 @@ fun CreateVideoScreen(
         permissionState.launchMultiplePermissionRequest()
     }
 
-    BackHandler(enabled = !uiState.isRecording) {}
+    BackHandler(enabled = !uiState.isRecording, onBack = router::back)
 
     val videoPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -290,8 +290,9 @@ fun BoxScope.PermissionGrantedContent(
             modifier = Modifier.fillMaxWidth(),
             progress = uiState.progress,
             isDashed = false,
-            backColor = Color(0x80B1B3C0),
-            fillColor = Color(0xFFB1B3C0),
+            backColor = AppTheme.specificColorScheme.white_40,
+            fillColor = AppTheme.specificColorScheme.white,
+            height = 6.dp,
         )
         Spacer(Modifier.height(16.dp))
         Box(modifier = Modifier.fillMaxSize()) {

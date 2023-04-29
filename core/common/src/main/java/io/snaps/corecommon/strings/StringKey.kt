@@ -143,6 +143,8 @@ enum class StringKey {
     ReferralProgramMessageReferralLinkCopied,
     ReferralProgramMessageFootnoteMain,
     ReferralProgramMessageFootnoteMyReferrals,
+    ReferralProgramTitleNoReferrals,
+    ReferralProgramMessageNoReferrals,
     ReferralProgramDialogTitleFootnoteMain1,
     ReferralProgramDialogTitleFootnoteMain2,
     ReferralProgramDialogMessageFootnoteMain1,
@@ -313,11 +315,14 @@ enum class StringKey {
     MyCollectionActionRepairGlasses,
 
     RankSelectionTitle,
-    RankSelectionMessage,
+    RankSelectionActionFootnote,
     RankSelectionTitleDailyReward,
     RankSelectionTitleDailyUnlock,
     RankSelectionTitleDailyConsumption,
     RankSelectionMessageNotAvailable,
+    RankSelectionDialogTitleFootnote1,
+    RankSelectionDialogMessageFootnote1,
+    RankSelectionDialogActionFootnote1,
 
     CreateVideoActionGrantPerms,
     CreateVideoActionFlip,
@@ -327,8 +332,11 @@ enum class StringKey {
     PreviewVideoActionDiscard,
     PreviewVideoActionProceed,
     PreviewVideoMessageSuccess,
-    PreviewVideoHintTitle,
-    PreviewVideoHintDescription,
+
+    UploadVideoTitle,
+    UploadVideoHintTitle,
+    UploadVideoHintDescription,
+    UploadVideoActionPublish,
 
     PurchaseTitle,
     PurchaseTitlePrice,

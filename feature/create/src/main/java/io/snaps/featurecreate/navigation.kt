@@ -10,6 +10,7 @@ import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
 import io.snaps.featurecreate.screen.CreateVideoScreen
 import io.snaps.featurecreate.screen.PreviewScreen
+import io.snaps.featurecreate.screen.UploadScreen
 import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) :
@@ -19,6 +20,18 @@ internal class ScreenNavigator(navHostController: NavHostController) :
         AppRoute.PreviewVideo,
         AppRoute.PreviewVideo.Args(uri),
     )
+
+    fun toUploadScreen(uri: String) = navHostController navigate FeatureNavDirection(
+        AppRoute.UploadVideo,
+        AppRoute.UploadVideo.Args(uri),
+    )
+
+    fun toCreateScreen() {
+        navHostController.popBackStack(
+            route = AppRoute.CreateVideo.path(),
+            inclusive = false,
+        )
+    }
 }
 
 class CreateFeatureProviderImpl @Inject constructor() : CreateFeatureProvider {
@@ -26,5 +39,6 @@ class CreateFeatureProviderImpl @Inject constructor() : CreateFeatureProvider {
     override fun NavGraphBuilder.createGraph(controller: NavHostController) {
         composable(AppRoute.CreateVideo) { CreateVideoScreen(controller) }
         composable(AppRoute.PreviewVideo) { PreviewScreen(controller) }
+        composable(AppRoute.UploadVideo) { UploadScreen(controller) }
     }
 }

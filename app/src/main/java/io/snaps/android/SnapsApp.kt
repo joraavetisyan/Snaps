@@ -14,9 +14,12 @@ import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.coredata.coroutine.ApplicationCoroutineScopeHolder
 import io.snaps.coredata.network.ApiConfig
+import io.snaps.coreui.notification.NotificationHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import net.gotev.uploadservice.UploadServiceConfig
+import net.gotev.uploadservice.protocols.multipart.MultipartUploadRequest
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -30,6 +33,9 @@ class SnapsApp : Application(), ApplicationCoroutineScopeHolder, ImageLoaderFact
 
     @Inject
     lateinit var networkStateSource: NetworkStateSource
+
+    @Inject
+    lateinit var notificationHelper: NotificationHelper // for channels to be inited
 
     @Inject
     lateinit var apiConfig: ApiConfig
@@ -54,6 +60,13 @@ class SnapsApp : Application(), ApplicationCoroutineScopeHolder, ImageLoaderFact
         AnalyticsTrackerHolder.init(tracker)
 
         CryptoKit.init(this)
+
+        // todo move to wrapper with  notificationHelper
+        UploadServiceConfig.initialize(
+            context = this,
+            defaultNotificationChannel = NotificationHelper.Channels.Upload.getId(this),
+            debug = BuildConfig.DEBUG,
+        )
     }
 
     override fun newImageLoader() = ImageLoader.Builder(this)

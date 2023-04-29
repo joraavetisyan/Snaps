@@ -69,7 +69,9 @@ fun FootnoteBottomDialog(
         ) {
             FootnoteBottomDialogPage(data = data[it])
         }
-        HorizontalPagerIndicatorBridge(pagerState = pagerState, pageCount = data.size)
+        if (data.size > 1) {
+            HorizontalPagerIndicatorBridge(pagerState = pagerState, pageCount = data.size)
+        }
         Spacer(modifier = Modifier.height(16.dp))
     }
 }

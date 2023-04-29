@@ -8,6 +8,7 @@ import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.ui.VideoFeedUiState
 import io.snaps.basefeed.ui.toVideoFeedUiState
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.SubsType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.Action
@@ -50,17 +51,15 @@ class ProfileViewModel @Inject constructor(
 
     init {
         if (args?.userId != null && !profileRepository.isCurrentUser(args.userId!!)) {
-            _uiState.update {
-                it.copy(userType = UserType.Other)
-            }
+            _uiState.update { it.copy(userType = UserType.Other) }
             loadUserById(requireNotNull(args.userId))
         } else {
             subscribeOnCurrentUser()
             loadCurrentUser()
         }
-        loadVideoFeed()
         subscribeOnFeed()
         subscribeOnUserLikedFeed()
+
         loadSubscriptions()
     }
 
@@ -89,6 +88,7 @@ class ProfileViewModel @Inject constructor(
 
     private fun loadSubscriptions() = viewModelScope.launch {
         _uiState.update { it.copy(isLoading = true) }
+        // todo in Action
         val subscriptions = subsRepository.getSubscriptions()
         _uiState.update {
             it.copy(
@@ -174,11 +174,6 @@ class ProfileViewModel @Inject constructor(
                 videoFeedRepository.loadNextFeedPage(VideoFeedType.UserLiked)
             }
         }
-    }
-
-    private fun loadVideoFeed() {
-        onUserLikedFeedReloadClicked()
-        onFeedReloadClicked()
     }
 
     private fun onUserLikedFeedReloadClicked() = viewModelScope.launch {

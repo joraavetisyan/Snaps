@@ -18,6 +18,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
@@ -29,11 +30,13 @@ fun Progress(
     backColor: Color = Color(0xFFF2F4FE),
     fillColor: Color = Color(0xFFDDE3FF),
     dashColor: Color = Color(0xFFD1D9FF),
+    height: Dp = 16.dp,
+    cornerSize: Dp = height,
 ) {
     Box(
         modifier
             .fillMaxWidth()
-            .height(16.dp)
+            .height(height)
             .background(backColor, CircleShape)
             .clip(CircleShape),
     ) {
@@ -42,7 +45,7 @@ fun Progress(
                 .fillMaxHeight()
                 .fillMaxWidth(progress.coerceIn(0.0f, 1.0f))
                 .align(Alignment.CenterStart)
-                .clip(RoundedCornerShape(16.dp)),
+                .clip(RoundedCornerShape(cornerSize)),
         ) {
             // Background
             drawRect(
@@ -51,9 +54,8 @@ fun Progress(
                 size = Size(width = size.width, height = size.height),
             )
             if (isDashed) {
-                val step = 16.dp
                 val angleDegrees = 30f
-                val stepPx = step.toPx()
+                val stepPx = height.toPx()
                 val stepsCount = (size.width / stepPx).roundToInt()
                 val actualStepWidth = size.width / stepsCount
                 val dotSize = Size(width = actualStepWidth / 2, height = size.height * 2)

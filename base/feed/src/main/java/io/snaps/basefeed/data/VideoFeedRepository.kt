@@ -1,25 +1,27 @@
 package io.snaps.basefeed.data
 
-import android.net.Uri
-import androidx.core.net.toFile
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.UserLikedVideoFeedItemResponseDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseplayer.domain.VideoClipModel
+import io.snaps.corecommon.ext.log
+import io.snaps.corecommon.model.AppError
+import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
-import io.snaps.corecommon.model.generateCurrentDateTime
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.database.TokenStorage
+import io.snaps.coredata.network.ApiService
 import io.snaps.coredata.network.PagedLoader
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.StateFlow
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
+import net.gotev.uploadservice.protocols.multipart.MultipartUploadRequest
 import javax.inject.Inject
 
 interface VideoFeedRepository {
@@ -34,15 +36,18 @@ interface VideoFeedRepository {
 
     suspend fun like(videoId: Uuid): Effect<Completable>
 
-    suspend fun addVideo(title: String, description: String, fileId: Uuid): Effect<VideoClipModel>
-
-    suspend fun uploadVideo(uri: Uri, videoId: Uuid): Effect<Completable>
+    suspend fun uploadVideo(
+        title: String, description: String, fileId: Uuid, filePath: String
+    ): Effect<Uuid>
 
     suspend fun deleteVideo(videoId: Uuid): Effect<Completable>
 }
 
 class VideoFeedRepositoryImpl @Inject constructor(
+    @ApplicationContext private val applicationContext: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    private val buildInfo: BuildInfo,
+    private val tokenStorage: TokenStorage,
     private val videoFeedApi: VideoFeedApi,
     private val loaderFactory: VideoFeedLoaderFactory,
     private val userLikedVideoFeedLoaderFactory: UserLikedVideoFeedLoaderFactory,
@@ -127,11 +132,12 @@ class VideoFeedRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addVideo(
+    override suspend fun uploadVideo(
         title: String,
         description: String,
         fileId: Uuid,
-    ): Effect<VideoClipModel> {
+        filePath: String,
+    ): Effect<Uuid> {
         return apiCall(ioDispatcher) {
             videoFeedApi.addVideo(
                 AddVideoRequestDto(
@@ -140,23 +146,28 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     thumbnailFileId = fileId,
                 )
             )
-        }.map {
-            it.toModel(isLiked = false)
+        }.flatMap {
+            uploadVideo(filePath, it.entityId)
         }
     }
 
-    override suspend fun uploadVideo(uri: Uri, videoId: Uuid): Effect<Completable> {
-        val file = uri.buildUpon().scheme("file").build().toFile()
-        val mediaType = "multipart/form-data".toMediaType()
-
-        val multipartBody = MultipartBody.Part.createFormData(
-            name = "videoFile",
-            filename = "file_${generateCurrentDateTime()}.mp4",
-            body = file.asRequestBody(mediaType),
-        )
-
-        return apiCall(ioDispatcher) {
-            videoFeedApi.uploadVideo(file = multipartBody, videoId = videoId)
+    private fun uploadVideo(filePath: String, videoId: Uuid): Effect<Uuid> {
+        try {
+            val uploadId = MultipartUploadRequest(
+                context = applicationContext,
+                serverUrl = ApiService.General.getBaseUrl(buildInfo) + "$videoId/upload",
+            ).apply {
+                setMethod("POST")
+                addHeader("Authorization", "${tokenStorage.authToken}")
+                addFileToUpload(
+                    filePath = filePath,
+                    parameterName = "videoFile",
+                )
+            }.startUpload()
+            return Effect.success(uploadId)
+        } catch (e: Exception) {
+            log(e)
+            return Effect.error(AppError.Unknown(cause = e))
         }
     }
 

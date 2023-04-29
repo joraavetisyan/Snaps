@@ -12,4 +12,5 @@ dependencies {
 
     implementation(*Libs.bundle.preference)
     implementation(*Libs.bundle.firebase)
+    implementation(Libs.bundle.uploadService)
 }

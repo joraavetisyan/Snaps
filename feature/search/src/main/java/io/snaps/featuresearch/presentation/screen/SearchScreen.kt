@@ -178,14 +178,14 @@ private fun Users(
     ) {
         itemsIndexed(
             items = uiState.items,
-            key = { _, item -> item.id }
+            key = { _, item -> item.key }
         ) { _, it ->
             when (it) {
                 is UserUiState.Data -> CellTile(
                     data = CellTileState.Data(
-                        leftPart = it.user.avatar?.let {
+                        leftPart = it.user.avatar.let {
                             LeftPart.Logo(it) { transformations(CircleCropTransformation()) }
-                        } ?: LeftPart.Shimmer,
+                        },
                         middlePart = MiddlePart.Data(valueBold = it.user.name.textValue()),
                         clickListener = it.onClicked,
                     )

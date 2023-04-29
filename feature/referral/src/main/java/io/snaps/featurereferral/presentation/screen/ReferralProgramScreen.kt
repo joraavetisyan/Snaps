@@ -46,6 +46,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -145,12 +146,12 @@ fun ReferralProgramScreen(
                 ReferralProgramViewModel.BottomDialog.ReferralQr -> TODO()
                 ReferralProgramViewModel.BottomDialog.ReferralProgramFootnote -> FootnoteBottomDialog(
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+                        image = ImageValue.ResImage(R.drawable.img_guy_eating),
                         title = StringKey.ReferralProgramDialogTitleFootnoteMain1.textValue(),
                         text = StringKey.ReferralProgramDialogMessageFootnoteMain1.textValue(),
                     ),
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+                        image = ImageValue.ResImage(R.drawable.img_guy_glad),
                         title = StringKey.ReferralProgramDialogTitleFootnoteMain2.textValue(),
                         text = StringKey.ReferralProgramDialogMessageFootnoteMain2.textValue(),
                         onClick = {},
@@ -285,7 +286,6 @@ private fun Body(
         Column(
             modifier = Modifier.fillMaxSize(),
         ) {
-            // todo strings
             when (it) {
                 0 -> {
                     FootnoteUi(
@@ -348,12 +348,12 @@ private fun Main(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             DirectReferralCard(
-                image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+                image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
                 title = StringKey.ReferralProgramTitleDirectReferral.textValue("2"),
                 message = StringKey.ReferralProgramMessageDirectReferral.textValue("2"),
             )
             DirectReferralCard(
-                image = ImageValue.ResImage(R.drawable.img_direct_referral_1),
+                image = ImageValue.ResImage(R.drawable.img_guys_surprised_shadowed_eating),
                 title = StringKey.ReferralProgramTitleDirectReferral.textValue("1"),
                 message = StringKey.ReferralProgramMessageDirectReferral.textValue("1"),
             )
@@ -573,18 +573,20 @@ private fun ReferralsInvitedBottomDialog() {
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
                 Image(
-                    painter = ImageValue.ResImage(R.drawable.img_direct_referral_2).get(),
+                    painter = ImageValue.ResImage(R.drawable.img_guy_hands_up).get(),
                     contentDescription = null,
                     modifier = Modifier.size(320.dp),
                 )
                 Text(
-                    text = StringKey.ReferralProgramDialogTitleFootnoteMyReferrals.textValue().get(),
+                    text = StringKey.ReferralProgramDialogTitleFootnoteMyReferrals.textValue()
+                        .get(),
                     style = AppTheme.specificTypography.titleLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Text(
-                    text = StringKey.ReferralProgramDialogMessageFootnoteMyReferrals.textValue().get(),
+                    text = StringKey.ReferralProgramDialogMessageFootnoteMyReferrals.textValue()
+                        .get(),
                     style = AppTheme.specificTypography.bodyLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
@@ -593,20 +595,23 @@ private fun ReferralsInvitedBottomDialog() {
                 ReferralLevelBlock(
                     title = StringKey.ReferralProgramDialogTitleFootnoteMyReferralsLevel1.textValue(),
                     text = StringKey.ReferralProgramDialogMessageFootnoteMyReferralsLevel1.textValue(),
-                    image = ImageValue.ResImage(R.drawable.img_diamonds),
+                    image = ImageValue.ResImage(R.drawable.img_sunglasses4),
                     backgroundColor = AppTheme.specificColorScheme.uiSystemOrange,
+                    rotateDegree = -20f,
                 )
                 ReferralLevelBlock(
                     title = StringKey.ReferralProgramDialogTitleFootnoteMyReferralsLevel2.textValue(),
                     text = StringKey.ReferralProgramDialogMessageFootnoteMyReferralsLevel2.textValue(),
-                    image = ImageValue.ResImage(R.drawable.img_diamonds),
+                    image = ImageValue.ResImage(R.drawable.img_sunglasses9),
                     backgroundColor = AppTheme.specificColorScheme.uiSystemBlue,
+                    rotateDegree = 15f,
                 )
                 ReferralLevelBlock(
                     title = StringKey.ReferralProgramDialogTitleFootnoteMyReferralsLevel3.textValue(),
                     text = StringKey.ReferralProgramDialogMessageFootnoteMyReferralsLevel3.textValue(),
-                    image = ImageValue.ResImage(R.drawable.img_diamonds),
+                    image = ImageValue.ResImage(R.drawable.img_sunglasses5),
                     backgroundColor = AppTheme.specificColorScheme.uiSystemPurple,
+                    rotateDegree = -30f,
                 )
             }
         }
@@ -619,6 +624,7 @@ private fun ReferralLevelBlock(
     text: TextValue,
     image: ImageValue,
     backgroundColor: Color,
+    rotateDegree: Float,
 ) {
     Row(
         modifier = Modifier
@@ -653,7 +659,9 @@ private fun ReferralLevelBlock(
         Image(
             painter = image.get(),
             contentDescription = null,
-            modifier = Modifier.size(48.dp),
+            modifier = Modifier
+                .size(48.dp)
+                .rotate(rotateDegree),
         )
     }
 }

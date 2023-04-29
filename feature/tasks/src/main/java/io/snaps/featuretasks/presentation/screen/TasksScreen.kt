@@ -107,17 +107,17 @@ fun TasksScreen(
                 TasksViewModel.BottomDialog.CurrentTasksFootnote,
                 TasksViewModel.BottomDialog.HistoryTasksFootnote -> FootnoteBottomDialog(
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+                        image = ImageValue.ResImage(R.drawable.img_guy_eating),
                         title = StringKey.TasksDialogTitleFootnote1.textValue(),
                         text = StringKey.TasksDialogMessageFootnote1.textValue(),
                     ),
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+                        image = ImageValue.ResImage(R.drawable.img_guy_glad),
                         title = StringKey.TasksDialogTitleFootnote2.textValue(),
                         text = StringKey.TasksDialogMessageFootnote2.textValue(),
                     ),
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_direct_referral_2),
+                        image = ImageValue.ResImage(R.drawable.img_guy_surprised),
                         title = StringKey.TasksDialogTitleFootnote3.textValue(),
                         text = StringKey.TasksDialogMessageFootnote3.textValue(),
                         onClick = viewModel::onFootnoteStartClicked,

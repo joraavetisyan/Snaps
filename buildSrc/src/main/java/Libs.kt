@@ -71,6 +71,8 @@ object Libs {
 
     private const val barcodeVersion = "4.3.0"
 
+    private const val uploadServiceVersion = "4.7.0"
+
     private const val trustWeb3Version = "2.0.8"
     private const val trustWalletCoreVersion = "3.1.20"
 
@@ -159,7 +161,6 @@ object Libs {
             "androidx.compose.foundation:foundation:$composeFoundationVersion",
             "androidx.compose.foundation:foundation-layout:$composeFoundationVersion",
             "androidx.compose.animation:animation:$composeVersion",
-            "com.google.accompanist:accompanist-pager:$accompanistVersion",
             "com.google.accompanist:accompanist-pager-indicators:$accompanistVersion",
             "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion",
             "com.google.accompanist:accompanist-placeholder-material:$accompanistVersion",
@@ -250,6 +251,8 @@ object Libs {
         )
 
         const val barcode = "com.journeyapps:zxing-android-embedded:$barcodeVersion"
+
+        const val uploadService = "net.gotev:uploadservice:$uploadServiceVersion"
 
         val trustWallet = arrayOf(
             "com.github.trustwallet:trust-web3-provider:$trustWeb3Version",
