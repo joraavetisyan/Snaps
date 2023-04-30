@@ -3,5 +3,6 @@ package io.snaps.baseprofile.domain
 data class BalanceModel(
     val unlocked: Double,
     val locked: Double,
-    val exchangeRate: Double,
+    val snpExchangeRate: Double,
+    val bnbExchangeRate: Double,
 )
