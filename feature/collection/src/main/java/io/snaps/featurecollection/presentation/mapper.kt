@@ -46,6 +46,7 @@ private fun RankModel.toRankTileState(
 )
 
 fun State<List<NftModel>>.toNftCollectionItemState(
+    onItemClicked: (NftModel) -> Unit,
     onAddItemClicked: () -> Unit,
     onReloadClicked: () -> Unit,
     onRepairClicked: (Uuid) -> Unit,
@@ -54,7 +55,12 @@ fun State<List<NftModel>>.toNftCollectionItemState(
     is Effect -> when {
         isSuccess -> buildList<CollectionItemState> {
             requireData.forEach {
-                add(it.toNftCollectionItemState(onRepairClicked))
+                add(
+                    it.toNftCollectionItemState(
+                        onRepairClicked = onRepairClicked,
+                        onItemClicked = onItemClicked,
+                    )
+                )
             }
             add(CollectionItemState.AddItem(onAddItemClicked))
         }
@@ -63,6 +69,7 @@ fun State<List<NftModel>>.toNftCollectionItemState(
 }
 
 private fun NftModel.toNftCollectionItemState(
+    onItemClicked: (NftModel) -> Unit,
     onRepairClicked: (Uuid) -> Unit,
 ) = CollectionItemState.Nft(
     type = type,
@@ -73,4 +80,5 @@ private fun NftModel.toNftCollectionItemState(
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthy = isHealthy,
     onRepairClicked = { onRepairClicked(id) },
+    onItemClicked = { onItemClicked(this) }
 )

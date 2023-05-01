@@ -5,8 +5,10 @@ package io.snaps.featuretasks.presentation.screen
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.Typeface
+import android.text.Layout
+import android.text.StaticLayout
+import android.text.TextPaint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,17 +31,21 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import io.snaps.corecommon.R
+import io.snaps.corecommon.R as commonR
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startSharePhotoIntent
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corenavigation.base.resultFlow
 import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
+import io.snaps.coreuicompose.tools.toPx
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonInlineM
@@ -49,6 +55,7 @@ import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.featuretasks.presentation.viewmodel.ShareTemplateViewModel
+import toTypeface
 
 @Composable
 fun ShareTemplateScreen(
@@ -80,7 +87,7 @@ fun ShareTemplateScreen(
     FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalTextApi::class)
 @Composable
 private fun ShareTemplateScreen(
     uiState: ShareTemplateViewModel.UiState,
@@ -91,34 +98,10 @@ private fun ShareTemplateScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val context = LocalContext.current
-
-    val templatePhoto = BitmapFactory.decodeResource(context.resources, R.drawable.img_template)
-    val combined = Bitmap.createBitmap(templatePhoto.width, templatePhoto.height, templatePhoto.config)
-    Canvas(combined.asImageBitmap()).apply {
-        val nativeCanvas = this.nativeCanvas
-        with(nativeCanvas) {
-            drawBitmap(templatePhoto, 0f, 0f, null)
-            uiState.qr?.let {
-                val left = 250f
-                val top = templatePhoto.height - it.height - 300f
-                val padding = 100f
-                val paint = Paint().apply {
-                    isAntiAlias = true
-                    color = Color.WHITE
-                    style = Paint.Style.FILL
-                }
-                val rect = RectF(
-                    left,
-                    top - padding * 2,
-                    left + it.width + padding * 2,
-                    top + it.height,
-                )
-                drawRoundRect(rect, 100f, 100f, paint)
-                drawBitmap(it, left + padding, top - padding, null)
-            }
-        }
-    }
-
+    val templatePhoto = generateTemplatePhoto(
+        bitmap = BitmapFactory.decodeResource(context.resources, commonR.drawable.img_template),
+        qr = uiState.qr,
+    )
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -131,7 +114,7 @@ private fun ShareTemplateScreen(
                     ActionIconData(
                         icon = AppTheme.specificIcons.share,
                         color = AppTheme.specificColorScheme.darkGrey,
-                        onClick = { onShareIconClicked(combined) },
+                        onClick = { onShareIconClicked(templatePhoto) },
                     ),
                 ),
             )
@@ -145,7 +128,7 @@ private fun ShareTemplateScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Image(
-                bitmap = combined.asImageBitmap(),
+                bitmap = templatePhoto.asImageBitmap(),
                 contentDescription = null,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -159,17 +142,78 @@ private fun ShareTemplateScreen(
                         .padding(horizontal = 8.dp, vertical = 4.dp)
             )
             SimpleButtonActionM(
-                onClick = { onPostToInstagramButtonClicked(combined) },
+                onClick = { onPostToInstagramButtonClicked(templatePhoto) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 SimpleButtonContent(text = StringKey.TaskShareActionPostToInstagram.textValue())
             }
             SimpleButtonInlineM(
-                onClick = { onSaveButtonClicked(combined) },
+                onClick = { onSaveButtonClicked(templatePhoto) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 SimpleButtonContent(text = StringKey.TaskShareActionSavePhoto.textValue())
             }
         }
     }
+}
+
+@Composable
+private fun generateTemplatePhoto(
+    bitmap: Bitmap,
+    qr: Bitmap?,
+): Bitmap {
+    val templateBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
+    Canvas(templateBitmap.asImageBitmap()).apply {
+        with(this.nativeCanvas) {
+            val padding = 64.dp.toPx()
+            val staticLayout = getStaticLayout(
+                text = StringKey.TaskShareFieldEarnCryptocurrencies.textValue().get().text,
+                paint = getTextPaint(
+                    size = 130.sp.toPx(),
+                    typeface = AppTheme.specificTypography.headlineLarge.toTypeface(),
+                ),
+                width = bitmap.width - padding.toInt(),
+            )
+            val staticLayout2 = getStaticLayout(
+                text = StringKey.TaskShareFieldDownloadApp.textValue().get().text,
+                paint = getTextPaint(
+                    size = 60.sp.toPx(),
+                    typeface = AppTheme.specificTypography.bodyLarge.toTypeface(),
+                ),
+                width = bitmap.width / 2 - padding.toInt() * 2,
+            )
+            drawBitmap(bitmap, 0f, 0f, null)
+            qr?.let {
+                val top = bitmap.height - it.height - padding
+                drawBitmap(it, padding, top, null)
+            }
+            translate(padding, padding)
+            staticLayout.draw(this)
+            translate(0f, staticLayout.height + padding)
+            staticLayout2.draw(this)
+        }
+    }
+    return templateBitmap
+}
+
+private fun getStaticLayout(
+    text: String,
+    paint: TextPaint,
+    width: Int,
+): StaticLayout {
+    return StaticLayout
+        .Builder
+        .obtain(text, 0, text.length, paint, width,)
+        .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+        .build()
+}
+
+private fun getTextPaint(
+    size: Float,
+    typeface: Typeface,
+) = TextPaint().apply {
+    isAntiAlias = true
+    this.typeface = typeface
+    textSize = size
+    color = Color.WHITE
 }

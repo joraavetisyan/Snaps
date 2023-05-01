@@ -12,6 +12,8 @@ dagger()
 lifecycle()
 
 android {
+    namespace = "io.snaps.android"
+
     defaultConfig {
         versionName = App.name
         versionCode = App.code
@@ -71,7 +73,7 @@ android {
                 )
             )
 
-            isMinifyEnabled = false // todo
+            isMinifyEnabled = false // todo release
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
         getByName(BuildTypes.release) {
@@ -85,7 +87,7 @@ android {
             )
 
             signingConfig = signingConfigs.getByName(BuildTypes.release)
-            isMinifyEnabled = false // todo
+            isMinifyEnabled = false // todo release
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }

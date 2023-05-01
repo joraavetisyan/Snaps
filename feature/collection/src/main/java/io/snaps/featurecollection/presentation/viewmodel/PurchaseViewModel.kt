@@ -7,10 +7,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basebilling.BillingRouter
 import io.snaps.basebilling.PurchaseStateProvider
 import io.snaps.basenft.data.NftRepository
+import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FiatCurrency
 import io.snaps.corecommon.model.NftType
+import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
@@ -28,12 +31,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PurchaseViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val action: Action,
     private val purchaseStateProvider: PurchaseStateProvider,
     private val billingRouter: BillingRouter,
+    private val notificationsSource: NotificationsSource,
     private val walletRepository: WalletRepository,
     private val nftRepository: NftRepository,
-    savedStateHandle: SavedStateHandle,
 ) : SimpleViewModel() {
 
     private val args = savedStateHandle.requireArgs<AppRoute.Purchase.Args>()
@@ -59,32 +63,32 @@ class PurchaseViewModel @Inject constructor(
 
     private fun subscribeOnNewPurchases() = viewModelScope.launch {
         purchaseStateProvider.newPurchasesFlow.onEach {
-            _uiState.update { it.copy(isLoading = true) }
-            action.execute {
-                nftRepository.mintNft(
-                    type = args.type,
-                    walletAddress = walletRepository.getActiveWalletsReceiveAddresses().first(),
-                    purchaseId = it.first().orderId
-                )
-            }.doOnComplete {
-                _uiState.update { it.copy(isLoading = false) }
-            }
+            minNft(purchaseId = it.first().orderId)
         }.launchIn(viewModelScope)
+    }
+
+    private suspend fun minNft(purchaseId: Uuid?) {
+        _uiState.update { it.copy(isLoading = true) }
+        action.execute {
+            nftRepository.mintNft(
+                type = args.type,
+                walletAddress = walletRepository.getActiveWalletsReceiveAddresses().first(),
+                purchaseId = purchaseId,
+            )
+        }.doOnSuccess {
+            notificationsSource.sendMessage("Purchase successful".textValue()) // todo localize
+            _command publish Command.ClosePurchaseScreen
+        }.doOnError { error, _ ->
+            notificationsSource.sendError(error)
+        }.doOnComplete {
+            _uiState.update { it.copy(isLoading = false) }
+        }
     }
 
     fun onBuyClicked(activity: Activity) {
         viewModelScope.launch {
             if (args.type == NftType.Free) {
-                action.execute {
-                    nftRepository.mintNft(
-                        type = NftType.Free,
-                        walletAddress = walletRepository.getActiveWalletsReceiveAddresses().first(),
-                        purchaseId = null,
-                    )
-                }.doOnComplete {
-                    _uiState.update { it.copy(isLoading = false) }
-                    _command publish Command.OpenMainScreen
-                }
+                minNft(purchaseId = null)
             } else {
                 purchaseStateProvider.getInAppProducts().data.orEmpty().firstOrNull {
                     it.details.sku == args.type.storeId
@@ -106,6 +110,6 @@ class PurchaseViewModel @Inject constructor(
     )
 
     sealed class Command {
-        object OpenMainScreen : Command()
+        object ClosePurchaseScreen : Command()
     }
 }

@@ -6,6 +6,10 @@ common()
 compose()
 dagger()
 
+android {
+    namespace = "io.snaps.coreuitheme"
+}
+
 dependencies {
     implementation(projects.coreCommon)
 

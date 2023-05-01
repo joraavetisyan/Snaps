@@ -7,6 +7,10 @@ compose()
 dagger()
 lifecycle()
 
+android {
+    namespace = "io.snaps.basewallet"
+}
+
 dependencies {
     implementation(projects.ethereumkit)
     implementation(projects.erc20kit)

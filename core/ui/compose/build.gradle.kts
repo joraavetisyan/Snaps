@@ -6,6 +6,10 @@ common()
 compose()
 dagger()
 
+android {
+    namespace = "io.snaps.coreuicompose"
+}
+
 dependencies {
     api(projects.coreUiTheme)
     api(*Libs.bundle.composeTheme)

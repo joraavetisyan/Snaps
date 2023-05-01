@@ -7,6 +7,10 @@ compose()
 dagger()
 lifecycle()
 
+android {
+    namespace = "io.snaps.coreui"
+}
+
 dependencies {
     api(projects.coreUiCompose)
     implementation(projects.coreCommon)

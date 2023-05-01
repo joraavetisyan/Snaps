@@ -11,10 +11,10 @@ import io.snaps.corenavigation.CollectionFeatureProvider
 import io.snaps.corenavigation.CreateFeatureProvider
 import io.snaps.corenavigation.FeedFeatureProvider
 import io.snaps.corenavigation.InitializationFeatureProvider
-import io.snaps.corenavigation.SearchFeatureProvider
 import io.snaps.corenavigation.ProfileFeatureProvider
 import io.snaps.corenavigation.ReferralFeatureProvider
 import io.snaps.corenavigation.RegistrationFeatureProvider
+import io.snaps.corenavigation.SearchFeatureProvider
 import io.snaps.corenavigation.TasksFeatureProvider
 import io.snaps.corenavigation.WalletConnectFeatureProvider
 import io.snaps.corenavigation.WalletFeatureProvider
@@ -54,13 +54,11 @@ class NavHostProvider @Inject constructor(
         navController: NavHostController,
         needsWalletConnect: Boolean,
         needsInitialization: Boolean,
-        needsRanking: Boolean,
     ) = Graph(
         navController = navController,
         startDestinationRoute = when {
             needsWalletConnect -> createRoute(AppRoute.WalletConnect)
             needsInitialization -> createRoute(AppRoute.UserCreate)
-            needsRanking -> createRoute(AppRoute.RankSelection)
             else -> createRoute(AppRoute.MainBottomBar)
         },
     )

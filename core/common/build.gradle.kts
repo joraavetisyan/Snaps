@@ -5,6 +5,10 @@ plugins {
 common()
 dagger()
 
+android {
+    namespace = "io.snaps.corecommon"
+}
+
 dependencies {
     implementation(*Libs.bundle.kotlinSerialization)
     implementation(*Libs.bundle.firebase)

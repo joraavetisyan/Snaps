@@ -110,7 +110,7 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun getSnpFiatValue() =
-        profileRepository.balanceState.value.dataOrCache?.exchangeRate?.toStringValue()
+        profileRepository.balanceState.value.dataOrCache?.snpExchangeRate?.toStringValue()
 
     private fun subscribeToRewards() {
         profileRepository.balanceState.map {

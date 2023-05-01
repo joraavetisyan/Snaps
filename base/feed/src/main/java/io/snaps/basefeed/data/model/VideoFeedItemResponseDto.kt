@@ -1,5 +1,6 @@
 package io.snaps.basefeed.data.model
 
+import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.model.DateTime
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Uuid
@@ -18,5 +19,5 @@ data class VideoFeedItemResponseDto(
     @SerialName("thumbnailUrl") val thumbnailUrl: FullUrl?,
     @SerialName("title") val title: String,
     @SerialName("description") val description: String,
-    @SerialName("authorUserId") val authorUserId: Uuid,
+    @SerialName("author") val author: UserInfoResponseDto,
 )

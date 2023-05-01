@@ -78,7 +78,6 @@ class AppActivity : FragmentActivity() {
                         navController = navController,
                         needsWalletConnect = currentFlow.needsWalletConnect,
                         needsInitialization = currentFlow.needsInitialization,
-                        needsRanking = currentFlow.needsRanking,
                     )
                     Firebase.dynamicLinks
                         .getDynamicLink(intent)

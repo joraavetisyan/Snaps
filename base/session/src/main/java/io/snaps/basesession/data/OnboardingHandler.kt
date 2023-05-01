@@ -1,5 +1,6 @@
 package io.snaps.basesession.data
 
+import io.snaps.basenft.data.NftRepository
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coreui.viewmodel.publish
@@ -37,6 +38,7 @@ interface OnboardingHandler {
 class OnboardingHandlerImplDelegate @Inject constructor(
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val sessionRepository: SessionRepository,
+    private val nftRepository: NftRepository,
 ) : OnboardingHandler {
 
     private val _uiState = MutableStateFlow(OnboardingHandler.UiState())
@@ -46,12 +48,23 @@ class OnboardingHandlerImplDelegate @Inject constructor(
     override val onboardingCommand = _command.receiveAsFlow()
 
     override fun checkOnboarding(type: OnboardingType) {
-        if (!sessionRepository.isOnboardingShown(type)) {
-            _uiState.update { it.copy(dialogType = type) }
-            scope.launch {
-                _command publish OnboardingHandler.Command.OpenDialog(type)
+        when {
+            type == OnboardingType.Rank -> scope.launch {
+                nftRepository.updateNftCollection().doOnSuccess {
+                    if (it.isEmpty()) {
+                        openDialog(type)
+                    }
+                }
+            }
+            !sessionRepository.isOnboardingShown(type) -> scope.launch {
+                openDialog(type)
             }
         }
+    }
+
+    private suspend fun openDialog(type: OnboardingType) {
+        _uiState.update { it.copy(dialogType = type) }
+        _command publish OnboardingHandler.Command.OpenDialog(type)
     }
 
     override fun closeOnboardingDialog() {

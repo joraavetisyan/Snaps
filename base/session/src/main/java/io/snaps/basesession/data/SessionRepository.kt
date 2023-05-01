@@ -29,7 +29,7 @@ interface SessionRepository {
 
     suspend fun onWalletConnect(): Effect<Completable>
 
-    suspend fun onInitialize(): Effect<Completable>
+    fun onInitialize()
 
     fun onLogout()
 
@@ -89,18 +89,6 @@ class SessionRepositoryImpl @Inject constructor(
             userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsInitialization)
             Effect.success(false)
         } else {
-            checkNft()
-        }
-    }
-
-    /**
-     * Check if user has NFTs in collection
-     */
-    private suspend fun checkNft() = nftRepository.updateNftCollection().flatMap {
-        if (it.isEmpty()) {
-            userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsRanking)
-            Effect.success(false)
-        } else {
             Effect.success(true)
         }
     }
@@ -133,12 +121,8 @@ class SessionRepositoryImpl @Inject constructor(
         }.toCompletable()
     }
 
-    override suspend fun onInitialize(): Effect<Completable> {
-        return checkNft().doOnSuccess { ready ->
-            if (ready) {
-                userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
-            }
-        }.toCompletable()
+    override fun onInitialize() {
+        userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
     }
 
     override fun onLogout() {

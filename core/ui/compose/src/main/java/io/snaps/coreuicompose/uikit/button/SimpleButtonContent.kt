@@ -26,28 +26,54 @@ import io.snaps.coreuitheme.compose.PreviewAppTheme
 @Composable
 fun SimpleButtonContent(
     text: TextValue?,
+    textColor: Color = LocalContentColor.current,
     iconLeft: IconValue? = null,
     iconRight: IconValue? = null,
-    tint: Color = Color.Unspecified,
-    textColor: Color = LocalContentColor.current,
+    iconTint: Color = Color.Unspecified,
 ) {
-    val textPaddingStart = when (iconLeft) {
+    SimpleButtonContent(
+        text = text,
+        textColor = textColor,
+        contentLeft = iconLeft?.get()?.let {
+            {
+                Icon(
+                    painter = it,
+                    contentDescription = "Button left icon",
+                    tint = iconTint,
+                    modifier = Modifier.size(getContentHeight()),
+                )
+            }
+        },
+        contentRight = iconRight?.get()?.let {
+            {
+                Icon(
+                    painter = it,
+                    contentDescription = "Button right icon",
+                    tint = iconTint,
+                    modifier = Modifier.size(getContentHeight()),
+                )
+            }
+        },
+    )
+}
+
+@Composable
+fun SimpleButtonContent(
+    text: TextValue?,
+    textColor: Color = LocalContentColor.current,
+    contentLeft: @Composable (() -> Unit)? = null,
+    contentRight: @Composable (() -> Unit)? = null,
+) {
+    val textPaddingStart = when (contentLeft) {
         null -> 4.dp
         else -> 8.dp
     }
-    val textPaddingEnd = when (iconRight) {
+    val textPaddingEnd = when (contentRight) {
         null -> 4.dp
         else -> 8.dp
     }
 
-    iconLeft?.get()?.let {
-        Icon(
-            painter = it,
-            contentDescription = "Button icon",
-            tint = tint,
-            modifier = Modifier.size(getContentHeight()),
-        )
-    }
+    contentLeft?.invoke()
     text?.get()?.let {
         Text(
             text = it,
@@ -60,14 +86,7 @@ fun SimpleButtonContent(
             overflow = TextOverflow.Ellipsis,
         )
     }
-    iconRight?.get()?.let {
-        Icon(
-            painter = it,
-            contentDescription = "Button icon",
-            tint = tint,
-            modifier = Modifier.size(getContentHeight()),
-        )
-    }
+    contentRight?.invoke()
 }
 
 @Composable

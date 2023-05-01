@@ -6,6 +6,10 @@ common()
 dagger()
 lifecycle()
 
+android {
+    namespace = "io.snaps.basesources"
+}
+
 dependencies {
     implementation(projects.coreCommon)
     implementation(projects.coreData)

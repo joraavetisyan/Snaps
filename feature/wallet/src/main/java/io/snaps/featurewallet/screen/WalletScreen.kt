@@ -67,7 +67,6 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
-import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
@@ -78,6 +77,7 @@ import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
+import io.snaps.coreuicompose.uikit.button.SimpleButtonOutlineL
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.other.TitleSlider
@@ -354,40 +354,27 @@ private fun Rewards(
             it.Content(modifier = Modifier.padding(bottom = 12.dp))
         }
         item {
-            Row(
+            SimpleButtonOutlineL(
+                onClick = onWithdrawClicked,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 20.dp)
-                    .border(
-                        width = 1.dp,
-                        color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
-                        shape = AppTheme.shapes.medium,
-                    )
-                    .background(
-                        color = AppTheme.specificColorScheme.white,
-                        shape = AppTheme.shapes.medium,
-                    )
-                    .padding(12.dp)
-                    .defaultTileRipple(onClick = onWithdrawClicked),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
+                    .padding(bottom = 20.dp),
             ) {
-                Icon(
-                    painter = AppTheme.specificIcons.withdraw.get(),
-                    tint = AppTheme.specificColorScheme.white,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .background(
-                            color = AppTheme.specificColorScheme.uiAccent,
-                            shape = CircleShape
+                SimpleButtonContent(
+                    text = StringKey.RewardsActionClaim.textValue(),
+                    contentLeft = {
+                        Icon(
+                            painter = AppTheme.specificIcons.withdraw.get(),
+                            tint = AppTheme.specificColorScheme.white,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .background(
+                                    color = AppTheme.specificColorScheme.uiAccent,
+                                    shape = CircleShape,
+                                )
+                                .padding(2.dp),
                         )
-                        .padding(12.dp),
-                )
-                Text(
-                    text = StringKey.WalletActionWithdraw.textValue().get().text,
-                    style = AppTheme.specificTypography.titleSmall,
-                    color = AppTheme.specificColorScheme.textPrimary,
-                    modifier = Modifier.padding(start = 20.dp),
+                    },
                 )
             }
             Row(
@@ -408,7 +395,7 @@ private fun Rewards(
                         SimpleButtonContent(
                             text = filterOptions.name.textValue(),
                             iconRight = AppTheme.specificIcons.arrowDropDown,
-                            tint = AppTheme.specificColorScheme.black_80,
+                            iconTint = AppTheme.specificColorScheme.black_80,
                             textColor = AppTheme.specificColorScheme.black_80,
                         )
                     }
@@ -579,25 +566,13 @@ private fun TopUpDialog(
 ) {
     SimpleBottomDialogUI(header = title) {
         item {
-            Box(
-                modifier = Modifier
-                    .size(164.dp)
-                    .padding(16.dp)
-                    .background(
-                        color = AppTheme.specificColorScheme.white,
-                        shape = AppTheme.shapes.extraLarge,
-                    ),
-            ) {
-                qr?.let {
-                    Image(
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .fillMaxSize(),
-                        bitmap = it.asImageBitmap(),
-                        contentScale = ContentScale.FillWidth,
-                        contentDescription = null,
-                    )
-                }
+            qr?.let {
+                Image(
+                    modifier = Modifier.size(164.dp),
+                    bitmap = it.asImageBitmap(),
+                    contentScale = ContentScale.FillWidth,
+                    contentDescription = null,
+                )
             }
             SimpleButtonGreyM(
                 modifier = Modifier

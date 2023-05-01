@@ -28,7 +28,9 @@ class UserInfoResponseDto(
     @SerialName("paymentsState") val paymentsState: PaymentsState?,
 )
 
+@Serializable
 enum class PaymentsState {
     No,
     InApp,
+    Blockchain,
 }

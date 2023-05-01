@@ -75,7 +75,8 @@ class FakeProfileApi : ProfileApi {
             data = BalanceResponseDto(
                 lockedTokensBalance = 1.0,
                 unlockedTokensBalance = 1.0,
-                exchangeRate = 342.01,
+                snpExchangeRate = 342.01,
+                bnbExchangeRate = 342.01,
             )
         ).also {
             delay(mockDelay)
@@ -115,89 +116,92 @@ class FakeProfileApi : ProfileApi {
         )
     }
 
-    private fun getUserInfo(userId: String?) = UserInfoResponseDto(
-        entityId = "63e1bb860007e5354351d549",
-        createdDate = "2023-02-07T02:46:30.3218237+00:00",
-        userId = "101939668681812837937",
-        email = "pozdnyshevmaksim@gmail.com",
-        wallet = "63e1bb860007e5354351d549",
-        name = "Вадим",
-        totalLikes = 4,
-        avatarUrl = "https://lh3.googleusercontent.com/a/AEdFTp5fj_vYT-nRYQ9RXjKbZniPZoLGlZ0ViZ9pX-ij5A=s96-c",
-        totalSubscribers = 12,
-        totalSubscriptions = 10,
-        experience = 0,
-        level = 1,
-        questInfo = getQuestInfo(),
-        ownInviteCode = "#42GJXE8QM",
-        inviteCodeRegisteredBy = null,
-        instagramId = null,
-        paymentsState = PaymentsState.No,
-    )
+    companion object {
 
-    private fun getQuestInfo() = QuestInfoResponseDto(
-        questDate = "2023-03-06T00:00:00+00:00",
-        roundEndDate = "2023-02-07T02:46:30.3218237+00:00",
-        experience = 0,
-        energy = 20,
-        roundId = "1",
-        id = "",
-        quests = listOf(
-            QuestItemDto(
-                completed = true,
-                done = null,
-                madeCount = rInt,
-                status = null,
-                quest = QuestDto(
-                    count = 20,
-                    type = QuestType.Like,
-                    energy = 20,
-                )
-            ),
-            QuestItemDto(
-                done = null,
-                completed = false,
-                madeCount = rInt,
-                status = null,
-                quest = QuestDto(
-                    count = rInt,
-                    type = QuestType.PublishVideo,
-                    energy = 20,
-                )
-            ),
-            QuestItemDto(
-                completed = false,
-                done = null,
-                madeCount = 0,
-                status = null,
-                quest = QuestDto(
-                    count = 20,
-                    type = QuestType.Watch,
-                    energy = 20,
-                )
-            ),
-            QuestItemDto(
-                completed = false,
-                done = null,
-                madeCount = 0,
-                status = null,
-                quest = QuestDto(
-                    count = 5,
-                    type = QuestType.Subscribe,
-                    energy = 20,
-                )
-            ),
-            QuestItemDto(
-                completed = false,
-                done = null,
-                madeCount = rInt,
-                status = null,
-                quest = QuestDto(
-                    count = rInt,
-                    type = QuestType.SocialPost,
-                    energy = 20,
-                )
-            ),
+        fun getUserInfo(userId: String?) = UserInfoResponseDto(
+            entityId = userId ?: "63e1bb860007e5354351d549",
+            createdDate = "2023-02-07T02:46:30.3218237+00:00",
+            userId = "101939668681812837937",
+            email = "pozdnyshevmaksim@gmail.com",
+            wallet = "63e1bb860007e5354351d549",
+            name = "Вадим",
+            totalLikes = 4,
+            avatarUrl = "https://lh3.googleusercontent.com/a/AEdFTp5fj_vYT-nRYQ9RXjKbZniPZoLGlZ0ViZ9pX-ij5A=s96-c",
+            totalSubscribers = 12,
+            totalSubscriptions = 10,
+            experience = 0,
+            level = 1,
+            questInfo = getQuestInfo(),
+            ownInviteCode = "#42GJXE8QM",
+            inviteCodeRegisteredBy = null,
+            instagramId = null,
+            paymentsState = PaymentsState.No,
         )
-    )
+
+        fun getQuestInfo() = QuestInfoResponseDto(
+            questDate = "2023-03-06T00:00:00+00:00",
+            roundEndDate = "2023-02-07T02:46:30.3218237+00:00",
+            experience = 0,
+            energy = 20,
+            roundId = "1",
+            id = "",
+            quests = listOf(
+                QuestItemDto(
+                    completed = true,
+                    done = null,
+                    madeCount = rInt,
+                    status = null,
+                    quest = QuestDto(
+                        count = 20,
+                        type = QuestType.Like,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    done = null,
+                    completed = false,
+                    madeCount = rInt,
+                    status = null,
+                    quest = QuestDto(
+                        count = rInt,
+                        type = QuestType.PublishVideo,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    completed = false,
+                    done = null,
+                    madeCount = 0,
+                    status = null,
+                    quest = QuestDto(
+                        count = 20,
+                        type = QuestType.Watch,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    completed = false,
+                    done = null,
+                    madeCount = 0,
+                    status = null,
+                    quest = QuestDto(
+                        count = 5,
+                        type = QuestType.Subscribe,
+                        energy = 20,
+                    )
+                ),
+                QuestItemDto(
+                    completed = false,
+                    done = null,
+                    madeCount = rInt,
+                    status = null,
+                    quest = QuestDto(
+                        count = rInt,
+                        type = QuestType.SocialPost,
+                        energy = 20,
+                    )
+                ),
+            )
+        )
+    }
 }

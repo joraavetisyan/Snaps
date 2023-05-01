@@ -85,6 +85,7 @@ fun TasksScreen(
             TasksViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             TasksViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
             is TasksViewModel.Command.OpenTaskDetailsScreen -> router.toTaskDetailsScreen(it.args)
+            is TasksViewModel.Command.OpenNftDetailsScreen -> router.toNftDetailsScreen(it.args)
         }
     }
 

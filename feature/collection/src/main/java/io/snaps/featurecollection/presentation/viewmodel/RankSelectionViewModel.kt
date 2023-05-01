@@ -104,14 +104,13 @@ class RankSelectionViewModel @Inject constructor(
     data class UiState(
         val ranks: List<RankTileState> = List(6) { RankTileState.Shimmer },
         val bottomDialog: BottomDialog = BottomDialog.RankFootnote,
-        )
+    )
 
     sealed class BottomDialog {
         object RankFootnote : BottomDialog()
     }
 
     sealed class Command {
-        object OpenMainScreen : Command()
         data class OpenPurchase(val args: AppRoute.Purchase.Args) : Command()
         object ShowBottomDialog : Command()
         object HideBottomDialog : Command()

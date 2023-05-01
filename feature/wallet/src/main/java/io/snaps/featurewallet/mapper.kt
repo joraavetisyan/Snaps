@@ -56,11 +56,11 @@ fun State<BalanceModel>.toRewardsTileState(
 fun BalanceModel.toRewardsTileState() = listOf(
     RewardsTileState.Unlocked(
         unlockedTokensBalance = unlocked.round().toStringValue(),
-        balanceInUsd = (unlocked * exchangeRate).round().toStringValue(),
+        balanceInUsd = (unlocked * snpExchangeRate).round().toStringValue(),
     ),
     RewardsTileState.Locked(
         lockedTokensBalance = locked.round().toStringValue(),
-        balanceInUsd = (locked * exchangeRate).round().toStringValue(),
+        balanceInUsd = (locked * snpExchangeRate).round().toStringValue(),
     ),
 )
 

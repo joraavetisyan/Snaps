@@ -1,6 +1,5 @@
 package io.snaps.featurecollection.presentation.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,7 +29,6 @@ import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.inset
-import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
@@ -58,6 +56,7 @@ fun MyCollectionScreen(
     viewModel.command.collectAsCommand {
         when (it) {
             is MyCollectionViewModel.Command.OpenRankSelectionScreen -> router.toRankSelectionScreen()
+            is MyCollectionViewModel.Command.OpenNftDetailsScreen -> router.toNftDetailsScreen(it.args)
         }
     }
 

@@ -1,5 +1,6 @@
 package io.snaps.basenft.data
 
+import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
@@ -99,7 +100,7 @@ class NftRepositoryImpl @Inject constructor(
     ): Effect<Completable> {
         return apiCall(ioDispatcher) {
             nftApi.mintNft(
-                body = io.snaps.basenft.data.model.MintNftRequestDto(
+                body = MintNftRequestDto(
                     nftType = type.intType,
                     purchaseId = purchaseId,
                     wallet = walletAddress,

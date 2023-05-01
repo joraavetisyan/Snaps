@@ -95,7 +95,8 @@ enum class StringKey {
     SearchProfilesTitle,
 
     WalletImportTitle,
-    WalletImportMessageEnterPhrases,
+    WalletImportMessageEnterPhrase,
+    WalletImportMessagePhraseExplanation,
     WalletImportHint,
 
     ConnectWalletTitle,
@@ -227,6 +228,8 @@ enum class StringKey {
     TaskShareActionSavePhoto,
     TaskShareActionPostToInstagram,
     TaskShareMessagePhotoSaved,
+    TaskShareFieldDownloadApp,
+    TaskShareFieldEarnCryptocurrencies,
 
     TaskFindPointsTitle,
     TaskFindPointsTitleConnectInstagram,
@@ -272,7 +275,7 @@ enum class StringKey {
     RewardsMessageFootnote,
     RewardsMessageAvailableRewards,
     RewardsMessageLockedRewards,
-    RewardsActionWithdraw,
+    RewardsActionClaim,
     RewardsErrorInsufficientBalance,
     RewardsDialogTitleFootnote1,
     RewardsDialogTitleFootnote2,
@@ -350,4 +353,12 @@ enum class StringKey {
     VideoClipActionDelete,
     VideoClipTitleAction,
     VideoClipDialogConfirmDeleteMessage,
+
+    NftDetailsDescriptionDailyReward,
+    NftDetailsTitleEarnings,
+    NftDetailsDescriptionEarnings,
+    NftDetailsTitleCondition,
+    NftDetailsDescriptionCondition,
+    NftDetailsTitleLevel,
+    NftDetailsDescriptionLevel,
 }

@@ -3,6 +3,7 @@ package io.snaps.basefeed.data
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.UserLikedVideoFeedItemResponseDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
+import io.snaps.baseprofile.data.FakeProfileApi
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rInt
@@ -43,7 +44,7 @@ class FakeVideoFeedApi : VideoFeedApi {
         likesCount = rInt,
         title = "title $it",
         description = "description $it",
-        authorUserId = "authorUserId$it",
+        author = FakeProfileApi.getUserInfo("authorUserId$it"),
         thumbnailUrl = "https://picsum.photos/177/222",
     )
 
@@ -147,7 +148,7 @@ class FakeVideoFeedApi : VideoFeedApi {
                 likesCount = rInt,
                 title = "title",
                 description = "description",
-                authorUserId = "authorUserId",
+                author = FakeProfileApi.getUserInfo("authorUserId"),
                 thumbnailUrl = "https://picsum.photos/177/222",
             ),
         )

@@ -101,14 +101,7 @@ class CreateUserViewModel @Inject constructor(
     }
 
     private fun handleCreate() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            action.execute {
-                sessionRepository.onInitialize()
-            }.doOnComplete {
-                _uiState.update { it.copy(isLoading = false) }
-            }
-        }
+        sessionRepository.onInitialize()
     }
 
     fun onNickNameValueChanged(value: String) {

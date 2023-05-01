@@ -34,10 +34,12 @@ class RegistrationViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
-    fun onPrivacyPolicyClicked() { /*TODO*/
+    fun onPrivacyPolicyClicked() {
+        /*TODO*/
     }
 
-    fun onTermsOfUserClicked() { /*TODO*/
+    fun onTermsOfUserClicked() {
+        /*TODO*/
     }
 
     fun onLoginWithEmailClicked() = viewModelScope.launch {
@@ -53,15 +55,13 @@ class RegistrationViewModel @Inject constructor(
             _command publish Command.ShowBottomDialog
         } else {
             _uiState.update {
-                it.copy(
-                    isEmailVerificationDialogVisible = true,
-                )
+                it.copy(isEmailVerificationDialogVisible = true)
             }
         }
     }
 
     fun onLoginWithTwitterClicked() {
-        // todo
+        /*TODO*/
     }
 
     fun showSignInBottomDialog() = viewModelScope.launch {
@@ -107,22 +107,29 @@ class RegistrationViewModel @Inject constructor(
     }
 
     fun signInWithGoogle(authCredential: AuthCredential) = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true) }
         action.execute {
             authRepository.signInWithCredential(authCredential)
         }.doOnSuccess {
             handleAuth()
+        }.doOnComplete {
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
     fun signInWithFacebook(authCredential: AuthCredential) = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true) }
         action.execute {
             authRepository.signInWithCredential(authCredential)
         }.doOnSuccess {
             handleAuth()
+        }.doOnComplete {
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
     fun signInWithEmail() = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true) }
         action.execute {
             authRepository.signInWithEmail(
                 email = uiState.value.emailAddressValue,
@@ -130,27 +137,27 @@ class RegistrationViewModel @Inject constructor(
             )
         }.doOnSuccess {
             handleAuth()
-        }.doOnError { error, data ->
+        }.doOnError { error, _ ->
             if (error.cause is FirebaseAuthException) {
                 notificationsSource.sendError(error)
             }
+        }.doOnComplete {
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
     private suspend fun handleAuth() {
         action.execute {
-            _uiState.update { it.copy(isLoading = true) }
             profileRepository.updateData().doOnSuccess {
                 sessionRepository.onLogin()
-                _uiState.update { it.copy(isLoading = false) }
             }.doOnError { _, _ ->
                 sessionRepository.onLogout()
-                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }
 
     fun signUpWithEmail() = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true) }
         action.execute {
             authRepository.signUpWithEmail(
                 email = uiState.value.emailAddressValue,
@@ -162,13 +169,13 @@ class RegistrationViewModel @Inject constructor(
             if (error.cause is FirebaseAuthException) {
                 notificationsSource.sendError(error)
             }
+        }.doOnComplete {
+            _uiState.update { it.copy(isLoading = false) }
         }
         if (!authRepository.isEmailVerified()) {
             _command publish Command.HideBottomDialog
             _uiState.update {
-                it.copy(
-                    isEmailVerificationDialogVisible = true,
-                )
+                it.copy(isEmailVerificationDialogVisible = true)
             }
         }
     }
