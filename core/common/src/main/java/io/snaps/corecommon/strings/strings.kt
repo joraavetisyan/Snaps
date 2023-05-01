@@ -237,11 +237,14 @@ internal val strings = mapOf(
     key(StringKey.WalletImportTitle) to mapOf(
         SupportedLanguageKey.En to "Wallet import",
     ),
-    key(StringKey.WalletImportMessageEnterPhrases) to mapOf(
+    key(StringKey.WalletImportMessageEnterPhrase) to mapOf(
         SupportedLanguageKey.En to "Enter your 12-word seed phrase to be able to use the wallet inside the app",
     ),
+    key(StringKey.WalletImportMessagePhraseExplanation) to mapOf(
+        SupportedLanguageKey.En to "Usually 12 (sometimes 24) words separated by on space",
+    ),
     key(StringKey.WalletImportHint) to mapOf(
-        SupportedLanguageKey.En to "%s. Enter here",
+        SupportedLanguageKey.En to "Secret phrase...",
     ),
 
     key(StringKey.ConnectWalletActionCreate) to mapOf(
@@ -726,13 +729,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Total",
     ),
     key(StringKey.WalletActionTopUp) to mapOf(
-        SupportedLanguageKey.En to "Top up",
+        SupportedLanguageKey.En to "Receive",
     ),
     key(StringKey.WalletActionWithdraw) to mapOf(
-        SupportedLanguageKey.En to "Withdraw",
+        SupportedLanguageKey.En to "Send",
     ),
     key(StringKey.WalletActionExchange) to mapOf(
-        SupportedLanguageKey.En to "Exchange",
+        SupportedLanguageKey.En to "Trade",
     ),
     key(StringKey.WalletTitleBalance) to mapOf(
         SupportedLanguageKey.En to "Balance",
@@ -789,8 +792,8 @@ internal val strings = mapOf(
     key(StringKey.RewardsMessageLockedRewards) to mapOf(
         SupportedLanguageKey.En to "Rewards unlocked tomorrow",
     ),
-    key(StringKey.RewardsActionWithdraw) to mapOf(
-        SupportedLanguageKey.En to "Withdraw",
+    key(StringKey.RewardsActionClaim) to mapOf(
+        SupportedLanguageKey.En to "Claim",
     ),
     key(StringKey.RewardsErrorInsufficientBalance) to mapOf(
         SupportedLanguageKey.En to "Token balance is zero",
@@ -896,7 +899,7 @@ internal val strings = mapOf(
     ),
 
     key(StringKey.RankSelectionTitle) to mapOf(
-        SupportedLanguageKey.En to "Choose a rank for your points",
+        SupportedLanguageKey.En to "Choose a rank for your glasses",
     ),
     key(StringKey.RankSelectionActionFootnote) to mapOf(
         SupportedLanguageKey.En to "What is a rank",

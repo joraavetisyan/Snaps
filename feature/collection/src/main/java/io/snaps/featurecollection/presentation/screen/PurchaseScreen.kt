@@ -40,7 +40,7 @@ import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
-import io.snaps.coreuicompose.tools.insetAll
+import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
@@ -107,15 +107,12 @@ private fun PurchaseScreen(
     ) { paddingValues ->
         Column(
             modifier = Modifier
-                .background(color = AppTheme.specificColorScheme.uiContentBg)
                 .padding(paddingValues)
-                .padding(horizontal = 12.dp)
-                .inset(insetAll()),
+                .inset(insetAllExcludeTop())
+                .padding(horizontal = 12.dp),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp, bottom = 8.dp),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(24.dp),
             ) {
@@ -152,6 +149,7 @@ private fun PurchaseScreen(
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(8.dp))
             CardBlock(
                 title = StringKey.PurchaseTitleDailyReward.textValue(),
                 description = StringKey.PurchaseDescriptionDailyReward.textValue(),

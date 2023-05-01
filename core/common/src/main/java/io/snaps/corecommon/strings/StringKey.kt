@@ -95,7 +95,8 @@ enum class StringKey {
     SearchProfilesTitle,
 
     WalletImportTitle,
-    WalletImportMessageEnterPhrases,
+    WalletImportMessageEnterPhrase,
+    WalletImportMessagePhraseExplanation,
     WalletImportHint,
 
     ConnectWalletTitle,
@@ -274,7 +275,7 @@ enum class StringKey {
     RewardsMessageFootnote,
     RewardsMessageAvailableRewards,
     RewardsMessageLockedRewards,
-    RewardsActionWithdraw,
+    RewardsActionClaim,
     RewardsErrorInsufficientBalance,
     RewardsDialogTitleFootnote1,
     RewardsDialogTitleFootnote2,

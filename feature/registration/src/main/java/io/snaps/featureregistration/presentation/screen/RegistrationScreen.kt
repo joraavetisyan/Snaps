@@ -38,6 +38,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -391,9 +392,10 @@ private fun LoginWithEmailDialog(
                 onValueChange = onPasswordValueChanged,
                 value = uiState.passwordValue,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
+                    keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done,
                 ),
+                visualTransformation = PasswordVisualTransformation(),
                 placeholder = {
                     Text(
                         text = LocalStringHolder.current(StringKey.RegistrationDialogSignInHintPassword),
@@ -470,9 +472,10 @@ private fun RegistrationWithEmailDialog(
                 onValueChange = onPasswordValueChanged,
                 value = uiState.passwordValue,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
+                    keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Next,
                 ),
+                visualTransformation = PasswordVisualTransformation(),
                 placeholder = {
                     Text(
                         text = LocalStringHolder.current(StringKey.RegistrationDialogSignUpHintPassword),

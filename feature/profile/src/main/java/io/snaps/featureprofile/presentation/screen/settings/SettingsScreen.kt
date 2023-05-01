@@ -127,7 +127,7 @@ private fun SettingsScreen(
                     SimpleButtonContent(
                         text = StringKey.SettingsActionDeleteAccount.textValue(),
                         iconLeft = AppTheme.specificIcons.delete,
-                        tint = AppTheme.specificColorScheme.uiSystemRed,
+                        iconTint = AppTheme.specificColorScheme.uiSystemRed,
                     )
                 }
             }

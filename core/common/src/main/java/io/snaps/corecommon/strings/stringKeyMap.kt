@@ -84,7 +84,7 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.SearchVideosTitle -> TODO()
     StringKey.SearchProfilesTitle -> TODO()
     StringKey.WalletImportTitle -> TODO()
-    StringKey.WalletImportMessageEnterPhrases -> TODO()
+    StringKey.WalletImportMessageEnterPhrase -> TODO()
     StringKey.WalletImportHint -> TODO()
     StringKey.ConnectWalletTitle -> TODO()
     StringKey.ConnectWalletMessage -> TODO()
@@ -237,7 +237,7 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.RewardsMessageFootnote -> TODO()
     StringKey.RewardsMessageAvailableRewards -> TODO()
     StringKey.RewardsMessageLockedRewards -> TODO()
-    StringKey.RewardsActionWithdraw -> TODO()
+    StringKey.RewardsActionClaim -> TODO()
     StringKey.RewardsErrorInsufficientBalance -> TODO()
     StringKey.RewardsDialogTitleFootnote1 -> TODO()
     StringKey.RewardsDialogTitleFootnote2 -> TODO()
@@ -314,4 +314,5 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.NftDetailsDescriptionCondition -> TODO()
     StringKey.NftDetailsTitleLevel -> TODO()
     StringKey.NftDetailsDescriptionLevel -> TODO()
+    StringKey.WalletImportMessagePhraseExplanation -> TODO()
 }

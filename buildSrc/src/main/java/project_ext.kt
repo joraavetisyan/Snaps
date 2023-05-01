@@ -38,6 +38,7 @@ fun Project.common() {
             }
             getByName(BuildTypes.release) {
                 isMinifyEnabled = false
+                isDebuggable = true
                 proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             }
         }

@@ -100,6 +100,7 @@ fun SimpleTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = SimpleTextFieldConfig.shape(),
     status: SimpleTextFieldStatus = SimpleTextFieldStatus.Normal,
@@ -125,6 +126,7 @@ fun SimpleTextField(
         interactionSource = interactionSource,
         singleLine = maxLines == 1,
         maxLines = maxLines,
+        minLines = minLines,
         decorationBox = @Composable { innerTextField ->
             TextFieldDefaults.OutlinedTextFieldDecorationBox(
                 value = value,

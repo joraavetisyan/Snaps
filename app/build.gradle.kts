@@ -83,6 +83,7 @@ android {
                     "app_name" to "SNAPS",
                 )
             )
+            isDebuggable = true
 
             signingConfig = signingConfigs.getByName(BuildTypes.release)
             isMinifyEnabled = false // todo

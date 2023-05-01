@@ -50,7 +50,6 @@ class AppViewModel @Inject constructor(
             is UserSessionTracker.State.Active -> StartFlow.AuthorizedFlow(
                 needsWalletConnect = userSession is UserSessionTracker.State.Active.NeedsWalletConnect,
                 needsInitialization = userSession is UserSessionTracker.State.Active.NeedsInitialization,
-                needsRanking = userSession is UserSessionTracker.State.Active.NeedsRanking,
             )
         }
     }.likeStateFlow(scope = viewModelScope, initialValue = StartFlow.Idle)
@@ -91,7 +90,6 @@ class AppViewModel @Inject constructor(
         data class AuthorizedFlow(
             val needsWalletConnect: Boolean,
             val needsInitialization: Boolean,
-            val needsRanking: Boolean,
         ) : StartFlow()
     }
 }

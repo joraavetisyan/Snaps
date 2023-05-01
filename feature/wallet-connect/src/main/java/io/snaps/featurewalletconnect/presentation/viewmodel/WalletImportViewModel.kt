@@ -39,7 +39,7 @@ class WalletImportViewModel @Inject constructor(
                     .flatMap { user ->
                         walletRepository.importAccount(
                             userId = user.userId,
-                            words = _uiState.value.words.map { it.trim().lowercase() }
+                            words = _uiState.value.words.trim().lowercase().split(" "),
                         )
                     }.flatMap {
                         sessionRepository.onWalletConnect()
@@ -58,20 +58,17 @@ class WalletImportViewModel @Inject constructor(
         _uiState.update { it.copy(dialog = null) }
     }
 
-    fun onPhraseValueChanged(phrase: String, index: Int) {
-        _uiState.update {
-            val newPhrases = it.words.mapIndexed { i, s -> if (index == i) phrase else s }
-            it.copy(words = newPhrases)
-        }
+    fun onPhraseValueChanged(phrase: String) {
+        _uiState.update { it.copy(words = phrase) }
     }
 
     data class UiState(
         val isLoading: Boolean = false,
-        val words: List<String> = List(12) { "" },
+        val words: String = "",
         val dialog: Dialog? = null,
     ) {
 
-        val isContinueButtonEnabled get() = words.all(String::isNotBlank)
+        val isContinueButtonEnabled get() = words.isNotBlank()
     }
 
     sealed interface Command
