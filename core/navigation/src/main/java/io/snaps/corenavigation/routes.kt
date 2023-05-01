@@ -209,6 +209,16 @@ object AppRoute {
         )
     }
 
+    object NftDetails : RouteWithArg("NftDetails") {
+
+        @Serializable
+        data class Args(
+            val type: NftType,
+            val image: FullUrl,
+            val dailyReward: Int,
+        )
+    }
+
     object WebView : Route("WebView")
 }
 

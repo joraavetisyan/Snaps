@@ -19,7 +19,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import net.gotev.uploadservice.UploadServiceConfig
-import net.gotev.uploadservice.protocols.multipart.MultipartUploadRequest
 import javax.inject.Inject
 
 @HiltAndroidApp

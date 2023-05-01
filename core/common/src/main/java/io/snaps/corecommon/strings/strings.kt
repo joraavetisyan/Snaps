@@ -657,6 +657,12 @@ internal val strings = mapOf(
     key(StringKey.TaskShareMessagePhotoSaved) to mapOf(
         SupportedLanguageKey.En to "Photo saved",
     ),
+    key(StringKey.TaskShareFieldDownloadApp) to mapOf(
+        SupportedLanguageKey.En to "Download the app Snaps",
+    ),
+    key(StringKey.TaskShareFieldEarnCryptocurrencies) to mapOf(
+        SupportedLanguageKey.En to "I play Snaps and\u00A0earn cryptocurrencies",
+    ),
 
     key(StringKey.TaskFindPointsTitle) to mapOf(
         SupportedLanguageKey.En to "Find points",
@@ -995,5 +1001,27 @@ internal val strings = mapOf(
     key(StringKey.VideoClipDialogConfirmDeleteMessage) to mapOf(
         SupportedLanguageKey.Ru to "Вы уверены, что хотите удалить видео?",
         SupportedLanguageKey.En to "Are you sure you want to delete video?",
+    ),
+
+    key(StringKey.NftDetailsDescriptionDailyReward) to mapOf(
+        SupportedLanguageKey.En to "Rank is the main characteristic of NFT points. Higher ranks allow you to get a multiple of more rewards and have a higher unlock speed",
+    ),
+    key(StringKey.NftDetailsTitleEarnings) to mapOf(
+        SupportedLanguageKey.En to "Earnings",
+    ),
+    key(StringKey.NftDetailsDescriptionEarnings) to mapOf(
+        SupportedLanguageKey.En to "Daily Reward\n%s SNPS",
+    ),
+    key(StringKey.NftDetailsTitleCondition) to mapOf(
+        SupportedLanguageKey.En to "Condition",
+    ),
+    key(StringKey.NftDetailsDescriptionCondition) to mapOf(
+        SupportedLanguageKey.En to "Make sure that your NFT glasses are always in excellent condition. If you do not repair NFT glasses for more than 3 days, they will break.",
+    ),
+    key(StringKey.NftDetailsTitleLevel) to mapOf(
+        SupportedLanguageKey.En to "Level and XP",
+    ),
+    key(StringKey.NftDetailsDescriptionLevel) to mapOf(
+        SupportedLanguageKey.En to "Earn XP for completing tasks. For each task you get 25 XP. With each level, your NFT points will bring more income. And at level 10, you can go to the next rank.",
     ),
 )

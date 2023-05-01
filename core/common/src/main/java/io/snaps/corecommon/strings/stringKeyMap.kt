@@ -305,4 +305,13 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.ReferralProgramMessageNoReferrals -> TODO()
     StringKey.UploadVideoActionPublish -> TODO()
     StringKey.UploadVideoTitle -> TODO()
+    StringKey.TaskShareFieldEarnCryptocurrencies -> TODO()
+    StringKey.TaskShareFieldDownloadApp -> TODO()
+    StringKey.NftDetailsDescriptionDailyReward -> TODO()
+    StringKey.NftDetailsTitleEarnings -> TODO()
+    StringKey.NftDetailsDescriptionEarnings -> TODO()
+    StringKey.NftDetailsTitleCondition -> TODO()
+    StringKey.NftDetailsDescriptionCondition -> TODO()
+    StringKey.NftDetailsTitleLevel -> TODO()
+    StringKey.NftDetailsDescriptionLevel -> TODO()
 }

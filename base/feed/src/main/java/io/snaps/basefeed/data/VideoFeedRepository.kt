@@ -37,7 +37,10 @@ interface VideoFeedRepository {
     suspend fun like(videoId: Uuid): Effect<Completable>
 
     suspend fun uploadVideo(
-        title: String, description: String, fileId: Uuid, filePath: String
+        title: String,
+        description: String,
+        fileId: Uuid,
+        filePath: String,
     ): Effect<Uuid>
 
     suspend fun deleteVideo(videoId: Uuid): Effect<Completable>
