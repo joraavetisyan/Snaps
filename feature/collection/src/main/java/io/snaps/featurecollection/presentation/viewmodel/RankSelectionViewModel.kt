@@ -111,7 +111,6 @@ class RankSelectionViewModel @Inject constructor(
     }
 
     sealed class Command {
-        object OpenMainScreen : Command()
         data class OpenPurchase(val args: AppRoute.Purchase.Args) : Command()
         object ShowBottomDialog : Command()
         object HideBottomDialog : Command()

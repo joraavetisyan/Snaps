@@ -9,7 +9,6 @@ import io.snaps.corenavigation.base.FeatureNavDirection
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
-import io.snaps.corenavigation.base.tryPopBackStack
 import io.snaps.featurecollection.presentation.screen.MyCollectionScreen
 import io.snaps.featurecollection.presentation.screen.NftDetailsScreen
 import io.snaps.featurecollection.presentation.screen.PurchaseScreen
@@ -20,10 +19,6 @@ internal class ScreenNavigator(navHostController: NavHostController) :
     Navigator(navHostController) {
 
     fun toRankSelectionScreen() = navHostController.navigate(AppRoute.RankSelection)
-
-    fun toMainScreen() = navHostController.navigate(AppRoute.MainBottomBar) {
-        tryPopBackStack(navHostController)
-    }
 
     fun toPurchaseScreen(
         args: AppRoute.Purchase.Args

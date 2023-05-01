@@ -71,7 +71,7 @@ android {
                 )
             )
 
-            isMinifyEnabled = false // todo
+            isMinifyEnabled = false // todo release
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
         getByName(BuildTypes.release) {
@@ -83,10 +83,9 @@ android {
                     "app_name" to "SNAPS",
                 )
             )
-            isDebuggable = true
 
             signingConfig = signingConfigs.getByName(BuildTypes.release)
-            isMinifyEnabled = false // todo
+            isMinifyEnabled = false // todo release
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }

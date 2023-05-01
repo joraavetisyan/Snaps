@@ -61,7 +61,7 @@ fun PurchaseScreen(
 
     viewModel.command.collectAsCommand {
         when (it) {
-            PurchaseViewModel.Command.OpenMainScreen -> router.toMainScreen()
+            PurchaseViewModel.Command.ClosePurchaseScreen -> router.back()
         }
     }
 

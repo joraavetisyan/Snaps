@@ -3,13 +3,14 @@ package io.snaps.featurecollection.presentation.viewmodel
 import android.app.Activity
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.android.billingclient.api.Purchase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basebilling.BillingRouter
 import io.snaps.basebilling.PurchaseStateProvider
 import io.snaps.basenft.data.NftRepository
+import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FiatCurrency
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.Uuid
@@ -34,6 +35,7 @@ class PurchaseViewModel @Inject constructor(
     private val action: Action,
     private val purchaseStateProvider: PurchaseStateProvider,
     private val billingRouter: BillingRouter,
+    private val notificationsSource: NotificationsSource,
     private val walletRepository: WalletRepository,
     private val nftRepository: NftRepository,
 ) : SimpleViewModel() {
@@ -74,7 +76,10 @@ class PurchaseViewModel @Inject constructor(
                 purchaseId = purchaseId,
             )
         }.doOnSuccess {
-            _command publish Command.OpenMainScreen
+            notificationsSource.sendMessage("Purchase successful".textValue()) // todo localize
+            _command publish Command.ClosePurchaseScreen
+        }.doOnError { error, _ ->
+            notificationsSource.sendError(error)
         }.doOnComplete {
             _uiState.update { it.copy(isLoading = false) }
         }
@@ -105,6 +110,6 @@ class PurchaseViewModel @Inject constructor(
     )
 
     sealed class Command {
-        object OpenMainScreen : Command()
+        object ClosePurchaseScreen : Command()
     }
 }

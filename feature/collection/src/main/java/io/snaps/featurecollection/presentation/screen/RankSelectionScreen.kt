@@ -61,7 +61,6 @@ fun RankSelectionScreen(
 
     viewModel.command.collectAsCommand {
         when (it) {
-            RankSelectionViewModel.Command.OpenMainScreen -> router.toMainScreen()
             is RankSelectionViewModel.Command.OpenPurchase -> router.toPurchaseScreen(it.args)
             RankSelectionViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             RankSelectionViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
