@@ -4,6 +4,10 @@ plugins {
 
 common()
 
+android {
+    namespace = "io.snaps.coreunittest"
+}
+
 dependencies {
     api(*Libs.bundle.unitTests)
 

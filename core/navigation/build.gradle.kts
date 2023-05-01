@@ -6,6 +6,10 @@ common()
 dagger()
 compose()
 
+android {
+    namespace = "io.snaps.corenavigation"
+}
+
 dependencies {
     api(*Libs.bundle.navigation)
     api(*Libs.bundle.kotlinSerialization)

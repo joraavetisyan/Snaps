@@ -7,6 +7,10 @@ compose()
 dagger()
 lifecycle()
 
+android {
+    namespace = "io.snaps.featureprofile"
+}
+
 dependencies {
     implementation(projects.coreCommon)
     implementation(projects.coreData)

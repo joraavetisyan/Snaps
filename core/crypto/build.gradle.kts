@@ -6,6 +6,10 @@ common()
 dagger()
 room()
 
+android {
+    namespace = "io.snaps.corecrypto"
+}
+
 dependencies {
     api(*Libs.bundle.requests)
     api(*Libs.bundle.kotlinSerialization)

@@ -12,6 +12,8 @@ dagger()
 lifecycle()
 
 android {
+    namespace = "io.snaps.android"
+
     defaultConfig {
         versionName = App.name
         versionCode = App.code

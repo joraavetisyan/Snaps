@@ -7,6 +7,10 @@ lifecycle()
 dagger()
 room()
 
+android {
+    namespace = "io.snaps.coredata"
+}
+
 dependencies {
     api(*Libs.bundle.requests)
     api(*Libs.bundle.kotlinSerialization)

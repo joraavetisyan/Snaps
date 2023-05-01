@@ -6,6 +6,10 @@ common()
 dagger()
 lifecycle()
 
+android {
+    namespace = "io.snaps.basebilling"
+}
+
 dependencies {
     api(*Libs.bundle.billing)
 
