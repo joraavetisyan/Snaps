@@ -11,6 +11,7 @@ enum class StringKey {
     ActionClose,
     ActionDelete,
     ActionHowItWorks,
+    ActionOk,
 
     MessageConnectionSuccess,
 
@@ -62,6 +63,7 @@ enum class StringKey {
     RegistrationDialogSignInHintPassword,
     RegistrationDialogSignInActionLogin,
     RegistrationDialogSignInActionRegistration,
+    RegistrationDialogSignInActionForgotPassword,
     RegistrationDialogSignUpTitle,
     RegistrationDialogSignUpMessage,
     RegistrationDialogSignUpHintEmail,
@@ -71,7 +73,11 @@ enum class StringKey {
     RegistrationDialogSignUpActionRegistration,
     RegistrationDialogVerificationTitle,
     RegistrationDialogVerificationMessage,
-    RegistrationDialogVerificationAction,
+    RegistrationDialogResetPasswordTitle,
+    RegistrationDialogResetPasswordAction,
+    RegistrationDialogResetPasswordFieldEnterEmail,
+    RegistrationDialogResetPasswordHintEmail,
+    RegistrationDialogResetPasswordInstructionsMessage,
 
     SubsActionSubscriptions,
     SubsActionSubscribers,
