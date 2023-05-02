@@ -4,8 +4,8 @@ import android.app.Activity
 import io.horizontalsystems.ethereumkit.models.Chain
 import io.snaps.basewallet.R
 import io.snaps.corecommon.model.WalletAddress
+import io.snaps.corecrypto.core.CryptoKit
 
-private const val RpcUrl = "https://bsc-dataseed2.binance.org"
 private const val SwapUrl = "https://pancakeswap.finance/swap?outputCurrency=BNB&inputCurrency=%s"
 
 object TrustWalletProvider {
@@ -24,7 +24,10 @@ object TrustWalletProvider {
                 ethereum: {
                     address: "$address",
                     chainId: ${Chain.BinanceSmartChain.id},
-                    rpcUrl: "$RpcUrl"
+                    rpcUrl: "${
+            if (CryptoKit.testMode) "https://data-seed-prebsc-1-s1.binance.org:8545/"
+            else "https://bsc-dataseed2.binance.org"
+        }"
                 },
                 isDebug: true
             };

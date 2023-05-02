@@ -46,6 +46,10 @@ interface NftRepository {
     suspend fun repairGlasses(
         glassesId: Uuid,
     ): Effect<Completable>
+
+    suspend fun repairGlassesOnBlockchain(
+        glassesId: Uuid,
+    ): Effect<Completable>
 }
 
 class NftRepositoryImpl @Inject constructor(
@@ -68,6 +72,7 @@ class NftRepositoryImpl @Inject constructor(
                 it.isSuccess -> Effect.success(
                     it.requireData.count { nft -> !nft.isHealthy }
                 )
+
                 else -> Effect.error(requireNotNull(it.errorOrNull))
             }
         }
@@ -114,11 +119,13 @@ class NftRepositoryImpl @Inject constructor(
 
     override suspend fun repairGlasses(glassesId: Uuid): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            nftApi.repairGlasses(
-                body = RepairGlassesRequestDto(glassesId),
-            )
+            nftApi.repairGlasses(body = RepairGlassesRequestDto(glassesId = glassesId))
         }.doOnSuccess {
             updateNftCollection()
         }
+    }
+
+    override suspend fun repairGlassesOnBlockchain(glassesId: Uuid): Effect<Completable> {
+        return Effect.completable
     }
 }

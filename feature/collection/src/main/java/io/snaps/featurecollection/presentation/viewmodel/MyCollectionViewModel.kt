@@ -14,6 +14,7 @@ import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
+import io.snaps.featurecollection.domain.MyCollectionInteractor
 import io.snaps.featurecollection.presentation.toNftCollectionItemState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +33,7 @@ class MyCollectionViewModel @Inject constructor(
     onboardingHandlerDelegate: OnboardingHandler,
     private val action: Action,
     private val nftRepository: NftRepository,
+    private val interactor: MyCollectionInteractor,
 ) : SimpleViewModel(),
     MainHeaderHandler by mainHeaderHandlerDelegate,
     OnboardingHandler by onboardingHandlerDelegate {
@@ -44,7 +46,9 @@ class MyCollectionViewModel @Inject constructor(
 
     init {
         subscribeOnNft()
-        loadNft()
+
+        updateNft()
+
         checkOnboarding(OnboardingType.Nft)
     }
 
@@ -61,14 +65,14 @@ class MyCollectionViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun loadNft() = viewModelScope.launch {
+    private fun updateNft() = viewModelScope.launch {
         action.execute {
             nftRepository.updateNftCollection()
         }
     }
 
     private fun onNftReloadClicked() {
-        loadNft()
+        updateNft()
     }
 
     private fun onAddItemClicked() = viewModelScope.launch {
@@ -76,15 +80,11 @@ class MyCollectionViewModel @Inject constructor(
     }
 
     private fun onRepairClicked(glassesId: Uuid) = viewModelScope.launch {
-        _uiState.update {
-            it.copy(isLoading = true)
-        }
+        _uiState.update { it.copy(isLoading = true) }
         action.execute {
-            nftRepository.repairGlasses(glassesId)
+            interactor.repairGlasses(glassesId)
         }.doOnComplete {
-            _uiState.update {
-                it.copy(isLoading = false)
-            }
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 

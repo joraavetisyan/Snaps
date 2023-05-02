@@ -4,6 +4,10 @@ plugins {
 
 common()
 
+android {
+    namespace = "io.horizontalsystems.ethereumkit"
+}
+
 dependencies {
     implementation("org.bouncycastle:bcpkix-jdk15on:1.65")
     implementation("com.github.horizontalsystems:hd-wallet-kit-android:f46885a")

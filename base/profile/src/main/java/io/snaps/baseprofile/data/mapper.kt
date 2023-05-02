@@ -40,6 +40,7 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
     ownInviteCode = ownInviteCode,
     totalPublication = null,
     instagramId = instagramId,
+    paymentsState = paymentsState,
 )
 
 fun BalanceResponseDto.toModel() = BalanceModel(

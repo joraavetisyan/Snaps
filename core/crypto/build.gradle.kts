@@ -16,6 +16,7 @@ dependencies {
 
     implementation(projects.ethereumkit)
     implementation(projects.erc20kit)
+    implementation(projects.binancechainkit)
 
     implementation(projects.coreCommon)
 

@@ -28,6 +28,7 @@ import io.snaps.corecrypto.core.ISendEthereumAdapter
 import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.IWordsManager
 import io.snaps.corecrypto.core.managers.WalletActivator
+import io.snaps.corecrypto.core.managers.defaultTokens
 import io.snaps.corecrypto.core.providers.BalanceService
 import io.snaps.corecrypto.core.providers.BalanceViewItemFactory
 import io.snaps.corecrypto.core.providers.Eip1559GasPriceService
@@ -65,7 +66,8 @@ import java.math.BigInteger
 import java.security.InvalidAlgorithmParameterException
 import javax.inject.Inject
 
-private const val messageNotSecured = "java.lang.IllegalStateException: Secure lock screen must be enabled to create keys requiring user authentication"
+private const val messageNotSecured =
+    "java.lang.IllegalStateException: Secure lock screen must be enabled to create keys requiring user authentication"
 
 interface WalletRepository {
 
@@ -272,16 +274,7 @@ class WalletRepositoryImpl @Inject constructor(
     }
 
     private fun activateDefaultWallets(account: Account) {
-        val tokenQueries = listOf(
-            // SNAPS
-            "0x92677918569A2BEA213Af66b54e0C9B9811d021c",
-            // WBNB
-            "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
-            // BUSD
-            "0xe9e7cea3dedca5984780bafc599bd69add087d56",
-            // USDT
-            "0x55d398326f99059ff775485246999027b3197955",
-        ).map {
+        val tokenQueries = defaultTokens.map {
             TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Eip20(it))
         } + listOf(
             TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Native)

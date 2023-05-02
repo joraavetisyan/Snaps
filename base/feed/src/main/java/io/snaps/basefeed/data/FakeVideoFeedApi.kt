@@ -1,7 +1,8 @@
 package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.AddVideoRequestDto
-import io.snaps.basefeed.data.model.UserLikedVideoFeedItemResponseDto
+import io.snaps.basefeed.data.model.UserLikedVideoResponseDto
+import io.snaps.basefeed.data.model.UserLikedVideoItem
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.baseprofile.data.FakeProfileApi
 import io.snaps.corecommon.ext.log
@@ -88,15 +89,29 @@ class FakeVideoFeedApi : VideoFeedApi {
     override suspend fun likedVideos(
         @Query(value = "from") from: Uuid?,
         @Query(value = "count") count: Int,
-    ): BaseResponse<List<UserLikedVideoFeedItemResponseDto>> {
+    ): BaseResponse<List<UserLikedVideoResponseDto>> {
         log("Requesting liked videos: $count videos with offset $from")
         delay(mockDelay)
         return BaseResponse(
             actualTimestamp = 1L,
             data = List(count) {
-                UserLikedVideoFeedItemResponseDto(
+                UserLikedVideoResponseDto(
                     entityId = "${generation}video$it",
-                    video = videoFeedItemResponseDto(it, 0)
+                    video = UserLikedVideoItem(
+                        url = rVideos.random(),
+                        internalId = "${generation}video$it",
+                        entityId = "${generation}video$it",
+                        createdDate = "",
+                        viewsCount = rInt,
+                        commentsCount = rInt,
+                        likesCount = rInt,
+                        title = "title $it",
+                        description = "description $it",
+                        authorId = "authorUserId$it",
+                        thumbnailUrl = "https://picsum.photos/177/222",
+                        isDeleted = false,
+                        urlWithResolution = null,
+                    )
                 )
             }
         )

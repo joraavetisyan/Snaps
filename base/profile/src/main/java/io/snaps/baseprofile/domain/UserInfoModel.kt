@@ -1,5 +1,6 @@
 package io.snaps.baseprofile.domain
 
+import io.snaps.baseprofile.data.model.PaymentsState
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Uuid
@@ -24,4 +25,5 @@ data class UserInfoModel(
     val inviteCodeRegisteredBy: String?,
     val ownInviteCode: String?,
     val instagramId: Uuid?,
+    val paymentsState: PaymentsState?,
 )

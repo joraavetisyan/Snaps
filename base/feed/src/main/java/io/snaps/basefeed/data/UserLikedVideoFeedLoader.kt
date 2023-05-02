@@ -3,7 +3,7 @@ package io.snaps.basefeed.data
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import io.snaps.basefeed.data.model.UserLikedVideoFeedItemResponseDto
+import io.snaps.basefeed.data.model.UserLikedVideoResponseDto
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
@@ -18,8 +18,8 @@ class UseLikedVideoFeedLoader @AssistedInject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     action: Action,
-    @Assisted private val params: PagedLoaderParams<UserLikedVideoFeedItemResponseDto, VideoClipModel>,
-) : PagedLoader<UserLikedVideoFeedItemResponseDto, VideoClipModel>(
+    @Assisted private val params: PagedLoaderParams<UserLikedVideoResponseDto, VideoClipModel>,
+) : PagedLoader<UserLikedVideoResponseDto, VideoClipModel>(
     ioDispatcher = ioDispatcher,
     scope = scope,
     action = action,
@@ -28,9 +28,9 @@ class UseLikedVideoFeedLoader @AssistedInject constructor(
 
 @AssistedFactory
 abstract class UserLikedVideoFeedLoaderFactory :
-    PagedLoaderFactory<Unit, UseLikedVideoFeedLoader, UserLikedVideoFeedItemResponseDto, VideoClipModel>() {
+    PagedLoaderFactory<Unit, UseLikedVideoFeedLoader, UserLikedVideoResponseDto, VideoClipModel>() {
 
-    override fun provide(params: PagedLoaderParams<UserLikedVideoFeedItemResponseDto, VideoClipModel>) = create(params)
+    override fun provide(params: PagedLoaderParams<UserLikedVideoResponseDto, VideoClipModel>) = create(params)
 
-    abstract fun create(params: PagedLoaderParams<UserLikedVideoFeedItemResponseDto, VideoClipModel>): UseLikedVideoFeedLoader
+    abstract fun create(params: PagedLoaderParams<UserLikedVideoResponseDto, VideoClipModel>): UseLikedVideoFeedLoader
 }

@@ -3,7 +3,7 @@ package io.snaps.basefeed.data
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.snaps.basefeed.data.model.AddVideoRequestDto
-import io.snaps.basefeed.data.model.UserLikedVideoFeedItemResponseDto
+import io.snaps.basefeed.data.model.UserLikedVideoResponseDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseplayer.domain.VideoClipModel
@@ -56,7 +56,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
     private val userLikedVideoFeedLoaderFactory: UserLikedVideoFeedLoaderFactory,
 ) : VideoFeedRepository {
 
-    private var likedVideos: List<UserLikedVideoFeedItemResponseDto>? = null
+    private var likedVideos: List<UserLikedVideoResponseDto>? = null
 
     private fun getLoader(videoFeedType: VideoFeedType): PagedLoader<*, VideoClipModel> {
         return when (videoFeedType) {
@@ -65,7 +65,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     action = { from, count -> videoFeedApi.likedVideos(from, count) },
                     pageSize = 20,
                     nextPageIdFactory = { it.entityId },
-                    mapper = { videoFeed -> videoFeed.map { it.video.toModel(true) } },
+                    mapper = { videoFeed -> videoFeed.map { it.video.toModel() } },
                 )
             }
             else -> loaderFactory.get(videoFeedType) { type ->
@@ -106,7 +106,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun getLikedVideos(): List<UserLikedVideoFeedItemResponseDto> {
+    private suspend fun getLikedVideos(): List<UserLikedVideoResponseDto> {
         return likedVideos ?: apiCall(ioDispatcher) {
             videoFeedApi.likedVideos(null, 100)
         }.doOnSuccess {

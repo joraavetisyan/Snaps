@@ -51,6 +51,7 @@ sealed class RpcSource() {
                             URL("https://bsc-dataseed2.binance.org/"),
                             URL("https://bsc-dataseed3.binance.org/"),
                             URL("https://bsc-dataseed4.binance.org/")*/
+                        // todo new
                             URL("https://data-seed-prebsc-1-s1.binance.org:8545/")
                     ),
                     null
