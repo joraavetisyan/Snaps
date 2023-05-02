@@ -162,6 +162,7 @@ fun RegistrationScreen(
                     onEmailAddressValueChanged = viewModel::onEmailAddressValueChanged,
                     onPasswordValueChanged = viewModel::onPasswordValueChanged,
                     onSignUpClicked = viewModel::showSignUpBottomDialog,
+                    onForgotPasswordClicked = viewModel::onForgotPasswordClicked,
                 )
                 RegistrationViewModel.BottomDialogType.SignUp -> RegistrationWithEmailDialog(
                     uiState = uiState,
@@ -172,6 +173,12 @@ fun RegistrationScreen(
                     onSignUpClicked = viewModel::signUpWithEmail,
                     onPrivacyPolicyClicked = viewModel::onPrivacyPolicyClicked,
                     onTermsOfUserClicked = viewModel::onTermsOfUserClicked,
+                )
+                RegistrationViewModel.BottomDialogType.ResetPassword -> ResetPasswordDialog(
+                    passwordResetEmail = uiState.passwordResetEmailValue,
+                    isResetPasswordButtonEnabled = uiState.isResetPasswordButtonEnabled,
+                    onResetPasswordEmailValueChanged = viewModel::onResetPasswordEmailValueChanged,
+                    onResetPasswordClicked = viewModel::onResetPasswordClicked,
                 )
             }
         },
@@ -197,6 +204,7 @@ fun RegistrationScreen(
             onPrivacyPolicyClicked = viewModel::onPrivacyPolicyClicked,
             onTermsOfUserClicked = viewModel::onTermsOfUserClicked,
             onEmailVerificationDialogDismissRequest = viewModel::onEmailVerificationDialogDismissRequest,
+            onResetPasswordInstructionsDialogDismissRequest = viewModel::onResetPasswordInstructionsDialogDismissRequest,
         )
     }
     FullScreenLoaderUi(isLoading = uiState.isLoading)
@@ -212,6 +220,7 @@ private fun RegistrationScreen(
     onLoginWithTwitterClicked: () -> Unit,
     onLoginWithFacebookClicked: () -> Unit,
     onEmailVerificationDialogDismissRequest: () -> Unit,
+    onResetPasswordInstructionsDialogDismissRequest: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -252,13 +261,20 @@ private fun RegistrationScreen(
         }
     }
 
-    if (uiState.isEmailVerificationDialogVisible) {
-        SimpleAlertDialogUi(
-            text = StringKey.RegistrationDialogVerificationMessage.textValue(),
-            title = StringKey.RegistrationDialogVerificationTitle.textValue(),
-            buttonText = StringKey.RegistrationDialogVerificationAction.textValue(),
-            onClickRequest = onEmailVerificationDialogDismissRequest,
-        )
+    uiState.dialogType?.let {
+        when (it) {
+            RegistrationViewModel.DialogType.EmailVerification -> SimpleAlertDialogUi(
+                text = StringKey.RegistrationDialogVerificationMessage.textValue(),
+                title = StringKey.RegistrationDialogVerificationTitle.textValue(),
+                buttonText = StringKey.ActionOk.textValue(),
+                onClickRequest = onEmailVerificationDialogDismissRequest,
+            )
+            RegistrationViewModel.DialogType.ResetPasswordInstructions -> SimpleAlertDialogUi(
+                text = StringKey.RegistrationDialogResetPasswordInstructionsMessage.textValue(),
+                buttonText = StringKey.ActionOk.textValue(),
+                onClickRequest = onResetPasswordInstructionsDialogDismissRequest,
+            )
+        }
     }
 }
 
@@ -355,6 +371,7 @@ private fun LoginWithEmailDialog(
     onPasswordValueChanged: (String) -> Unit,
     onLoginWithEmailClicked: () -> Unit,
     onSignUpClicked: () -> Unit,
+    onForgotPasswordClicked: () -> Unit,
 ) {
     SimpleBottomDialogUI(header = StringKey.RegistrationDialogSignInTitle.textValue()) {
         item {
@@ -420,6 +437,14 @@ private fun LoginWithEmailDialog(
                 onClick = onSignUpClicked,
             ) {
                 SimpleButtonContent(text = StringKey.RegistrationDialogSignInActionRegistration.textValue())
+            }
+            SimpleButtonInlineM(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                onClick = onForgotPasswordClicked,
+            ) {
+                SimpleButtonContent(text = StringKey.RegistrationDialogSignInActionForgotPassword.textValue())
             }
         }
     }
@@ -523,6 +548,55 @@ private fun RegistrationWithEmailDialog(
                 onPrivacyPolicyClicked = onPrivacyPolicyClicked,
                 onTermsOfUserClicked = onTermsOfUserClicked,
             )
+        }
+    }
+}
+
+@Composable
+private fun ResetPasswordDialog(
+    passwordResetEmail: String,
+    isResetPasswordButtonEnabled: Boolean,
+    onResetPasswordEmailValueChanged: (String) -> Unit,
+    onResetPasswordClicked: () -> Unit,
+) {
+    SimpleBottomDialogUI(header = StringKey.RegistrationDialogResetPasswordTitle.textValue()) {
+        item {
+            Text(
+                text = StringKey.RegistrationDialogResetPasswordFieldEnterEmail.textValue().get(),
+                color = AppTheme.specificColorScheme.textSecondary,
+                style = AppTheme.specificTypography.titleSmall,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp, horizontal = 32.dp),
+                textAlign = TextAlign.Center,
+            )
+            SimpleTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                onValueChange = onResetPasswordEmailValueChanged,
+                value = passwordResetEmail,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next,
+                ),
+                placeholder = {
+                    Text(
+                        text = StringKey.RegistrationDialogResetPasswordHintEmail.textValue().get(),
+                        style = AppTheme.specificTypography.titleSmall,
+                    )
+                },
+                maxLines = 1,
+            )
+            SimpleButtonActionM(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                enabled = isResetPasswordButtonEnabled,
+                onClick = onResetPasswordClicked,
+            ) {
+                SimpleButtonContent(text = StringKey.RegistrationDialogResetPasswordAction.textValue())
+            }
         }
     }
 }

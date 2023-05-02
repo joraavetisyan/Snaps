@@ -14,7 +14,7 @@ import io.snaps.coreuitheme.compose.AppTheme
 @Composable
 fun SimpleAlertDialogUi(
     text: TextValue,
-    title: TextValue,
+    title: TextValue? = null,
     buttonText: TextValue,
     onClickRequest: () -> Unit,
 ) {
@@ -22,12 +22,14 @@ fun SimpleAlertDialogUi(
         containerColor = AppTheme.specificColorScheme.grey,
         onDismissRequest = onClickRequest,
         title = {
-            Text(
-                text = title.get(),
-                modifier = Modifier.fillMaxWidth(),
-                style = AppTheme.specificTypography.headlineSmall,
-                color = AppTheme.specificColorScheme.textPrimary,
-            )
+            title?.let {
+                Text(
+                    text = it.get(),
+                    modifier = Modifier.fillMaxWidth(),
+                    style = AppTheme.specificTypography.headlineSmall,
+                    color = AppTheme.specificColorScheme.textPrimary,
+                )
+            }
         },
         text = {
             Text(

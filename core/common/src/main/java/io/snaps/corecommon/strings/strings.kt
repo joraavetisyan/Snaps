@@ -28,6 +28,9 @@ internal val strings = mapOf(
     key(StringKey.ActionHowItWorks) to mapOf(
         SupportedLanguageKey.En to "How it works?",
     ),
+    key(StringKey.ActionOk) to mapOf(
+        SupportedLanguageKey.En to "Ok",
+    ),
 
     key(StringKey.MessageConnectionSuccess) to mapOf(
         SupportedLanguageKey.Ru to "Соединение восстановлено",
@@ -209,9 +212,6 @@ internal val strings = mapOf(
     key(StringKey.RegistrationDialogVerificationMessage) to mapOf(
         SupportedLanguageKey.En to "Check your email for the verification link sent to account",
     ),
-    key(StringKey.RegistrationDialogVerificationAction) to mapOf(
-        SupportedLanguageKey.En to "Ok",
-    ),
     key(StringKey.RegistrationDialogSignUpTitle) to mapOf(
         SupportedLanguageKey.En to "Sign up",
     ),
@@ -232,6 +232,24 @@ internal val strings = mapOf(
     ),
     key(StringKey.RegistrationDialogSignUpActionLogin) to mapOf(
         SupportedLanguageKey.En to "Already has account? Sign in",
+    ),
+    key(StringKey.RegistrationDialogSignInActionForgotPassword) to mapOf(
+        SupportedLanguageKey.En to "Forgot password?",
+    ),
+    key(StringKey.RegistrationDialogResetPasswordTitle) to mapOf(
+        SupportedLanguageKey.En to "Reset password",
+    ),
+    key(StringKey.RegistrationDialogResetPasswordAction) to mapOf(
+        SupportedLanguageKey.En to "Reset password",
+    ),
+    key(StringKey.RegistrationDialogResetPasswordFieldEnterEmail) to mapOf(
+        SupportedLanguageKey.En to "Enter your e-mail address",
+    ),
+    key(StringKey.RegistrationDialogResetPasswordHintEmail) to mapOf(
+        SupportedLanguageKey.En to "Email address",
+    ),
+    key(StringKey.RegistrationDialogResetPasswordInstructionsMessage) to mapOf(
+        SupportedLanguageKey.En to "Instructions were send to email",
     ),
 
     key(StringKey.WalletImportTitle) to mapOf(

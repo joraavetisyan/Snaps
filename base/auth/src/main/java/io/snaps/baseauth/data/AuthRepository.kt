@@ -25,6 +25,8 @@ interface AuthRepository {
     suspend fun signUpWithEmail(email: String, password: String): Effect<Completable>
 
     fun sendEmailVerification()
+
+    suspend fun resetPassword(email: String): Effect<Completable>
 }
 
 class AuthRepositoryImpl @Inject constructor(
@@ -63,6 +65,17 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun sendEmailVerification() {
         getCurrentUser()?.sendEmailVerification()
+    }
+
+    override suspend fun resetPassword(email: String): Effect<Completable> {
+        return try {
+            auth.sendPasswordResetEmail(email).await()
+            Effect.completable
+        } catch (e: FirebaseAuthException) {
+            Effect.error(AppError.Custom(displayMessage = e.localizedMessage, cause = e))
+        } catch (e: Exception) {
+            Effect.error(AppError.Unknown(cause = e))
+        }
     }
 
     override suspend fun signInWithEmail(email: String, password: String): Effect<Completable> {

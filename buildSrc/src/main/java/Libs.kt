@@ -50,7 +50,7 @@ object Libs {
     private const val datastoreVersion = "1.0.0-rc01"
     private const val securityVersion = "1.1.0-alpha01" // Downgrading to 1.1.0-alpha01 solve issue InvalidProtocolBufferException
     private const val preferenceVersion = "1.1.1"
-    private const val roomVersion = "2.4.0"
+    private const val roomVersion = "2.5.1"
     private const val jsonConverterVersion = "0.8.0"
     private const val retrofitVersion = "2.9.0"
     private const val okHttpVersion = "4.9.0"
