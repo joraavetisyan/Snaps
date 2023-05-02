@@ -1,5 +1,3 @@
-import com.google.protobuf.gradle.*
-
 plugins {
     id(Libs.plugin.library)
     id("com.google.protobuf") version "0.9.3"

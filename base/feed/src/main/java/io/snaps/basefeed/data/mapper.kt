@@ -27,7 +27,7 @@ fun VideoFeedItemResponseDto.toModel(isLiked: Boolean) = VideoClipModel(
     url = url,
     title = title,
     description = description,
-    authorId = author.entityId,
+    authorId = author.userId,
     thumbnail = thumbnailUrl,
     isLiked = isLiked,
 )

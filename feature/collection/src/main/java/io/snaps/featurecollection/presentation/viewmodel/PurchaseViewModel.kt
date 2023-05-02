@@ -13,7 +13,7 @@ import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FiatCurrency
 import io.snaps.corecommon.model.NftType
-import io.snaps.corecommon.model.Uuid
+import io.snaps.corecommon.model.Token
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
@@ -63,17 +63,17 @@ class PurchaseViewModel @Inject constructor(
 
     private fun subscribeOnNewPurchases() = viewModelScope.launch {
         purchaseStateProvider.newPurchasesFlow.onEach {
-            minNft(purchaseId = it.first().orderId)
+            minNft(purchaseToken = it.first().purchaseToken)
         }.launchIn(viewModelScope)
     }
 
-    private suspend fun minNft(purchaseId: Uuid?) {
+    private suspend fun minNft(purchaseToken: Token?) {
         _uiState.update { it.copy(isLoading = true) }
         action.execute {
             nftRepository.mintNft(
                 type = args.type,
                 walletAddress = walletRepository.getActiveWalletsReceiveAddresses().first(),
-                purchaseId = purchaseId,
+                purchaseId = purchaseToken,
             )
         }.doOnSuccess {
             notificationsSource.sendMessage("Purchase successful".textValue()) // todo localize
@@ -88,7 +88,7 @@ class PurchaseViewModel @Inject constructor(
     fun onBuyClicked(activity: Activity) {
         viewModelScope.launch {
             if (args.type == NftType.Free) {
-                minNft(purchaseId = null)
+                minNft(purchaseToken = null)
             } else {
                 purchaseStateProvider.getInAppProducts().data.orEmpty().firstOrNull {
                     it.details.sku == args.type.storeId
