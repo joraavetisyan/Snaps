@@ -209,7 +209,7 @@ object AppRoute {
         )
     }
 
-    object NftDetails : RouteWithArg("NftDetails") {
+    object UserNftDetails : RouteWithArg("UserNftDetails") {
 
         @Serializable
         data class Args(

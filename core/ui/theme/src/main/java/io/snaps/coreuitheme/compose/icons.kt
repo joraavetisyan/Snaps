@@ -77,6 +77,7 @@ object SpecificIcons {
     val question: IconValue = resource(R.drawable.ic_question)
     val gem: IconValue = resource(R.drawable.ic_gem)
     val verified: IconValue = resource(R.drawable.ic_verified)
+    val trophy: IconValue = resource(R.drawable.ic_trophy)
 
     val sendCircled: IconValue = resource(R.drawable.ic_send)
     val addCircled: IconValue = resource(R.drawable.ic_add)

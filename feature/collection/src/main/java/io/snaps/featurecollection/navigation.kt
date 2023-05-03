@@ -10,9 +10,9 @@ import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
 import io.snaps.featurecollection.presentation.screen.MyCollectionScreen
-import io.snaps.featurecollection.presentation.screen.NftDetailsScreen
 import io.snaps.featurecollection.presentation.screen.PurchaseScreen
 import io.snaps.featurecollection.presentation.screen.RankSelectionScreen
+import io.snaps.featurecollection.presentation.screen.UserNftDetailsScreen
 import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) :
@@ -36,10 +36,10 @@ internal class ScreenNavigator(navHostController: NavHostController) :
 
     fun toWalletScreen() = navHostController.navigate(AppRoute.Wallet)
 
-    fun toNftDetailsScreen(
-        args: AppRoute.NftDetails.Args
+    fun toUserNftDetailsScreen(
+        args: AppRoute.UserNftDetails.Args
     ) = navHostController navigate FeatureNavDirection(
-        route = AppRoute.NftDetails,
+        route = AppRoute.UserNftDetails,
         arg = args,
     )
 }
@@ -50,6 +50,6 @@ class CollectionFeatureProviderImpl @Inject constructor() : CollectionFeaturePro
         composable(AppRoute.RankSelection) { RankSelectionScreen(controller) }
         composable(AppRoute.MainBottomBar.MainTab4Start) { MyCollectionScreen(controller) }
         composable(AppRoute.Purchase) { PurchaseScreen(controller) }
-        composable(AppRoute.NftDetails) { NftDetailsScreen(controller) }
+        composable(AppRoute.UserNftDetails) { UserNftDetailsScreen(controller) }
     }
 }

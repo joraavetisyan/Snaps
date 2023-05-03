@@ -1,6 +1,7 @@
 package io.snaps.coreuicompose.uikit.button
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,6 +28,7 @@ import io.snaps.coreuitheme.compose.PreviewAppTheme
 @Composable
 fun SimpleButtonContent(
     text: TextValue?,
+    additionalText: TextValue? = null,
     textColor: Color = LocalContentColor.current,
     iconLeft: IconValue? = null,
     iconRight: IconValue? = null,
@@ -60,6 +63,7 @@ fun SimpleButtonContent(
 @Composable
 fun SimpleButtonContent(
     text: TextValue?,
+    additionalText: TextValue? = null,
     textColor: Color = LocalContentColor.current,
     contentLeft: @Composable (() -> Unit)? = null,
     contentRight: @Composable (() -> Unit)? = null,
@@ -74,17 +78,30 @@ fun SimpleButtonContent(
     }
 
     contentLeft?.invoke()
-    text?.get()?.let {
-        Text(
-            text = it,
-            color = textColor,
-            style = LocalTextStyle.current,
-            modifier = Modifier
-                .padding(start = textPaddingStart, end = textPaddingEnd)
-                .height(getContentHeight()),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        text?.get()?.let {
+            Text(
+                text = it,
+                color = textColor,
+                style = LocalTextStyle.current,
+                modifier = Modifier
+                    .padding(start = textPaddingStart, end = textPaddingEnd)
+                    .height(getContentHeight()),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        additionalText?.get()?.let {
+            Text(
+                text = it,
+                color = textColor,
+                style = AppTheme.specificTypography.labelSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
     contentRight?.invoke()
 }

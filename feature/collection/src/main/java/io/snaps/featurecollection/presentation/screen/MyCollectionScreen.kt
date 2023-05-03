@@ -56,7 +56,7 @@ fun MyCollectionScreen(
     viewModel.command.collectAsCommand {
         when (it) {
             is MyCollectionViewModel.Command.OpenRankSelectionScreen -> router.toRankSelectionScreen()
-            is MyCollectionViewModel.Command.OpenNftDetailsScreen -> router.toNftDetailsScreen(it.args)
+            is MyCollectionViewModel.Command.OpenNftDetailsScreen -> router.toUserNftDetailsScreen(it.args)
         }
     }
 
