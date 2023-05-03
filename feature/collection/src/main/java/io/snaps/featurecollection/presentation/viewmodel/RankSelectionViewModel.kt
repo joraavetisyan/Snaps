@@ -5,7 +5,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.corecommon.model.NftModel
 import io.snaps.basenft.domain.RankModel
-import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -13,7 +12,6 @@ import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.featurecollection.presentation.screen.RankTileState
 import io.snaps.featurecollection.presentation.toRankTileState
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,26 +35,14 @@ class RankSelectionViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
-    private var ranksLoadJob: Job? = null
-
     init {
-        nftRepository.nftCollectionState.onEach {
-            if (it is Effect && it.isSuccess) {
-                subscribeOnRanks(it.requireData)
-                loadRanks()
-            }
-        }.launchIn(viewModelScope)
-
-        viewModelScope.launch {
-            action.execute { nftRepository.updateNftCollection() }
-        }
+        subscribeOnRanks()
+        loadRanks()
     }
 
-    private fun subscribeOnRanks(purchasedRanks: List<NftModel>) {
-        ranksLoadJob?.cancel()
-        ranksLoadJob = nftRepository.ranksState.map {
+    private fun subscribeOnRanks() {
+        nftRepository.ranksState.map {
             it.toRankTileState(
-                purchasedRanks = purchasedRanks,
                 onItemClicked = ::onItemClicked,
                 onReloadClicked = ::onReloadClicked,
             )

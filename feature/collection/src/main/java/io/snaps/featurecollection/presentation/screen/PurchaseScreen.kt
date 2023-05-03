@@ -3,16 +3,20 @@ package io.snaps.featurecollection.presentation.screen
 import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Card
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
@@ -22,11 +26,19 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -36,6 +48,7 @@ import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toPercentageFormat
+import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
@@ -43,7 +56,9 @@ import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
+import io.snaps.coreuicompose.uikit.button.SimpleButtonDefaultM
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
+import io.snaps.coreuicompose.uikit.other.SimpleCard
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuicompose.uikit.status.InfoBlock
 import io.snaps.coreuitheme.compose.AppTheme
@@ -68,7 +83,9 @@ fun PurchaseScreen(
     PurchaseScreen(
         uiState = uiState,
         onBackClicked = router::back,
-        onBuyClicked = { viewModel.onBuyClicked(context as Activity) },
+        onBuyWithGooglePlayClicked = { viewModel.onBuyWithGooglePlayClicked(context as Activity) },
+        onBuyWithBNBClicked = viewModel::onBuyWithBNBClicked,
+        onFreeClicked = viewModel::onFreeClicked,
     )
 
     FullScreenLoaderUi(isLoading = uiState.isLoading)
@@ -78,10 +95,15 @@ fun PurchaseScreen(
 @Composable
 private fun PurchaseScreen(
     uiState: PurchaseViewModel.UiState,
-    onBuyClicked: () -> Unit,
+    onBuyWithGooglePlayClicked: () -> Unit,
+    onBuyWithBNBClicked: () -> Unit,
+    onFreeClicked: () -> Unit,
     onBackClicked: () -> Boolean,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val localDensity = LocalDensity.current
+    var buttonsHeight by remember { mutableStateOf(0.dp) }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -93,14 +115,15 @@ private fun PurchaseScreen(
         },
         floatingActionButton = {
             if (uiState.isAvailableToPurchase) {
-                SimpleButtonActionM(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
-                    onClick = onBuyClicked,
-                ) {
-                    SimpleButtonContent(text = StringKey.PurchaseAction.textValue())
-                }
+                ActionButtons(
+                    nftType = uiState.nftType,
+                    onGloballyPositioned = {
+                        buttonsHeight = with(localDensity) { it.size.height.toDp() }
+                    },
+                    onBuyWithBNBClicked = onBuyWithBNBClicked,
+                    onFreeClicked = onFreeClicked,
+                    onBuyWithGooglePlayClicked = onBuyWithGooglePlayClicked,
+                )
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
@@ -109,59 +132,44 @@ private fun PurchaseScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .inset(insetAllExcludeTop())
-                .padding(horizontal = 12.dp),
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 12.dp)
+                .padding(bottom = buttonsHeight + 24.dp),
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(24.dp),
-            ) {
-                Image(
-                    painter = uiState.nftImage.get(),
-                    contentDescription = null,
-                    modifier = Modifier.size(100.dp),
+            if (uiState.isAvailableToPurchase) {
+                NftInfoBlock(
+                    nftType = uiState.nftType,
+                    nftImage = uiState.nftImage,
+                    cost = uiState.cost,
                 )
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Text(
-                        text = uiState.nftType.name,
-                        style = AppTheme.specificTypography.labelMedium,
-                    )
-                    if (uiState.isAvailableToPurchase) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(20.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                text = StringKey.PurchaseTitlePrice.textValue().get(),
-                                style = AppTheme.specificTypography.labelSmall,
-                                color = AppTheme.specificColorScheme.textSecondary,
-                            )
-                            ValueWidget(ImageValue.ResImage(R.drawable.img_coin_silver) to uiState.cost)
-                        }
-                    } else {
-                        Text(
-                            text = StringKey.PurchaseTitleNotAvailable.textValue().get(),
-                            style = AppTheme.specificTypography.labelSmall,
-                            color = AppTheme.specificColorScheme.textSecondary,
-                        )
-                    }
-                }
+            } else {
+                UnavailableNftInfoBlock(
+                    nftType = uiState.nftType,
+                    nftImage = uiState.nftImage,
+                    sunglassesImage = uiState.sunglassesImage,
+                )
             }
-            Spacer(modifier = Modifier.height(8.dp))
             CardBlock(
-                title = StringKey.PurchaseTitleDailyReward.textValue(),
+                title = StringKey.PurchaseTitleDailyReward.textValue(
+                    uiState.dailyReward.toString()
+                ),
                 description = StringKey.PurchaseDescriptionDailyReward.textValue(),
                 message = StringKey.PurchaseMessageDailyReward.textValue(),
             )
             Spacer(modifier = Modifier.height(12.dp))
             CardBlock(
-                title = StringKey.PurchaseTitleDailyUnlock.textValue(),
+                title = StringKey.PurchaseTitleDailyUnlock.textValue(
+                    uiState.dailyUnlock.toPercentageFormat()
+                ),
                 description = StringKey.PurchaseDescriptionDailyUnlock.textValue(
                     uiState.dailyUnlock.toPercentageFormat()
                 ),
                 message = StringKey.PurchaseMessageDailyUnlock.textValue(),
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            CardBlock(
+                title = StringKey.PurchaseTitleDailyCosts.textValue(),
+                description = StringKey.PurchaseDescriptionDailyCosts.textValue(),
             )
         }
     }
@@ -171,33 +179,190 @@ private fun PurchaseScreen(
 fun CardBlock(
     title: TextValue,
     description: TextValue,
-    message: TextValue,
+    message: TextValue? = null,
 ) {
-    Card(
-        modifier = Modifier
-            .border(
-                width = 1.dp,
-                color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
-                shape = AppTheme.shapes.medium,
-            )
-            .padding(vertical = 12.dp, horizontal = 16.dp)
-            .background(
-                color = AppTheme.specificColorScheme.white,
-                shape = AppTheme.shapes.medium,
-            ),
-    ) {
+    SimpleCard {
         Text(
             text = title.get(),
-            style = AppTheme.specificTypography.labelMedium,
+            style = AppTheme.specificTypography.titleSmall,
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+                .padding(top = 12.dp),
         )
         Text(
             text = description.get(),
-            style = AppTheme.specificTypography.labelSmall,
+            style = AppTheme.specificTypography.bodyMedium,
             color = AppTheme.specificColorScheme.textSecondary,
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = 12.dp)
                 .padding(top = 4.dp, bottom = 12.dp)
         )
-        InfoBlock(message = message)
+        message?.let {
+            InfoBlock(
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .padding(bottom = 12.dp),
+                message = it,
+            )
+        }
     }
+}
+
+@Composable
+private fun ActionButtons(
+    nftType: NftType,
+    onFreeClicked: () -> Unit,
+    onBuyWithGooglePlayClicked: () -> Unit,
+    onBuyWithBNBClicked: () -> Unit,
+    onGloballyPositioned: (LayoutCoordinates) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .onGloballyPositioned { coordinates -> onGloballyPositioned(coordinates) }
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        if (nftType == NftType.Free) {
+            SimpleButtonActionM(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onFreeClicked,
+            ) {
+                SimpleButtonContent(text = StringKey.PurchaseActionFree.textValue())
+            }
+        } else {
+            SimpleButtonDefaultM(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(elevation = 16.dp, shape = CircleShape),
+                onClick = onBuyWithGooglePlayClicked,
+            ) {
+                SimpleButtonContent(
+                    text = StringKey.PurchaseActionBuyWithGooglePay.textValue(),
+                    iconLeft = AppTheme.specificIcons.google,
+                )
+            }
+            SimpleButtonActionM(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onBuyWithBNBClicked,
+            ) {
+                SimpleButtonContent(
+                    text = StringKey.PurchaseActionBuyWithBNB.textValue(),
+                    additionalText = StringKey.PurchaseFieldOff.textValue(),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun NftInfoBlock(
+    nftType: NftType,
+    nftImage: ImageValue,
+    cost: String,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(24.dp),
+    ) {
+        Image(
+            painter = nftImage.get(),
+            contentDescription = null,
+            modifier = Modifier.size(100.dp),
+        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = nftType.name,
+                style = AppTheme.specificTypography.headlineSmall,
+            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = StringKey.PurchaseTitlePrice.textValue().get(),
+                    style = AppTheme.specificTypography.bodyMedium,
+                    color = AppTheme.specificColorScheme.textSecondary,
+                )
+                ValueWidget(ImageValue.ResImage(R.drawable.img_coin_silver) to cost)
+            }
+        }
+    }
+}
+
+@Composable
+private fun UnavailableNftInfoBlock(
+    nftType: NftType,
+    nftImage: ImageValue,
+    sunglassesImage: ImageValue?,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp),
+        horizontalArrangement = Arrangement.spacedBy(32.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        NftImage(image = nftImage)
+        Box(
+            modifier = Modifier
+                .size(80.dp)
+                .background(
+                    color = AppTheme.specificColorScheme.uiAccent.copy(0.1f),
+                    shape = CircleShape,
+                )
+                .padding(8.dp),
+        ) {
+            Icon(
+                painter = AppTheme.specificIcons.trophy.get(),
+                contentDescription = null,
+                tint = AppTheme.specificColorScheme.uiAccent,
+                modifier = Modifier
+                    .size(32.dp)
+                    .align(Alignment.TopCenter),
+            )
+            Text(
+                text = StringKey.PurchaseFieldLevel.textValue("10").get(),
+                color = AppTheme.specificColorScheme.uiAccent,
+                style = AppTheme.specificTypography.labelMedium,
+                modifier = Modifier.align(Alignment.BottomCenter),
+            )
+        }
+        sunglassesImage?.let {
+            NftImage(image = it)
+        }
+    }
+    Text(
+        text = StringKey.PurchaseTitleRank.textValue(nftType.name).get(),
+        style = AppTheme.specificTypography.headlineSmall,
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center,
+    )
+    Text(
+        text = StringKey.PurchaseTitleNotAvailable.textValue(nftType.name).get(),
+        style = AppTheme.specificTypography.bodyLarge,
+        color = AppTheme.specificColorScheme.textSecondary,
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center,
+    )
+    Spacer(modifier = Modifier.height(24.dp))
+}
+
+@Composable
+private fun RowScope.NftImage(
+    image: ImageValue,
+) {
+    Image(
+        painter = image.get(),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .size(100.dp)
+            .weight(1f),
+    )
 }

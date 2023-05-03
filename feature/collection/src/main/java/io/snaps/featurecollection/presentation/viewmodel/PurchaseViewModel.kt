@@ -9,6 +9,7 @@ import io.snaps.basebilling.PurchaseStateProvider
 import io.snaps.basenft.data.NftRepository
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
+import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FiatCurrency
@@ -47,9 +48,10 @@ class PurchaseViewModel @Inject constructor(
             nftType = args.type,
             nftImage = ImageValue.Url(args.image),
             cost = "${args.costInUsd}${FiatCurrency.USD.symbol}",
-            dailyUnlock = args.dailyUnlock * 100,
+            dailyUnlock = args.dailyUnlock,
             dailyReward = args.dailyReward,
             isAvailableToPurchase = args.isAvailableToPurchase,
+            sunglassesImage = getSunglassesImage(),
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -85,19 +87,38 @@ class PurchaseViewModel @Inject constructor(
         }
     }
 
-    fun onBuyClicked(activity: Activity) {
+    fun onBuyWithGooglePlayClicked(activity: Activity) {
         viewModelScope.launch {
-            if (args.type == NftType.Free) {
-                minNft(purchaseToken = null)
-            } else {
-                purchaseStateProvider.getInAppProducts().data.orEmpty().firstOrNull {
-                    it.details.sku == args.type.storeId
-                }?.let {
-                    billingRouter.openBillingScreen(it, activity)
-                }
+            purchaseStateProvider.getInAppProducts().data.orEmpty().firstOrNull {
+                it.details.sku == args.type.storeId
+            }?.let {
+                billingRouter.openBillingScreen(it, activity)
             }
         }
     }
+
+    fun onBuyWithBNBClicked() {
+        // TODO
+    }
+
+    fun onFreeClicked() = viewModelScope.launch {
+        minNft(purchaseToken = null)
+    }
+
+    private fun getSunglassesImage() = when (args.type.intType) {
+        1 -> R.drawable.img_sunglasses0
+        2 -> R.drawable.img_sunglasses1
+        3 -> R.drawable.img_sunglasses2
+        4 -> R.drawable.img_sunglasses3
+        5 -> R.drawable.img_sunglasses4
+        6 -> R.drawable.img_sunglasses5
+        7 -> R.drawable.img_sunglasses6
+        8 -> R.drawable.img_sunglasses7
+        9 -> R.drawable.img_sunglasses8
+        10 -> R.drawable.img_sunglasses9
+        11 -> R.drawable.img_sunglasses10
+        else -> null
+    }?.let(ImageValue::ResImage)
 
     data class UiState(
         val isLoading: Boolean = false,
@@ -107,6 +128,7 @@ class PurchaseViewModel @Inject constructor(
         val dailyReward: Int,
         val dailyUnlock: Double,
         val isAvailableToPurchase: Boolean,
+        val sunglassesImage: ImageValue? = null,
     )
 
     sealed class Command {

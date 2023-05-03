@@ -19,11 +19,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class NftDetailsViewModel @Inject constructor(
+class UserNftDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : SimpleViewModel() {
 
-    private val args = savedStateHandle.requireArgs<AppRoute.NftDetails.Args>()
+    private val args = savedStateHandle.requireArgs<AppRoute.UserNftDetails.Args>()
 
     private val _uiState = MutableStateFlow(
         UiState(
