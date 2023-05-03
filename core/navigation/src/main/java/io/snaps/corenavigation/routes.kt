@@ -65,8 +65,6 @@ object AppRoute {
 
     object Registration : Route("Registration")
 
-    object Checking : Route("Checking")
-
     object WalletConnect : Route("WalletConnect")
 
     object WalletCreate : Route("WalletCreate")
@@ -205,7 +203,7 @@ object AppRoute {
             val dailyReward: Int,
             val dailyUnlock: Double,
             val costInUsd: Int?,
-            val isAvailableToPurchase: Boolean,
+            val isPurchasable: Boolean,
         )
     }
 

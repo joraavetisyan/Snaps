@@ -18,7 +18,7 @@ private fun NftItemResponseDto.toModel() = RankModel(
     dailyReward = dailyReward,
     dailyUnlock = percentGrowingPerDay,
     dailyConsumption = dailyMaintenanceCostMultiplier ?: 0.0,
-    isAvailableToPurchase = isAvailableToPurchase,
+    isPurchasable = isAvailableToPurchase,
 )
 
 fun List<UserNftItemResponseDto>.toNftModelList() = map(UserNftItemResponseDto::toModel)

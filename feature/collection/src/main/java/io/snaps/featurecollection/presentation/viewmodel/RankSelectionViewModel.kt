@@ -3,7 +3,6 @@ package io.snaps.featurecollection.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
-import io.snaps.corecommon.model.NftModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.coredata.network.Action
@@ -69,7 +68,7 @@ class RankSelectionViewModel @Inject constructor(
                 dailyReward = rank.dailyReward,
                 dailyUnlock = rank.dailyUnlock,
                 image = rank.image.value as FullUrl,
-                isAvailableToPurchase = rank.isAvailableToPurchase,
+                isPurchasable = rank.isPurchasable,
             )
         )
     }

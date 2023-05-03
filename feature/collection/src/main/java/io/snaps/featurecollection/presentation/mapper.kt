@@ -9,7 +9,6 @@ import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
-import io.snaps.corecommon.model.Uuid
 import io.snaps.featurecollection.presentation.screen.RankTileState
 
 fun State<List<RankModel>>.toRankTileState(
@@ -21,7 +20,7 @@ fun State<List<RankModel>>.toRankTileState(
         isSuccess -> {
             requireData.map { rank ->
                 rank.copy(
-                    isAvailableToPurchase = rank.isAvailableToPurchase
+                    isPurchasable = rank.isPurchasable
                 ).toRankTileState(onItemClicked = onItemClicked)
             }
         }
@@ -38,7 +37,7 @@ private fun RankModel.toRankTileState(
     dailyReward = dailyReward.dailyRewardToString(),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
-    isAvailableToPurchase = isAvailableToPurchase,
+    isPurchasable = isPurchasable,
     clickListener = { onItemClicked(this) },
 )
 

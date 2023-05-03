@@ -45,7 +45,7 @@ sealed class RankTileState : TileState {
         val dailyReward: String,
         val dailyUnlock: String,
         val dailyConsumption: String,
-        val isAvailableToPurchase: Boolean,
+        val isPurchasable: Boolean,
         val clickListener: () -> Unit,
     ) : RankTileState()
 
@@ -79,7 +79,7 @@ private fun Data(
     Container(
         modifier = modifier
             .defaultTileRipple(onClick = data.clickListener, padding = 0.dp)
-            .addIf(!data.isAvailableToPurchase) {
+            .addIf(!data.isPurchasable) {
                 drawWithCache {
                     onDrawWithContent {
                         drawContent()

@@ -9,7 +9,7 @@ data class RankModel(
     val dailyReward: Int,
     val dailyUnlock: Double,
     val dailyConsumption: Double,
-    val isAvailableToPurchase: Boolean,
+    val isPurchasable: Boolean,
     val costInUsd: Int?,
     val costInRealTokens: Int?,
 )

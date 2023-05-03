@@ -4,7 +4,7 @@ enum class Feature(
     val key: String = "",
     val defaultValue: Boolean = true,
 ) {
-    AuthApiMock("AuthApiMock", false),
+    // Mocks
     ProfileApiMock("ProfileApiMock", false),
     FeedApiMock("FeedApiMock", false),
     CommentApiMock("CommentApiMock", false),
@@ -12,6 +12,10 @@ enum class Feature(
     WalletApiMock("WalletApiMock", false),
     TasksApiMock("TasksApiMock", false),
     NftApiMock("NftApiMock", false),
-    TransactionsApiMock("TransactionsApiMock", false),
+    TransactionsApiMock("TransactionsApiMock", false), // todo use or remove
+
+    // Ui elements
+    BnbPurchase("BnbPurchase", true),
+
     UNKNOWN
 }

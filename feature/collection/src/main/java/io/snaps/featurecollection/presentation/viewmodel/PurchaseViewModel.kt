@@ -8,6 +8,8 @@ import io.snaps.basebilling.BillingRouter
 import io.snaps.basebilling.PurchaseStateProvider
 import io.snaps.basenft.data.NftRepository
 import io.snaps.basesources.NotificationsSource
+import io.snaps.basesources.featuretoggle.Feature
+import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
@@ -33,6 +35,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PurchaseViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    featureToggle: FeatureToggle,
     private val action: Action,
     private val purchaseStateProvider: PurchaseStateProvider,
     private val billingRouter: BillingRouter,
@@ -50,7 +53,8 @@ class PurchaseViewModel @Inject constructor(
             cost = "${args.costInUsd}${FiatCurrency.USD.symbol}",
             dailyUnlock = args.dailyUnlock,
             dailyReward = args.dailyReward,
-            isAvailableToPurchase = args.isAvailableToPurchase,
+            isPurchasable = args.isPurchasable,
+            isPurchasableWithBnb = featureToggle.isEnabled(Feature.BnbPurchase),
             sunglassesImage = getSunglassesImage(),
         )
     )
@@ -127,7 +131,8 @@ class PurchaseViewModel @Inject constructor(
         val cost: String,
         val dailyReward: Int,
         val dailyUnlock: Double,
-        val isAvailableToPurchase: Boolean,
+        val isPurchasable: Boolean,
+        val isPurchasableWithBnb: Boolean,
         val sunglassesImage: ImageValue? = null,
     )
 

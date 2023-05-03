@@ -114,9 +114,9 @@ private fun PurchaseScreen(
             )
         },
         floatingActionButton = {
-            if (uiState.isAvailableToPurchase) {
+            if (uiState.isPurchasable) {
                 ActionButtons(
-                    nftType = uiState.nftType,
+                    uiState = uiState,
                     onGloballyPositioned = {
                         buttonsHeight = with(localDensity) { it.size.height.toDp() }
                     },
@@ -136,7 +136,7 @@ private fun PurchaseScreen(
                 .padding(horizontal = 12.dp)
                 .padding(bottom = buttonsHeight + 24.dp),
         ) {
-            if (uiState.isAvailableToPurchase) {
+            if (uiState.isPurchasable) {
                 NftInfoBlock(
                     nftType = uiState.nftType,
                     nftImage = uiState.nftImage,
@@ -211,7 +211,7 @@ fun CardBlock(
 
 @Composable
 private fun ActionButtons(
-    nftType: NftType,
+    uiState: PurchaseViewModel.UiState,
     onFreeClicked: () -> Unit,
     onBuyWithGooglePlayClicked: () -> Unit,
     onBuyWithBNBClicked: () -> Unit,
@@ -223,7 +223,7 @@ private fun ActionButtons(
             .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        if (nftType == NftType.Free) {
+        if (uiState.nftType == NftType.Free) {
             SimpleButtonActionM(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onFreeClicked,
@@ -242,14 +242,16 @@ private fun ActionButtons(
                     iconLeft = AppTheme.specificIcons.google,
                 )
             }
-            SimpleButtonActionM(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onBuyWithBNBClicked,
-            ) {
-                SimpleButtonContent(
-                    text = StringKey.PurchaseActionBuyWithBNB.textValue(),
-                    additionalText = StringKey.PurchaseFieldOff.textValue(),
-                )
+            if (uiState.isPurchasableWithBnb) {
+                SimpleButtonActionM(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = onBuyWithBNBClicked,
+                ) {
+                    SimpleButtonContent(
+                        text = StringKey.PurchaseActionBuyWithBNB.textValue(),
+                        additionalText = StringKey.PurchaseFieldOff.textValue(),
+                    )
+                }
             }
         }
     }
