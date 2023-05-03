@@ -83,7 +83,7 @@ fun PurchaseScreen(
     PurchaseScreen(
         uiState = uiState,
         onBackClicked = router::back,
-        onBuyWithGooglePayClicked = { viewModel.onBuyWithGooglePayClicked(context as Activity) },
+        onBuyWithGooglePlayClicked = { viewModel.onBuyWithGooglePlayClicked(context as Activity) },
         onBuyWithBNBClicked = viewModel::onBuyWithBNBClicked,
         onFreeClicked = viewModel::onFreeClicked,
     )
@@ -95,7 +95,7 @@ fun PurchaseScreen(
 @Composable
 private fun PurchaseScreen(
     uiState: PurchaseViewModel.UiState,
-    onBuyWithGooglePayClicked: () -> Unit,
+    onBuyWithGooglePlayClicked: () -> Unit,
     onBuyWithBNBClicked: () -> Unit,
     onFreeClicked: () -> Unit,
     onBackClicked: () -> Boolean,
@@ -122,7 +122,7 @@ private fun PurchaseScreen(
                     },
                     onBuyWithBNBClicked = onBuyWithBNBClicked,
                     onFreeClicked = onFreeClicked,
-                    onBuyWithGooglePayClicked = onBuyWithGooglePayClicked,
+                    onBuyWithGooglePlayClicked = onBuyWithGooglePlayClicked,
                 )
             }
         },
@@ -213,7 +213,7 @@ fun CardBlock(
 private fun ActionButtons(
     nftType: NftType,
     onFreeClicked: () -> Unit,
-    onBuyWithGooglePayClicked: () -> Unit,
+    onBuyWithGooglePlayClicked: () -> Unit,
     onBuyWithBNBClicked: () -> Unit,
     onGloballyPositioned: (LayoutCoordinates) -> Unit,
 ) {
@@ -235,7 +235,7 @@ private fun ActionButtons(
                 modifier = Modifier
                     .fillMaxWidth()
                     .shadow(elevation = 16.dp, shape = CircleShape),
-                onClick = onBuyWithGooglePayClicked,
+                onClick = onBuyWithGooglePlayClicked,
             ) {
                 SimpleButtonContent(
                     text = StringKey.PurchaseActionBuyWithGooglePay.textValue(),

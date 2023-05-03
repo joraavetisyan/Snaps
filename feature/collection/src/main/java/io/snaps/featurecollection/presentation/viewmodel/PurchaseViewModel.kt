@@ -87,7 +87,7 @@ class PurchaseViewModel @Inject constructor(
         }
     }
 
-    fun onBuyWithGooglePayClicked(activity: Activity) {
+    fun onBuyWithGooglePlayClicked(activity: Activity) {
         viewModelScope.launch {
             purchaseStateProvider.getInAppProducts().data.orEmpty().firstOrNull {
                 it.details.sku == args.type.storeId

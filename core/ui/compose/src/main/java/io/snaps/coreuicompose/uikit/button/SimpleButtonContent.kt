@@ -37,6 +37,7 @@ fun SimpleButtonContent(
     SimpleButtonContent(
         text = text,
         textColor = textColor,
+        additionalText = additionalText,
         contentLeft = iconLeft?.get()?.let {
             {
                 Icon(
