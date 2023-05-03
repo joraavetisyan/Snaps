@@ -3,13 +3,12 @@ package io.snaps.featurecollection.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
-import io.snaps.basenft.domain.NftModel
+import io.snaps.corecommon.model.NftModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
-import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -79,10 +78,10 @@ class MyCollectionViewModel @Inject constructor(
         _command publish Command.OpenRankSelectionScreen
     }
 
-    private fun onRepairClicked(glassesId: Uuid) = viewModelScope.launch {
+    private fun onRepairClicked(nftModel: NftModel) = viewModelScope.launch {
         _uiState.update { it.copy(isLoading = true) }
         action.execute {
-            interactor.repairGlasses(glassesId)
+            interactor.repairGlasses(nftModel)
         }.doOnComplete {
             _uiState.update { it.copy(isLoading = false) }
         }

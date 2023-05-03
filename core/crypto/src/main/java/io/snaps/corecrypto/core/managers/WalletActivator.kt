@@ -12,7 +12,8 @@ import io.snaps.corecrypto.entities.Account
 import io.snaps.corecrypto.entities.ConfiguredToken
 import io.snaps.corecrypto.entities.Wallet
 
-private const val SNAPS = "0x92677918569A2BEA213Af66b54e0C9B9811d021c"
+val SNAPS_NFT = "0x5F0cF62ad1DD5A267427DC161ff365b75142E3b3"
+val SNAPS = "0x92677918569A2BEA213Af66b54e0C9B9811d021c"
 private const val WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
 private const val BUSD = "0xe9e7cea3dedca5984780bafc599bd69add087d56"
 private const val USDT = "0x55d398326f99059ff775485246999027b3197955"

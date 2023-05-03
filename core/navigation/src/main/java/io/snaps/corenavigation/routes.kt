@@ -201,7 +201,7 @@ object AppRoute {
         @Serializable
         data class Args(
             val type: NftType,
-            val image: FullUrl,
+            val image: FullUrl, // todo why FullUrl?
             val dailyReward: Int,
             val dailyUnlock: Double,
             val costInUsd: Int?,
@@ -214,7 +214,7 @@ object AppRoute {
         @Serializable
         data class Args(
             val type: NftType,
-            val image: FullUrl,
+            val image: FullUrl, // todo why FullUrl?
             val dailyReward: Int,
         )
     }

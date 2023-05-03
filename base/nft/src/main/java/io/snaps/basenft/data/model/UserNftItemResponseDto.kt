@@ -10,7 +10,7 @@ data class UserNftItemResponseDto(
     @SerialName("id") val id: Uuid,
     @SerialName("userId") val userId: Uuid,
     @SerialName("tokenId") val tokenId: Uuid?,
-    @SerialName("type") val type: NftItemResponseDto,
+    @SerialName("type") val data: NftItemResponseDto,
     @SerialName("mintedDate") val mintedDate: DateTime,
     @SerialName("isHealthy") val isHealthy: Boolean,
 )

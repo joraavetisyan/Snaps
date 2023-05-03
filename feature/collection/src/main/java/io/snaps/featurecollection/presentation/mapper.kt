@@ -1,6 +1,6 @@
 package io.snaps.featurecollection.presentation
 
-import io.snaps.basenft.domain.NftModel
+import io.snaps.corecommon.model.NftModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.basenft.ui.costToString
@@ -49,7 +49,7 @@ fun State<List<NftModel>>.toNftCollectionItemState(
     onItemClicked: (NftModel) -> Unit,
     onAddItemClicked: () -> Unit,
     onReloadClicked: () -> Unit,
-    onRepairClicked: (Uuid) -> Unit,
+    onRepairClicked: (NftModel) -> Unit,
 ) = when (this) {
     is Loading -> List(6) { CollectionItemState.Shimmer }
     is Effect -> when {
@@ -70,7 +70,7 @@ fun State<List<NftModel>>.toNftCollectionItemState(
 
 private fun NftModel.toNftCollectionItemState(
     onItemClicked: (NftModel) -> Unit,
-    onRepairClicked: (Uuid) -> Unit,
+    onRepairClicked: (NftModel) -> Unit,
 ) = CollectionItemState.Nft(
     type = type,
     price = costInUsd?.costToString() ?: "",
@@ -79,6 +79,6 @@ private fun NftModel.toNftCollectionItemState(
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthy = isHealthy,
-    onRepairClicked = { onRepairClicked(id) },
+    onRepairClicked = { onRepairClicked(this) },
     onItemClicked = { onItemClicked(this) }
 )

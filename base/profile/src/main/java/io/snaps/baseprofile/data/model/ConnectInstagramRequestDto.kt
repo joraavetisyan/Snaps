@@ -10,6 +10,6 @@ import kotlinx.serialization.Serializable
 class ConnectInstagramRequestDto(
     @SerialName("instagramId") val instagramId: Uuid?,
     @SerialName("name") val name: String,
-    @SerialName("avatar") val avatarUrl: FullUrl,
+    @SerialName("avatar") val avatarUrl: FullUrl?,
     @SerialName("wallet") val wallet: WalletAddress,
 )

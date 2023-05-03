@@ -34,18 +34,43 @@ object ContractMethodHelper {
                 is BigInteger -> {
                     data += pad(unsignedBigIntergerToByteArray(argument))
                 }
+
                 is Address -> {
                     data += pad(argument.raw)
                 }
-                is List<*> -> {
-                    val addresses = argument.filterIsInstance<Address>()
 
+                is List<*> -> {
                     data += pad(unsignedBigIntergerToByteArray((BigInteger.valueOf(arguments.size * 32L + arraysData.size))))
-                    arraysData += encode(addresses)
+
+                    var added = false
+                    argument.filterIsInstance<Address>().takeUnless { it.isEmpty() }?.let {
+                        added = true
+                        arraysData += encodeAddresses(it)
+                    }
+                    argument.filterIsInstance<BigInteger>().takeUnless { it.isEmpty() }?.let {
+                        added = true
+                        arraysData += encodeBigIntegers(it)
+                    }
+                    if (!added) {
+                        arraysData += pad(unsignedBigIntergerToByteArray(BigInteger.valueOf(0L)))
+                    }
                 }
+
                 is ByteArray -> {
-                    data += pad(unsignedBigIntergerToByteArray(BigInteger.valueOf(arguments.size * 32L + arraysData.size)))
-                    arraysData += pad(BigInteger.valueOf(argument.size.toLong()).toByteArray()) + argument
+                    data += pad(
+                        unsignedBigIntergerToByteArray(
+                            BigInteger.valueOf(arguments.size * 32L + arraysData.size)
+                        )
+                    )
+                    arraysData += pad(
+                        BigInteger
+                            .valueOf(argument.size.toLong())
+                            .toByteArray()
+                    ) +
+                            argument.copyOfRange(0, 32) +
+                            argument.copyOfRange(32, 64) +
+                            argument.copyOfRange(64, 65) +
+                            ByteArray(31)
                 }
             }
         }
@@ -61,40 +86,58 @@ object ContractMethodHelper {
         argumentTypes.forEach { type ->
             when (type) {
                 BigInteger::class -> {
-                    parsedArguments.add(inputArguments.copyOfRange(position, position + 32).toBigInteger())
+                    parsedArguments.add(
+                        inputArguments.copyOfRange(position, position + 32).toBigInteger()
+                    )
                     position += 32
                 }
+
                 Address::class -> {
-                    parsedArguments.add(parseAddress(inputArguments.copyOfRange(position, position + 32)))
+                    parsedArguments.add(
+                        parseAddress(
+                            inputArguments.copyOfRange(
+                                position,
+                                position + 32
+                            )
+                        )
+                    )
                     position += 32
                 }
+
                 List::class -> {
                     val arrayPosition = inputArguments.copyOfRange(position, position + 32).toInt()
                     val array = parseAddressArray(arrayPosition, inputArguments)
                     parsedArguments.add(array)
                     position += 32
                 }
+
                 ByteArray::class -> {
                     val arrayPosition = inputArguments.copyOfRange(position, position + 32).toInt()
                     val byteArray: ByteArray = parseByteArray(arrayPosition, inputArguments)
                     parsedArguments.add(byteArray)
                     position += 32
                 }
+
                 Bytes32Array::class -> {
                     val arrayPosition = inputArguments.copyOfRange(position, position + 32).toInt()
                     val bytes32Array = parseBytes32Array(arrayPosition, inputArguments)
                     parsedArguments.add(bytes32Array)
                     position += 32
                 }
+
                 is DynamicStruct -> {
-                    val argumentsPosition = inputArguments.copyOfRange(position, position + 32).toInt()
-                    val structParameterData = inputArguments.copyOfRange(argumentsPosition, inputArguments.size)
+                    val argumentsPosition =
+                        inputArguments.copyOfRange(position, position + 32).toInt()
+                    val structParameterData =
+                        inputArguments.copyOfRange(argumentsPosition, inputArguments.size)
                     val structParameter = decodeABI(structParameterData, type.argumentTypes)
                     parsedArguments.add(structParameter)
                     position += 32
                 }
+
                 is StaticStruct -> {
-                    val structParameterData = inputArguments.copyOfRange(position, inputArguments.size)
+                    val structParameterData =
+                        inputArguments.copyOfRange(position, inputArguments.size)
                     val structParameter = decodeABI(structParameterData, type.argumentTypes)
                     parsedArguments.add(structParameter)
                     position += 32 * type.argumentTypes.size
@@ -111,7 +154,10 @@ object ContractMethodHelper {
         val array: Array<ByteArray> = Array(size) { byteArrayOf() }
 
         for (i in 0 until size) {
-            array[i] = inputArguments.copyOfRange(dataStartPosition + 32 * i, dataStartPosition + 32 * (i + 1))
+            array[i] = inputArguments.copyOfRange(
+                dataStartPosition + 32 * i,
+                dataStartPosition + 32 * (i + 1)
+            )
         }
 
         return Bytes32Array(array)
@@ -131,7 +177,10 @@ object ContractMethodHelper {
         val sizePositionEnd = positionStart + 32
         val arraySize = inputArguments.copyOfRange(positionStart, sizePositionEnd).toInt()
         val addressArray = mutableListOf<Address>()
-        for (address in inputArguments.copyOfRange(sizePositionEnd, sizePositionEnd + arraySize * 32).toList().chunked(32)) {
+        for (address in inputArguments.copyOfRange(
+            sizePositionEnd,
+            sizePositionEnd + arraySize * 32
+        ).toList().chunked(32)) {
             addressArray.add(parseAddress(address.toByteArray()))
         }
         return addressArray
@@ -142,10 +191,18 @@ object ContractMethodHelper {
         return prePadding + data
     }
 
-    private fun encode(array: List<Address>): ByteArray {
+    private fun encodeAddresses(array: List<Address>): ByteArray {
         var data = pad(unsignedBigIntergerToByteArray(BigInteger.valueOf(array.size.toLong())))
         for (address in array) {
             data += pad(address.raw)
+        }
+        return data
+    }
+
+    private fun encodeBigIntegers(array: List<BigInteger>): ByteArray {
+        var data = pad(unsignedBigIntergerToByteArray(BigInteger.valueOf(array.size.toLong())))
+        for (bigInteger in array) {
+            data += pad(unsignedBigIntergerToByteArray(bigInteger))
         }
         return data
     }

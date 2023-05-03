@@ -72,7 +72,7 @@ class PurchaseViewModel @Inject constructor(
         action.execute {
             nftRepository.mintNft(
                 type = args.type,
-                walletAddress = walletRepository.getActiveWalletsReceiveAddresses().first(),
+                walletAddress = walletRepository.getActiveWalletReceiveAddress(),
                 purchaseId = purchaseToken,
             )
         }.doOnSuccess {

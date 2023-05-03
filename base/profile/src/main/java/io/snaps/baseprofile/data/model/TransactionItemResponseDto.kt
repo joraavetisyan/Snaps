@@ -23,4 +23,5 @@ enum class TransactionType(val title: String) {
     @SerialName("GasFee") GasFee("Gas Fee"),
     @SerialName("none") None("Transaction"),
     @SerialName("SubscribersPromo") SubscribersPromo("Subscribers Promo"),
+    @SerialName("ViewsPromo") ViewsPromo("Views Promo"),
 }

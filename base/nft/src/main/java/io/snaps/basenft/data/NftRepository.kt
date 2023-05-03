@@ -2,18 +2,18 @@ package io.snaps.basenft.data
 
 import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
-import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
+import io.snaps.corecommon.model.NftModel
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.State
+import io.snaps.corecommon.model.Token
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
-import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreui.viewmodel.tryPublish
@@ -43,12 +43,10 @@ interface NftRepository {
         walletAddress: WalletAddress,
     ): Effect<Completable>
 
-    suspend fun repairGlasses(
-        glassesId: Uuid,
-    ): Effect<Completable>
-
-    suspend fun repairGlassesOnBlockchain(
-        glassesId: Uuid,
+    suspend fun repairNft(
+        nftModel: NftModel,
+        repairTxHash: Token? = null,
+        offChainAmount: Long = 0L,
     ): Effect<Completable>
 }
 
@@ -56,7 +54,6 @@ class NftRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val nftApi: NftApi,
-    private val userDataStorage: UserDataStorage,
 ) : NftRepository {
 
     private val _nftCollectionState = MutableStateFlow<State<List<NftModel>>>(Loading())
@@ -117,15 +114,21 @@ class NftRepositoryImpl @Inject constructor(
         }.toCompletable()
     }
 
-    override suspend fun repairGlasses(glassesId: Uuid): Effect<Completable> {
+    override suspend fun repairNft(
+        nftModel: NftModel,
+        repairTxHash: Token?,
+        offChainAmount: Long,
+    ): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            nftApi.repairGlasses(body = RepairGlassesRequestDto(glassesId = glassesId))
+            nftApi.repairGlasses(
+                body = RepairGlassesRequestDto(
+                    glassesId = nftModel.id,
+                    offChainAmount = offChainAmount,
+                    transactionHash = repairTxHash,
+                )
+            )
         }.doOnSuccess {
             updateNftCollection()
         }
-    }
-
-    override suspend fun repairGlassesOnBlockchain(glassesId: Uuid): Effect<Completable> {
-        return Effect.completable
     }
 }

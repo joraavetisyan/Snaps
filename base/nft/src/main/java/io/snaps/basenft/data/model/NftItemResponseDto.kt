@@ -9,10 +9,16 @@ import kotlinx.serialization.Serializable
 data class NftItemResponseDto(
     @SerialName("type") val type: NftType,
     @SerialName("dailyReward") val dailyReward: Int,
-    @SerialName("percentGrowingPerDay") val dailyUnlock: Double,
-    @SerialName("dailyMaintenanceCostMultiplier") val dailyConsumption: Double,
     @SerialName("costInUsd") val costInUsd: Int?,
     @SerialName("costInRealTokens") val costInRealTokens: Int?,
     @SerialName("isAvailableToPurchase") val isAvailableToPurchase: Boolean,
     @SerialName("pathToImage") val pathToImage: FullUrl,
-)
+    @SerialName("dailyMaintenanceCostMultiplier") val dailyMaintenanceCostMultiplier: Double?,
+    @SerialName("percentGrowingPerDay") val percentGrowingPerDay: Double,
+) {
+
+    val repairCost: Double get() {
+        val multiplier = dailyMaintenanceCostMultiplier ?: return 0.0
+        return (dailyReward * multiplier)
+    }
+}

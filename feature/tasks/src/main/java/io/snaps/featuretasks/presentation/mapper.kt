@@ -1,6 +1,6 @@
 package io.snaps.featuretasks.presentation
 
-import io.snaps.basenft.domain.NftModel
+import io.snaps.corecommon.model.NftModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.basenft.ui.costToString
 import io.snaps.basenft.ui.dailyRewardToString

@@ -1,14 +1,21 @@
 package io.snaps.basewallet.data
 
 import android.annotation.SuppressLint
+import io.horizontalsystems.ethereumkit.contracts.ContractMethod
 import io.horizontalsystems.ethereumkit.core.LegacyGasPriceProvider
 import io.horizontalsystems.ethereumkit.core.eip1559.Eip1559GasPriceProvider
+import io.horizontalsystems.ethereumkit.core.hexStringToByteArray
+import io.horizontalsystems.ethereumkit.core.toHexString
 import io.horizontalsystems.ethereumkit.models.Address
+import io.horizontalsystems.ethereumkit.models.GasPrice
+import io.horizontalsystems.ethereumkit.models.TransactionData
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.marketkit.models.TokenQuery
 import io.horizontalsystems.marketkit.models.TokenType
 import io.reactivex.disposables.CompositeDisposable
 import io.snaps.basewallet.data.model.ClaimRequestDto
+import io.snaps.basewallet.data.model.NftRepairSignatureRequestDto
+import io.snaps.basewallet.data.model.NftRepairSignatureResponseDto
 import io.snaps.basewallet.data.model.WalletSaveRequestDto
 import io.snaps.basewallet.domain.DeviceNotSecuredException
 import io.snaps.basewallet.domain.InvalidMnemonicsException
@@ -17,6 +24,8 @@ import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
+import io.snaps.corecommon.model.NftModel
+import io.snaps.corecommon.model.Token
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.corecommon.model.WalletModel
@@ -27,6 +36,9 @@ import io.snaps.corecrypto.core.IAccountManager
 import io.snaps.corecrypto.core.ISendEthereumAdapter
 import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.IWordsManager
+import io.snaps.corecrypto.core.adapters.Eip20Adapter
+import io.snaps.corecrypto.core.managers.SNAPS
+import io.snaps.corecrypto.core.managers.SNAPS_NFT
 import io.snaps.corecrypto.core.managers.WalletActivator
 import io.snaps.corecrypto.core.managers.defaultTokens
 import io.snaps.corecrypto.core.providers.BalanceService
@@ -62,6 +74,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.rx2.await
+import kotlinx.coroutines.withContext
 import java.math.BigInteger
 import java.security.InvalidAlgorithmParameterException
 import javax.inject.Inject
@@ -89,7 +103,7 @@ interface WalletRepository {
 
     fun getMnemonics(): List<String>
 
-    fun getActiveWalletsReceiveAddresses(): List<WalletAddress>
+    fun getActiveWalletReceiveAddress(): WalletAddress
 
     fun getAvailableBalance(wallet: WalletModel): String?
 
@@ -105,6 +119,11 @@ interface WalletRepository {
     fun getBnbWalletModel(): WalletModel?
 
     fun deleteAccount(id: Uuid)
+
+    /**
+     * returns: Repair transaction hash
+     */
+    suspend fun repairNftOnBlockchain(nftModel: NftModel): Effect<Token>
 }
 
 class WalletRepositoryImpl @Inject constructor(
@@ -219,11 +238,11 @@ class WalletRepositoryImpl @Inject constructor(
         activateDefaultWallets(account)
         predefinedBlockchainSettingsProvider.prepareNew(account, BlockchainType.Zcash)
         // fixme better way
-        while (getActiveWalletsReceiveAddresses().firstOrNull() == null) {
+        while (getActiveWalletReceiveAddress().firstOrNull() == null) {
             delay(200)
         }
         return apiCall(ioDispatcher) {
-            walletApi.save(WalletSaveRequestDto(getActiveWalletsReceiveAddresses().first()))
+            walletApi.save(WalletSaveRequestDto(getActiveWalletReceiveAddress()))
         }.toCompletable()
     }
 
@@ -267,8 +286,8 @@ class WalletRepositoryImpl @Inject constructor(
         accountManager.delete(id)
     }
 
-    override fun getActiveWalletsReceiveAddresses(): List<WalletAddress> {
-        return getWallets().mapNotNull {
+    override fun getActiveWalletReceiveAddress(): WalletAddress {
+        return getWallets().firstNotNullOf {
             CryptoKit.adapterManager.getReceiveAdapterForWallet(it)?.receiveAddress
         }
     }
@@ -283,7 +302,7 @@ class WalletRepositoryImpl @Inject constructor(
     }
 
     override fun getAvailableBalance(wallet: WalletModel): String? {
-        return adapter(wallet)?.balanceData?.available?.toString()
+        return adapter(wallet.coinUid)?.balanceData?.available?.toString()
     }
 
     @SuppressLint("CheckResult")
@@ -295,9 +314,9 @@ class WalletRepositoryImpl @Inject constructor(
     ): Effect<SendHandler> {
         lastSendHandler?.stop()
 
-        val adapter = adapter(wallet) ?: return Effect.error(
+        val adapter = adapter(wallet.coinUid) ?: return Effect.error(
             AppError.Unknown(
-                cause = IllegalArgumentException("Adapter is null")
+                cause = IllegalStateException("Adapter is null")
             )
         )
 
@@ -347,8 +366,8 @@ class WalletRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun adapter(wallet: WalletModel): ISendEthereumAdapter? {
-        return getWallets().firstOrNull { it.coin.uid == wallet.coinUid }?.let {
+    private fun adapter(coinUid: String): ISendEthereumAdapter? {
+        return getWallets().firstOrNull { it.coin.uid == coinUid }?.let {
             CryptoKit.adapterManager.getAdapterForWallet(it) as ISendEthereumAdapter
         }
     }
@@ -358,6 +377,143 @@ class WalletRepositoryImpl @Inject constructor(
             walletApi.claim(ClaimRequestDto(amount))
         }
     }
+
+    override suspend fun repairNftOnBlockchain(nftModel: NftModel): Effect<Token> {
+        val wallet = getWallets().firstOrNull { it.coin.code == SNAPS } ?: return Effect.error(
+            AppError.Unknown(cause = IllegalStateException("Wallet is null"))
+        )
+        val adapter = CryptoKit.adapterManager.getAdapterForWallet(wallet) as Eip20Adapter?
+            ?: return Effect.error(
+                AppError.Unknown(cause = IllegalStateException("Adapter is null"))
+            )
+
+        val nonceRaw = 153L /*todo tmp, then adapter.evmKit.accountState?.nonce ?: 0L*/
+
+        return apiCall(ioDispatcher) {
+            walletApi.nftRepairSignature(
+                body = NftRepairSignatureRequestDto(
+                    nonce = nonceRaw,
+                    amount = nftModel.repairCost.toLong(),
+                ),
+            )
+        }.flatMap {
+            withContext(ioDispatcher) {
+                repair(
+                    data = it,
+                    nonceRaw = nonceRaw,
+                    wallet = wallet,
+                    adapter = adapter,
+                    nftModel = nftModel,
+                )
+            }
+        }
+    }
+
+    private suspend fun repair(
+        data: NftRepairSignatureResponseDto,
+        nonceRaw: Long,
+        wallet: Wallet,
+        adapter: Eip20Adapter,
+        nftModel: NftModel,
+    ): Effect<String> {
+        return try {
+            val error = Effect.error<String>(
+                AppError.Unknown(cause = IllegalStateException("Signature data null! $data"))
+            )
+
+            val address = Address(SNAPS_NFT)
+            val gasPrice = GasPrice.Legacy(10_000_000_000L)
+
+            val method = RepairContractMethod(
+                owner = Address(getActiveWalletReceiveAddress()),
+                fromAccountAmounts = data.amountReceiver?.let(::BigInteger) ?: return error,
+                deadline = data.deadline?.toBigInteger() ?: return error,
+                nonce = nonceRaw.toBigInteger(),
+                contract = data.contract?.let(::Address) ?: return error,
+                signature = data.signature?.hexStringToByteArray() ?: return error,
+                profitWallet = data.profitWallet?.let(::Address) ?: return error,
+            )
+            val encodedAbi: ByteArray = method.encodedABI()
+
+            fun Double.applyDecimal() = toBigDecimal()
+                .movePointRight(wallet.decimal)
+                .toBigInteger()
+
+            val approveGasLimitTD: TransactionData = adapter.eip20Kit.buildTransferTransactionData(
+                to = address,
+                value = nftModel.repairCost.applyDecimal(),
+            )
+            val approveGasLimit = adapter.evmKit.estimateGas(
+                transactionData = approveGasLimitTD,
+                gasPrice = gasPrice,
+            ).await()
+
+            val approveTD = adapter.eip20Kit.buildApproveTransactionData(
+                spenderAddress = address,
+                amount = nftModel.repairCost.applyDecimal(),
+            )
+            adapter.evmKitWrapper.sendSingle(
+                transactionData = approveTD,
+                gasPrice = gasPrice,
+                gasLimit = approveGasLimit,
+            ).await()
+
+            val repairGasLimitTD = TransactionData(
+                to = address,
+                value = BigInteger.ZERO,
+                input = encodedAbi,
+            )
+            val repairGasLimit = adapter.evmKit.estimateGas(
+                transactionData = repairGasLimitTD,
+                gasPrice = gasPrice,
+            ).await()
+
+            val repairTD = TransactionData(
+                to = address,
+                value = BigInteger.ZERO,
+                input = encodedAbi,
+            )
+            val repairResult = adapter.evmKitWrapper.sendSingle(
+                transactionData = repairTD,
+                gasPrice = gasPrice,
+                gasLimit = repairGasLimit,
+            ).await().transaction.hash.toHexString()
+
+            Effect.success(repairResult)
+        } catch (e: Exception) {
+            Effect.error(AppError.Unknown(cause = e))
+        }
+    }
+}
+
+class RepairContractMethod(
+    val owner: Address,
+    val contract: Address,
+    val profitWallet: Address,
+    val fromAccountAmounts: BigInteger,
+    val nonce: BigInteger,
+    val deadline: BigInteger,
+    val signature: ByteArray,
+) : ContractMethod() {
+
+    override val methodSignature =
+        "execTransaction(uint256[],uint256,address,address,address[],uint256[],address,address[],uint256[],uint256,uint256,bytes)"
+
+    // 12 params
+    override fun getArguments() = listOf(
+        listOf<BigInteger>(),
+        BigInteger.ZERO,
+        owner,
+        contract,
+        listOf(profitWallet),
+        listOf(fromAccountAmounts),
+        Address("0x0000000000000000000000000000000000000000"),
+        listOf<Address>(),
+        listOf<BigInteger>(),
+        nonce,
+        deadline,
+        signature,
+    )
 }
 
 interface SendHandler {
@@ -403,6 +559,7 @@ internal class SendHandlerImpl(
                 is SendEvmTransactionService.State.NotReady -> {
                     _state.update { SendHandler.State.Failed(serviceState.errors) }
                 }
+
                 is SendEvmTransactionService.State.Ready -> {
                     _state.update {
                         SendHandler.State.Ready(
@@ -419,12 +576,15 @@ internal class SendHandlerImpl(
                 is SendEvmTransactionService.SendState.Failed -> {
                     _state.update { SendHandler.State.Failed(listOf(serviceSendState.error)) }
                 }
+
                 SendEvmTransactionService.SendState.Idle -> {
                     _state.update { SendHandler.State.Idle }
                 }
+
                 SendEvmTransactionService.SendState.Sending -> {
                     _state.update { SendHandler.State.Sending }
                 }
+
                 is SendEvmTransactionService.SendState.Sent -> {
                     _state.update { SendHandler.State.Sent }
                 }

@@ -47,7 +47,9 @@ interface ProfileRepository {
 
     suspend fun loadNextUsersPage(query: String): Effect<Completable>
 
-    suspend fun updateData(): Effect<UserInfoModel>
+    suspend fun updateData(
+        isSilently: Boolean = false,
+    ): Effect<UserInfoModel>
 
     suspend fun updateBalance(): Effect<Completable>
 
@@ -70,13 +72,13 @@ interface ProfileRepository {
         instagramUsername: String,
         name: String,
         walletAddress: WalletAddress,
-        avatar: FullUrl,
+        avatar: FullUrl?,
     ): Effect<Completable>
 
     suspend fun disconnectInstagram(
         name: String,
         walletAddress: WalletAddress,
-        avatar: FullUrl,
+        avatar: FullUrl?,
     ): Effect<Completable>
 }
 
@@ -133,8 +135,10 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun loadNextUsersPage(query: String): Effect<Completable> =
         getLoader(query).loadNext()
 
-    override suspend fun updateData(): Effect<UserInfoModel> {
-        _state tryPublish Loading()
+    override suspend fun updateData(isSilently: Boolean): Effect<UserInfoModel> {
+        if (!isSilently) {
+            _state tryPublish Loading()
+        }
         return apiCall(ioDispatcher) {
             api.userInfo()
         }.map {
@@ -219,7 +223,7 @@ class ProfileRepositoryImpl @Inject constructor(
         instagramUsername: String,
         name: String,
         walletAddress: WalletAddress,
-        avatar: FullUrl,
+        avatar: FullUrl?,
     ): Effect<Completable> {
         return apiCall(ioDispatcher) {
             api.connectInstagram(
@@ -245,7 +249,7 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun disconnectInstagram(
         name: String,
         walletAddress: WalletAddress,
-        avatar: FullUrl,
+        avatar: FullUrl?,
     ): Effect<Completable> {
         return apiCall(ioDispatcher) {
             api.connectInstagram(

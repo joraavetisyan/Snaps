@@ -31,8 +31,8 @@ class ConnectInstagramInteractorImpl @Inject constructor(
                     instagramId = it.id,
                     instagramUsername = it.username,
                     name = user.name,
-                    walletAddress = walletRepository.getActiveWalletsReceiveAddresses().first(),
-                    avatar = user.avatar?.value as FullUrl,
+                    walletAddress = walletRepository.getActiveWalletReceiveAddress(),
+                    avatar = user.avatarUrl,
                 )
             } ?: Effect.error(AppError.Unknown())
         }
@@ -42,8 +42,8 @@ class ConnectInstagramInteractorImpl @Inject constructor(
         return profileRepository.state.value.dataOrCache?.let {
              profileRepository.disconnectInstagram(
                  name = it.name,
-                 walletAddress = walletRepository.getActiveWalletsReceiveAddresses().first(),
-                 avatar = it.avatar?.value as FullUrl,
+                 walletAddress = walletRepository.getActiveWalletReceiveAddress(),
+                 avatar = it.avatarUrl,
             )
         } ?: Effect.error(AppError.Unknown())
     }

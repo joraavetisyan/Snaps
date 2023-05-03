@@ -1,7 +1,9 @@
 package io.snaps.corecommon.model
 
+import io.snaps.corecommon.container.ImageValue
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.util.UUID
 import java.util.Currency
@@ -95,3 +97,20 @@ enum class OnboardingType {
     Wallet,
     Rewards,
 }
+
+data class NftModel(
+    val id: Uuid,
+    val tokenId: Uuid?,
+    val userId: Uuid,
+    val type: NftType,
+    val image: ImageValue,
+    val dailyReward: Int,
+    val dailyUnlock: Double,
+    val dailyConsumption: Double,
+    val isAvailableToPurchase: Boolean,
+    val costInUsd: Int?,
+    val costInRealTokens: Int?,
+    val mintedDate: LocalDateTime,
+    val isHealthy: Boolean,
+    val repairCost: Double,
+)
