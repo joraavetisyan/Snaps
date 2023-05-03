@@ -13,7 +13,6 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.featurecollection.presentation.screen.RankTileState
 
 fun State<List<RankModel>>.toRankTileState(
-    purchasedRanks: List<NftModel>,
     onItemClicked: (RankModel) -> Unit,
     onReloadClicked: () -> Unit,
 ) = when (this) {
@@ -22,9 +21,7 @@ fun State<List<RankModel>>.toRankTileState(
         isSuccess -> {
             requireData.map { rank ->
                 rank.copy(
-                    isAvailableToPurchase = rank.isAvailableToPurchase && purchasedRanks.none {
-                        it.type == rank.type
-                    }
+                    isAvailableToPurchase = rank.isAvailableToPurchase
                 ).toRankTileState(onItemClicked = onItemClicked)
             }
         }

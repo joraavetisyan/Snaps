@@ -2,12 +2,15 @@ package io.snaps.coreuicompose.uikit.duplicate
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.TextValue
@@ -82,7 +85,16 @@ fun SimpleTopAppBar(
     additional: @Composable () -> Unit = {},
 ) {
     SimpleTopAppBar(
-        title = { title?.get()?.let { Text(it) } },
+        title = {
+            title?.get()?.let {
+                Text(
+                    text = it,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+        },
         titleHorizontalArrangement = titleHorizontalArrangement,
         titleTextStyle = titleTextStyle,
         navigationIcon = navigationIcon,

@@ -45,10 +45,10 @@ internal class ScreenNavigator(navHostController: NavHostController) :
 
     fun toWebView() = navHostController.navigate(AppRoute.WebView)
 
-    fun toNftDetailsScreen(
-        args: AppRoute.NftDetails.Args
+    fun toUserNftDetailsScreen(
+        args: AppRoute.UserNftDetails.Args
     ) = navHostController navigate FeatureNavDirection(
-        route = AppRoute.NftDetails,
+        route = AppRoute.UserNftDetails,
         arg = args,
     )
 }

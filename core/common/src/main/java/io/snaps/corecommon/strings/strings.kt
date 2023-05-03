@@ -983,32 +983,53 @@ internal val strings = mapOf(
     key(StringKey.PurchaseTitle) to mapOf(
         SupportedLanguageKey.En to "Buy",
     ),
-    key(StringKey.PurchaseAction) to mapOf(
-        SupportedLanguageKey.En to "Purchase",
+    key(StringKey.PurchaseActionBuyWithGooglePay) to mapOf(
+        SupportedLanguageKey.En to "Pay",
+    ),
+    key(StringKey.PurchaseActionBuyWithBNB) to mapOf(
+        SupportedLanguageKey.En to "Buy with BNB",
+    ),
+    key(StringKey.PurchaseActionFree) to mapOf(
+        SupportedLanguageKey.En to "Free",
+    ),
+    key(StringKey.PurchaseFieldOff) to mapOf(
+        SupportedLanguageKey.En to "30%% off",
     ),
     key(StringKey.PurchaseTitlePrice) to mapOf(
         SupportedLanguageKey.En to "Price:",
     ),
     key(StringKey.PurchaseTitleNotAvailable) to mapOf(
-        SupportedLanguageKey.En to "Not available for mint",
+        SupportedLanguageKey.En to "Rank %s is not available for mint",
+    ),
+    key(StringKey.PurchaseTitleDailyCosts) to mapOf(
+        SupportedLanguageKey.En to "Daily costs",
+    ),
+    key(StringKey.PurchaseDescriptionDailyCosts) to mapOf(
+        SupportedLanguageKey.En to "Daily consumption of your NFT points. Every NFT point, except for the FREE rank, deteriorates every day and needs to be restored in order to continue further use and generate income.",
     ),
     key(StringKey.PurchaseTitleDailyReward) to mapOf(
-        SupportedLanguageKey.En to "Daily Reward",
+        SupportedLanguageKey.En to "Daily Reward\n%s SNPS",
     ),
     key(StringKey.PurchaseDescriptionDailyReward) to mapOf(
         SupportedLanguageKey.En to "Estimated daily reward in tokens when completing tasks",
     ),
     key(StringKey.PurchaseMessageDailyReward) to mapOf(
-        SupportedLanguageKey.En to "This value is only an estimate of the rank and is subject to change.",
+        SupportedLanguageKey.En to "This cost is only an estimate of rank and may change",
     ),
     key(StringKey.PurchaseTitleDailyUnlock) to mapOf(
-        SupportedLanguageKey.En to "Daily Unlock",
+        SupportedLanguageKey.En to "Daily Unlock\n%s",
     ),
     key(StringKey.PurchaseDescriptionDailyUnlock) to mapOf(
-        SupportedLanguageKey.En to "You can transfer %s of the available SNAPS rewards  to main wallet. After receiving tokens, they can be exchanged or withdrawn.",
+        SupportedLanguageKey.En to "You can transfer %s of the available SNP rewards to the main wallet. After receiving the tokens, they can be exchanged or withdrawn",
     ),
     key(StringKey.PurchaseMessageDailyUnlock) to mapOf(
-        SupportedLanguageKey.En to "The remaining SNAPS tokens are frozen and stored in a locked wallet.",
+        SupportedLanguageKey.En to "The rest of the SNAPS tokens are frozen and stored in a locked wallet",
+    ),
+    key(StringKey.PurchaseTitleRank) to mapOf(
+        SupportedLanguageKey.En to "Rank %s",
+    ),
+    key(StringKey.PurchaseFieldLevel) to mapOf(
+        SupportedLanguageKey.En to "%s LVL",
     ),
 
     key(StringKey.VideoClipActionDelete) to mapOf(

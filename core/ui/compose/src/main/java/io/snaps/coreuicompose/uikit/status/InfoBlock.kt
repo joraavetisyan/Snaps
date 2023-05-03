@@ -17,9 +17,12 @@ import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuitheme.compose.AppTheme
 
 @Composable
-fun InfoBlock(message: TextValue) {
+fun InfoBlock(
+    modifier: Modifier = Modifier,
+    message: TextValue
+) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(
                 color = AppTheme.specificColorScheme.uiSystemYellow.copy(alpha = 0.3f),

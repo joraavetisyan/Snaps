@@ -91,7 +91,7 @@ class MyCollectionViewModel @Inject constructor(
     private fun onItemClicked(nftModel: NftModel) {
         viewModelScope.launch {
             _command publish Command.OpenNftDetailsScreen(
-                args = AppRoute.NftDetails.Args(
+                args = AppRoute.UserNftDetails.Args(
                     type = nftModel.type,
                     dailyReward = nftModel.dailyReward,
                     image = nftModel.image.value as FullUrl,
@@ -107,6 +107,6 @@ class MyCollectionViewModel @Inject constructor(
 
     sealed class Command {
         object OpenRankSelectionScreen : Command()
-        data class OpenNftDetailsScreen(val args: AppRoute.NftDetails.Args) : Command()
+        data class OpenNftDetailsScreen(val args: AppRoute.UserNftDetails.Args) : Command()
     }
 }

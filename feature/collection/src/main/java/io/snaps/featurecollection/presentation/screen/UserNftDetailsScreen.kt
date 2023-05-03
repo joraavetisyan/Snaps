@@ -36,17 +36,17 @@ import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurecollection.ScreenNavigator
-import io.snaps.featurecollection.presentation.viewmodel.NftDetailsViewModel
+import io.snaps.featurecollection.presentation.viewmodel.UserNftDetailsViewModel
 
 @Composable
-fun NftDetailsScreen(
+fun UserNftDetailsScreen(
     navHostController: NavHostController,
 ) {
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
-    val viewModel = hiltViewModel<NftDetailsViewModel>()
+    val viewModel = hiltViewModel<UserNftDetailsViewModel>()
     val uiState by viewModel.uiState.collectAsState()
 
-    NftDetailsScreen(
+    UserNftDetailsScreen(
         uiState = uiState,
         onBackClicked = router::back,
     )
@@ -54,8 +54,8 @@ fun NftDetailsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun NftDetailsScreen(
-    uiState: NftDetailsViewModel.UiState,
+private fun UserNftDetailsScreen(
+    uiState: UserNftDetailsViewModel.UiState,
     onBackClicked: () -> Boolean,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())

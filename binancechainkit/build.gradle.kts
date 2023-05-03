@@ -44,7 +44,7 @@ protobuf {
     val archSuffix = if (Os.isFamily(Os.FAMILY_MAC)) ":osx-x86_64" else ""
 
     protoc {
-        artifact = "com.google.protobuf:protoc$archSuffix"
+        artifact = "com.google.protobuf:protoc:3.14.0$archSuffix"
     }
     generateProtoTasks {
         all().forEach { task ->
