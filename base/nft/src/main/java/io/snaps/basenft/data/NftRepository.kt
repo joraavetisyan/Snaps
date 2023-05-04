@@ -1,6 +1,7 @@
 package io.snaps.basenft.data
 
 import io.snaps.basenft.data.model.MintNftRequestDto
+import io.snaps.basenft.data.model.MintNftStoreRequestDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.domain.RankModel
 import io.snaps.corecommon.model.Completable
@@ -11,7 +12,6 @@ import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Token
 import io.snaps.corecommon.model.Uuid
-import io.snaps.corecommon.model.WalletAddress
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.UserDataStorage
@@ -38,21 +38,19 @@ interface NftRepository {
 
     suspend fun updateNftCollection(): Effect<List<NftModel>>
 
-    /**
-     * params: [data] - Google Play purchaseToken or blockchain transaction hash
-     */
-    suspend fun mintNft(
-        type: NftType,
-        walletAddress: WalletAddress,
-        data: Token?,
-    ): Effect<Completable>
+    suspend fun mintNftStore(productId: Uuid, purchaseToken: Token): Effect<Completable>
 
     /**
-     * params: [data] - Blockchain transaction hash
+     * params: [transactionHash] - Blockchain transaction hash
+     */
+    suspend fun mintNft(type: NftType, transactionHash: Token? = null): Effect<Completable>
+
+    /**
+     * params: [transactionHash] - Blockchain transaction hash
      */
     suspend fun repairNft(
         nftModel: NftModel,
-        data: Token? = null,
+        transactionHash: Token? = null,
         offChainAmount: Long = 0L,
     ): Effect<Completable>
 
@@ -105,17 +103,26 @@ class NftRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun mintNft(
-        type: NftType,
-        walletAddress: WalletAddress,
-        data: Token?,
-    ): Effect<Completable> {
+    override suspend fun mintNft(type: NftType, transactionHash: Token?): Effect<Completable> {
         return apiCall(ioDispatcher) {
             nftApi.mintNft(
                 body = MintNftRequestDto(
                     nftType = type.intType,
-                    purchaseId = data,
-                    wallet = walletAddress,
+                    transactionHash = transactionHash,
+                ),
+            )
+        }.doOnSuccess {
+            updateNftCollection()
+            updateRanks()
+        }.toCompletable()
+    }
+
+    override suspend fun mintNftStore(productId: Uuid, purchaseToken: Token): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            nftApi.mintNftStore(
+                body = MintNftStoreRequestDto(
+                    productId = productId,
+                    purchaseToken = purchaseToken,
                 ),
             )
         }.doOnSuccess {
@@ -126,7 +133,7 @@ class NftRepositoryImpl @Inject constructor(
 
     override suspend fun repairNft(
         nftModel: NftModel,
-        data: Token?,
+        transactionHash: Token?,
         offChainAmount: Long,
     ): Effect<Completable> {
         return apiCall(ioDispatcher) {
@@ -134,7 +141,7 @@ class NftRepositoryImpl @Inject constructor(
                 body = RepairGlassesRequestDto(
                     glassesId = nftModel.id,
                     offChainAmount = offChainAmount,
-                    transactionHash = data,
+                    transactionHash = transactionHash,
                 )
             )
         }.doOnSuccess {

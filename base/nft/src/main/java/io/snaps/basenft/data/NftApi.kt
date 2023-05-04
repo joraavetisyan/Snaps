@@ -2,6 +2,7 @@ package io.snaps.basenft.data
 
 import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.MintNftResponseDto
+import io.snaps.basenft.data.model.MintNftStoreRequestDto
 import io.snaps.basenft.data.model.NftItemResponseDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.data.model.UserNftItemResponseDto
@@ -18,6 +19,11 @@ interface NftApi {
 
     @GET("nft")
     suspend fun nft(): BaseResponse<List<NftItemResponseDto>>
+
+    @POST("user/nft/mint/android")
+    suspend fun mintNftStore(
+        @Body body: MintNftStoreRequestDto,
+    ): BaseResponse<MintNftResponseDto>
 
     @POST("user/nft/mint")
     suspend fun mintNft(

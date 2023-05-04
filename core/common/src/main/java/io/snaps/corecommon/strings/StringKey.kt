@@ -360,7 +360,7 @@ enum class StringKey {
     PurchaseMessageDailyUnlock,
     PurchaseTitleDailyCosts,
     PurchaseDescriptionDailyCosts,
-    PurchaseActionBuyWithGooglePay,
+    PurchaseActionBuyInStore,
     PurchaseActionBuyWithBNB,
     PurchaseActionFree,
     PurchaseFieldOff,

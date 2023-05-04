@@ -16,6 +16,13 @@ interface MyCollectionInteractor {
 
     suspend fun repair(nftModel: NftModel): Effect<Completable>
 
+    suspend fun mint(
+        nftType: NftType,
+        purchaseToken: Token? = null,
+    ): Effect<Completable>
+
+    suspend fun getNftMintSummary(nftType: NftType): Effect<NftMintSummary>
+
     /**
      * returns: Mint transaction hash
      */
@@ -32,7 +39,7 @@ class MyCollectionInteractorImpl @Inject constructor(
         return profileRepository.updateData(isSilently = true).flatMap { userInfoModel ->
             if (userInfoModel.paymentsState == PaymentsState.Blockchain) {
                 walletRepository.repairNft(nftModel = nftModel).flatMap {
-                    nftRepository.repairNft(nftModel = nftModel, data = it)
+                    nftRepository.repairNft(nftModel = nftModel, transactionHash = it)
                 }
             } else {
                 nftRepository.repairNft(
@@ -43,6 +50,21 @@ class MyCollectionInteractorImpl @Inject constructor(
         }
     }
 
+    override suspend fun mint(nftType: NftType, purchaseToken: Token?): Effect<Completable> {
+        require(
+            nftType != NftType.Free || (nftType.storeId != null && purchaseToken != null)
+        )
+        return if (nftType == NftType.Free) {
+            nftRepository.mintNft(NftType.Free)
+        } else {
+            nftRepository.mintNftStore(nftType.storeId!!, purchaseToken!!)
+        }
+    }
+
+    override suspend fun getNftMintSummary(nftType: NftType): Effect<NftMintSummary> {
+        return walletRepository.getNftMintSummary(nftType)
+    }
+
     override suspend fun mintOnBlockchain(
         nftType: NftType,
         summary: NftMintSummary,
@@ -50,8 +72,7 @@ class MyCollectionInteractorImpl @Inject constructor(
         return walletRepository.mintNft(nftType = nftType, summary = summary).flatMap { hash ->
             nftRepository.mintNft(
                 type = nftType,
-                data = hash,
-                walletAddress = walletRepository.getActiveWalletReceiveAddress()!!, // todo
+                transactionHash = hash
             ).flatMap {
                 nftRepository.saveProcessingNft(nftType)
             }.map {

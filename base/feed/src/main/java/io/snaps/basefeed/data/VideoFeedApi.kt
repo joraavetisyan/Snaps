@@ -1,6 +1,7 @@
 package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.AddVideoRequestDto
+import io.snaps.basefeed.data.model.AddVideoResponseDto
 import io.snaps.basefeed.data.model.UserLikedVideoResponseDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.corecommon.model.Completable
@@ -70,7 +71,7 @@ interface VideoFeedApi {
     @POST("video")
     suspend fun addVideo(
         @Body body: AddVideoRequestDto,
-    ): BaseResponse<VideoFeedItemResponseDto>
+    ): BaseResponse<AddVideoResponseDto>
 
     @Multipart
     @POST("{videoId}/upload")

@@ -305,7 +305,7 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.PurchaseMessageDailyUnlock -> TODO()
     StringKey.PurchaseTitleDailyCosts -> TODO()
     StringKey.PurchaseDescriptionDailyCosts -> TODO()
-    StringKey.PurchaseActionBuyWithGooglePay -> TODO()
+    StringKey.PurchaseActionBuyInStore -> TODO()
     StringKey.PurchaseActionBuyWithBNB -> TODO()
     StringKey.PurchaseFieldOff -> TODO()
     StringKey.PurchaseActionFree -> TODO()

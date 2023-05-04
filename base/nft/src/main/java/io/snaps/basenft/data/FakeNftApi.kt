@@ -2,6 +2,7 @@ package io.snaps.basenft.data
 
 import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.MintNftResponseDto
+import io.snaps.basenft.data.model.MintNftStoreRequestDto
 import io.snaps.basenft.data.model.NftItemResponseDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.data.model.UserNftItemResponseDto
@@ -42,6 +43,17 @@ class FakeNftApi : NftApi {
 
     override suspend fun mintNft(body: MintNftRequestDto): BaseResponse<MintNftResponseDto> {
         log("Requesting add nft")
+        delay(mockDelay)
+        return BaseResponse(
+            actualTimestamp = 1L,
+            data = MintNftResponseDto(
+                tokenId = rInt,
+            ),
+        )
+    }
+
+    override suspend fun mintNftStore(body: MintNftStoreRequestDto): BaseResponse<MintNftResponseDto> {
+        log("Requesting add nft on store")
         delay(mockDelay)
         return BaseResponse(
             actualTimestamp = 1L,

@@ -1,6 +1,7 @@
 package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.AddVideoRequestDto
+import io.snaps.basefeed.data.model.AddVideoResponseDto
 import io.snaps.basefeed.data.model.UserLikedVideoResponseDto
 import io.snaps.basefeed.data.model.UserLikedVideoItem
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
@@ -148,23 +149,13 @@ class FakeVideoFeedApi : VideoFeedApi {
         )
     }
 
-    override suspend fun addVideo(body: AddVideoRequestDto): BaseResponse<VideoFeedItemResponseDto> {
+    override suspend fun addVideo(body: AddVideoRequestDto): BaseResponse<AddVideoResponseDto> {
         log("Requesting add video")
         delay(mockDelay)
         return BaseResponse(
             actualTimestamp = 1L,
-            data = VideoFeedItemResponseDto(
-                url = rVideos.random(),
+            data = AddVideoResponseDto(
                 entityId = "${popularGeneration}video",
-                internalId = "${popularGeneration}video",
-                createdDate = "",
-                viewsCount = rInt,
-                commentsCount = rInt,
-                likesCount = rInt,
-                title = "title",
-                description = "description",
-                author = FakeProfileApi.getUserInfo("authorUserId"),
-                thumbnailUrl = "https://picsum.photos/177/222",
             ),
         )
     }

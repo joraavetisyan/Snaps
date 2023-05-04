@@ -276,8 +276,7 @@ private fun ActionButtons(
                 onClick = onBuyWithGooglePlayClicked,
             ) {
                 SimpleButtonContent(
-                    text = StringKey.PurchaseActionBuyWithGooglePay.textValue(),
-                    iconLeft = AppTheme.specificIcons.google,
+                    text = StringKey.PurchaseActionBuyInStore.textValue(),
                 )
             }
             if (uiState.isPurchasableWithBnb) {

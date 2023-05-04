@@ -55,6 +55,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
@@ -164,6 +165,7 @@ fun RegistrationScreen(
                     onSignUpClicked = viewModel::showSignUpBottomDialog,
                     onForgotPasswordClicked = viewModel::onForgotPasswordClicked,
                 )
+
                 RegistrationViewModel.BottomDialogType.SignUp -> RegistrationWithEmailDialog(
                     uiState = uiState,
                     onEmailAddressValueChanged = viewModel::onEmailAddressValueChanged,
@@ -174,6 +176,7 @@ fun RegistrationScreen(
                     onPrivacyPolicyClicked = viewModel::onPrivacyPolicyClicked,
                     onTermsOfUserClicked = viewModel::onTermsOfUserClicked,
                 )
+
                 RegistrationViewModel.BottomDialogType.ResetPassword -> ResetPasswordDialog(
                     passwordResetEmail = uiState.passwordResetEmailValue,
                     isResetPasswordButtonEnabled = uiState.isResetPasswordButtonEnabled,
@@ -193,6 +196,10 @@ fun RegistrationScreen(
                             result.pendingIntent.intentSender
                         ).build()
                         googleSignInLauncher.launch(intentSenderRequest)
+                    }.addOnFailureListener {
+                        // if "com.google.android.gms.common.api.ApiException: 10: Developer console is not set up correctly."
+                        // add your machine sha1 to the firebase console
+                        log(it)
                     }
             },
             onLoginWithEmailClicked = viewModel::onLoginWithEmailClicked,
@@ -269,6 +276,7 @@ private fun RegistrationScreen(
                 buttonText = StringKey.ActionOk.textValue(),
                 onClickRequest = onEmailVerificationDialogDismissRequest,
             )
+
             RegistrationViewModel.DialogType.ResetPasswordInstructions -> SimpleAlertDialogUi(
                 text = StringKey.RegistrationDialogResetPasswordInstructionsMessage.textValue(),
                 buttonText = StringKey.ActionOk.textValue(),

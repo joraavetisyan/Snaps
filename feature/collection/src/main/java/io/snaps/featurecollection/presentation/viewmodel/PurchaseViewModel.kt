@@ -6,11 +6,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basebilling.BillingRouter
 import io.snaps.basebilling.PurchaseStateProvider
-import io.snaps.basenft.data.NftRepository
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
-import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.NftMintSummary
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
@@ -46,8 +44,6 @@ class PurchaseViewModel @Inject constructor(
     private val billingRouter: BillingRouter,
     private val interactor: MyCollectionInteractor,
     private val notificationsSource: NotificationsSource,
-    private val walletRepository: WalletRepository,
-    private val nftRepository: NftRepository,
 ) : SimpleViewModel() {
 
     private val args = savedStateHandle.requireArgs<AppRoute.Purchase.Args>()
@@ -76,17 +72,16 @@ class PurchaseViewModel @Inject constructor(
 
     private fun subscribeOnNewPurchases() = viewModelScope.launch {
         purchaseStateProvider.newPurchasesFlow.onEach {
-            mintNft(purchaseToken = it.first().purchaseToken)
+            mint(purchaseToken = it.first().purchaseToken)
         }.launchIn(viewModelScope)
     }
 
-    private suspend fun mintNft(purchaseToken: Token?) {
+    private suspend fun mint(purchaseToken: Token? = null) {
         _uiState.update { it.copy(isLoading = true) }
         action.execute {
-            nftRepository.mintNft(
-                type = args.type,
-                walletAddress = walletRepository.getActiveWalletReceiveAddress()!!, // todo handle
-                data = purchaseToken,
+            interactor.mint(
+                nftType = args.type,
+                purchaseToken = purchaseToken,
             )
         }.doOnSuccess {
             notificationsSource.sendMessage("Purchase successful".textValue()) // todo localize
@@ -123,7 +118,7 @@ class PurchaseViewModel @Inject constructor(
 
     private suspend fun getPurchaseNftWithBnbSummary() {
         action.execute {
-            walletRepository.getNftMintSummary(args.type)
+            interactor.getNftMintSummary(args.type)
         }.doOnSuccess { summary ->
             _uiState.update {
                 it.copy(
@@ -164,9 +159,7 @@ class PurchaseViewModel @Inject constructor(
         }
     }
 
-    fun onFreeClicked() = viewModelScope.launch {
-        mintNft(purchaseToken = null)
-    }
+    fun onFreeClicked() = viewModelScope.launch { mint() }
 
     private fun getSunglassesImage() = when (args.type.intType) {
         1 -> R.drawable.img_sunglasses0
