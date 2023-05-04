@@ -119,6 +119,8 @@ private fun NftModel.toNftCollectionItemState(
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthy = true,
+    isProcessing = false,
     onRepairClicked = {},
-    onItemClicked = { onItemClicked(this) }
+    onItemClicked = { onItemClicked(this) },
+    onProcessingClicked = {},
 )

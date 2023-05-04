@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
@@ -48,7 +49,9 @@ sealed class CollectionItemState : TileState {
         val dailyUnlock: String,
         val dailyConsumption: String,
         val isHealthy: Boolean,
+        val isProcessing: Boolean,
         val onRepairClicked: () -> Unit,
+        val onProcessingClicked: () -> Unit,
         val onItemClicked: () -> Unit,
     ) : CollectionItemState()
 
@@ -136,7 +139,20 @@ private fun Nft(
                 value = data.dailyConsumption,
             )
         }
-        if (!data.isHealthy) RepairButton(onClick = data.onRepairClicked)
+        if (!data.isHealthy) {
+            Button(
+                text = StringKey.MyCollectionActionRepairGlasses.textValue(),
+                textColor = AppTheme.specificColorScheme.pink,
+                onClick = data.onRepairClicked,
+            )
+        }
+        if (data.isProcessing) {
+            Button(
+                text = StringKey.MyCollectionActionProcessing.textValue(),
+                textColor = AppTheme.specificColorScheme.uiAccent,
+                onClick = data.onProcessingClicked,
+            )
+        }
     }
 }
 
@@ -157,7 +173,9 @@ private fun NeedToRepairMessage() {
 }
 
 @Composable
-private fun RepairButton(
+private fun Button(
+    text: TextValue,
+    textColor: Color,
     onClick: () -> Unit,
 ) {
     SimpleCard(
@@ -169,8 +187,8 @@ private fun RepairButton(
             .defaultTileRipple(onClick = onClick)
     ) {
         Text(
-            text = StringKey.MyCollectionActionRepairGlasses.textValue().get(),
-            color = AppTheme.specificColorScheme.pink,
+            text = text.get(),
+            color = textColor,
             style = AppTheme.specificTypography.labelMedium,
             modifier = Modifier
                 .fillMaxWidth()

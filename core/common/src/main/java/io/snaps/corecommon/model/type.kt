@@ -113,4 +113,5 @@ data class NftModel(
     val mintedDate: LocalDateTime,
     val isHealthy: Boolean,
     val repairCost: Double,
+    val isProcessing: Boolean,
 )

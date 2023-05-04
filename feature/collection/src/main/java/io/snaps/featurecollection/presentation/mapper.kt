@@ -46,6 +46,7 @@ fun State<List<NftModel>>.toNftCollectionItemState(
     onAddItemClicked: () -> Unit,
     onReloadClicked: () -> Unit,
     onRepairClicked: (NftModel) -> Unit,
+    onProcessingClicked: (NftModel) -> Unit,
 ) = when (this) {
     is Loading -> List(6) { CollectionItemState.Shimmer }
     is Effect -> when {
@@ -55,6 +56,7 @@ fun State<List<NftModel>>.toNftCollectionItemState(
                     it.toNftCollectionItemState(
                         onRepairClicked = onRepairClicked,
                         onItemClicked = onItemClicked,
+                        onProcessingClicked = onProcessingClicked,
                     )
                 )
             }
@@ -67,6 +69,7 @@ fun State<List<NftModel>>.toNftCollectionItemState(
 private fun NftModel.toNftCollectionItemState(
     onItemClicked: (NftModel) -> Unit,
     onRepairClicked: (NftModel) -> Unit,
+    onProcessingClicked: (NftModel) -> Unit,
 ) = CollectionItemState.Nft(
     type = type,
     price = costInUsd?.costToString() ?: "",
@@ -75,6 +78,8 @@ private fun NftModel.toNftCollectionItemState(
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthy = isHealthy,
+    isProcessing = isProcessing,
     onRepairClicked = { onRepairClicked(this) },
-    onItemClicked = { onItemClicked(this) }
+    onItemClicked = { onItemClicked(this) },
+    onProcessingClicked = { onProcessingClicked(this) },
 )

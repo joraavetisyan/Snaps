@@ -18,4 +18,5 @@ dependencies {
     implementation(projects.coreNavigation)
 
     implementation(projects.baseSources)
+    implementation(projects.baseWallet)
 }

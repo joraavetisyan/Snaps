@@ -5,7 +5,6 @@ import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
-import io.snaps.corecommon.model.FullUrl
 import io.snaps.featuretasks.data.InstagramService
 import javax.inject.Inject
 

@@ -22,21 +22,23 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 fun List<WalletModel>.toCellTileStateList(
-    snpFiatValue: String? = null,
     onClick: ((WalletModel) -> Unit)? = null,
-): List<CellTileState> = map { it.toCellTileState(snpFiatValue = snpFiatValue, onClick = onClick) }
+): List<CellTileState> = map { it.toCellTileState(onClick = onClick) }
 
 fun WalletModel.toCellTileState(
-    snpFiatValue: String? = null,
     onClick: ((WalletModel) -> Unit)?,
 ) = CellTileState(
     middlePart = MiddlePart.Data(
         value = symbol.textValue(),
     ),
-    leftPart = LeftPart.Logo(ImageValue.Url(iconUrl)),
+    leftPart = if (symbol == "SNAPS") {
+        ImageValue.ResImage(R.drawable.ic_snp_token)
+    } else {
+        ImageValue.Url(iconUrl)
+    }.let(LeftPart::Logo),
     rightPart = RightPart.TextMoney(
         coin = coinValue,
-        fiatCurrency = if (symbol == "SNAPS") snpFiatValue.orEmpty() else fiatValue,
+        fiatCurrency = fiatValue,
     ),
     clickListener = onClick?.let { { it.invoke(this) } },
 )
