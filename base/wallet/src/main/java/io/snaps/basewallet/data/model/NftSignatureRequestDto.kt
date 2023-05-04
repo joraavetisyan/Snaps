@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NftRepairSignatureRequestDto(
+data class NftSignatureRequestDto(
     @SerialName("nonce") val nonce: Long,
-    @SerialName("amount") val amount: Long,
+    @SerialName("amount") val amount: Double,
 )

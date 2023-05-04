@@ -66,6 +66,7 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.corecommon.strings.addressEllipsized
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
@@ -480,7 +481,7 @@ private fun Balance(
                 onClick = onAddressCopyClicked,
             ) {
                 SimpleButtonContent(
-                    text = address.textValue(),
+                    text = address.addressEllipsized.textValue(),
                     iconRight = AppTheme.specificIcons.copy,
                 )
             }

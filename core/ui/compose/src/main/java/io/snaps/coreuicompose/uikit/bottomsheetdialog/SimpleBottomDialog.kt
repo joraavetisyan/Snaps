@@ -19,7 +19,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuitheme.compose.AppTheme
 
 @Composable
-fun OnboardingBottomDialog(
+fun SimpleBottomDialog(
     image: ImageValue,
     title: TextValue,
     text: TextValue,

@@ -7,6 +7,7 @@ enum class StringKey {
     ActionReply,
     ActionReload,
     ActionContinue,
+    ActionConfirm,
     ActionCancel,
     ActionClose,
     ActionDelete,

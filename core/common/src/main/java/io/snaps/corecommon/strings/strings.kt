@@ -16,6 +16,9 @@ internal val strings = mapOf(
     key(StringKey.ActionContinue) to mapOf(
         SupportedLanguageKey.En to "Continue",
     ),
+    key(StringKey.ActionConfirm) to mapOf(
+        SupportedLanguageKey.En to "Confirm",
+    ),
     key(StringKey.ActionCancel) to mapOf(
         SupportedLanguageKey.En to "Cancel",
     ),

@@ -24,7 +24,7 @@ class CreateUserInteractorImpl @Inject constructor(
             profileRepository.createUser(
                 fileId = it.id,
                 userName = userName,
-                walletAddress = walletRepository.getActiveWalletReceiveAddress(),
+                walletAddress = walletRepository.getActiveWalletReceiveAddress()!!, // todo handle,
             )
         }
     }

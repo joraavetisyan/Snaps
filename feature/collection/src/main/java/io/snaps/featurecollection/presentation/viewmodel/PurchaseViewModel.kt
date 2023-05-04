@@ -11,10 +11,13 @@ import io.snaps.basesources.NotificationsSource
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basewallet.data.WalletRepository
+import io.snaps.basewallet.domain.NftMintSummary
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.ext.toStringValue
 import io.snaps.corecommon.model.FiatCurrency
+import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.Token
 import io.snaps.coredata.network.Action
@@ -22,6 +25,8 @@ import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
+import io.snaps.featurecollection.domain.MyCollectionInteractor
+import io.snaps.featurecollection.presentation.screen.PurchaseWithBnbTileState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,6 +44,7 @@ class PurchaseViewModel @Inject constructor(
     private val action: Action,
     private val purchaseStateProvider: PurchaseStateProvider,
     private val billingRouter: BillingRouter,
+    private val interactor: MyCollectionInteractor,
     private val notificationsSource: NotificationsSource,
     private val walletRepository: WalletRepository,
     private val nftRepository: NftRepository,
@@ -54,8 +60,9 @@ class PurchaseViewModel @Inject constructor(
             dailyUnlock = args.dailyUnlock,
             dailyReward = args.dailyReward,
             isPurchasable = args.isPurchasable,
-            isPurchasableWithBnb = featureToggle.isEnabled(Feature.BnbPurchase),
+            isPurchasableWithBnb = featureToggle.isEnabled(Feature.PurchaseNftWithBnb),
             sunglassesImage = getSunglassesImage(),
+            purchaseWithBnbTileState = PurchaseWithBnbTileState.Shimmer(nftType = args.type),
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -69,17 +76,17 @@ class PurchaseViewModel @Inject constructor(
 
     private fun subscribeOnNewPurchases() = viewModelScope.launch {
         purchaseStateProvider.newPurchasesFlow.onEach {
-            minNft(purchaseToken = it.first().purchaseToken)
+            mintNft(purchaseToken = it.first().purchaseToken)
         }.launchIn(viewModelScope)
     }
 
-    private suspend fun minNft(purchaseToken: Token?) {
+    private suspend fun mintNft(purchaseToken: Token?) {
         _uiState.update { it.copy(isLoading = true) }
         action.execute {
             nftRepository.mintNft(
                 type = args.type,
-                walletAddress = walletRepository.getActiveWalletReceiveAddress(),
-                purchaseId = purchaseToken,
+                walletAddress = walletRepository.getActiveWalletReceiveAddress()!!, // todo handle
+                data = purchaseToken,
             )
         }.doOnSuccess {
             notificationsSource.sendMessage("Purchase successful".textValue()) // todo localize
@@ -102,11 +109,63 @@ class PurchaseViewModel @Inject constructor(
     }
 
     fun onBuyWithBNBClicked() {
-        // TODO
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    bottomDialog = BottomDialog.PurchaseWithBnb,
+                    purchaseWithBnbTileState = PurchaseWithBnbTileState.Shimmer(nftType = args.type),
+                )
+            }
+            _command publish Command.ShowBottomDialog
+            getPurchaseNftWithBnbSummary()
+        }
+    }
+
+    private suspend fun getPurchaseNftWithBnbSummary() {
+        action.execute {
+            walletRepository.getNftMintSummary(args.type)
+        }.doOnSuccess { summary ->
+            _uiState.update {
+                it.copy(
+                    purchaseWithBnbTileState = PurchaseWithBnbTileState.Data(
+                        nftType = args.type,
+                        from = summary.from,
+                        to = summary.to,
+                        // todo
+                        summary = summary.summary.toDouble().toStringValue() + " BNB",
+                        gas = summary.gas.toDouble().toStringValue() + " BNB",
+                        total = summary.total.toDouble().toStringValue() + " BNB",
+                        onConfirmClick = { onConfirmed(summary) },
+                        onCancelClick = {
+                            viewModelScope.launch {
+                                _command publish Command.HideBottomDialog
+                            }
+                        },
+                    )
+                )
+            }
+        }
+    }
+
+    private fun onConfirmed(summary: NftMintSummary) {
+        viewModelScope.launch {
+            _command publish Command.HideBottomDialog
+            _uiState.update { it.copy(isLoading = true) }
+            action.execute {
+                interactor.mintOnBlockchain(nftType = args.type, summary = summary)
+            }.doOnSuccess { hash ->
+                _uiState.update {
+                    it.copy(bottomDialog = BottomDialog.PurchaseWithBnbSuccess("https://testnet.bscscan.com/tx/${hash}"))
+                }
+                _command publish Command.ShowBottomDialog
+            }.doOnComplete {
+                _uiState.update { it.copy(isLoading = false) }
+            }
+        }
     }
 
     fun onFreeClicked() = viewModelScope.launch {
-        minNft(purchaseToken = null)
+        mintNft(purchaseToken = null)
     }
 
     private fun getSunglassesImage() = when (args.type.intType) {
@@ -134,9 +193,18 @@ class PurchaseViewModel @Inject constructor(
         val isPurchasable: Boolean,
         val isPurchasableWithBnb: Boolean,
         val sunglassesImage: ImageValue? = null,
+        val bottomDialog: BottomDialog = BottomDialog.PurchaseWithBnb,
+        val purchaseWithBnbTileState: PurchaseWithBnbTileState,
     )
+
+    sealed class BottomDialog {
+        object PurchaseWithBnb : BottomDialog()
+        data class PurchaseWithBnbSuccess(val link: FullUrl) : BottomDialog()
+    }
 
     sealed class Command {
         object ClosePurchaseScreen : Command()
+        object ShowBottomDialog : Command()
+        object HideBottomDialog : Command()
     }
 }

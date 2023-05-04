@@ -81,7 +81,7 @@ class MyCollectionViewModel @Inject constructor(
     private fun onRepairClicked(nftModel: NftModel) = viewModelScope.launch {
         _uiState.update { it.copy(isLoading = true) }
         action.execute {
-            interactor.repairGlasses(nftModel)
+            interactor.repair(nftModel)
         }.doOnComplete {
             _uiState.update { it.copy(isLoading = false) }
         }
