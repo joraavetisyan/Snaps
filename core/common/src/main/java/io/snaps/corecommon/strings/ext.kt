@@ -16,7 +16,7 @@ enum class PluralKey {
 }
 
 enum class SupportedLanguageKey {
-    Ru, En;
+    Ru, En, Tr, Ua, Es;
 
     companion object {
         val Default = En
