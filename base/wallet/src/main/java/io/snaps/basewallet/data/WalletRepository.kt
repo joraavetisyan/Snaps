@@ -18,6 +18,8 @@ import io.snaps.basewallet.data.model.NftSignatureResponseDto
 import io.snaps.basewallet.data.model.WalletSaveRequestDto
 import io.snaps.basewallet.domain.DeviceNotSecuredException
 import io.snaps.basewallet.domain.NftMintSummary
+import io.snaps.basewallet.domain.NoEnoughBnbToMint
+import io.snaps.basewallet.domain.NoEnoughSnpToRepair
 import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.AppError
@@ -103,6 +105,8 @@ interface WalletRepository {
     fun getMnemonics(): List<String>
 
     fun getActiveWalletReceiveAddress(): WalletAddress?
+
+    fun requireActiveWalletReceiveAddress(): WalletAddress
 
     fun getAvailableBalance(wallet: WalletModel): String?
 
@@ -252,7 +256,7 @@ class WalletRepositoryImpl @Inject constructor(
             delay(200)
         }
         return apiCall(ioDispatcher) {
-            walletApi.save(WalletSaveRequestDto(getActiveWalletReceiveAddress()!!)) // todo handle
+            walletApi.save(WalletSaveRequestDto(requireActiveWalletReceiveAddress()))
         }.toCompletable()
     }
 
@@ -305,6 +309,12 @@ class WalletRepositoryImpl @Inject constructor(
     override fun getActiveWalletReceiveAddress(): WalletAddress? {
         return getWallets().firstNotNullOfOrNull {
             CryptoKit.adapterManager.getReceiveAdapterForWallet(it)?.receiveAddress
+        }
+    }
+
+    override fun requireActiveWalletReceiveAddress(): WalletAddress {
+        return requireNotNull(getActiveWalletReceiveAddress()) {
+            "No active wallet receive address"
         }
     }
 
@@ -395,6 +405,10 @@ class WalletRepositoryImpl @Inject constructor(
     }
 
     override suspend fun repairNft(nftModel: NftModel): Effect<Token> {
+        if ((getSnpWalletModel()?.coinValue?.toDouble() ?: 0.0) < nftModel.repairCost) {
+            return Effect.error(AppError.Custom(cause = NoEnoughSnpToRepair))
+        }
+
         val wallet = getSnapsWallet() ?: return Effect.error(
             AppError.Unknown(cause = IllegalStateException("Wallet is null"))
         )
@@ -403,7 +417,7 @@ class WalletRepositoryImpl @Inject constructor(
                 AppError.Unknown(cause = IllegalStateException("Adapter is null"))
             )
 
-        val nonceRaw = 153L /*todo tmp, then adapter.evmKit.accountState?.nonce ?: 0L*/
+        val nonceRaw = adapter.evmKit.accountState?.nonce ?: 0L
 
         return apiCall(ioDispatcher) {
             walletApi.getRepairSignature(
@@ -440,7 +454,7 @@ class WalletRepositoryImpl @Inject constructor(
             val address = Address(SNAPS_NFT)
 
             val method = RepairContractMethod(
-                owner = Address(getActiveWalletReceiveAddress()!!), // todo handle
+                owner = Address(requireActiveWalletReceiveAddress()),
                 fromAccountAmounts = data.amountReceiver?.let(::BigInteger) ?: return error,
                 deadline = data.deadline?.toBigInteger() ?: return error,
                 nonce = nonceRaw.toBigInteger(),
@@ -502,8 +516,10 @@ class WalletRepositoryImpl @Inject constructor(
 
     override suspend fun getNftMintSummary(nftType: NftType): Effect<NftMintSummary> {
         val value = 0.005
-        val bnbBalance = 1 // todo
-        // todo check if balance enough and throw if needed
+        if ((getBnbWalletModel()?.coinValue?.toDouble() ?: 0.0) < value) {
+            return Effect.error(AppError.Custom(cause = NoEnoughBnbToMint))
+        }
+
         val wallet = getSnapsWallet() ?: return Effect.error(
             AppError.Unknown(cause = IllegalStateException("Wallet is null"))
         )
@@ -511,7 +527,7 @@ class WalletRepositoryImpl @Inject constructor(
             ?: return Effect.error(
                 AppError.Unknown(cause = IllegalStateException("Adapter is null"))
             )
-        val nonceRaw = 154L /*todo tmp, then adapter.evmKit.accountState?.nonce ?: 0L*/
+        val nonceRaw = adapter.evmKit.accountState?.nonce ?: 0L
 
         return apiCall(ioDispatcher) {
             walletApi.getMintSignature(
@@ -527,10 +543,10 @@ class WalletRepositoryImpl @Inject constructor(
                 )
 
                 val address = Address(SNAPS_NFT)
-                val fromAddress = getActiveWalletReceiveAddress()!! // todo handle
+                val fromAddress = requireActiveWalletReceiveAddress()
 
                 val method = MintContractMethod(
-                    owner = Address(getActiveWalletReceiveAddress()!!), // todo handle
+                    owner = Address(requireActiveWalletReceiveAddress()),
                     fromAccountAmounts = data.amountReceiver?.let(::BigInteger) ?: return@l error,
                     deadline = data.deadline?.toBigInteger() ?: return@l error,
                     nonce = nonceRaw.toBigInteger(),

@@ -564,7 +564,7 @@ private fun SelectWalletDialog(
 private fun TopUpDialog(
     title: TextValue,
     qr: Bitmap?,
-    address: String,
+    address: WalletAddress,
     onAddressCopyClicked: () -> Unit,
 ) {
     SimpleBottomDialogUI(header = title) {
@@ -584,7 +584,7 @@ private fun TopUpDialog(
                 onClick = onAddressCopyClicked,
             ) {
                 SimpleButtonContent(
-                    text = address.textValue(),
+                    text = address.addressEllipsized.textValue(),
                     iconRight = AppTheme.specificIcons.copy,
                 )
             }

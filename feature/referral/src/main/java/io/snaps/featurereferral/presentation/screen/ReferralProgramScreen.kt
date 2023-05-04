@@ -1,5 +1,11 @@
 package io.snaps.featurereferral.presentation.screen
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Typeface
+import android.text.Layout
+import android.text.StaticLayout
+import android.text.TextPaint
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -47,14 +53,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.baseprofile.data.MainHeaderHandler
@@ -64,6 +75,7 @@ import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.ext.startSharePhotoIntent
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.defaultTileRipple
@@ -71,10 +83,12 @@ import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.gradientBackground
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
+import io.snaps.coreuicompose.tools.toPx
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialogItem
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContentLoader
@@ -91,6 +105,7 @@ import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurereferral.ScreenNavigator
 import io.snaps.featurereferral.presentation.viewmodel.ReferralProgramViewModel
 import kotlinx.coroutines.launch
+import toTypeface
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -117,11 +132,17 @@ fun ReferralProgramScreen(
 
     val clipboardManager = LocalClipboardManager.current
 
+    val context = LocalContext.current
+
     viewModel.command.collectAsCommand {
         when (it) {
             ReferralProgramViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             ReferralProgramViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
             is ReferralProgramViewModel.Command.OpenUserInfoScreen -> router.toProfileScreen(it.userId)
+            is ReferralProgramViewModel.Command.OpenShareDialog -> context.startSharePhotoIntent(
+                uri = it.uri,
+                text = it.text,
+            )
         }
     }
 
@@ -131,6 +152,12 @@ fun ReferralProgramScreen(
             MainHeaderHandler.Command.OpenWalletScreen -> router.toWalletScreen()
         }
     }
+
+    val templatePhoto = generateTemplatePhoto(
+        bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.img_template),
+        qr = uiState.referralQr,
+        code = uiState.referralCode,
+    )
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
@@ -143,7 +170,10 @@ fun ReferralProgramScreen(
                     onInviteUserClicked = viewModel::onReferralCodeDialogButtonClicked,
                     onInviteCodeValueChanged = viewModel::onInviteCodeValueChanged,
                 )
-                ReferralProgramViewModel.BottomDialog.ReferralQr -> TODO()
+                ReferralProgramViewModel.BottomDialog.ReferralQr -> ReferralQrBottomDialog(
+                    bitmap = templatePhoto,
+                    onClick = viewModel::onShareQrClicked,
+                )
                 ReferralProgramViewModel.BottomDialog.ReferralProgramFootnote -> FootnoteBottomDialog(
                     FootnoteBottomDialogItem(
                         image = ImageValue.ResImage(R.drawable.img_guy_eating),
@@ -154,10 +184,11 @@ fun ReferralProgramScreen(
                         image = ImageValue.ResImage(R.drawable.img_guy_glad),
                         title = StringKey.ReferralProgramDialogTitleFootnoteMain2.textValue(),
                         text = StringKey.ReferralProgramDialogMessageFootnoteMain2.textValue(),
-                        onClick = {},
+                        onClick = viewModel::onShowReferralQrClicked,
                         buttonText = StringKey.ReferralProgramDialogActionFootnoteMain2.textValue(),
                     )
                 )
+
                 ReferralProgramViewModel.BottomDialog.ReferralsInvitedFootnote -> ReferralsInvitedBottomDialog()
             }
         },
@@ -309,7 +340,7 @@ private fun Body(
                         action = StringKey.ActionHowItWorks.textValue(),
                         onClick = onReferralsInvitedFootnoteClick,
                     )
-                    uiState.referralsTileState.Content(modifier = Modifier)
+                    uiState.referralsTileState.Content(modifier = Modifier.weight(1f))
                 }
             }
         }
@@ -664,4 +695,100 @@ private fun ReferralLevelBlock(
                 .rotate(rotateDegree),
         )
     }
+}
+
+@Composable
+fun ReferralQrBottomDialog(
+    bitmap: Bitmap,
+    onClick: (Bitmap) -> Unit,
+) {
+    SimpleBottomDialogUI {
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+            Image(
+                bitmap = bitmap.asImageBitmap(),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            SimpleButtonActionL(
+                onClick = { onClick(bitmap) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+            ) {
+                SimpleButtonContent(
+                    text = "Share template".textValue(),
+                    iconLeft = AppTheme.specificIcons.share,
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
+@Composable
+private fun generateTemplatePhoto(
+    bitmap: Bitmap,
+    qr: Bitmap?,
+    code: String,
+): Bitmap {
+    val templateBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
+    Canvas(templateBitmap.asImageBitmap()).apply {
+        with(this.nativeCanvas) {
+            val padding = 64.dp.toPx()
+            val staticLayout = getStaticLayout(
+                text = code,
+                paint = getTextPaint(
+                    size = 130.sp.toPx(),
+                    typeface = AppTheme.specificTypography.headlineLarge.toTypeface(),
+                ),
+                width = bitmap.width - padding.toInt() * 2,
+            )
+            val staticLayout2 = getStaticLayout(
+                text = "Download the SNAPS app and get a referral code".textValue().get().text,
+                paint = getTextPaint(
+                    size = 60.sp.toPx(),
+                    typeface = AppTheme.specificTypography.bodyLarge.toTypeface(),
+                ),
+                width = bitmap.width - padding.toInt() * 2,
+            )
+            drawBitmap(bitmap, 0f, 0f, null)
+            qr?.let {
+                val left = (bitmap.width - it.width) / 2f
+                drawBitmap(it, left, padding, null)
+            }
+            val text1dy = 2 * padding + (qr?.height?.toFloat() ?: 0f)
+            val text1dx = (bitmap.width - staticLayout.width) / 2f
+            translate(text1dx, text1dy)
+            staticLayout.draw(this)
+            translate((staticLayout.width - staticLayout2.width) / 2f, staticLayout.height + padding)
+            staticLayout2.draw(this)
+        }
+    }
+    return templateBitmap
+}
+
+private fun getStaticLayout(
+    text: String,
+    paint: TextPaint,
+    width: Int,
+): StaticLayout {
+    return StaticLayout
+        .Builder
+        .obtain(text, 0, text.length, paint, width)
+        .setAlignment(Layout.Alignment.ALIGN_CENTER)
+        .build()
+}
+
+private fun getTextPaint(
+    size: Float,
+    typeface: Typeface,
+) = TextPaint().apply {
+    isAntiAlias = true
+    this.typeface = typeface
+    textSize = size
+    color = android.graphics.Color.WHITE
 }

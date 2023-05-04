@@ -197,8 +197,9 @@ fun RegistrationScreen(
                         ).build()
                         googleSignInLauncher.launch(intentSenderRequest)
                     }.addOnFailureListener {
-                        // if "com.google.android.gms.common.api.ApiException: 10: Developer console is not set up correctly."
-                        // add your machine sha1 to the firebase console
+                        log("""
+                            If this is "com.google.android.gms.common.api.ApiException: 10: Developer console is not set up correctly." add your machine's sha1 to the firebase console
+                        """.trimIndent())
                         log(it)
                     }
             },

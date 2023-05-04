@@ -22,7 +22,6 @@ import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.addressEllipsized
-import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
@@ -32,7 +31,7 @@ import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 import io.snaps.coreuicompose.uikit.other.ShimmerTileLine
 import io.snaps.coreuitheme.compose.AppTheme
 
-sealed class PurchaseWithBnbTileState : TileState {
+sealed class PurchaseWithBnbState {
 
     abstract val nftType: NftType
 
@@ -45,38 +44,34 @@ sealed class PurchaseWithBnbTileState : TileState {
         val total: String,
         val onConfirmClick: () -> Unit,
         val onCancelClick: () -> Unit,
-    ) : PurchaseWithBnbTileState()
+    ) : PurchaseWithBnbState()
 
     data class Shimmer(
         override val nftType: NftType,
-    ) : PurchaseWithBnbTileState()
+    ) : PurchaseWithBnbState()
 
     data class Error(
         override val nftType: NftType,
+        val message: MessageBannerState? = null,
         val onClick: () -> Unit,
-    ) : PurchaseWithBnbTileState()
-
-    @Composable
-    override fun Content(modifier: Modifier) {
-        PurchaseWithBnbTile(modifier = modifier, data = this)
-    }
+    ) : PurchaseWithBnbState()
 }
 
 @Composable
-private fun PurchaseWithBnbTile(
-    modifier: Modifier,
-    data: PurchaseWithBnbTileState,
+fun PurchaseWithBnb(
+    modifier: Modifier = Modifier,
+    data: PurchaseWithBnbState,
 ) {
     when (data) {
-        is PurchaseWithBnbTileState.Shimmer -> Shimmer(data)
-        is PurchaseWithBnbTileState.Error -> Error(data)
-        is PurchaseWithBnbTileState.Data -> Data(data)
+        is PurchaseWithBnbState.Shimmer -> Shimmer(data)
+        is PurchaseWithBnbState.Error -> Error(data)
+        is PurchaseWithBnbState.Data -> Data(data)
     }
 }
 
 @Composable
 private fun Data(
-    data: PurchaseWithBnbTileState.Data,
+    data: PurchaseWithBnbState.Data,
 ) {
     Container(
         state = data,
@@ -196,18 +191,20 @@ private fun PriceLine(
 
 @Composable
 private fun Error(
-    data: PurchaseWithBnbTileState.Error,
+    data: PurchaseWithBnbState.Error,
 ) {
     Container(
         state = data,
     ) {
-        MessageBannerState.defaultState(onClick = data.onClick).Content(modifier = Modifier)
+        (data.message ?: MessageBannerState.defaultState(onClick = data.onClick)).Content(
+            modifier = Modifier,
+        )
     }
 }
 
 @Composable
 private fun Shimmer(
-    state: PurchaseWithBnbTileState.Shimmer,
+    state: PurchaseWithBnbState.Shimmer,
 ) {
     Container(
         state = state,
@@ -219,7 +216,7 @@ private fun Shimmer(
 @Composable
 private fun Container(
     modifier: Modifier = Modifier,
-    state: PurchaseWithBnbTileState,
+    state: PurchaseWithBnbState,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     SimpleBottomDialogUI(
@@ -240,9 +237,9 @@ private fun Container(
 //@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewData() {
-    PurchaseWithBnbTile(
+    PurchaseWithBnb(
         modifier = Modifier,
-        data = PurchaseWithBnbTileState.Data(
+        data = PurchaseWithBnbState.Data(
             nftType = NftType.Newbie,
             from = "0x5F0cF62ad1DD5A267427DC161ff365b75142E3b3",
             to = "0x5F0cF62ad1DD5A267427DC161ff365b75142E3b3",
@@ -259,9 +256,9 @@ private fun PreviewData() {
 //@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewError() {
-    PurchaseWithBnbTile(
+    PurchaseWithBnb(
         modifier = Modifier,
-        data = PurchaseWithBnbTileState.Error(nftType = NftType.Newbie, onClick = {}),
+        data = PurchaseWithBnbState.Error(nftType = NftType.Newbie, onClick = {}),
     )
 }
 
@@ -269,8 +266,8 @@ private fun PreviewError() {
 //@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewShimmer() {
-    PurchaseWithBnbTile(
+    PurchaseWithBnb(
         modifier = Modifier,
-        data = PurchaseWithBnbTileState.Shimmer(nftType = NftType.Newbie),
+        data = PurchaseWithBnbState.Shimmer(nftType = NftType.Newbie),
     )
 }

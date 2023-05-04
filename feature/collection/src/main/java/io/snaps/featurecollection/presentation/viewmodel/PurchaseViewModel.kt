@@ -10,6 +10,7 @@ import io.snaps.basesources.NotificationsSource
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basewallet.domain.NftMintSummary
+import io.snaps.basewallet.domain.NoEnoughBnbToMint
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
@@ -18,13 +19,16 @@ import io.snaps.corecommon.model.FiatCurrency
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.Token
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
+import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
+import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurecollection.domain.MyCollectionInteractor
-import io.snaps.featurecollection.presentation.screen.PurchaseWithBnbTileState
+import io.snaps.featurecollection.presentation.screen.PurchaseWithBnbState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -58,7 +62,7 @@ class PurchaseViewModel @Inject constructor(
             isPurchasable = args.isPurchasable,
             isPurchasableWithBnb = featureToggle.isEnabled(Feature.PurchaseNftWithBnb),
             sunglassesImage = getSunglassesImage(),
-            purchaseWithBnbTileState = PurchaseWithBnbTileState.Shimmer(nftType = args.type),
+            purchaseWithBnbState = PurchaseWithBnbState.Shimmer(nftType = args.type),
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -108,7 +112,7 @@ class PurchaseViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     bottomDialog = BottomDialog.PurchaseWithBnb,
-                    purchaseWithBnbTileState = PurchaseWithBnbTileState.Shimmer(nftType = args.type),
+                    purchaseWithBnbState = PurchaseWithBnbState.Shimmer(nftType = args.type),
                 )
             }
             _command publish Command.ShowBottomDialog
@@ -122,11 +126,11 @@ class PurchaseViewModel @Inject constructor(
         }.doOnSuccess { summary ->
             _uiState.update {
                 it.copy(
-                    purchaseWithBnbTileState = PurchaseWithBnbTileState.Data(
+                    purchaseWithBnbState = PurchaseWithBnbState.Data(
                         nftType = args.type,
                         from = summary.from,
                         to = summary.to,
-                        // todo
+                        // todo localize
                         summary = summary.summary.toDouble().toStringValue() + " BNB",
                         gas = summary.gas.toDouble().toStringValue() + " BNB",
                         total = summary.total.toDouble().toStringValue() + " BNB",
@@ -136,6 +140,25 @@ class PurchaseViewModel @Inject constructor(
                                 _command publish Command.HideBottomDialog
                             }
                         },
+                    )
+                )
+            }
+        }.doOnError { error, _ ->
+            _uiState.update {
+                it.copy(
+                    purchaseWithBnbState = PurchaseWithBnbState.Error(
+                        nftType = args.type,
+                        message = MessageBannerState(
+                            icon = AppTheme.specificIcons.reload.toImageValue(),
+                            description = "Not enough BNB to mint".textValue(), // todo localize
+                            button = StringKey.ActionClose.textValue(),
+                            onClick = {
+                                viewModelScope.launch {
+                                    _command publish Command.HideBottomDialog
+                                }
+                            }
+                        ).takeIf { error.cause is NoEnoughBnbToMint },
+                        onClick = ::onBuyWithBNBClicked,
                     )
                 )
             }
@@ -187,7 +210,7 @@ class PurchaseViewModel @Inject constructor(
         val isPurchasableWithBnb: Boolean,
         val sunglassesImage: ImageValue? = null,
         val bottomDialog: BottomDialog = BottomDialog.PurchaseWithBnb,
-        val purchaseWithBnbTileState: PurchaseWithBnbTileState,
+        val purchaseWithBnbState: PurchaseWithBnbState,
     )
 
     sealed class BottomDialog {

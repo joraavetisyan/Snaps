@@ -100,6 +100,10 @@ fun PurchaseScreen(
         sheetState = sheetState,
         sheetContent = {
             when (val dialog = uiState.bottomDialog) {
+                PurchaseViewModel.BottomDialog.PurchaseWithBnb -> PurchaseWithBnb(
+                    data = uiState.purchaseWithBnbState,
+                )
+
                 is PurchaseViewModel.BottomDialog.PurchaseWithBnbSuccess -> SimpleBottomDialog(
                     image = ImageValue.ResImage(R.drawable.img_guy_hands_up),
                     title = "Transaction succeeded".textValue(),
@@ -109,10 +113,6 @@ fun PurchaseScreen(
                         coroutineScope.launch { sheetState.hide() }
                         context.openUrl(dialog.link)
                     },
-                )
-
-                PurchaseViewModel.BottomDialog.PurchaseWithBnb -> uiState.purchaseWithBnbTileState.Content(
-                    modifier = Modifier,
                 )
             }
         }

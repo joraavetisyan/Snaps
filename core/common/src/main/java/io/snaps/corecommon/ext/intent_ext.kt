@@ -26,10 +26,11 @@ fun Context.startSharePhotoToInstagramIntent(uri: Uri) {
     startActivity(shareIntent)
 }
 
-fun Context.startSharePhotoIntent(uri: Uri) {
+fun Context.startSharePhotoIntent(uri: Uri, text: String? = null) {
     val intent = Intent(Intent.ACTION_SEND).apply {
         type = "image/*"
         putExtra(Intent.EXTRA_STREAM, uri)
+        text?.let { putExtra(Intent.EXTRA_TEXT, it) }
         flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
     }
     val shareIntent = Intent.createChooser(intent, null)
