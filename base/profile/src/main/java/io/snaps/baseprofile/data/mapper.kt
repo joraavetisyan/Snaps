@@ -12,10 +12,9 @@ import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
-import io.snaps.corecommon.ext.round
-import io.snaps.corecommon.ext.toStringValue
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.State
+import io.snaps.corecommon.model.WalletModel
 import java.lang.Integer.min
 import java.time.ZonedDateTime
 
@@ -81,16 +80,17 @@ private fun QuestItemDto.energyProgress(): Int {
 
 fun mainHeaderState(
     profile: State<UserInfoModel>,
-    coins: State<BalanceModel>,
+    snp: WalletModel?,
+    bnb: WalletModel?,
     onProfileClicked: () -> Unit,
     onWalletClicked: () -> Unit,
-) = if (profile is Effect && coins is Effect) {
-    if (profile.isSuccess && coins.isSuccess) {
+) = if (profile is Effect) {
+    if (profile.isSuccess) {
         MainHeaderState.Data(
             profileImage = profile.requireData.avatar,
             energy = profile.requireData.questInfo?.totalEnergyProgress.toString(),
-            unlocked = coins.requireData.unlocked.round().toStringValue(),
-            locked = coins.requireData.locked.round().toStringValue(),
+            bnb = bnb?.coinValue ?: "-",
+            snp = snp?.coinValue ?: "-",
             onProfileClicked = onProfileClicked,
             onWalletClicked = onWalletClicked,
         )

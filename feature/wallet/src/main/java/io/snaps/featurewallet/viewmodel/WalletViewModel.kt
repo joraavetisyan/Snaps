@@ -9,7 +9,6 @@ import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.ext.toStringValue
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.corecommon.model.WalletModel
@@ -34,6 +33,7 @@ import io.snaps.featurewallet.toRewardsTileState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -63,7 +63,6 @@ class WalletViewModel @Inject constructor(
     private var wallets = listOf<WalletModel>()
 
     init {
-        subscribeToBalance()
         subscribeToTotalBalance()
         subscribeToWallets()
         subscribeToRewards()
@@ -75,15 +74,6 @@ class WalletViewModel @Inject constructor(
         checkOnboarding(OnboardingType.Wallet)
     }
 
-    private fun subscribeToBalance() {
-        // To update SNAPS token fiat value todo move logic to interactor
-        profileRepository.balanceState.onEach { state ->
-            if (state.dataOrCache != null) {
-                updateWallets(wallets)
-            }
-        }.launchIn(viewModelScope)
-    }
-
     private fun subscribeToTotalBalance() {
         walletRepository.totalBalanceValue.onEach { totalBalance ->
             _uiState.update { it.copy(totalBalance = totalBalance) }
@@ -91,26 +81,26 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun subscribeToWallets() {
-        walletRepository.activeWallets.onEach { wallets ->
-            this.wallets = wallets
-            updateWallets(wallets)
+        walletRepository.activeWallets.combine(flow = walletInteractor.snpFiatState) { wallets, balance ->
+            wallets.map {
+                if (it.symbol == "SNAPS") {
+                    it.copy(fiatValue = balance.dataOrCache.orEmpty())
+                } else {
+                    it
+                }
+            }
+        }.onEach { state ->
+            this.wallets = state
+            _uiState.update {
+                it.copy(
+                    address = state.firstOrNull()?.receiveAddress.orEmpty(),
+                    wallets = state.toCellTileStateList(
+                        onClick = ::openWithdrawScreen,
+                    ),
+                )
+            }
         }.launchIn(viewModelScope)
     }
-
-    private fun updateWallets(wallets: List<WalletModel>) {
-        _uiState.update {
-            it.copy(
-                address = wallets.firstOrNull()?.receiveAddress.orEmpty(),
-                wallets = wallets.toCellTileStateList(
-                    snpFiatValue = getSnpFiatValue(),
-                    onClick = ::openWithdrawScreen,
-                ),
-            )
-        }
-    }
-
-    private fun getSnpFiatValue() =
-        profileRepository.balanceState.value.dataOrCache?.snpExchangeRate?.toStringValue()
 
     private fun subscribeToRewards() {
         profileRepository.balanceState.map {
@@ -229,7 +219,6 @@ class WalletViewModel @Inject constructor(
                 it.copy(
                     bottomDialog = BottomDialog.SelectWallet(
                         wallets = wallets.toCellTileStateList(
-                            snpFiatValue = getSnpFiatValue(),
                             onClick = onSelected,
                         ),
                     ),

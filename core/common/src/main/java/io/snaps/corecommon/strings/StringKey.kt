@@ -321,6 +321,7 @@ enum class StringKey {
     MyCollectionTitleMysteryBox,
     MyCollectionFieldNeedToRepair,
     MyCollectionActionRepairGlasses,
+    MyCollectionActionProcessing,
 
     RankSelectionTitle,
     RankSelectionActionFootnote,

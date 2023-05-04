@@ -58,6 +58,7 @@ class MyCollectionViewModel @Inject constructor(
                 onReloadClicked = ::onNftReloadClicked,
                 onRepairClicked = ::onRepairClicked,
                 onItemClicked = ::onItemClicked,
+                onProcessingClicked = ::onProcessingClicked,
             )
         }.onEach { state ->
             _uiState.update { it.copy(nft = state) }
@@ -85,6 +86,10 @@ class MyCollectionViewModel @Inject constructor(
         }.doOnComplete {
             _uiState.update { it.copy(isLoading = false) }
         }
+    }
+
+    private fun onProcessingClicked(nftModel: NftModel) {
+        // todo
     }
 
     private fun onItemClicked(nftModel: NftModel) {

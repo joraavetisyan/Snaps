@@ -1,6 +1,7 @@
 package io.snaps.baseprofile.data
 
 import io.snaps.baseprofile.ui.MainHeaderState
+import io.snaps.basewallet.data.WalletRepository
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.network.Action
 import kotlinx.coroutines.CoroutineScope
@@ -36,6 +37,7 @@ interface MainHeaderHandler {
 class MainHeaderHandlerImplDelegate @Inject constructor(
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val profileRepository: ProfileRepository,
+    private val walletRepository: WalletRepository,
     private val action: Action,
 ) : MainHeaderHandler {
 
@@ -46,15 +48,17 @@ class MainHeaderHandlerImplDelegate @Inject constructor(
     override val headerCommand = _command.receiveAsFlow()
 
     init {
+        walletRepository.getBnbWalletModel()
         subscribeToData()
         updateData()
     }
 
     private fun subscribeToData() {
-        profileRepository.state.combine(flow = profileRepository.balanceState) { profile, coins ->
+        profileRepository.state.combine(flow = walletRepository.activeWallets) { profile, _ ->
             mainHeaderState(
                 profile = profile,
-                coins = coins,
+                snp = walletRepository.getSnpWalletModel(),
+                bnb = walletRepository.getBnbWalletModel(),
                 onProfileClicked = ::onProfileClicked,
                 onWalletClicked = ::onWalletClicked,
             )

@@ -918,6 +918,9 @@ internal val strings = mapOf(
     key(StringKey.MyCollectionActionRepairGlasses) to mapOf(
         SupportedLanguageKey.En to "Repair Glasses",
     ),
+    key(StringKey.MyCollectionActionProcessing) to mapOf(
+        SupportedLanguageKey.En to "Processing",
+    ),
 
     key(StringKey.RankSelectionTitle) to mapOf(
         SupportedLanguageKey.En to "Choose a rank for your glasses",
