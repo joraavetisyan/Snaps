@@ -39,8 +39,8 @@ sealed class MainHeaderState {
     data class Data(
         val profileImage: ImageValue,
         val energy: String,
-        val locked: String,
-        val unlocked: String,
+        val bnb: String,
+        val snp: String,
         override val onProfileClicked: () -> Unit,
         override val onWalletClicked: () -> Unit,
     ) : MainHeaderState()
@@ -79,8 +79,8 @@ private fun Data(
         EnergyWidget(state.energy)
         Spacer(Modifier.width(4.dp))
         ValueWidget(
-            ImageValue.ResImage(R.drawable.img_coin_locked) to state.locked,
-            ImageValue.ResImage(R.drawable.img_coin_gold) to state.unlocked,
+            ImageValue.ResImage(R.drawable.ic_bnb_token) to state.bnb,
+            ImageValue.ResImage(R.drawable.ic_snp_token) to state.snp,
             modifier = Modifier.defaultTileRipple(onClick = state.onWalletClicked),
         )
     }
@@ -156,8 +156,8 @@ private fun Preview() {
         state = MainHeaderState.Data(
             profileImage = ImageValue.ResImage(R.drawable.img_guy_welcoming),
             energy = "12",
-            unlocked = "12",
-            locked = "12",
+            snp = "12",
+            bnb = "12",
             onProfileClicked = {},
             onWalletClicked = {},
         )

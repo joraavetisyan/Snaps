@@ -118,6 +118,8 @@ interface WalletRepository {
 
     fun getBnbWalletModel(): WalletModel?
 
+    fun getSnpWalletModel(): WalletModel?
+
     fun deleteAccount(id: Uuid)
 
     /**
@@ -279,6 +281,12 @@ class WalletRepositoryImpl @Inject constructor(
     override fun getBnbWalletModel(): WalletModel? {
         return activeWallets.value.firstOrNull {
             it.coinUid == "binancecoin"
+        }
+    }
+
+    override fun getSnpWalletModel(): WalletModel? {
+        return activeWallets.value.firstOrNull {
+            it.symbol == "SNAPS"
         }
     }
 

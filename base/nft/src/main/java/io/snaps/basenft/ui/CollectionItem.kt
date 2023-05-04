@@ -20,15 +20,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
+import io.snaps.coreuicompose.tools.addIf
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
@@ -48,7 +51,9 @@ sealed class CollectionItemState : TileState {
         val dailyUnlock: String,
         val dailyConsumption: String,
         val isHealthy: Boolean,
+        val isProcessing: Boolean,
         val onRepairClicked: () -> Unit,
+        val onProcessingClicked: () -> Unit,
         val onItemClicked: () -> Unit,
     ) : CollectionItemState()
 
@@ -91,10 +96,21 @@ private fun Nft(
 ) {
     Column(modifier) {
         Container(
-            Modifier.defaultTileRipple(
-                onClick = data.onItemClicked,
-                padding = 0.dp,
-            )
+            Modifier
+                .defaultTileRipple(
+                    onClick = data.onItemClicked,
+                    padding = 0.dp,
+                )
+                .addIf(data.isProcessing) {
+                    drawWithCache {
+                        onDrawWithContent {
+                            drawContent()
+                            drawRect(
+                                color = Color.White.copy(alpha = 0.5f),
+                            )
+                        }
+                    }
+                },
         ) {
             Box(
                 modifier = Modifier
@@ -136,7 +152,20 @@ private fun Nft(
                 value = data.dailyConsumption,
             )
         }
-        if (!data.isHealthy) RepairButton(onClick = data.onRepairClicked)
+        if (!data.isHealthy) {
+            Button(
+                text = StringKey.MyCollectionActionRepairGlasses.textValue(),
+                textColor = AppTheme.specificColorScheme.pink,
+                onClick = data.onRepairClicked,
+            )
+        }
+        if (data.isProcessing) {
+            Button(
+                text = StringKey.MyCollectionActionProcessing.textValue(),
+                textColor = AppTheme.specificColorScheme.uiAccent,
+                onClick = data.onProcessingClicked,
+            )
+        }
     }
 }
 
@@ -157,7 +186,9 @@ private fun NeedToRepairMessage() {
 }
 
 @Composable
-private fun RepairButton(
+private fun Button(
+    text: TextValue,
+    textColor: Color,
     onClick: () -> Unit,
 ) {
     SimpleCard(
@@ -169,8 +200,8 @@ private fun RepairButton(
             .defaultTileRipple(onClick = onClick)
     ) {
         Text(
-            text = StringKey.MyCollectionActionRepairGlasses.textValue().get(),
-            color = AppTheme.specificColorScheme.pink,
+            text = text.get(),
+            color = textColor,
             style = AppTheme.specificTypography.labelMedium,
             modifier = Modifier
                 .fillMaxWidth()

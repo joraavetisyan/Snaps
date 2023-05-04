@@ -276,6 +276,7 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.MyCollectionTitleMysteryBox -> TODO()
     StringKey.MyCollectionFieldNeedToRepair -> TODO()
     StringKey.MyCollectionActionRepairGlasses -> TODO()
+    StringKey.MyCollectionActionProcessing -> TODO()
     StringKey.RankSelectionTitle -> TODO()
     StringKey.RankSelectionActionFootnote -> TODO()
     StringKey.RankSelectionTitleDailyReward -> TODO()

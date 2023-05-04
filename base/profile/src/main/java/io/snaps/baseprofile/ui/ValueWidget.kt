@@ -2,6 +2,7 @@ package io.snaps.baseprofile.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -45,14 +46,22 @@ fun ValueWidget(
         value: String,
         modifier: Modifier = Modifier,
     ) {
-        Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             if (image != null) Image(
                 painter = image.get(),
                 contentDescription = null,
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier
+                    .padding(end = 4.dp)
+                    .size(24.dp),
                 contentScale = ContentScale.Crop,
             )
-            Text(text = value, style = AppTheme.specificTypography.bodySmall)
+            Text(
+                text = value,
+                style = AppTheme.specificTypography.bodySmall,
+            )
         }
     }
     Card(
@@ -64,6 +73,7 @@ fun ValueWidget(
             modifier = Modifier
                 .background(color = backgroundColor, shape = MainHeaderElementShape)
                 .padding(horizontal = 8.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             items.forEach { Element(it.first, it.second) }
         }

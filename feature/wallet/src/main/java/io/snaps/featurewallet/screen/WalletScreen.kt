@@ -49,6 +49,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -305,6 +306,7 @@ private fun Wallet(
             uiState.wallets.forEach { item ->
                 item.Content(
                     modifier = Modifier
+                        .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
                         .background(
                             color = AppTheme.specificColorScheme.white,
                             shape = AppTheme.shapes.medium,
