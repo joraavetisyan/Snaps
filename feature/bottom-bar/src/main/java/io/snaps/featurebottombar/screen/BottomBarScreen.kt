@@ -216,7 +216,7 @@ private fun OnboardingDialog(
         OnboardingType.Rank -> OnboardingBottomDialog(
             image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
             title = StringKey.OnboardingRankTitle.textValue(),
-            text = StringKey.OnboardingRankText.textValue(),
+            text = StringKey.OnboardingRankMessage.textValue(),
             buttonText = StringKey.OnboardingRankAction.textValue(),
             onClick = {
                 onClicked(onboardingState.dialogType)
@@ -225,7 +225,7 @@ private fun OnboardingDialog(
         OnboardingType.Popular -> OnboardingBottomDialog(
             image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
             title = StringKey.OnboardingPopularTitle.textValue(),
-            text = StringKey.OnboardingPopularText.textValue(),
+            text = StringKey.OnboardingPopularMessage.textValue(),
             buttonText = StringKey.OnboardingPopularAction.textValue(),
             onClick = {
                 onClicked(onboardingState.dialogType)
@@ -234,7 +234,7 @@ private fun OnboardingDialog(
         OnboardingType.Tasks -> OnboardingBottomDialog(
             image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
             title = StringKey.OnboardingTasksTitle.textValue(),
-            text = StringKey.OnboardingTasksText.textValue(),
+            text = StringKey.OnboardingTasksMessage.textValue(),
             buttonText = StringKey.OnboardingTasksAction.textValue(),
             onClick = {
                 onClicked(onboardingState.dialogType)
@@ -252,7 +252,7 @@ private fun OnboardingDialog(
         OnboardingType.Referral -> OnboardingBottomDialog(
             image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
             title = StringKey.OnboardingReferralTitle.textValue(),
-            text = StringKey.OnboardingReferralText.textValue(),
+            text = StringKey.OnboardingReferralMessage.textValue(),
             buttonText = StringKey.OnboardingReferralAction.textValue(),
             onClick = {
                 onClicked(onboardingState.dialogType)
@@ -270,7 +270,7 @@ private fun OnboardingDialog(
         OnboardingType.Rewards -> OnboardingBottomDialog(
             image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
             title = StringKey.OnboardingRewardsTitle.textValue(),
-            text = StringKey.OnboardingRewardsText.textValue(),
+            text = StringKey.OnboardingRewardsMessage.textValue(),
             buttonText = StringKey.OnboardingRewardsAction.textValue(),
             onClick = {
                 onClicked(onboardingState.dialogType)

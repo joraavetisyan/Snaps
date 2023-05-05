@@ -169,7 +169,7 @@ private fun PurchaseScreen(
             Spacer(modifier = Modifier.height(12.dp))
             CardBlock(
                 title = StringKey.PurchaseTitleDailyCosts.textValue(),
-                description = StringKey.PurchaseDescriptionDailyCosts.textValue(),
+                description = StringKey.PurchaseMessageDailyCosts.textValue(),
             )
         }
     }

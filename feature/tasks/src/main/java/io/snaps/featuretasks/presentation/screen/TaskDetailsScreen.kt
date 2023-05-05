@@ -124,12 +124,12 @@ private fun Content(
     onStartButtonClicked: () -> Unit,
 ) {
     val description = when (uiState.type) {
-        QuestType.Like -> StringKey.TaskLikeDescription
-        QuestType.PublishVideo -> StringKey.TaskPublishVideoDescription
-        QuestType.SocialPost -> StringKey.TaskSocialPostDescription
-        QuestType.SocialShare -> StringKey.TaskSocialShareDescription
-        QuestType.Subscribe -> StringKey.TaskSubscribeDescription
-        QuestType.Watch -> StringKey.TaskWatchVideoDescription
+        QuestType.Like -> StringKey.TaskLikeMessage
+        QuestType.PublishVideo -> StringKey.TaskPublishVideoMessage
+        QuestType.SocialPost -> StringKey.TaskSocialPostMessage
+        QuestType.SocialShare -> StringKey.TaskSocialShareMessage
+        QuestType.Subscribe -> StringKey.TaskSubscribeMessage
+        QuestType.Watch -> StringKey.TaskWatchVideoMessage
     }.textValue()
     SimpleCard {
         TaskProgress(

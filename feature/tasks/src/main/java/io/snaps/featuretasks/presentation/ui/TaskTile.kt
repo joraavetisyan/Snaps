@@ -145,11 +145,11 @@ private fun TaskStatusMessage(
         Text(
             text = when (taskStatus) {
                 TaskStatus.Credited -> StringKey.TasksMessageTaskCounted
-                TaskStatus.Rejected -> StringKey.TasksFieldSocialPostRejected
+                TaskStatus.Rejected -> StringKey.TasksMessageSocialPostRejected
                 TaskStatus.InProgress -> StringKey.TasksMessageTaskInProgress
-                TaskStatus.NotPosted -> StringKey.TasksFieldSocialPostNotPosted
-                TaskStatus.WaitForVerification -> StringKey.TasksFieldSocialPostWaitForVerification
-                TaskStatus.NotSendToVerify -> StringKey.TasksFieldSocialPostNotSendToVerify
+                TaskStatus.NotPosted -> StringKey.TasksMessageSocialPostNotPosted
+                TaskStatus.WaitForVerification -> StringKey.TasksMessageSocialPostReview
+                TaskStatus.NotSendToVerify -> StringKey.TasksMessageSocialPostNotSendToVerify
             }.textValue().get(),
             color = color,
             style = AppTheme.specificTypography.bodySmall,

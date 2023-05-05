@@ -74,11 +74,11 @@ fun QuestType.toTaskTitle() = when (this) {
 }
 
 fun QuestType.toTaskDescription() = when (this) {
-    QuestType.Like -> StringKey.TasksDescriptionLike.textValue()
-    QuestType.PublishVideo -> StringKey.TasksDescriptionPublishVideo.textValue()
-    QuestType.Subscribe -> StringKey.TasksDescriptionSubscribe.textValue()
-    QuestType.Watch -> StringKey.TasksDescriptionWatchVideo.textValue()
-    else -> StringKey.TasksDescriptionSocialPost.textValue()
+    QuestType.Like -> StringKey.TasksMessageLike.textValue()
+    QuestType.PublishVideo -> StringKey.TasksMessagePublishVideo.textValue()
+    QuestType.Subscribe -> StringKey.TasksMessageSubscribe.textValue()
+    QuestType.Watch -> StringKey.TasksMessageWatchVideo.textValue()
+    else -> StringKey.TasksMessageSocialPost.textValue()
 }
 
 fun QuestModel.status(): TaskStatus? = when (status) {

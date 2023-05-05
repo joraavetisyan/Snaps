@@ -15,6 +15,7 @@ internal val strings = mapOf(
     ),
     key(StringKey.ActionContinue) to mapOf(
         SupportedLanguageKey.En to "Continue",
+        SupportedLanguageKey.Ru to "Продолжить",
     ),
     key(StringKey.ActionCancel) to mapOf(
         SupportedLanguageKey.En to "Cancel",
@@ -57,21 +58,21 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ru to "Добро пожаловать в Snaps!",
         SupportedLanguageKey.En to "Welcome to Snaps!",
     ),
-    key(StringKey.OnboardingRankText) to mapOf(
+    key(StringKey.OnboardingRankMessage) to mapOf(
         SupportedLanguageKey.Ru to "Для того, чтобы начать получать награду за каждое действие в приложении выберите себе свои первые NFT очки!",
-        SupportedLanguageKey.En to "To get a reward for every action in the app, choose your first NFT points!",
+        SupportedLanguageKey.En to "In order to start getting a reward for every action in the app, choose your first NFT points!",
     ),
     key(StringKey.OnboardingRankAction) to mapOf(
         SupportedLanguageKey.Ru to "Выбрать NFT очки",
-        SupportedLanguageKey.En to "Select NFT",
+        SupportedLanguageKey.En to "Select NFT points",
     ),
     key(StringKey.OnboardingPopularTitle) to mapOf(
         SupportedLanguageKey.Ru to "Популярное",
         SupportedLanguageKey.En to "Popular",
     ),
-    key(StringKey.OnboardingPopularText) to mapOf(
-        SupportedLanguageKey.Ru to "Здесь вы найдете видео самых популярных авторов в Snaps! Посмотрите, какие видео сейчас в  тренде!",
-        SupportedLanguageKey.En to "Here you will find videos of the most popular authors in Snaps! Check out what videos are trending right now!",
+    key(StringKey.OnboardingPopularMessage) to mapOf(
+        SupportedLanguageKey.Ru to "Здесь вы найдете видео самых популярных авторов в Snaps! Посмотрите, какие видео сейчас в тренде!",
+        SupportedLanguageKey.En to "Here you'll find the videos of the most popular creators on Snaps! See what videos are trending right now!",
     ),
     key(StringKey.OnboardingPopularAction) to mapOf(
         SupportedLanguageKey.Ru to "Продолжить",
@@ -81,7 +82,7 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ru to "Задания",
         SupportedLanguageKey.En to "Tasks",
     ),
-    key(StringKey.OnboardingTasksText) to mapOf(
+    key(StringKey.OnboardingTasksMessage) to mapOf(
         SupportedLanguageKey.Ru to "Для того, чтобы получать награды в Snaps Вам необходимо успешно завершать эти задания.\n" +
                 "Но перед началом, узнайте подробнее о каждом задании!",
         SupportedLanguageKey.En to "In order to receive rewards in Snaps, you need to successfully complete these tasks.\n" +
@@ -104,10 +105,10 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Raise NFT rank",
     ),
     key(StringKey.OnboardingReferralTitle) to mapOf(
-        SupportedLanguageKey.Ru to "Рефералы",
-        SupportedLanguageKey.En to "Refferal",
+        SupportedLanguageKey.Ru to "Реферальная программа",
+        SupportedLanguageKey.En to "Referral program",
     ),
-    key(StringKey.OnboardingReferralText) to mapOf(
+    key(StringKey.OnboardingReferralMessage) to mapOf(
         SupportedLanguageKey.Ru to "Вы можете отправить другу Вашу пригласительную ссылку или Ваш реферальный код. Или же если у Вас уже есть реферальный код, то вы можете ввести его в соответсвующем поле. ",
         SupportedLanguageKey.En to "You can send your invite link or your referral code to a friend. Or if you already have a referral code, then you can enter it in the corresponding field.",
     ),
@@ -116,8 +117,8 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Learn more",
     ),
     key(StringKey.OnboardingWalletTitle) to mapOf(
-        SupportedLanguageKey.Ru to "Кошелек",
-        SupportedLanguageKey.En to "Wallet",
+        SupportedLanguageKey.Ru to "Мой кошелек",
+        SupportedLanguageKey.En to "My wallet",
     ),
     key(StringKey.OnboardingWalletText) to mapOf(
         SupportedLanguageKey.Ru to "Это ваш криптовалютный кошелек. Он полностью безопасен, а ключи от него знаете только Вы! Проверьте записали ли Вы Вашу секретную фразу!",
@@ -128,10 +129,10 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "ОК",
     ),
     key(StringKey.OnboardingRewardsTitle) to mapOf(
-        SupportedLanguageKey.Ru to "Награды",
-        SupportedLanguageKey.En to "Rewards",
+        SupportedLanguageKey.Ru to "Мои Награды",
+        SupportedLanguageKey.En to "My Rewards",
     ),
-    key(StringKey.OnboardingRewardsText) to mapOf(
+    key(StringKey.OnboardingRewardsMessage) to mapOf(
         SupportedLanguageKey.Ru to "Здесь хранятся все Ваши награды! В верхнем кошельке вы увидите награды, которые можете получить прямо сейчас. В заблокированном кошельке награды, которые вы можете забирать постепенно каждый день!",
         SupportedLanguageKey.En to "All your rewards are stored here! In the upper wallet you will see the rewards that you can get right now. There are rewards in the locked wallet that you can collect gradually every day!",
     ),
@@ -280,6 +281,7 @@ internal val strings = mapOf(
 
     key(StringKey.CreateWalletAction) to mapOf(
         SupportedLanguageKey.En to "Continue",
+        SupportedLanguageKey.Ru to "Продолжить",
     ),
     key(StringKey.CreateWalletMessage) to mapOf(
         SupportedLanguageKey.En to "If your device is lost or stolen, you can restore access to your funds using a seed phrase. If you lose access to your seed, this will result in a loss of funds.",
@@ -310,6 +312,7 @@ internal val strings = mapOf(
 
     key(StringKey.CreatedWalletAction) to mapOf(
         SupportedLanguageKey.En to "Continue",
+        SupportedLanguageKey.Ru to "Продолжить",
     ),
     key(StringKey.CreatedWalletMessage) to mapOf(
         SupportedLanguageKey.En to "Congratulations! Your wallet has been successfully created, now you can start using your account",
@@ -365,6 +368,7 @@ internal val strings = mapOf(
 
     key(StringKey.ReferralProgramTitleFootnoteMain) to mapOf(
         SupportedLanguageKey.En to "Referral program",
+        SupportedLanguageKey.Ru to "Реферальная программа",
     ),
 
     key(StringKey.SearchVideosTitle) to mapOf(
@@ -375,16 +379,20 @@ internal val strings = mapOf(
     ),
     key(StringKey.SearchHint) to mapOf(
         SupportedLanguageKey.En to "Search",
+        SupportedLanguageKey.Ru to "Поиск",
     ),
 
     key(StringKey.ReferralProgramTitleSliderMain) to mapOf(
         SupportedLanguageKey.En to "Main",
+        SupportedLanguageKey.Ru to "Главная",
     ),
     key(StringKey.ReferralProgramTitleSliderMyReferrals) to mapOf(
         SupportedLanguageKey.En to "My referrals",
+        SupportedLanguageKey.Ru to "Мои рефералы",
     ),
     key(StringKey.ReferralProgramTitleFootnoteMain) to mapOf(
         SupportedLanguageKey.En to "Referral program",
+        SupportedLanguageKey.Ru to "Реферальная программа",
     ),
     key(StringKey.ReferralProgramTitleFootnoteMyReferrals) to mapOf(
         SupportedLanguageKey.En to "Invited referrals",
@@ -448,6 +456,7 @@ internal val strings = mapOf(
     ),
     key(StringKey.ReferralProgramTitleNoReferrals) to mapOf(
         SupportedLanguageKey.En to "No referrals yet",
+        SupportedLanguageKey.Ru to "У вас пока нет рефералов",
     ),
     key(StringKey.ReferralProgramMessageNoReferrals) to mapOf(
         SupportedLanguageKey.En to "You haven't invited any user yet.",
@@ -466,6 +475,7 @@ internal val strings = mapOf(
     ),
     key(StringKey.ReferralProgramDialogActionFootnoteMain2) to mapOf(
         SupportedLanguageKey.En to "Referral program",
+        SupportedLanguageKey.Ru to "Реферальная программа",
     ),
     key(StringKey.ReferralProgramDialogTitleFootnoteMyReferrals) to mapOf(
         SupportedLanguageKey.En to "Get a boost in rewards for referred friends.",
@@ -500,9 +510,11 @@ internal val strings = mapOf(
     ),
     key(StringKey.SettingsTitleWallet) to mapOf(
         SupportedLanguageKey.En to "Wallet",
+        SupportedLanguageKey.Ru to "Кошелек",
     ),
     key(StringKey.SettingsTitleReferralProgram) to mapOf(
         SupportedLanguageKey.En to "Referral program",
+        SupportedLanguageKey.Ru to "Реферальная программа",
     ),
     key(StringKey.SettingsTitleSocialNetworks) to mapOf(
         SupportedLanguageKey.En to "Our social networks",
@@ -529,15 +541,18 @@ internal val strings = mapOf(
 
     key(StringKey.TasksTitleSlideCurrent) to mapOf(
         SupportedLanguageKey.En to "Current",
+        SupportedLanguageKey.Ru to "Текущие",
     ),
     key(StringKey.TasksTitleSlideHistory) to mapOf(
         SupportedLanguageKey.En to "History",
+        SupportedLanguageKey.Ru to "История",
     ),
     key(StringKey.TasksTitleFootnoteCurrent) to mapOf(
         SupportedLanguageKey.En to "Complete the task",
     ),
     key(StringKey.TasksTitleFootnoteHistory) to mapOf(
         SupportedLanguageKey.En to "History",
+        SupportedLanguageKey.Ru to "История",
     ),
     key(StringKey.TasksTitleRemainingTime) to mapOf(
         SupportedLanguageKey.En to "Until the end of the round",
@@ -552,52 +567,67 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Here you can see the history of your tasks and your progress.",
     ),
     key(StringKey.TasksMessageTaskCounted) to mapOf(
-        SupportedLanguageKey.En to "Assignment credited",
+        SupportedLanguageKey.En to "Assignment scored",
+        SupportedLanguageKey.Ru to "Задание засчитано",
     ),
     key(StringKey.TasksMessageTaskInProgress) to mapOf(
         SupportedLanguageKey.En to "Assignment will be credited if completed in full",
+        SupportedLanguageKey.Ru to "Задание будет засчитано, если выполнено полностью",
     ),
     key(StringKey.TasksTitleWatchVideo) to mapOf(
         SupportedLanguageKey.En to "View 20 video",
+        SupportedLanguageKey.Ru to "Просмотреть 20 видео",
     ),
-    key(StringKey.TasksDescriptionWatchVideo) to mapOf(
+    key(StringKey.TasksMessageWatchVideo) to mapOf(
         SupportedLanguageKey.En to "View at least 20 videos from the feed",
+        SupportedLanguageKey.Ru to "Просмотреть минимум 20 видео из ленты",
     ),
     key(StringKey.TasksTitleLike) to mapOf(
         SupportedLanguageKey.En to "Like",
+        SupportedLanguageKey.Ru to "Поставить лайки",
     ),
-    key(StringKey.TasksDescriptionLike) to mapOf(
+    key(StringKey.TasksMessageLike) to mapOf(
         SupportedLanguageKey.En to "Like videos you like",
+        SupportedLanguageKey.Ru to "Поставить лайки на понравившиеся ролики",
     ),
     key(StringKey.TasksTitlePublishVideo) to mapOf(
         SupportedLanguageKey.En to "Upload video",
+        SupportedLanguageKey.Ru to "Выложить видео",
     ),
-    key(StringKey.TasksDescriptionPublishVideo) to mapOf(
+    key(StringKey.TasksMessagePublishVideo) to mapOf(
         SupportedLanguageKey.En to "Post a short video to your profile",
+        SupportedLanguageKey.Ru to "Выложить короткое видео в свой профиль",
     ),
     key(StringKey.TasksTitleSubscribe) to mapOf(
-        SupportedLanguageKey.En to "Subscribe",
+        SupportedLanguageKey.En to "Follow Authors",
+        SupportedLanguageKey.Ru to "Подписаться на авторов",
     ),
-    key(StringKey.TasksDescriptionSubscribe) to mapOf(
-        SupportedLanguageKey.En to "Subscribe to authors you like",
+    key(StringKey.TasksMessageSubscribe) to mapOf(
+        SupportedLanguageKey.En to "Follow your favorite authors",
+        SupportedLanguageKey.Ru to "Подписаться на любимых авторов",
     ),
     key(StringKey.TasksTitleSocialPost) to mapOf(
         SupportedLanguageKey.En to "Talk about Snaps",
+        SupportedLanguageKey.Ru to "Рассказать о Snaps",
     ),
-    key(StringKey.TasksDescriptionSocialPost) to mapOf(
+    key(StringKey.TasksMessageSocialPost) to mapOf(
         SupportedLanguageKey.En to "Share Snaps on Instagram",
+        SupportedLanguageKey.Ru to "Рассказать о Snaps в Instagram",
     ),
-    key(StringKey.TasksFieldSocialPostNotPosted) to mapOf(
+    key(StringKey.TasksMessageSocialPostNotPosted) to mapOf(
         SupportedLanguageKey.En to "Post not yet published",
+        SupportedLanguageKey.Ru to "Пост еще не опубликован",
     ),
-    key(StringKey.TasksFieldSocialPostNotSendToVerify) to mapOf(
+    key(StringKey.TasksMessageSocialPostNotSendToVerify) to mapOf(
         SupportedLanguageKey.En to "Post not send for verification",
     ),
-    key(StringKey.TasksFieldSocialPostWaitForVerification) to mapOf(
-        SupportedLanguageKey.En to "Assignment is waiting for verification",
+    key(StringKey.TasksMessageSocialPostReview) to mapOf(
+        SupportedLanguageKey.En to "Assignment for review",
+        SupportedLanguageKey.Ru to "Задание на проверке",
     ),
-    key(StringKey.TasksFieldSocialPostRejected) to mapOf(
+    key(StringKey.TasksMessageSocialPostRejected) to mapOf(
         SupportedLanguageKey.En to "Assignment rejected",
+        SupportedLanguageKey.Ru to "Задание отклонено",
     ),
     key(StringKey.TasksDialogTitleFootnote1) to mapOf(
         SupportedLanguageKey.En to "Energy",
@@ -619,45 +649,57 @@ internal val strings = mapOf(
     ),
 
     key(StringKey.TaskWatchVideoTitle) to mapOf(
-        SupportedLanguageKey.En to "Watch short videos",
+        SupportedLanguageKey.En to "View 20 video",
+        SupportedLanguageKey.Ru to "Просмотреть 20 видео",
     ),
-    key(StringKey.TaskWatchVideoDescription) to mapOf(
-        SupportedLanguageKey.En to "Watch at least 50 videos with a retention of at least 70%% to get 15 energy points.",
+    key(StringKey.TaskWatchVideoMessage) to mapOf(
+        SupportedLanguageKey.En to "View at least 20 videos of the most popular videos. Attention retention must be at least 70 percent. If the video is 1 minute long, you must watch it for at least 42 seconds to successfully complete the task.",
+        SupportedLanguageKey.Ru to "Просмотреть минимум %@ видео из вашей ленты коротких видео. Удержание внимания должно быть минимум 70 процентов. Если ролик длится 1 минуту, то для успешного выполнения задания, вы должны просмотреть его минимум 42 секунды.",
     ),
 
     key(StringKey.TaskLikeTitle) to mapOf(
         SupportedLanguageKey.En to "Like",
+        SupportedLanguageKey.Ru to "Поставить лайки",
     ),
-    key(StringKey.TaskLikeDescription) to mapOf(
-        SupportedLanguageKey.En to "At least 10 likes",
+    key(StringKey.TaskLikeMessage) to mapOf(
+        SupportedLanguageKey.En to "Give at least 10 likes to the videos you like from your short video feed. Likes are placed by double-tapping the screen, or by clicking on the heart icon.",
+        SupportedLanguageKey.Ru to "Поставить минимум 10 лайков на понравившиеся Вам ролики из вашей ленты коротких видео. Лайки ставятся двойным тапом по экрану, либо же кликом на значок “сердечка”.",
     ),
 
     key(StringKey.TaskSubscribeTitle) to mapOf(
-        SupportedLanguageKey.En to "Subscribe",
+        SupportedLanguageKey.En to "Follow Authors",
+        SupportedLanguageKey.Ru to "Подписаться на авторов",
     ),
-    key(StringKey.TaskSubscribeDescription) to mapOf(
-        SupportedLanguageKey.En to "At least 5 subscriptions",
+    key(StringKey.TaskSubscribeMessage) to mapOf(
+        SupportedLanguageKey.En to "Subscribe to the content creators like in Snaps. You need to follow at least 5 accounts to complete the task.",
+        SupportedLanguageKey.Ru to "Подписаться на понравившихся контент криейтеров в Snaps. Для успешного выполнения задания необходимо подписаться по меньшей мере на 5 аккаунтов.",
     ),
 
     key(StringKey.TaskPublishVideoTitle) to mapOf(
-        SupportedLanguageKey.En to "Post video to your profile",
+        SupportedLanguageKey.En to "Upload Video",
+        SupportedLanguageKey.Ru to "Выложить видео",
     ),
-    key(StringKey.TaskPublishVideoDescription) to mapOf(
-        SupportedLanguageKey.En to "The minimum video length is 5 seconds, the maximum video length is 1 minute = 15 energy points.",
+    key(StringKey.TaskPublishVideoMessage) to mapOf(
+        SupportedLanguageKey.En to "Post a video between 5 and 60 seconds long to your Snaps profile. The video must not violate the platform's rules and regulations.",
+        SupportedLanguageKey.Ru to "Выложить видео длиной от 5 до 60 секунд в свой профиль Snaps. Видео не должно нарушать правил и принципов платформы.",
     ),
 
     key(StringKey.TaskSocialPostTitle) to mapOf(
-        SupportedLanguageKey.En to "Post to Instagram",
+        SupportedLanguageKey.En to "Talk about Snaps",
+        SupportedLanguageKey.Ru to "Рассказать о Snaps",
     ),
-    key(StringKey.TaskSocialPostDescription) to mapOf(
-        SupportedLanguageKey.En to "Post a post/story to Instagram with a template generated inside the app.",
+    key(StringKey.TaskSocialPostMessage) to mapOf(
+        SupportedLanguageKey.En to "Post Insta Stories about your Snaps account and the project itself. You don't need to come up with anything! You can use a ready-made template and immediately post it to your Instagram account. The task will be reviewed from 3 to 6 hours.",
+        SupportedLanguageKey.Ru to "Выложить Insta Stories о своем аккаунте в Snaps и о самом проекте. Придумывать ничего не нужно! Можно использовать готовый шаблон и сразу же его выложить в свой Instagram аккаунт. Задание будет проверяться от 3 до 6 часов.",
     ),
 
     key(StringKey.TaskSocialShareTitle) to mapOf(
-        SupportedLanguageKey.En to "Social share",
+        SupportedLanguageKey.En to "Share your video with friends",
+        SupportedLanguageKey.Ru to "Поделиться своим видео с друзьями",
     ),
-    key(StringKey.TaskSocialShareDescription) to mapOf(
-        SupportedLanguageKey.En to "Share your video with friends in messengers",
+    key(StringKey.TaskSocialShareMessage) to mapOf(
+        SupportedLanguageKey.En to "Share your Snaps video with your friends via social network. You must click the share button on your video, and send it to your friends via social network. You must share with at least three friends.",
+        SupportedLanguageKey.Ru to "Поделиться своим видео в Snaps с друзьями через социальную сеть. Нужно нажать кнопку “поделиться” на своем видео, и отправить друзьям через социальную сеть. Нужно поделиться минимум с тремя друзьями.",
     ),
 
     key(StringKey.TaskShareTitle) to mapOf(
@@ -742,6 +784,7 @@ internal val strings = mapOf(
 
     key(StringKey.WalletTitle) to mapOf(
         SupportedLanguageKey.En to "Wallet",
+        SupportedLanguageKey.Ru to "Кошелек",
     ),
     key(StringKey.WalletFieldTotal) to mapOf(
         SupportedLanguageKey.En to "Total",
@@ -788,6 +831,7 @@ internal val strings = mapOf(
 
     key(StringKey.RewardsTitle) to mapOf(
         SupportedLanguageKey.En to "Rewards",
+        SupportedLanguageKey.Ru to "Награды",
     ),
     key(StringKey.RewardsTitleFootnote) to mapOf(
         SupportedLanguageKey.En to "Get Rewards",
@@ -800,6 +844,7 @@ internal val strings = mapOf(
     ),
     key(StringKey.RewardsTitleHistory) to mapOf(
         SupportedLanguageKey.En to "History",
+        SupportedLanguageKey.Ru to "История",
     ),
     key(StringKey.RewardsMessageFootnote) to mapOf(
         SupportedLanguageKey.En to "Get rewards from your unlocked wallet right now. And from the blocked every day a little later.",
@@ -927,9 +972,11 @@ internal val strings = mapOf(
     ),
     key(StringKey.RankSelectionTitleDailyReward) to mapOf(
         SupportedLanguageKey.En to "Daily reward",
+        SupportedLanguageKey.Ru to "Ежедневная награда",
     ),
     key(StringKey.RankSelectionTitleDailyUnlock) to mapOf(
         SupportedLanguageKey.En to "Daily unlock",
+        SupportedLanguageKey.Ru to "Ежедневная разблокировка",
     ),
     key(StringKey.RankSelectionTitleDailyConsumption) to mapOf(
         SupportedLanguageKey.En to "Daily consumption",
@@ -939,6 +986,7 @@ internal val strings = mapOf(
     ),
     key(StringKey.RankSelectionDialogTitleFootnote1) to mapOf(
         SupportedLanguageKey.En to "My glasses",
+        SupportedLanguageKey.Ru to "Мои очки",
     ),
     key(StringKey.RankSelectionDialogMessageFootnote1) to mapOf(
         SupportedLanguageKey.En to "All your NFT points are stored here. Free rank NFT points are enough to get started. This will allow you to get your first rewards and try yourself in the Snaps ecosystem!",
@@ -1007,26 +1055,32 @@ internal val strings = mapOf(
     key(StringKey.PurchaseTitleDailyCosts) to mapOf(
         SupportedLanguageKey.En to "Daily costs",
     ),
-    key(StringKey.PurchaseDescriptionDailyCosts) to mapOf(
+    key(StringKey.PurchaseMessageDailyCosts) to mapOf(
         SupportedLanguageKey.En to "Daily consumption of your NFT points. Every NFT point, except for the FREE rank, deteriorates every day and needs to be restored in order to continue further use and generate income.",
     ),
     key(StringKey.PurchaseTitleDailyReward) to mapOf(
         SupportedLanguageKey.En to "Daily Reward\n%s SNPS",
+        SupportedLanguageKey.Ru to "Ежедневная награда\n%s SNPS",
     ),
     key(StringKey.PurchaseDescriptionDailyReward) to mapOf(
         SupportedLanguageKey.En to "Estimated daily reward in tokens when completing tasks",
+        SupportedLanguageKey.Ru to "Предполагаемое ежедневное вознаграждение в токенах при выполнени заданий",
     ),
     key(StringKey.PurchaseMessageDailyReward) to mapOf(
         SupportedLanguageKey.En to "This cost is only an estimate of rank and may change",
+        SupportedLanguageKey.Ru to "Данная стоимость является лишь оценкой ранга и может меняться",
     ),
     key(StringKey.PurchaseTitleDailyUnlock) to mapOf(
         SupportedLanguageKey.En to "Daily Unlock\n%s",
+        SupportedLanguageKey.Ru to "Ежедневная разблокировка\n%s",
     ),
     key(StringKey.PurchaseDescriptionDailyUnlock) to mapOf(
         SupportedLanguageKey.En to "You can transfer %s of the available SNP rewards to the main wallet. After receiving the tokens, they can be exchanged or withdrawn",
+        SupportedLanguageKey.Ru to "Вы можете перевести %s доступных вознагрождений SNP на основной кошелек. После получения токенов их можно обменять или вывести",
     ),
     key(StringKey.PurchaseMessageDailyUnlock) to mapOf(
         SupportedLanguageKey.En to "The rest of the SNAPS tokens are frozen and stored in a locked wallet",
+        SupportedLanguageKey.Ru to "Остальные токены SNAPS заморожены и хранятся в заблокированном кошельке",
     ),
     key(StringKey.PurchaseTitleRank) to mapOf(
         SupportedLanguageKey.En to "Rank %s",
