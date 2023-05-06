@@ -1,6 +1,7 @@
 package io.snaps.basewallet.data
 
 import android.annotation.SuppressLint
+import io.horizontalsystems.ethereumkit.api.jsonrpc.JsonRpc
 import io.horizontalsystems.ethereumkit.core.LegacyGasPriceProvider
 import io.horizontalsystems.ethereumkit.core.eip1559.Eip1559GasPriceProvider
 import io.horizontalsystems.ethereumkit.core.hexStringToByteArray
@@ -75,7 +76,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.withContext
 import java.math.BigInteger
 import java.security.InvalidAlgorithmParameterException
@@ -405,7 +405,7 @@ class WalletRepositoryImpl @Inject constructor(
     }
 
     override suspend fun repairNft(nftModel: NftModel): Effect<Token> {
-        if ((getSnpWalletModel()?.coinValue?.toDouble() ?: 0.0) < nftModel.repairCost) {
+        if ((getSnpWalletModel()?.coinValueDouble ?: 0.0) < nftModel.repairCost) {
             return Effect.error(AppError.Custom(cause = NoEnoughSnpToRepair))
         }
 
@@ -417,7 +417,7 @@ class WalletRepositoryImpl @Inject constructor(
                 AppError.Unknown(cause = IllegalStateException("Adapter is null"))
             )
 
-        val nonceRaw = adapter.evmKit.accountState?.nonce ?: 0L
+        val nonceRaw = System.currentTimeMillis()
 
         return apiCall(ioDispatcher) {
             walletApi.getRepairSignature(
@@ -471,7 +471,7 @@ class WalletRepositoryImpl @Inject constructor(
             val approveGasLimit = adapter.evmKit.estimateGas(
                 transactionData = approveGasLimitTD,
                 gasPrice = gasPrice,
-            ).await()
+            ).blockingGet()
 
             val approveTD = adapter.eip20Kit.buildApproveTransactionData(
                 spenderAddress = address,
@@ -481,7 +481,7 @@ class WalletRepositoryImpl @Inject constructor(
                 transactionData = approveTD,
                 gasPrice = gasPrice,
                 gasLimit = approveGasLimit,
-            ).await()
+            ).blockingGet()
 
             val repairGasLimitTD = TransactionData(
                 to = address,
@@ -491,7 +491,7 @@ class WalletRepositoryImpl @Inject constructor(
             val repairGasLimit = adapter.evmKit.estimateGas(
                 transactionData = repairGasLimitTD,
                 gasPrice = gasPrice,
-            ).await()
+            ).blockingGet()
 
             val repairTD = TransactionData(
                 to = address,
@@ -502,11 +502,11 @@ class WalletRepositoryImpl @Inject constructor(
                 transactionData = repairTD,
                 gasPrice = gasPrice,
                 gasLimit = repairGasLimit,
-            ).await().transaction.hash.toHexString()
+            ).blockingGet().transaction.hash.toHexString()
 
             Effect.success(repairResult)
-        } catch (e: Exception) {
-            Effect.error(AppError.Unknown(cause = e))
+        } catch (e: Throwable) {
+            handlePossibleRpcError(e)
         }
     }
 
@@ -516,7 +516,7 @@ class WalletRepositoryImpl @Inject constructor(
 
     override suspend fun getNftMintSummary(nftType: NftType): Effect<NftMintSummary> {
         val value = 0.005
-        if ((getBnbWalletModel()?.coinValue?.toDouble() ?: 0.0) < value) {
+        if ((getBnbWalletModel()?.coinValueDouble ?: 0.0) < value) {
             return Effect.error(AppError.Custom(cause = NoEnoughBnbToMint))
         }
 
@@ -527,7 +527,7 @@ class WalletRepositoryImpl @Inject constructor(
             ?: return Effect.error(
                 AppError.Unknown(cause = IllegalStateException("Adapter is null"))
             )
-        val nonceRaw = adapter.evmKit.accountState?.nonce ?: 0L
+        val nonceRaw = System.currentTimeMillis()
 
         return apiCall(ioDispatcher) {
             walletApi.getMintSignature(
@@ -537,49 +537,53 @@ class WalletRepositoryImpl @Inject constructor(
                 ),
             )
         }.flatMap { data ->
-            withContext(ioDispatcher) l@{
-                val error = Effect.error<NftMintSummary>(
-                    AppError.Unknown(cause = IllegalStateException("Signature data null! $data"))
-                )
-
-                val address = Address(SNAPS_NFT)
-                val fromAddress = requireActiveWalletReceiveAddress()
-
-                val method = MintContractMethod(
-                    owner = Address(requireActiveWalletReceiveAddress()),
-                    fromAccountAmounts = data.amountReceiver?.let(::BigInteger) ?: return@l error,
-                    deadline = data.deadline?.toBigInteger() ?: return@l error,
-                    nonce = nonceRaw.toBigInteger(),
-                    signature = data.signature?.hexStringToByteArray() ?: return@l error,
-                    profitWallet = data.profitWallet?.let(::Address) ?: return@l error,
-                )
-                val encodedAbi: ByteArray = method.encodedABI()
-
-                val valueApplied = value.applyDecimal(wallet)
-                val transactionData = TransactionData(
-                    to = address,
-                    value = valueApplied,
-                    input = encodedAbi,
-                )
-                val gasLimit = adapter.evmKit.estimateGas(
-                    transactionData = transactionData,
-                    gasPrice = gasPrice,
-                ).await()
-                val gasPriceDecimal = gasPrice.max.toBigDecimal()
-                    .movePointLeft(wallet.decimal)
-                    .times(gasLimit.toBigDecimal())
-
-                Effect.success(
-                    NftMintSummary(
-                        from = fromAddress,
-                        to = address.hex,
-                        summary = value.toBigDecimal(),
-                        gas = gasPriceDecimal,
-                        total = value.toBigDecimal() + gasPriceDecimal,
-                        gasLimit = gasLimit,
-                        transactionData = transactionData,
+            try {
+                withContext(ioDispatcher) l@{
+                    val error = Effect.error<NftMintSummary>(
+                        AppError.Unknown(cause = IllegalStateException("Signature data null! $data"))
                     )
-                )
+
+                    val address = Address(SNAPS_NFT)
+                    val fromAddress = requireActiveWalletReceiveAddress()
+
+                    val method = MintContractMethod(
+                        owner = Address(requireActiveWalletReceiveAddress()),
+                        fromAccountAmounts = data.amountReceiver?.let(::BigInteger) ?: return@l error,
+                        deadline = data.deadline?.toBigInteger() ?: return@l error,
+                        nonce = nonceRaw.toBigInteger(),
+                        signature = data.signature?.hexStringToByteArray() ?: return@l error,
+                        profitWallet = data.profitWallet?.let(::Address) ?: return@l error,
+                    )
+                    val encodedAbi: ByteArray = method.encodedABI()
+
+                    val valueApplied = value.applyDecimal(wallet)
+                    val transactionData = TransactionData(
+                        to = address,
+                        value = valueApplied,
+                        input = encodedAbi,
+                    )
+                    val gasLimit = adapter.evmKit.estimateGas(
+                        transactionData = transactionData,
+                        gasPrice = gasPrice,
+                    ).blockingGet()
+                    val gasPriceDecimal = gasPrice.max.toBigDecimal()
+                        .movePointLeft(wallet.decimal)
+                        .times(gasLimit.toBigDecimal())
+
+                    Effect.success(
+                        NftMintSummary(
+                            from = fromAddress,
+                            to = address.hex,
+                            summary = value.toBigDecimal(),
+                            gas = gasPriceDecimal,
+                            total = value.toBigDecimal() + gasPriceDecimal,
+                            gasLimit = gasLimit,
+                            transactionData = transactionData,
+                        )
+                    )
+                }
+            } catch (e: Throwable) {
+                handlePossibleRpcError(e)
             }
         }
     }
@@ -598,13 +602,20 @@ class WalletRepositoryImpl @Inject constructor(
                     transactionData = summary.transactionData as TransactionData,
                     gasPrice = gasPrice,
                     gasLimit = summary.gasLimit,
-                ).await().transaction.hash.toHexString()
+                ).blockingGet().transaction.hash.toHexString()
                 Effect.success(result)
-            } catch (e: Exception) {
-                Effect.error(AppError.Unknown(cause = e))
+            } catch (e: Throwable) {
+                handlePossibleRpcError(e)
             }
         }
     }
+
+    private fun <T : Any> handlePossibleRpcError(e: Throwable): Effect<T> =
+        (e.cause as? JsonRpc.ResponseError.RpcError)?.error?.let {
+            Effect.error(AppError.Unknown(cause = Exception(it.code.toString() + " " + it.message)))
+        } ?: (e.cause as? JsonRpc.ResponseError.InvalidResult)?.let {
+            Effect.error(AppError.Unknown(cause = Exception(it.toString())))
+        } ?: Effect.error(AppError.Unknown(cause = e as? Exception))
 
     private fun getSnapsWallet() = getWallets().firstOrNull { it.coin.code == "SNAPS" }
 }

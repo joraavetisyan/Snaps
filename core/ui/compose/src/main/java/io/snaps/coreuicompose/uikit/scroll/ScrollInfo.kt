@@ -6,6 +6,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
+import io.snaps.corecommon.ext.log
 import kotlinx.coroutines.flow.fold
 
 const val DETECT_THRESHOLD = 5
@@ -19,6 +20,10 @@ class ScrollInfo(
         this.isReachingEnd == (other as ScrollInfo).isReachingEnd
 
     override fun hashCode(): Int = isReachingEnd.hashCode()
+
+    override fun toString(): String {
+        return "ScrollInfo(isReachingEnd=$isReachingEnd, totalItemsCount=$totalItemsCount)"
+    }
 }
 
 @Composable
@@ -30,7 +35,9 @@ fun DetectScroll(
 
     LaunchedEffect(scrollInfo) {
         snapshotFlow { scrollInfo.value }.fold(0) { previousTotalItemsCount, currentScrollInfo ->
+            log(currentScrollInfo.toString())
             if (currentScrollInfo.isReachingEnd && currentScrollInfo.totalItemsCount > previousTotalItemsCount) {
+                log("Scroll end detected")
                 onScrollEndDetectedRemembered?.invoke()
             }
             if (currentScrollInfo.isReachingEnd) {

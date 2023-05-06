@@ -65,11 +65,11 @@ class ReferralProgramViewModel @Inject constructor(
     private fun subscribeOnCurrentUser() {
         profileRepository.state.onEach { state ->
             _uiState.update {
-                val inviteCode = state.dataOrCache?.ownInviteCode.orEmpty()
+                val inviteCode = state.dataOrCache?.ownInviteCode
                 it.copy(
-                    referralCode = inviteCode.addPrefix("#"),
-                    referralLink = inviteCode.addPrefix("https://snaps.io/"),
-                    referralQr = barcodeManager.getQrCodeBitmap(text = inviteCode, size = 600f),
+                    referralCode = inviteCode.orEmpty().addPrefix("#"),
+                    referralLink = inviteCode.orEmpty().addPrefix("https://snaps.io/"),
+                    referralQr = inviteCode?.let { barcodeManager.getQrCodeBitmap(text = inviteCode, size = 600f) },
                 )
             }
         }.launchIn(viewModelScope)

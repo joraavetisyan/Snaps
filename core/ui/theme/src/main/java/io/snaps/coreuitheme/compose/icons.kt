@@ -30,6 +30,8 @@ import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.Try
 import androidx.compose.material.icons.rounded.Videocam
+import androidx.compose.material.icons.rounded.VolumeMute
+import androidx.compose.material.icons.rounded.VolumeUp
 import androidx.compose.ui.graphics.vector.ImageVector
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.IconValue
@@ -58,6 +60,8 @@ object SpecificIcons {
     val infoRounded: IconValue = vector(Icons.Rounded.Info)
     val checkCircle: IconValue = vector(Icons.Rounded.CheckCircle)
     val moreVert: IconValue = vector(Icons.Rounded.MoreVert)
+    val volumeDown: IconValue = vector(Icons.Rounded.VolumeMute)
+    val volumeUp: IconValue = vector(Icons.Rounded.VolumeUp)
 
     // Bottom menu icons
     val camera: IconValue = vector(Icons.Rounded.Videocam)

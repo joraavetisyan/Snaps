@@ -70,9 +70,7 @@ private fun PreviewScreen(
         VideoPlayer(
             localUri = uiState.uri,
             shouldPlay = true,
-            isMuted = false,
             isScrolling = false,
-            onMuted = {},
             progressChangePollFrequency = 50L,
             onProgressChanged = onProgressChanged,
             isRepeat = false, // OutOfMemory on repeat

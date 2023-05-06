@@ -25,6 +25,7 @@ object Libs {
     private const val pagingVersion = "3.1.0"
     private const val accompanistVersion = "0.31.1-alpha"
     private const val coilVersion = "2.1.0"
+    private const val lottieVersion = "6.0.0"
 
     private const val lifecycleVersion = "2.4.0"
     private const val navigationVersion = "2.5.3"
@@ -167,6 +168,7 @@ object Libs {
             "com.google.accompanist:accompanist-permissions:$accompanistVersion",
             "io.coil-kt:coil-compose:$coilVersion",
             "io.coil-kt:coil-svg:$coilVersion",
+            "com.airbnb.android:lottie-compose:$lottieVersion",
         )
 
         val splashscreen = arrayOf("androidx.core:core-splashscreen:$splashVersion")

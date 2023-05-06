@@ -129,12 +129,8 @@ private fun ProfileScreen(
                     ActionIconData(
                         icon = AppTheme.specificIcons.share,
                         color = AppTheme.specificColorScheme.darkGrey,
-                        onClick = {
-                            uiState.shareLink?.let {
-                                context.startShareLinkIntent(it)
-                            }
-                        },
-                    ),
+                        onClick = { context.startShareLinkIntent(uiState.shareLink!!) },
+                    ).takeIf { uiState.shareLink != null },
                 ),
             )
         },

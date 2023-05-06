@@ -38,5 +38,5 @@ private fun UserNftItemResponseDto.toModel() = NftModel(
     dailyConsumption = data.dailyMaintenanceCostMultiplier ?: 0.0,
     isAvailableToPurchase = data.isAvailableToPurchase,
     repairCost = data.repairCost,
-    isProcessing = false, // todo
+    isProcessing = false,
 )

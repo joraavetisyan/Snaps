@@ -19,7 +19,7 @@ typealias PagedLoaderAction<T> = suspend (from: String?, count: Int) -> BaseResp
 data class PagedLoaderParams<T, R>(
     val action: PagedLoaderAction<T>,
     val pageSize: Int,
-    val nextPageIdFactory: (T) -> String,
+    val nextPageIdFactory: (T) -> String?,
     val mapper: suspend (List<T>) -> List<R>,
 )
 
@@ -44,16 +44,20 @@ abstract class PagedLoader<T, R>(
     private val initialPageModel get() = PageModel<R>(pageSize = params.pageSize)
 
     init {
-        log("${this.javaClass.simpleName} init")
+        log("init")
         scope.launch { action.execute { load() } }
     }
 
     suspend fun refresh(): Effect<Completable> {
+        log("refresh")
         _state.update { initialPageModel }
         return action.execute { load() }
     }
 
-    suspend fun loadNext(): Effect<Completable> = action.execute { load() }
+    suspend fun loadNext(): Effect<Completable> {
+        log("loadNext")
+        return action.execute { load() }
+    }
 
     private suspend fun load(): Effect<Completable> {
         val nextPageId = _state.value.nextPageId ?: return Effect.completable
