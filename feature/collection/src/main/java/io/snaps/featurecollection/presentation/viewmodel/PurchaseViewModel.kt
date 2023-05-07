@@ -89,7 +89,7 @@ class PurchaseViewModel @Inject constructor(
             )
         }.doOnSuccess {
             notificationsSource.sendMessage("Purchase successful".textValue()) // todo localize
-            _command publish Command.ClosePurchaseScreen
+            _command publish Command.BackToMyCollectionScreen
         }.doOnError { error, _ ->
             notificationsSource.sendError(error)
         }.doOnComplete {
@@ -99,6 +99,7 @@ class PurchaseViewModel @Inject constructor(
 
     fun onBuyWithGooglePlayClicked(activity: Activity) {
         viewModelScope.launch {
+            _command publish Command.BackToMyCollectionScreen
             purchaseStateProvider.getInAppProducts().data.orEmpty().firstOrNull {
                 it.details.sku == args.type.storeId
             }?.let {
@@ -219,7 +220,7 @@ class PurchaseViewModel @Inject constructor(
     }
 
     sealed class Command {
-        object ClosePurchaseScreen : Command()
+        object BackToMyCollectionScreen : Command()
         object ShowBottomDialog : Command()
         object HideBottomDialog : Command()
     }
