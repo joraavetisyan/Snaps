@@ -10,6 +10,7 @@ import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
+import io.snaps.basesubs.data.SubsRepository
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.Uuid
@@ -39,6 +40,7 @@ abstract class VideoFeedViewModel(
     private val videoFeedRepository: VideoFeedRepository,
     private val profileRepository: ProfileRepository,
     private val commentRepository: CommentRepository,
+    private val subsRepository: SubsRepository,
     val startPosition: Int = 0,
 ) : SimpleViewModel(),
     BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandlerDelegate {
@@ -66,6 +68,9 @@ abstract class VideoFeedViewModel(
     private fun subscribeToProfile() {
         profileRepository.state.onEach { profileState ->
             _uiState.update { it.copy(profileAvatar = profileState.dataOrCache?.avatar) }
+            profileState.dataOrCache?.userId?.let {
+                loadSubscriptions(it)
+            }
         }.launchIn(viewModelScope)
     }
 
@@ -132,6 +137,17 @@ abstract class VideoFeedViewModel(
                     it.copy(authorProfileAvatar = profileModel.avatar)
                 }
             }
+        }
+    }
+
+    private fun loadSubscriptions(userId: Uuid) = viewModelScope.launch {
+        // todo in Action
+        val subscriptions = subsRepository.getSubscriptions()
+        _uiState.update {
+            it.copy(
+                isSubscribed = subscriptions.firstOrNull { it.userId == userId } != null,
+                isSubscribeButtonVisible = videoFeedType == VideoFeedType.Main,
+            )
         }
     }
 
@@ -284,12 +300,6 @@ abstract class VideoFeedViewModel(
                     it.copy(dialogType = null)
                 }
                 videoFeedRepository.refreshFeed(videoFeedType)
-                /*val videoClips = videoFeedPageModel?.loadedPageItems?.filter {
-                    it.id != video.id
-                }.orEmpty()
-                videoFeedPageModel = videoFeedPageModel?.copy(loadedPageItems = videoClips)
-                Log.e("videoClips", videoFeedPageModel?.loadedPageItems?.size.toString())
-                applyVideoClipToState()*/
             }
         }
     }
@@ -297,6 +307,22 @@ abstract class VideoFeedViewModel(
     fun onDeleteDismissed() {
         _uiState.update {
             it.copy(dialogType = null)
+        }
+    }
+
+    fun onSubscribeClicked() {
+        val video = currentVideo ?: return
+        viewModelScope.launch {
+            action.execute {
+                if (uiState.value.isSubscribed) {
+                    subsRepository.unsubscribe(video.authorId)
+                } else {
+                    subsRepository.subscribe(video.authorId)
+                }
+            }
+            _uiState.update {
+                it.copy(isSubscribed = !it.isSubscribed)
+            }
         }
     }
 
@@ -310,6 +336,8 @@ abstract class VideoFeedViewModel(
         val bottomDialogType: BottomDialogType = BottomDialogType.Comments,
         val dialogType: DialogType? = null,
         val actions: List<ActionData>,
+        val isSubscribeButtonVisible: Boolean = false,
+        val isSubscribed: Boolean = false,
     ) {
 
         val commentListSize = commentsUiState.items.filterIsInstance<CommentUiState.Data>().size

@@ -328,10 +328,12 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "%s Subscribers",
     ),
     key(StringKey.SubsActionFollow) to mapOf(
-        SupportedLanguageKey.En to "Follow",
+        SupportedLanguageKey.En to "Subscribe",
+        SupportedLanguageKey.Ru to "Подписаться",
     ),
     key(StringKey.SubsActionFollowing) to mapOf(
-        SupportedLanguageKey.En to "Following",
+        SupportedLanguageKey.En to "Subscribed",
+        SupportedLanguageKey.En to "Вы подписаны",
     ),
 
     key(StringKey.CreateUserTitle) to mapOf(

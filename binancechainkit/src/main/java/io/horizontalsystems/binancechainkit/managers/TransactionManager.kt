@@ -13,9 +13,11 @@ import java.math.BigDecimal
 import java.util.*
 
 
-class TransactionManager( private val wallet: Wallet,
-                          private val storage: IStorage,
-                          private val binanceApi: BinanceChainApi) {
+class TransactionManager(
+    private val wallet: Wallet,
+    private val storage: IStorage,
+    private val binanceApi: BinanceChainApi
+) {
 
     interface Listener {
         fun onSyncTransactions(transactions: List<Transaction>)
@@ -103,7 +105,7 @@ class TransactionManager( private val wallet: Wallet,
     }
 
     fun send(symbol: String, to: String, amount: BigDecimal, memo: String): Single<String> {
-        return binanceApi.send(symbol, to, amount, memo, wallet )
+        return binanceApi.send(symbol, to, amount, memo, wallet)
     }
 
 }

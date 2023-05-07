@@ -8,6 +8,7 @@ import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.ui.VideoFeedViewModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
+import io.snaps.basesubs.data.SubsRepository
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
@@ -20,6 +21,7 @@ class PopularVideoFeedViewModel @Inject constructor(
     videoFeedRepository: VideoFeedRepository,
     profileRepository: ProfileRepository,
     commentRepository: CommentRepository,
+    subsRepository: SubsRepository,
     bottomDialogBarVisibilityHandlerDelegate: BottomDialogBarVisibilityHandler,
 ) : VideoFeedViewModel(
     videoFeedType = savedStateHandle.requireArgs<AppRoute.PopularVideoFeed.Args>().query.let {
@@ -30,5 +32,6 @@ class PopularVideoFeedViewModel @Inject constructor(
     videoFeedRepository = videoFeedRepository,
     profileRepository = profileRepository,
     commentRepository = commentRepository,
+    subsRepository = subsRepository,
     bottomDialogBarVisibilityHandlerDelegate = bottomDialogBarVisibilityHandlerDelegate,
 )

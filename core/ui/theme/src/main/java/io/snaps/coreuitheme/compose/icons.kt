@@ -12,6 +12,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.AssignmentTurnedIn
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Collections
@@ -57,6 +58,7 @@ object SpecificIcons {
     val info: IconValue = vector(Icons.Outlined.Info)
     val infoRounded: IconValue = vector(Icons.Rounded.Info)
     val checkCircle: IconValue = vector(Icons.Rounded.CheckCircle)
+    val checkBox: IconValue = vector(Icons.Rounded.Check)
     val moreVert: IconValue = vector(Icons.Rounded.MoreVert)
 
     // Bottom menu icons

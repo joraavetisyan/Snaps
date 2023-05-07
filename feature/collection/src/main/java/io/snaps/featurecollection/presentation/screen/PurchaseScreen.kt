@@ -1,7 +1,6 @@
 package io.snaps.featurecollection.presentation.screen
 
 import android.app.Activity
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -56,7 +55,6 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get

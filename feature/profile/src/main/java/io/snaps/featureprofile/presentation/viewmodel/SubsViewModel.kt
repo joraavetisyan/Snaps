@@ -4,14 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
-import io.snaps.featureprofile.domain.SubModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.basesubs.data.SubsRepository
+import io.snaps.basesubs.domain.SubPageModel
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.publish
-import io.snaps.featureprofile.data.SubsRepository
-import io.snaps.featureprofile.domain.SubPageModel
 import io.snaps.featureprofile.presentation.screen.SubsUiState
 import io.snaps.featureprofile.presentation.screen.toSubsUiState
 import kotlinx.coroutines.channels.Channel
@@ -86,11 +85,11 @@ class SubsViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun onItemClicked(item: SubModel) = viewModelScope.launch {
+    private fun onItemClicked(item: io.snaps.basesubs.domain.SubModel) = viewModelScope.launch {
         _command publish Command.OpenProfileScreen(userId = item.userId)
     }
 
-    private fun onSubscribeClicked(item: SubModel) = viewModelScope.launch {
+    private fun onSubscribeClicked(item: io.snaps.basesubs.domain.SubModel) = viewModelScope.launch {
         if (item.isSubscribed) {
             _uiState.update {
                 it.copy(dialog = Dialog.ConfirmUnsubscribe(item))
@@ -127,7 +126,7 @@ class SubsViewModel @Inject constructor(
         }
     }
 
-    private fun SubPageModel?.applySubToState() = this?.toSubsUiState(
+    private fun io.snaps.basesubs.domain.SubPageModel?.applySubToState() = this?.toSubsUiState(
         shimmerListSize = 5,
         onItemClicked = ::onItemClicked,
         onReloadClicked = ::onSubscriptionsReloadClicked,
@@ -159,7 +158,7 @@ class SubsViewModel @Inject constructor(
         }
     }
 
-    fun onUnsubscribeClicked(item: SubModel) = viewModelScope.launch {
+    fun onUnsubscribeClicked(item: io.snaps.basesubs.domain.SubModel) = viewModelScope.launch {
         _uiState.update {
             it.copy(dialog = null)
         }
@@ -186,7 +185,7 @@ class SubsViewModel @Inject constructor(
     )
 
     sealed class Dialog {
-        data class ConfirmUnsubscribe(val data: SubModel) : Dialog()
+        data class ConfirmUnsubscribe(val data: io.snaps.basesubs.domain.SubModel) : Dialog()
     }
 
     sealed class Command {

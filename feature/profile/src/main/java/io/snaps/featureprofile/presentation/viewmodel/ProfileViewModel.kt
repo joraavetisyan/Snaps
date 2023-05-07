@@ -8,6 +8,8 @@ import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.ui.VideoFeedUiState
 import io.snaps.basefeed.ui.toVideoFeedUiState
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.basesubs.data.SubsRepository
+import io.snaps.basesubs.domain.SubModel
 import io.snaps.corecommon.model.SubsType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.Action
@@ -16,8 +18,6 @@ import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.getArg
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
-import io.snaps.featureprofile.data.SubsRepository
-import io.snaps.featureprofile.domain.SubModel
 import io.snaps.featureprofile.presentation.screen.UserInfoTileState
 import io.snaps.featureprofile.presentation.toUserInfoTileState
 import kotlinx.coroutines.channels.Channel

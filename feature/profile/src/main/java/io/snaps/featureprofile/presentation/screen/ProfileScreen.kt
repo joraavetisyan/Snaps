@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -13,10 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.IconButton
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,13 +28,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.basefeed.ui.VideoFeedGrid
+import io.snaps.corecommon.R
+import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startShareLinkIntent
 import io.snaps.corecommon.strings.StringKey
@@ -49,7 +51,7 @@ import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureprofile.ScreenNavigator
-import io.snaps.featureprofile.domain.SubModel
+import io.snaps.basesubs.domain.SubModel
 import io.snaps.featureprofile.presentation.viewmodel.ProfileViewModel
 import io.snaps.featureprofile.presentation.viewmodel.SubsViewModel
 
@@ -98,7 +100,7 @@ private fun ProfileScreen(
     onSettingsClicked: () -> Unit,
     onBackClicked: () -> Boolean,
     onSubscribeClicked: () -> Unit,
-    onUnsubscribeClicked: (SubModel) -> Unit,
+    onUnsubscribeClicked: (io.snaps.basesubs.domain.SubModel) -> Unit,
     onDismissRequest: () -> Unit,
     onVideoClipClicked: (Int) -> Unit,
     onUserLikedVideoClipClicked: (Int) -> Unit,
@@ -140,15 +142,12 @@ private fun ProfileScreen(
         },
         floatingActionButton = {
             if (uiState.userType == ProfileViewModel.UserType.Current) {
-                FloatingActionButton(
-                    onClick = onCreateVideoClicked,
-                    shape = CircleShape,
-                    containerColor = AppTheme.specificColorScheme.uiAccent,
-                ) {
+                IconButton(onClick = { onCreateVideoClicked() }) {
                     Icon(
-                        painter = AppTheme.specificIcons.add.get(),
+                        painter = ImageValue.ResImage(R.drawable.img_create).get(),
                         contentDescription = null,
-                        tint = AppTheme.specificColorScheme.white,
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(64.dp),
                     )
                 }
             }
@@ -165,10 +164,11 @@ private fun ProfileScreen(
                 SimpleChip(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .shadow(elevation = 12.dp, shape = CircleShape),
+                        .padding(horizontal = 16.dp),
                     selected = !uiState.isSubscribed,
                     label = (if (uiState.isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),
+                    textStyle = AppTheme.specificTypography.titleSmall,
+                    contentPadding = PaddingValues(10.dp),
                     onClick = onSubscribeClicked,
                 )
             } else {

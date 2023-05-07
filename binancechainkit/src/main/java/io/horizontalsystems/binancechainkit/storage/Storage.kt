@@ -91,5 +91,4 @@ class Storage(private val database: KitDatabase) : IStorage {
 
         return database.transactions.getSql(SimpleSQLiteQuery(sql))
     }
-
 }

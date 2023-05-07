@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.data
+package io.snaps.basesubs.data
 
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.model.Completable
@@ -7,10 +7,10 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
-import io.snaps.featureprofile.data.model.SubscribeRequestDto
-import io.snaps.featureprofile.data.model.SubscriptionItemResponseDto
-import io.snaps.featureprofile.data.model.UnsubscribeRequestDto
-import io.snaps.featureprofile.domain.SubPageModel
+import io.snaps.basesubs.data.model.SubscribeRequestDto
+import io.snaps.basesubs.data.model.SubscriptionItemResponseDto
+import io.snaps.basesubs.data.model.UnsubscribeRequestDto
+import io.snaps.basesubs.domain.SubPageModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject

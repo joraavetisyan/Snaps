@@ -7,11 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.bouncycastle.util.encoders.Hex
 import java.nio.charset.Charset
 
-
 object EncodeUtils {
 
     private var OBJECT_MAPPER: ObjectMapper = ObjectMapper()
-
 
     @Throws(JsonProcessingException::class)
     fun toJsonStringSortKeys(`object`: Any): String {
@@ -31,14 +29,13 @@ object EncodeUtils {
         return Hex.decode(s)
     }
 
-
     fun bytesToHex(bytes: ByteArray): String {
         return Hex.toHexString(bytes)
     }
 
     @Throws(IOException::class)
     fun aminoWrap(raw: ByteArray, typePrefix: ByteArray, isPrefixLength: Boolean): ByteArray {
-        var totalLen =  (raw.size + typePrefix.size).toLong()
+        var totalLen = (raw.size + typePrefix.size).toLong()
 
         if (isPrefixLength)
             totalLen += CodedOutputStream.computeUInt64SizeNoTag(totalLen)
@@ -53,5 +50,4 @@ object EncodeUtils {
 
         return msg
     }
-
 }

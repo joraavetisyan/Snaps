@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.di
+package io.snaps.basesubs.di
 
 import dagger.Binds
 import dagger.Module
@@ -8,12 +8,12 @@ import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
+import io.snaps.basesubs.data.FakeSubsApi
+import io.snaps.basesubs.data.SubsApi
+import io.snaps.basesubs.data.SubsRepository
+import io.snaps.basesubs.data.SubsRepositoryImpl
 import io.snaps.coredata.network.ApiConfig
 import io.snaps.coredata.network.ApiService
-import io.snaps.featureprofile.data.FakeSubsApi
-import io.snaps.featureprofile.data.SubsApi
-import io.snaps.featureprofile.data.SubsRepository
-import io.snaps.featureprofile.data.SubsRepositoryImpl
 
 @Module
 @InstallIn(ViewModelComponent::class)

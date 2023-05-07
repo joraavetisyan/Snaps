@@ -1,12 +1,12 @@
-package io.snaps.featureprofile.data
+package io.snaps.basesubs.data
 
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
-import io.snaps.featureprofile.data.model.SubscribeRequestDto
-import io.snaps.featureprofile.data.model.SubscriptionItemResponseDto
-import io.snaps.featureprofile.data.model.UnsubscribeRequestDto
+import io.snaps.basesubs.data.model.SubscribeRequestDto
+import io.snaps.basesubs.data.model.SubscriptionItemResponseDto
+import io.snaps.basesubs.data.model.UnsubscribeRequestDto
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
