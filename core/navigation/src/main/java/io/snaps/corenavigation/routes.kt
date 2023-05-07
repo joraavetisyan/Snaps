@@ -1,14 +1,9 @@
 package io.snaps.corenavigation
 
-import android.net.Uri
 import androidx.core.net.toUri
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import com.google.firebase.dynamiclinks.ktx.androidParameters
-import com.google.firebase.dynamiclinks.ktx.dynamicLink
-import com.google.firebase.dynamiclinks.ktx.dynamicLinks
-import com.google.firebase.ktx.Firebase
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.NftType
@@ -61,6 +56,14 @@ object AppRoute {
 
         object MainTab5 : Route("MainTab5")
         object MainTab5Start : Route("MainTab5Start")
+    }
+
+    object SingleVideo : RouteWithArg("SingleVideo") {
+
+        @Serializable
+        data class Args(
+            val videoClipId: Uuid,
+        )
     }
 
     object Registration : Route("Registration")
@@ -224,12 +227,16 @@ object AppDeeplink {
 
     private val BaseUri = "https://snapsapp.io".toUri()
 
-    private fun pathProfile() = "${BaseUri}blogger"
+    private fun pathProfile() = "${BaseUri}/blogger?id="
+    private fun pathVideoClip() = "${BaseUri}/video?id="
+    private fun pathInvite() = "${BaseUri}/invite"
 
     fun parse(deeplink: String?): Deeplink? {
         val result = when {
             deeplink == null -> null
-            deeplink.startsWith(pathProfile()) -> deeplink.removePrefix("${pathProfile()}/").let(::Profile)
+            deeplink.startsWith(pathProfile()) -> deeplink.removePrefix(pathProfile()).let(::Profile)
+            deeplink.startsWith(pathVideoClip()) -> deeplink.removePrefix(pathVideoClip()).let(::VideoClip)
+            deeplink.startsWith(pathInvite()) -> Invite
             else -> null
         }
         log("Deep link parsed: $deeplink into $result")
@@ -237,20 +244,29 @@ object AppDeeplink {
     }
 
     fun generateSharingLink(deeplink: Deeplink): String {
-        val dynamicLink = Firebase.dynamicLinks.dynamicLink {
+        // When firebase dynamic links support is added, use this instead of the custom intent handle
+        /*val dynamicLink = Firebase.dynamicLinks.dynamicLink {
             link = Uri.parse(deeplink.path())
             domainUriPrefix = BaseUri.toString()
-            androidParameters {
-                build()
-            }
+            androidParameters { build() }
             buildDynamicLink()
         }
-        return dynamicLink.uri.toString()
+        return dynamicLink.uri.toString()*/
+        return deeplink.path()
     }
 
-    data class Profile(val userId: Uuid) : Deeplink(pathProfile()) {
+    data class Profile(val id: Uuid) : Deeplink(pathProfile()) {
 
-        override val pattern = "$value/{$DefaultArgKey}"
-        override fun path() = "$value/%s".format(userId)
+        override fun path() = "$value%s".format(id)
+    }
+
+    data class VideoClip(val id: Uuid) : Deeplink(pathVideoClip()) {
+
+        override fun path() = "$value%s".format(id)
+    }
+
+    object Invite : Deeplink(pathInvite()) {
+
+        override fun path() = value
     }
 }

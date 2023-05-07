@@ -51,7 +51,13 @@ data class WalletModel(
     val fiatValue: String,
     val decimal: Int,
     val coinAddress: String?,
-)
+) {
+
+    val coinValueDouble: Double
+        get() = coinValue.replace(",", ".")
+            .filter { it.isDigit() || it == '.' }
+            .toDoubleOrNull() ?: 0.0
+}
 
 @Serializable
 enum class SocialNetwork(

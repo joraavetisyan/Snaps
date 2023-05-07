@@ -99,6 +99,9 @@ fun ColorScheme.toSpecificColorScheme(isLight: Boolean) = SpecificColorScheme(
 
     pink = if (isLight) LightSpecificColorScheme.pink
     else DarkSpecificColorScheme.pink,
+
+    red = if (isLight) LightSpecificColorScheme.red
+    else DarkSpecificColorScheme.red,
 )
 
 fun SpecificTypography.toTypography() = Typography(

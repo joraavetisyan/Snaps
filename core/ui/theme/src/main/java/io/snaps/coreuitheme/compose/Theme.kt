@@ -15,8 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
+import io.snaps.corecommon.container.IconValue
 import io.snaps.coreuitheme.compose.ext.Material2ThemeSupport
 import io.snaps.coreuitheme.compose.ext.toColorScheme
 import io.snaps.coreuitheme.compose.ext.toSpecificColorScheme
@@ -58,6 +61,7 @@ fun AppTheme(
                 outline = DarkSpecificColorScheme.outlineBorderBase,
                 outlineVariant = DarkSpecificColorScheme.outlineBorderBase,
             )
+
             else -> dynamicLightColorScheme(LocalContext.current).copy(
                 outline = LightSpecificColorScheme.outlineBorderBase,
                 outlineVariant = LightSpecificColorScheme.outlineBorderBase,
@@ -117,3 +121,15 @@ object AppTheme {
         @ReadOnlyComposable
         get() = MaterialTheme.typography
 }
+
+@Composable
+inline fun withIcons(block: SpecificIcons.() -> IconValue): IconValue =
+    AppTheme.specificIcons.block()
+
+@Composable
+inline fun withColors(block: SpecificColorScheme.() -> Color): Color =
+    AppTheme.specificColorScheme.block()
+
+@Composable
+inline fun withTypography(block: SpecificTypography.() -> TextStyle): TextStyle =
+    AppTheme.specificTypography.block()

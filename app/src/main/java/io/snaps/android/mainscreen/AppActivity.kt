@@ -1,6 +1,7 @@
 package io.snaps.android.mainscreen
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -9,9 +10,11 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
@@ -21,6 +24,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
+import io.snaps.corecommon.ext.log
 import io.snaps.corenavigation.AppDeeplink
 import io.snaps.corenavigation.base.navigate
 import io.snaps.coreuicompose.tools.SystemBarsIconsColor
@@ -56,7 +60,9 @@ class AppActivity : FragmentActivity() {
     @Composable
     private fun AppScreen() {
         val navController = rememberNavController()
-        val viewModel = viewModel<AppViewModel>()
+        val viewModel = viewModel<AppViewModel>(
+            factory = AppViewModelFactory.provide(LocalContext.current as Activity)
+        )
         val currentFlowState = viewModel.currentFlowState.collectAsState()
         val stringHolder by viewModel.stringHolderState.collectAsState()
         val notification by viewModel.notificationsState.collectAsState()
@@ -79,11 +85,15 @@ class AppActivity : FragmentActivity() {
                         needsWalletConnect = currentFlow.needsWalletConnect,
                         needsInitialization = currentFlow.needsInitialization,
                     )
-                    Firebase.dynamicLinks
+                    LaunchedEffect(Unit) {
+                        navController.navigate(currentFlow.deeplink)
+                    }
+                    // When firebase dynamic links support is added, use this instead of the custom intent handle
+                    /*Firebase.dynamicLinks
                         .getDynamicLink(intent)
                         .addOnSuccessListener {
                             navController.navigate(AppDeeplink.parse(it?.link.toString()))
-                        }
+                        }*/
                 }
             }
             viewModel.updateAppRoute(navBackStackEntry?.destination?.route)

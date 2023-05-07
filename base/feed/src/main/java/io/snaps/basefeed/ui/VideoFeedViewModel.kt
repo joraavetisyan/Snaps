@@ -13,9 +13,11 @@ import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesubs.data.SubsRepository
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.network.Action
+import io.snaps.corenavigation.AppDeeplink
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ActionColor
@@ -180,6 +182,11 @@ abstract class VideoFeedViewModel(
         }
     }
 
+    fun onDoubleLikeClicked(clipModel: VideoClipModel) {
+        if (clipModel.isLiked) return
+        onLikeClicked(clipModel)
+    }
+
     private fun likeVideoClip(clipModel: VideoClipModel) {
         val videoClips = videoFeedPageModel?.loadedPageItems?.map {
             when (it.id) {
@@ -200,6 +207,14 @@ abstract class VideoFeedViewModel(
             it.copy(bottomDialogType = BottomDialogType.Comments)
         }
         viewModelScope.launch { _command publish Command.ShowBottomDialog }
+    }
+
+    fun onShareClicked(clipModel: VideoClipModel) {
+        viewModelScope.launch {
+            _command publish Command.ShareVideoClipLink(
+                AppDeeplink.generateSharingLink(AppDeeplink.VideoClip(clipModel.id))
+            )
+        }
     }
 
     fun onCommentChanged(newValue: TextFieldValue) {
@@ -340,8 +355,6 @@ abstract class VideoFeedViewModel(
         val isSubscribed: Boolean = false,
     ) {
 
-        val commentListSize = commentsUiState.items.filterIsInstance<CommentUiState.Data>().size
-
         val isCommentSendEnabled get() = comment.text.isNotBlank()
     }
 
@@ -361,5 +374,6 @@ abstract class VideoFeedViewModel(
         object HideCommentInputBottomDialog : Command()
         data class ScrollToPosition(val position: Int) : Command()
         data class OpenProfileScreen(val userId: Uuid) : Command()
+        data class ShareVideoClipLink(val link: FullUrl) : Command()
     }
 }

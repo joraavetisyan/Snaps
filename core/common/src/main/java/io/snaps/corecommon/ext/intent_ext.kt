@@ -8,8 +8,7 @@ import io.snaps.corecommon.model.SocialNetwork
 fun Context.startShareLinkIntent(url: String, title: String? = null) {
     val intent = Intent(Intent.ACTION_SEND).apply {
         type = "text/plain"
-        putExtra(Intent.EXTRA_TEXT, title)
-        putExtra(Intent.EXTRA_TEXT, url)
+        putExtra(Intent.EXTRA_TEXT, "${title.orEmpty()} ".trim() + url)
     }
     val shareIntent = Intent.createChooser(intent, null)
     startActivity(shareIntent)

@@ -12,7 +12,6 @@ import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
-import io.snaps.corecommon.ext.parseToDouble
 import io.snaps.corecommon.ext.round
 import io.snaps.corecommon.ext.toFormatDecimal
 import io.snaps.corecommon.ext.toStringValue
@@ -94,8 +93,8 @@ fun mainHeaderState(
         MainHeaderState.Data(
             profileImage = profile.requireData.avatar,
             energy = profile.requireData.questInfo?.totalEnergyProgress.toString(),
-            bnb = bnb?.coinValue?.coinToFormatDecimal() ?: "-",
-            snp = snp?.coinValue?.coinToFormatDecimal() ?: "-",
+            bnb = bnb?.coinValueDouble?.coinToFormatDecimal() ?: "-",
+            snp = snp?.coinValueDouble?.coinToFormatDecimal() ?: "-",
             onProfileClicked = onProfileClicked,
             onWalletClicked = onWalletClicked,
         )
@@ -107,8 +106,8 @@ fun mainHeaderState(
     MainHeaderState.Shimmer
 }
 
-private fun String.coinToFormatDecimal(): String {
-    val number = this.parseToDouble().round(3)
+private fun Double.coinToFormatDecimal(): String {
+    val number = this.round(3)
     if (number.toInt() >= 100000) {
         return number.toInt().toFormatDecimal(Locale.US)
     }

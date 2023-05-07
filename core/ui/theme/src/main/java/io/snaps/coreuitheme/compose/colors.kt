@@ -47,6 +47,7 @@ internal val LightSpecificColorScheme = SpecificColorScheme(
     darkGrey = Color(0xFFB1B3C0),
 
     pink = Color(0xFFEE667E),
+    red = Color(0xFFE3342F),
 )
 
 internal val DarkSpecificColorScheme = LightSpecificColorScheme
@@ -90,6 +91,7 @@ data class SpecificColorScheme(
     val darkGrey: Color,
 
     val pink: Color,
+    val red: Color,
 
     val white_10: Color = Color(0x33FFFFFF),
     val white_20: Color = Color(0x33FFFFFF),

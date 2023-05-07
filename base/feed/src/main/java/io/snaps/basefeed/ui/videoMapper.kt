@@ -29,6 +29,8 @@ data class VideoFeedUiState(
 ) {
 
     val isData get() = items.any { it is VideoClipUiState.Data }
+
+    val dataSize get() = items.filterIsInstance<VideoClipUiState.Data>().size
 }
 
 fun VideoFeedPageModel.toVideoFeedUiState(

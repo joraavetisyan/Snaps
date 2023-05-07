@@ -24,7 +24,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import java.util.Collections.max
 import javax.inject.Inject
+import kotlin.math.max
 
 interface NftRepository {
 
@@ -96,8 +98,18 @@ class NftRepositoryImpl @Inject constructor(
     override suspend fun updateNftCollection(): Effect<List<NftModel>> {
         return apiCall(ioDispatcher) {
             nftApi.userNftCollection()
-        }.map {
-            it.toNftModelList()
+        }.map { dtoList ->
+            dtoList.toNftModelList()
+                .groupBy(NftModel::type)
+                .mapValues { (type, list) ->
+                    val processingCount = userDataStorage.getProcessingNftCount(type)
+                    val overCount = (userDataStorage.getProcessingNftCount(type) - list.size).coerceAtLeast(0)
+                    userDataStorage.setProcessingNftCount(type, max(processingCount, list.size))
+                    list + List(overCount) { i -> list.first().let {
+                        it.copy(id = it.id + "processing$i", isProcessing = true) }
+                    }
+                }
+                .flatMap(Map.Entry<NftType, List<NftModel>>::value)
         }.also {
             _nftCollectionState tryPublish it
         }
@@ -150,7 +162,10 @@ class NftRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveProcessingNft(nftType: NftType): Effect<Completable> {
-
+        userDataStorage.setProcessingNftCount(
+            type = nftType,
+            totalCount = userDataStorage.getProcessingNftCount(nftType) + 1,
+        )
         return Effect.completable
     }
 }

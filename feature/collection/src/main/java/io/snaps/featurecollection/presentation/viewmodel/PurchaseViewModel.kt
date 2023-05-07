@@ -132,9 +132,9 @@ class PurchaseViewModel @Inject constructor(
                         from = summary.from,
                         to = summary.to,
                         // todo localize
-                        summary = summary.summary.toDouble().toStringValue() + " BNB",
-                        gas = summary.gas.toDouble().toStringValue() + " BNB",
-                        total = summary.total.toDouble().toStringValue() + " BNB",
+                        summary = summary.summary.toStringValue() + " BNB",
+                        gas = summary.gas.toStringValue() + " BNB",
+                        total = summary.total.toStringValue() + " BNB",
                         onConfirmClick = { onConfirmed(summary) },
                         onCancelClick = {
                             viewModelScope.launch {
@@ -177,6 +177,8 @@ class PurchaseViewModel @Inject constructor(
                     it.copy(bottomDialog = BottomDialog.PurchaseWithBnbSuccess("https://testnet.bscscan.com/tx/${hash}"))
                 }
                 _command publish Command.ShowBottomDialog
+            }.doOnError { error, _ ->
+                if (error.code == 400) notificationsSource.sendError(error)
             }.doOnComplete {
                 _uiState.update { it.copy(isLoading = false) }
             }

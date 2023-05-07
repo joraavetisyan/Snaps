@@ -31,5 +31,6 @@ class FeedFeatureProviderImpl @Inject constructor() : FeedFeatureProvider {
 
     override fun NavGraphBuilder.feedGraph(controller: NavHostController) {
         composable(AppRoute.MainBottomBar.MainTab1Start) { MainVideoFeedScreen(controller) }
+        composable(AppRoute.SingleVideo) { MainVideoFeedScreen(controller) }
     }
 }

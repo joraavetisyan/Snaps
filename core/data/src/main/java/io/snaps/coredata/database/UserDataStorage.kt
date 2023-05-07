@@ -53,17 +53,11 @@ class UserDataStorage @Inject constructor(
             putString("instagramUsername", value)
         }
 
-    fun getProcessingNft(type: NftType): Pair<Int, Int>? =
-        provider.prefs.getString("ProcessingNft${type.name}", null)?.let {
-            it.split(":").run { first().toInt() to last().toInt() }
-        }
+    fun getProcessingNftCount(type: NftType): Int = provider.prefs.getInt("ProcessingNft${type.name}", 0)
 
-    fun setProcessingNft(
-        type: NftType,
-        wasCount: Int,
-        processingCount: Int,
-    ) = provider.prefs.edit {
-        putString("ProcessingNft${type.name}", "$wasCount:$processingCount")
+    // Saves processed + processing nfts count
+    fun setProcessingNftCount(type: NftType, totalCount: Int) = provider.prefs.edit {
+        putInt("ProcessingNft${type.name}", totalCount)
     }
 
     fun reset(reason: LogOutReason? = null) {

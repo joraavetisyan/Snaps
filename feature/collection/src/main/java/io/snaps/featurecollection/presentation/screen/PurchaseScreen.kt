@@ -64,6 +64,7 @@ import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonDefaultM
+import io.snaps.coreuicompose.uikit.button.SimpleTwoLineButtonActionL
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.other.SimpleCard
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
@@ -280,15 +281,12 @@ private fun ActionButtons(
                 )
             }
             if (uiState.isPurchasableWithBnb) {
-                SimpleButtonActionM(
+                SimpleTwoLineButtonActionL(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onBuyWithBNBClicked,
-                ) {
-                    SimpleButtonContent(
-                        text = StringKey.PurchaseActionBuyWithBNB.textValue(),
-                        additionalText = StringKey.PurchaseFieldOff.textValue(),
-                    )
-                }
+                    text = StringKey.PurchaseActionBuyWithBNB.textValue(),
+                    additionalText = StringKey.PurchaseFieldOff.textValue(),
+                )
             }
         }
     }
