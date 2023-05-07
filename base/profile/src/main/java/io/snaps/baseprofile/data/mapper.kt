@@ -12,11 +12,16 @@ import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
+import io.snaps.corecommon.ext.parseToDouble
+import io.snaps.corecommon.ext.round
+import io.snaps.corecommon.ext.toFormatDecimal
+import io.snaps.corecommon.ext.toStringValue
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.WalletModel
 import java.lang.Integer.min
 import java.time.ZonedDateTime
+import java.util.Locale
 
 fun List<UserInfoResponseDto>.toModelList() = map(UserInfoResponseDto::toModel)
 
@@ -89,8 +94,8 @@ fun mainHeaderState(
         MainHeaderState.Data(
             profileImage = profile.requireData.avatar,
             energy = profile.requireData.questInfo?.totalEnergyProgress.toString(),
-            bnb = bnb?.coinValue ?: "-",
-            snp = snp?.coinValue ?: "-",
+            bnb = bnb?.coinValue?.coinToFormatDecimal() ?: "-",
+            snp = snp?.coinValue?.coinToFormatDecimal() ?: "-",
             onProfileClicked = onProfileClicked,
             onWalletClicked = onWalletClicked,
         )
@@ -100,4 +105,12 @@ fun mainHeaderState(
     )
 } else {
     MainHeaderState.Shimmer
+}
+
+private fun String.coinToFormatDecimal(): String {
+    val number = this.parseToDouble().round(3)
+    if (number.toInt() >= 100000) {
+        return number.toInt().toFormatDecimal(Locale.US)
+    }
+    return number.toStringValue()
 }

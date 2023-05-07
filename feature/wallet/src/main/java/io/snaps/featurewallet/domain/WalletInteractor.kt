@@ -2,6 +2,7 @@ package io.snaps.featurewallet.domain
 
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basewallet.data.WalletRepository
+import io.snaps.corecommon.ext.parseToDouble
 import io.snaps.corecommon.ext.toStringValue
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
@@ -35,7 +36,7 @@ class WalletInteractorImpl @Inject constructor(
             is Loading -> Loading()
             is Effect -> when {
                 it.isSuccess -> {
-                    val snp = walletRepository.getSnpWalletModel()?.coinValue?.toDouble()
+                    val snp = walletRepository.getSnpWalletModel()?.coinValue?.parseToDouble()
                     Effect.success(
                         "$${snp?.times(it.requireData.snpExchangeRate)?.toStringValue().orEmpty()}"
                     )

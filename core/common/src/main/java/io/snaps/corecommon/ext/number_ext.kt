@@ -9,3 +9,9 @@ fun Int.toFormatDecimal(locale: Locale = DEFAULT_LOCALE): String {
         .getInstance(locale, CompactDecimalFormat.CompactStyle.SHORT)
         .format(this)
 }
+
+fun String.parseToDouble(): Double {
+    return this.replace(",", ".")
+        .filter { it.isDigit() || it == '.' }
+        .toDouble()
+}
