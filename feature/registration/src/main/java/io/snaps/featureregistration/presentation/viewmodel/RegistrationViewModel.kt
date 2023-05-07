@@ -185,6 +185,8 @@ class RegistrationViewModel @Inject constructor(
                 sessionRepository.onLogin()
             }.doOnError { _, _ ->
                 sessionRepository.onLogout()
+            }.doOnComplete {
+                _command publish Command.HideBottomDialog
             }
         }
     }
