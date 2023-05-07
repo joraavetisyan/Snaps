@@ -1,5 +1,7 @@
 package io.snaps.featurereferral.presentation.viewmodel
 
+import android.graphics.Bitmap
+import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.MainHeaderHandler
@@ -14,6 +16,8 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.addPrefix
 import io.snaps.coredata.network.Action
+import io.snaps.coreui.FileManager
+import io.snaps.coreui.barcode.BarcodeManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.featurereferral.presentation.screen.ReferralsTileState
@@ -33,6 +37,8 @@ class ReferralProgramViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
     onboardingHandlerDelegate: OnboardingHandler,
     bottomDialogBarVisibilityHandlerDelegate: BottomDialogBarVisibilityHandler,
+    private val fileManager: FileManager,
+    private val barcodeManager: BarcodeManager,
     private val profileRepository: ProfileRepository,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
@@ -59,10 +65,11 @@ class ReferralProgramViewModel @Inject constructor(
     private fun subscribeOnCurrentUser() {
         profileRepository.state.onEach { state ->
             _uiState.update {
-                val inviteCode = state.dataOrCache?.ownInviteCode.orEmpty()
+                val inviteCode = state.dataOrCache?.ownInviteCode
                 it.copy(
-                    referralCode = inviteCode.addPrefix("#"),
-                    referralLink = inviteCode.addPrefix("https://snaps.io/"),
+                    referralCode = inviteCode.orEmpty().addPrefix("#"),
+                    referralLink = inviteCode.orEmpty().addPrefix("https://snaps.io/"),
+                    referralQr = inviteCode?.let { barcodeManager.getQrCodeBitmap(text = inviteCode, size = 600f) },
                 )
             }
         }.launchIn(viewModelScope)
@@ -75,6 +82,7 @@ class ReferralProgramViewModel @Inject constructor(
                     referralsTileState = state.toReferralsUiState(
                         onReferralClick = ::onReferralClick,
                         onReloadClick = ::updateReferrals,
+                        onShowQrClick = ::onShowReferralQrClicked,
                     ),
                 )
             }
@@ -163,6 +171,20 @@ class ReferralProgramViewModel @Inject constructor(
         }
     }
 
+    fun onShowReferralQrClicked() = viewModelScope.launch {
+        _uiState.update { it.copy(bottomDialog = BottomDialog.ReferralQr) }
+        _command publish Command.ShowBottomDialog
+    }
+
+    fun onShareQrClicked(bitmap: Bitmap) = viewModelScope.launch {
+        fileManager.createFileFromBitmap(bitmap)?.let {
+            _command publish Command.OpenShareDialog(
+                uri = fileManager.getUriForFile(it),
+                text = "Download Snaps and use my referral code - ${uiState.value.referralCode}"
+            )
+        }
+    }
+
     data class UiState(
         val isLoading: Boolean = false,
         val referralCode: String = "",
@@ -171,6 +193,7 @@ class ReferralProgramViewModel @Inject constructor(
         val bottomDialog: BottomDialog = BottomDialog.ReferralCode,
         val referralsTileState: ReferralsTileState = ReferralsTileState.Shimmer,
         val isInviteUserDialogVisible: Boolean = false,
+        val referralQr: Bitmap? = null,
     ) {
 
         val isReferralCodeValid get() = inviteCodeValue.isNotBlank()
@@ -187,5 +210,6 @@ class ReferralProgramViewModel @Inject constructor(
         object ShowBottomDialog : Command()
         object HideBottomDialog : Command()
         data class OpenUserInfoScreen(val userId: Uuid) : Command()
+        data class OpenShareDialog(val uri: Uri, val text: String) : Command()
     }
 }

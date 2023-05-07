@@ -15,7 +15,7 @@ enum class Feature(
     TransactionsApiMock("TransactionsApiMock", false), // todo use or remove
 
     // Ui elements
-    BnbPurchase("BnbPurchase", true),
+    PurchaseNftWithBnb("PurchaseNftWithBnb", true),
 
     UNKNOWN
 }

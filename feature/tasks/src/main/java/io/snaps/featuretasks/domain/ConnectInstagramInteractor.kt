@@ -30,7 +30,7 @@ class ConnectInstagramInteractorImpl @Inject constructor(
                     instagramId = it.id,
                     instagramUsername = it.username,
                     name = user.name,
-                    walletAddress = walletRepository.getActiveWalletReceiveAddress(),
+                    walletAddress = walletRepository.requireActiveWalletReceiveAddress(),
                     avatar = user.avatarUrl,
                 )
             } ?: Effect.error(AppError.Unknown())
@@ -41,7 +41,7 @@ class ConnectInstagramInteractorImpl @Inject constructor(
         return profileRepository.state.value.dataOrCache?.let {
              profileRepository.disconnectInstagram(
                  name = it.name,
-                 walletAddress = walletRepository.getActiveWalletReceiveAddress(),
+                 walletAddress = walletRepository.requireActiveWalletReceiveAddress(),
                  avatar = it.avatarUrl,
             )
         } ?: Effect.error(AppError.Unknown())

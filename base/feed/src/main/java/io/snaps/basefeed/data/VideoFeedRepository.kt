@@ -72,8 +72,14 @@ class VideoFeedRepositoryImpl @Inject constructor(
                 when (type) {
                     VideoFeedType.Main -> PagedLoaderParams(
                         action = { from, count -> videoFeedApi.feed(from, count) },
-                        pageSize = 3,
+                        pageSize = 5,
                         nextPageIdFactory = { it.entityId },
+                        mapper = { it.toVideoClipModelList(getLikedVideos()) },
+                    )
+                    is VideoFeedType.Single -> PagedLoaderParams(
+                        action = { _, _ -> videoFeedApi.feed(type.videoId, 1) },
+                        pageSize = 1,
+                        nextPageIdFactory = { null },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
                     is VideoFeedType.Popular -> PagedLoaderParams(

@@ -8,13 +8,18 @@ import io.snaps.featurereferral.presentation.screen.ReferralsTileState
 
 fun State<List<UserInfoModel>>.toReferralsUiState(
     onReferralClick: (UserInfoModel) -> Unit,
+    onShowQrClick: () -> Unit,
     onReloadClick: () -> Unit,
 ): ReferralsTileState {
     return when (this) {
         is Loading -> ReferralsTileState.Shimmer
         is Effect -> if (isSuccess) {
             if (requireData.isEmpty()) ReferralsTileState.Empty
-            else ReferralsTileState.Data(requireData, onReferralClick)
-        } else ReferralsTileState.Error(onReloadClick)
+            else ReferralsTileState.Data(
+                values = requireData,
+                onReferralClick = onReferralClick,
+                onShowQrClick = onShowQrClick,
+            )
+        } else ReferralsTileState.Error(onReloadClick = onReloadClick)
     }
 }

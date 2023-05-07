@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package io.snaps.featuretasks.presentation.screen
 
 import android.graphics.Bitmap
@@ -87,7 +85,7 @@ fun ShareTemplateScreen(
     FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalTextApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ShareTemplateScreen(
     uiState: ShareTemplateViewModel.UiState,

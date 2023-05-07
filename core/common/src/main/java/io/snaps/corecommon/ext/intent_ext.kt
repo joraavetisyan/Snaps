@@ -8,8 +8,7 @@ import io.snaps.corecommon.model.SocialNetwork
 fun Context.startShareLinkIntent(url: String, title: String? = null) {
     val intent = Intent(Intent.ACTION_SEND).apply {
         type = "text/plain"
-        putExtra(Intent.EXTRA_TEXT, title)
-        putExtra(Intent.EXTRA_TEXT, url)
+        putExtra(Intent.EXTRA_TEXT, "${title.orEmpty()} ".trim() + url)
     }
     val shareIntent = Intent.createChooser(intent, null)
     startActivity(shareIntent)
@@ -26,10 +25,11 @@ fun Context.startSharePhotoToInstagramIntent(uri: Uri) {
     startActivity(shareIntent)
 }
 
-fun Context.startSharePhotoIntent(uri: Uri) {
+fun Context.startSharePhotoIntent(uri: Uri, text: String? = null) {
     val intent = Intent(Intent.ACTION_SEND).apply {
         type = "image/*"
         putExtra(Intent.EXTRA_STREAM, uri)
+        text?.let { putExtra(Intent.EXTRA_TEXT, it) }
         flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
     }
     val shareIntent = Intent.createChooser(intent, null)

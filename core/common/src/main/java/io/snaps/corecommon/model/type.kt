@@ -51,7 +51,11 @@ data class WalletModel(
     val fiatValue: String,
     val decimal: Int,
     val coinAddress: String?,
-)
+) {
+
+    val coinValueDouble: Double
+        get() = coinValue.replace(',', '.').toDoubleOrNull() ?: 0.0
+}
 
 @Serializable
 enum class SocialNetwork(
@@ -86,6 +90,12 @@ enum class NftType(val intType: NftTypeInt, val storeId: String?) {
     @SerialName("Rockstar") Rockstar(9, null),
     @SerialName("SuperStar") SuperStar(10, null),
     @SerialName("Legend") Legend(11, null),
+    ;
+
+    companion object {
+
+        fun fromIntType(intType: NftTypeInt) = values().first { it.intType == intType }
+    }
 }
 
 enum class OnboardingType {

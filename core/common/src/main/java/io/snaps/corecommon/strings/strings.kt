@@ -17,6 +17,9 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Continue",
         SupportedLanguageKey.Ru to "Продолжить",
     ),
+    key(StringKey.ActionConfirm) to mapOf(
+        SupportedLanguageKey.En to "Confirm",
+    ),
     key(StringKey.ActionCancel) to mapOf(
         SupportedLanguageKey.En to "Cancel",
     ),
@@ -1034,8 +1037,8 @@ internal val strings = mapOf(
     key(StringKey.PurchaseTitle) to mapOf(
         SupportedLanguageKey.En to "Buy",
     ),
-    key(StringKey.PurchaseActionBuyWithGooglePay) to mapOf(
-        SupportedLanguageKey.En to "Pay",
+    key(StringKey.PurchaseActionBuyInStore) to mapOf(
+        SupportedLanguageKey.En to "Purchase",
     ),
     key(StringKey.PurchaseActionBuyWithBNB) to mapOf(
         SupportedLanguageKey.En to "Buy with BNB",

@@ -49,17 +49,41 @@ class ProfileViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     init {
-        if (args?.userId != null && !profileRepository.isCurrentUser(args.userId!!)) {
-            _uiState.update { it.copy(userType = UserType.Other) }
-            loadUserById(requireNotNull(args.userId))
+        if (args?.userId != null) {
+            viewModelScope.launch {
+                action.execute {
+                    profileRepository.updateData()
+                }.doOnSuccess {
+                    if (!profileRepository.isCurrentUser(requireNotNull(args.userId))) {
+                        _uiState.update {
+                            it.copy(
+                                userType = UserType.Other,
+                                shareLink = AppDeeplink.generateSharingLink(
+                                    deeplink = AppDeeplink.Profile(id = requireNotNull(args.userId))
+                                )
+                            )
+                        }
+                        loadUserById(requireNotNull(args.userId))
+                    } else {
+                        subscribeOnCurrentUser()
+                        loadCurrentUser()
+                    }
+
+                    subscribeOnFeed()
+                    subscribeOnUserLikedFeed()
+
+                    loadSubscriptions()
+                }
+            }
         } else {
             subscribeOnCurrentUser()
             loadCurrentUser()
-        }
-        subscribeOnFeed()
-        subscribeOnUserLikedFeed()
 
-        loadSubscriptions()
+            subscribeOnFeed()
+            subscribeOnUserLikedFeed()
+
+            loadSubscriptions()
+        }
     }
 
     private fun subscribeOnCurrentUser() {

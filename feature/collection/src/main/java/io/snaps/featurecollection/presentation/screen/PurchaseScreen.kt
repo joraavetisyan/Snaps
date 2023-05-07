@@ -16,7 +16,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
@@ -28,6 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,13 +55,16 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonDefaultM
+import io.snaps.coreuicompose.uikit.button.SimpleTwoLineButtonActionL
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.other.SimpleCard
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
@@ -64,7 +72,9 @@ import io.snaps.coreuicompose.uikit.status.InfoBlock
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurecollection.ScreenNavigator
 import io.snaps.featurecollection.presentation.viewmodel.PurchaseViewModel
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PurchaseScreen(
     navHostController: NavHostController,
@@ -74,19 +84,48 @@ fun PurchaseScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true,
+    )
+    val coroutineScope = rememberCoroutineScope()
+
     viewModel.command.collectAsCommand {
         when (it) {
             PurchaseViewModel.Command.ClosePurchaseScreen -> router.back()
+            PurchaseViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
+            PurchaseViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
         }
     }
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetContent = {
+            when (val dialog = uiState.bottomDialog) {
+                PurchaseViewModel.BottomDialog.PurchaseWithBnb -> PurchaseWithBnb(
+                    data = uiState.purchaseWithBnbState,
+                )
 
-    PurchaseScreen(
-        uiState = uiState,
-        onBackClicked = router::back,
-        onBuyWithGooglePlayClicked = { viewModel.onBuyWithGooglePlayClicked(context as Activity) },
-        onBuyWithBNBClicked = viewModel::onBuyWithBNBClicked,
-        onFreeClicked = viewModel::onFreeClicked,
-    )
+                is PurchaseViewModel.BottomDialog.PurchaseWithBnbSuccess -> SimpleBottomDialog(
+                    image = ImageValue.ResImage(R.drawable.img_guy_hands_up),
+                    title = "Transaction succeeded".textValue(),
+                    text = "NFT will appear in your collection soon".textValue(),
+                    buttonText = "View on Bscscan".textValue(),
+                    onClick = {
+                        coroutineScope.launch { sheetState.hide() }
+                        context.openUrl(dialog.link)
+                    },
+                )
+            }
+        }
+    ) {
+        PurchaseScreen(
+            uiState = uiState,
+            onBackClicked = router::back,
+            onBuyWithGooglePlayClicked = { viewModel.onBuyWithGooglePlayClicked(context as Activity) },
+            onBuyWithBNBClicked = viewModel::onBuyWithBNBClicked,
+            onFreeClicked = viewModel::onFreeClicked,
+        )
+    }
 
     FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
@@ -238,20 +277,16 @@ private fun ActionButtons(
                 onClick = onBuyWithGooglePlayClicked,
             ) {
                 SimpleButtonContent(
-                    text = StringKey.PurchaseActionBuyWithGooglePay.textValue(),
-                    iconLeft = AppTheme.specificIcons.google,
+                    text = StringKey.PurchaseActionBuyInStore.textValue(),
                 )
             }
             if (uiState.isPurchasableWithBnb) {
-                SimpleButtonActionM(
+                SimpleTwoLineButtonActionL(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onBuyWithBNBClicked,
-                ) {
-                    SimpleButtonContent(
-                        text = StringKey.PurchaseActionBuyWithBNB.textValue(),
-                        additionalText = StringKey.PurchaseFieldOff.textValue(),
-                    )
-                }
+                    text = StringKey.PurchaseActionBuyWithBNB.textValue(),
+                    additionalText = StringKey.PurchaseFieldOff.textValue(),
+                )
             }
         }
     }

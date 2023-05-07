@@ -1,6 +1,8 @@
 package io.snaps.android.mainscreen
 
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basesession.ActiveAppZoneProvider
 import io.snaps.basesession.AppRouteProvider
@@ -10,6 +12,8 @@ import io.snaps.basesources.LocaleSource
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.strings.StringHolder
 import io.snaps.coredata.database.UserDataStorage
+import io.snaps.corenavigation.AppDeeplink
+import io.snaps.corenavigation.Deeplink
 import io.snaps.corenavigation.base.ROUTE_ARGS_SEPARATOR
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.likeStateFlow
@@ -20,8 +24,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
-class AppViewModel @Inject constructor(
+class AppViewModel @AssistedInject constructor(
+    @Assisted private var deeplink: String?,
     localeSource: LocaleSource,
     activeAppZoneProvider: ActiveAppZoneProvider,
     userSessionTracker: UserSessionTracker,
@@ -50,6 +54,7 @@ class AppViewModel @Inject constructor(
             is UserSessionTracker.State.Active -> StartFlow.AuthorizedFlow(
                 needsWalletConnect = userSession is UserSessionTracker.State.Active.NeedsWalletConnect,
                 needsInitialization = userSession is UserSessionTracker.State.Active.NeedsInitialization,
+                deeplink = AppDeeplink.parse(deeplink).also { deeplink = null },
             )
         }
     }.likeStateFlow(scope = viewModelScope, initialValue = StartFlow.Idle)
@@ -90,6 +95,7 @@ class AppViewModel @Inject constructor(
         data class AuthorizedFlow(
             val needsWalletConnect: Boolean,
             val needsInitialization: Boolean,
+            val deeplink: Deeplink? = null,
         ) : StartFlow()
     }
 }

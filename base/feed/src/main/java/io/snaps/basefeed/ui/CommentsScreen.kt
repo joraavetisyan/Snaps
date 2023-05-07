@@ -80,7 +80,7 @@ fun CommentsScreen(
             ) {
                 Text(
                     text = StringKey.CommentsTitle
-                        .textValue(uiState.commentListSize.toString()).get(),
+                        .textValue(uiState.commentsUiState.dataSize.toString()).get(),
                     modifier = Modifier.align(Alignment.Center),
                     style = AppTheme.specificTypography.titleSmall
                 )

@@ -560,7 +560,7 @@ data class SimpleButtonColors(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-private fun SimpleButton(
+internal fun SimpleButton(
     modifier: Modifier,
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,

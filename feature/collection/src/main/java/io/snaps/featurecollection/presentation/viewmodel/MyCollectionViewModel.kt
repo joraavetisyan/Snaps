@@ -7,6 +7,9 @@ import io.snaps.corecommon.model.NftModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.basesession.data.OnboardingHandler
+import io.snaps.basesources.NotificationsSource
+import io.snaps.basewallet.domain.NoEnoughSnpToRepair
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.coredata.network.Action
@@ -31,6 +34,7 @@ class MyCollectionViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
     onboardingHandlerDelegate: OnboardingHandler,
     private val action: Action,
+    private val notificationsSource: NotificationsSource,
     private val nftRepository: NftRepository,
     private val interactor: MyCollectionInteractor,
 ) : SimpleViewModel(),
@@ -82,7 +86,11 @@ class MyCollectionViewModel @Inject constructor(
     private fun onRepairClicked(nftModel: NftModel) = viewModelScope.launch {
         _uiState.update { it.copy(isLoading = true) }
         action.execute {
-            interactor.repairGlasses(nftModel)
+            interactor.repair(nftModel)
+        }.doOnError { error, _ ->
+            if (error.cause is NoEnoughSnpToRepair) {
+                notificationsSource.sendError("No enough SNP to repair".textValue())
+            }
         }.doOnComplete {
             _uiState.update { it.copy(isLoading = false) }
         }

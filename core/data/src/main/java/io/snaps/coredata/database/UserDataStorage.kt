@@ -2,6 +2,7 @@ package io.snaps.coredata.database
 
 import androidx.core.content.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.OnboardingType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -51,6 +52,13 @@ class UserDataStorage @Inject constructor(
         set(value) = provider.prefs.edit {
             putString("instagramUsername", value)
         }
+
+    fun getProcessingNftCount(type: NftType): Int = provider.prefs.getInt("ProcessingNft${type.name}", 0)
+
+    // Saves processed + processing nfts count
+    fun setProcessingNftCount(type: NftType, totalCount: Int) = provider.prefs.edit {
+        putInt("ProcessingNft${type.name}", totalCount)
+    }
 
     fun reset(reason: LogOutReason? = null) {
         instagramUsername = ""

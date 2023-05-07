@@ -1,13 +1,24 @@
+@file:Suppress("NOTHING_TO_INLINE") // inlining to get the java class simpleName
+
 package io.snaps.corecommon.ext
 
 import android.util.Log
 
-private const val tag = "simple_logger"
+private const val logTagPrefix = "snps" // keep this short to fit in the logs
+val Any.logTag get() = "$logTagPrefix ${this.javaClass.simpleName}"
+
+inline fun Any.log(value: String) {
+    Log.d(logTag, value)
+}
 
 fun log(value: String) {
-    Log.d(tag, value)
+    Log.d(logTagPrefix, value)
+}
+
+inline fun Any.log(value: Exception) {
+    Log.e(logTag, "Error: ", value)
 }
 
 fun log(value: Exception) {
-    Log.e(tag, "Error: ", value)
+    Log.e(logTagPrefix, "Error: ", value)
 }

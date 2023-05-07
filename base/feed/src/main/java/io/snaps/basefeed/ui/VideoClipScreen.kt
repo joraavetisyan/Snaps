@@ -47,6 +47,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -85,7 +86,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
-private const val DETECT_THRESHOLD = 1
+private const val DETECT_THRESHOLD = 3
 
 @Composable
 @OptIn(
@@ -152,6 +153,7 @@ fun VideoClipScreen(
             VideoFeedViewModel.Command.HideCommentInputBottomDialog -> commentInputSheetState.hideSheet()
             is VideoFeedViewModel.Command.ScrollToPosition -> pagerState.scrollToPage(it.position)
             is VideoFeedViewModel.Command.OpenProfileScreen -> onAuthorClicked(it.userId)
+            is VideoFeedViewModel.Command.ShareVideoClipLink -> context.startShareLinkIntent(it.link)
         }
     }
 
@@ -215,7 +217,7 @@ fun VideoClipScreen(
             ) { paddingValues ->
                 Box {
                     ScrollDetector(
-                        pageCount = uiState.videoFeedUiState.items.size,
+                        pageCount = uiState.videoFeedUiState.dataSize,
                         pagerState = pagerState,
                         onListEndReaching = uiState.videoFeedUiState.onListEndReaching,
                     )
@@ -242,10 +244,9 @@ fun VideoClipScreen(
                                     onMuteClicked = viewModel::onMuteClicked,
                                     onAuthorClicked = viewModel::onAuthorClicked,
                                     onLikeClicked = viewModel::onLikeClicked,
+                                    onDoubleLikeClicked = viewModel::onDoubleLikeClicked,
                                     onCommentClicked = viewModel::onCommentClicked,
-                                    onShareClicked = {
-                                        context.startShareLinkIntent(it.url, it.title)
-                                    },
+                                    onShareClicked = viewModel::onShareClicked,
                                     onMoreClicked = viewModel::onMoreClicked,
                                     onCreateVideoClicked = onCreateVideoClicked,
                                 )
@@ -282,12 +283,14 @@ private fun ScrollDetector(
     pagerState: PagerState,
     onListEndReaching: (() -> Unit)?,
 ) {
+    val pageCountRemembered by rememberUpdatedState(pageCount)
     val scrollInfo = remember(pagerState) {
         derivedStateOf {
             val currentPage = pagerState.currentPage
+            val isReachingEnd = pageCountRemembered > 0 && currentPage + 1 >= pageCountRemembered - DETECT_THRESHOLD
             ScrollInfo(
-                isReachingEnd = currentPage + 1 >= pageCount - DETECT_THRESHOLD,
-                totalItemsCount = pageCount,
+                isReachingEnd = isReachingEnd,
+                totalItemsCount = pageCountRemembered,
             )
         }
     }
@@ -305,6 +308,7 @@ private fun VideoClip(
     onMuteClicked: (Boolean) -> Unit,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
+    onDoubleLikeClicked: (VideoClipModel) -> Unit,
     onCommentClicked: (VideoClipModel) -> Unit,
     onShareClicked: (VideoClipModel) -> Unit,
     onMoreClicked: () -> Unit,
@@ -323,9 +327,11 @@ private fun VideoClip(
     VideoPlayer(
         networkUrl = item.clip.url,
         shouldPlay = shouldPlay,
+        isLiked = item.clip.isLiked,
         isMuted = uiState.isMuted,
-        isScrolling = pagerState.isScrollInProgress,
         onMuted = onMuteClicked,
+        isScrolling = pagerState.isScrollInProgress,
+        onLiked = { onDoubleLikeClicked(item.clip) },
     )
 
     VideoClipItems(
@@ -511,12 +517,17 @@ private fun VideoClipEndItems(
         }
 
         TextedIcon(
-            icon = if (!clipModel.isLiked) {
-                AppTheme.specificIcons.favoriteBorder
-            } else {
+            icon = if (clipModel.isLiked) {
                 AppTheme.specificIcons.favorite
+            } else {
+                AppTheme.specificIcons.favoriteBorder
             },
             text = clipModel.likeCount.toFormatDecimal(),
+            tint = if (clipModel.isLiked) {
+                AppTheme.specificColorScheme.red
+            } else {
+                AppTheme.specificColorScheme.white
+            },
             onIconClicked = { onLikeClicked(clipModel) },
         )
 
@@ -562,9 +573,9 @@ private fun TextedIcon(
     modifier: Modifier = Modifier,
     icon: IconValue,
     text: String,
-    tint: Color = Color.White,
+    tint: Color = AppTheme.specificColorScheme.white,
     contentDescription: String? = null,
-    onIconClicked: () -> Unit
+    onIconClicked: () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -580,7 +591,7 @@ private fun TextedIcon(
         }
         Text(
             text = text,
-            color = Color.White,
+            color = AppTheme.specificColorScheme.white,
         )
     }
 }

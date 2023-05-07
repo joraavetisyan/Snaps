@@ -71,6 +71,7 @@ class SimpleBillingImpl @Inject constructor(
             scope.launch {
                 handlePurchases(purchases)
             }
+            // todo emit only if handled?
             newPurchasesFlow.tryEmit(purchases)
         }
     }

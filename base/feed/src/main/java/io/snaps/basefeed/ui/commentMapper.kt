@@ -28,7 +28,10 @@ data class CommentsUiState(
     val errorState: MessageBannerState? = null,
     val emptyState: EmptyListTileState? = null,
     val onListEndReaching: (() -> Unit)? = null,
-)
+) {
+
+    val dataSize get() = items.filterIsInstance<CommentUiState.Data>().size
+}
 
 fun CommentPageModel.toCommentsUiState(
     shimmerListSize: Int,

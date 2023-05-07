@@ -305,7 +305,7 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.PurchaseMessageDailyUnlock -> TODO()
     StringKey.PurchaseTitleDailyCosts -> TODO()
     StringKey.PurchaseMessageDailyCosts -> TODO()
-    StringKey.PurchaseActionBuyWithGooglePay -> TODO()
+    StringKey.PurchaseActionBuyInStore -> TODO()
     StringKey.PurchaseActionBuyWithBNB -> TODO()
     StringKey.PurchaseFieldOff -> TODO()
     StringKey.PurchaseActionFree -> TODO()
@@ -329,4 +329,5 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.NftDetailsTitleLevel -> TODO()
     StringKey.NftDetailsDescriptionLevel -> TODO()
     StringKey.WalletImportMessagePhraseExplanation -> TODO()
+    StringKey.ActionConfirm -> TODO()
 }

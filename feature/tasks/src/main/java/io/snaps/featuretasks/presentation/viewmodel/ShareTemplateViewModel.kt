@@ -35,6 +35,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShareTemplateViewModel @Inject constructor(
+    barcodeManager: BarcodeManager,
     private val action: Action,
     private val tasksRepository: TasksRepository,
     private val profileRepository: ProfileRepository,
@@ -42,7 +43,6 @@ class ShareTemplateViewModel @Inject constructor(
     private val userDataStorage: UserDataStorage,
     private val fileManager: FileManager,
     private val notificationsSource: NotificationsSource,
-    private val barcodeManager: BarcodeManager,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(

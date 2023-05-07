@@ -1,6 +1,7 @@
 package io.snaps.corecommon.strings
 
-import java.util.Locale
+import io.snaps.corecommon.model.WalletAddress
+import java.util.*
 
 val DEFAULT_LOCALE: Locale get() = Locale.getDefault()
 val RU_LOCALE: Locale get() = Locale("ru")
@@ -35,3 +36,5 @@ fun String.addPrefix(prefix: String, ignoreEmpty: Boolean = false): String {
     else if (this.startsWith(prefix)) return this
     return "$prefix$this"
 }
+
+val WalletAddress.addressEllipsized get() = take(7) + "..." + takeLast(10)
