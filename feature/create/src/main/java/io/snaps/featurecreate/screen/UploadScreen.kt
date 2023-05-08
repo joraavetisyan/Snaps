@@ -72,7 +72,7 @@ fun UploadScreen(
 
     viewModel.command.collectAsCommand {
         when (it) {
-            UploadViewModel.Command.CloseScreen -> router.toCreateScreen()
+            UploadViewModel.Command.CloseScreen -> router.toProfileScreen()
         }
     }
 
