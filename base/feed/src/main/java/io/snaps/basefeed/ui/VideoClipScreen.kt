@@ -105,6 +105,7 @@ fun VideoClipScreen(
     viewModel: VideoFeedViewModel,
     onAuthorClicked: (Uuid) -> Unit,
     onCreateVideoClicked: (() -> Unit)? = null,
+    onCloseScreen: (() -> Unit)? = null,
     content: @Composable ((BoxScope.(PaddingValues) -> Unit))? = null,
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -156,6 +157,7 @@ fun VideoClipScreen(
                 commentInputSheetState.showSheet()
                 focusRequester.requestFocus()
             }
+            VideoFeedViewModel.Command.CloseScreen -> onCloseScreen?.invoke()
             VideoFeedViewModel.Command.HideCommentInputBottomDialog -> commentInputSheetState.hideSheet()
             is VideoFeedViewModel.Command.ScrollToPosition -> pagerState.scrollToPage(it.position)
             is VideoFeedViewModel.Command.OpenProfileScreen -> onAuthorClicked(it.userId)

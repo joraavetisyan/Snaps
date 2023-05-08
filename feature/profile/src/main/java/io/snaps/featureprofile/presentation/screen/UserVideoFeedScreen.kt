@@ -19,6 +19,7 @@ fun UserVideoFeedScreen(
     UserVideoFeedScreen(
         viewModel = viewModel,
         onAuthorClicked = { router.back() },
+        onCloseScreen = { router.back() }
     )
 }
 
@@ -26,9 +27,11 @@ fun UserVideoFeedScreen(
 private fun UserVideoFeedScreen(
     viewModel: UserVideoFeedViewModel,
     onAuthorClicked: (Uuid) -> Unit,
+    onCloseScreen: () -> Unit,
 ) {
     VideoClipScreen(
         viewModel = viewModel,
         onAuthorClicked = onAuthorClicked,
+        onCloseScreen = onCloseScreen,
     )
 }
