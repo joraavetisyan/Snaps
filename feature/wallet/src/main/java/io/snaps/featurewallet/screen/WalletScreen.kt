@@ -242,6 +242,7 @@ private fun WalletScreen(
                     onWithdrawClicked = onRewardsWithdrawClicked,
                     onRewardsFootnoteClick = onRewardsFootnoteClick,
                     onDropdownMenuItemClicked = onDropdownMenuItemClicked,
+                    isWithdrawVisible = uiState.isRewardsWithdrawVisible,
                 )
             }
         }
@@ -330,6 +331,7 @@ private fun Rewards(
     filterOptions: WalletViewModel.FilterOptions,
     rewards: List<RewardsTileState>,
     onWithdrawClicked: () -> Unit,
+    isWithdrawVisible: Boolean,
     onOpened: () -> Unit,
     onRewardsFootnoteClick: () -> Unit,
     onDropdownMenuItemClicked: (WalletViewModel.FilterOptions) -> Unit,
@@ -357,28 +359,30 @@ private fun Rewards(
             it.Content(modifier = Modifier.padding(bottom = 12.dp))
         }
         item {
-            SimpleButtonOutlineL(
-                onClick = onWithdrawClicked,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 20.dp),
-            ) {
-                SimpleButtonContent(
-                    text = StringKey.RewardsActionClaim.textValue(),
-                    contentLeft = {
-                        Icon(
-                            painter = AppTheme.specificIcons.withdraw.get(),
-                            tint = AppTheme.specificColorScheme.white,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .background(
-                                    color = AppTheme.specificColorScheme.uiAccent,
-                                    shape = CircleShape,
-                                )
-                                .padding(2.dp),
-                        )
-                    },
-                )
+            if (isWithdrawVisible) {
+                SimpleButtonOutlineL(
+                    onClick = onWithdrawClicked,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp),
+                ) {
+                    SimpleButtonContent(
+                        text = StringKey.RewardsActionClaim.textValue(),
+                        contentLeft = {
+                            Icon(
+                                painter = AppTheme.specificIcons.withdraw.get(),
+                                tint = AppTheme.specificColorScheme.white,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .background(
+                                        color = AppTheme.specificColorScheme.uiAccent,
+                                        shape = CircleShape,
+                                    )
+                                    .padding(4.dp),
+                            )
+                        },
+                    )
+                }
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),

@@ -285,6 +285,7 @@ enum class StringKey {
     RewardsMessageLockedRewards,
     RewardsActionClaim,
     RewardsErrorInsufficientBalance,
+    RewardsErrorRepairGlasses,
     RewardsDialogTitleFootnote1,
     RewardsDialogTitleFootnote2,
     RewardsDialogMessageFootnote1,

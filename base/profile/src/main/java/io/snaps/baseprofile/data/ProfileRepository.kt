@@ -17,7 +17,6 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
-import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow

@@ -3,7 +3,9 @@ package io.snaps.featurewallet.viewmodel
 import android.graphics.Bitmap
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.basenft.data.NftRepository
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.baseprofile.data.model.PaymentsState
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
@@ -52,9 +54,16 @@ class WalletViewModel @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
     private val profileRepository: ProfileRepository,
     private val notificationsSource: NotificationsSource,
+    private val nftRepository: NftRepository,
 ) : SimpleViewModel(), OnboardingHandler by onboardingHandlerDelegate {
 
-    private val _uiState = MutableStateFlow(UiState())
+    private val _uiState = MutableStateFlow(
+        UiState(
+            isRewardsWithdrawVisible = profileRepository.state.value.dataOrCache?.paymentsState?.let {
+                it == PaymentsState.Blockchain
+            } ?: false,
+        )
+    )
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
@@ -68,6 +77,7 @@ class WalletViewModel @Inject constructor(
         subscribeToRewards()
         subscribeToUnlockedTransactions()
         subscribeToLockedTransactions()
+        subscribeToUserNft()
 
         updateBalance()
 
@@ -138,6 +148,16 @@ class WalletViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    private fun subscribeToUserNft() {
+        nftRepository.countBrokenGlassesState.onEach { state ->
+            _uiState.update {
+                it.copy(
+                    countBrokenGlasses = state.dataOrCache ?: 0,
+                )
+            }
+        }.launchIn(viewModelScope)
+    }
+
     private fun updateBalance() = viewModelScope.launch {
         action.execute { profileRepository.updateBalance() }
     }
@@ -183,8 +203,10 @@ class WalletViewModel @Inject constructor(
         }
     }
 
-    fun onRewardsWithdrawClicked() {
-        viewModelScope.launch {
+    fun onRewardsWithdrawClicked() = viewModelScope.launch {
+        if (uiState.value.countBrokenGlasses > 0) {
+            notificationsSource.sendError(StringKey.RewardsErrorRepairGlasses.textValue())
+        } else {
             action.execute {
                 walletInteractor.claim()
             }.doOnSuccess {
@@ -276,6 +298,8 @@ class WalletViewModel @Inject constructor(
         val unlockedTransactions: TransactionsUiState = TransactionsUiState(),
         val lockedTransactions: TransactionsUiState = TransactionsUiState(),
         val filterOptions: FilterOptions = FilterOptions.Unlocked,
+        val isRewardsWithdrawVisible: Boolean = false,
+        val countBrokenGlasses: Int = 0,
     )
 
     sealed class BottomDialog {

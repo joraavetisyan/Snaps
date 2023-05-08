@@ -825,6 +825,10 @@ internal val strings = mapOf(
     key(StringKey.RewardsErrorInsufficientBalance) to mapOf(
         SupportedLanguageKey.En to "Token balance is zero",
     ),
+    key(StringKey.RewardsErrorRepairGlasses) to mapOf(
+        SupportedLanguageKey.En to "To claim the tokens please fix all the glasses",
+        SupportedLanguageKey.Ru to "Чтобы заклеймить токены пожалуйста почините все очки",
+    ),
     key(StringKey.RewardsDialogTitleFootnote1) to mapOf(
         SupportedLanguageKey.En to "Unlocked Rewards",
     ),
