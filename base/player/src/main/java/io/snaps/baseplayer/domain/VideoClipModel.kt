@@ -12,7 +12,7 @@ data class VideoClipModel(
     val likeCount: Int,
     val url: FullUrl,
     val title: String,
-    val description: String,
+    val description: String?,
     val authorId: Uuid,
     val isLiked: Boolean,
     val thumbnail: FullUrl?,

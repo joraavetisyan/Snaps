@@ -111,13 +111,17 @@ class ProfileViewModel @Inject constructor(
 
     private fun loadSubscriptions() = viewModelScope.launch {
         _uiState.update { it.copy(isLoading = true) }
-        // todo in Action
-        val subscriptions = subsRepository.getSubscriptions()
-        _uiState.update {
-            it.copy(
-                isSubscribed = subscriptions.firstOrNull { it.userId == args?.userId } != null,
-                isLoading = false,
-            )
+        action.execute {
+            subsRepository.getSubscriptions()
+        }.doOnSuccess { subscriptions ->
+            _uiState.update {
+                it.copy(
+                    isSubscribed = subscriptions.firstOrNull { it.userId == args?.userId } != null,
+                    isLoading = false,
+                )
+            }
+        }.doOnComplete {
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 

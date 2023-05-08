@@ -75,7 +75,6 @@ class UploadViewModel @Inject constructor(
         action.execute {
             videoFeedRepository.uploadVideo(
                 title = _uiState.value.titleValue.trim(),
-                description = _uiState.value.descriptionValue.trim(),
                 fileId = fileModel.id,
                 filePath = filePath,
             )
@@ -132,7 +131,6 @@ class UploadViewModel @Inject constructor(
     ) {
 
         val isPublishEnabled = titleValue.isNotBlank()
-                && descriptionValue.isNotBlank()
                 && uploadingProgress == null
     }
 

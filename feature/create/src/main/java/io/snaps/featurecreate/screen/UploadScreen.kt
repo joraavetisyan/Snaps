@@ -134,7 +134,7 @@ private fun UploadScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             TitleTextField(uiState = uiState, onTitleChanged = onTitleChanged)
-            DescriptionTextField(uiState = uiState, onDescriptionChanged = onDescriptionChanged)
+            /*DescriptionTextField(uiState = uiState, onDescriptionChanged = onDescriptionChanged)*/
             Text(text = "Select video preview", style = AppTheme.specificTypography.titleSmall)
             selectedBitmap?.let { bitmap ->
                 Canvas(

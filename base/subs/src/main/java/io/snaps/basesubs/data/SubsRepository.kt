@@ -33,7 +33,7 @@ interface SubsRepository {
 
     suspend fun unsubscribe(subscriptionId: Uuid): Effect<Completable>
 
-    suspend fun getSubscriptions(): List<UserInfoResponseDto>
+    suspend fun getSubscriptions(): Effect<List<UserInfoResponseDto>>
 }
 
 class SubsRepositoryImpl @Inject constructor(
@@ -41,8 +41,6 @@ class SubsRepositoryImpl @Inject constructor(
     private val subsApi: SubsApi,
     private val loaderFactory: SubsLoaderFactory,
 ) : SubsRepository {
-
-    private var subscriptions: List<UserInfoResponseDto>? = null
 
     private fun getLoader(subType: SubType): SubsLoader {
         return loaderFactory.get(subType) { type ->
@@ -101,11 +99,9 @@ class SubsRepositoryImpl @Inject constructor(
         }
     }
 
-     override suspend fun getSubscriptions(): List<UserInfoResponseDto> {
-        return subscriptions ?: apiCall(ioDispatcher) {
+     override suspend fun getSubscriptions(): Effect<List<UserInfoResponseDto>> {
+         return apiCall(ioDispatcher) {
             subsApi.subscriptions(null, 100)
-        }.doOnSuccess {
-            subscriptions = it
-        }.dataOrCache ?: emptyList()
+        }
     }
 }

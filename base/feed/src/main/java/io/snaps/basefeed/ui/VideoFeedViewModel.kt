@@ -70,9 +70,6 @@ abstract class VideoFeedViewModel(
     private fun subscribeToProfile() {
         profileRepository.state.onEach { profileState ->
             _uiState.update { it.copy(profileAvatar = profileState.dataOrCache?.avatar) }
-            profileState.dataOrCache?.userId?.let {
-                loadSubscriptions(it)
-            }
         }.launchIn(viewModelScope)
     }
 
@@ -112,6 +109,7 @@ abstract class VideoFeedViewModel(
         onViewed(videoClip)
         loadComments(videoClip.id)
         loadAuthor(videoClip.authorId)
+        loadSubscriptions(videoClip.authorId)
     }
 
     private fun loadComments(videoId: Uuid) {
@@ -136,20 +134,27 @@ abstract class VideoFeedViewModel(
             }.doOnSuccess { profileModel ->
                 if (!isActive) return@doOnSuccess
                 _uiState.update {
-                    it.copy(authorProfileAvatar = profileModel.avatar)
+                    it.copy(
+                        authorProfileAvatar = profileModel.avatar,
+                        authorName = profileModel.name,
+                    )
                 }
             }
         }
     }
 
-    private fun loadSubscriptions(userId: Uuid) = viewModelScope.launch {
-        // todo in Action
-        val subscriptions = subsRepository.getSubscriptions()
-        _uiState.update {
-            it.copy(
-                isSubscribed = subscriptions.firstOrNull { it.userId == userId } != null,
-                isSubscribeButtonVisible = videoFeedType == VideoFeedType.Main,
-            )
+    private fun loadSubscriptions(authorId: Uuid) {
+        viewModelScope.launch {
+            action.execute {
+                subsRepository.getSubscriptions()
+            }.doOnSuccess { subscriptions ->
+                _uiState.update {
+                    it.copy(
+                        isSubscribed = subscriptions.firstOrNull { it.userId == authorId } != null,
+                        isSubscribeButtonVisible = videoFeedType == VideoFeedType.Main,
+                    )
+                }
+            }
         }
     }
 
@@ -345,6 +350,7 @@ abstract class VideoFeedViewModel(
         val isMuted: Boolean = false,
         val profileAvatar: ImageValue? = null,
         val authorProfileAvatar: ImageValue? = null,
+        val authorName: String = "",
         val comment: TextFieldValue = TextFieldValue(""),
         val videoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
         val commentsUiState: CommentsUiState = CommentsUiState(),

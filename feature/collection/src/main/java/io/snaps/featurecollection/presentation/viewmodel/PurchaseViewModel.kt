@@ -99,7 +99,6 @@ class PurchaseViewModel @Inject constructor(
 
     fun onBuyWithGooglePlayClicked(activity: Activity) {
         viewModelScope.launch {
-            _command publish Command.BackToMyCollectionScreen
             purchaseStateProvider.getInAppProducts().data.orEmpty().firstOrNull {
                 it.details.sku == args.type.storeId
             }?.let {

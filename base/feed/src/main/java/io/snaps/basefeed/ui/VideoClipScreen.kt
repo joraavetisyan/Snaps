@@ -350,6 +350,7 @@ private fun VideoClip(
         isSubscribeButtonVisible = uiState.isSubscribeButtonVisible,
         isSubscribed = uiState.isSubscribed,
         authorProfileAvatar = uiState.authorProfileAvatar,
+        authorName = uiState.authorName,
         onAuthorClicked = onAuthorClicked,
         onLikeClicked = onLikeClicked,
         onCommentClicked = onCommentClicked,
@@ -368,6 +369,7 @@ private fun VideoClipItems(
     isSubscribeButtonVisible: Boolean,
     isSubscribed: Boolean,
     authorProfileAvatar: ImageValue?,
+    authorName: String,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onCommentClicked: (VideoClipModel) -> Unit,
@@ -397,6 +399,7 @@ private fun VideoClipItems(
                 isSubscribeButtonVisible = isSubscribeButtonVisible,
                 isSubscribed = isSubscribed,
                 authorProfileAvatar = authorProfileAvatar,
+                authorName = authorName,
                 onAuthorClicked = onAuthorClicked,
                 onLikeClicked = onLikeClicked,
                 onCommentClicked = onCommentClicked,
@@ -416,6 +419,7 @@ private fun VideoClipInfoItems(
     isSubscribeButtonVisible: Boolean,
     isSubscribed: Boolean,
     authorProfileAvatar: ImageValue?,
+    authorName: String,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onCommentClicked: (VideoClipModel) -> Unit,
@@ -431,6 +435,7 @@ private fun VideoClipInfoItems(
         VideoClipBottomItems(
             modifier = Modifier.fillMaxWidth(0.7f),
             clipModel = clipModel,
+            authorName = authorName,
             isSubscribeButtonVisible = isSubscribeButtonVisible,
             isSubscribed = isSubscribed,
             onSubscribeClicked = onSubscribeClicked,
@@ -457,6 +462,7 @@ private fun VideoClipBottomItems(
     isSubscribeButtonVisible: Boolean,
     isSubscribed: Boolean,
     clipModel: VideoClipModel,
+    authorName: String,
     onSubscribeClicked: () -> Unit,
 ) {
     var isDescriptionExpanded by remember { mutableStateOf(false) }
@@ -475,7 +481,7 @@ private fun VideoClipBottomItems(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
-                    text = clipModel.title,
+                    text = authorName,
                     style = AppTheme.specificTypography.bodyLarge,
                     maxLines = 1,
                     color = Color.White,
@@ -497,7 +503,7 @@ private fun VideoClipBottomItems(
             val interactionSource = remember { MutableInteractionSource() }
             Column(modifier = Modifier.verticalScroll(scrollState)) {
                 Text(
-                    text = clipModel.description,
+                    text = clipModel.title,
                     style = AppTheme.specificTypography.bodySmall,
                     maxLines = if (isDescriptionExpanded) Int.MAX_VALUE else 2,
                     color = AppTheme.specificColorScheme.white,
