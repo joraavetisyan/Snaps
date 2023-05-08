@@ -24,7 +24,7 @@ data class UserLikedVideoItem(
     @SerialName("urlWithResolution") val urlWithResolution: FullUrl?,
     @SerialName("thumbnailUrl") val thumbnailUrl: FullUrl?,
     @SerialName("title") val title: String,
-    @SerialName("description") val description: String,
+    @SerialName("description") val description: String?,
     @SerialName("authorUserId") val authorId: Uuid,
     @SerialName("isDeleted") val isDeleted: Boolean,
     /*@SerialName("status") val status: VideoStatusType,*/

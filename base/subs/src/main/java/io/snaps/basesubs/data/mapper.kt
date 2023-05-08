@@ -1,8 +1,8 @@
-package io.snaps.featureprofile.data
+package io.snaps.basesubs.data
 
 import io.snaps.corecommon.container.ImageValue
-import io.snaps.featureprofile.data.model.SubscriptionItemResponseDto
-import io.snaps.featureprofile.domain.SubModel
+import io.snaps.basesubs.data.model.SubscriptionItemResponseDto
+import io.snaps.basesubs.domain.SubModel
 
 fun List<SubscriptionItemResponseDto>.toModelList() = map(SubscriptionItemResponseDto::toSubModel)
 

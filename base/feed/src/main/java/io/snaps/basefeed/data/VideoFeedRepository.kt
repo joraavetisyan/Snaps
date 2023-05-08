@@ -38,7 +38,6 @@ interface VideoFeedRepository {
 
     suspend fun uploadVideo(
         title: String,
-        description: String,
         fileId: Uuid,
         filePath: String,
     ): Effect<Uuid>
@@ -143,7 +142,6 @@ class VideoFeedRepositoryImpl @Inject constructor(
 
     override suspend fun uploadVideo(
         title: String,
-        description: String,
         fileId: Uuid,
         filePath: String,
     ): Effect<Uuid> {
@@ -151,7 +149,6 @@ class VideoFeedRepositoryImpl @Inject constructor(
             videoFeedApi.addVideo(
                 AddVideoRequestDto(
                     title = title,
-                    description = description,
                     thumbnailFileId = fileId,
                 )
             )

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basebilling.BillingRouter
 import io.snaps.basebilling.PurchaseStateProvider
+import io.snaps.basenft.data.NftRepository
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
@@ -47,6 +48,7 @@ class PurchaseViewModel @Inject constructor(
     private val purchaseStateProvider: PurchaseStateProvider,
     private val billingRouter: BillingRouter,
     private val interactor: MyCollectionInteractor,
+    private val nftRepository: NftRepository,
     private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel() {
 
@@ -72,6 +74,16 @@ class PurchaseViewModel @Inject constructor(
 
     init {
         subscribeOnNewPurchases()
+        if (args.type == NftType.Free) {
+            nftRepository.nftCollectionState.value.dataOrCache?.any { it.type == NftType.Free }?.let {
+                _uiState.update {
+                    it.copy(
+                        isPurchasable = false,
+                        isPurchasableWithBnb = false,
+                    )
+                }
+            }
+        }
     }
 
     private fun subscribeOnNewPurchases() = viewModelScope.launch {
@@ -89,7 +101,7 @@ class PurchaseViewModel @Inject constructor(
             )
         }.doOnSuccess {
             notificationsSource.sendMessage("Purchase successful".textValue()) // todo localize
-            _command publish Command.ClosePurchaseScreen
+            _command publish Command.BackToMyCollectionScreen
         }.doOnError { error, _ ->
             notificationsSource.sendError(error)
         }.doOnComplete {
@@ -221,7 +233,7 @@ class PurchaseViewModel @Inject constructor(
     }
 
     sealed class Command {
-        object ClosePurchaseScreen : Command()
+        object BackToMyCollectionScreen : Command()
         object ShowBottomDialog : Command()
         object HideBottomDialog : Command()
     }

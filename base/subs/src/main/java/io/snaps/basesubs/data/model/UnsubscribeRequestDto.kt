@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.data.model
+package io.snaps.basesubs.data.model
 
 import io.snaps.corecommon.model.Uuid
 import kotlinx.serialization.SerialName

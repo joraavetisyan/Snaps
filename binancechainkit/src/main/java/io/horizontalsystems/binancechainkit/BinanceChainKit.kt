@@ -255,7 +255,6 @@ class BinanceChainKit(
             balanceManager.listener = kit
             actionManager.listener = kit
 
-
             kit.validateAddress(wallet.address)
 
             return kit

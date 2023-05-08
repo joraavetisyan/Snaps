@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.data
+package io.snaps.basesubs.data
 
 import io.snaps.baseprofile.data.model.PaymentsState
 import io.snaps.baseprofile.data.model.QuestInfoResponseDto
@@ -11,9 +11,9 @@ import io.snaps.corecommon.mock.rInt
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
-import io.snaps.featureprofile.data.model.SubscribeRequestDto
-import io.snaps.featureprofile.data.model.SubscriptionItemResponseDto
-import io.snaps.featureprofile.data.model.UnsubscribeRequestDto
+import io.snaps.basesubs.data.model.SubscribeRequestDto
+import io.snaps.basesubs.data.model.SubscriptionItemResponseDto
+import io.snaps.basesubs.data.model.UnsubscribeRequestDto
 import kotlinx.coroutines.delay
 import retrofit2.http.Query
 
@@ -82,7 +82,7 @@ class FakeSubsApi : SubsApi {
                     experience = 0,
                     level = 1,
                     instagramId = null,
-                    ownInviteCode = null,
+                    ownInviteCode = "",
                     inviteCodeRegisteredBy = null,
                     questInfo = QuestInfoResponseDto(
                         quests = emptyList(),

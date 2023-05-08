@@ -78,6 +78,7 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startSharePhotoIntent
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.LocalBottomNavigationHeight
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.gradientBackground
@@ -154,7 +155,7 @@ fun ReferralProgramScreen(
     }
 
     val templatePhoto = generateTemplatePhoto(
-        bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.img_template),
+        bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.img_referral_code_template),
         qr = uiState.referralQr,
         code = uiState.referralCode,
     )
@@ -359,7 +360,7 @@ private fun Main(
         modifier = Modifier
             .padding(vertical = 12.dp)
             .verticalScroll(rememberScrollState())
-            .padding(bottom = 100.dp),
+            .padding(bottom = LocalBottomNavigationHeight.current),
     ) {
         ReferralCodeCard(onEnterCodeClicked = onEnterCodeClicked)
         Spacer(modifier = Modifier.height(16.dp))

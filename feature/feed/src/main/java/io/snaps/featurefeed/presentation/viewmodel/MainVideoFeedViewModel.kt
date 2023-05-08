@@ -10,6 +10,7 @@ import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
+import io.snaps.basesubs.data.SubsRepository
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -26,6 +27,7 @@ class MainVideoFeedViewModel @Inject constructor(
     videoFeedRepository: VideoFeedRepository,
     profileRepository: ProfileRepository,
     commentRepository: CommentRepository,
+    subsRepository: SubsRepository,
 ) : VideoFeedViewModel(
     videoFeedType = savedStateHandle.getArg<AppRoute.SingleVideo.Args>()?.videoClipId?.let {
         VideoFeedType.Single(it)
@@ -34,6 +36,7 @@ class MainVideoFeedViewModel @Inject constructor(
     videoFeedRepository = videoFeedRepository,
     profileRepository = profileRepository,
     commentRepository = commentRepository,
+    subsRepository = subsRepository,
     bottomDialogBarVisibilityHandlerDelegate = bottomDialogBarVisibilityHandlerDelegate,
 ), MainHeaderHandler by mainHeaderHandlerDelegate, OnboardingHandler by onboardingHandlerDelegate {
 

@@ -54,7 +54,9 @@ data class WalletModel(
 ) {
 
     val coinValueDouble: Double
-        get() = coinValue.replace(',', '.').toDoubleOrNull() ?: 0.0
+        get() = coinValue.replace(",", ".")
+            .filter { it.isDigit() || it == '.' }
+            .toDoubleOrNull() ?: 0.0
 }
 
 @Serializable

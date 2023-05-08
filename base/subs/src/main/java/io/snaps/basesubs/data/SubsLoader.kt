@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.data
+package io.snaps.basesubs.data
 
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -10,8 +10,8 @@ import io.snaps.coredata.network.Action
 import io.snaps.coredata.network.PagedLoader
 import io.snaps.coredata.network.PagedLoaderFactory
 import io.snaps.coredata.network.PagedLoaderParams
-import io.snaps.featureprofile.data.model.SubscriptionItemResponseDto
-import io.snaps.featureprofile.domain.SubModel
+import io.snaps.basesubs.data.model.SubscriptionItemResponseDto
+import io.snaps.basesubs.domain.SubModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 

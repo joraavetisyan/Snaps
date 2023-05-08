@@ -27,15 +27,20 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -80,7 +85,7 @@ import kotlinx.coroutines.launch
 private const val SERVER_CLIENT_ID =
     "132799039711-rd59jfaphbpinbmhrp647hqapp2b6aiu.apps.googleusercontent.com"
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun RegistrationScreen(
     navHostController: NavHostController,
@@ -96,6 +101,16 @@ fun RegistrationScreen(
     )
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(key1 = sheetState.currentValue) {
+        if (sheetState.currentValue == ModalBottomSheetValue.Hidden) {
+            focusRequester.freeFocus()
+            keyboardController?.hide()
+        }
+    }
 
     val googleSignInRequest = BeginSignInRequest.Builder()
         .setGoogleIdTokenRequestOptions(
@@ -144,7 +159,11 @@ fun RegistrationScreen(
     viewModel.command.collectAsCommand {
         when (it) {
             RegistrationViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
-            RegistrationViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
+            RegistrationViewModel.Command.HideBottomDialog -> coroutineScope.launch {
+                focusRequester.freeFocus()
+                keyboardController?.hide()
+                sheetState.hide()
+            }
             RegistrationViewModel.Command.OpenConnectWalletScreen -> router.toConnectWalletScreen()
         }
     }
@@ -159,6 +178,7 @@ fun RegistrationScreen(
             when (uiState.bottomDialogType) {
                 RegistrationViewModel.BottomDialogType.SignIn -> LoginWithEmailDialog(
                     uiState = uiState,
+                    focusRequester = focusRequester,
                     onLoginWithEmailClicked = viewModel::signInWithEmail,
                     onEmailAddressValueChanged = viewModel::onEmailAddressValueChanged,
                     onPasswordValueChanged = viewModel::onPasswordValueChanged,
@@ -168,6 +188,7 @@ fun RegistrationScreen(
 
                 RegistrationViewModel.BottomDialogType.SignUp -> RegistrationWithEmailDialog(
                     uiState = uiState,
+                    focusRequester = focusRequester,
                     onEmailAddressValueChanged = viewModel::onEmailAddressValueChanged,
                     onPasswordValueChanged = viewModel::onPasswordValueChanged,
                     onConfirmPasswordValueChanged = viewModel::onConfirmPasswordValueChanged,
@@ -179,6 +200,7 @@ fun RegistrationScreen(
 
                 RegistrationViewModel.BottomDialogType.ResetPassword -> ResetPasswordDialog(
                     passwordResetEmail = uiState.passwordResetEmailValue,
+                    focusRequester = focusRequester,
                     isResetPasswordButtonEnabled = uiState.isResetPasswordButtonEnabled,
                     onResetPasswordEmailValueChanged = viewModel::onResetPasswordEmailValueChanged,
                     onResetPasswordClicked = viewModel::onResetPasswordClicked,
@@ -376,6 +398,7 @@ private fun PrivacyPolicy(
 @Composable
 private fun LoginWithEmailDialog(
     uiState: RegistrationViewModel.UiState,
+    focusRequester: FocusRequester,
     onEmailAddressValueChanged: (String) -> Unit,
     onPasswordValueChanged: (String) -> Unit,
     onLoginWithEmailClicked: () -> Unit,
@@ -396,7 +419,8 @@ private fun LoginWithEmailDialog(
             SimpleTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp)
+                    .focusRequester(focusRequester),
                 onValueChange = onEmailAddressValueChanged,
                 value = uiState.emailAddressValue,
                 keyboardOptions = KeyboardOptions(
@@ -414,7 +438,8 @@ private fun LoginWithEmailDialog(
             SimpleTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .focusRequester(focusRequester),
                 onValueChange = onPasswordValueChanged,
                 value = uiState.passwordValue,
                 keyboardOptions = KeyboardOptions(
@@ -461,6 +486,7 @@ private fun LoginWithEmailDialog(
 
 @Composable
 private fun RegistrationWithEmailDialog(
+    focusRequester: FocusRequester,
     uiState: RegistrationViewModel.UiState,
     onEmailAddressValueChanged: (String) -> Unit,
     onPasswordValueChanged: (String) -> Unit,
@@ -484,7 +510,8 @@ private fun RegistrationWithEmailDialog(
             SimpleTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp)
+                    .focusRequester(focusRequester),
                 onValueChange = onEmailAddressValueChanged,
                 value = uiState.emailAddressValue,
                 keyboardOptions = KeyboardOptions(
@@ -502,7 +529,8 @@ private fun RegistrationWithEmailDialog(
             SimpleTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .focusRequester(focusRequester),
                 onValueChange = onPasswordValueChanged,
                 value = uiState.passwordValue,
                 keyboardOptions = KeyboardOptions(
@@ -521,7 +549,8 @@ private fun RegistrationWithEmailDialog(
             SimpleTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp)
+                    .focusRequester(focusRequester),
                 onValueChange = onConfirmPasswordValueChanged,
                 value = uiState.confirmPasswordValue,
                 keyboardOptions = KeyboardOptions(
@@ -563,6 +592,7 @@ private fun RegistrationWithEmailDialog(
 
 @Composable
 private fun ResetPasswordDialog(
+    focusRequester: FocusRequester,
     passwordResetEmail: String,
     isResetPasswordButtonEnabled: Boolean,
     onResetPasswordEmailValueChanged: (String) -> Unit,
@@ -582,7 +612,8 @@ private fun ResetPasswordDialog(
             SimpleTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp)
+                    .focusRequester(focusRequester),
                 onValueChange = onResetPasswordEmailValueChanged,
                 value = passwordResetEmail,
                 keyboardOptions = KeyboardOptions(

@@ -42,6 +42,11 @@ internal class ScreenNavigator(navHostController: NavHostController) :
         route = AppRoute.UserNftDetails,
         arg = args,
     )
+
+    fun backToMyCollectionScreen() = navHostController.popBackStack(
+        route = AppRoute.RankSelection.path(),
+        inclusive = true
+    )
 }
 
 class CollectionFeatureProviderImpl @Inject constructor() : CollectionFeatureProvider {

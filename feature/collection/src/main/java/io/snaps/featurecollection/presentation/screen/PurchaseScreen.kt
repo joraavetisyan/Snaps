@@ -92,7 +92,7 @@ fun PurchaseScreen(
 
     viewModel.command.collectAsCommand {
         when (it) {
-            PurchaseViewModel.Command.ClosePurchaseScreen -> router.back()
+            PurchaseViewModel.Command.BackToMyCollectionScreen -> router.backToMyCollectionScreen()
             PurchaseViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             PurchaseViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
         }
@@ -370,9 +370,7 @@ private fun UnavailableNftInfoBlock(
                 modifier = Modifier.align(Alignment.BottomCenter),
             )
         }
-        sunglassesImage?.let {
-            NftImage(image = it)
-        }
+        NftImage(image = sunglassesImage ?: nftImage)
     }
     Text(
         text = StringKey.PurchaseTitleRank.textValue(nftType.name).get(),

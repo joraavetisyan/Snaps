@@ -20,6 +20,7 @@ dependencies {
     implementation(projects.baseSources)
     implementation(projects.basePlayer)
     implementation(projects.baseProfile)
+    implementation(projects.baseSubs)
 
     implementation(*Libs.bundle.media)
     implementation(Libs.bundle.uploadService)

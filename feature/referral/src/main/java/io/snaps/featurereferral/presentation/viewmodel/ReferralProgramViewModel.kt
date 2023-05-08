@@ -11,6 +11,7 @@ import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
@@ -64,13 +65,15 @@ class ReferralProgramViewModel @Inject constructor(
 
     private fun subscribeOnCurrentUser() {
         profileRepository.state.onEach { state ->
-            _uiState.update {
-                val inviteCode = state.dataOrCache?.ownInviteCode
-                it.copy(
-                    referralCode = inviteCode.orEmpty().addPrefix("#"),
-                    referralLink = inviteCode.orEmpty().addPrefix("https://snaps.io/"),
-                    referralQr = inviteCode?.let { barcodeManager.getQrCodeBitmap(text = inviteCode, size = 600f) },
-                )
+            if (state is Effect && state.isSuccess) {
+                _uiState.update {
+                    val inviteCode = state.requireData.ownInviteCode
+                    it.copy(
+                        referralCode = inviteCode.addPrefix("#"),
+                        referralLink = inviteCode.addPrefix("https://snaps.io/"),
+                        referralQr = barcodeManager.getQrCodeBitmap(text = inviteCode, size = 600f),
+                    )
+                }
             }
         }.launchIn(viewModelScope)
     }

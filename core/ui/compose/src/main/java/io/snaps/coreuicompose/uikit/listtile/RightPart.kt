@@ -3,7 +3,6 @@ package io.snaps.coreuicompose.uikit.listtile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -198,7 +197,6 @@ fun RightPartTile(modifier: Modifier, data: RightPart) {
             is RightPart.ChipData -> {
                 SimpleChip(
                     modifier = Modifier.width(100.dp),
-                    contentPadding = PaddingValues(4.dp),
                     selected = data.selected,
                     label = data.text,
                     textStyle = AppTheme.specificTypography.labelSmall,

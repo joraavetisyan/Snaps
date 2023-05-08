@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.domain
+package io.snaps.basesubs.domain
 
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.model.Uuid

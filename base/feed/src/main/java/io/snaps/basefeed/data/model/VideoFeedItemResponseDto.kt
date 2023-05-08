@@ -18,6 +18,6 @@ data class VideoFeedItemResponseDto(
     @SerialName("url") val url: FullUrl,
     @SerialName("thumbnailUrl") val thumbnailUrl: FullUrl?,
     @SerialName("title") val title: String,
-    @SerialName("description") val description: String,
+    @SerialName("description") val description: String?,
     @SerialName("author") val author: UserInfoResponseDto,
 )

@@ -1,4 +1,4 @@
-package io.snaps.featureprofile.data
+package io.snaps.basesubs.data
 
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.model.Completable
@@ -7,10 +7,10 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
-import io.snaps.featureprofile.data.model.SubscribeRequestDto
-import io.snaps.featureprofile.data.model.SubscriptionItemResponseDto
-import io.snaps.featureprofile.data.model.UnsubscribeRequestDto
-import io.snaps.featureprofile.domain.SubPageModel
+import io.snaps.basesubs.data.model.SubscribeRequestDto
+import io.snaps.basesubs.data.model.SubscriptionItemResponseDto
+import io.snaps.basesubs.data.model.UnsubscribeRequestDto
+import io.snaps.basesubs.domain.SubPageModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
@@ -33,7 +33,7 @@ interface SubsRepository {
 
     suspend fun unsubscribe(subscriptionId: Uuid): Effect<Completable>
 
-    suspend fun getSubscriptions(): List<UserInfoResponseDto>
+    suspend fun getSubscriptions(): Effect<List<UserInfoResponseDto>>
 }
 
 class SubsRepositoryImpl @Inject constructor(
@@ -41,8 +41,6 @@ class SubsRepositoryImpl @Inject constructor(
     private val subsApi: SubsApi,
     private val loaderFactory: SubsLoaderFactory,
 ) : SubsRepository {
-
-    private var subscriptions: List<UserInfoResponseDto>? = null
 
     private fun getLoader(subType: SubType): SubsLoader {
         return loaderFactory.get(subType) { type ->
@@ -101,11 +99,9 @@ class SubsRepositoryImpl @Inject constructor(
         }
     }
 
-     override suspend fun getSubscriptions(): List<UserInfoResponseDto> {
-        return subscriptions ?: apiCall(ioDispatcher) {
+     override suspend fun getSubscriptions(): Effect<List<UserInfoResponseDto>> {
+         return apiCall(ioDispatcher) {
             subsApi.subscriptions(null, 100)
-        }.doOnSuccess {
-            subscriptions = it
-        }.dataOrCache ?: emptyList()
+        }
     }
 }

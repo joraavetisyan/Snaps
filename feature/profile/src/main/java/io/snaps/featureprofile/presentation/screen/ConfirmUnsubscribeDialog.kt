@@ -25,7 +25,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.featureprofile.domain.SubModel
+import io.snaps.basesubs.domain.SubModel
 
 @Composable
 fun ConfirmUnsubscribeDialog(
@@ -50,7 +50,7 @@ fun ConfirmUnsubscribeDialog(
             ) {
                 data.image?.let {
                     Image(
-                        painter = data.image.get(),
+                        painter = it.get(),
                         contentDescription = null,
                         modifier = Modifier
                             .size(64.dp)

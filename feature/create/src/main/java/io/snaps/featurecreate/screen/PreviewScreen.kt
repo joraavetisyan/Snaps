@@ -1,5 +1,6 @@
 package io.snaps.featurecreate.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -63,52 +66,63 @@ private fun PreviewScreen(
     onProceedClicked: () -> Unit,
 ) {
     Box(
-        Modifier
-            .fillMaxSize()
-            .inset(insetAll())
+        modifier = Modifier.fillMaxSize()
     ) {
-        VideoPlayer(
-            localUri = uiState.uri,
-            shouldPlay = true,
-            isScrolling = false,
-            progressChangePollFrequency = 50L,
-            onProgressChanged = onProgressChanged,
-            isRepeat = false, // OutOfMemory on repeat
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(0.5f)))
+                )
         )
-        Column(
+        Box(
             Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.Start,
+                .fillMaxWidth()
+                .inset(insetAll())
         ) {
-            Progress(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                progress = uiState.playbackProgress,
-                isDashed = false,
-                backColor = AppTheme.specificColorScheme.white_40,
-                fillColor = AppTheme.specificColorScheme.white,
-                height = 6.dp,
+            VideoPlayer(
+                localUri = uiState.uri,
+                shouldPlay = true,
+                isScrolling = false,
+                progressChangePollFrequency = 50L,
+                onProgressChanged = onProgressChanged,
+                isRepeat = false, // OutOfMemory on repeat
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            IconButton(onClick = onBackClicked) {
-                Icon(
-                    painter = AppTheme.specificIcons.back.get(),
-                    contentDescription = null,
-                    tint = AppTheme.specificColorScheme.white,
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            SimpleButtonInlineL(
-                onClick = onProceedClicked,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+            Column(
+                Modifier
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.Start,
             ) {
-                SimpleButtonContent(
-                    text = StringKey.PreviewVideoActionProceed.textValue(),
-                    textColor = AppTheme.specificColorScheme.white,
+                Progress(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    progress = uiState.playbackProgress,
+                    isDashed = false,
+                    backColor = AppTheme.specificColorScheme.white_40,
+                    fillColor = AppTheme.specificColorScheme.white,
+                    height = 6.dp,
                 )
+                Spacer(modifier = Modifier.height(16.dp))
+                IconButton(onClick = onBackClicked) {
+                    Icon(
+                        painter = AppTheme.specificIcons.back.get(),
+                        contentDescription = null,
+                        tint = AppTheme.specificColorScheme.white,
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                SimpleButtonInlineL(
+                    onClick = onProceedClicked,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                ) {
+                    SimpleButtonContent(
+                        text = StringKey.PreviewVideoActionProceed.textValue(),
+                        textColor = AppTheme.specificColorScheme.white,
+                    )
+                }
             }
         }
     }
