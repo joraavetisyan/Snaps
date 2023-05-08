@@ -27,7 +27,6 @@ class ConnectInstagramInteractorImpl @Inject constructor(
         }.flatMap {
             profileRepository.state.value.dataOrCache?.let { user ->
                 profileRepository.connectInstagram(
-                    instagramId = it.id,
                     instagramUsername = it.username,
                     name = user.name,
                     walletAddress = walletRepository.requireActiveWalletReceiveAddress(),

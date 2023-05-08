@@ -11,7 +11,6 @@ import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.barcode.BarcodeManager
@@ -40,7 +39,6 @@ class ShareTemplateViewModel @Inject constructor(
     private val tasksRepository: TasksRepository,
     private val profileRepository: ProfileRepository,
     private val connectInstagramInteractor: ConnectInstagramInteractor,
-    private val userDataStorage: UserDataStorage,
     private val fileManager: FileManager,
     private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel() {
@@ -79,7 +77,7 @@ class ShareTemplateViewModel @Inject constructor(
                     ImageValue.ResImage(R.drawable.ic_instagram)
                 ),
                 middlePart = MiddlePart.Data(
-                    value = userDataStorage.instagramUsername.textValue()
+                    value = instagramUserId.textValue()
                 ),
                 rightPart = RightPart.DeleteIcon(
                     clickListener = ::onDeleteIconClicked,
