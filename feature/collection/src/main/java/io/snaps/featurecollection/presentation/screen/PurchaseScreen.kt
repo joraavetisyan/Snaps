@@ -370,9 +370,7 @@ private fun UnavailableNftInfoBlock(
                 modifier = Modifier.align(Alignment.BottomCenter),
             )
         }
-        sunglassesImage?.let {
-            NftImage(image = it)
-        }
+        NftImage(image = sunglassesImage ?: nftImage)
     }
     Text(
         text = StringKey.PurchaseTitleRank.textValue(nftType.name).get(),

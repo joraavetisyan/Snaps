@@ -21,11 +21,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.dynamiclinks.ktx.dynamicLinks
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
-import io.snaps.corecommon.ext.log
-import io.snaps.corenavigation.AppDeeplink
 import io.snaps.corenavigation.base.navigate
 import io.snaps.coreuicompose.tools.SystemBarsIconsColor
 import io.snaps.coreuicompose.uikit.status.MessageBannerUi

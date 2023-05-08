@@ -52,7 +52,7 @@ class MyCollectionInteractorImpl @Inject constructor(
 
     override suspend fun mint(nftType: NftType, purchaseToken: Token?): Effect<Completable> {
         require(
-            nftType != NftType.Free || (nftType.storeId != null && purchaseToken != null)
+            nftType == NftType.Free || (nftType.storeId != null && purchaseToken != null)
         )
         return if (nftType == NftType.Free) {
             nftRepository.mintNft(NftType.Free)
