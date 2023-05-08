@@ -10,6 +10,7 @@ import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.TotalBalanceModel
+import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.WalletAddress
@@ -32,6 +33,7 @@ import io.snaps.featurewallet.screen.TransactionsUiState
 import io.snaps.featurewallet.screen.toTransactionsUiState
 import io.snaps.featurewallet.toCellTileStateList
 import io.snaps.featurewallet.toRewardsTileState
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -235,6 +237,12 @@ class WalletViewModel @Inject constructor(
         }
     }
 
+    fun onPageSelected(index: Int) {
+        _uiState.update {
+            it.copy(screen = Screen.getByOrdinal(index) ?: Screen.Wallet)
+        }
+    }
+
     private fun showWalletSelectBottomDialog(onSelected: (WalletModel) -> Unit) =
         viewModelScope.launch {
             _uiState.update {
@@ -252,6 +260,43 @@ class WalletViewModel @Inject constructor(
     fun onAddressCopied() {
         viewModelScope.launch {
             notificationsSource.sendMessage(StringKey.WalletMessageAddressCopied.textValue())
+        }
+    }
+
+    fun refresh() {
+        when (uiState.value.screen) {
+            Screen.Wallet -> refreshWallet()
+            Screen.Rewards -> refreshRewards()
+        }
+    }
+
+    private fun refreshWallet() = viewModelScope.launch {
+        _uiState.update { it.copy(isRefreshing = true) }
+        action.execute {
+            val loadBalanceDeferred = viewModelScope.async { walletRepository.updateBalance() }
+
+            loadBalanceDeferred.await()
+        }.doOnComplete {
+            _uiState.update { it.copy(isRefreshing = false) }
+        }
+    }
+
+    private fun refreshRewards() = viewModelScope.launch {
+        _uiState.update { it.copy(isRefreshing = true) }
+        action.execute {
+            val loadBalanceDeferred = viewModelScope.async { profileRepository.updateBalance() }
+            val loadUnlockedTransactionsDeferred = viewModelScope.async {
+                transactionsRepository.refreshTransactions(TransactionsType.Unlocked)
+            }
+            val loadLockedTransactionsDeferred = viewModelScope.async {
+                transactionsRepository.refreshTransactions(TransactionsType.Locked)
+            }
+
+            loadBalanceDeferred.await()
+            loadLockedTransactionsDeferred.await()
+            loadUnlockedTransactionsDeferred.await()
+        }.doOnComplete {
+            _uiState.update { it.copy(isRefreshing = false) }
         }
     }
 
@@ -300,6 +345,8 @@ class WalletViewModel @Inject constructor(
         val filterOptions: FilterOptions = FilterOptions.Unlocked,
         val isRewardsWithdrawVisible: Boolean = false,
         val countBrokenGlasses: Int = 0,
+        val isRefreshing: Boolean = false,
+        val screen: Screen = Screen.Wallet,
     )
 
     sealed class BottomDialog {
@@ -319,6 +366,15 @@ class WalletViewModel @Inject constructor(
 
     enum class FilterOptions {
         Unlocked, Locked
+    }
+
+    enum class Screen(val label: TextValue) {
+        Wallet(StringKey.WalletTitle.textValue()),
+        Rewards(StringKey.RewardsTitle.textValue());
+
+        companion object {
+            fun getByOrdinal(ordinal: Int) = values().firstOrNull { it.ordinal == ordinal }
+        }
     }
 
     sealed class Command {

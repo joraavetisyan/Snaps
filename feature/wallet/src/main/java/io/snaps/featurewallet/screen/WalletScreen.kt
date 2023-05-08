@@ -30,6 +30,10 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -47,6 +51,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -101,6 +106,7 @@ fun WalletScreen(
     val clipboardManager = LocalClipboardManager.current
 
     val uiState by viewModel.uiState.collectAsState()
+    val pullRefreshState = rememberPullRefreshState(uiState.isRefreshing, { viewModel.refresh() })
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -156,6 +162,7 @@ fun WalletScreen(
     ) {
         WalletScreen(
             uiState = uiState,
+            pullRefreshState = pullRefreshState,
             onBackClicked = router::back,
             onAddressCopyClicked = ::onAddressCopyClicked,
             onTopUpClicked = viewModel::onTopUpClicked,
@@ -165,6 +172,7 @@ fun WalletScreen(
             onRewardsOpened = viewModel::onRewardsOpened,
             onRewardsFootnoteClick = viewModel::onRewardsFootnoteClick,
             onDropdownMenuItemClicked = viewModel::onDropdownMenuItemClicked,
+            onPageSelected = viewModel::onPageSelected,
         )
     }
 }
@@ -172,10 +180,12 @@ fun WalletScreen(
 @OptIn(
     ExperimentalMaterial3Api::class,
     ExperimentalFoundationApi::class,
+    ExperimentalMaterialApi::class,
 )
 @Composable
 private fun WalletScreen(
     uiState: WalletViewModel.UiState,
+    pullRefreshState: PullRefreshState,
     onBackClicked: () -> Boolean,
     onAddressCopyClicked: (WalletAddress) -> Unit,
     onTopUpClicked: () -> Unit,
@@ -185,14 +195,18 @@ private fun WalletScreen(
     onRewardsOpened: () -> Unit,
     onRewardsFootnoteClick: () -> Unit,
     onDropdownMenuItemClicked: (WalletViewModel.FilterOptions) -> Unit,
+    onPageSelected: (Int) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
-    val wallet = StringKey.WalletTitle.textValue()
-    val awards = StringKey.RewardsTitle.textValue()
-
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { page ->
+            onPageSelected(page)
+        }
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -202,7 +216,7 @@ private fun WalletScreen(
                 title = {
                     TitleSlider(
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        items = listOf(wallet, awards),
+                        items = WalletViewModel.Screen.values().map { it.label },
                         selectedItemIndex = pagerState.currentPage,
                         onClick = {
                             coroutineScope.launch {
@@ -216,35 +230,44 @@ private fun WalletScreen(
             )
         }
     ) { paddingValues ->
-        HorizontalPager(
-            pageCount = 2,
-            state = pagerState,
+        Box(
             modifier = Modifier
                 .padding(paddingValues)
-                .inset(insetAllExcludeTop()),
+                .inset(insetAllExcludeTop())
+                .pullRefresh(pullRefreshState),
         ) {
-            when (it) {
-                0 -> Wallet(
-                    uiState = uiState,
-                    onAddressCopyClicked = onAddressCopyClicked,
-                    onTopUpClicked = onTopUpClicked,
-                    onWithdrawClicked = onWithdrawClicked,
-                    onExchangeClicked = onExchangeClicked,
-                )
-                1 -> Rewards(
-                    transactions = when (uiState.filterOptions) {
-                        WalletViewModel.FilterOptions.Unlocked -> uiState.unlockedTransactions
-                        WalletViewModel.FilterOptions.Locked -> uiState.lockedTransactions
-                    },
-                    rewards = uiState.rewards,
-                    onOpened = onRewardsOpened,
-                    filterOptions = uiState.filterOptions,
-                    onWithdrawClicked = onRewardsWithdrawClicked,
-                    onRewardsFootnoteClick = onRewardsFootnoteClick,
-                    onDropdownMenuItemClicked = onDropdownMenuItemClicked,
-                    isWithdrawVisible = uiState.isRewardsWithdrawVisible,
-                )
+            HorizontalPager(
+                pageCount = 2,
+                state = pagerState,
+            ) {
+                when (it) {
+                    0 -> Wallet(
+                        uiState = uiState,
+                        onAddressCopyClicked = onAddressCopyClicked,
+                        onTopUpClicked = onTopUpClicked,
+                        onWithdrawClicked = onWithdrawClicked,
+                        onExchangeClicked = onExchangeClicked,
+                    )
+                    1 -> Rewards(
+                        transactions = when (uiState.filterOptions) {
+                            WalletViewModel.FilterOptions.Unlocked -> uiState.unlockedTransactions
+                            WalletViewModel.FilterOptions.Locked -> uiState.lockedTransactions
+                        },
+                        rewards = uiState.rewards,
+                        onOpened = onRewardsOpened,
+                        filterOptions = uiState.filterOptions,
+                        onWithdrawClicked = onRewardsWithdrawClicked,
+                        onRewardsFootnoteClick = onRewardsFootnoteClick,
+                        onDropdownMenuItemClicked = onDropdownMenuItemClicked,
+                        isWithdrawVisible = uiState.isRewardsWithdrawVisible,
+                    )
+                }
             }
+            PullRefreshIndicator(
+                uiState.isRefreshing,
+                pullRefreshState,
+                Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }

@@ -100,7 +100,7 @@ private fun ProfileScreen(
     onSettingsClicked: () -> Unit,
     onBackClicked: () -> Boolean,
     onSubscribeClicked: () -> Unit,
-    onUnsubscribeClicked: (io.snaps.basesubs.domain.SubModel) -> Unit,
+    onUnsubscribeClicked: (SubModel) -> Unit,
     onDismissRequest: () -> Unit,
     onVideoClipClicked: (Int) -> Unit,
     onUserLikedVideoClipClicked: (Int) -> Unit,

@@ -136,6 +136,8 @@ interface WalletRepository {
      * returns: Mint transaction hash
      */
     suspend fun mintNft(nftType: NftType, summary: NftMintSummary): Effect<Token>
+
+    suspend fun updateBalance(): Effect<Completable>
 }
 
 class WalletRepositoryImpl @Inject constructor(
@@ -608,6 +610,11 @@ class WalletRepositoryImpl @Inject constructor(
                 handlePossibleRpcError(e)
             }
         }
+    }
+
+    override suspend fun updateBalance(): Effect<Completable> {
+        // TODO("Not yet implemented")
+        return Effect.completable
     }
 
     private fun <T : Any> handlePossibleRpcError(e: Throwable): Effect<T> =
