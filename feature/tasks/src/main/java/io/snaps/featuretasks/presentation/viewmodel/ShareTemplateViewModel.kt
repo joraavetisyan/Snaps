@@ -130,13 +130,13 @@ class ShareTemplateViewModel @Inject constructor(
         }
     }
 
-    fun onPostToInstagramButtonClicked(bitmap: Bitmap) = viewModelScope.launch {
+    fun onPostToInstagramButtonClicked() = viewModelScope.launch {
         val instagramId = profileRepository.state.value.dataOrCache?.instagramId
         if (instagramId != null) {
-            fileManager.createFileFromBitmap(bitmap)?.let {
-                action.execute {
-                    tasksRepository.postToInstagram()
-                }
+            action.execute {
+                tasksRepository.postToInstagram()
+            }.doOnSuccess {
+                notificationsSource.sendMessage(StringKey.TaskShareMessagePostInstagram.textValue())
             }
         } else {
             onConnectClicked()

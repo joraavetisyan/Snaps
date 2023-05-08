@@ -237,6 +237,7 @@ enum class StringKey {
     TaskShareMessagePhotoSaved,
     TaskShareFieldDownloadApp,
     TaskShareFieldEarnCryptocurrencies,
+    TaskShareMessagePostInstagram,
 
     TaskFindPointsTitle,
     TaskFindPointsTitleConnectInstagram,
