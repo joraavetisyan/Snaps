@@ -68,16 +68,10 @@ class MyCollectionInteractorImpl @Inject constructor(
     override suspend fun mintOnBlockchain(
         nftType: NftType,
         summary: NftMintSummary,
-    ): Effect<Token> {
-        return walletRepository.mintNft(nftType = nftType, summary = summary).flatMap { hash ->
-            nftRepository.mintNft(
-                type = nftType,
-                transactionHash = hash
-            ).flatMap {
-                nftRepository.saveProcessingNft(nftType)
-            }.map {
-                hash
-            }
+    ): Effect<Token> = nftRepository.mintNft(type = nftType)
+        .flatMap {
+            walletRepository.mintNft(nftType = nftType, summary = summary)
+        }.flatMap { hash ->
+            nftRepository.saveProcessingNft(nftType).map { hash }
         }
-    }
 }
