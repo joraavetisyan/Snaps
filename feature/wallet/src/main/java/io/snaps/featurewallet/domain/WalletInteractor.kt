@@ -21,7 +21,7 @@ interface WalletInteractor {
 
     val snpFiatState: StateFlow<State<String>>
 
-    suspend fun claim(): Effect<Completable>
+    suspend fun claim(amount: Double): Effect<Completable>
 }
 
 class WalletInteractorImpl @Inject constructor(
@@ -45,11 +45,11 @@ class WalletInteractorImpl @Inject constructor(
         }
     }.likeStateFlow(scope, Loading())
 
-    override suspend fun claim(): Effect<Completable> {
+    override suspend fun claim(amount: Double): Effect<Completable> {
         return profileRepository.updateBalance().flatMap {
             requireNotNull(profileRepository.balanceState.value.dataOrCache).let {
-                if (it.unlocked > 0) {
-                    walletRepository.claim(it.unlocked)
+                if (amount > 0) {
+                    walletRepository.claim(amount)
                 } else {
                     Effect.error(AppError.Custom(cause = InsufficientBalanceError))
                 }

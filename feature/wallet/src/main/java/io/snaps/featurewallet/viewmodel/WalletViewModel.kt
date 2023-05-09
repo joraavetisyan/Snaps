@@ -117,7 +117,7 @@ class WalletViewModel @Inject constructor(
     private fun subscribeToRewards() {
         profileRepository.balanceState.map { state ->
             _uiState.update {
-                it.copy(availableTokens = state.dataOrCache?.locked ?: 0.0)
+                it.copy(availableTokens = state.dataOrCache?.unlocked ?: 0.0)
             }
             state.toRewardsTileState(::onRewardReloadClicked)
         }.onEach { rewards ->
@@ -235,7 +235,7 @@ class WalletViewModel @Inject constructor(
     fun onConfirmClaimClicked() = viewModelScope.launch {
         _uiState.update { it.copy(isLoading = true) }
         action.execute {
-            walletInteractor.claim()
+            walletInteractor.claim(uiState.value.amountToClaimValue.toDouble())
         }.doOnSuccess {
             profileRepository.updateBalance()
             _command publish Command.HideBottomDialog

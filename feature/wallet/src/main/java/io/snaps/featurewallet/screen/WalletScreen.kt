@@ -129,7 +129,8 @@ fun WalletScreen(
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(key1 = sheetState.currentValue) {
-        if (sheetState.currentValue == ModalBottomSheetValue.Hidden) {
+        if (sheetState.currentValue == ModalBottomSheetValue.Hidden
+            && uiState.bottomDialog == WalletViewModel.BottomDialog.RewardsWithdraw) {
             focusRequester.freeFocus()
             keyboardController?.hide()
         }
@@ -679,7 +680,7 @@ private fun RewardsWithdrawDialog(
                 onValueChange = onAmountValueChanged,
                 value = amountValue,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Decimal,
+                    keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done,
                 ),
                 placeholder = {
