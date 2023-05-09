@@ -24,6 +24,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -53,13 +54,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -81,21 +88,25 @@ import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialogItem
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonOutlineL
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
+import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.other.TitleSlider
 import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
 import io.snaps.coreuicompose.uikit.status.FootnoteUi
+import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewallet.ScreenNavigator
 import io.snaps.featurewallet.viewmodel.WalletViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun WalletScreen(
     navHostController: NavHostController,
@@ -113,6 +124,16 @@ fun WalletScreen(
         skipHalfExpanded = true,
     )
     val coroutineScope = rememberCoroutineScope()
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(key1 = sheetState.currentValue) {
+        if (sheetState.currentValue == ModalBottomSheetValue.Hidden) {
+            focusRequester.freeFocus()
+            keyboardController?.hide()
+        }
+    }
 
     viewModel.command.collectAsCommand {
         when (it) {
@@ -157,6 +178,15 @@ fun WalletScreen(
                         text = StringKey.RewardsDialogMessageFootnote2.textValue(),
                     ),
                 )
+                WalletViewModel.BottomDialog.RewardsWithdraw -> RewardsWithdrawDialog(
+                    amountValue = uiState.amountToClaimValue,
+                    availableTokens = uiState.availableTokens,
+                    isConfirmButtonEnabled = uiState.isConfirmClaimEnabled,
+                    focusRequester = focusRequester,
+                    onAmountValueChanged = viewModel::onAmountToClaimValueChanged,
+                    onConfirmClicked = viewModel::onConfirmClaimClicked,
+                    onMaxButtonClicked = viewModel::onMaxButtonClicked,
+                )
             }
         },
     ) {
@@ -175,6 +205,7 @@ fun WalletScreen(
             onPageSelected = viewModel::onPageSelected,
         )
     }
+    FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
 
 @OptIn(
@@ -624,6 +655,72 @@ private fun TopUpDialog(
                     .padding(vertical = 16.dp, horizontal = 24.dp),
                 textAlign = TextAlign.Center,
             )
+        }
+    }
+}
+
+@Composable
+private fun RewardsWithdrawDialog(
+    amountValue: String,
+    availableTokens: Double,
+    isConfirmButtonEnabled: Boolean,
+    focusRequester: FocusRequester,
+    onAmountValueChanged: (String) -> Unit,
+    onMaxButtonClicked: () -> Unit,
+    onConfirmClicked: () -> Unit,
+) {
+    SimpleBottomDialogUI(header = StringKey.RewardsDialogTitleClaim.textValue()) {
+        item {
+            SimpleTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                    .focusRequester(focusRequester),
+                onValueChange = onAmountValueChanged,
+                value = amountValue,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Done,
+                ),
+                placeholder = {
+                    Text(
+                        text = StringKey.RewardsDialogHintClaim.textValue().get(),
+                        style = AppTheme.specificTypography.titleSmall,
+                    )
+                },
+                trailingIcon = {
+                    SimpleButtonActionS(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        onClick = onMaxButtonClicked,
+                    ) {
+                        SimpleButtonContent(
+                            text = StringKey.RewardsDialogActionMax.textValue(),
+                        )
+                    }
+                },
+                maxLines = 1,
+            )
+            Text(
+                text = StringKey.RewardsDialogFieldAvailable.textValue(
+                    availableTokens.toString()
+                ).get(),
+                style = AppTheme.specificTypography.bodySmall,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                textAlign = TextAlign.End,
+            )
+            SimpleButtonActionM(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 20.dp),
+                onClick = onConfirmClicked,
+                enabled = isConfirmButtonEnabled,
+            ) {
+                SimpleButtonContent(
+                    text = StringKey.RewardsDialogActionClaim.textValue(),
+                )
+            }
         }
     }
 }

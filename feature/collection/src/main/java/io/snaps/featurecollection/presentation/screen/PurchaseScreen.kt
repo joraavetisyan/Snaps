@@ -185,7 +185,7 @@ private fun PurchaseScreen(
                 UnavailableNftInfoBlock(
                     nftType = uiState.nftType,
                     nftImage = uiState.nftImage,
-                    sunglassesImage = uiState.sunglassesImage,
+                    prevNftImage = uiState.prevNftImage,
                 )
             }
             CardBlock(
@@ -336,7 +336,7 @@ private fun NftInfoBlock(
 private fun UnavailableNftInfoBlock(
     nftType: NftType,
     nftImage: ImageValue,
-    sunglassesImage: ImageValue?,
+    prevNftImage: ImageValue,
 ) {
     Row(
         modifier = Modifier
@@ -370,7 +370,7 @@ private fun UnavailableNftInfoBlock(
                 modifier = Modifier.align(Alignment.BottomCenter),
             )
         }
-        NftImage(image = sunglassesImage ?: nftImage)
+        NftImage(image = prevNftImage)
     }
     Text(
         text = StringKey.PurchaseTitleRank.textValue(nftType.name).get(),

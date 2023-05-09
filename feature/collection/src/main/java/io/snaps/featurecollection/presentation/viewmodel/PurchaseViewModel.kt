@@ -12,7 +12,6 @@ import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basewallet.domain.NftMintSummary
 import io.snaps.basewallet.domain.NoEnoughBnbToMint
-import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toStringValue
@@ -63,7 +62,7 @@ class PurchaseViewModel @Inject constructor(
             dailyReward = args.dailyReward,
             isPurchasable = args.isPurchasable,
             isPurchasableWithBnb = featureToggle.isEnabled(Feature.PurchaseNftWithBnb),
-            sunglassesImage = args.type.getSunglassesImage(),
+            prevNftImage = NftType.fromIntType(args.type.intType - 1).getSunglassesImage(),
             purchaseWithBnbState = PurchaseWithBnbState.Shimmer(nftType = args.type),
         )
     )
@@ -207,7 +206,7 @@ class PurchaseViewModel @Inject constructor(
         val dailyUnlock: Double,
         val isPurchasable: Boolean,
         val isPurchasableWithBnb: Boolean,
-        val sunglassesImage: ImageValue? = null,
+        val prevNftImage: ImageValue,
         val bottomDialog: BottomDialog = BottomDialog.PurchaseWithBnb,
         val purchaseWithBnbState: PurchaseWithBnbState,
     )
