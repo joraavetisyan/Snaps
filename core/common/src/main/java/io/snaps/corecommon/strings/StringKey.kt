@@ -237,6 +237,7 @@ enum class StringKey {
     TaskShareMessagePhotoSaved,
     TaskShareFieldDownloadApp,
     TaskShareFieldEarnCryptocurrencies,
+    TaskShareMessagePostInstagram,
 
     TaskFindPointsTitle,
     TaskFindPointsTitleConnectInstagram,
@@ -284,6 +285,7 @@ enum class StringKey {
     RewardsMessageLockedRewards,
     RewardsActionClaim,
     RewardsErrorInsufficientBalance,
+    RewardsErrorRepairGlasses,
     RewardsDialogTitleFootnote1,
     RewardsDialogTitleFootnote2,
     RewardsDialogMessageFootnote1,

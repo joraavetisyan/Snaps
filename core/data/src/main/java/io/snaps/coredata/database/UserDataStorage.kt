@@ -47,12 +47,6 @@ class UserDataStorage @Inject constructor(
             putInt("lastCheckedAvailableVersionCode", value)
         }
 
-    var instagramUsername: String
-        get() = provider.prefs.getString("instagramUsername", "").orEmpty()
-        set(value) = provider.prefs.edit {
-            putString("instagramUsername", value)
-        }
-
     fun getProcessingNftCount(type: NftType): Int = provider.prefs.getInt("ProcessingNft${type.name}", 0)
 
     // Saves processed + processing nfts count
@@ -60,9 +54,7 @@ class UserDataStorage @Inject constructor(
         putInt("ProcessingNft${type.name}", totalCount)
     }
 
-    fun reset(reason: LogOutReason? = null) {
-        instagramUsername = ""
-    }
+    fun reset(reason: LogOutReason? = null) {}
 }
 
 enum class ThemeMode { Light, Dark, System }

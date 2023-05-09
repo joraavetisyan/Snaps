@@ -76,7 +76,7 @@ fun SubsScreen(
 private fun SubsScreen(
     uiState: SubsViewModel.UiState,
     onBackClicked: () -> Boolean,
-    onUnsubscribeClicked: (io.snaps.basesubs.domain.SubModel) -> Unit,
+    onUnsubscribeClicked: (SubModel) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())

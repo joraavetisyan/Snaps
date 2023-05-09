@@ -319,7 +319,11 @@ abstract class VideoFeedViewModel(
                 _uiState.update {
                     it.copy(dialogType = null)
                 }
-                videoFeedRepository.refreshFeed(videoFeedType)
+                videoFeedRepository.refreshFeed(videoFeedType).doOnSuccess {
+                     if (uiState.value.videoFeedUiState.items.isEmpty()) {
+                         _command publish Command.CloseScreen
+                     }
+                }
             }
         }
     }
@@ -378,6 +382,7 @@ abstract class VideoFeedViewModel(
         object HideBottomDialog : Command()
         object ShowCommentInputBottomDialog : Command()
         object HideCommentInputBottomDialog : Command()
+        object CloseScreen : Command()
         data class ScrollToPosition(val position: Int) : Command()
         data class OpenProfileScreen(val userId: Uuid) : Command()
         data class ShareVideoClipLink(val link: FullUrl) : Command()

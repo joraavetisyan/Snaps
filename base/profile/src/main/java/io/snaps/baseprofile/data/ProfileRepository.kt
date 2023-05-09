@@ -17,7 +17,6 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
-import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
@@ -68,7 +67,6 @@ interface ProfileRepository {
     fun isCurrentUser(userId: Uuid): Boolean
 
     suspend fun connectInstagram(
-        instagramId: String,
         instagramUsername: String,
         name: String,
         walletAddress: WalletAddress,
@@ -86,7 +84,6 @@ class ProfileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val api: ProfileApi,
-    private val userDataStorage: UserDataStorage,
     private val loaderFactory: UsersLoaderFactory,
 ) : ProfileRepository {
 
@@ -219,7 +216,6 @@ class ProfileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun connectInstagram(
-        instagramId: String,
         instagramUsername: String,
         name: String,
         walletAddress: WalletAddress,
@@ -228,17 +224,16 @@ class ProfileRepositoryImpl @Inject constructor(
         return apiCall(ioDispatcher) {
             api.connectInstagram(
                 ConnectInstagramRequestDto(
-                    instagramId = instagramId,
+                    instagramId = instagramUsername,
                     wallet = walletAddress,
                     name = name,
                     avatarUrl = avatar,
                 )
             )
         }.doOnSuccess {
-            userDataStorage.instagramUsername = instagramUsername
             _state.update {
                 if (it is Effect && it.isSuccess) {
-                    Effect.success(it.requireData.copy(instagramId = instagramId))
+                    Effect.success(it.requireData.copy(instagramId = instagramUsername))
                 } else {
                     it
                 }
@@ -261,7 +256,6 @@ class ProfileRepositoryImpl @Inject constructor(
                 )
             )
         }.doOnSuccess {
-            userDataStorage.instagramUsername = ""
             _state.update {
                 if (it is Effect && it.isSuccess) {
                     Effect.success(it.requireData.copy(instagramId = null))

@@ -8,6 +8,7 @@ import io.snaps.corenavigation.base.FeatureNavDirection
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
+import io.snaps.corenavigation.base.tryPopBackStack
 import io.snaps.featurecreate.screen.CreateVideoScreen
 import io.snaps.featurecreate.screen.PreviewScreen
 import io.snaps.featurecreate.screen.UploadScreen
@@ -26,11 +27,11 @@ internal class ScreenNavigator(navHostController: NavHostController) :
         AppRoute.UploadVideo.Args(uri),
     )
 
-    fun toCreateScreen() {
-        navHostController.popBackStack(
-            route = AppRoute.CreateVideo.path(),
-            inclusive = false,
-        )
+    fun toProfileScreen() {
+        navHostController.navigate(AppRoute.Profile) {
+            tryPopBackStack(AppRoute.CreateVideo.path())
+            launchSingleTop = true // если уже в стеке есть экран Профиля
+        }
     }
 }
 

@@ -57,6 +57,8 @@ fun VideoFeedGrid(
             }
         }
     }
+    uiState.emptyState?.Content(modifier = Modifier.fillMaxWidth())
+    uiState.errorState?.Content(modifier = Modifier.fillMaxWidth())
 }
 
 @Composable

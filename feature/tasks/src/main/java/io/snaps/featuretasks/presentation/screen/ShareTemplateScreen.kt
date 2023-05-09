@@ -90,7 +90,7 @@ private fun ShareTemplateScreen(
     onBackClicked: () -> Boolean,
     onShareIconClicked: (Bitmap) -> Unit,
     onSaveButtonClicked: (Bitmap) -> Unit,
-    onPostToInstagramButtonClicked: (Bitmap) -> Unit,
+    onPostToInstagramButtonClicked: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val context = LocalContext.current
@@ -138,7 +138,7 @@ private fun ShareTemplateScreen(
                         .padding(horizontal = 8.dp, vertical = 4.dp)
             )
             SimpleButtonActionM(
-                onClick = { onPostToInstagramButtonClicked(templatePhoto) },
+                onClick = onPostToInstagramButtonClicked,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 SimpleButtonContent(text = StringKey.TaskShareActionPostToInstagram.textValue())
