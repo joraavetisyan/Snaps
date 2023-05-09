@@ -63,7 +63,7 @@ class PurchaseViewModel @Inject constructor(
             dailyReward = args.dailyReward,
             isPurchasable = args.isPurchasable,
             isPurchasableWithBnb = featureToggle.isEnabled(Feature.PurchaseNftWithBnb),
-            sunglassesImage = getSunglassesImage(),
+            sunglassesImage = args.type.getSunglassesImage(),
             purchaseWithBnbState = PurchaseWithBnbState.Shimmer(nftType = args.type),
         )
     )
@@ -197,21 +197,6 @@ class PurchaseViewModel @Inject constructor(
     }
 
     fun onFreeClicked() = viewModelScope.launch { mint() }
-
-    private fun getSunglassesImage() = when (args.type.intType) {
-        1 -> R.drawable.img_sunglasses0
-        2 -> R.drawable.img_sunglasses1
-        3 -> R.drawable.img_sunglasses2
-        4 -> R.drawable.img_sunglasses3
-        5 -> R.drawable.img_sunglasses4
-        6 -> R.drawable.img_sunglasses5
-        7 -> R.drawable.img_sunglasses6
-        8 -> R.drawable.img_sunglasses7
-        9 -> R.drawable.img_sunglasses8
-        10 -> R.drawable.img_sunglasses9
-        11 -> R.drawable.img_sunglasses10
-        else -> null
-    }?.let(ImageValue::ResImage)
 
     data class UiState(
         val isLoading: Boolean = false,

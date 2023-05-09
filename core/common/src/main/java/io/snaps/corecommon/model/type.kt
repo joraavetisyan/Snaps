@@ -1,5 +1,6 @@
 package io.snaps.corecommon.model
 
+import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -93,6 +94,21 @@ enum class NftType(val intType: NftTypeInt, val storeId: String?) {
     @SerialName("SuperStar") SuperStar(10, null),
     @SerialName("Legend") Legend(11, null),
     ;
+
+    fun getSunglassesImage() = when (this) {
+        Free -> R.drawable.img_sunglasses0
+        Newbie -> R.drawable.img_sunglasses1
+        Viewer -> R.drawable.img_sunglasses2
+        Follower -> R.drawable.img_sunglasses3
+        Sub -> R.drawable.img_sunglasses4
+        Sponsor -> R.drawable.img_sunglasses5
+        Influencer -> R.drawable.img_sunglasses6
+        FamousGuy -> R.drawable.img_sunglasses7
+        Star -> R.drawable.img_sunglasses8
+        Rockstar -> R.drawable.img_sunglasses9
+        SuperStar -> R.drawable.img_sunglasses10
+        Legend -> R.drawable.img_sunglasses10
+    }.let(ImageValue::ResImage)
 
     companion object {
 

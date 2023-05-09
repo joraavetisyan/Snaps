@@ -39,7 +39,9 @@ import io.snaps.corecrypto.core.IAccountManager
 import io.snaps.corecrypto.core.ISendEthereumAdapter
 import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.IWordsManager
+import io.snaps.corecrypto.core.adapters.BaseEvmAdapter
 import io.snaps.corecrypto.core.adapters.Eip20Adapter
+import io.snaps.corecrypto.core.adapters.EvmAdapter
 import io.snaps.corecrypto.core.managers.SNAPS_NFT
 import io.snaps.corecrypto.core.managers.WalletActivator
 import io.snaps.corecrypto.core.managers.defaultTokens
@@ -613,7 +615,12 @@ class WalletRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateBalance(): Effect<Completable> {
-        // TODO("Not yet implemented")
+        getWallets().forEach { wallet ->
+            CryptoKit.adapterManager.getAdapterForWallet(wallet).let {
+                (it as? BaseEvmAdapter)?.evmKitWrapper?.evmKit?.refresh()
+            }
+        }
+        delay(500)
         return Effect.completable
     }
 

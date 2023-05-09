@@ -73,7 +73,9 @@ class Erc20Kit(
         disposables.clear()
     }
 
-    fun refresh() {}
+    fun refresh() {
+        balanceManager.sync()
+    }
 
     fun getAllowanceAsync(
         spenderAddress: Address,

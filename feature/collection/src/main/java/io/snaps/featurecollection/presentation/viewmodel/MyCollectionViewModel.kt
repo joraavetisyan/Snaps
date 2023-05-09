@@ -97,10 +97,11 @@ class MyCollectionViewModel @Inject constructor(
     }
 
     private fun onProcessingClicked(nftModel: NftModel) {
-        // todo
+        // do nothing
     }
 
     private fun onItemClicked(nftModel: NftModel) {
+        if (nftModel.isProcessing) return
         viewModelScope.launch {
             _command publish Command.OpenNftDetailsScreen(
                 args = AppRoute.UserNftDetails.Args(

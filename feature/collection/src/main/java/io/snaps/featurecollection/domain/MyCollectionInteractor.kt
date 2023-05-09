@@ -73,5 +73,7 @@ class MyCollectionInteractorImpl @Inject constructor(
             walletRepository.mintNft(nftType = nftType, summary = summary)
         }.flatMap { hash ->
             nftRepository.saveProcessingNft(nftType).map { hash }
+        }.flatMap { hash ->
+            nftRepository.updateNftCollection().map { hash }
         }
 }

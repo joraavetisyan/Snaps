@@ -4,6 +4,7 @@ import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.MintNftStoreRequestDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.domain.RankModel
+import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
@@ -24,7 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
-import java.util.Collections.max
+import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlin.math.max
 
@@ -101,12 +102,38 @@ class NftRepositoryImpl @Inject constructor(
         }.map { dtoList ->
             dtoList.toNftModelList()
                 .groupBy(NftModel::type)
+                .let { map ->
+                    val nonAdded = NftType.values().filter {
+                        !map.keys.contains(it)
+                    }
+                    map.toMutableMap().apply {
+                        putAll(nonAdded.associateWith { emptyList() })
+                    }
+                }
                 .mapValues { (type, list) ->
                     val processingCount = userDataStorage.getProcessingNftCount(type)
                     val overCount = (userDataStorage.getProcessingNftCount(type) - list.size).coerceAtLeast(0)
                     userDataStorage.setProcessingNftCount(type, max(processingCount, list.size))
-                    list + List(overCount) { i -> list.first().let {
-                        it.copy(id = it.id + "processing$i", isProcessing = true) }
+                    list + List(overCount) { i ->
+                        list.firstOrNull()?.let {
+                            it.copy(id = it.id + "processing$i", isProcessing = true)
+                        } ?: NftModel(
+                            id = "${type.name}processing$i",
+                            tokenId = "",
+                            userId = "",
+                            type = type,
+                            image = type.getSunglassesImage(),
+                            dailyReward = 0,
+                            dailyUnlock = 0.0,
+                            dailyConsumption = 0.0,
+                            isAvailableToPurchase = false,
+                            costInUsd = 0,
+                            costInRealTokens = 0,
+                            mintedDate = LocalDateTime.now(),
+                            isHealthy = true,
+                            repairCost = 0.0,
+                            isProcessing = true,
+                        )
                     }
                 }
                 .flatMap(Map.Entry<NftType, List<NftModel>>::value)

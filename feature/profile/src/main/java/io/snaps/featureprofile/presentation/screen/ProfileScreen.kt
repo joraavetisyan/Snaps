@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.basefeed.ui.VideoFeedGrid
+import io.snaps.basesubs.domain.SubModel
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
@@ -51,7 +53,6 @@ import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureprofile.ScreenNavigator
-import io.snaps.basesubs.domain.SubModel
 import io.snaps.featureprofile.presentation.viewmodel.ProfileViewModel
 import io.snaps.featureprofile.presentation.viewmodel.SubsViewModel
 
@@ -71,6 +72,7 @@ fun ProfileScreen(
             is ProfileViewModel.Command.OpenUserVideoFeedScreen -> {
                 router.toUserVideoFeedScreen(userId = it.userId, position = it.position)
             }
+
             is ProfileViewModel.Command.OpenUserLikedVideoFeedScreen -> {
                 router.toUserLikedVideoFeedScreen(position = it.position)
             }
@@ -151,6 +153,7 @@ private fun ProfileScreen(
     ) { paddingValues ->
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(paddingValues)
                 .inset(insetAllExcludeTop()),
         ) {
@@ -175,13 +178,17 @@ private fun ProfileScreen(
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
-            AnimatedContent(targetState = uiState.selectedItemIndex) {
+            AnimatedContent(
+                targetState = uiState.selectedItemIndex,
+                modifier = Modifier.fillMaxSize(),
+            ) {
                 when (it) {
                     0 -> VideoFeedGrid(
                         columnCount = 3,
                         uiState = uiState.videoFeedUiState,
                         onClick = onVideoClipClicked,
                     )
+
                     else -> VideoFeedGrid(
                         columnCount = 3,
                         uiState = uiState.userLikedVideoFeedUiState,
@@ -197,6 +204,7 @@ private fun ProfileScreen(
             onDismissRequest = onDismissRequest,
             onUnsubscribeClicked = onUnsubscribeClicked,
         )
+
         null -> Unit
     }
 }
