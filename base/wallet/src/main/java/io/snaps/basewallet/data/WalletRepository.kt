@@ -41,7 +41,6 @@ import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.IWordsManager
 import io.snaps.corecrypto.core.adapters.BaseEvmAdapter
 import io.snaps.corecrypto.core.adapters.Eip20Adapter
-import io.snaps.corecrypto.core.adapters.EvmAdapter
 import io.snaps.corecrypto.core.managers.SNAPS_NFT
 import io.snaps.corecrypto.core.managers.WalletActivator
 import io.snaps.corecrypto.core.managers.defaultTokens

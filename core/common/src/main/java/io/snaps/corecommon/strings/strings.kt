@@ -56,6 +56,15 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "An error has occurred. Try again later",
     ),
 
+    key(StringKey.MessageEmptyVideoFeed) to mapOf(
+        SupportedLanguageKey.Ru to "Eще нет видео",
+        SupportedLanguageKey.En to "No videos yet",
+    ),
+    key(StringKey.MessageNothingFound) to mapOf(
+        SupportedLanguageKey.Ru to "Ничего не найдено",
+        SupportedLanguageKey.En to "Nothing found",
+    ),
+
     key(StringKey.OnboardingRankTitle) to mapOf(
         SupportedLanguageKey.Ru to "Добро пожаловать в Snaps!",
         SupportedLanguageKey.En to "Welcome to Snaps!",
@@ -840,6 +849,26 @@ internal val strings = mapOf(
     ),
     key(StringKey.RewardsDialogMessageFootnote2) to mapOf(
         SupportedLanguageKey.En to "According to the rank of your NFT points, you will receive rewards with a smooth and gradual unlocking. Every day, the rewards from your blocked account will go to the unlocked one and you can pick them up. Every day the unlock gets bigger and after a few days in Snaps you will start getting 100%% reward every day on your unlocked wallet.",
+    ),
+    key(StringKey.RewardsDialogTitleClaim) to mapOf(
+        SupportedLanguageKey.En to "Claim tokens",
+        SupportedLanguageKey.Ru to "Вывести токены",
+    ),
+    key(StringKey.RewardsDialogActionClaim) to mapOf(
+        SupportedLanguageKey.En to "Confirm",
+        SupportedLanguageKey.Ru to "Подтвердить",
+    ),
+    key(StringKey.RewardsDialogHintClaim) to mapOf(
+        SupportedLanguageKey.En to "Enter amount to claim",
+        SupportedLanguageKey.Ru to "Введите сумму вывода",
+    ),
+    key(StringKey.RewardsDialogActionMax) to mapOf(
+        SupportedLanguageKey.En to "Max",
+        SupportedLanguageKey.Ru to "Mакс",
+    ),
+    key(StringKey.RewardsDialogFieldAvailable) to mapOf(
+        SupportedLanguageKey.En to "Available: %s SNAPS",
+        SupportedLanguageKey.Ru to "Доступно: %s SNAPS",
     ),
 
     key(StringKey.WithdrawTitle) to mapOf(

@@ -115,8 +115,11 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun subscribeToRewards() {
-        profileRepository.balanceState.map {
-            it.toRewardsTileState(::onRewardReloadClicked)
+        profileRepository.balanceState.map { state ->
+            _uiState.update {
+                it.copy(availableTokens = state.dataOrCache?.unlocked ?: 0.0)
+            }
+            state.toRewardsTileState(::onRewardReloadClicked)
         }.onEach { rewards ->
             _uiState.update { it.copy(rewards = rewards) }
         }.launchIn(viewModelScope)
@@ -208,18 +211,44 @@ class WalletViewModel @Inject constructor(
     fun onRewardsWithdrawClicked() = viewModelScope.launch {
         if (uiState.value.countBrokenGlasses > 0) {
             notificationsSource.sendError(StringKey.RewardsErrorRepairGlasses.textValue())
+        } else if (uiState.value.availableTokens == 0.0) {
+            notificationsSource.sendError(StringKey.RewardsErrorInsufficientBalance.textValue())
         } else {
-            action.execute {
-                walletInteractor.claim()
-            }.doOnSuccess {
-                profileRepository.updateBalance()
-            }.doOnError { error, _ ->
-                when (error.cause) {
-                    InsufficientBalanceError -> notificationsSource.sendError(
-                        StringKey.RewardsErrorInsufficientBalance.textValue()
-                    )
-                }
+            _command publish Command.ShowBottomDialog
+            _uiState.update {
+                it.copy(
+                    amountToClaimValue = "",
+                    bottomDialog = BottomDialog.RewardsWithdraw,
+                )
             }
+        }
+    }
+
+    fun onAmountToClaimValueChanged(amount: String) {
+        _uiState.update { it.copy(amountToClaimValue = amount) }
+    }
+
+    fun onMaxButtonClicked() {
+        _uiState.update {
+            it.copy(amountToClaimValue = it.availableTokens.toString())
+        }
+    }
+
+    fun onConfirmClaimClicked() = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true) }
+        action.execute {
+            walletInteractor.claim(uiState.value.amountToClaimValue.toDouble())
+        }.doOnSuccess {
+            profileRepository.updateBalance()
+            _command publish Command.HideBottomDialog
+        }.doOnError { error, _ ->
+            when (error.cause) {
+                InsufficientBalanceError -> notificationsSource.sendError(
+                    StringKey.RewardsErrorInsufficientBalance.textValue()
+                )
+            }
+        }.doOnComplete {
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
@@ -347,7 +376,15 @@ class WalletViewModel @Inject constructor(
         val countBrokenGlasses: Int = 0,
         val isRefreshing: Boolean = false,
         val screen: Screen = Screen.Wallet,
-    )
+        val amountToClaimValue: String = "",
+        val availableTokens: Double = 0.0,
+        val isLoading: Boolean = false,
+    ) {
+
+        val isConfirmClaimEnabled get() = amountToClaimValue.toDoubleOrNull()?.let {
+            it <= availableTokens && it > 0
+        } ?: false
+    }
 
     sealed class BottomDialog {
 
@@ -362,6 +399,8 @@ class WalletViewModel @Inject constructor(
         ) : BottomDialog()
 
         object RewardsFootnote : BottomDialog()
+
+        object RewardsWithdraw : BottomDialog()
     }
 
     enum class FilterOptions {

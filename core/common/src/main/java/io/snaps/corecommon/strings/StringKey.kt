@@ -21,6 +21,9 @@ enum class StringKey {
     ErrorConnection,
     ErrorUnknown,
 
+    MessageEmptyVideoFeed,
+    MessageNothingFound,
+
     OnboardingRankTitle,
     OnboardingRankText,
     OnboardingRankAction,
@@ -290,6 +293,11 @@ enum class StringKey {
     RewardsDialogTitleFootnote2,
     RewardsDialogMessageFootnote1,
     RewardsDialogMessageFootnote2,
+    RewardsDialogTitleClaim,
+    RewardsDialogActionClaim,
+    RewardsDialogHintClaim,
+    RewardsDialogActionMax,
+    RewardsDialogFieldAvailable,
 
     WithdrawTitle,
     WithdrawHintAddress,

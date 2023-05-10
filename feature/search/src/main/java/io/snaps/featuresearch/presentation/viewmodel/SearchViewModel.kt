@@ -13,8 +13,10 @@ import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.ui.UsersUiState
 import io.snaps.baseprofile.ui.toUsersUiState
 import io.snaps.basesession.data.OnboardingHandler
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.Uuid
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
@@ -86,6 +88,7 @@ class SearchViewModel @Inject constructor(
         subscribePopularFeedJob = videoFeedRepository.getFeedState(VideoFeedType.All(query)).map {
             it.toVideoFeedUiState(
                 shimmerListSize = 6,
+                emptyMessage = StringKey.MessageNothingFound.textValue(),
                 onClipClicked = ::onClipClicked,
                 onReloadClicked = ::onReloadClicked,
                 onListEndReaching = ::onListEndReaching,
