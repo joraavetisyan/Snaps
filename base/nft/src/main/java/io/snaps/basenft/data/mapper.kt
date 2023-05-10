@@ -39,4 +39,9 @@ private fun UserNftItemResponseDto.toModel() = NftModel(
     isAvailableToPurchase = data.isAvailableToPurchase,
     repairCost = data.repairCost,
     isProcessing = false,
+    level = levelInfo.level,
+    lowerThreshold = levelInfo.lowerThreshold,
+    upperThreshold = levelInfo.upperThreshold,
+    bonus = levelInfo.bonus,
+    experience = levelInfo.experience,
 )

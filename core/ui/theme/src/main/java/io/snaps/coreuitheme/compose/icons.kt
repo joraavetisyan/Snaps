@@ -23,6 +23,7 @@ import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Fingerprint
 import androidx.compose.material.icons.rounded.FlipCameraAndroid
 import androidx.compose.material.icons.rounded.HeartBroken
+import androidx.compose.material.icons.rounded.Help
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.NavigateNext
@@ -64,6 +65,7 @@ object SpecificIcons {
     val moreVert: IconValue = vector(Icons.Rounded.MoreVert)
     val volumeDown: IconValue = vector(Icons.Rounded.VolumeMute)
     val volumeUp: IconValue = vector(Icons.Rounded.VolumeUp)
+    val help: IconValue = vector(Icons.Rounded.Help)
 
     // Bottom menu icons
     val camera: IconValue = vector(Icons.Rounded.Videocam)

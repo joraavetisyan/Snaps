@@ -132,6 +132,11 @@ class NftRepositoryImpl @Inject constructor(
                             isHealthy = true,
                             repairCost = 0.0,
                             isProcessing = true,
+                            level = 0,
+                            experience = 0,
+                            lowerThreshold = 0,
+                            upperThreshold = 0,
+                            bonus = 0,
                         )
                     }
                 }

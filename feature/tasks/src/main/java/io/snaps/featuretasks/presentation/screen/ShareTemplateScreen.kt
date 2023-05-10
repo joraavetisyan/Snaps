@@ -67,7 +67,7 @@ fun ShareTemplateScreen(
 
     viewModel.command.collectAsCommand {
         when (it) {
-            is ShareTemplateViewModel.Command.OpenWebView -> router.toWebView()
+            is ShareTemplateViewModel.Command.OpenWebView -> router.toConnectInstagramScreen()
             is ShareTemplateViewModel.Command.OpenShareDialog -> context.startSharePhotoIntent(it.uri)
         }
     }

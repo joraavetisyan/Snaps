@@ -57,6 +57,7 @@ fun MyCollectionScreen(
         when (it) {
             is MyCollectionViewModel.Command.OpenRankSelectionScreen -> router.toRankSelectionScreen()
             is MyCollectionViewModel.Command.OpenNftDetailsScreen -> router.toUserNftDetailsScreen(it.args)
+            is MyCollectionViewModel.Command.OpenWebViewScreen -> router.toWebView(it.url)
         }
     }
 

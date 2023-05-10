@@ -16,6 +16,7 @@ import io.snaps.corenavigation.RegistrationFeatureProvider
 import io.snaps.corenavigation.TasksFeatureProvider
 import io.snaps.corenavigation.WalletConnectFeatureProvider
 import io.snaps.corenavigation.WalletFeatureProvider
+import io.snaps.corenavigation.WebViewFeatureProvider
 import io.snaps.featurebottombar.BottomBarFeatureProviderImpl
 import io.snaps.featurecollection.CollectionFeatureProviderImpl
 import io.snaps.featurecreate.CreateFeatureProviderImpl
@@ -28,6 +29,7 @@ import io.snaps.featuresearch.SearchFeatureProviderImpl
 import io.snaps.featuretasks.TasksFeatureProviderImpl
 import io.snaps.featurewallet.WalletFeatureProviderImpl
 import io.snaps.featurewalletconnect.WalletConnectFeatureProviderImpl
+import io.snaps.featurewebview.WebViewFeatureProviderImpl
 import javax.inject.Singleton
 
 @Module
@@ -81,4 +83,8 @@ interface FeatureProviderModule {
     @Binds
     @Singleton
     fun referralFeatureProvider(provider: ReferralFeatureProviderImpl): ReferralFeatureProvider
+
+    @Binds
+    @Singleton
+    fun webViewFeatureProvider(provider: WebViewFeatureProviderImpl): WebViewFeatureProvider
 }

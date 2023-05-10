@@ -220,7 +220,15 @@ object AppRoute {
         )
     }
 
-    object WebView : Route("WebView")
+    object WebView : RouteWithArg("WebView") {
+
+        @Serializable
+        data class Args(
+            val url: FullUrl,
+        )
+    }
+
+    object ConnectInstagram : Route("ConnectInstagram")
 }
 
 object AppDeeplink {

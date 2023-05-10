@@ -9,11 +9,11 @@ import io.snaps.corenavigation.base.FeatureNavDirection
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
+import io.snaps.featuretasks.presentation.screen.ConnectInstagramScreen
 import io.snaps.featuretasks.presentation.screen.FindPointsScreen
 import io.snaps.featuretasks.presentation.screen.ShareTemplateScreen
 import io.snaps.featuretasks.presentation.screen.TaskDetailsScreen
 import io.snaps.featuretasks.presentation.screen.TasksScreen
-import io.snaps.featuretasks.presentation.screen.WebViewScreen
 import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) :
@@ -43,7 +43,7 @@ internal class ScreenNavigator(navHostController: NavHostController) :
 
     fun toWalletScreen() = navHostController.navigate(AppRoute.Wallet)
 
-    fun toWebView() = navHostController.navigate(AppRoute.WebView)
+    fun toConnectInstagramScreen() = navHostController.navigate(AppRoute.ConnectInstagram)
 
     fun toUserNftDetailsScreen(
         args: AppRoute.UserNftDetails.Args
@@ -60,6 +60,6 @@ class TasksFeatureProviderImpl @Inject constructor() : TasksFeatureProvider {
         composable(AppRoute.ShareTemplate) { ShareTemplateScreen(controller) }
         composable(AppRoute.TaskDetails) { TaskDetailsScreen(controller) }
         composable(AppRoute.FindPoints) { FindPointsScreen(controller) }
-        composable(AppRoute.WebView) { WebViewScreen(controller) }
+        composable(AppRoute.ConnectInstagram) { ConnectInstagramScreen(controller) }
     }
 }

@@ -29,6 +29,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val LEVEL_URL = "https://snaps-docs.gitbook.io/baza-znanii-snaps/features/level-up"
+
 @HiltViewModel
 class MyCollectionViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
@@ -63,6 +65,7 @@ class MyCollectionViewModel @Inject constructor(
                 onRepairClicked = ::onRepairClicked,
                 onItemClicked = ::onItemClicked,
                 onProcessingClicked = ::onProcessingClicked,
+                onHelpIconClicked = ::onHelpIconClicked,
             )
         }.onEach { state ->
             _uiState.update { it.copy(nft = state) }
@@ -113,6 +116,12 @@ class MyCollectionViewModel @Inject constructor(
         }
     }
 
+    private fun onHelpIconClicked() {
+        viewModelScope.launch {
+            _command publish Command.OpenWebViewScreen(LEVEL_URL)
+        }
+    }
+
     data class UiState(
         val isLoading: Boolean = false,
         val nft: List<CollectionItemState> = List(6) { CollectionItemState.Shimmer },
@@ -121,5 +130,6 @@ class MyCollectionViewModel @Inject constructor(
     sealed class Command {
         object OpenRankSelectionScreen : Command()
         data class OpenNftDetailsScreen(val args: AppRoute.UserNftDetails.Args) : Command()
+        data class OpenWebViewScreen(val url: FullUrl) : Command()
     }
 }
