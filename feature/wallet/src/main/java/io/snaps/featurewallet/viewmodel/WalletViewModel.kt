@@ -211,6 +211,8 @@ class WalletViewModel @Inject constructor(
     fun onRewardsWithdrawClicked() = viewModelScope.launch {
         if (uiState.value.countBrokenGlasses > 0) {
             notificationsSource.sendError(StringKey.RewardsErrorRepairGlasses.textValue())
+        } else if (uiState.value.availableTokens == 0.0) {
+            notificationsSource.sendError(StringKey.RewardsErrorInsufficientBalance.textValue())
         } else {
             _command publish Command.ShowBottomDialog
             _uiState.update {
@@ -380,7 +382,7 @@ class WalletViewModel @Inject constructor(
     ) {
 
         val isConfirmClaimEnabled get() = amountToClaimValue.toDoubleOrNull()?.let {
-            it <= availableTokens
+            it <= availableTokens && it > 0
         } ?: false
     }
 

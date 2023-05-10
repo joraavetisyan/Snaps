@@ -48,7 +48,7 @@ class WalletInteractorImpl @Inject constructor(
     override suspend fun claim(amount: Double): Effect<Completable> {
         return profileRepository.updateBalance().flatMap {
             requireNotNull(profileRepository.balanceState.value.dataOrCache).let {
-                if (amount > 0) {
+                if (it.unlocked > 0) {
                     walletRepository.claim(amount)
                 } else {
                     Effect.error(AppError.Custom(cause = InsufficientBalanceError))

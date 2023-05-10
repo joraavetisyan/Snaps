@@ -162,6 +162,7 @@ private fun PurchaseScreen(
                     onBuyWithBNBClicked = onBuyWithBNBClicked,
                     onFreeClicked = onFreeClicked,
                     onBuyWithGooglePlayClicked = onBuyWithGooglePlayClicked,
+                    isFreeButtonVisible = uiState.isFreeButtonVisible,
                 )
             }
         },
@@ -251,6 +252,7 @@ fun CardBlock(
 @Composable
 private fun ActionButtons(
     uiState: PurchaseViewModel.UiState,
+    isFreeButtonVisible: Boolean,
     onFreeClicked: () -> Unit,
     onBuyWithGooglePlayClicked: () -> Unit,
     onBuyWithBNBClicked: () -> Unit,
@@ -263,11 +265,13 @@ private fun ActionButtons(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         if (uiState.nftType == NftType.Free) {
-            SimpleButtonActionM(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onFreeClicked,
-            ) {
-                SimpleButtonContent(text = StringKey.PurchaseActionFree.textValue())
+            if (isFreeButtonVisible) {
+                SimpleButtonActionM(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = onFreeClicked,
+                ) {
+                    SimpleButtonContent(text = StringKey.PurchaseActionFree.textValue())
+                }
             }
         } else {
             SimpleButtonDefaultM(
