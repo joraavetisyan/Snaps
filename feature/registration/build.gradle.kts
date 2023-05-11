@@ -6,6 +6,7 @@ common()
 compose()
 dagger()
 lifecycle()
+firebase()
 
 android {
     namespace = "io.snaps.featureregistration"
@@ -22,7 +23,6 @@ dependencies {
     implementation(projects.baseAuth)
     implementation(projects.baseProfile)
 
-    implementation(*Libs.bundle.firebase)
     implementation(Libs.bundle.playServices)
     implementation(*Libs.bundle.facebook)
 }

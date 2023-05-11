@@ -106,3 +106,10 @@ fun Project.lifecycle() {
         kapt(Libs.bundle.lifecycleKapt)
     }
 }
+
+fun Project.firebase() {
+    dependencies {
+        implementation(platform(Libs.bundle.firebaseBom))
+        implementation(*Libs.bundle.firebase)
+    }
+}

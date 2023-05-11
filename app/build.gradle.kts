@@ -10,6 +10,7 @@ common()
 compose()
 dagger()
 lifecycle()
+firebase()
 
 android {
     namespace = "io.snaps.android"
@@ -127,7 +128,6 @@ dependencies {
     implementation(*Libs.bundle.appUpdater)
     implementation(*Libs.bundle.trustWallet)
     implementation(*Libs.bundle.biometric)
-    implementation(*Libs.bundle.firebase)
     implementation(Libs.bundle.playServices)
     implementation(Libs.bundle.uploadService)
 }

@@ -1,6 +1,7 @@
 package io.snaps.basesources.featuretoggle
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import io.snaps.corecommon.ext.log
 import io.snaps.coredata.BuildConfig
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.hours
@@ -15,8 +16,8 @@ class FeatureToggleUpdater @Inject constructor(
     private val firebaseRemoteConfig by lazy { FirebaseRemoteConfig.getInstance() }
 
     init {
-//        initDefaultValues()
-//        saveRemoteValues()
+        //initDefaultValues()
+        saveRemoteValues()
     }
 
     private fun initDefaultValues() {
@@ -31,12 +32,15 @@ class FeatureToggleUpdater @Inject constructor(
             when {
                 BuildConfig.DEBUG -> FETCH_TIME_DURATION_DEBUG
                 else -> FETCH_TIME_DURATION_RELEASE
-            }.inWholeMilliseconds
+            }.inWholeSeconds
         ).addOnSuccessListener {
+            log("Fetched Firebase remote configs")
             featureToggle.clearRemoteValues()
-            Feature.values().forEach {
+            Feature.values().filter { it.isRemote }.forEach {
                 featureToggle.setRemoteValue(it, firebaseRemoteConfig.getBoolean(it.key))
             }
+        }.addOnFailureListener {
+            log(it)
         }
     }
 }

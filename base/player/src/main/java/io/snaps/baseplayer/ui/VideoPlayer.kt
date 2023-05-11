@@ -55,7 +55,7 @@ fun VideoPlayer(
     onMuted: ((Boolean) -> Unit)? = null,
     isLiked: Boolean = false,
     onLiked: (() -> Unit)? = null,
-    progressChangePollFrequency: Long = 1000L, /*every 1 second*/
+    progressPollFrequencyInMillis: Long = 1000L, /*every 1 second*/
     onProgressChanged: ((Float) -> Unit)? = null, /*[0f,1f] every [progressChangePollFrequency]*/
     isScrolling: Boolean = false,
     isRepeat: Boolean = true,
@@ -93,7 +93,7 @@ fun VideoPlayer(
                         0f
                     }.coerceIn(0f, 1f)
                 )
-                delay(progressChangePollFrequency)
+                delay(progressPollFrequencyInMillis)
             }
         }
     }
@@ -146,7 +146,7 @@ fun VideoPlayer(
             }
         )
 
-        Crossfade(targetState = lottieAnimatable.isPlaying) {
+        Crossfade(targetState = lottieAnimatable.isPlaying, label = "likeLottieAnimation") {
             if (it) {
                 LottieAnimation(composition = composition, progress = { lottieAnimatable.progress })
             }

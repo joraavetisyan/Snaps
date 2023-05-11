@@ -38,3 +38,5 @@ fun String.addPrefix(prefix: String, ignoreEmpty: Boolean = false): String {
 }
 
 val WalletAddress.addressEllipsized get() = take(7) + "..." + takeLast(10)
+
+fun String.capitalizeFirstLetter() = replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }

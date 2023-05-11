@@ -6,6 +6,7 @@ common()
 lifecycle()
 dagger()
 room()
+firebase()
 
 android {
     namespace = "io.snaps.coredata"
@@ -17,7 +18,6 @@ dependencies {
 
     implementation(projects.coreCommon)
 
-    implementation(*Libs.bundle.firebase)
     implementation(*Libs.bundle.datastore)
     implementation(*Libs.bundle.preference)
     implementation(*Libs.bundle.cryptoPreference)

@@ -39,12 +39,7 @@ object Libs {
     private const val hiltJetpackVersion = "1.0.0"
 
     private const val crashlyticsGradleVersion = "2.5.2"
-    private const val authVersion = "21.1.0"
-    private const val crashlyticsVersion = "18.3.3"
-    private const val analyticsVersion = "21.2.0"
-    private const val messagingVersion = "23.1.1"
-    private const val configVersion = "21.2.1"
-    private const val dynamicLinksVersion = "21.1.0"
+    private const val firebaseBomVersion = "32.0.0"
 
     private const val playServicesVersion = "20.4.1"
 
@@ -135,13 +130,14 @@ object Libs {
 
         const val playServices = "com.google.android.gms:play-services-auth:$playServicesVersion"
 
+        val firebaseBom = "com.google.firebase:firebase-bom:$firebaseBomVersion"
         val firebase = arrayOf(
-            "com.google.firebase:firebase-auth-ktx:$authVersion",
-            "com.google.firebase:firebase-crashlytics-ktx:$crashlyticsVersion",
-            "com.google.firebase:firebase-analytics-ktx:$analyticsVersion",
-            "com.google.firebase:firebase-messaging-ktx:$messagingVersion",
-            "com.google.firebase:firebase-config-ktx:$configVersion",
-            "com.google.firebase:firebase-dynamic-links-ktx:$dynamicLinksVersion"
+            "com.google.firebase:firebase-auth-ktx",
+            "com.google.firebase:firebase-crashlytics-ktx",
+            "com.google.firebase:firebase-analytics-ktx",
+            "com.google.firebase:firebase-messaging-ktx",
+            "com.google.firebase:firebase-config-ktx",
+            "com.google.firebase:firebase-dynamic-links-ktx",
         )
 
         val composeCompiler = arrayOf("androidx.compose.compiler:compiler:$composeCompilerVersion")

@@ -24,6 +24,8 @@ import javax.inject.Inject
 @HiltAndroidApp
 class SnapsApp : Application(), ApplicationCoroutineScopeHolder, ImageLoaderFactory {
 
+    // Injections for the init blocks to be executed
+
     @Inject
     lateinit var tracker: AnalyticsTracker
 
@@ -34,7 +36,7 @@ class SnapsApp : Application(), ApplicationCoroutineScopeHolder, ImageLoaderFact
     lateinit var networkStateSource: NetworkStateSource
 
     @Inject
-    lateinit var notificationHelper: NotificationHelper // for channels to be inited
+    lateinit var notificationHelper: NotificationHelper
 
     @Inject
     lateinit var apiConfig: ApiConfig
@@ -51,10 +53,7 @@ class SnapsApp : Application(), ApplicationCoroutineScopeHolder, ImageLoaderFact
     override fun onCreate() {
         super.onCreate()
 
-        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(
-            // todo on release only
-            true
-        )
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
 
         AnalyticsTrackerHolder.init(tracker)
 

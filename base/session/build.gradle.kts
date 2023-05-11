@@ -6,6 +6,7 @@ common()
 compose()
 dagger()
 lifecycle()
+firebase()
 
 android {
     namespace = "io.snaps.basesession"
@@ -23,7 +24,6 @@ dependencies {
     implementation(projects.baseWallet)
     implementation(projects.baseNft)
 
-    implementation(*Libs.bundle.firebase)
     implementation(*Libs.bundle.preference)
     implementation(*Libs.bundle.datastore)
 }

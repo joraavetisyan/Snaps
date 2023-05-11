@@ -84,7 +84,7 @@ private fun PreviewScreen(
                 localUri = uiState.uri,
                 shouldPlay = true,
                 isScrolling = false,
-                progressChangePollFrequency = 50L,
+                progressPollFrequencyInMillis = 50L,
                 onProgressChanged = onProgressChanged,
                 isRepeat = false, // OutOfMemory on repeat
             )

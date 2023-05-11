@@ -74,10 +74,6 @@ object SpecificIcons {
     val picture: IconValue = vector(Icons.Rounded.Collections)
     val profile: IconValue = vector(Icons.Rounded.Person)
 
-    val instagram: IconValue = resource(R.drawable.ic_instagram)
-    val google: IconValue = resource(R.drawable.ic_google)
-    val facebook: IconValue = resource(R.drawable.ic_facebook)
-
     val cameraTimer: IconValue = resource(R.drawable.ic_camera_timer)
     val settings: IconValue = resource(R.drawable.ic_settings)
     val gallery: IconValue = resource(R.drawable.ic_gallery)
@@ -96,10 +92,15 @@ object SpecificIcons {
     val topUp: IconValue = resource(R.drawable.ic_topup)
     val withdraw: IconValue = resource(R.drawable.ic_withdraw)
 
-    val apple: IconValue = resource(R.drawable.ic_apple)
-    val twitter: IconValue = resource(R.drawable.ic_twitter)
     val telegram: IconValue = resource(R.drawable.ic_telegram)
     val discord: IconValue = resource(R.drawable.ic_discord)
+
+    val apple: IconValue = resource(R.drawable.ic_apple)
+    val twitter: IconValue = resource(R.drawable.ic_twitter)
+    val instagram: IconValue = resource(R.drawable.ic_instagram)
+    val google: IconValue = resource(R.drawable.ic_google)
+    val facebook: IconValue = resource(R.drawable.ic_facebook)
+
     val bnbToken: IconValue = resource(R.drawable.ic_bnb_token)
     val snpToken: IconValue = resource(R.drawable.ic_snp_token)
 }

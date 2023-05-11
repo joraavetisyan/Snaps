@@ -2,6 +2,7 @@ package io.snaps.featureprofile
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.ProfileFeatureProvider

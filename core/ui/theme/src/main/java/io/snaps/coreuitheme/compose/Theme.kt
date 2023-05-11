@@ -122,7 +122,6 @@ object AppTheme {
         get() = MaterialTheme.typography
 }
 
-@Composable
 inline fun withIcons(block: SpecificIcons.() -> IconValue): IconValue =
     AppTheme.specificIcons.block()
 
