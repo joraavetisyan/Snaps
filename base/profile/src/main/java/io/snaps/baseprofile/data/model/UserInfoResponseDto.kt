@@ -17,13 +17,13 @@ class UserInfoResponseDto(
     @SerialName("name") val name: String?,
     @SerialName("totalLikes") val totalLikes: Int,
     @SerialName("avatar") val avatarUrl: FullUrl?,
-    @SerialName("experience") val experience: Int,
+    @SerialName("experience") val experience: Int?,
     @SerialName("questInfo") val questInfo: QuestInfoResponseDto?, // current quests aren't null only for current user
     @SerialName("subscribersCount") val totalSubscribers: Int,
     @SerialName("subscribesCount") val totalSubscriptions: Int,
     @SerialName("inviteCodeRegisteredBy") val inviteCodeRegisteredBy: String?,
     @SerialName("ownInviteCode") val ownInviteCode: String,
-    @SerialName("level") val level: Int,
+    @SerialName("level") val level: Int?,
     @SerialName("instagramId") val instagramId: Uuid?,
     @SerialName("paymentsState") val paymentsState: PaymentsState?,
 )

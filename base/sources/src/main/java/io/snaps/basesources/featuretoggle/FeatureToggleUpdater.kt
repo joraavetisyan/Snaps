@@ -7,7 +7,7 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.hours
 
 private val FETCH_TIME_DURATION_DEBUG = 0.hours
-private val FETCH_TIME_DURATION_RELEASE = 6.hours
+private val FETCH_TIME_DURATION_RELEASE = 0.hours
 
 class FeatureToggleUpdater @Inject constructor(
     private val featureToggle: EditableFeatureToggle,
@@ -36,7 +36,7 @@ class FeatureToggleUpdater @Inject constructor(
         ).addOnSuccessListener {
             log("Fetched Firebase remote configs")
             featureToggle.clearRemoteValues()
-            Feature.values().filter { it.isRemote }.forEach {
+            Feature.values().filter(Feature::isRemote).forEach {
                 featureToggle.setRemoteValue(it, firebaseRemoteConfig.getBoolean(it.key))
             }
         }.addOnFailureListener {

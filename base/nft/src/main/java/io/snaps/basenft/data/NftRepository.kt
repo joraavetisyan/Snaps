@@ -4,6 +4,7 @@ import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.MintNftStoreRequestDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.domain.RankModel
+import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
@@ -15,6 +16,7 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.UserDataStorage
+import io.snaps.coredata.json.KotlinxSerializationJsonProvider
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreui.viewmodel.tryPublish
@@ -24,6 +26,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlin.math.max
@@ -84,6 +89,29 @@ class NftRepositoryImpl @Inject constructor(
             }
         }
     }.likeStateFlow(scope, Loading())
+
+    init {
+        scope.launch {
+            repairPreviouslyFailedNfts()
+            mintPreviouslyFailedNfts()
+        }
+    }
+
+    private suspend fun repairPreviouslyFailedNfts() {
+        userDataStorage.getNonRepairedNfts().forEach {
+            val decoded = KotlinxSerializationJsonProvider().get().decodeFromString<RepairGlassesRequestDto>(it)
+            log("Repairing previously failed nft $decoded")
+            repairNft(decoded)
+        }
+    }
+
+    private suspend fun mintPreviouslyFailedNfts() {
+        userDataStorage.getNonMintedNfts().forEach {
+            val decoded = KotlinxSerializationJsonProvider().get().decodeFromString<MintNftRequestDto>(it)
+            log("Minting previously failed nft $decoded")
+            mintNft(decoded)
+        }
+    }
 
     override suspend fun updateRanks(): Effect<Completable> {
         return apiCall(ioDispatcher) {
@@ -147,19 +175,30 @@ class NftRepositoryImpl @Inject constructor(
     }
 
     override suspend fun mintNft(type: NftType, transactionHash: Token?): Effect<Completable> {
+        return mintNft(
+            body = MintNftRequestDto(
+                nftType = type,
+                transactionHash = transactionHash,
+            ),
+        )
+    }
+
+    private suspend fun mintNft(body: MintNftRequestDto): Effect<Completable> {
+        val encoded = KotlinxSerializationJsonProvider().get().encodeToString(body)
         return apiCall(ioDispatcher) {
-            nftApi.mintNft(
-                body = MintNftRequestDto(
-                    nftType = type.intType,
-                    transactionHash = transactionHash,
-                ),
-            )
+            nftApi.mintNft(body)
         }.doOnSuccess {
+            userDataStorage.removeNonMintedNft(encoded)
             updateNftCollection()
             updateRanks()
+        }.doOnError { _, _ ->
+            userDataStorage.setNonMintedNft(encoded)
         }.toCompletable()
     }
 
+    /**
+     * For purchases through Google Play
+     */
     override suspend fun mintNftStore(productId: Uuid, purchaseToken: Token): Effect<Completable> {
         return apiCall(ioDispatcher) {
             nftApi.mintNftStore(
@@ -179,16 +218,24 @@ class NftRepositoryImpl @Inject constructor(
         transactionHash: Token?,
         offChainAmount: Long,
     ): Effect<Completable> {
+        return repairNft(
+            body = RepairGlassesRequestDto(
+                glassesId = nftModel.id,
+                offChainAmount = offChainAmount,
+                transactionHash = transactionHash,
+            ),
+        )
+    }
+
+    private suspend fun repairNft(body: RepairGlassesRequestDto): Effect<Completable> {
+        val encoded = KotlinxSerializationJsonProvider().get().encodeToString(body)
         return apiCall(ioDispatcher) {
-            nftApi.repairGlasses(
-                body = RepairGlassesRequestDto(
-                    glassesId = nftModel.id,
-                    offChainAmount = offChainAmount,
-                    transactionHash = transactionHash,
-                )
-            )
+            nftApi.repairGlasses(body = body)
         }.doOnSuccess {
+            userDataStorage.removeNonRepairedNft(encoded)
             updateNftCollection()
+        }.doOnError { _, _ ->
+            userDataStorage.setNonRepairedNft(encoded)
         }
     }
 
