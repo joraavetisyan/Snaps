@@ -8,5 +8,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MintNftRequestDto(
     @SerialName("nftType") val nftType: NftTypeInt,
-    @SerialName("purchaseId") val transactionHash: Token?,
+    @SerialName("transactionId") val transactionHash: Token?,
 )
