@@ -43,11 +43,11 @@ import javax.inject.Inject
 class PurchaseViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     featureToggle: FeatureToggle,
+    nftRepository: NftRepository,
     private val action: Action,
     private val purchaseStateProvider: PurchaseStateProvider,
     private val billingRouter: BillingRouter,
     private val interactor: MyCollectionInteractor,
-    private val nftRepository: NftRepository,
     private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel() {
 
