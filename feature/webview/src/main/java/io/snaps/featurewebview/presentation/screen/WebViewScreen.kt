@@ -1,4 +1,4 @@
-package io.snaps.featuretasks.presentation.screen
+package io.snaps.featurewebview.presentation.screen
 
 import android.view.ViewGroup
 import android.webkit.WebView
@@ -18,14 +18,11 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import io.snaps.corenavigation.base.popBackStackWithResult
-import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.featuretasks.ScreenNavigator
-import io.snaps.featuretasks.presentation.viewmodel.WebViewViewModel
+import io.snaps.featurewebview.ScreenNavigator
+import io.snaps.featurewebview.presentation.viewmodel.WebViewViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WebViewScreen(
     navHostController: NavHostController,
@@ -35,19 +32,25 @@ fun WebViewScreen(
     val viewModel: WebViewViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
-    viewModel.command.collectAsCommand {
-        when (it) {
-            is WebViewViewModel.Command.CloseScreen -> navHostController.popBackStackWithResult(it.authCode)
-        }
-    }
+    WebViewScreen(
+        uiState = uiState,
+        onBackIconClicked = router::back,
+    )
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun WebViewScreen(
+    uiState: WebViewViewModel.UiState,
+    onBackIconClicked: () -> Boolean,
+) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SimpleTopAppBar(
                 title = null,
-                navigationIcon = AppTheme.specificIcons.back to router::back,
+                navigationIcon = AppTheme.specificIcons.back to onBackIconClicked,
                 scrollBehavior = scrollBehavior,
             )
         }
@@ -58,15 +61,7 @@ fun WebViewScreen(
                     layoutParams = ViewGroup.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
                     )
-                    settings.javaScriptEnabled = true
-                    webViewClient = object : WebViewClient() {
-                        override fun onPageFinished(view: WebView?, url: String?) {
-                            super.onPageFinished(view, url)
-                            url?.let {
-                                viewModel.onAuthCodeReceived(url)
-                            }
-                        }
-                    }
+                    webViewClient = WebViewClient()
                     loadUrl(uiState.url)
                 }
             },

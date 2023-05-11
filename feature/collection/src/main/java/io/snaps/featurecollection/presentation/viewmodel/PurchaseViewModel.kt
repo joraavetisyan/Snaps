@@ -80,10 +80,10 @@ class PurchaseViewModel @Inject constructor(
     init {
         subscribeOnNewPurchases()
         if (args.type == NftType.Free) {
-            nftRepository.nftCollectionState.value.dataOrCache?.any { it.type == NftType.Free }?.let {
+            nftRepository.nftCollectionState.value.dataOrCache?.any { it.type == NftType.Free }?.let { isNotEmpty ->
                 _uiState.update {
                     it.copy(
-                        isFreeButtonVisible = false,
+                        isFreeButtonVisible = !isNotEmpty,
                         isPurchasableWithBnb = false,
                     )
                 }

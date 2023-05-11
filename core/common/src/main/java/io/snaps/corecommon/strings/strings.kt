@@ -960,6 +960,42 @@ internal val strings = mapOf(
     key(StringKey.MyCollectionActionProcessing) to mapOf(
         SupportedLanguageKey.En to "Processing",
     ),
+    key(StringKey.MyCollectionFieldBonus) to mapOf(
+        SupportedLanguageKey.Ru to "+ %s к наградам",
+        SupportedLanguageKey.En to "+ %s to rewards",
+    ),
+    key(StringKey.MyCollectionFieldLevel) to mapOf(
+        SupportedLanguageKey.Ru to "УРОВЕНЬ\u00A0%s",
+        SupportedLanguageKey.En to "LEVEL\u00A0%s ",
+    ),
+    key(StringKey.MyCollectionFieldUpperThreshold) to mapOf(
+        SupportedLanguageKey.Ru to "%s опыта до %s",
+        SupportedLanguageKey.En to "%s experience up to %s",
+    ),
+    key(StringKey.MyCollectionFieldExperience, PluralKey.Zero) to mapOf(
+        SupportedLanguageKey.Ru to "%s очков опыта",
+        SupportedLanguageKey.En to "%s experience points",
+    ),
+    key(StringKey.MyCollectionFieldExperience, PluralKey.One) to mapOf(
+        SupportedLanguageKey.Ru to "%s очко опыта",
+        SupportedLanguageKey.En to "%s experience point",
+    ),
+    key(StringKey.MyCollectionFieldExperience, PluralKey.Two) to mapOf(
+        SupportedLanguageKey.Ru to "%s очка опыта",
+        SupportedLanguageKey.En to "%s experience points",
+    ),
+    key(StringKey.MyCollectionFieldExperience, PluralKey.Few) to mapOf(
+        SupportedLanguageKey.Ru to "%s очка опыта",
+        SupportedLanguageKey.En to "%s experience points",
+    ),
+    key(StringKey.MyCollectionFieldExperience, PluralKey.Many) to mapOf(
+        SupportedLanguageKey.Ru to "%s очков опыта",
+        SupportedLanguageKey.En to "%s experience points",
+    ),
+    key(StringKey.MyCollectionFieldExperience, PluralKey.Other) to mapOf(
+        SupportedLanguageKey.Ru to "%s очков опыта",
+        SupportedLanguageKey.En to "%s experience points",
+    ),
 
     key(StringKey.RankSelectionTitle) to mapOf(
         SupportedLanguageKey.En to "Choose a rank for your glasses",

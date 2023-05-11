@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WebViewViewModel @Inject constructor(
+class ConnectInstagramViewModel @Inject constructor(
     private val instagramService: InstagramService,
 ) : SimpleViewModel() {
 

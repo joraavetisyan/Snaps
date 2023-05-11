@@ -332,6 +332,10 @@ enum class StringKey {
     MyCollectionFieldNeedToRepair,
     MyCollectionActionRepairGlasses,
     MyCollectionActionProcessing,
+    MyCollectionFieldBonus,
+    MyCollectionFieldExperience,
+    MyCollectionFieldLevel,
+    MyCollectionFieldUpperThreshold,
 
     RankSelectionTitle,
     RankSelectionActionFootnote,

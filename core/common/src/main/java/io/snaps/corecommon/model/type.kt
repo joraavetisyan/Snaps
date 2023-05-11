@@ -142,4 +142,9 @@ data class NftModel(
     val isHealthy: Boolean,
     val repairCost: Double,
     val isProcessing: Boolean,
+    val level: Int,
+    val experience: Int,
+    val lowerThreshold: Int,
+    val upperThreshold: Int,
+    val bonus: Int,
 )
