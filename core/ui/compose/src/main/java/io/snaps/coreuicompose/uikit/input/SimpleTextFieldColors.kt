@@ -5,8 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.text.selection.TextSelectionColors
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.State
@@ -136,12 +135,15 @@ data class SimpleTextFieldColors internal constructor(
         return rememberUpdatedState(if (isError) errorCursorColor else cursorColor)
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun toLibColors() = TextFieldDefaults.outlinedTextFieldColors(
-        textColor = textColor,
+    fun toLibColors() = OutlinedTextFieldDefaults.colors(
+        focusedTextColor = textColor,
+        unfocusedTextColor = textColor,
         disabledTextColor = disabledTextColor,
-        containerColor = containerColor,
+        unfocusedContainerColor = containerColor,
+        focusedContainerColor = containerColor,
+        disabledContainerColor = containerColor,
+        errorContainerColor = containerColor,
         cursorColor = cursorColor,
         errorCursorColor = errorCursorColor,
         selectionColors = textSelectionColors,
@@ -161,7 +163,8 @@ data class SimpleTextFieldColors internal constructor(
         unfocusedLabelColor = unfocusedLabelColor,
         disabledLabelColor = disabledLabelColor,
         errorLabelColor = errorLabelColor,
-        placeholderColor = placeholderColor,
+        focusedPlaceholderColor = placeholderColor,
+        unfocusedPlaceholderColor = placeholderColor,
         disabledPlaceholderColor = disabledPlaceholderColor,
     )
 }
