@@ -26,4 +26,6 @@ data class UserInfoModel(
     val ownInviteCode: String,
     val instagramId: Uuid?,
     val paymentsState: PaymentsState?,
+    val firstLevelReferralMultiplier: Double,
+    val secondLevelReferralMultiplier: Double,
 )

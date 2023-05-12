@@ -11,6 +11,7 @@ import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.Uuid
@@ -72,6 +73,8 @@ class ReferralProgramViewModel @Inject constructor(
                         referralCode = inviteCode.addPrefix("#"),
                         referralLink = inviteCode.addPrefix("https://snaps.io/"),
                         referralQr = barcodeManager.getQrCodeBitmap(text = inviteCode, size = 600f),
+                        firstLevelReferral = state.requireData.firstLevelReferralMultiplier.toPercentageFormat(),
+                        secondLevelReferral = state.requireData.secondLevelReferralMultiplier.toPercentageFormat(),
                     )
                 }
             }
@@ -197,6 +200,8 @@ class ReferralProgramViewModel @Inject constructor(
         val referralsTileState: ReferralsTileState = ReferralsTileState.Shimmer,
         val isInviteUserDialogVisible: Boolean = false,
         val referralQr: Bitmap? = null,
+        val firstLevelReferral: String = "",
+        val secondLevelReferral: String = "",
     ) {
 
         val isReferralCodeValid get() = inviteCodeValue.isNotBlank()

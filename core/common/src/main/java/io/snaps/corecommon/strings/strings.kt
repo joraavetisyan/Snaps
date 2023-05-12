@@ -419,10 +419,10 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Ref. link",
     ),
     key(StringKey.ReferralProgramTitleDirectReferral) to mapOf(
-        SupportedLanguageKey.En to "Direct referral - %s%%",
+        SupportedLanguageKey.En to "Direct referral - %s",
     ),
     key(StringKey.ReferralProgramMessageDirectReferral) to mapOf(
-        SupportedLanguageKey.En to "You will receive %s%% of all rewards earned by friends",
+        SupportedLanguageKey.En to "You will receive %s of all rewards earned by friends",
     ),
     key(StringKey.ReferralProgramActionInviteUser) to mapOf(
         SupportedLanguageKey.En to "Invite user",

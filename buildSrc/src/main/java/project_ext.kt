@@ -1,4 +1,5 @@
 import com.android.build.gradle.BaseExtension
+import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.fileTree
@@ -44,6 +45,8 @@ fun Project.common() {
 
         compileOptions {
             isCoreLibraryDesugaringEnabled = true
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
         }
     }
 

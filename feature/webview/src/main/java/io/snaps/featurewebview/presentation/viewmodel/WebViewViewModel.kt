@@ -27,7 +27,6 @@ class WebViewViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
-
     data class UiState(
         val url: FullUrl,
     )

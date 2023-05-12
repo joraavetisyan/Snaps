@@ -44,6 +44,8 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
     totalPublication = null,
     instagramId = instagramId,
     paymentsState = paymentsState,
+    firstLevelReferralMultiplier = firstLevelReferralMultiplier ?: 0.03,
+    secondLevelReferralMultiplier = secondLevelReferralMultiplier ?: 0.01,
 )
 
 fun BalanceResponseDto.toModel() = BalanceModel(
