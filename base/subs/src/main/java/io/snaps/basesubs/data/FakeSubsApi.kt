@@ -97,6 +97,8 @@ class FakeSubsApi : SubsApi {
                     totalSubscribers = rInt,
                     totalSubscriptions = rInt,
                     paymentsState = PaymentsState.No,
+                    firstLevelReferralMultiplier = 0.03,
+                    secondLevelReferralMultiplier = 0.01,
                 )
             }
         ).also { subscriberGeneration++ }

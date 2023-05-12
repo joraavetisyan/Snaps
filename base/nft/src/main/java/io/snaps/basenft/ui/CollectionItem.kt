@@ -429,7 +429,7 @@ private fun Container(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .heightIn(min = 220.dp)
             .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
             .background(

@@ -381,13 +381,13 @@ private fun Main(
         ) {
             DirectReferralCard(
                 image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
-                title = StringKey.ReferralProgramTitleDirectReferral.textValue("2"),
-                message = StringKey.ReferralProgramMessageDirectReferral.textValue("2"),
+                title = StringKey.ReferralProgramTitleDirectReferral.textValue(uiState.firstLevelReferral),
+                message = StringKey.ReferralProgramMessageDirectReferral.textValue(uiState.secondLevelReferral),
             )
             DirectReferralCard(
                 image = ImageValue.ResImage(R.drawable.img_guys_surprised_shadowed_eating),
-                title = StringKey.ReferralProgramTitleDirectReferral.textValue("1"),
-                message = StringKey.ReferralProgramMessageDirectReferral.textValue("1"),
+                title = StringKey.ReferralProgramTitleDirectReferral.textValue(uiState.secondLevelReferral),
+                message = StringKey.ReferralProgramMessageDirectReferral.textValue(uiState.secondLevelReferral),
             )
         }
         SimpleButtonActionM(

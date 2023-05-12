@@ -136,6 +136,8 @@ class FakeProfileApi : ProfileApi {
             inviteCodeRegisteredBy = null,
             instagramId = null,
             paymentsState = PaymentsState.No,
+            firstLevelReferralMultiplier = 0.03,
+            secondLevelReferralMultiplier = 0.01,
         )
 
         fun getQuestInfo() = QuestInfoResponseDto(
