@@ -175,7 +175,7 @@ abstract class VideoFeedViewModel(
     }
 
     private fun onViewed(clipModel: VideoClipModel) = viewModelScope.launch {
-        action.execute(needProcessErrors = false) {
+        action.execute(needsErrorProcessing = false) {
             videoFeedRepository.view(clipModel.id)
         }
     }

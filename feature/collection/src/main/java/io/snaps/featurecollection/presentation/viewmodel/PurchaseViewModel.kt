@@ -45,10 +45,10 @@ class PurchaseViewModel @Inject constructor(
     featureToggle: FeatureToggle,
     nftRepository: NftRepository,
     private val action: Action,
+    private val notificationsSource: NotificationsSource,
     private val purchaseStateProvider: PurchaseStateProvider,
     private val billingRouter: BillingRouter,
     private val interactor: MyCollectionInteractor,
-    private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel() {
 
     private val args = savedStateHandle.requireArgs<AppRoute.Purchase.Args>()

@@ -22,13 +22,14 @@ class ActionImpl @Inject constructor(
 ) : Action {
 
     override suspend fun <T : Any> execute(
-        needProcessErrors: Boolean,
-        block: suspend CoroutineScope.() -> Effect<T>,
+        needsErrorProcessing: Boolean,
+        needsTokenExpireProcessing: Boolean,
+        block: suspend CoroutineScope.() -> Effect<T>
     ): Effect<T> {
         val effect = try {
             coroutineScope {
                 var effect = block()
-                if (needProcessErrors && effect.errorOrNull?.code == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                if (needsTokenExpireProcessing && effect.errorOrNull?.code == HttpURLConnection.HTTP_UNAUTHORIZED) {
                     sessionRepository.refresh()
                     effect = block()
                 }
@@ -43,7 +44,7 @@ class ActionImpl @Inject constructor(
         }
 
         return effect.also {
-            if (needProcessErrors) it.errorOrNull?.let { error -> handle(error) }
+            if (needsErrorProcessing) it.errorOrNull?.let { error -> handle(error) }
         }
     }
 

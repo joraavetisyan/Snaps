@@ -6,7 +6,8 @@ import kotlinx.coroutines.CoroutineScope
 interface Action {
 
     suspend fun <T : Any> execute(
-        needProcessErrors: Boolean = true,
+        needsErrorProcessing: Boolean = true,
+        needsTokenExpireProcessing: Boolean = true,
         block: suspend CoroutineScope.() -> Effect<T>,
     ): Effect<T>
 }

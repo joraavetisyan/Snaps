@@ -53,6 +53,7 @@ class AppViewModel @AssistedInject constructor(
             )
             is UserSessionTracker.State.Active -> StartFlow.AuthorizedFlow(
                 needsWalletConnect = userSession is UserSessionTracker.State.Active.NeedsWalletConnect,
+                needsWalletImport = userSession is UserSessionTracker.State.Active.NeedsWalletImport,
                 needsInitialization = userSession is UserSessionTracker.State.Active.NeedsInitialization,
                 deeplink = AppDeeplink.parse(deeplink).also { deeplink = null },
             )
@@ -94,6 +95,7 @@ class AppViewModel @AssistedInject constructor(
 
         data class AuthorizedFlow(
             val needsWalletConnect: Boolean,
+            val needsWalletImport: Boolean,
             val needsInitialization: Boolean,
             val deeplink: Deeplink? = null,
         ) : StartFlow()

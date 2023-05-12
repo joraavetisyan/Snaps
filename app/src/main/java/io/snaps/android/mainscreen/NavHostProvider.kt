@@ -55,11 +55,13 @@ class NavHostProvider @Inject constructor(
     fun AuthorizedGraph(
         navController: NavHostController,
         needsWalletConnect: Boolean,
+        needsWalletImport: Boolean,
         needsInitialization: Boolean,
     ) = Graph(
         navController = navController,
         startDestinationRoute = when {
             needsWalletConnect -> createRoute(AppRoute.WalletConnect)
+            needsWalletImport -> createRoute(AppRoute.WalletImport)
             needsInitialization -> createRoute(AppRoute.UserCreate)
             else -> createRoute(AppRoute.MainBottomBar)
         },

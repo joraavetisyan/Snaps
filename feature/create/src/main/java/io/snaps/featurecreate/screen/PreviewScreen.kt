@@ -89,8 +89,7 @@ private fun PreviewScreen(
                 isRepeat = false, // OutOfMemory on repeat
             )
             Column(
-                Modifier
-                    .fillMaxSize(),
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.Start,
             ) {
                 Progress(

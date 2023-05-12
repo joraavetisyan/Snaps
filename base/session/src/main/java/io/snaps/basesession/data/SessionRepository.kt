@@ -1,7 +1,6 @@
 package io.snaps.basesession.data
 
 import com.google.firebase.auth.FirebaseAuth
-import io.snaps.basenft.data.NftRepository
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.DeviceInfoProvider
 import io.snaps.basewallet.data.WalletRepository
@@ -45,7 +44,6 @@ class SessionRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val profileRepository: ProfileRepository,
     private val walletRepository: WalletRepository,
-    private val nftRepository: NftRepository,
 ) : SessionRepository {
 
     override fun isOnboardingShown(type: OnboardingType): Boolean {
@@ -68,8 +66,16 @@ class SessionRepositoryImpl @Inject constructor(
      */
     private suspend fun checkWallet(userId: String): Effect<Completable> {
         if (!walletRepository.hasAccount(userId)) {
-            userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsWalletConnect)
-            return Effect.completable
+            return profileRepository.updateData().flatMap {
+                userSessionTracker.onLogin(
+                    if (it.wallet == null) {
+                        UserSessionTracker.State.Active.NeedsWalletConnect
+                    } else {
+                        UserSessionTracker.State.Active.NeedsWalletImport
+                    }
+                )
+                Effect.completable
+            }
         }
         return checkUser().doOnSuccess { ready ->
             if (ready) {

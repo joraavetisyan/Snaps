@@ -79,6 +79,7 @@ class AppActivity : FragmentActivity() {
                     navHostProvider.AuthorizedGraph(
                         navController = navController,
                         needsWalletConnect = currentFlow.needsWalletConnect,
+                        needsWalletImport = currentFlow.needsWalletImport,
                         needsInitialization = currentFlow.needsInitialization,
                     )
                     LaunchedEffect(Unit) {

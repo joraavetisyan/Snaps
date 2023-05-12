@@ -33,8 +33,9 @@ interface UserSessionTracker {
         // Registered/authorized
         sealed class Active : State() {
             object NeedsWalletConnect : Active() // Registered/authorized, but not connected to wallet
+            object NeedsWalletImport : Active() // Registered/authorized, connected to wallet previously, needs to import it
             object NeedsInitialization : Active() // Registered/authorized, connected to wallet, but not initialized
-            object Ready : Active() // Registered/authorized, connected to wallet, initialized, ranked
+            object Ready : Active() // Registered/authorized, connected to wallet, initialized
         }
     }
 }

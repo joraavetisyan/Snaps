@@ -7,6 +7,7 @@ import io.horizontalsystems.ethereumkit.core.eip1559.Eip1559GasPriceProvider
 import io.horizontalsystems.ethereumkit.core.hexStringToByteArray
 import io.horizontalsystems.ethereumkit.core.toHexString
 import io.horizontalsystems.ethereumkit.models.Address
+import io.horizontalsystems.ethereumkit.models.FullTransaction
 import io.horizontalsystems.ethereumkit.models.GasPrice
 import io.horizontalsystems.ethereumkit.models.TransactionData
 import io.horizontalsystems.marketkit.models.BlockchainType
@@ -442,7 +443,7 @@ class WalletRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun repair(
+    private fun repair(
         data: NftSignatureResponseDto,
         nonceRaw: Long,
         wallet: Wallet,
@@ -540,8 +541,8 @@ class WalletRepositoryImpl @Inject constructor(
                 ),
             )
         }.flatMap { data ->
-            try {
-                withContext(ioDispatcher) l@{
+            withContext(ioDispatcher) l@{
+                try {
                     val error = Effect.error<NftMintSummary>(
                         AppError.Unknown(cause = IllegalStateException("Signature data null! $data"))
                     )
@@ -584,9 +585,9 @@ class WalletRepositoryImpl @Inject constructor(
                             transactionData = transactionData,
                         )
                     )
+                } catch (e: Throwable) {
+                    handlePossibleRpcError(e)
                 }
-            } catch (e: Throwable) {
-                handlePossibleRpcError(e)
             }
         }
     }

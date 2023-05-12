@@ -126,7 +126,7 @@ class SubsViewModel @Inject constructor(
         }
     }
 
-    private fun io.snaps.basesubs.domain.SubPageModel?.applySubToState() = this?.toSubsUiState(
+    private fun SubPageModel?.applySubToState() = this?.toSubsUiState(
         shimmerListSize = 5,
         onItemClicked = ::onItemClicked,
         onReloadClicked = ::onSubscriptionsReloadClicked,

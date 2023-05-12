@@ -181,6 +181,7 @@ private fun ProfileScreen(
             AnimatedContent(
                 targetState = uiState.selectedItemIndex,
                 modifier = Modifier.fillMaxSize(),
+                label = "",
             ) {
                 when (it) {
                     0 -> VideoFeedGrid(

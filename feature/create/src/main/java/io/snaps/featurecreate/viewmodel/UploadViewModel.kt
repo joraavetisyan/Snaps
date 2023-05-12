@@ -35,11 +35,11 @@ import javax.inject.Inject
 class UploadViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val action: Action,
-    private val fileRepository: FileRepository,
-    private val videoFeedRepository: VideoFeedRepository,
-    private val fileManager: FileManager,
     private val notificationsSource: NotificationsSource,
     private val uploadStatusSource: UploadStatusSource,
+    private val fileManager: FileManager,
+    private val fileRepository: FileRepository,
+    private val videoFeedRepository: VideoFeedRepository,
 ) : SimpleViewModel() {
 
     private val args = savedStateHandle.requireArgs<AppRoute.PreviewVideo.Args>()
@@ -90,15 +90,11 @@ class UploadViewModel @Inject constructor(
         progressListenJob = uploadStatusSource.listenTo(uploadId).onEach { state ->
             when (state) {
                 is UploadStatusSource.State.Error -> {
-                    _uiState.update {
-                        it.copy(uploadingProgress = null)
-                    }
+                    _uiState.update { it.copy(uploadingProgress = null) }
                     notificationsSource.sendError(state.error)
                 }
                 is UploadStatusSource.State.Progress -> {
-                    _uiState.update {
-                        it.copy(uploadingProgress = state.progress / 100f)
-                    }
+                    _uiState.update { it.copy(uploadingProgress = state.progress / 100f) }
                 }
                 is UploadStatusSource.State.Success -> {
                     videoFeedRepository.refreshFeed(VideoFeedType.User(null))
@@ -130,8 +126,7 @@ class UploadViewModel @Inject constructor(
         val descriptionValue: String = "",
     ) {
 
-        val isPublishEnabled = titleValue.isNotBlank()
-                && uploadingProgress == null
+        val isPublishEnabled = titleValue.isNotBlank() && uploadingProgress == null
     }
 
     sealed class Command {

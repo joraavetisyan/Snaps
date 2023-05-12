@@ -14,6 +14,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,7 +35,16 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun onLogoutClicked() {
+        _uiState.update { it.copy(dialog = Dialog.ConfirmLogout) }
+    }
+
+    fun onLogoutConfirmed() {
+        _uiState.update { it.copy(isLoading = true, dialog = null) }
         sessionRepository.onLogout()
+    }
+
+    fun onDialogDismissRequest() = viewModelScope.launch {
+        _uiState.update { it.copy(dialog = null) }
     }
 
     private fun onWalletItemClicked() = viewModelScope.launch {
@@ -85,8 +95,14 @@ class SettingsViewModel @Inject constructor(
     )
 
     data class UiState(
+        val isLoading: Boolean = false,
         val items: List<CellTileState>,
+        val dialog: Dialog? = null,
     )
+
+    sealed class Dialog {
+        object ConfirmLogout : Dialog()
+    }
 
     sealed class Command {
         object OpenWalletSettingsScreen : Command()

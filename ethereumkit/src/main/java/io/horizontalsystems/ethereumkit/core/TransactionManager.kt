@@ -19,7 +19,8 @@ class TransactionManager(
     private val fullTransactionsSubject = PublishSubject.create<Pair<List<FullTransaction>, Boolean>>()
     private val fullTransactionsWithTagsSubject = PublishSubject.create<List<TransactionWithTags>>()
 
-    val fullTransactionsAsync: Flowable<Pair<List<FullTransaction>, Boolean>> = fullTransactionsSubject.toFlowable(BackpressureStrategy.BUFFER)
+    val fullTransactionsAsync: Flowable<Pair<List<FullTransaction>, Boolean>> =
+        fullTransactionsSubject.toFlowable(BackpressureStrategy.BUFFER)
 
     fun getFullTransactionsFlowable(tags: List<List<String>>): Flowable<List<FullTransaction>> {
         return fullTransactionsWithTagsSubject.toFlowable(BackpressureStrategy.BUFFER)
@@ -36,7 +37,11 @@ class TransactionManager(
             .filter { it.isNotEmpty() }
     }
 
-    fun getFullTransactionsAsync(tags: List<List<String>>, fromHash: ByteArray? = null, limit: Int? = null): Single<List<FullTransaction>> =
+    fun getFullTransactionsAsync(
+        tags: List<List<String>>,
+        fromHash: ByteArray? = null,
+        limit: Int? = null
+    ): Single<List<FullTransaction>> =
         storage.getTransactionsBeforeAsync(tags, fromHash, limit)
             .map { transactions ->
                 decorationManager.decorateTransactions(transactions)
@@ -85,7 +90,12 @@ class TransactionManager(
                         blockchain.getBlock(transaction.blockNumber),
                         provider.getInternalTransactionsAsync(hash)
                     ) { receipt, block, internalTransactions ->
-                        FullRpcTransaction(transaction, receipt, block, internalTransactions.map { it.internalTransaction() }.toMutableList())
+                        FullRpcTransaction(
+                            rpcTransaction = transaction,
+                            rpcReceipt = receipt,
+                            rpcBlock = block,
+                            internalTransactions = internalTransactions.map { it.internalTransaction() }.toMutableList(),
+                        )
                     }
                 } else {
                     return@flatMap Single.just(FullRpcTransaction(transaction, null, null, mutableListOf()))
