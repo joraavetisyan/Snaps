@@ -3,7 +3,7 @@ object Libs {
     private const val gmsVersion = "4.3.15"
     private const val gradleVersion = "7.3.1"
     private const val desugarVersion = "1.1.5"
-    private const val kotlinVersion = "1.7.10"
+    private const val kotlinVersion = "1.8.21"
     private const val kotlinSerializationVersion = "1.3.0"
     private const val coroutinesVersion = "1.6.1"
     private const val kotlinterVersion = "3.8.0"
@@ -11,13 +11,13 @@ object Libs {
     private const val benManesVersionsVersion = "0.45.0"
 
     /*Compatibility with Kotlin https://developer.android.com/jetpack/androidx/releases/compose-kotlin*/
-    const val composeCompilerVersion = "1.3.0"
+    const val composeCompilerVersion = "1.4.7"
 
     /*https://developer.android.com/jetpack/androidx/releases/compose*/
-    private const val composeVersion = "1.3.0"
-    private const val composeFoundationVersion = "1.3.0"
-    private const val composeMaterialVersion = "1.3.0"
-    private const val composeMaterial3Version = "1.1.0-alpha03"
+    private const val composeVersion = "1.4.3"
+    private const val composeFoundationVersion = "1.4.3"
+    private const val composeMaterialVersion = "1.4.3"
+    private const val composeMaterial3Version = "1.1.0"
     private const val composeGlanceVersion = "1.0.0-alpha03"
     private const val splashVersion = "1.0.0-beta01"
     private const val activityVersion = "1.4.0"
@@ -35,7 +35,7 @@ object Libs {
     private const val biometricVersion = "1.2.0-alpha04"
     private const val windowVersion = "1.0.0"
 
-    private const val hiltVersion = "2.42"
+    private const val hiltVersion = "2.45"
     private const val hiltJetpackVersion = "1.0.0"
 
     private const val crashlyticsGradleVersion = "2.5.2"

@@ -3,7 +3,6 @@ package io.snaps.android.mainscreen
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basesession.ActiveAppZoneProvider
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.SessionRepository
@@ -22,7 +21,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class AppViewModel @AssistedInject constructor(
     @Assisted private var deeplink: String?,
