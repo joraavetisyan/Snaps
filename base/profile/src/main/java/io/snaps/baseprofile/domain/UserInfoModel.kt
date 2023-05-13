@@ -23,7 +23,7 @@ data class UserInfoModel(
     val level: Int?,
     val questInfo: QuestInfoModel?,
     val inviteCodeRegisteredBy: String?,
-    val ownInviteCode: String,
+    val ownInviteCode: String?,
     val instagramId: Uuid?,
     val paymentsState: PaymentsState?,
     val firstLevelReferralMultiplier: Double,

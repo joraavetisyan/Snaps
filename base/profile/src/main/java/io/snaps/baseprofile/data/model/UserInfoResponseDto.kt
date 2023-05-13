@@ -22,7 +22,7 @@ class UserInfoResponseDto(
     @SerialName("subscribersCount") val totalSubscribers: Int,
     @SerialName("subscribesCount") val totalSubscriptions: Int,
     @SerialName("inviteCodeRegisteredBy") val inviteCodeRegisteredBy: String?,
-    @SerialName("ownInviteCode") val ownInviteCode: String,
+    @SerialName("ownInviteCode") val ownInviteCode: String?,
     @SerialName("level") val level: Int?,
     @SerialName("instagramId") val instagramId: Uuid?,
     @SerialName("paymentsState") val paymentsState: PaymentsState?,

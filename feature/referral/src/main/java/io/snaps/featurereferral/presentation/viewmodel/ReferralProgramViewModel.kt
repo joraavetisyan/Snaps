@@ -68,7 +68,8 @@ class ReferralProgramViewModel @Inject constructor(
         profileRepository.state.onEach { state ->
             if (state is Effect && state.isSuccess) {
                 _uiState.update {
-                    val inviteCode = state.requireData.ownInviteCode
+                    // It's not null for the authed user
+                    val inviteCode = state.requireData.ownInviteCode!!
                     it.copy(
                         referralCode = inviteCode.addPrefix("#"),
                         referralLink = inviteCode.addPrefix("https://snaps.io/"),
