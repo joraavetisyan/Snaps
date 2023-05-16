@@ -87,6 +87,16 @@ class FakeVideoFeedApi : VideoFeedApi {
         ).also { popularGeneration++ }
     }
 
+    override suspend fun subscriptionsFeed(
+        from: Uuid?,
+        count: Int
+    ): BaseResponse<List<VideoFeedItemResponseDto>> {
+        return BaseResponse(
+            actualTimestamp = 1L,
+            data = List(count) { videoFeedItemResponseDto(it, generation) }
+        ).also { generation++ }
+    }
+
     override suspend fun likedVideos(
         @Query(value = "from") from: Uuid?,
         @Query(value = "count") count: Int,

@@ -300,7 +300,7 @@ abstract class VideoFeedViewModel(
             icon = AppTheme.specificIcons.delete,
             color = ActionColor.Negative,
             onClick = { onDeleteClicked() },
-        ).takeIf { videoFeedType is VideoFeedType.User },
+        ).takeIf { videoFeedType is VideoFeedType.User && videoFeedType.userId == null },
     )
 
     private fun onDeleteClicked() = viewModelScope.launch {

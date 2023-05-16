@@ -343,4 +343,6 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.NftDetailsDescriptionLevel -> TODO()
     StringKey.WalletImportMessagePhraseExplanation -> TODO()
     StringKey.ActionConfirm -> TODO()
+    StringKey.MainVideoFeedTitleForYou -> TODO()
+    StringKey.MainVideoFeedTitleSubscriptions -> TODO()
 }
