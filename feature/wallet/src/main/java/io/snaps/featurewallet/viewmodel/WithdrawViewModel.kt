@@ -4,8 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basesources.NotificationsSource
-import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
 import io.snaps.basewallet.data.WalletRepository
+import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
+import io.snaps.basewallet.ui.LimitedGasDialogHandler
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensState
 import io.snaps.corecommon.container.textValue
@@ -32,16 +33,20 @@ import java.math.BigDecimal
 import javax.inject.Inject
 
 private const val gasLimitNull = -1L
+private const val minGasValue = 0.001
 
 @HiltViewModel
 class WithdrawViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     transferTokensDialogHandlerImplDelegate: TransferTokensDialogHandler,
+    limitedGasDialogHandlerImplDelegate: LimitedGasDialogHandler,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
     private val blockchainTxRepository: BlockchainTxRepository,
     private val walletRepository: WalletRepository,
-) : SimpleViewModel(), TransferTokensDialogHandler by transferTokensDialogHandlerImplDelegate {
+) : SimpleViewModel(),
+    TransferTokensDialogHandler by transferTokensDialogHandlerImplDelegate,
+    LimitedGasDialogHandler by limitedGasDialogHandlerImplDelegate {
 
     private val args = savedStateHandle.requireArgs<AppRoute.Withdraw.Args>()
 
@@ -162,7 +167,8 @@ class WithdrawViewModel @Inject constructor(
             viewModelScope.launch { notificationsSource.sendError("Invalid amount".textValue()) }
             return
         }
-        viewModelScope.launch {
+
+        checkGas(scope = viewModelScope, minValue = minGasValue) {
             _uiState.update { it.copy(isLoading = true) }
             action.execute {
                 blockchainTxRepository.send(

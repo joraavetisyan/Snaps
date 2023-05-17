@@ -53,6 +53,7 @@ import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
+import io.snaps.coreuitheme.compose.colors
 import io.snaps.featurebottombar.viewmodel.BottomBarViewModel
 import kotlinx.coroutines.launch
 
@@ -133,9 +134,9 @@ fun BottomBarScreen(
                     }
                 }
                 if (isBottomBarVisible) {
-                    val containerColor = when (currentRoute) {
-                        AppRoute.MainBottomBar.MainTab1Start.path() -> AppTheme.specificColorScheme.black
-                        else -> AppTheme.specificColorScheme.white
+                    val containerColor = colors {
+                        if (currentRoute == AppRoute.MainBottomBar.MainTab1Start.path()) black
+                        else white
                     }
                     NavigationBar(
                         modifier = Modifier

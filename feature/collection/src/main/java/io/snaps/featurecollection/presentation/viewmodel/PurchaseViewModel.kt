@@ -12,6 +12,7 @@ import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basewallet.domain.NftMintSummary
 import io.snaps.basewallet.domain.NoEnoughBnbToMint
+import io.snaps.basewallet.ui.LimitedGasDialogHandler
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensState
 import io.snaps.corecommon.container.ImageValue
@@ -40,18 +41,23 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val minGasValue = 0.0012
+
 @HiltViewModel
 class PurchaseViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     featureToggle: FeatureToggle,
     transferTokensDialogHandlerImplDelegate: TransferTokensDialogHandler,
+    limitedGasDialogHandlerImplDelegate: LimitedGasDialogHandler,
     nftRepository: NftRepository,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
     private val purchaseStateProvider: PurchaseStateProvider,
     private val billingRouter: BillingRouter,
     private val interactor: MyCollectionInteractor,
-) : SimpleViewModel(), TransferTokensDialogHandler by transferTokensDialogHandlerImplDelegate {
+) : SimpleViewModel(),
+    TransferTokensDialogHandler by transferTokensDialogHandlerImplDelegate,
+    LimitedGasDialogHandler by limitedGasDialogHandlerImplDelegate {
 
     private val args = savedStateHandle.requireArgs<AppRoute.Purchase.Args>()
 
@@ -123,7 +129,7 @@ class PurchaseViewModel @Inject constructor(
     }
 
     fun onBuyWithBNBClicked() {
-        viewModelScope.launch {
+        checkGas(scope = viewModelScope, minValue = minGasValue) {
             showTransferTokensBottomDialog(
                 scope = viewModelScope,
                 state = TransferTokensState.Shimmer(title = purchaseWithBnbDialogTitle)

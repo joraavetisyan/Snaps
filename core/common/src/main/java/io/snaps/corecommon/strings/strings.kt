@@ -39,6 +39,10 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Ok",
     ),
 
+    key(StringKey.MessageSuccess) to mapOf(
+        SupportedLanguageKey.Ru to "Успешно!",
+        SupportedLanguageKey.En to "Success!",
+    ),
     key(StringKey.MessageConnectionSuccess) to mapOf(
         SupportedLanguageKey.Ru to "Соединение восстановлено",
         SupportedLanguageKey.En to "Connection restored",
@@ -1065,6 +1069,19 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "View on Bscscan",
     ),
 
+    key(StringKey.DialogLimitedGasTitle) to mapOf(
+        SupportedLanguageKey.Ru to "На вашем счете недостаточно газа",
+        SupportedLanguageKey.En to "There is not enough gas on your account",
+    ),
+    key(StringKey.DialogLimitedGasMessage) to mapOf(
+        SupportedLanguageKey.Ru to "SNAPS заботится о своих пользователях и\nпополняет им газ автоматически",
+        SupportedLanguageKey.En to "SNAPS takes care of its users and\nrefills their gas automatically",
+    ),
+    key(StringKey.DialogLimitedGasAction) to mapOf(
+        SupportedLanguageKey.Ru to "Пополнить",
+        SupportedLanguageKey.En to "Refill",
+    ),
+
     key(StringKey.RankSelectionTitle) to mapOf(
         SupportedLanguageKey.En to "Choose a rank for your glasses",
     ),
@@ -1191,6 +1208,15 @@ internal val strings = mapOf(
     ),
     key(StringKey.PurchaseErrorNotEnoughBnb) to mapOf(
         SupportedLanguageKey.En to "Not enough BNB to mint",
+    ),
+    key(StringKey.PurchaseDialogWithBnbSuccessTitle) to mapOf(
+        SupportedLanguageKey.En to "Transaction succeeded",
+    ),
+    key(StringKey.PurchaseDialogWithBnbSuccessMessage) to mapOf(
+        SupportedLanguageKey.En to "NFT will appear in your collection soon",
+    ),
+    key(StringKey.PurchaseDialogWithBnbSuccessAction) to mapOf(
+        SupportedLanguageKey.En to "View on Bscscan",
     ),
 
     key(StringKey.VideoClipActionDelete) to mapOf(

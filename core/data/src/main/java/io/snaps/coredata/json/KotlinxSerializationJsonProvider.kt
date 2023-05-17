@@ -15,6 +15,7 @@ class KotlinxSerializationJsonProvider @Inject constructor() : Provider<Json> {
             ignoreUnknownKeys = true
             explicitNulls = false
             isLenient = true
+            coerceInputValues = true
             serializersModule = SerializersModule {
                 contextual(LocalDateTimeSerializer)
             }

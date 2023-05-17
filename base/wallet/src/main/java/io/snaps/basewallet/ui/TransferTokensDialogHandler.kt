@@ -35,9 +35,11 @@ interface TransferTokensDialogHandler {
         to: WalletAddress? = null,
     )
 
+    fun onTransferTokensDialogHidden()
+
     data class UiState(
         val state: TransferTokensState = TransferTokensState.Shimmer("".textValue()),
-        val bottomDialog: BottomDialog = BottomDialog.TokensTransfer,
+        val bottomDialog: BottomDialog? = null,
     )
 
     sealed class BottomDialog {
@@ -93,5 +95,9 @@ class TransferTokensDialogHandlerImplDelegate @Inject constructor() : TransferTo
         scope.launch {
             _command publish TransferTokensDialogHandler.Command.ShowBottomDialog
         }
+    }
+
+    override fun onTransferTokensDialogHidden() {
+        _uiState.update { it.copy(bottomDialog = null) }
     }
 }

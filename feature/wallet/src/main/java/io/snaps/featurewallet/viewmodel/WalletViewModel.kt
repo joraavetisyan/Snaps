@@ -14,6 +14,7 @@ import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.ext.fiatToFormatDecimal
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.WalletAddress
@@ -27,7 +28,6 @@ import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
-import io.snaps.featurewallet.toPayoutStatusState
 import io.snaps.featurewallet.data.TransactionsRepository
 import io.snaps.featurewallet.data.TransactionsType
 import io.snaps.featurewallet.domain.InsufficientBalanceError
@@ -37,6 +37,7 @@ import io.snaps.featurewallet.screen.RewardsTileState
 import io.snaps.featurewallet.screen.TransactionsUiState
 import io.snaps.featurewallet.screen.toTransactionsUiState
 import io.snaps.featurewallet.toCellTileStateList
+import io.snaps.featurewallet.toPayoutStatusState
 import io.snaps.featurewallet.toRewardsTileState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
@@ -102,7 +103,7 @@ class WalletViewModel @Inject constructor(
         walletRepository.activeWallets.combine(flow = walletInteractor.snpFiatState) { wallets, balance ->
             wallets.map {
                 if (it.symbol == "SNAPS") {
-                    it.copy(fiatValue = balance.dataOrCache.orEmpty())
+                    it.copy(fiatValue = " $${balance.dataOrCache?.toDoubleOrNull()?.fiatToFormatDecimal() ?: "0"}")
                 } else {
                     it
                 }
@@ -441,9 +442,10 @@ class WalletViewModel @Inject constructor(
         val payoutStatusState: PayoutStatusState? = null,
     ) {
 
-        val isConfirmClaimEnabled get() = amountToClaimValue.toDoubleOrNull()?.let {
-            it <= availableTokens && it > 0
-        } ?: false
+        val isConfirmClaimEnabled
+            get() = amountToClaimValue.toDoubleOrNull()?.let {
+                it <= availableTokens && it > 0
+            } ?: false
     }
 
     sealed class BottomDialog {

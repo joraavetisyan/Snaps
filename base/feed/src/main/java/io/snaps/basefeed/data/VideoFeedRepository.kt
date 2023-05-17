@@ -36,7 +36,7 @@ interface VideoFeedRepository {
 
     suspend fun loadNextFeedPage(feedType: VideoFeedType): Effect<Completable>
 
-    suspend fun view(videoId: Uuid): Effect<Completable>
+    suspend fun markWatched(videoId: Uuid): Effect<Completable>
 
     suspend fun like(videoId: Uuid): Effect<Completable>
 
@@ -146,7 +146,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
     override suspend fun loadNextFeedPage(feedType: VideoFeedType): Effect<Completable> =
         getLoader(feedType).loadNext()
 
-    override suspend fun view(videoId: Uuid): Effect<Completable> {
+    override suspend fun markWatched(videoId: Uuid): Effect<Completable> {
         return apiCall(ioDispatcher) {
             videoFeedApi.view(videoId)
         }

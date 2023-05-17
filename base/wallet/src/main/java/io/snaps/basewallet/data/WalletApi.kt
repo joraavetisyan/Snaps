@@ -1,6 +1,7 @@
 package io.snaps.basewallet.data
 
 import io.snaps.basewallet.data.model.ClaimRequestDto
+import io.snaps.basewallet.data.model.RefillGasRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
 import io.snaps.basewallet.data.model.SignatureRequestDto
@@ -41,4 +42,9 @@ interface WalletApi {
     suspend fun getMintSignature(
         @Body body: SignatureRequestDto,
     ): BaseResponse<SignatureResponseDto>
+
+    @POST("base-token")
+    suspend fun refillGas(
+        @Body body: RefillGasRequestDto,
+    ): BaseResponse<Completable>
 }

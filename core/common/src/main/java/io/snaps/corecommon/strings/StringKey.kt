@@ -15,6 +15,7 @@ enum class StringKey {
     ActionHowItWorks,
     ActionOk,
 
+    MessageSuccess,
     MessageConnectionSuccess,
     MessageEmptyVideoFeed,
     MessageNothingFound,
@@ -358,6 +359,10 @@ enum class StringKey {
     MyCollectionDialogRepairSuccessTitle,
     MyCollectionDialogRepairSuccessAction,
 
+    DialogLimitedGasTitle,
+    DialogLimitedGasMessage,
+    DialogLimitedGasAction,
+
     RankSelectionTitle,
     RankSelectionActionFootnote,
     RankSelectionTitleDailyReward,
@@ -403,6 +408,9 @@ enum class StringKey {
     PurchaseMessageSuccess,
     PurchaseDialogWithBnbTitle,
     PurchaseErrorNotEnoughBnb,
+    PurchaseDialogWithBnbSuccessTitle,
+    PurchaseDialogWithBnbSuccessMessage,
+    PurchaseDialogWithBnbSuccessAction,
 
     VideoClipActionDelete,
     VideoClipTitleAction,

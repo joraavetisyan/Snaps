@@ -255,6 +255,7 @@ fun VideoClipScreen(
                                     item = item,
                                     uiState = uiState,
                                     onMuteClicked = viewModel::onMuteClicked,
+                                    onProgressChanged = viewModel::onVideoClipWatchProgressed,
                                     onAuthorClicked = viewModel::onAuthorClicked,
                                     onLikeClicked = viewModel::onLikeClicked,
                                     onDoubleLikeClicked = viewModel::onDoubleLikeClicked,
@@ -319,6 +320,7 @@ private fun VideoClip(
     item: VideoClipUiState.Data,
     uiState: VideoFeedViewModel.UiState,
     onMuteClicked: (Boolean) -> Unit,
+    onProgressChanged: (Float, VideoClipModel) -> Unit,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onDoubleLikeClicked: (VideoClipModel) -> Unit,
@@ -338,7 +340,7 @@ private fun VideoClip(
         }
     }
 
-    var progress by remember { mutableStateOf(0f) }
+    var progress by remember(item.clip.id) { mutableStateOf(0f) }
 
     VideoPlayer(
         networkUrl = item.clip.url,
@@ -348,7 +350,10 @@ private fun VideoClip(
         onMuted = onMuteClicked,
         isScrolling = pagerState.isScrollInProgress,
         onLiked = { onDoubleLikeClicked(item.clip) },
-        onProgressChanged = { progress = it },
+        onProgressChanged = {
+            onProgressChanged(it, item.clip)
+            progress = it
+        },
         progressPollFrequencyInMillis = 10L,
     )
 

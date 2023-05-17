@@ -3,6 +3,7 @@ package io.snaps.basewallet.data
 import io.snaps.basewallet.data.model.ClaimRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
+import io.snaps.basewallet.data.model.RefillGasRequestDto
 import io.snaps.basewallet.data.model.SignatureRequestDto
 import io.snaps.basewallet.data.model.SignatureResponseDto
 import io.snaps.basewallet.data.model.WalletSaveRequestDto
@@ -49,5 +50,9 @@ class FakeWalletApi : WalletApi {
                 contract = "",
             )
         )
+    }
+
+    override suspend fun refillGas(body: RefillGasRequestDto): BaseResponse<Completable> {
+        return BaseResponse(Completable)
     }
 }

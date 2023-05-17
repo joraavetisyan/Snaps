@@ -15,6 +15,8 @@ import io.snaps.basewallet.data.FakeWalletApi
 import io.snaps.basewallet.data.WalletApi
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.data.WalletRepositoryImpl
+import io.snaps.basewallet.ui.LimitedGasDialogHandler
+import io.snaps.basewallet.ui.LimitedGasDialogHandlerImplDelegate
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensDialogHandlerImplDelegate
 import io.snaps.coredata.network.ApiConfig
@@ -57,4 +59,8 @@ interface ViewModelDataBindModule {
     @Binds
     @ViewModelScoped
     fun transferTokensHandler(bind: TransferTokensDialogHandlerImplDelegate): TransferTokensDialogHandler
+
+    @Binds
+    @ViewModelScoped
+    fun limitedGasDialogHandler(bind: LimitedGasDialogHandlerImplDelegate): LimitedGasDialogHandler
 }

@@ -14,7 +14,6 @@ import io.snaps.basewallet.data.model.SignatureRequestDto
 import io.snaps.basewallet.domain.NftMintSummary
 import io.snaps.basewallet.domain.NoEnoughBnbToMint
 import io.snaps.basewallet.domain.NoEnoughSnpToRepair
-import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.NftModel
@@ -102,9 +101,15 @@ class BlockchainTxRepositoryImpl @Inject constructor(
     }
 
     private fun ethereumAdapter(coinUid: String): ISendEthereumAdapter? {
-        return walletRepository.getWallets().firstOrNull { it.coin.uid == coinUid }?.let {
+        return getWallet(coinUid)?.let {
             CryptoKit.adapterManager.getAdapterForWallet(it) as ISendEthereumAdapter
         }
+    }
+
+    private fun getWallet(coinUid: String) = walletRepository.getWallets().firstOrNull { it.coin.uid == coinUid }
+
+    private fun requireWallet(coinUid: String) = requireNotNull(getWallet(coinUid)) {
+        "Wallet is null for $coinUid"
     }
 
     private fun requireEthereumAdapter(coinUid: String) = requireNotNull(ethereumAdapter(coinUid)) {
@@ -261,6 +266,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                 gasLimit = summary.gasLimit,
             ).blockingGet().transaction.hash
             var receipt: RpcTransactionReceipt? = null
+            // todo possible inf loop
             while (receipt == null) {
                 delay(1000L)
                 // todo catch only rpc errors
@@ -280,13 +286,24 @@ class BlockchainTxRepositoryImpl @Inject constructor(
         value: BigInteger,
         gasPrice: Long?,
     ): Effect<Long> {
-        log("gas limit calc: $wallet, $address, $value, $gasPrice")
         return blockchainCall(ioDispatcher) {
-            requireEthereumAdapter(wallet.coinUid).evmKitWrapper.evmKit.estimateGas(
-                to = Address(address),
-                value = value,
-                gasPrice = gasPrice.toLegacyGasPriceOrDefault(),
-            ).blockingGet()
+            if (wallet.coinUid == "binancecoin") {
+                requireEthereumAdapter(wallet.coinUid).evmKitWrapper.evmKit.estimateGas(
+                    to = Address(address),
+                    value = value,
+                    gasPrice = gasPrice.toLegacyGasPriceOrDefault(),
+                ).blockingGet()
+            } else {
+                val adapter = requireEip20Adapter(requireWallet(wallet.coinUid))
+                val gasLimitTD: TransactionData = adapter.eip20Kit.buildTransferTransactionData(
+                    to = Address(address),
+                    value = value,
+                )
+                adapter.evmKitWrapper.evmKit.estimateGas(
+                    transactionData = gasLimitTD,
+                    gasPrice = gasPrice.toLegacyGasPriceOrDefault(),
+                ).blockingGet()
+            }
         }
     }
 

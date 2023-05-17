@@ -48,6 +48,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.baseprofile.ui.ValueWidget
+import io.snaps.basewallet.ui.LimitedGasDialog
+import io.snaps.basewallet.ui.LimitedGasDialogHandler
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensUi
 import io.snaps.corecommon.R
@@ -62,6 +64,7 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetCurrentStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
@@ -85,6 +88,7 @@ fun PurchaseScreen(
     val viewModel = hiltViewModel<PurchaseViewModel>()
     val uiState by viewModel.uiState.collectAsState()
     val transferTokensState by viewModel.transferTokensState.collectAsState()
+    val limitedGasState by viewModel.limitedGasState.collectAsState()
     val context = LocalContext.current
 
     val sheetState = rememberModalBottomSheetState(
@@ -92,6 +96,16 @@ fun PurchaseScreen(
         skipHalfExpanded = true,
     )
     val coroutineScope = rememberCoroutineScope()
+
+    ModalBottomSheetCurrentStateListener(
+        sheetState = sheetState,
+        onStateChanged = {
+            if (it) {
+                viewModel.onLimitedGasDialogHidden()
+                viewModel.onTransferTokensDialogHidden()
+            }
+        },
+    )
 
     viewModel.command.collectAsCommand {
         when (it) {
@@ -104,6 +118,12 @@ fun PurchaseScreen(
             TransferTokensDialogHandler.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
         }
     }
+    viewModel.limitedGasCommand.collectAsCommand {
+        when (it) {
+            LimitedGasDialogHandler.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
+            LimitedGasDialogHandler.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
+        }
+    }
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
@@ -114,16 +134,23 @@ fun PurchaseScreen(
                 )
                 is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess -> SimpleBottomDialog(
                     image = ImageValue.ResImage(R.drawable.img_guy_hands_up),
-                    title = "Transaction succeeded".textValue(),
-                    text = "NFT will appear in your collection soon".textValue(),
-                    buttonText = "View on Bscscan".textValue(),
+                    title = StringKey.PurchaseDialogWithBnbSuccessTitle.textValue(),
+                    text = StringKey.PurchaseDialogWithBnbSuccessMessage.textValue(),
+                    buttonText = StringKey.PurchaseDialogWithBnbSuccessAction.textValue(),
                     onClick = {
                         coroutineScope.launch { sheetState.hide() }
                         context.openUrl(dialog.bscScanLink)
                     },
                 )
+                null -> Unit
             }
-        }
+            when (val dialog = limitedGasState.bottomDialog) {
+                is LimitedGasDialogHandler.BottomDialog.Refill -> LimitedGasDialog(
+                    onRefillClick = dialog.onRefillClicked,
+                )
+                null -> Unit
+            }
+        },
     ) {
         PurchaseScreen(
             uiState = uiState,
@@ -134,7 +161,7 @@ fun PurchaseScreen(
         )
     }
 
-    FullScreenLoaderUi(isLoading = uiState.isLoading)
+    FullScreenLoaderUi(isLoading = uiState.isLoading || limitedGasState.isLoading)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

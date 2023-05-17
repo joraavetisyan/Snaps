@@ -7,10 +7,11 @@ import io.horizontalsystems.marketkit.models.TokenType
 import io.snaps.basewallet.data.model.ClaimRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
-import io.snaps.basewallet.data.model.PayoutOrderStatus
+import io.snaps.basewallet.data.model.RefillGasRequestDto
 import io.snaps.basewallet.data.model.WalletSaveRequestDto
 import io.snaps.basewallet.domain.DeviceNotSecuredException
 import io.snaps.basewallet.domain.TotalBalanceModel
+import io.snaps.corecommon.ext.fiatToFormatDecimal
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.CardNumber
@@ -27,7 +28,6 @@ import io.snaps.corecrypto.core.IAccountFactory
 import io.snaps.corecrypto.core.IAccountManager
 import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.IWordsManager
-import io.snaps.corecrypto.core.adapters.BaseEvmAdapter
 import io.snaps.corecrypto.core.managers.WalletActivator
 import io.snaps.corecrypto.core.managers.defaultTokens
 import io.snaps.corecrypto.core.providers.BalanceService
@@ -43,7 +43,6 @@ import io.snaps.corecrypto.entities.Wallet
 import io.snaps.corecrypto.entities.normalizeNFKD
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
-import io.snaps.coredata.network.BaseResponse
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreui.viewmodel.tryPublish
@@ -106,6 +105,8 @@ interface WalletRepository {
     suspend fun confirmPayout(amount: Double, cardNumber: CardNumber): Effect<Completable>
 
     suspend fun updatePayouts(isSilently: Boolean = false): Effect<Completable>
+
+    suspend fun refillGas(amount: Double): Effect<Completable>
 }
 
 class WalletRepositoryImpl @Inject constructor(
@@ -322,5 +323,11 @@ class WalletRepositoryImpl @Inject constructor(
         }.also {
             _payouts tryPublish it
         }.toCompletable()
+    }
+
+    override suspend fun refillGas(amount: Double): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            walletApi.refillGas(RefillGasRequestDto(amount = amount))
+        }
     }
 }

@@ -3,6 +3,8 @@ package io.snaps.corecommon.ext
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.Locale
+import kotlin.math.max
+import kotlin.math.min
 
 fun Double.round(places: Int = 2): Double {
     require(places >= 0)
@@ -36,4 +38,11 @@ fun Double.coinToFormatDecimal(): String {
         return number.toInt().toFormatDecimal(Locale.US)
     }
     return number.toStringValue()
+}
+
+fun Double.fiatToFormatDecimal(): String {
+    val number = toString()
+    val pointIndex = number.indexOf('.')
+    if (pointIndex == -1) return number
+    return number.substring(0, min(pointIndex + 3, number.length))
 }

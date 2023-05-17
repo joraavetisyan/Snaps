@@ -9,6 +9,19 @@ import androidx.compose.runtime.snapshotFlow
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
+inline fun ModalBottomSheetCurrentStateListener(
+    sheetState: ModalBottomSheetState,
+    crossinline onStateChanged: (isHidden: Boolean) -> Unit,
+) {
+    LaunchedEffect(Unit) {
+        snapshotFlow { sheetState.currentValue }.collect {
+            onStateChanged(it == ModalBottomSheetValue.Hidden)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
 inline fun ModalBottomSheetTargetStateListener(
     sheetState: ModalBottomSheetState,
     crossinline onStateToChange: (willBeHidden: Boolean) -> Unit,

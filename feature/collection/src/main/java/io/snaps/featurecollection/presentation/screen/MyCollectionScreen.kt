@@ -105,6 +105,7 @@ fun MyCollectionScreen(
                         context.openUrl(dialog.bscScanLink)
                     },
                 )
+                null -> Unit
             }
         }
     ) {

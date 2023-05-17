@@ -31,6 +31,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.basewallet.ui.LimitedGasDialog
+import io.snaps.basewallet.ui.LimitedGasDialogHandler
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensUi
 import io.snaps.corecommon.R
@@ -42,6 +44,7 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetCurrentStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
@@ -66,6 +69,7 @@ fun WithdrawScreen(
 
     val uiState by viewModel.uiState.collectAsState()
     val transferTokensState by viewModel.transferTokensState.collectAsState()
+    val limitedGasState by viewModel.limitedGasState.collectAsState()
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -73,6 +77,16 @@ fun WithdrawScreen(
     )
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    ModalBottomSheetCurrentStateListener(
+        sheetState = sheetState,
+        onStateChanged = {
+            if (it) {
+                viewModel.onLimitedGasDialogHidden()
+                viewModel.onTransferTokensDialogHidden()
+            }
+        },
+    )
 
     viewModel.command.collectAsCommand {
         when (it) {
@@ -83,6 +97,12 @@ fun WithdrawScreen(
         when (it) {
             TransferTokensDialogHandler.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             TransferTokensDialogHandler.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
+        }
+    }
+    viewModel.limitedGasCommand.collectAsCommand {
+        when (it) {
+            LimitedGasDialogHandler.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
+            LimitedGasDialogHandler.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
         }
     }
     ModalBottomSheetLayout(
@@ -102,6 +122,13 @@ fun WithdrawScreen(
                         context.openUrl(dialog.bscScanLink)
                     },
                 )
+                null -> Unit
+            }
+            when (val dialog = limitedGasState.bottomDialog) {
+                is LimitedGasDialogHandler.BottomDialog.Refill -> LimitedGasDialog(
+                    onRefillClick = dialog.onRefillClicked,
+                )
+                null -> Unit
             }
         }
     ) {
