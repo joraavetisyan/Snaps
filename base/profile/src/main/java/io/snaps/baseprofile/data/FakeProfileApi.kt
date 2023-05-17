@@ -25,14 +25,12 @@ class FakeProfileApi : ProfileApi {
 
     override suspend fun userInfo(userId: String?): BaseResponse<UserInfoResponseDto> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = getUserInfo(userId),
         )
     }
 
     override suspend fun createUser(@Body body: UserCreateRequestDto): BaseResponse<UserInfoResponseDto> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = getUserInfo(null),
         )
     }
@@ -40,7 +38,6 @@ class FakeProfileApi : ProfileApi {
     override suspend fun setInviteCode(body: SetInviteCodeRequestDto): BaseResponse<Completable> {
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 0L,
             data = Completable,
         )
     }
@@ -50,7 +47,6 @@ class FakeProfileApi : ProfileApi {
         count: Int
     ): BaseResponse<List<TransactionItemResponseDto>> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = getTransactions()
         ).also {
             delay(mockDelay)
@@ -62,7 +58,6 @@ class FakeProfileApi : ProfileApi {
         count: Int
     ): BaseResponse<List<TransactionItemResponseDto>> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = getTransactions()
         ).also {
             delay(mockDelay)
@@ -71,7 +66,6 @@ class FakeProfileApi : ProfileApi {
 
     override suspend fun balance(): BaseResponse<BalanceResponseDto> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = BalanceResponseDto(
                 lockedTokensBalance = 1.0,
                 unlockedTokensBalance = 1.0,
@@ -85,7 +79,6 @@ class FakeProfileApi : ProfileApi {
 
     override suspend fun connectInstagram(@Body body: ConnectInstagramRequestDto): BaseResponse<UserInfoResponseDto> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = getUserInfo(null)
         ).also {
             delay(mockDelay)
@@ -99,7 +92,6 @@ class FakeProfileApi : ProfileApi {
         @Query(value = "onlyInvited") onlyInvited: Boolean,
     ): BaseResponse<List<UserInfoResponseDto>> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = List(10) {
                 getUserInfo("user $it")
             },

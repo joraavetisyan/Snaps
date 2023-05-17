@@ -23,5 +23,5 @@ dependencies {
     implementation(projects.baseSubs)
 
     implementation(*Libs.bundle.media)
-    implementation(Libs.bundle.uploadService)
+    implementation(*Libs.bundle.uploadService)
 }

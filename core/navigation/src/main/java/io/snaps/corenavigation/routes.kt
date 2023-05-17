@@ -124,6 +124,8 @@ object AppRoute {
         )
     }
 
+    object WithdrawSnaps : Route("WithdrawSnaps")
+
     object Exchange : RouteWithArg("Exchange") {
 
         @Serializable

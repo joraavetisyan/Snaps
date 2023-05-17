@@ -12,6 +12,7 @@ import io.snaps.corecommon.model.NftModel
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Token
+import io.snaps.corecommon.model.TxHash
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
@@ -50,14 +51,14 @@ interface NftRepository {
     /**
      * params: [transactionHash] - Blockchain transaction hash
      */
-    suspend fun mintNft(type: NftType, transactionHash: Token? = null): Effect<Completable>
+    suspend fun mintNft(type: NftType, transactionHash: TxHash? = null): Effect<Completable>
 
     /**
      * params: [transactionHash] - Blockchain transaction hash
      */
     suspend fun repairNft(
         nftModel: NftModel,
-        transactionHash: Token? = null,
+        transactionHash: TxHash? = null,
         offChainAmount: Long = 0L,
     ): Effect<Completable>
 
@@ -174,7 +175,7 @@ class NftRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun mintNft(type: NftType, transactionHash: Token?): Effect<Completable> {
+    override suspend fun mintNft(type: NftType, transactionHash: TxHash?): Effect<Completable> {
         return mintNft(
             body = MintNftRequestDto(
                 nftType = type,
@@ -215,7 +216,7 @@ class NftRepositoryImpl @Inject constructor(
 
     override suspend fun repairNft(
         nftModel: NftModel,
-        transactionHash: Token?,
+        transactionHash: TxHash?,
         offChainAmount: Long,
     ): Effect<Completable> {
         return repairNft(

@@ -16,6 +16,10 @@ internal val strings = mapOf(
     key(StringKey.ActionContinue) to mapOf(
         SupportedLanguageKey.En to "Continue",
     ),
+    key(StringKey.ActionSend) to mapOf(
+        SupportedLanguageKey.En to "Send",
+        SupportedLanguageKey.Ru to "Отправить",
+    ),
     key(StringKey.ActionConfirm) to mapOf(
         SupportedLanguageKey.En to "Confirm",
     ),
@@ -1146,5 +1150,14 @@ internal val strings = mapOf(
     ),
     key(StringKey.NftDetailsDescriptionLevel) to mapOf(
         SupportedLanguageKey.En to "Earn XP for completing tasks. For each task you get 25 XP. With each level, your NFT points will bring more income. And at level 10, you can go to the next rank.",
+    ),
+
+    key(StringKey.MainVideoFeedTitleForYou) to mapOf(
+        SupportedLanguageKey.En to "For You",
+        SupportedLanguageKey.Ru to "Для Вас",
+    ),
+    key(StringKey.MainVideoFeedTitleSubscriptions) to mapOf(
+        SupportedLanguageKey.En to "Subscriptions",
+        SupportedLanguageKey.Ru to "Подписки",
     ),
 )

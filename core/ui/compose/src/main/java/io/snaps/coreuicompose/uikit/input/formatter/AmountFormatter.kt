@@ -15,13 +15,13 @@ import java.text.NumberFormat
 
 private const val numberFormatterSpace = ' '
 private const val trueSpace = ' '
-private const val fractionalPartMaxLength = 2
 
 const val amountDivider = ','
 
 class AmountFormatter(
     private val fiatCurrency: FiatCurrency,
     private val maxLength: Int = 10,
+    private val fractionalPartMaxLength: Int = 2,
 ) : SimpleFormatter {
 
     private val formatter = NumberFormat.getNumberInstance(RU_LOCALE)

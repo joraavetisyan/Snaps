@@ -7,6 +7,7 @@ enum class StringKey {
     ActionReply,
     ActionReload,
     ActionContinue,
+    ActionSend,
     ActionConfirm,
     ActionCancel,
     ActionClose,
@@ -390,4 +391,7 @@ enum class StringKey {
     NftDetailsDescriptionCondition,
     NftDetailsTitleLevel,
     NftDetailsDescriptionLevel,
+
+    MainVideoFeedTitleForYou,
+    MainVideoFeedTitleSubscriptions,
 }

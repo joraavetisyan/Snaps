@@ -31,7 +31,6 @@ import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewallet.ScreenNavigator
-import io.snaps.featurewallet.viewmodel.CryptoSendHandler
 import io.snaps.featurewallet.viewmodel.ExchangeViewModel
 
 @Composable
@@ -42,11 +41,10 @@ fun ExchangeScreen(
     val viewModel = hiltViewModel<ExchangeViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
-    val cryptoSendState by viewModel.cryptoSendState.collectAsState()
 
-    viewModel.cryptoSendCommand.collectAsCommand {
+    viewModel.command.collectAsCommand {
         when (it) {
-            CryptoSendHandler.Command.CloseScreen -> router.back()
+            ExchangeViewModel.Command.CloseScreen -> router.back()
         }
     }
 
@@ -56,7 +54,7 @@ fun ExchangeScreen(
         onTransactionSendClicked = viewModel::onTransactionSendClicked,
     )
 
-    FullScreenLoaderUi(isLoading = cryptoSendState.isLoading)
+    FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

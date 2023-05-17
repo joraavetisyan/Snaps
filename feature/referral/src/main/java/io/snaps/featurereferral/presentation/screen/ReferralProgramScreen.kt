@@ -93,6 +93,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContentLoader
+import io.snaps.coreuicompose.uikit.button.SimpleButtonContentWithLoader
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
 import io.snaps.coreuicompose.uikit.dialog.DiamondDialog
 import io.snaps.coreuicompose.uikit.dialog.DiamondDialogButtonData
@@ -584,12 +585,10 @@ private fun ReferralCodeDialog(
                 enabled = isInviteUserButtonEnabled,
                 onClick = onInviteUserClicked,
             ) {
-                AnimatedContent(targetState = isLoading) {
-                    if (it) SimpleButtonContentLoader()
-                    else SimpleButtonContent(
-                        text = StringKey.ReferralProgramCodeDialogActionInvite.textValue()
-                    )
-                }
+                SimpleButtonContentWithLoader(
+                    isLoading = isLoading,
+                    text = StringKey.ReferralProgramCodeDialogActionInvite.textValue(),
+                )
             }
         }
     }

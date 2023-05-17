@@ -30,7 +30,6 @@ class FakeSubsApi : SubsApi {
         log("Requesting subscribers: $count subscribers with offset $from")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = List(count) {
                 SubscriptionItemResponseDto(
                     userId = "${subscriberGeneration}subscriber$it",
@@ -50,7 +49,6 @@ class FakeSubsApi : SubsApi {
         log("Requesting subscriptions: $count subscriptions with offset $from")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = List(count) {
                 SubscriptionItemResponseDto(
                     userId = "${subscriptionGeneration}subscription$it",
@@ -69,7 +67,6 @@ class FakeSubsApi : SubsApi {
         log("Requesting subscribers: $count subscribers with offset $from")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = List(count) {
                 UserInfoResponseDto(
                     entityId = "${subscriberGeneration}entity$it",
@@ -108,7 +105,6 @@ class FakeSubsApi : SubsApi {
         delay(mockDelay)
         log("Requesting subscribe: ${body.toSubscribeUserId}")
         return BaseResponse(
-            actualTimestamp = 1L,
             data = Completable,
         )
     }
@@ -117,7 +113,6 @@ class FakeSubsApi : SubsApi {
         delay(mockDelay)
         log("Requesting unsubscribe: ${body.subscriptionId}")
         return BaseResponse(
-            actualTimestamp = 1L,
             data = Completable,
         )
     }

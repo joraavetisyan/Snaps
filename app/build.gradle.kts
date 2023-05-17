@@ -103,7 +103,6 @@ dependencies {
     implementation(projects.coreData)
     implementation(projects.coreUi)
     implementation(projects.coreNavigation)
-    implementation(projects.coreCrypto)
 
     implementation(projects.baseSources)
     implementation(projects.baseProfile)
@@ -126,8 +125,7 @@ dependencies {
 
     implementation(*Libs.bundle.splashscreen)
     implementation(*Libs.bundle.appUpdater)
-    implementation(*Libs.bundle.trustWallet)
     implementation(*Libs.bundle.biometric)
     implementation(Libs.bundle.playServices)
-    implementation(Libs.bundle.uploadService)
+    implementation(*Libs.bundle.uploadService)
 }

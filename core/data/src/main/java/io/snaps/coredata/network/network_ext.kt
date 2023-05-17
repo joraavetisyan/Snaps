@@ -53,7 +53,7 @@ suspend inline fun <reified T : Any> apiCall(
 }
 
 inline fun <reified T : Any> BaseResponse<T>.toEffect(): Effect<T> {
-    if (isSuccess) {
+    if (isSuccess == null || isSuccess == true) {
         when {
             data != null -> return Effect.success(data)
             T::class == Completable::class -> return Effect.success(Completable as T)
@@ -74,8 +74,9 @@ fun Throwable.toApiError() = when (this) {
 
     is HttpException -> {
         val errorBody = try {
-            KotlinxSerializationJsonProvider().get()
-                .decodeFromStream<ErrorResponse>(response()!!.errorBody()!!.byteStream())
+            KotlinxSerializationJsonProvider().get().decodeFromStream<ErrorResponse>(
+                stream = response()!!.errorBody()!!.byteStream(),
+            )
         } catch (t: Throwable) {
             log("Couldn't retrieve error body: $t")
             null
@@ -87,8 +88,8 @@ fun Throwable.toApiError() = when (this) {
             error == null && errorCode == null -> AppError.Unknown()
 
             else -> AppError.Custom(
-                message = error?.message,
-                displayMessage = error?.displayMessage,
+                message = error,
+                displayMessage = error,
                 code = errorCode,
                 cause = this as Exception,
             )

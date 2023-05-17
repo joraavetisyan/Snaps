@@ -1,5 +1,6 @@
 package io.snaps.corecommon.strings
 
+/*
 fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.ActionStart -> TODO()
     StringKey.ActionSave -> TODO()
@@ -343,4 +344,4 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.NftDetailsDescriptionLevel -> TODO()
     StringKey.WalletImportMessagePhraseExplanation -> TODO()
     StringKey.ActionConfirm -> TODO()
-}
+}*/

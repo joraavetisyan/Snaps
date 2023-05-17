@@ -19,9 +19,13 @@ import io.snaps.coredata.network.ApiService
 import io.snaps.coredata.network.PagedLoader
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
+import io.snaps.coreui.FileManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.StateFlow
 import net.gotev.uploadservice.protocols.multipart.MultipartUploadRequest
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 import javax.inject.Inject
 
 interface VideoFeedRepository {
@@ -39,8 +43,14 @@ interface VideoFeedRepository {
     suspend fun uploadVideo(
         title: String,
         fileId: Uuid,
-        filePath: String,
+        file: String,
     ): Effect<Uuid>
+
+    suspend fun uploadVideo(
+        title: String,
+        fileId: Uuid,
+        file: File,
+    ): Effect<Completable>
 
     suspend fun deleteVideo(videoId: Uuid): Effect<Completable>
 }
@@ -53,6 +63,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
     private val videoFeedApi: VideoFeedApi,
     private val loaderFactory: VideoFeedLoaderFactory,
     private val userLikedVideoFeedLoaderFactory: UserLikedVideoFeedLoaderFactory,
+    private val fileManager: FileManager,
 ) : VideoFeedRepository {
 
     private var likedVideos: List<UserLikedVideoResponseDto>? = null
@@ -67,10 +78,17 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     mapper = { videoFeed -> videoFeed.map { it.video.toModel() } },
                 )
             }
+
             else -> loaderFactory.get(videoFeedType) { type ->
                 when (type) {
                     VideoFeedType.Main -> PagedLoaderParams(
                         action = { from, count -> videoFeedApi.feed(from, count) },
+                        pageSize = 5,
+                        nextPageIdFactory = { it.entityId },
+                        mapper = { it.toVideoClipModelList(getLikedVideos()) },
+                    )
+                    VideoFeedType.Subscriptions -> PagedLoaderParams(
+                        action = { from, count -> videoFeedApi.subscriptionsFeed(from, count) },
                         pageSize = 5,
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
@@ -143,37 +161,44 @@ class VideoFeedRepositoryImpl @Inject constructor(
     override suspend fun uploadVideo(
         title: String,
         fileId: Uuid,
-        filePath: String,
+        file: String,
     ): Effect<Uuid> {
         return apiCall(ioDispatcher) {
-            videoFeedApi.addVideo(
-                AddVideoRequestDto(
-                    title = title,
-                    thumbnailFileId = fileId,
-                )
-            )
+            videoFeedApi.addVideo(AddVideoRequestDto(title = title, thumbnailFileId = fileId))
         }.flatMap {
-            uploadVideo(filePath, it.entityId)
+            try {
+                val uploadId = MultipartUploadRequest(
+                    context = applicationContext,
+                    serverUrl = ApiService.General.getBaseUrl(buildInfo) + "${it.entityId}/upload",
+                ).apply {
+                    setMethod("POST")
+                    addHeader("Authorization", "${tokenStorage.authToken}")
+                    addFileToUpload(
+                        filePath = file,
+                        parameterName = "videoFile",
+                    )
+                }.startUpload()
+                Effect.success(uploadId)
+            } catch (e: Exception) {
+                log(e)
+                Effect.error(AppError.Unknown(cause = e))
+            }
         }
     }
 
-    private fun uploadVideo(filePath: String, videoId: Uuid): Effect<Uuid> {
-        try {
-            val uploadId = MultipartUploadRequest(
-                context = applicationContext,
-                serverUrl = ApiService.General.getBaseUrl(buildInfo) + "$videoId/upload",
-            ).apply {
-                setMethod("POST")
-                addHeader("Authorization", "${tokenStorage.authToken}")
-                addFileToUpload(
-                    filePath = filePath,
-                    parameterName = "videoFile",
-                )
-            }.startUpload()
-            return Effect.success(uploadId)
-        } catch (e: Exception) {
-            log(e)
-            return Effect.error(AppError.Unknown(cause = e))
+    override suspend fun uploadVideo(title: String, fileId: Uuid, file: File): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            videoFeedApi.addVideo(AddVideoRequestDto(title = title, thumbnailFileId = fileId))
+        }.flatMap {
+            val mediaType = fileManager.getMimeType(file.path) ?: MultipartBody.FORM
+            val multipartBody = MultipartBody.Part.createFormData(
+                name = "videoFile",
+                filename = file.name,
+                body = file.asRequestBody(mediaType),
+            )
+            apiCall(ioDispatcher) {
+                videoFeedApi.uploadVideo(file = multipartBody, videoId = it.entityId)
+            }.toCompletable()
         }
     }
 
