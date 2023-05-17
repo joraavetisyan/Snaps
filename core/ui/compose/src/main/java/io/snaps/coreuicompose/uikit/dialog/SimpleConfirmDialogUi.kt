@@ -17,8 +17,8 @@ import io.snaps.coreuitheme.compose.AppTheme
 fun SimpleConfirmDialogUi(
     title: TextValue? = null,
     text: TextValue,
-    confirmButtonText: TextValue? = null,
-    dismissButtonText: TextValue? = null,
+    confirmButtonText: TextValue = StringKey.ActionConfirm.textValue(),
+    dismissButtonText: TextValue = StringKey.ActionCancel.textValue(),
     onDismissRequest: () -> Unit,
     onConfirmRequest: () -> Unit,
 ) {
@@ -44,12 +44,12 @@ fun SimpleConfirmDialogUi(
         },
         confirmButton = {
             SimpleButtonInlineM(onClick = onConfirmRequest) {
-                SimpleButtonContent(confirmButtonText ?: StringKey.ActionConfirm.textValue())
+                SimpleButtonContent(confirmButtonText)
             }
         },
         dismissButton = {
             SimpleButtonInlineM(onClick = onDismissRequest) {
-                SimpleButtonContent(dismissButtonText ?: StringKey.ActionCancel.textValue())
+                SimpleButtonContent(dismissButtonText)
             }
         },
     )

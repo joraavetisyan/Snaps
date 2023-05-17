@@ -105,7 +105,19 @@ fun BottomBarScreen(
         }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            CompositionLocalProvider(LocalBottomNavigationHeight provides 80.dp) {
+            val bottomBarScreens = listOf(
+                AppRoute.MainBottomBar.MainTab1Start,
+                AppRoute.MainBottomBar.MainTab2Start,
+                AppRoute.MainBottomBar.MainTab3Start,
+                AppRoute.MainBottomBar.MainTab4Start,
+                AppRoute.MainBottomBar.MainTab5Start,
+            )
+            val currentRoute = currentDestination?.route?.substringBefore(delimiter = "?")
+            val bottomBarDestination = bottomBarScreens.any { it.path() == currentRoute }
+            val isBottomBarVisible = uiState.isBottomBarVisible && bottomBarDestination
+            CompositionLocalProvider(
+                LocalBottomNavigationHeight provides (if (isBottomBarVisible) 80.dp else 0.dp)
+            ) {
                 NavHost(
                     navController = navController,
                     startDestination = items.first().route.pattern,
@@ -120,18 +132,7 @@ fun BottomBarScreen(
                         }
                     }
                 }
-                val bottomBarScreens = listOf(
-                    AppRoute.MainBottomBar.MainTab1Start,
-                    AppRoute.MainBottomBar.MainTab2Start,
-                    AppRoute.MainBottomBar.MainTab3Start,
-                    AppRoute.MainBottomBar.MainTab4Start,
-                    AppRoute.MainBottomBar.MainTab5Start,
-                )
-                val currentRoute = currentDestination?.route?.substringBefore(delimiter = "?")
-                val bottomBarDestination = bottomBarScreens.any {
-                    it.path() == currentRoute
-                }
-                if (uiState.isBottomBarVisible && bottomBarDestination) {
+                if (isBottomBarVisible) {
                     val containerColor = when (currentRoute) {
                         AppRoute.MainBottomBar.MainTab1Start.path() -> AppTheme.specificColorScheme.black
                         else -> AppTheme.specificColorScheme.white

@@ -89,6 +89,8 @@ import io.snaps.coreuicompose.uikit.scroll.DetectScroll
 import io.snaps.coreuicompose.uikit.scroll.ScrollInfo
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
+import io.snaps.coreuitheme.compose.colors
+import io.snaps.coreuitheme.compose.icons
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -261,7 +263,6 @@ fun VideoClipScreen(
                                     onMoreClicked = viewModel::onMoreClicked,
                                     onCreateVideoClicked = onCreateVideoClicked,
                                     onSubscribeClicked = viewModel::onSubscribeClicked,
-                                    onProgressChanged = viewModel::onProgressChanged,
                                 )
                             }
                             is VideoClipUiState.Shimmer -> FullScreenLoaderUi(
@@ -281,7 +282,6 @@ fun VideoClipScreen(
             VideoFeedViewModel.Dialog.ConfirmDeleteVideo -> SimpleConfirmDialogUi(
                 text = StringKey.VideoClipDialogConfirmDeleteMessage.textValue(),
                 confirmButtonText = StringKey.ActionDelete.textValue(),
-                dismissButtonText = StringKey.ActionCancel.textValue(),
                 onDismissRequest = viewModel::onDeleteDismissed,
                 onConfirmRequest = viewModel::onDeleteConfirmed,
             )
@@ -327,7 +327,6 @@ private fun VideoClip(
     onMoreClicked: () -> Unit,
     onCreateVideoClicked: (() -> Unit)?,
     onSubscribeClicked: () -> Unit,
-    onProgressChanged: (Float) -> Unit,
 ) {
     val shouldPlay by remember(pagerState) {
         derivedStateOf {
@@ -339,6 +338,8 @@ private fun VideoClip(
         }
     }
 
+    var progress by remember { mutableStateOf(0f) }
+
     VideoPlayer(
         networkUrl = item.clip.url,
         shouldPlay = shouldPlay,
@@ -347,8 +348,8 @@ private fun VideoClip(
         onMuted = onMuteClicked,
         isScrolling = pagerState.isScrollInProgress,
         onLiked = { onDoubleLikeClicked(item.clip) },
-        onProgressChanged = onProgressChanged,
-        progressPollFrequencyInMillis = 50L,
+        onProgressChanged = { progress = it },
+        progressPollFrequencyInMillis = 10L,
     )
 
     VideoClipItems(
@@ -358,7 +359,7 @@ private fun VideoClip(
         isSubscribed = uiState.isSubscribed,
         authorProfileAvatar = uiState.authorProfileAvatar,
         authorName = uiState.authorName,
-        progress = uiState.playProgress,
+        progress = progress,
         onAuthorClicked = onAuthorClicked,
         onLikeClicked = onLikeClicked,
         onCommentClicked = onCommentClicked,
@@ -425,7 +426,7 @@ private fun VideoClipItems(
                 isDashed = false,
                 backColor = AppTheme.specificColorScheme.white_40,
                 fillColor = AppTheme.specificColorScheme.white,
-                height = 6.dp,
+                height = 2.dp,
             )
         }
     }
@@ -588,17 +589,9 @@ private fun VideoClipEndItems(
         }
 
         TextedIcon(
-            icon = if (clipModel.isLiked) {
-                AppTheme.specificIcons.favorite
-            } else {
-                AppTheme.specificIcons.favoriteBorder
-            },
+            icon = icons { if (clipModel.isLiked) favorite else favoriteBorder },
             text = clipModel.likeCount.toFormatDecimal(),
-            tint = if (clipModel.isLiked) {
-                AppTheme.specificColorScheme.red
-            } else {
-                AppTheme.specificColorScheme.white
-            },
+            tint = colors { if (clipModel.isLiked) red else white },
             onIconClicked = { onLikeClicked(clipModel) },
         )
 
