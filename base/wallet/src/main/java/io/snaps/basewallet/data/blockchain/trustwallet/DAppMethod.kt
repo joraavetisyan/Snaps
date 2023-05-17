@@ -1,4 +1,4 @@
-package io.snaps.basewallet.data.trustwallet
+package io.snaps.basewallet.data.blockchain.trustwallet
 
 @Suppress("SpellCheckingInspection")
 internal enum class DAppMethod {

@@ -318,14 +318,7 @@ class WalletRepositoryImpl @Inject constructor(
             _payouts tryPublish Loading()
         }
         return apiCall(ioDispatcher) {
-//            walletApi.payoutStatus()
-            BaseResponse(listOf(
-                PayoutOrderResponseDto(
-                    id= "afsjhdf9fuajsdfasjdf0af",
-                    entityId = "afsjhdf9fuajsdfasjdf0af",
-                    status = PayoutOrderStatus.Success,
-                )
-            ))
+            walletApi.payoutStatus()
         }.also {
             _payouts tryPublish it
         }.toCompletable()

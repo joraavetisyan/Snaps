@@ -3,7 +3,7 @@ package io.snaps.featurecollection.domain
 import io.snaps.basenft.data.NftRepository
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.data.model.PaymentsState
-import io.snaps.basewallet.data.BlockchainTxRepository
+import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
 import io.snaps.basewallet.domain.NftMintSummary
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect

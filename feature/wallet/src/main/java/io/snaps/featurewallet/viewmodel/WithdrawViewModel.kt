@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basesources.NotificationsSource
-import io.snaps.basewallet.data.BlockchainTxRepository
+import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensState
@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.math.BigInteger
 import javax.inject.Inject
 
 private const val gasLimitNull = -1L

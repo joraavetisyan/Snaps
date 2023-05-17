@@ -1,4 +1,4 @@
-package io.snaps.basewallet.data
+package io.snaps.basewallet.data.blockchain
 
 import android.app.Application
 import io.snaps.corecrypto.core.CryptoKit

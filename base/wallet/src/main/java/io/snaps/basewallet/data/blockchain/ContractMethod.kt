@@ -1,4 +1,4 @@
-package io.snaps.basewallet.data
+package io.snaps.basewallet.data.blockchain
 
 import io.horizontalsystems.ethereumkit.contracts.ContractMethod
 import io.horizontalsystems.ethereumkit.models.Address

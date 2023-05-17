@@ -1,4 +1,4 @@
-package io.snaps.basewallet.data
+package io.snaps.basewallet.data.blockchain
 
 import io.horizontalsystems.ethereumkit.api.jsonrpc.models.RpcTransactionReceipt
 import io.horizontalsystems.ethereumkit.core.LegacyGasPriceProvider
@@ -7,6 +7,9 @@ import io.horizontalsystems.ethereumkit.core.toHexString
 import io.horizontalsystems.ethereumkit.models.Address
 import io.horizontalsystems.ethereumkit.models.GasPrice
 import io.horizontalsystems.ethereumkit.models.TransactionData
+import io.snaps.basewallet.data.WalletApi
+import io.snaps.basewallet.data.WalletRepository
+import io.snaps.basewallet.data.blockchainCall
 import io.snaps.basewallet.data.model.SignatureRequestDto
 import io.snaps.basewallet.domain.NftMintSummary
 import io.snaps.basewallet.domain.NoEnoughBnbToMint

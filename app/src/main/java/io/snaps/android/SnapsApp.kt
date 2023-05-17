@@ -8,7 +8,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.HiltAndroidApp
 import io.snaps.basesources.NetworkStateSource
 import io.snaps.basesources.featuretoggle.FeatureToggleUpdater
-import io.snaps.basewallet.data.CryptoInitializer
+import io.snaps.basewallet.data.blockchain.CryptoInitializer
 import io.snaps.corecommon.analytics.AnalyticsTracker
 import io.snaps.corecommon.analytics.AnalyticsTrackerHolder
 import io.snaps.corecommon.model.BuildInfo

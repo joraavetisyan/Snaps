@@ -9,8 +9,8 @@ import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
-import io.snaps.basewallet.data.BlockchainTxRepository
-import io.snaps.basewallet.data.BlockchainTxRepositoryImpl
+import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
+import io.snaps.basewallet.data.blockchain.BlockchainTxRepositoryImpl
 import io.snaps.basewallet.data.FakeWalletApi
 import io.snaps.basewallet.data.WalletApi
 import io.snaps.basewallet.data.WalletRepository

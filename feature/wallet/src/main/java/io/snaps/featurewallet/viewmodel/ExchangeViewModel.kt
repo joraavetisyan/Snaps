@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basesources.NotificationsSource
-import io.snaps.basewallet.data.BlockchainTxRepository
+import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.SwapTransactionModel
 import io.snaps.corecommon.container.textValue

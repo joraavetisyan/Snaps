@@ -21,8 +21,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import io.snaps.basewallet.data.trustwallet.TrustWalletProvider
-import io.snaps.basewallet.data.trustwallet.TrustWalletWebAppInterface
+import io.snaps.basewallet.data.blockchain.trustwallet.TrustWalletProvider
+import io.snaps.basewallet.data.blockchain.trustwallet.TrustWalletWebAppInterface
 import io.snaps.basewallet.domain.SwapTransactionModel
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
