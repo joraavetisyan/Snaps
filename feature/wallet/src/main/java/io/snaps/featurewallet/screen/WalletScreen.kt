@@ -63,6 +63,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
@@ -71,7 +72,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.ImageValue
@@ -80,6 +80,8 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.addressEllipsized
+import io.snaps.corenavigation.base.openUrl
+import io.snaps.corenavigation.base.resultFlow
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
@@ -114,6 +116,8 @@ fun WalletScreen(
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
     val viewModel = hiltViewModel<WalletViewModel>()
 
+    navHostController.resultFlow<Boolean>()?.collectAsCommand(action = viewModel::onSellSnapsResultReceived)
+
     val clipboardManager = LocalClipboardManager.current
 
     val uiState by viewModel.uiState.collectAsState()
@@ -124,13 +128,15 @@ fun WalletScreen(
         skipHalfExpanded = true,
     )
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(key1 = sheetState.currentValue) {
         if (sheetState.currentValue == ModalBottomSheetValue.Hidden
-            && uiState.bottomDialog == WalletViewModel.BottomDialog.RewardsWithdraw) {
+            && uiState.bottomDialog == WalletViewModel.BottomDialog.RewardsWithdraw
+        ) {
             focusRequester.freeFocus()
             keyboardController?.hide()
         }
@@ -142,16 +148,14 @@ fun WalletScreen(
             WalletViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
             is WalletViewModel.Command.OpenWithdrawScreen -> router.toWithdrawScreen(it.wallet)
             is WalletViewModel.Command.OpenExchangeScreen -> router.toExchangeScreen(it.wallet)
+            WalletViewModel.Command.OpenWithdrawSnapsScreen -> router.toWithdrawSnapsScreen()
+            is WalletViewModel.Command.CopyText -> clipboardManager.setText(AnnotatedString(it.text))
+            is WalletViewModel.Command.OpenLink -> context.openUrl(it.link)
         }
     }
 
     BackHandler(enabled = sheetState.isVisible) {
         coroutineScope.launch { sheetState.hide() }
-    }
-
-    fun onAddressCopyClicked(address: WalletAddress) {
-        clipboardManager.setText(AnnotatedString(address))
-        viewModel.onAddressCopied()
     }
 
     ModalBottomSheetLayout(
@@ -161,12 +165,14 @@ fun WalletScreen(
                 is WalletViewModel.BottomDialog.SelectWallet -> SelectWalletDialog(
                     wallets = dialog.wallets,
                 )
+
                 is WalletViewModel.BottomDialog.TopUp -> TopUpDialog(
                     title = StringKey.WalletDialogTitleTopUp.textValue(dialog.title),
                     address = dialog.address,
                     qr = dialog.qr,
-                    onAddressCopyClicked = { onAddressCopyClicked(dialog.address) },
+                    onAddressCopyClicked = { viewModel.onAddressCopyClicked(dialog.address) },
                 )
+
                 WalletViewModel.BottomDialog.RewardsFootnote -> FootnoteBottomDialog(
                     FootnoteBottomDialogItem(
                         image = ImageValue.ResImage(R.drawable.img_guy_eating),
@@ -179,6 +185,7 @@ fun WalletScreen(
                         text = StringKey.RewardsDialogMessageFootnote2.textValue(),
                     ),
                 )
+
                 WalletViewModel.BottomDialog.RewardsWithdraw -> RewardsWithdrawDialog(
                     amountValue = uiState.amountToClaimValue,
                     availableTokens = uiState.availableTokens,
@@ -186,7 +193,7 @@ fun WalletScreen(
                     focusRequester = focusRequester,
                     onAmountValueChanged = viewModel::onAmountToClaimValueChanged,
                     onConfirmClicked = viewModel::onConfirmClaimClicked,
-                    onMaxButtonClicked = viewModel::onMaxButtonClicked,
+                    onMaxButtonClicked = viewModel::onRewardsMaxButtonClicked,
                 )
             }
         },
@@ -195,7 +202,8 @@ fun WalletScreen(
             uiState = uiState,
             pullRefreshState = pullRefreshState,
             onBackClicked = router::back,
-            onAddressCopyClicked = ::onAddressCopyClicked,
+            onAddressCopyClicked = viewModel::onAddressCopyClicked,
+            onSellSnapsClicked = viewModel::onSellSnapsClicked,
             onTopUpClicked = viewModel::onTopUpClicked,
             onWithdrawClicked = viewModel::onWithdrawClicked,
             onRewardsWithdrawClicked = viewModel::onRewardsWithdrawClicked,
@@ -220,6 +228,7 @@ private fun WalletScreen(
     pullRefreshState: PullRefreshState,
     onBackClicked: () -> Boolean,
     onAddressCopyClicked: (WalletAddress) -> Unit,
+    onSellSnapsClicked: () -> Unit,
     onTopUpClicked: () -> Unit,
     onWithdrawClicked: () -> Unit,
     onRewardsWithdrawClicked: () -> Unit,
@@ -279,7 +288,9 @@ private fun WalletScreen(
                         onTopUpClicked = onTopUpClicked,
                         onWithdrawClicked = onWithdrawClicked,
                         onExchangeClicked = onExchangeClicked,
+                        onSellSnapsClicked = onSellSnapsClicked,
                     )
+
                     1 -> Rewards(
                         transactions = when (uiState.filterOptions) {
                             WalletViewModel.FilterOptions.Unlocked -> uiState.unlockedTransactions
@@ -308,6 +319,7 @@ private fun WalletScreen(
 private fun Wallet(
     uiState: WalletViewModel.UiState,
     onAddressCopyClicked: (WalletAddress) -> Unit,
+    onSellSnapsClicked: () -> Unit,
     onTopUpClicked: () -> Unit,
     onWithdrawClicked: () -> Unit,
     onExchangeClicked: () -> Unit,
@@ -322,10 +334,18 @@ private fun Wallet(
             style = AppTheme.specificTypography.headlineMedium,
             modifier = Modifier.padding(16.dp),
         )
+        uiState.payoutStatusState?.let {
+            PayoutStatus(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp),
+                data = it,
+            )
+        }
         Balance(
-            totalBalance = uiState.totalBalance,
-            address = uiState.address,
+            uiState = uiState,
             onAddressCopyClicked = { onAddressCopyClicked(uiState.address) },
+            onSellSnapsClicked = onSellSnapsClicked,
         )
         Row(
             modifier = Modifier
@@ -491,9 +511,9 @@ private fun Rewards(
 
 @Composable
 private fun Balance(
-    totalBalance: TotalBalanceModel,
-    address: WalletAddress,
+    uiState: WalletViewModel.UiState,
     onAddressCopyClicked: () -> Unit,
+    onSellSnapsClicked: () -> Unit,
 ) {
     Card(
         shape = AppTheme.shapes.medium,
@@ -518,7 +538,7 @@ private fun Balance(
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = totalBalance.coin,
+                text = uiState.totalBalance.coin,
                 style = AppTheme.specificTypography.titleLarge,
                 color = AppTheme.specificColorScheme.textPrimary,
                 modifier = Modifier
@@ -527,7 +547,7 @@ private fun Balance(
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = totalBalance.fiat,
+                text = uiState.totalBalance.fiat,
                 style = AppTheme.specificTypography.bodySmall,
                 color = AppTheme.specificColorScheme.textSecondary,
                 modifier = Modifier
@@ -536,15 +556,26 @@ private fun Balance(
                 textAlign = TextAlign.Center,
             )
             SimpleButtonGreyM(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(),
+                modifier = Modifier.fillMaxWidth(),
                 onClick = onAddressCopyClicked,
             ) {
                 SimpleButtonContent(
-                    text = address.addressEllipsized.textValue(),
+                    text = uiState.address.addressEllipsized.textValue(),
                     iconRight = AppTheme.specificIcons.copy,
                 )
+            }
+            if (uiState.isSnapsSellEnabled) {
+                SimpleButtonActionM(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    onClick = onSellSnapsClicked,
+                ) {
+                    SimpleButtonContent(
+                        text = "Sell SNAPS".textValue(),
+                        iconLeft = AppTheme.specificIcons.snpToken,
+                    )
+                }
             }
         }
     }

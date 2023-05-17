@@ -9,6 +9,7 @@ import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.domain.NoEnoughSnpToRepair
+import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
@@ -35,13 +36,15 @@ private const val LEVEL_URL = "https://snaps-docs.gitbook.io/baza-znanii-snaps/f
 class MyCollectionViewModel @Inject constructor(
     mainHeaderHandlerDelegate: MainHeaderHandler,
     onboardingHandlerDelegate: OnboardingHandler,
+    transferTokensDialogHandlerImplDelegate: TransferTokensDialogHandler,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
     private val nftRepository: NftRepository,
     private val interactor: MyCollectionInteractor,
 ) : SimpleViewModel(),
     MainHeaderHandler by mainHeaderHandlerDelegate,
-    OnboardingHandler by onboardingHandlerDelegate {
+    OnboardingHandler by onboardingHandlerDelegate,
+    TransferTokensDialogHandler by transferTokensDialogHandlerImplDelegate  {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -90,6 +93,10 @@ class MyCollectionViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
         action.execute {
             interactor.repair(nftModel)
+        }.doOnSuccess {
+            if (it.isNotEmpty()) {
+                onSuccessfulTransfer(scope = viewModelScope, txHash = it)
+            }
         }.doOnError { error, _ ->
             if (error.cause is NoEnoughSnpToRepair) {
                 notificationsSource.sendError("No enough SNP to repair".textValue())

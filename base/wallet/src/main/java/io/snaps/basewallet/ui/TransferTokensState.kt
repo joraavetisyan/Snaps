@@ -1,4 +1,4 @@
-package io.snaps.featurecollection.presentation.screen
+package io.snaps.basewallet.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.WalletAddress
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.addressEllipsized
@@ -31,12 +30,12 @@ import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 import io.snaps.coreuicompose.uikit.other.ShimmerTileLine
 import io.snaps.coreuitheme.compose.AppTheme
 
-sealed class PurchaseWithBnbState {
+sealed class TransferTokensState {
 
-    abstract val nftType: NftType
+    abstract val title: TextValue
 
     data class Data(
-        override val nftType: NftType,
+        override val title: TextValue,
         val from: WalletAddress,
         val to: WalletAddress,
         val summary: String,
@@ -44,34 +43,34 @@ sealed class PurchaseWithBnbState {
         val total: String,
         val onConfirmClick: () -> Unit,
         val onCancelClick: () -> Unit,
-    ) : PurchaseWithBnbState()
+    ) : TransferTokensState()
 
     data class Shimmer(
-        override val nftType: NftType,
-    ) : PurchaseWithBnbState()
+        override val title: TextValue,
+    ) : TransferTokensState()
 
     data class Error(
-        override val nftType: NftType,
+        override val title: TextValue,
         val message: MessageBannerState? = null,
         val onClick: () -> Unit,
-    ) : PurchaseWithBnbState()
+    ) : TransferTokensState()
 }
 
 @Composable
-fun PurchaseWithBnb(
+fun TransferTokensUi(
     modifier: Modifier = Modifier,
-    data: PurchaseWithBnbState,
+    data: TransferTokensState,
 ) {
     when (data) {
-        is PurchaseWithBnbState.Shimmer -> Shimmer(data)
-        is PurchaseWithBnbState.Error -> Error(data)
-        is PurchaseWithBnbState.Data -> Data(data)
+        is TransferTokensState.Shimmer -> Shimmer(data)
+        is TransferTokensState.Error -> Error(data)
+        is TransferTokensState.Data -> Data(data)
     }
 }
 
 @Composable
 private fun Data(
-    data: PurchaseWithBnbState.Data,
+    data: TransferTokensState.Data,
 ) {
     Container(
         state = data,
@@ -191,7 +190,7 @@ private fun PriceLine(
 
 @Composable
 private fun Error(
-    data: PurchaseWithBnbState.Error,
+    data: TransferTokensState.Error,
 ) {
     Container(
         state = data,
@@ -204,7 +203,7 @@ private fun Error(
 
 @Composable
 private fun Shimmer(
-    state: PurchaseWithBnbState.Shimmer,
+    state: TransferTokensState.Shimmer,
 ) {
     Container(
         state = state,
@@ -216,12 +215,12 @@ private fun Shimmer(
 @Composable
 private fun Container(
     modifier: Modifier = Modifier,
-    state: PurchaseWithBnbState,
+    state: TransferTokensState,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     SimpleBottomDialogUI(
         modifier = modifier,
-        header = "${state.nftType.name} NFT Minting".textValue(),
+        header = state.title,
     ) {
         item {
             Column(
@@ -237,10 +236,10 @@ private fun Container(
 //@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewData() {
-    PurchaseWithBnb(
+    TransferTokensUi(
         modifier = Modifier,
-        data = PurchaseWithBnbState.Data(
-            nftType = NftType.Newbie,
+        data = TransferTokensState.Data(
+            title = "Newbie".textValue(),
             from = "0x5F0cF62ad1DD5A267427DC161ff365b75142E3b3",
             to = "0x5F0cF62ad1DD5A267427DC161ff365b75142E3b3",
             summary = "0.0005 BNB",
@@ -256,9 +255,9 @@ private fun PreviewData() {
 //@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewError() {
-    PurchaseWithBnb(
+    TransferTokensUi(
         modifier = Modifier,
-        data = PurchaseWithBnbState.Error(nftType = NftType.Newbie, onClick = {}),
+        data = TransferTokensState.Error(title = "Newbie".textValue(), onClick = {}),
     )
 }
 
@@ -266,8 +265,8 @@ private fun PreviewError() {
 //@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewShimmer() {
-    PurchaseWithBnb(
+    TransferTokensUi(
         modifier = Modifier,
-        data = PurchaseWithBnbState.Shimmer(nftType = NftType.Newbie),
+        data = TransferTokensState.Shimmer(title = "Newbie".textValue()),
     )
 }

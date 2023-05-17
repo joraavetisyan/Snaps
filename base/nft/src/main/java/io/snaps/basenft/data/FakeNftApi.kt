@@ -26,7 +26,6 @@ class FakeNftApi : NftApi {
         log("Requesting nft")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = getUserNft()
         ).also {
             generation++
@@ -37,7 +36,6 @@ class FakeNftApi : NftApi {
         log("Requesting ranks")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = getRanks()
         )
     }
@@ -46,7 +44,6 @@ class FakeNftApi : NftApi {
         log("Requesting add nft")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = MintNftResponseDto(
                 tokenId = rInt,
             ),
@@ -57,7 +54,6 @@ class FakeNftApi : NftApi {
         log("Requesting add nft on store")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = MintNftResponseDto(
                 tokenId = rInt,
             ),
@@ -68,7 +64,6 @@ class FakeNftApi : NftApi {
         log("Requesting repair Glasses")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = Completable,
         )
     }

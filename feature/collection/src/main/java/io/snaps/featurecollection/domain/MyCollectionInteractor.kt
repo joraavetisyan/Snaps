@@ -3,18 +3,19 @@ package io.snaps.featurecollection.domain
 import io.snaps.basenft.data.NftRepository
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.data.model.PaymentsState
-import io.snaps.basewallet.data.WalletRepository
+import io.snaps.basewallet.data.BlockchainTxRepository
 import io.snaps.basewallet.domain.NftMintSummary
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.NftModel
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.Token
+import io.snaps.corecommon.model.TxHash
 import javax.inject.Inject
 
 interface MyCollectionInteractor {
 
-    suspend fun repair(nftModel: NftModel): Effect<Completable>
+    suspend fun repair(nftModel: NftModel): Effect<TxHash>
 
     suspend fun mint(
         nftType: NftType,
@@ -23,29 +24,26 @@ interface MyCollectionInteractor {
 
     suspend fun getNftMintSummary(nftType: NftType): Effect<NftMintSummary>
 
-    /**
-     * returns: Mint transaction hash
-     */
-    suspend fun mintOnBlockchain(nftType: NftType, summary: NftMintSummary): Effect<Token>
+    suspend fun mintOnBlockchain(nftType: NftType, summary: NftMintSummary): Effect<TxHash>
 }
 
 class MyCollectionInteractorImpl @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val nftRepository: NftRepository,
-    private val walletRepository: WalletRepository,
+    private val blockchainTxRepository: BlockchainTxRepository,
 ) : MyCollectionInteractor {
 
-    override suspend fun repair(nftModel: NftModel): Effect<Completable> {
+    override suspend fun repair(nftModel: NftModel): Effect<TxHash> {
         return profileRepository.updateData(isSilently = true).flatMap { userInfoModel ->
             if (userInfoModel.paymentsState == PaymentsState.Blockchain) {
-                walletRepository.repairNft(nftModel = nftModel).flatMap {
-                    nftRepository.repairNft(nftModel = nftModel, transactionHash = it)
+                blockchainTxRepository.repairNft(nftModel = nftModel).flatMap { hash ->
+                    nftRepository.repairNft(nftModel = nftModel, transactionHash = hash).map { hash }
                 }
             } else {
                 nftRepository.repairNft(
                     nftModel = nftModel,
                     offChainAmount = nftModel.repairCost.toLong(),
-                )
+                ).map { "" }
             }
         }
     }
@@ -62,13 +60,13 @@ class MyCollectionInteractorImpl @Inject constructor(
     }
 
     override suspend fun getNftMintSummary(nftType: NftType): Effect<NftMintSummary> {
-        return walletRepository.getNftMintSummary(nftType)
+        return blockchainTxRepository.getNftMintSummary(nftType)
     }
 
     override suspend fun mintOnBlockchain(
         nftType: NftType,
         summary: NftMintSummary,
-    ): Effect<Token> = walletRepository.mintNft(nftType = nftType, summary = summary).flatMap { hash ->
+    ): Effect<TxHash> = blockchainTxRepository.mintNft(nftType = nftType, summary = summary).flatMap { hash ->
         nftRepository.mintNft(type = nftType, transactionHash = hash)
             .flatMap { nftRepository.saveProcessingNft(nftType) }
             .flatMap { nftRepository.updateNftCollection() }

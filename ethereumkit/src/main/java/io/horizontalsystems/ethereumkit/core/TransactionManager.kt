@@ -1,5 +1,6 @@
 package io.horizontalsystems.ethereumkit.core
 
+import io.horizontalsystems.ethereumkit.api.jsonrpc.models.RpcTransactionReceipt
 import io.horizontalsystems.ethereumkit.decorations.DecorationManager
 import io.horizontalsystems.ethereumkit.models.*
 import io.reactivex.BackpressureStrategy
@@ -79,6 +80,10 @@ class TransactionManager(
 
     fun etherTransferTransactionData(address: Address, value: BigInteger): TransactionData {
         return TransactionData(address, value, byteArrayOf())
+    }
+
+    fun getTransactionReceipt(hash: ByteArray): Single<RpcTransactionReceipt> {
+        return blockchain.getTransactionReceipt(hash)
     }
 
     fun getFullTransactionSingle(hash: ByteArray): Single<FullTransaction> {

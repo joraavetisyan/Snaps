@@ -1,20 +1,17 @@
 package io.snaps.coredata.network
 
-import io.snaps.corecommon.model.Timestamp
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class BaseResponse<T>(
-    @SerialName("actualTimestamp") val actualTimestamp: Timestamp?,
     @SerialName("data") val data: T?,
-    @SerialName("success") val isSuccess: Boolean = true,
+    @SerialName("success") val isSuccess: Boolean? = null,
 )
 
 @Serializable
 data class ErrorResponse(
-    @SerialName("actualTimestamp") val actualTimestamp: Timestamp?,
-    @SerialName("error") val error: ErrorDto?,
+    @SerialName("error") val error: String?,
 )
 
 @Serializable

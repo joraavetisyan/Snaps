@@ -6,7 +6,6 @@ common()
 compose()
 dagger()
 lifecycle()
-firebase()
 
 android {
     namespace = "io.snaps.featureprofile"

@@ -69,6 +69,8 @@ object Libs {
 
     private const val uploadServiceVersion = "4.7.0"
 
+    private const val videoCompressorVersion = "1.2.3"
+
     private const val trustWeb3Version = "2.0.8"
     private const val trustWalletCoreVersion = "3.1.20"
 
@@ -243,6 +245,10 @@ object Libs {
             "com.squareup.retrofit2:adapter-rxjava2:2.9.0",
             "com.squareup.retrofit2:converter-scalars:2.9.0",
         )
+        val trustWallet = arrayOf(
+            "com.github.trustwallet:trust-web3-provider:$trustWeb3Version",
+            "com.trustwallet:wallet-core:$trustWalletCoreVersion"
+        )
 
         val gson = arrayOf(
             "com.google.code.gson:gson:2.9.0",
@@ -250,11 +256,13 @@ object Libs {
 
         const val barcode = "com.journeyapps:zxing-android-embedded:$barcodeVersion"
 
-        const val uploadService = "net.gotev:uploadservice:$uploadServiceVersion"
+        val uploadService = arrayOf(
+            "net.gotev:uploadservice:$uploadServiceVersion",
+            "net.gotev:uploadservice-okhttp:$uploadServiceVersion",
+        )
 
-        val trustWallet = arrayOf(
-            "com.github.trustwallet:trust-web3-provider:$trustWeb3Version",
-            "com.trustwallet:wallet-core:$trustWalletCoreVersion"
+        val videoCompressor = arrayOf(
+            "com.github.AbedElazizShe:LightCompressor:$videoCompressorVersion",
         )
 
         val facebook = arrayOf(

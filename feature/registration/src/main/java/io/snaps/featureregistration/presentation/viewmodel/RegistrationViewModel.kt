@@ -46,7 +46,7 @@ class RegistrationViewModel @Inject constructor(
         if (authRepository.isEmailVerified()) {
             _uiState.update {
                 it.copy(
-                    bottomDialogType = BottomDialogType.SignIn,
+                    bottomDialog = BottomDialog.SignIn,
                     confirmPasswordValue = "",
                     passwordValue = "",
                     emailAddressValue = "",
@@ -55,7 +55,7 @@ class RegistrationViewModel @Inject constructor(
             _command publish Command.ShowBottomDialog
         } else {
             _uiState.update {
-                it.copy(dialogType = DialogType.EmailVerification)
+                it.copy(dialog = Dialog.EmailVerification)
             }
         }
     }
@@ -67,7 +67,7 @@ class RegistrationViewModel @Inject constructor(
     fun onForgotPasswordClicked() = viewModelScope.launch {
         _uiState.update {
             it.copy(
-                bottomDialogType = BottomDialogType.ResetPassword,
+                bottomDialog = BottomDialog.ResetPassword,
                 passwordResetEmailValue = "",
             )
         }
@@ -81,7 +81,7 @@ class RegistrationViewModel @Inject constructor(
             )
         }.doOnSuccess {
             _command publish Command.HideBottomDialog
-            _uiState.update { it.copy(dialogType = DialogType.ResetPasswordInstructions) }
+            _uiState.update { it.copy(dialog = Dialog.ResetPasswordInstructions) }
         }.doOnError { error, _ ->
             if (error.cause is FirebaseAuthException) {
                 notificationsSource.sendError(error)
@@ -100,7 +100,7 @@ class RegistrationViewModel @Inject constructor(
     fun showSignInBottomDialog() = viewModelScope.launch {
         _uiState.update {
             it.copy(
-                bottomDialogType = BottomDialogType.SignIn,
+                bottomDialog = BottomDialog.SignIn,
                 confirmPasswordValue = "",
                 passwordValue = "",
                 emailAddressValue = "",
@@ -112,7 +112,7 @@ class RegistrationViewModel @Inject constructor(
     fun showSignUpBottomDialog() = viewModelScope.launch {
         _uiState.update {
             it.copy(
-                bottomDialogType = BottomDialogType.SignUp,
+                bottomDialog = BottomDialog.SignUp,
                 confirmPasswordValue = "",
                 passwordValue = "",
                 emailAddressValue = "",
@@ -210,31 +210,31 @@ class RegistrationViewModel @Inject constructor(
         if (!authRepository.isEmailVerified()) {
             _command publish Command.HideBottomDialog
             _uiState.update {
-                it.copy(dialogType = DialogType.EmailVerification)
+                it.copy(dialog = Dialog.EmailVerification)
             }
         }
     }
 
     fun onEmailVerificationDialogDismissRequest() {
         _uiState.update {
-            it.copy(dialogType = null)
+            it.copy(dialog = null)
         }
     }
 
     fun onResetPasswordInstructionsDialogDismissRequest() {
         _uiState.update {
-            it.copy(dialogType = null)
+            it.copy(dialog = null)
         }
     }
 
     data class UiState(
         val isLoading: Boolean = false,
-        val bottomDialogType: BottomDialogType = BottomDialogType.SignIn,
+        val bottomDialog: BottomDialog = BottomDialog.SignIn,
         val emailAddressValue: String = "",
         val passwordResetEmailValue: String = "",
         val passwordValue: String = "",
         val confirmPasswordValue: String = "",
-        val dialogType: DialogType? = null,
+        val dialog: Dialog? = null,
     ) {
 
         val isSignInButtonEnabled
@@ -250,13 +250,13 @@ class RegistrationViewModel @Inject constructor(
         val isResetPasswordButtonEnabled get() = passwordResetEmailValue.isNotBlank()
     }
 
-    enum class BottomDialogType {
+    enum class BottomDialog {
         SignIn, SignUp, ResetPassword,
     }
 
-    sealed class DialogType {
-        object EmailVerification : DialogType()
-        object ResetPasswordInstructions : DialogType()
+    sealed class Dialog {
+        object EmailVerification : Dialog()
+        object ResetPasswordInstructions : Dialog()
     }
 
     sealed class Command {
