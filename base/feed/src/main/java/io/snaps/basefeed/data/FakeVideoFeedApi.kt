@@ -88,7 +88,6 @@ class FakeVideoFeedApi : VideoFeedApi {
         count: Int
     ): BaseResponse<List<VideoFeedItemResponseDto>> {
         return BaseResponse(
-            actualTimestamp = 1L,
             data = List(count) { videoFeedItemResponseDto(it, generation) }
         ).also { generation++ }
     }

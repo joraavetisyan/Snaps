@@ -37,11 +37,13 @@ import io.snaps.basefeed.ui.VideoClipScreen
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
+import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuitheme.compose.AppTheme
+import io.snaps.coreuitheme.compose.colors
 import io.snaps.featurefeed.ScreenNavigator
 import io.snaps.featurefeed.presentation.viewmodel.MainVideoFeedViewModel
 import io.snaps.featurefeed.presentation.viewmodel.SubscriptionsVideoFeedViewModel
@@ -82,7 +84,7 @@ private fun MainVideoFeedScreen(
     onAuthorClicked: (Uuid) -> Unit,
     onCreateVideoClicked: () -> Unit,
     mainHeaderState: MainHeaderState,
-    onTabRowClicked: (Int) -> Unit,
+    onTabRowClicked: (MainVideoFeedViewModel.Tab) -> Unit,
 ) {
     @Composable
     fun BoxScope.Header(paddingValues: PaddingValues) {
@@ -93,11 +95,9 @@ private fun MainVideoFeedScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             MainHeader(state = mainHeaderState)
-            screenState.screen?.let { screen ->
+            screenState.tab?.let { screen ->
                 CustomTabRow(
-                    tabs = MainVideoFeedViewModel.VideoClipScreen.values().map { item ->
-                        item.label.get().text
-                    },
+                    tabs = MainVideoFeedViewModel.Tab.values(),
                     selectedTabIndex = screen.ordinal,
                     onClick = { onTabRowClicked(it) },
                 )
@@ -105,15 +105,15 @@ private fun MainVideoFeedScreen(
         }
     }
 
-    when (screenState.screen) {
-        MainVideoFeedViewModel.VideoClipScreen.Subscriptions -> VideoClipScreen(
+    when (screenState.tab) {
+        MainVideoFeedViewModel.Tab.Subscriptions -> VideoClipScreen(
             viewModel = subscriptionsViewModel,
             onAuthorClicked = onAuthorClicked,
             onCreateVideoClicked = onCreateVideoClicked,
             content = { Header(paddingValues = it) }
         )
 
-        MainVideoFeedViewModel.VideoClipScreen.Main -> VideoClipScreen(
+        MainVideoFeedViewModel.Tab.Main -> VideoClipScreen(
             viewModel = mainViewModel,
             onAuthorClicked = onAuthorClicked,
             onCreateVideoClicked = onCreateVideoClicked,
@@ -131,9 +131,9 @@ private fun MainVideoFeedScreen(
 
 @Composable
 private fun CustomTabRow(
-    tabs: List<String>,
+    tabs: Array<MainVideoFeedViewModel.Tab>,
     selectedTabIndex: Int,
-    onClick: (Int) -> Unit,
+    onClick: (MainVideoFeedViewModel.Tab) -> Unit,
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -157,11 +157,11 @@ private fun CustomTabRow(
         Row(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            tabs.mapIndexed { index, text ->
+            tabs.mapIndexed { index, tab ->
                 TabItem(
                     isSelected = index == selectedTabIndex,
-                    onClick = { onClick(index) },
-                    text = text,
+                    onClick = { onClick(tab) },
+                    text = tab.label,
                     onTextLayout = {
                         tabWidths[index] = with(density) { it.size.width.toDp() }
                     }
@@ -182,17 +182,15 @@ private fun CustomTabRow(
 private fun TabItem(
     isSelected: Boolean,
     onClick: () -> Unit,
-    text: String,
+    text: TextValue,
     onTextLayout: (TextLayoutResult) -> Unit,
 ) {
     Text(
         modifier = Modifier
             .padding(vertical = 4.dp)
             .defaultTileRipple(onClick = onClick),
-        text = text,
-        color = if (isSelected) {
-            AppTheme.specificColorScheme.white
-        } else AppTheme.specificColorScheme.white_70,
+        text = text.get(),
+        color = colors { if (isSelected) white else white_40 },
         style = AppTheme.specificTypography.labelMedium,
         onTextLayout = { textLayoutResult -> onTextLayout(textLayoutResult) },
     )
