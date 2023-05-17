@@ -55,18 +55,16 @@ class PurchaseViewModel @Inject constructor(
 
     private val args = savedStateHandle.requireArgs<AppRoute.Purchase.Args>()
 
-    // todo localize
-    private val title: TextValue by lazy { "${args.type.name} NFT Minting".textValue() }
-
     private val _uiState = MutableStateFlow(
         UiState(
             nftType = args.type,
             nftImage = ImageValue.Url(args.image),
+            // todo currency name
             cost = "${args.costInUsd}${FiatCurrency.USD.symbol}",
             dailyUnlock = args.dailyUnlock,
             dailyReward = args.dailyReward,
             isPurchasable = args.isPurchasable,
-            isPurchasableWithBnb = featureToggle.isEnabled(Feature.PurchaseNftWithBnb),
+            isPurchasableWithBnb = args.type != NftType.Free && featureToggle.isEnabled(Feature.PurchaseNftWithBnb),
             prevNftImage = (args.type.intType - 1).let {
                 if (it != -1) {
                     NftType.fromIntType(it).getSunglassesImage()
@@ -74,6 +72,8 @@ class PurchaseViewModel @Inject constructor(
                     NftType.Free.getSunglassesImage()
                 }
             },
+            isFreeButtonVisible = args.type == NftType.Free
+                && (nftRepository.nftCollectionState.value.dataOrCache?.none { it.type == NftType.Free } ?: true),
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -81,18 +81,12 @@ class PurchaseViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
+    private val purchaseWithBnbDialogTitle: TextValue by lazy {
+        StringKey.PurchaseDialogWithBnbTitle.textValue(args.type.name)
+    }
+
     init {
         subscribeOnNewPurchases()
-        if (args.type == NftType.Free) {
-            nftRepository.nftCollectionState.value.dataOrCache?.any { it.type == NftType.Free }?.let { isNotEmpty ->
-                _uiState.update {
-                    it.copy(
-                        isFreeButtonVisible = !isNotEmpty,
-                        isPurchasableWithBnb = false,
-                    )
-                }
-            }
-        }
     }
 
     private fun subscribeOnNewPurchases() = viewModelScope.launch {
@@ -109,7 +103,7 @@ class PurchaseViewModel @Inject constructor(
                 purchaseToken = purchaseToken,
             )
         }.doOnSuccess {
-            notificationsSource.sendMessage("Purchase successful".textValue()) // todo localize
+            notificationsSource.sendMessage(StringKey.PurchaseMessageSuccess.textValue())
             _command publish Command.BackToMyCollectionScreen
         }.doOnError { error, _ ->
             notificationsSource.sendError(error)
@@ -130,7 +124,10 @@ class PurchaseViewModel @Inject constructor(
 
     fun onBuyWithBNBClicked() {
         viewModelScope.launch {
-            showTransferTokensBottomDialog(scope = viewModelScope, state = TransferTokensState.Shimmer(title = title))
+            showTransferTokensBottomDialog(
+                scope = viewModelScope,
+                state = TransferTokensState.Shimmer(title = purchaseWithBnbDialogTitle)
+            )
             getPurchaseNftWithBnbSummary()
         }
     }
@@ -141,10 +138,10 @@ class PurchaseViewModel @Inject constructor(
         }.doOnSuccess { summary ->
             updateTransferTokensState(
                 state = TransferTokensState.Data(
-                    title = title,
+                    title = purchaseWithBnbDialogTitle,
                     from = summary.from,
                     to = summary.to,
-                    // todo localize
+                    // todo currency name
                     summary = summary.summary.toStringValue() + " BNB",
                     gas = summary.gas.toStringValue() + " BNB",
                     total = summary.total.toStringValue() + " BNB",
@@ -155,10 +152,10 @@ class PurchaseViewModel @Inject constructor(
         }.doOnError { error, _ ->
             updateTransferTokensState(
                 state = TransferTokensState.Error(
-                    title = title,
+                    title = purchaseWithBnbDialogTitle,
                     message = MessageBannerState(
                         icon = AppTheme.specificIcons.reload.toImageValue(),
-                        description = "Not enough BNB to mint".textValue(), // todo localize
+                        description = StringKey.PurchaseErrorNotEnoughBnb.textValue(),
                         button = StringKey.ActionClose.textValue(),
                         onClick = { hideTransferTokensBottomDialog(viewModelScope) },
                     ).takeIf { error.cause is NoEnoughBnbToMint },
@@ -196,7 +193,7 @@ class PurchaseViewModel @Inject constructor(
         val isPurchasable: Boolean,
         val isPurchasableWithBnb: Boolean,
         val prevNftImage: ImageValue,
-        val isFreeButtonVisible: Boolean = true,
+        val isFreeButtonVisible: Boolean,
     )
 
     sealed class Command {

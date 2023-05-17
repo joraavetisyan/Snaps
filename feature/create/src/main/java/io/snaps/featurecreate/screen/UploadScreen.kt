@@ -138,7 +138,10 @@ private fun UploadScreen(
         ) {
             TitleTextField(uiState = uiState, onTitleChanged = onTitleChanged)
             /*DescriptionTextField(uiState = uiState, onDescriptionChanged = onDescriptionChanged)*/
-            Text(text = "Select video preview", style = typography { titleSmall }) // todo localize
+            Text(
+                text = LocalStringHolder.current(StringKey.UploadVideoTitlePreview),
+                style = typography { titleSmall },
+            )
             selectedBitmap?.let { bitmap ->
                 Canvas(
                     modifier = Modifier

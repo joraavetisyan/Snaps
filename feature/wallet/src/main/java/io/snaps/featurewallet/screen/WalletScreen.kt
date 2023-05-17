@@ -493,7 +493,7 @@ private fun Rewards(
                                 },
                             ) {
                                 Text(
-                                    text = it.name, // todo localize filter name
+                                    text = it.label.get(),
                                     style = AppTheme.specificTypography.bodySmall,
                                 )
                             }

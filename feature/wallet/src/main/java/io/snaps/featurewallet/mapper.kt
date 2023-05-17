@@ -107,10 +107,7 @@ fun State<List<PayoutOrderResponseDto>>.toPayoutStatusState(
                         onContactSupportClick = onContactSupportClick,
                         onCopyClick = onCopyClick,
                     )
-                    PayoutOrderStatus.Success -> PayoutStatusState.Data.Success(
-                        dto = it,
-                        onCopyClick = onCopyClick,
-                    )
+                    PayoutOrderStatus.Success -> PayoutStatusState.Success
                 }
             }
         } else {

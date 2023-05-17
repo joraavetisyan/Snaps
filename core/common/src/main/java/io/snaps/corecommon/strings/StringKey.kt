@@ -16,14 +16,18 @@ enum class StringKey {
     ActionOk,
 
     MessageConnectionSuccess,
+    MessageEmptyVideoFeed,
+    MessageNothingFound,
+
+    FieldMinutes,
+    FieldMinutesShort,
+    FieldSeconds,
+    FieldSecondsShort,
 
     Error,
     ErrorLoadFail,
     ErrorConnection,
     ErrorUnknown,
-
-    MessageEmptyVideoFeed,
-    MessageNothingFound,
 
     OnboardingRankTitle,
     OnboardingRankText,
@@ -179,6 +183,8 @@ enum class StringKey {
     SettingsTitleAboutProject,
     SettingsActionLogout,
     SettingsActionDeleteAccount,
+    SettingsDialogLogoutTitle,
+    SettingsDialogLogoutMessage,
 
     SocialNetworksTitle,
     SocialNetworksTitleDiscord,
@@ -264,6 +270,12 @@ enum class StringKey {
     BackupWalletKeyActionHold,
 
     WalletTitle,
+    WalletTitlePaymentStatus,
+    WalletFieldPaymentStatusInProcess,
+    WalletFieldPaymentStatusRejected,
+    WalletTitlePaymentTransactionId,
+    WalletMessagePaymentRejected,
+    WalletActionPaymentRejected,
     WalletActionTopUp,
     WalletActionWithdraw,
     WalletActionExchange,
@@ -290,6 +302,8 @@ enum class StringKey {
     RewardsActionClaim,
     RewardsErrorInsufficientBalance,
     RewardsErrorRepairGlasses,
+    RewardsFieldFilterLocked,
+    RewardsFieldFilterUnlocked,
     RewardsDialogTitleFootnote1,
     RewardsDialogTitleFootnote2,
     RewardsDialogMessageFootnote1,
@@ -309,6 +323,10 @@ enum class StringKey {
     WithdrawFieldTotal,
     WithdrawActionConfirmTransaction,
     WithdrawActionSendTransaction,
+    WithdrawErrorInvalidAddress,
+    WithdrawDialogWithdrawSuccessTitle,
+    WithdrawDialogWithdrawSuccessMessage,
+    WithdrawDialogWithdrawSuccessAction,
 
     ExchangeTitle,
 
@@ -337,6 +355,8 @@ enum class StringKey {
     MyCollectionFieldExperience,
     MyCollectionFieldLevel,
     MyCollectionFieldUpperThreshold,
+    MyCollectionDialogRepairSuccessTitle,
+    MyCollectionDialogRepairSuccessAction,
 
     RankSelectionTitle,
     RankSelectionActionFootnote,
@@ -358,6 +378,7 @@ enum class StringKey {
     PreviewVideoMessageSuccess,
 
     UploadVideoTitle,
+    UploadVideoTitlePreview,
     UploadVideoHintTitle,
     UploadVideoHintDescription,
     UploadVideoActionPublish,
@@ -379,6 +400,9 @@ enum class StringKey {
     PurchaseActionBuyWithBNB,
     PurchaseActionFree,
     PurchaseFieldOff,
+    PurchaseMessageSuccess,
+    PurchaseDialogWithBnbTitle,
+    PurchaseErrorNotEnoughBnb,
 
     VideoClipActionDelete,
     VideoClipTitleAction,

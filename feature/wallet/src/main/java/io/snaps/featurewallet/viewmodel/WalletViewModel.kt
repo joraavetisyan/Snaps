@@ -463,13 +463,16 @@ class WalletViewModel @Inject constructor(
         object RewardsWithdraw : BottomDialog()
     }
 
-    enum class FilterOptions {
-        Unlocked, Locked
+    enum class FilterOptions(val label: TextValue) {
+        Unlocked(StringKey.RewardsFieldFilterUnlocked.textValue()),
+        Locked(StringKey.RewardsFieldFilterLocked.textValue()),
+        ;
     }
 
     enum class Screen(val label: TextValue) {
         Wallet(StringKey.WalletTitle.textValue()),
-        Rewards(StringKey.RewardsTitle.textValue());
+        Rewards(StringKey.RewardsTitle.textValue()),
+        ;
 
         companion object {
             fun getByOrdinal(ordinal: Int) = values().firstOrNull { it.ordinal == ordinal }

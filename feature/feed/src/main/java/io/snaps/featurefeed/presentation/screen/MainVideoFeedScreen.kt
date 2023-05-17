@@ -190,8 +190,8 @@ private fun TabItem(
             .padding(vertical = 4.dp)
             .defaultTileRipple(onClick = onClick),
         text = text.get(),
-        color = colors { if (isSelected) white else white_40 },
-        style = AppTheme.specificTypography.labelMedium,
+        color = colors { if (isSelected) white else darkGrey },
+        style = AppTheme.specificTypography.labelLarge,
         onTextLayout = { textLayoutResult -> onTextLayout(textLayoutResult) },
     )
 }

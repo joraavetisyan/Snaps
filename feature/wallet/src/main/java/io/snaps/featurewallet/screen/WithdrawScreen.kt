@@ -94,10 +94,9 @@ fun WithdrawScreen(
                 )
                 is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess -> SimpleBottomDialog(
                     image = ImageValue.ResImage(R.drawable.img_guy_hands_up),
-                    // todo localize
-                    title = "Transaction succeeded".textValue(),
-                    text = "Sent ${dialog.sent} to ${dialog.to}".textValue(),
-                    buttonText = "View on Bscscan".textValue(),
+                    title = StringKey.WithdrawDialogWithdrawSuccessTitle.textValue(),
+                    text = StringKey.WithdrawDialogWithdrawSuccessMessage.textValue(dialog.sent.orEmpty(), dialog.to.orEmpty()),
+                    buttonText = StringKey.WithdrawDialogWithdrawSuccessAction.textValue(),
                     onClick = {
                         coroutineScope.launch { sheetState.hide() }
                         context.openUrl(dialog.bscScanLink)
@@ -236,10 +235,10 @@ private fun WithdrawScreen(
                 SimpleButtonContentWithLoader(
                     isLoading = uiState.isCalculating,
                     text = if (uiState.isAddressInvalid) {
-                        "Invalid address".textValue()
+                        StringKey.WithdrawErrorInvalidAddress
                     } else {
-                        StringKey.WithdrawActionConfirmTransaction.textValue()
-                    },
+                        StringKey.WithdrawActionConfirmTransaction
+                    }.textValue(),
                 )
             }
         }

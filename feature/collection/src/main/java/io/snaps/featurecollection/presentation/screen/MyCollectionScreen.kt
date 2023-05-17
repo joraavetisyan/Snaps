@@ -98,8 +98,8 @@ fun MyCollectionScreen(
                 TransferTokensDialogHandler.BottomDialog.TokensTransfer -> Unit
                 is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess -> SimpleBottomDialog(
                     image = ImageValue.ResImage(R.drawable.img_guy_hands_up),
-                    title = "Repair succeeded".textValue(), // todo localize
-                    buttonText = "View on Bscscan".textValue(),
+                    title = StringKey.MyCollectionDialogRepairSuccessTitle.textValue(),
+                    buttonText = StringKey.MyCollectionDialogRepairSuccessAction.textValue(),
                     onClick = {
                         coroutineScope.launch { sheetState.hide() }
                         context.openUrl(dialog.bscScanLink)

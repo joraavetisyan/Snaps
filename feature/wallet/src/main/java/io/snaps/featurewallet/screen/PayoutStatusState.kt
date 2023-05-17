@@ -21,12 +21,14 @@ import io.snaps.basewallet.data.model.PayoutOrderResponseDto
 import io.snaps.basewallet.data.model.PayoutOrderStatus
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.Uuid
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonRedActionS
 import io.snaps.coreuicompose.uikit.other.ShimmerTileLine
 import io.snaps.coreuicompose.uikit.other.SimpleCard
 import io.snaps.coreuitheme.compose.AppTheme
+import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.coreuitheme.compose.colors
 import io.snaps.coreuitheme.compose.icons
 
@@ -44,15 +46,12 @@ sealed class PayoutStatusState {
 
         data class Rejected(
             override val dto: PayoutOrderResponseDto,
+            override val onCopyClick: (Uuid) -> Unit,
             val onContactSupportClick: () -> Unit,
-            override val onCopyClick: (Uuid) -> Unit,
-        ) : Data()
-
-        data class Success(
-            override val dto: PayoutOrderResponseDto,
-            override val onCopyClick: (Uuid) -> Unit,
         ) : Data()
     }
+
+    object Success : PayoutStatusState()
 
     object Shimmer : PayoutStatusState()
 }
@@ -63,8 +62,9 @@ fun PayoutStatus(
     data: PayoutStatusState,
 ) {
     when (data) {
-        PayoutStatusState.Shimmer -> Shimmer()
         is PayoutStatusState.Data -> Data(modifier, data)
+        PayoutStatusState.Success -> Unit
+        PayoutStatusState.Shimmer -> Shimmer()
     }
 }
 
@@ -98,14 +98,12 @@ private fun Data(
     modifier: Modifier,
     data: PayoutStatusState.Data,
 ) {
-    if (data is PayoutStatusState.Data.Success) return
     Container(
         modifier = modifier,
         backgroundColor = colors {
             when (data) {
-                is PayoutStatusState.Data.Processing -> Color(0xFFF2F3FE)
-                is PayoutStatusState.Data.Rejected -> Color(0xFFFEF2F2)
-                is PayoutStatusState.Data.Success -> white
+                is PayoutStatusState.Data.Processing -> Color(0xFFF2F3FE) // todo colors
+                is PayoutStatusState.Data.Rejected -> Color(0xFFFEF2F2) // todo colors
             }
         },
     ) {
@@ -113,24 +111,27 @@ private fun Data(
             when (data) {
                 is PayoutStatusState.Data.Processing -> textLink
                 is PayoutStatusState.Data.Rejected -> uiSystemRed
-                is PayoutStatusState.Data.Success -> textPrimary
             }
         }
+        val style = AppTheme.specificTypography.bodySmall
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            // todo localize
-            Text("Payment status:", color = color)
+            Text(
+                text = LocalStringHolder.current(StringKey.WalletTitlePaymentStatus),
+                color = color,
+                style = style,
+            )
             Text(
                 text = when (data.dto.status) {
-                    // todo localize
-                    PayoutOrderStatus.InProcess -> "In progress"
-                    PayoutOrderStatus.Success -> "Success"
-                    PayoutOrderStatus.Rejected -> "In progress"
-                },
+                    PayoutOrderStatus.InProcess -> StringKey.WalletFieldPaymentStatusInProcess.textValue()
+                    PayoutOrderStatus.Success -> "".textValue()
+                    PayoutOrderStatus.Rejected -> StringKey.WalletFieldPaymentStatusRejected.textValue()
+                }.get(),
                 color = color,
+                style = style,
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -139,8 +140,18 @@ private fun Data(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            // todo localize
-            Text("Transaction Id:\n${data.dto.id}", color = color)
+            Column {
+                Text(
+                    text = LocalStringHolder.current(StringKey.WalletTitlePaymentTransactionId),
+                    color = color,
+                    style = style,
+                )
+                Text(
+                    text = data.dto.id,
+                    color = color,
+                    style = style,
+                )
+            }
             IconButton(onClick = { data.onCopyClick(data.dto.id) }) {
                 Icon(painter = icons { copy }.get(), contentDescription = null, tint = colors { darkGrey })
             }
@@ -152,10 +163,13 @@ private fun Data(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                // todo localize
-                Text("An error occurred because\nno such card was found.", color = color)
+                Text(
+                    text = LocalStringHolder.current(StringKey.WalletMessagePaymentRejected),
+                    color = color,
+                    style = style,
+                )
                 SimpleButtonRedActionS(onClick = data.onContactSupportClick) {
-                    SimpleButtonContent(text = "Contact support".textValue())
+                    SimpleButtonContent(text = StringKey.WalletActionPaymentRejected.textValue())
                 }
             }
         }
@@ -211,7 +225,7 @@ private fun PreviewProcessing() {
 private fun PreviewSuccess() {
     PayoutStatus(
         modifier = Modifier.padding(16.dp),
-        data = PayoutStatusState.Data.Success(previewDto(PayoutOrderStatus.Success), {})
+        data = PayoutStatusState.Success,
     )
 }
 
