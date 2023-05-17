@@ -83,6 +83,7 @@ import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStat
 import io.snaps.coreuicompose.uikit.button.SimpleChip
 import io.snaps.coreuicompose.uikit.button.SimpleChipConfig
 import io.snaps.coreuicompose.uikit.dialog.SimpleConfirmDialogUi
+import io.snaps.coreuicompose.uikit.other.Progress
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.scroll.DetectScroll
 import io.snaps.coreuicompose.uikit.scroll.ScrollInfo
@@ -260,6 +261,7 @@ fun VideoClipScreen(
                                     onMoreClicked = viewModel::onMoreClicked,
                                     onCreateVideoClicked = onCreateVideoClicked,
                                     onSubscribeClicked = viewModel::onSubscribeClicked,
+                                    onProgressChanged = viewModel::onProgressChanged,
                                 )
                             }
                             is VideoClipUiState.Shimmer -> FullScreenLoaderUi(
@@ -325,6 +327,7 @@ private fun VideoClip(
     onMoreClicked: () -> Unit,
     onCreateVideoClicked: (() -> Unit)?,
     onSubscribeClicked: () -> Unit,
+    onProgressChanged: (Float) -> Unit,
 ) {
     val shouldPlay by remember(pagerState) {
         derivedStateOf {
@@ -344,6 +347,8 @@ private fun VideoClip(
         onMuted = onMuteClicked,
         isScrolling = pagerState.isScrollInProgress,
         onLiked = { onDoubleLikeClicked(item.clip) },
+        onProgressChanged = onProgressChanged,
+        progressPollFrequencyInMillis = 50L,
     )
 
     VideoClipItems(
@@ -353,6 +358,7 @@ private fun VideoClip(
         isSubscribed = uiState.isSubscribed,
         authorProfileAvatar = uiState.authorProfileAvatar,
         authorName = uiState.authorName,
+        progress = uiState.playProgress,
         onAuthorClicked = onAuthorClicked,
         onLikeClicked = onLikeClicked,
         onCommentClicked = onCommentClicked,
@@ -372,6 +378,7 @@ private fun VideoClipItems(
     isSubscribed: Boolean,
     authorProfileAvatar: ImageValue?,
     authorName: String,
+    progress: Float,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onCommentClicked: (VideoClipModel) -> Unit,
@@ -409,6 +416,16 @@ private fun VideoClipItems(
                 onMoreClicked = onMoreClicked,
                 onCreateVideoClicked = onCreateVideoClicked,
                 onSubscribeClicked = onSubscribeClicked,
+            )
+            Progress(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                progress = progress,
+                isDashed = false,
+                backColor = AppTheme.specificColorScheme.white_40,
+                fillColor = AppTheme.specificColorScheme.white,
+                height = 6.dp,
             )
         }
     }

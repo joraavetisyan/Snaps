@@ -110,6 +110,7 @@ abstract class VideoFeedViewModel(
         loadComments(videoClip.id)
         loadAuthor(videoClip.authorId)
         loadSubscriptions(videoClip.authorId)
+        onProgressChanged(0f)
     }
 
     private fun loadComments(videoId: Uuid) {
@@ -350,6 +351,10 @@ abstract class VideoFeedViewModel(
         }
     }
 
+    fun onProgressChanged(value: Float) {
+        _uiState.update { it.copy(playProgress = value) }
+    }
+
     data class UiState(
         val isMuted: Boolean = false,
         val profileAvatar: ImageValue? = null,
@@ -363,6 +368,7 @@ abstract class VideoFeedViewModel(
         val actions: List<ActionData>,
         val isSubscribeButtonVisible: Boolean = false,
         val isSubscribed: Boolean = false,
+        val playProgress: Float = 0f,
     ) {
 
         val isCommentSendEnabled get() = comment.text.isNotBlank()
