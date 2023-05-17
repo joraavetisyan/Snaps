@@ -87,21 +87,24 @@ class VideoFeedRepositoryImpl @Inject constructor(
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
-
+                    VideoFeedType.Subscriptions -> PagedLoaderParams(
+                        action = { from, count -> videoFeedApi.subscriptionsFeed(from, count) },
+                        pageSize = 5,
+                        nextPageIdFactory = { it.entityId },
+                        mapper = { it.toVideoClipModelList(getLikedVideos()) },
+                    )
                     is VideoFeedType.Single -> PagedLoaderParams(
                         action = { _, _ -> videoFeedApi.feed(type.videoId, 1) },
                         pageSize = 1,
                         nextPageIdFactory = { null },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
-
                     is VideoFeedType.Popular -> PagedLoaderParams(
                         action = { from, count -> videoFeedApi.popularFeed(from, count) },
                         pageSize = 12,
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
-
                     is VideoFeedType.User -> PagedLoaderParams(
                         action = { from, count ->
                             if (type.userId != null) {
@@ -114,14 +117,12 @@ class VideoFeedRepositoryImpl @Inject constructor(
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
-
                     is VideoFeedType.All -> PagedLoaderParams(
                         action = { from, count -> videoFeedApi.videos(type.query, from, count) },
                         pageSize = 12,
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
-
                     is VideoFeedType.UserLiked -> throw IllegalStateException("Unknown video type")
                 }
             }

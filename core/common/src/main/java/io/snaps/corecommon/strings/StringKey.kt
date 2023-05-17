@@ -391,4 +391,7 @@ enum class StringKey {
     NftDetailsDescriptionCondition,
     NftDetailsTitleLevel,
     NftDetailsDescriptionLevel,
+
+    MainVideoFeedTitleForYou,
+    MainVideoFeedTitleSubscriptions,
 }

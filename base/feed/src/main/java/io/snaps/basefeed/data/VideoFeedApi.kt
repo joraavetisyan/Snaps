@@ -44,6 +44,12 @@ interface VideoFeedApi {
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
 
+    @GET("video/subscriptions")
+    suspend fun subscriptionsFeed(
+        @Query("from") from: Uuid?,
+        @Query("count") count: Int,
+    ): BaseResponse<List<VideoFeedItemResponseDto>>
+
     // todo there must not be from and count
     @GET("user/likes")
     suspend fun likedVideos(
