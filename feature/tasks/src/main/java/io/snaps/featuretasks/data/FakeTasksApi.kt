@@ -19,7 +19,6 @@ class FakeTasksApi : TasksApi {
         @Query(value = "count") count: Int
     ): BaseResponse<List<HistoryTaskItemResponseDto>> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = getTasks()
         ).also {
             delay(mockDelay)
@@ -28,7 +27,6 @@ class FakeTasksApi : TasksApi {
 
     override suspend fun instagramPost(): BaseResponse<Completable> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = Completable
         ).also {
             delay(mockDelay)

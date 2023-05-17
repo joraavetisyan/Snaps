@@ -175,8 +175,8 @@ fun RegistrationScreen(
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-            when (uiState.bottomDialogType) {
-                RegistrationViewModel.BottomDialogType.SignIn -> LoginWithEmailDialog(
+            when (uiState.bottomDialog) {
+                RegistrationViewModel.BottomDialog.SignIn -> LoginWithEmailDialog(
                     uiState = uiState,
                     focusRequester = focusRequester,
                     onLoginWithEmailClicked = viewModel::signInWithEmail,
@@ -186,7 +186,7 @@ fun RegistrationScreen(
                     onForgotPasswordClicked = viewModel::onForgotPasswordClicked,
                 )
 
-                RegistrationViewModel.BottomDialogType.SignUp -> RegistrationWithEmailDialog(
+                RegistrationViewModel.BottomDialog.SignUp -> RegistrationWithEmailDialog(
                     uiState = uiState,
                     focusRequester = focusRequester,
                     onEmailAddressValueChanged = viewModel::onEmailAddressValueChanged,
@@ -198,7 +198,7 @@ fun RegistrationScreen(
                     onTermsOfUserClicked = viewModel::onTermsOfUserClicked,
                 )
 
-                RegistrationViewModel.BottomDialogType.ResetPassword -> ResetPasswordDialog(
+                RegistrationViewModel.BottomDialog.ResetPassword -> ResetPasswordDialog(
                     passwordResetEmail = uiState.passwordResetEmailValue,
                     focusRequester = focusRequester,
                     isResetPasswordButtonEnabled = uiState.isResetPasswordButtonEnabled,
@@ -291,16 +291,16 @@ private fun RegistrationScreen(
         }
     }
 
-    uiState.dialogType?.let {
+    uiState.dialog?.let {
         when (it) {
-            RegistrationViewModel.DialogType.EmailVerification -> SimpleAlertDialogUi(
+            RegistrationViewModel.Dialog.EmailVerification -> SimpleAlertDialogUi(
                 text = StringKey.RegistrationDialogVerificationMessage.textValue(),
                 title = StringKey.RegistrationDialogVerificationTitle.textValue(),
                 buttonText = StringKey.ActionOk.textValue(),
                 onClickRequest = onEmailVerificationDialogDismissRequest,
             )
 
-            RegistrationViewModel.DialogType.ResetPasswordInstructions -> SimpleAlertDialogUi(
+            RegistrationViewModel.Dialog.ResetPasswordInstructions -> SimpleAlertDialogUi(
                 text = StringKey.RegistrationDialogResetPasswordInstructionsMessage.textValue(),
                 buttonText = StringKey.ActionOk.textValue(),
                 onClickRequest = onResetPasswordInstructionsDialogDismissRequest,

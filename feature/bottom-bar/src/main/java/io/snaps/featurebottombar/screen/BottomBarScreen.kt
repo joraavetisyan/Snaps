@@ -212,14 +212,14 @@ private fun OnboardingDialog(
     onboardingState: OnboardingHandler.UiState,
     onClicked: (OnboardingType?) -> Unit,
 ) {
-    when (onboardingState.dialogType) {
+    when (onboardingState.onboardingType) {
         OnboardingType.Rank -> SimpleBottomDialog(
             image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
             title = StringKey.OnboardingRankTitle.textValue(),
             text = StringKey.OnboardingRankText.textValue(),
             buttonText = StringKey.OnboardingRankAction.textValue(),
             onClick = {
-                onClicked(onboardingState.dialogType)
+                onClicked(onboardingState.onboardingType)
             },
         )
         OnboardingType.Popular -> SimpleBottomDialog(
@@ -228,7 +228,7 @@ private fun OnboardingDialog(
             text = StringKey.OnboardingPopularText.textValue(),
             buttonText = StringKey.OnboardingPopularAction.textValue(),
             onClick = {
-                onClicked(onboardingState.dialogType)
+                onClicked(onboardingState.onboardingType)
             },
         )
         OnboardingType.Tasks -> SimpleBottomDialog(
@@ -237,7 +237,7 @@ private fun OnboardingDialog(
             text = StringKey.OnboardingTasksText.textValue(),
             buttonText = StringKey.OnboardingTasksAction.textValue(),
             onClick = {
-                onClicked(onboardingState.dialogType)
+                onClicked(onboardingState.onboardingType)
             },
         )
         OnboardingType.Nft -> SimpleBottomDialog(
@@ -246,7 +246,7 @@ private fun OnboardingDialog(
             text = StringKey.OnboardingNftText.textValue(),
             buttonText = StringKey.OnboardingNftAction.textValue(),
             onClick = {
-                onClicked(onboardingState.dialogType)
+                onClicked(onboardingState.onboardingType)
             },
         )
         OnboardingType.Referral -> SimpleBottomDialog(
@@ -255,7 +255,7 @@ private fun OnboardingDialog(
             text = StringKey.OnboardingReferralText.textValue(),
             buttonText = StringKey.OnboardingReferralAction.textValue(),
             onClick = {
-                onClicked(onboardingState.dialogType)
+                onClicked(onboardingState.onboardingType)
             },
         )
         OnboardingType.Wallet -> SimpleBottomDialog(
@@ -264,7 +264,7 @@ private fun OnboardingDialog(
             text = StringKey.OnboardingWalletText.textValue(),
             buttonText = StringKey.OnboardingWalletAction.textValue(),
             onClick = {
-                onClicked(onboardingState.dialogType)
+                onClicked(onboardingState.onboardingType)
             },
         )
         OnboardingType.Rewards -> SimpleBottomDialog(
@@ -273,7 +273,7 @@ private fun OnboardingDialog(
             text = StringKey.OnboardingRewardsText.textValue(),
             buttonText = StringKey.OnboardingRewardsAction.textValue(),
             onClick = {
-                onClicked(onboardingState.dialogType)
+                onClicked(onboardingState.onboardingType)
             },
         )
         null -> Box(modifier = Modifier.size(1.dp))

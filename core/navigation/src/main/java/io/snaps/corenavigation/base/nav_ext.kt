@@ -35,15 +35,12 @@ const val ARG_KEY = "arg"
 const val ROUTE_ARGS_SEPARATOR = '?'
 
 inline fun <reified ARG> ARG.toQuery() = ARG_KEY + "=" + Json.encodeToString(this)
-inline fun <reified ARG> SavedStateHandle.getArg(): ARG? =
-    this.get<String>(ARG_KEY)?.let { Json.decodeFromString(it) }
-
+inline fun <reified ARG> SavedStateHandle.getArg(): ARG? = get<String>(ARG_KEY)?.let { Json.decodeFromString(it) }
 inline fun <reified ARG> SavedStateHandle.requireArgs(): ARG = requireNotNull(getArg())
 
 fun createRoute(route: Route) = route.path()
 fun createRouteWithArg(route: RouteWithArg) = "${route.path()}?$ARG_KEY={$ARG_KEY}"
-inline fun <reified ARG> createRouteWithArg(route: RouteWithArg, arg: ARG) =
-    "${route.path()}?${arg.toQuery()}"
+inline fun <reified ARG> createRouteWithArg(route: RouteWithArg, arg: ARG) = "${route.path()}?${arg.toQuery()}"
 
 fun NavGraphBuilder.composable(
     route: Route,
@@ -91,11 +88,10 @@ fun <T> NavController.popBackStackWithResult(result: T) {
     popBackStack()
 }
 
-inline infix fun <reified ARG> NavController.navigate(direction: FeatureNavDirection<ARG>) =
-    navigate(
-        route = direction.route.path(direction.arg.toDefaultFormat()),
-        builder = direction.optionsBuilder,
-    )
+inline infix fun <reified ARG> NavController.navigate(direction: FeatureNavDirection<ARG>) = navigate(
+    route = direction.route.path(direction.arg.toDefaultFormat()),
+    builder = direction.optionsBuilder,
+)
 
 fun <T> NavController.resultFlow(): Flow<T>? {
     return currentBackStackEntry?.savedStateHandle?.getLiveData<T>(RESULT_KEY)?.asFlow()?.onEach {

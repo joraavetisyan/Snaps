@@ -8,10 +8,10 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.HiltAndroidApp
 import io.snaps.basesources.NetworkStateSource
 import io.snaps.basesources.featuretoggle.FeatureToggleUpdater
+import io.snaps.basewallet.data.CryptoInitializer
 import io.snaps.corecommon.analytics.AnalyticsTracker
 import io.snaps.corecommon.analytics.AnalyticsTrackerHolder
 import io.snaps.corecommon.model.BuildInfo
-import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.coredata.coroutine.ApplicationCoroutineScopeHolder
 import io.snaps.coredata.network.ApiConfig
 import io.snaps.coreui.notification.NotificationHelper
@@ -47,23 +47,23 @@ class SnapsApp : Application(), ApplicationCoroutineScopeHolder, ImageLoaderFact
     override val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     init {
-        System.loadLibrary("TrustWalletCore")
+        CryptoInitializer.loadLibs()
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!buildInfo.isDebug)
 
         AnalyticsTrackerHolder.init(tracker)
 
-        CryptoKit.init(this)
+        CryptoInitializer.initKit(this)
 
-        // todo move to wrapper with  notificationHelper
+        // todo move to wrapper with notificationHelper
         UploadServiceConfig.initialize(
             context = this,
             defaultNotificationChannel = NotificationHelper.Channels.Upload.getId(this),
-            debug = BuildConfig.DEBUG,
+            debug = buildInfo.isDebug,
         )
     }
 

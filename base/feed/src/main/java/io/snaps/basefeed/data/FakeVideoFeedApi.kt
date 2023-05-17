@@ -31,7 +31,6 @@ class FakeVideoFeedApi : VideoFeedApi {
         log("Requesting feed: $count videos with offset $from")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = List(count) { videoFeedItemResponseDto(it, generation) }
         ).also { generation++ }
     }
@@ -57,7 +56,6 @@ class FakeVideoFeedApi : VideoFeedApi {
         log("Requesting my feed: $count videos with offset $from")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = List(count) { videoFeedItemResponseDto(it, myGeneration) }
         ).also { myGeneration++ }
     }
@@ -70,7 +68,6 @@ class FakeVideoFeedApi : VideoFeedApi {
         log("Requesting user $userId feed: $count videos with offset $from")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = List(count) { videoFeedItemResponseDto(it, userGeneration) }
         ).also { userGeneration++ }
     }
@@ -82,7 +79,6 @@ class FakeVideoFeedApi : VideoFeedApi {
         log("Requesting popular feed: $count videos with offset $from")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = List(count) { videoFeedItemResponseDto(it, popularGeneration) }
         ).also { popularGeneration++ }
     }
@@ -94,7 +90,6 @@ class FakeVideoFeedApi : VideoFeedApi {
         log("Requesting liked videos: $count videos with offset $from")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = List(count) {
                 UserLikedVideoResponseDto(
                     entityId = "${generation}video$it",
@@ -126,7 +121,6 @@ class FakeVideoFeedApi : VideoFeedApi {
         log("Requesting video: $count videos with offset $from")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = List(count) { videoFeedItemResponseDto(it, generation) }
         ).also { generation++ }
     }
@@ -135,7 +129,6 @@ class FakeVideoFeedApi : VideoFeedApi {
         log("Requesting view video $videoId")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = Completable,
         )
     }
@@ -144,7 +137,6 @@ class FakeVideoFeedApi : VideoFeedApi {
         log("Requesting like video $videoId")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = Completable,
         )
     }
@@ -153,7 +145,6 @@ class FakeVideoFeedApi : VideoFeedApi {
         log("Requesting add video")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = AddVideoResponseDto(
                 entityId = "${popularGeneration}video",
             ),
@@ -167,7 +158,6 @@ class FakeVideoFeedApi : VideoFeedApi {
         log("Requesting upload video")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = Completable,
         )
     }
@@ -176,7 +166,6 @@ class FakeVideoFeedApi : VideoFeedApi {
         log("Requesting delete video")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = Completable,
         )
     }

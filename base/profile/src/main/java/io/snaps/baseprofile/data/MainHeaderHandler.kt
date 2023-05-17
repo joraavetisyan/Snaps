@@ -36,9 +36,9 @@ interface MainHeaderHandler {
 
 class MainHeaderHandlerImplDelegate @Inject constructor(
     @ApplicationCoroutineScope private val scope: CoroutineScope,
+    private val action: Action,
     private val profileRepository: ProfileRepository,
     private val walletRepository: WalletRepository,
-    private val action: Action,
 ) : MainHeaderHandler {
 
     private val _uiState = MutableStateFlow(MainHeaderHandler.UiState())

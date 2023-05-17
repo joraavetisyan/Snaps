@@ -12,11 +12,13 @@ import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basewallet.domain.NftMintSummary
 import io.snaps.basewallet.domain.NoEnoughBnbToMint
+import io.snaps.basewallet.ui.TransferTokensDialogHandler
+import io.snaps.basewallet.ui.TransferTokensState
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toStringValue
 import io.snaps.corecommon.model.FiatCurrency
-import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.Token
 import io.snaps.corecommon.strings.StringKey
@@ -28,7 +30,6 @@ import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurecollection.domain.MyCollectionInteractor
-import io.snaps.featurecollection.presentation.screen.PurchaseWithBnbState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,15 +44,19 @@ import javax.inject.Inject
 class PurchaseViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     featureToggle: FeatureToggle,
+    transferTokensDialogHandlerImplDelegate: TransferTokensDialogHandler,
     nftRepository: NftRepository,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
     private val purchaseStateProvider: PurchaseStateProvider,
     private val billingRouter: BillingRouter,
     private val interactor: MyCollectionInteractor,
-) : SimpleViewModel() {
+) : SimpleViewModel(), TransferTokensDialogHandler by transferTokensDialogHandlerImplDelegate {
 
     private val args = savedStateHandle.requireArgs<AppRoute.Purchase.Args>()
+
+    // todo localize
+    private val title: TextValue by lazy { "${args.type.name} NFT Minting".textValue() }
 
     private val _uiState = MutableStateFlow(
         UiState(
@@ -69,7 +74,6 @@ class PurchaseViewModel @Inject constructor(
                     NftType.Free.getSunglassesImage()
                 }
             },
-            purchaseWithBnbState = PurchaseWithBnbState.Shimmer(nftType = args.type),
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -126,13 +130,7 @@ class PurchaseViewModel @Inject constructor(
 
     fun onBuyWithBNBClicked() {
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    bottomDialog = BottomDialog.PurchaseWithBnb,
-                    purchaseWithBnbState = PurchaseWithBnbState.Shimmer(nftType = args.type),
-                )
-            }
-            _command publish Command.ShowBottomDialog
+            showTransferTokensBottomDialog(scope = viewModelScope, state = TransferTokensState.Shimmer(title = title))
             getPurchaseNftWithBnbSummary()
         }
     }
@@ -141,58 +139,43 @@ class PurchaseViewModel @Inject constructor(
         action.execute {
             interactor.getNftMintSummary(args.type)
         }.doOnSuccess { summary ->
-            _uiState.update {
-                it.copy(
-                    purchaseWithBnbState = PurchaseWithBnbState.Data(
-                        nftType = args.type,
-                        from = summary.from,
-                        to = summary.to,
-                        // todo localize
-                        summary = summary.summary.toStringValue() + " BNB",
-                        gas = summary.gas.toStringValue() + " BNB",
-                        total = summary.total.toStringValue() + " BNB",
-                        onConfirmClick = { onConfirmed(summary) },
-                        onCancelClick = {
-                            viewModelScope.launch {
-                                _command publish Command.HideBottomDialog
-                            }
-                        },
-                    )
+            updateTransferTokensState(
+                state = TransferTokensState.Data(
+                    title = title,
+                    from = summary.from,
+                    to = summary.to,
+                    // todo localize
+                    summary = summary.summary.toStringValue() + " BNB",
+                    gas = summary.gas.toStringValue() + " BNB",
+                    total = summary.total.toStringValue() + " BNB",
+                    onConfirmClick = { onConfirmed(summary) },
+                    onCancelClick = { hideTransferTokensBottomDialog(viewModelScope) },
                 )
-            }
+            )
         }.doOnError { error, _ ->
-            _uiState.update {
-                it.copy(
-                    purchaseWithBnbState = PurchaseWithBnbState.Error(
-                        nftType = args.type,
-                        message = MessageBannerState(
-                            icon = AppTheme.specificIcons.reload.toImageValue(),
-                            description = "Not enough BNB to mint".textValue(), // todo localize
-                            button = StringKey.ActionClose.textValue(),
-                            onClick = {
-                                viewModelScope.launch {
-                                    _command publish Command.HideBottomDialog
-                                }
-                            }
-                        ).takeIf { error.cause is NoEnoughBnbToMint },
-                        onClick = ::onBuyWithBNBClicked,
-                    )
+            updateTransferTokensState(
+                state = TransferTokensState.Error(
+                    title = title,
+                    message = MessageBannerState(
+                        icon = AppTheme.specificIcons.reload.toImageValue(),
+                        description = "Not enough BNB to mint".textValue(), // todo localize
+                        button = StringKey.ActionClose.textValue(),
+                        onClick = { hideTransferTokensBottomDialog(viewModelScope) },
+                    ).takeIf { error.cause is NoEnoughBnbToMint },
+                    onClick = ::onBuyWithBNBClicked,
                 )
-            }
+            )
         }
     }
 
     private fun onConfirmed(summary: NftMintSummary) {
         viewModelScope.launch {
-            _command publish Command.HideBottomDialog
+            hideTransferTokensBottomDialog(viewModelScope)
             _uiState.update { it.copy(isLoading = true) }
             action.execute {
                 interactor.mintOnBlockchain(nftType = args.type, summary = summary)
             }.doOnSuccess { hash ->
-                _uiState.update {
-                    it.copy(bottomDialog = BottomDialog.PurchaseWithBnbSuccess("https://testnet.bscscan.com/tx/${hash}"))
-                }
-                _command publish Command.ShowBottomDialog
+                onSuccessfulTransfer(scope = viewModelScope, txHash = hash)
             }.doOnError { error, _ ->
                 if (error.code == 400) notificationsSource.sendError(error)
             }.doOnComplete {
@@ -213,19 +196,10 @@ class PurchaseViewModel @Inject constructor(
         val isPurchasable: Boolean,
         val isPurchasableWithBnb: Boolean,
         val prevNftImage: ImageValue,
-        val bottomDialog: BottomDialog = BottomDialog.PurchaseWithBnb,
-        val purchaseWithBnbState: PurchaseWithBnbState,
         val isFreeButtonVisible: Boolean = true,
     )
 
-    sealed class BottomDialog {
-        object PurchaseWithBnb : BottomDialog()
-        data class PurchaseWithBnbSuccess(val link: FullUrl) : BottomDialog()
-    }
-
     sealed class Command {
         object BackToMyCollectionScreen : Command()
-        object ShowBottomDialog : Command()
-        object HideBottomDialog : Command()
     }
 }

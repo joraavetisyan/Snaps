@@ -6,6 +6,7 @@ import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basesubs.data.SubsRepository
+import io.snaps.basesubs.domain.SubModel
 import io.snaps.basesubs.domain.SubPageModel
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corenavigation.AppRoute
@@ -33,7 +34,14 @@ class SubsViewModel @Inject constructor(
 
     private val args = stateHandle.requireArgs<AppRoute.Subs.Args>()
 
-    private val _uiState = MutableStateFlow(UiState())
+    private val _uiState = MutableStateFlow(
+        UiState(
+            nickname = args.nickname,
+            totalSubscribers = args.totalSubscribers,
+            totalSubscriptions = args.totalSubscriptions,
+            initialPage = args.subsPage.ordinal,
+        )
+    )
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
@@ -43,14 +51,6 @@ class SubsViewModel @Inject constructor(
     private var subscriptionsPageModel: SubPageModel? = null
 
     init {
-        _uiState.update {
-            it.copy(
-                nickname = args.nickname,
-                totalSubscribers = args.totalSubscribers,
-                totalSubscriptions = args.totalSubscriptions,
-                initialPage = args.subsPage.ordinal,
-            )
-        }
         subscribeOnSubscriptions()
         subscribeOnSubscribers()
     }
@@ -85,11 +85,11 @@ class SubsViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun onItemClicked(item: io.snaps.basesubs.domain.SubModel) = viewModelScope.launch {
+    private fun onItemClicked(item: SubModel) = viewModelScope.launch {
         _command publish Command.OpenProfileScreen(userId = item.userId)
     }
 
-    private fun onSubscribeClicked(item: io.snaps.basesubs.domain.SubModel) = viewModelScope.launch {
+    private fun onSubscribeClicked(item: SubModel) = viewModelScope.launch {
         if (item.isSubscribed) {
             _uiState.update {
                 it.copy(dialog = Dialog.ConfirmUnsubscribe(item))
@@ -158,7 +158,7 @@ class SubsViewModel @Inject constructor(
         }
     }
 
-    fun onUnsubscribeClicked(item: io.snaps.basesubs.domain.SubModel) = viewModelScope.launch {
+    fun onUnsubscribeClicked(item: SubModel) = viewModelScope.launch {
         _uiState.update {
             it.copy(dialog = null)
         }
@@ -185,7 +185,7 @@ class SubsViewModel @Inject constructor(
     )
 
     sealed class Dialog {
-        data class ConfirmUnsubscribe(val data: io.snaps.basesubs.domain.SubModel) : Dialog()
+        data class ConfirmUnsubscribe(val data: SubModel) : Dialog()
     }
 
     sealed class Command {

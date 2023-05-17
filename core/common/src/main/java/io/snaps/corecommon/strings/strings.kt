@@ -16,6 +16,10 @@ internal val strings = mapOf(
     key(StringKey.ActionContinue) to mapOf(
         SupportedLanguageKey.En to "Continue",
     ),
+    key(StringKey.ActionSend) to mapOf(
+        SupportedLanguageKey.En to "Send",
+        SupportedLanguageKey.Ru to "Отправить",
+    ),
     key(StringKey.ActionConfirm) to mapOf(
         SupportedLanguageKey.En to "Confirm",
     ),

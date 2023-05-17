@@ -203,15 +203,15 @@ fun VideoClipScreen(
         ModalBottomSheetLayout(
             sheetState = sheetState,
             sheetContent = {
-                when (uiState.bottomDialogType) {
-                    VideoFeedViewModel.BottomDialogType.Comments -> CommentsScreen(
+                when (uiState.bottomDialog) {
+                    VideoFeedViewModel.BottomDialog.Comments -> CommentsScreen(
                         uiState = uiState,
                         onCommentInputClicked = viewModel::onCommentInputClick,
                         onCloseClicked = sheetState::hideSheet,
                         onReplyClicked = commentInputSheetState::showSheet,
                         onEmojiClicked = viewModel::onEmojiClicked,
                     )
-                    VideoFeedViewModel.BottomDialogType.MoreActions -> ActionsBottomDialog(
+                    VideoFeedViewModel.BottomDialog.MoreActions -> ActionsBottomDialog(
                         title = StringKey.VideoClipTitleAction.textValue(),
                         actions = uiState.actions,
                     )
@@ -274,9 +274,9 @@ fun VideoClipScreen(
             }
         }
     }
-    uiState.dialogType?.let {
+    uiState.dialog?.let {
         when (it) {
-            VideoFeedViewModel.DialogType.ConfirmDeleteVideo -> SimpleConfirmDialogUi(
+            VideoFeedViewModel.Dialog.ConfirmDeleteVideo -> SimpleConfirmDialogUi(
                 text = StringKey.VideoClipDialogConfirmDeleteMessage.textValue(),
                 confirmButtonText = StringKey.ActionDelete.textValue(),
                 dismissButtonText = StringKey.ActionCancel.textValue(),

@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -16,33 +20,43 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.basewallet.ui.TransferTokensDialogHandler
+import io.snaps.basewallet.ui.TransferTokensUi
+import io.snaps.corecommon.R
+import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
+import io.snaps.coreuicompose.uikit.button.SimpleButtonContentWithLoader
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurewallet.ScreenNavigator
-import io.snaps.featurewallet.viewmodel.CryptoSendHandler
 import io.snaps.featurewallet.viewmodel.WithdrawViewModel
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WithdrawScreen(
     navHostController: NavHostController,
@@ -51,34 +65,64 @@ fun WithdrawScreen(
     val viewModel = hiltViewModel<WithdrawViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
-    val cryptoSendState by viewModel.cryptoSendState.collectAsState()
+    val transferTokensState by viewModel.transferTokensState.collectAsState()
 
-    viewModel.command.collectAsCommand {}
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true,
+    )
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
-    viewModel.cryptoSendCommand.collectAsCommand {
+    viewModel.command.collectAsCommand {
         when (it) {
-            CryptoSendHandler.Command.CloseScreen -> router.back()
+            WithdrawViewModel.Command.CloseScreen -> router.back()
         }
     }
+    viewModel.transferTokensCommand.collectAsCommand {
+        when (it) {
+            TransferTokensDialogHandler.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
+            TransferTokensDialogHandler.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
+        }
+    }
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetContent = {
+            when (val dialog = transferTokensState.bottomDialog) {
+                TransferTokensDialogHandler.BottomDialog.TokensTransfer -> TransferTokensUi(
+                    data = transferTokensState.state,
+                )
+                is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess -> SimpleBottomDialog(
+                    image = ImageValue.ResImage(R.drawable.img_guy_hands_up),
+                    // todo localize
+                    title = "Transaction succeeded".textValue(),
+                    text = "Sent ${dialog.sent} to ${dialog.to}".textValue(),
+                    buttonText = "View on Bscscan".textValue(),
+                    onClick = {
+                        coroutineScope.launch { sheetState.hide() }
+                        context.openUrl(dialog.bscScanLink)
+                    },
+                )
+            }
+        }
+    ) {
+        WithdrawScreen(
+            uiState = uiState,
+            onAddressValueChanged = viewModel::onAddressValueChanged,
+            onAmountValueChanged = viewModel::onAmountValueChanged,
+            onConfirmTransactionClicked = viewModel::onConfirmTransactionClicked,
+            onMaxButtonClicked = viewModel::onMaxButtonClicked,
+            onBackClicked = router::back,
+        )
+    }
 
-    WithdrawScreen(
-        uiState = uiState,
-        cryptoSendState = cryptoSendState,
-        onAddressValueChanged = viewModel::onAddressValueChanged,
-        onAmountValueChanged = viewModel::onAmountValueChanged,
-        onConfirmTransactionClicked = viewModel::onConfirmTransactionClicked,
-        onMaxButtonClicked = viewModel::onMaxButtonClicked,
-        onBackClicked = router::back,
-    )
-
-    FullScreenLoaderUi(isLoading = cryptoSendState.isLoading)
+    FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WithdrawScreen(
     uiState: WithdrawViewModel.UiState,
-    cryptoSendState: CryptoSendHandler.UiState,
     onAddressValueChanged: (String) -> Unit,
     onAmountValueChanged: (String) -> Unit,
     onConfirmTransactionClicked: () -> Unit,
@@ -126,7 +170,7 @@ private fun WithdrawScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp, vertical = 8.dp),
-                onValueChange = onAmountValueChanged,
+                onValueChange = uiState.amountFormatter.onValueChanged(onAmountValueChanged),
                 value = uiState.amountValue,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
@@ -173,24 +217,7 @@ private fun WithdrawScreen(
                     modifier = Modifier.padding(horizontal = 12.dp),
                 )
                 Text(
-                    text = cryptoSendState.transactionFee,
-                    style = AppTheme.specificTypography.bodySmall,
-                    color = AppTheme.specificColorScheme.textPrimary,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                    textAlign = TextAlign.End,
-                )
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = StringKey.WithdrawFieldTotal.textValue().get(),
-                    style = AppTheme.specificTypography.bodySmall,
-                    color = AppTheme.specificColorScheme.textSecondary,
-                    modifier = Modifier.padding(12.dp),
-                )
-                Text(
-                    text = cryptoSendState.totalAmount,
+                    text = uiState.gasPriceString,
                     style = AppTheme.specificTypography.bodySmall,
                     color = AppTheme.specificColorScheme.textPrimary,
                     modifier = Modifier
@@ -203,19 +230,16 @@ private fun WithdrawScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp, vertical = 20.dp),
-                onClick = if (cryptoSendState.isSendEnabled) {
-                    cryptoSendState.onSendClicked
-                } else {
-                    onConfirmTransactionClicked
-                },
-                enabled = uiState.isConfirmEnabled || cryptoSendState.isSendEnabled,
+                onClick = onConfirmTransactionClicked,
+                enabled = uiState.isConfirmEnabled,
             ) {
-                SimpleButtonContent(
-                    text = if (cryptoSendState.isSendEnabled) {
-                        StringKey.WithdrawActionSendTransaction
+                SimpleButtonContentWithLoader(
+                    isLoading = uiState.isCalculating,
+                    text = if (uiState.isAddressInvalid) {
+                        "Invalid address".textValue()
                     } else {
-                        StringKey.WithdrawActionConfirmTransaction
-                    }.textValue(),
+                        StringKey.WithdrawActionConfirmTransaction.textValue()
+                    },
                 )
             }
         }
