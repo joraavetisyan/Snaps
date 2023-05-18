@@ -108,7 +108,7 @@ fun mainHeaderState(
     MainHeaderState.Shimmer
 }
 
-private fun Double.coinToFormatDecimal(): String {
+fun Double.coinToFormatDecimal(): String {
     val number = this.round(3)
     if (number.toInt() >= 100000) {
         return number.toInt().toFormatDecimal(Locale.US)
