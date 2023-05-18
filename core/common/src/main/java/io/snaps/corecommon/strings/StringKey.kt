@@ -314,6 +314,9 @@ enum class StringKey {
     RewardsDialogHintClaim,
     RewardsDialogActionMax,
     RewardsDialogFieldAvailable,
+    RewardsDialogRepairNftTitle,
+    RewardsDialogRepairNftText,
+    RewardsDialogRepairNftAction,
 
     WithdrawTitle,
     WithdrawHintAddress,

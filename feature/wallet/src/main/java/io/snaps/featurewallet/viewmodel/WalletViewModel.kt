@@ -39,6 +39,7 @@ import io.snaps.featurewallet.screen.toTransactionsUiState
 import io.snaps.featurewallet.toCellTileStateList
 import io.snaps.featurewallet.toPayoutStatusState
 import io.snaps.featurewallet.toRewardsTileState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,14 +67,7 @@ class WalletViewModel @Inject constructor(
     private val nftRepository: NftRepository,
 ) : SimpleViewModel(), OnboardingHandler by onboardingHandlerDelegate {
 
-    private val _uiState = MutableStateFlow(
-        UiState(
-            isSnapsSellEnabled = featureToggle.isEnabled(Feature.SellSnaps),
-            isRewardsWithdrawVisible = profileRepository.state.value.dataOrCache?.paymentsState?.let {
-                it == PaymentsState.Blockchain
-            } ?: false,
-        )
-    )
+    private val _uiState = MutableStateFlow(UiState(isSnapsSellEnabled = featureToggle.isEnabled(Feature.SellSnaps)))
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
@@ -255,18 +249,24 @@ class WalletViewModel @Inject constructor(
         }
     }
 
-    fun onRewardsWithdrawClicked() = viewModelScope.launch {
-        if (uiState.value.countBrokenGlasses > 0) {
-            notificationsSource.sendError(StringKey.RewardsErrorRepairGlasses.textValue())
-        } else if (uiState.value.availableTokens == 0.0) {
-            notificationsSource.sendError(StringKey.RewardsErrorInsufficientBalance.textValue())
-        } else {
-            _command publish Command.ShowBottomDialog
-            _uiState.update {
-                it.copy(
-                    amountToClaimValue = "",
-                    bottomDialog = BottomDialog.RewardsWithdraw,
-                )
+    fun onRewardsClaimClicked() {
+        viewModelScope.launch {
+            if (
+                profileRepository.state.value.dataOrCache?.paymentsState == PaymentsState.InApp
+                && uiState.value.countBrokenGlasses > 0
+            ) {
+                _uiState.update { it.copy(bottomDialog = BottomDialog.RepairNft) }
+                _command publish Command.ShowBottomDialog
+            } else if (uiState.value.availableTokens == 0.0) {
+                notificationsSource.sendError(StringKey.RewardsErrorInsufficientBalance.textValue())
+            } else {
+                _command publish Command.ShowBottomDialog
+                _uiState.update {
+                    it.copy(
+                        amountToClaimValue = "",
+                        bottomDialog = BottomDialog.RewardsWithdraw,
+                    )
+                }
             }
         }
     }
@@ -432,7 +432,6 @@ class WalletViewModel @Inject constructor(
         val unlockedTransactions: TransactionsUiState = TransactionsUiState(),
         val lockedTransactions: TransactionsUiState = TransactionsUiState(),
         val filterOptions: FilterOptions = FilterOptions.Unlocked,
-        val isRewardsWithdrawVisible: Boolean = false,
         val countBrokenGlasses: Int = 0,
         val isRefreshing: Boolean = false,
         val screen: Screen = Screen.Wallet,
@@ -461,6 +460,8 @@ class WalletViewModel @Inject constructor(
         ) : BottomDialog()
 
         object RewardsFootnote : BottomDialog()
+
+        object RepairNft : BottomDialog()
 
         object RewardsWithdraw : BottomDialog()
     }

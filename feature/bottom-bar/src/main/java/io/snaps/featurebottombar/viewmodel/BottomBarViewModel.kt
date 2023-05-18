@@ -47,10 +47,10 @@ class BottomBarViewModel @Inject constructor(
     }
 
     private fun subscribeOnCountBrokenGlasses() = viewModelScope.launch {
-        nftRepository.countBrokenGlassesState.onEach { state ->
-            _uiState.update {
-                it.copy(
-                    badgeText = state.dataOrCache?.takeIf { it > 0 }?.toString().orEmpty(),
+        nftRepository.countBrokenGlassesState.onEach { count ->
+            _uiState.update { state ->
+                state.copy(
+                    badgeText = count.dataOrCache?.takeIf { it > 0 }?.toString().orEmpty(),
                 )
             }
         }.launchIn(viewModelScope)

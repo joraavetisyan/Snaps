@@ -28,6 +28,8 @@ internal class ScreenNavigator(navHostController: NavHostController) : Navigator
     )
 
     fun toWithdrawSnapsScreen() = navHostController.navigate(AppRoute.WithdrawSnaps)
+
+    fun toMyCollectionScreen() = navHostController.navigate(AppRoute.MainBottomBar.MainTab4)
 }
 
 class WalletFeatureProviderImpl @Inject constructor() : WalletFeatureProvider {

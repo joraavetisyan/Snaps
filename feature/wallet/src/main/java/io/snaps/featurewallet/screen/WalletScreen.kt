@@ -89,6 +89,7 @@ import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialogItem
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
@@ -165,14 +166,12 @@ fun WalletScreen(
                 is WalletViewModel.BottomDialog.SelectWallet -> SelectWalletDialog(
                     wallets = dialog.wallets,
                 )
-
                 is WalletViewModel.BottomDialog.TopUp -> TopUpDialog(
                     title = StringKey.WalletDialogTitleTopUp.textValue(dialog.title),
                     address = dialog.address,
                     qr = dialog.qr,
                     onAddressCopyClicked = { viewModel.onAddressCopyClicked(dialog.address) },
                 )
-
                 WalletViewModel.BottomDialog.RewardsFootnote -> FootnoteBottomDialog(
                     FootnoteBottomDialogItem(
                         image = ImageValue.ResImage(R.drawable.img_guy_eating),
@@ -185,8 +184,7 @@ fun WalletScreen(
                         text = StringKey.RewardsDialogMessageFootnote2.textValue(),
                     ),
                 )
-
-                WalletViewModel.BottomDialog.RewardsWithdraw -> RewardsWithdrawDialog(
+                WalletViewModel.BottomDialog.RewardsWithdraw -> RewardsClaimDialog(
                     amountValue = uiState.amountToClaimValue,
                     availableTokens = uiState.availableTokens,
                     isConfirmButtonEnabled = uiState.isConfirmClaimEnabled,
@@ -194,6 +192,16 @@ fun WalletScreen(
                     onAmountValueChanged = viewModel::onAmountToClaimValueChanged,
                     onConfirmClicked = viewModel::onConfirmClaimClicked,
                     onMaxButtonClicked = viewModel::onRewardsMaxButtonClicked,
+                )
+                WalletViewModel.BottomDialog.RepairNft -> SimpleBottomDialog(
+                    image = ImageValue.ResImage(R.drawable.img_guy_sad),
+                    title = StringKey.RewardsDialogRepairNftTitle.textValue(),
+                    text = StringKey.RewardsDialogRepairNftText.textValue(),
+                    buttonText = StringKey.RewardsDialogRepairNftAction.textValue(),
+                    onClick = {
+                        coroutineScope.launch { sheetState.hide() }
+                        router.toMyCollectionScreen()
+                    }
                 )
             }
         },
@@ -206,7 +214,7 @@ fun WalletScreen(
             onSellSnapsClicked = viewModel::onSellSnapsClicked,
             onTopUpClicked = viewModel::onTopUpClicked,
             onWithdrawClicked = viewModel::onWithdrawClicked,
-            onRewardsWithdrawClicked = viewModel::onRewardsWithdrawClicked,
+            onRewardsWithdrawClicked = viewModel::onRewardsClaimClicked,
             onExchangeClicked = viewModel::onExchangeClicked,
             onRewardsOpened = viewModel::onRewardsOpened,
             onRewardsFootnoteClick = viewModel::onRewardsFootnoteClick,
@@ -296,13 +304,12 @@ private fun WalletScreen(
                             WalletViewModel.FilterOptions.Unlocked -> uiState.unlockedTransactions
                             WalletViewModel.FilterOptions.Locked -> uiState.lockedTransactions
                         },
-                        rewards = uiState.rewards,
-                        onOpened = onRewardsOpened,
                         filterOptions = uiState.filterOptions,
+                        rewards = uiState.rewards,
                         onWithdrawClicked = onRewardsWithdrawClicked,
+                        onOpened = onRewardsOpened,
                         onRewardsFootnoteClick = onRewardsFootnoteClick,
                         onDropdownMenuItemClicked = onDropdownMenuItemClicked,
-                        isWithdrawVisible = uiState.isRewardsWithdrawVisible,
                     )
                 }
             }
@@ -406,7 +413,6 @@ private fun Rewards(
     filterOptions: WalletViewModel.FilterOptions,
     rewards: List<RewardsTileState>,
     onWithdrawClicked: () -> Unit,
-    isWithdrawVisible: Boolean,
     onOpened: () -> Unit,
     onRewardsFootnoteClick: () -> Unit,
     onDropdownMenuItemClicked: (WalletViewModel.FilterOptions) -> Unit,
@@ -434,30 +440,28 @@ private fun Rewards(
             it.Content(modifier = Modifier.padding(bottom = 12.dp))
         }
         item {
-            if (isWithdrawVisible) {
-                SimpleButtonOutlineL(
-                    onClick = onWithdrawClicked,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp),
-                ) {
-                    SimpleButtonContent(
-                        text = StringKey.RewardsActionClaim.textValue(),
-                        contentLeft = {
-                            Icon(
-                                painter = AppTheme.specificIcons.withdraw.get(),
-                                tint = AppTheme.specificColorScheme.white,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .background(
-                                        color = AppTheme.specificColorScheme.uiAccent,
-                                        shape = CircleShape,
-                                    )
-                                    .padding(4.dp),
-                            )
-                        },
-                    )
-                }
+            SimpleButtonOutlineL(
+                onClick = onWithdrawClicked,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
+            ) {
+                SimpleButtonContent(
+                    text = StringKey.RewardsActionClaim.textValue(),
+                    contentLeft = {
+                        Icon(
+                            painter = AppTheme.specificIcons.withdraw.get(),
+                            tint = AppTheme.specificColorScheme.white,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .background(
+                                    color = AppTheme.specificColorScheme.uiAccent,
+                                    shape = CircleShape,
+                                )
+                                .padding(4.dp),
+                        )
+                    },
+                )
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -692,7 +696,7 @@ private fun TopUpDialog(
 }
 
 @Composable
-private fun RewardsWithdrawDialog(
+private fun RewardsClaimDialog(
     amountValue: String,
     availableTokens: Double,
     isConfirmButtonEnabled: Boolean,

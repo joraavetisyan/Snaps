@@ -48,14 +48,8 @@ interface NftRepository {
 
     suspend fun mintNftStore(productId: Uuid, purchaseToken: Token): Effect<Completable>
 
-    /**
-     * params: [transactionHash] - Blockchain transaction hash
-     */
     suspend fun mintNft(type: NftType, transactionHash: TxHash? = null): Effect<Completable>
 
-    /**
-     * params: [transactionHash] - Blockchain transaction hash
-     */
     suspend fun repairNft(
         nftModel: NftModel,
         transactionHash: TxHash? = null,

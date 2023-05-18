@@ -924,6 +924,18 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Available: %s SNAPS",
         SupportedLanguageKey.Ru to "Доступно: %s SNAPS",
     ),
+    key(StringKey.RewardsDialogRepairNftTitle) to mapOf(
+        SupportedLanguageKey.En to "Need to repair glasses first",
+        SupportedLanguageKey.Ru to "Необходим ремонт очков",
+    ),
+    key(StringKey.RewardsDialogRepairNftText) to mapOf(
+        SupportedLanguageKey.En to "To claim the tokens please repair all glasses",
+        SupportedLanguageKey.Ru to "Чтобы заклеймить токены пожалуйста почините все очки",
+    ),
+    key(StringKey.RewardsDialogRepairNftAction) to mapOf(
+        SupportedLanguageKey.En to "Repair glasses",
+        SupportedLanguageKey.Ru to "Починить очки",
+    ),
 
     key(StringKey.WithdrawTitle) to mapOf(
         SupportedLanguageKey.En to "Withdraw %s",
