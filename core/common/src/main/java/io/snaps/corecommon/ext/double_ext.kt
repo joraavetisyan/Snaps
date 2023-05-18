@@ -2,6 +2,9 @@ package io.snaps.corecommon.ext
 
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.util.Locale
+import kotlin.math.max
+import kotlin.math.min
 
 fun Double.round(places: Int = 2): Double {
     require(places >= 0)
@@ -13,7 +16,7 @@ fun Double.round(places: Int = 2): Double {
 fun Double.toPercentageFormat() = "${(this * 100).round(1).toStringValue()}%"
 
 fun Double.toStringValue(): String {
-    var number = this.toString()
+    var number = this.toBigDecimal().toPlainString()
     if (number.endsWith(".0")) {
         number = number.removeSuffix(".0")
     }
@@ -27,4 +30,19 @@ fun BigDecimal.toStringValue(): String {
         number = number.removeSuffix(".")
     }
     return number
+}
+
+fun Double.coinToFormatDecimal(): String {
+    val number = this.round(3)
+    if (number.toInt() >= 100000) {
+        return number.toInt().toFormatDecimal(Locale.US)
+    }
+    return number.toStringValue()
+}
+
+fun Double.fiatToFormatDecimal(): String {
+    val number = toString()
+    val pointIndex = number.indexOf('.')
+    if (pointIndex == -1) return number
+    return number.substring(0, min(pointIndex + 3, number.length))
 }

@@ -25,7 +25,7 @@ class UserInfoResponseDto(
     @SerialName("ownInviteCode") val ownInviteCode: String?,
     @SerialName("level") val level: Int?,
     @SerialName("instagramId") val instagramId: Uuid?,
-    @SerialName("paymentsState") val paymentsState: PaymentsState?,
+    @SerialName("paymentsState") val paymentsState: PaymentsState? = null,
     @SerialName("firstLevelReferralMultiplier") val firstLevelReferralMultiplier: Double?,
     @SerialName("secondLevelReferralMultiplier") val secondLevelReferralMultiplier: Double?,
 )

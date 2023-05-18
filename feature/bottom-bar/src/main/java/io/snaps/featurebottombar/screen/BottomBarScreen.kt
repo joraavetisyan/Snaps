@@ -53,6 +53,7 @@ import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
+import io.snaps.coreuitheme.compose.colors
 import io.snaps.featurebottombar.viewmodel.BottomBarViewModel
 import kotlinx.coroutines.launch
 
@@ -105,7 +106,19 @@ fun BottomBarScreen(
         }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            CompositionLocalProvider(LocalBottomNavigationHeight provides 80.dp) {
+            val bottomBarScreens = listOf(
+                AppRoute.MainBottomBar.MainTab1Start,
+                AppRoute.MainBottomBar.MainTab2Start,
+                AppRoute.MainBottomBar.MainTab3Start,
+                AppRoute.MainBottomBar.MainTab4Start,
+                AppRoute.MainBottomBar.MainTab5Start,
+            )
+            val currentRoute = currentDestination?.route?.substringBefore(delimiter = "?")
+            val bottomBarDestination = bottomBarScreens.any { it.path() == currentRoute }
+            val isBottomBarVisible = uiState.isBottomBarVisible && bottomBarDestination
+            CompositionLocalProvider(
+                LocalBottomNavigationHeight provides (if (isBottomBarVisible) 80.dp else 0.dp)
+            ) {
                 NavHost(
                     navController = navController,
                     startDestination = items.first().route.pattern,
@@ -120,21 +133,10 @@ fun BottomBarScreen(
                         }
                     }
                 }
-                val bottomBarScreens = listOf(
-                    AppRoute.MainBottomBar.MainTab1Start,
-                    AppRoute.MainBottomBar.MainTab2Start,
-                    AppRoute.MainBottomBar.MainTab3Start,
-                    AppRoute.MainBottomBar.MainTab4Start,
-                    AppRoute.MainBottomBar.MainTab5Start,
-                )
-                val currentRoute = currentDestination?.route?.substringBefore(delimiter = "?")
-                val bottomBarDestination = bottomBarScreens.any {
-                    it.path() == currentRoute
-                }
-                if (uiState.isBottomBarVisible && bottomBarDestination) {
-                    val containerColor = when (currentRoute) {
-                        AppRoute.MainBottomBar.MainTab1Start.path() -> AppTheme.specificColorScheme.black
-                        else -> AppTheme.specificColorScheme.white
+                if (isBottomBarVisible) {
+                    val containerColor = colors {
+                        if (currentRoute == AppRoute.MainBottomBar.MainTab1Start.path()) black
+                        else white
                     }
                     NavigationBar(
                         modifier = Modifier
@@ -212,14 +214,14 @@ private fun OnboardingDialog(
     onboardingState: OnboardingHandler.UiState,
     onClicked: (OnboardingType?) -> Unit,
 ) {
-    when (onboardingState.dialogType) {
+    when (onboardingState.onboardingType) {
         OnboardingType.Rank -> SimpleBottomDialog(
             image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
             title = StringKey.OnboardingRankTitle.textValue(),
             text = StringKey.OnboardingRankText.textValue(),
             buttonText = StringKey.OnboardingRankAction.textValue(),
             onClick = {
-                onClicked(onboardingState.dialogType)
+                onClicked(onboardingState.onboardingType)
             },
         )
         OnboardingType.Popular -> SimpleBottomDialog(
@@ -228,7 +230,7 @@ private fun OnboardingDialog(
             text = StringKey.OnboardingPopularText.textValue(),
             buttonText = StringKey.OnboardingPopularAction.textValue(),
             onClick = {
-                onClicked(onboardingState.dialogType)
+                onClicked(onboardingState.onboardingType)
             },
         )
         OnboardingType.Tasks -> SimpleBottomDialog(
@@ -237,7 +239,7 @@ private fun OnboardingDialog(
             text = StringKey.OnboardingTasksText.textValue(),
             buttonText = StringKey.OnboardingTasksAction.textValue(),
             onClick = {
-                onClicked(onboardingState.dialogType)
+                onClicked(onboardingState.onboardingType)
             },
         )
         OnboardingType.Nft -> SimpleBottomDialog(
@@ -246,7 +248,7 @@ private fun OnboardingDialog(
             text = StringKey.OnboardingNftText.textValue(),
             buttonText = StringKey.OnboardingNftAction.textValue(),
             onClick = {
-                onClicked(onboardingState.dialogType)
+                onClicked(onboardingState.onboardingType)
             },
         )
         OnboardingType.Referral -> SimpleBottomDialog(
@@ -255,7 +257,7 @@ private fun OnboardingDialog(
             text = StringKey.OnboardingReferralText.textValue(),
             buttonText = StringKey.OnboardingReferralAction.textValue(),
             onClick = {
-                onClicked(onboardingState.dialogType)
+                onClicked(onboardingState.onboardingType)
             },
         )
         OnboardingType.Wallet -> SimpleBottomDialog(
@@ -264,7 +266,7 @@ private fun OnboardingDialog(
             text = StringKey.OnboardingWalletText.textValue(),
             buttonText = StringKey.OnboardingWalletAction.textValue(),
             onClick = {
-                onClicked(onboardingState.dialogType)
+                onClicked(onboardingState.onboardingType)
             },
         )
         OnboardingType.Rewards -> SimpleBottomDialog(
@@ -273,7 +275,7 @@ private fun OnboardingDialog(
             text = StringKey.OnboardingRewardsText.textValue(),
             buttonText = StringKey.OnboardingRewardsAction.textValue(),
             onClick = {
-                onClicked(onboardingState.dialogType)
+                onClicked(onboardingState.onboardingType)
             },
         )
         null -> Box(modifier = Modifier.size(1.dp))

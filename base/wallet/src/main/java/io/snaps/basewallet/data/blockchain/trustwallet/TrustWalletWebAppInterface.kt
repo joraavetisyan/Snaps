@@ -1,4 +1,4 @@
-package io.snaps.basewallet.data.trustwallet
+package io.snaps.basewallet.data.blockchain.trustwallet
 
 import android.webkit.JavascriptInterface
 import android.webkit.WebView

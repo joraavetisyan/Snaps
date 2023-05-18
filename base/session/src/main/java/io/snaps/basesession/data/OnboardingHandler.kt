@@ -26,7 +26,7 @@ interface OnboardingHandler {
     fun closeOnboardingDialog()
 
     data class UiState(
-        val dialogType: OnboardingType? = null,
+        val onboardingType: OnboardingType? = null,
     )
 
     sealed interface Command {
@@ -63,7 +63,7 @@ class OnboardingHandlerImplDelegate @Inject constructor(
     }
 
     private suspend fun openDialog(type: OnboardingType) {
-        _uiState.update { it.copy(dialogType = type) }
+        _uiState.update { it.copy(onboardingType = type) }
         _command publish OnboardingHandler.Command.OpenDialog(type)
     }
 

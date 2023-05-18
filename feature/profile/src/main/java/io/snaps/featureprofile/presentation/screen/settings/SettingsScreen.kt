@@ -142,9 +142,8 @@ private fun SettingsScreen(
     }
     when (uiState.dialog) {
         is SettingsViewModel.Dialog.ConfirmLogout -> SimpleConfirmDialogUi(
-            // todo localize
-            title = "Are you sure you want to logout?".textValue(),
-            text = "Please ensure you saved your wallet so you won't lose it after logout".textValue(),
+            title = StringKey.SettingsDialogLogoutTitle.textValue(),
+            text = StringKey.SettingsDialogLogoutMessage.textValue(),
             onDismissRequest = onDialogDismissRequest,
             onConfirmRequest = onLogoutConfirmed,
         )

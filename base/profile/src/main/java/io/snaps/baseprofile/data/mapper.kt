@@ -12,6 +12,7 @@ import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
+import io.snaps.corecommon.ext.coinToFormatDecimal
 import io.snaps.corecommon.ext.round
 import io.snaps.corecommon.ext.toFormatDecimal
 import io.snaps.corecommon.ext.toStringValue
@@ -106,12 +107,4 @@ fun mainHeaderState(
     )
 } else {
     MainHeaderState.Shimmer
-}
-
-fun Double.coinToFormatDecimal(): String {
-    val number = this.round(3)
-    if (number.toInt() >= 100000) {
-        return number.toInt().toFormatDecimal(Locale.US)
-    }
-    return number.toStringValue()
 }

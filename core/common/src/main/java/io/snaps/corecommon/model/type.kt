@@ -15,8 +15,10 @@ typealias Token = String
 typealias FullUrl = String
 typealias DeviceId = String
 typealias Uuid = String
+typealias CardNumber = String
 typealias CurrencySymbol = String
 typealias WalletAddress = String
+typealias TxHash = String // blockchain transaction hash
 typealias NftTypeInt = Int
 
 fun generateCurrentDateTime() = ZonedDateTime.now().toString()
@@ -29,6 +31,7 @@ enum class FiatCurrency(
     @SerialName("643") RUB("₽"),
     @SerialName("840") USD("$"),
     @SerialName("978") EUR("€"),
+    NONE(""),
     ;
 
     val displayName

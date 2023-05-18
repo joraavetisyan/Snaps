@@ -16,6 +16,10 @@ internal val strings = mapOf(
     key(StringKey.ActionContinue) to mapOf(
         SupportedLanguageKey.En to "Continue",
     ),
+    key(StringKey.ActionSend) to mapOf(
+        SupportedLanguageKey.En to "Send",
+        SupportedLanguageKey.Ru to "Отправить",
+    ),
     key(StringKey.ActionConfirm) to mapOf(
         SupportedLanguageKey.En to "Confirm",
     ),
@@ -35,9 +39,38 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Ok",
     ),
 
+    key(StringKey.MessageSuccess) to mapOf(
+        SupportedLanguageKey.Ru to "Успешно!",
+        SupportedLanguageKey.En to "Success!",
+    ),
     key(StringKey.MessageConnectionSuccess) to mapOf(
         SupportedLanguageKey.Ru to "Соединение восстановлено",
         SupportedLanguageKey.En to "Connection restored",
+    ),
+    key(StringKey.MessageEmptyVideoFeed) to mapOf(
+        SupportedLanguageKey.Ru to "Eще нет видео",
+        SupportedLanguageKey.En to "No videos yet",
+    ),
+    key(StringKey.MessageNothingFound) to mapOf(
+        SupportedLanguageKey.Ru to "Ничего не найдено",
+        SupportedLanguageKey.En to "Nothing found",
+    ),
+
+    key(StringKey.FieldMinutes) to mapOf(
+        SupportedLanguageKey.Ru to "%s мин",
+        SupportedLanguageKey.En to "%s min",
+    ),
+    key(StringKey.FieldMinutesShort) to mapOf(
+        SupportedLanguageKey.Ru to "%sм",
+        SupportedLanguageKey.En to "%sm",
+    ),
+    key(StringKey.FieldSeconds) to mapOf(
+        SupportedLanguageKey.Ru to "%s сек",
+        SupportedLanguageKey.En to "%s sec",
+    ),
+    key(StringKey.FieldSecondsShort) to mapOf(
+        SupportedLanguageKey.Ru to "%sс",
+        SupportedLanguageKey.En to "%ss",
     ),
 
     key(StringKey.Error) to mapOf(
@@ -54,15 +87,6 @@ internal val strings = mapOf(
     key(StringKey.ErrorUnknown) to mapOf(
         SupportedLanguageKey.Ru to "Произошла ошибка. Попробуйте повторить позднее",
         SupportedLanguageKey.En to "An error has occurred. Try again later",
-    ),
-
-    key(StringKey.MessageEmptyVideoFeed) to mapOf(
-        SupportedLanguageKey.Ru to "Eще нет видео",
-        SupportedLanguageKey.En to "No videos yet",
-    ),
-    key(StringKey.MessageNothingFound) to mapOf(
-        SupportedLanguageKey.Ru to "Ничего не найдено",
-        SupportedLanguageKey.En to "Nothing found",
     ),
 
     key(StringKey.OnboardingRankTitle) to mapOf(
@@ -530,6 +554,12 @@ internal val strings = mapOf(
     key(StringKey.SettingsActionLogout) to mapOf(
         SupportedLanguageKey.En to "Sign out",
     ),
+    key(StringKey.SettingsDialogLogoutTitle) to mapOf(
+        SupportedLanguageKey.En to "Are you sure you want to logout?",
+    ),
+    key(StringKey.SettingsDialogLogoutMessage) to mapOf(
+        SupportedLanguageKey.En to "Please ensure you saved your wallet so you won't lose it after logout",
+    ),
 
     key(StringKey.SocialNetworksTitle) to mapOf(
         SupportedLanguageKey.En to "Our social networks",
@@ -761,6 +791,24 @@ internal val strings = mapOf(
     key(StringKey.WalletTitle) to mapOf(
         SupportedLanguageKey.En to "Wallet",
     ),
+    key(StringKey.WalletTitlePaymentStatus) to mapOf(
+        SupportedLanguageKey.En to "Payment status:",
+    ),
+    key(StringKey.WalletFieldPaymentStatusInProcess) to mapOf(
+        SupportedLanguageKey.En to "In progress",
+    ),
+    key(StringKey.WalletFieldPaymentStatusRejected) to mapOf(
+        SupportedLanguageKey.En to "In progress",
+    ),
+    key(StringKey.WalletTitlePaymentTransactionId) to mapOf(
+        SupportedLanguageKey.En to "Transaction Id:",
+    ),
+    key(StringKey.WalletMessagePaymentRejected) to mapOf(
+        SupportedLanguageKey.En to "An error occurred because\nno such card was found.",
+    ),
+    key(StringKey.WalletActionPaymentRejected) to mapOf(
+        SupportedLanguageKey.En to "Contact support",
+    ),
     key(StringKey.WalletFieldTotal) to mapOf(
         SupportedLanguageKey.En to "Total",
     ),
@@ -838,6 +886,12 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "To claim the tokens please fix all the glasses",
         SupportedLanguageKey.Ru to "Чтобы заклеймить токены пожалуйста почините все очки",
     ),
+    key(StringKey.RewardsFieldFilterLocked) to mapOf(
+        SupportedLanguageKey.En to "Locked",
+    ),
+    key(StringKey.RewardsFieldFilterUnlocked) to mapOf(
+        SupportedLanguageKey.En to "Unlocked",
+    ),
     key(StringKey.RewardsDialogTitleFootnote1) to mapOf(
         SupportedLanguageKey.En to "Unlocked Rewards",
     ),
@@ -897,6 +951,18 @@ internal val strings = mapOf(
     ),
     key(StringKey.WithdrawActionSendTransaction) to mapOf(
         SupportedLanguageKey.En to "Send transaction",
+    ),
+    key(StringKey.WithdrawErrorInvalidAddress) to mapOf(
+        SupportedLanguageKey.En to "Invalid address",
+    ),
+    key(StringKey.WithdrawDialogWithdrawSuccessTitle) to mapOf(
+        SupportedLanguageKey.En to "Transaction succeeded",
+    ),
+    key(StringKey.WithdrawDialogWithdrawSuccessMessage) to mapOf(
+        SupportedLanguageKey.En to "Sent %s to %s", // amount to address
+    ),
+    key(StringKey.WithdrawDialogWithdrawSuccessAction) to mapOf(
+        SupportedLanguageKey.En to "View on Bscscan",
     ),
 
     key(StringKey.ExchangeTitle) to mapOf(
@@ -996,6 +1062,25 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ru to "%s очков опыта",
         SupportedLanguageKey.En to "%s experience points",
     ),
+    key(StringKey.MyCollectionDialogRepairSuccessTitle) to mapOf(
+        SupportedLanguageKey.En to "Repair succeeded",
+    ),
+    key(StringKey.MyCollectionDialogRepairSuccessAction) to mapOf(
+        SupportedLanguageKey.En to "View on Bscscan",
+    ),
+
+    key(StringKey.DialogLimitedGasTitle) to mapOf(
+        SupportedLanguageKey.Ru to "На вашем счете недостаточно газа",
+        SupportedLanguageKey.En to "There is not enough gas on your account",
+    ),
+    key(StringKey.DialogLimitedGasMessage) to mapOf(
+        SupportedLanguageKey.Ru to "SNAPS заботится о своих пользователях и\nпополняет им газ автоматически",
+        SupportedLanguageKey.En to "SNAPS takes care of its users and\nrefills their gas automatically",
+    ),
+    key(StringKey.DialogLimitedGasAction) to mapOf(
+        SupportedLanguageKey.Ru to "Пополнить",
+        SupportedLanguageKey.En to "Refill",
+    ),
 
     key(StringKey.RankSelectionTitle) to mapOf(
         SupportedLanguageKey.En to "Choose a rank for your glasses",
@@ -1050,6 +1135,9 @@ internal val strings = mapOf(
 
     key(StringKey.UploadVideoTitle) to mapOf(
         SupportedLanguageKey.En to "Upload",
+    ),
+    key(StringKey.UploadVideoTitlePreview) to mapOf(
+        SupportedLanguageKey.En to "Select video preview",
     ),
     key(StringKey.UploadVideoHintTitle) to mapOf(
         SupportedLanguageKey.En to "Enter video title",
@@ -1111,6 +1199,24 @@ internal val strings = mapOf(
     ),
     key(StringKey.PurchaseFieldLevel) to mapOf(
         SupportedLanguageKey.En to "%s LVL",
+    ),
+    key(StringKey.PurchaseMessageSuccess) to mapOf(
+        SupportedLanguageKey.En to "Purchase successful",
+    ),
+    key(StringKey.PurchaseDialogWithBnbTitle) to mapOf(
+        SupportedLanguageKey.En to "%s NFT Minting",
+    ),
+    key(StringKey.PurchaseErrorNotEnoughBnb) to mapOf(
+        SupportedLanguageKey.En to "Not enough BNB to mint",
+    ),
+    key(StringKey.PurchaseDialogWithBnbSuccessTitle) to mapOf(
+        SupportedLanguageKey.En to "Transaction succeeded",
+    ),
+    key(StringKey.PurchaseDialogWithBnbSuccessMessage) to mapOf(
+        SupportedLanguageKey.En to "NFT will appear in your collection soon",
+    ),
+    key(StringKey.PurchaseDialogWithBnbSuccessAction) to mapOf(
+        SupportedLanguageKey.En to "View on Bscscan",
     ),
 
     key(StringKey.VideoClipActionDelete) to mapOf(

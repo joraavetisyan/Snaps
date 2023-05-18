@@ -24,7 +24,6 @@ class FakeCommentApi : CommentApi {
         log("Requesting comments: $count comments with offset $from")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = List(count) {
                 CommentResponseDto(
                     id = "${generation}comment$it",
@@ -44,7 +43,6 @@ class FakeCommentApi : CommentApi {
         log("Requesting create comment")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = Completable,
         )
     }

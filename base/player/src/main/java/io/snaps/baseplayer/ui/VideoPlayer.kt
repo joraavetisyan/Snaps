@@ -40,8 +40,8 @@ import io.snaps.corecommon.R
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.coreuicompose.tools.get
-import io.snaps.coreuitheme.compose.withColors
-import io.snaps.coreuitheme.compose.withIcons
+import io.snaps.coreuitheme.compose.colors
+import io.snaps.coreuitheme.compose.icons
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -64,6 +64,8 @@ fun VideoPlayer(
         "Don't provide both local and network sources!"
     }
 
+    val coroutineScope = rememberCoroutineScope()
+
     val exoPlayer = rememberExoPlayerWithLifecycle(
         networkUrl = networkUrl,
         localUri = localUri,
@@ -73,15 +75,12 @@ fun VideoPlayer(
 
     var isVolumeIconVisible by remember { mutableStateOf(false) }
 
-    val coroutineScope = rememberCoroutineScope()
-
-    val composition by rememberLottieComposition(
+    val lottieComposition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(R.raw.lottie_like),
     )
     val lottieAnimatable = rememberLottieAnimatable()
 
     val onProgressChangedRemembered by rememberUpdatedState(onProgressChanged)
-
     if (onProgressChangedRemembered != null) {
         LaunchedEffect(exoPlayer) {
             while (isActive) {
@@ -108,7 +107,7 @@ fun VideoPlayer(
                             onLiked?.let {
                                 it()
                                 coroutineScope.launch {
-                                    lottieAnimatable.animate(composition)
+                                    lottieAnimatable.animate(lottieComposition)
                                 }
                             }
                         },
@@ -137,7 +136,7 @@ fun VideoPlayer(
                                 exoPlayer.playWhenReady = true
                             }
                         },
-                        onLongPress = {}
+                        onLongPress = {},
                     )
                 },
             update = {
@@ -148,15 +147,15 @@ fun VideoPlayer(
 
         Crossfade(targetState = lottieAnimatable.isPlaying, label = "likeLottieAnimation") {
             if (it) {
-                LottieAnimation(composition = composition, progress = { lottieAnimatable.progress })
+                LottieAnimation(composition = lottieComposition, progress = { lottieAnimatable.progress })
             }
         }
 
         if (isVolumeIconVisible) {
             Icon(
-                painter = withIcons { if (isMuted) volumeDown else volumeUp }.get(),
+                painter = icons { if (isMuted) volumeDown else volumeUp }.get(),
                 contentDescription = null,
-                tint = withColors { white },
+                tint = colors { white },
                 modifier = Modifier
                     .align(Alignment.Center)
                     .size(100.dp),
@@ -199,9 +198,7 @@ private fun rememberExoPlayerWithLifecycle(
             prepare()
         }
     }
-    var appInBackground by remember {
-        mutableStateOf(false)
-    }
+    var appInBackground by remember { mutableStateOf(false) }
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(key1 = lifecycleOwner, appInBackground) {
         val lifecycleObserver = getExoPlayerLifecycleObserver(exoPlayer, appInBackground) {

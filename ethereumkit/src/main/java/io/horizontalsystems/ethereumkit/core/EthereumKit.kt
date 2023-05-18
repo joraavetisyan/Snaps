@@ -153,6 +153,10 @@ class EthereumKit(
         return transactionManager.getFullTransactionSingle(hash)
     }
 
+    fun getTransactionReceipt(hash: ByteArray): Single<RpcTransactionReceipt> {
+        return transactionManager.getTransactionReceipt(hash)
+    }
+
     fun estimateGas(to: Address?, value: BigInteger, gasPrice: GasPrice): Single<Long> {
         // without address - provide default gas limit
         if (to == null) {

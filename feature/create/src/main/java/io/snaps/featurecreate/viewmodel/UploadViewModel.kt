@@ -1,8 +1,15 @@
 package io.snaps.featurecreate.viewmodel
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.abedelazizshe.lightcompressorlibrary.CompressionListener
+import com.abedelazizshe.lightcompressorlibrary.VideoCompressor
+import com.abedelazizshe.lightcompressorlibrary.config.AppSpecificStorageConfiguration
+import com.abedelazizshe.lightcompressorlibrary.config.Configuration
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basefeed.data.VideoFeedRepository
 import io.snaps.basefeed.domain.VideoFeedType
@@ -29,6 +36,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -52,22 +60,63 @@ class UploadViewModel @Inject constructor(
 
     private var progressListenJob: Job? = null
 
-    fun onPublishClicked(thumbnail: Bitmap?) {
+    fun onPublishClicked(context: Context, thumbnail: Bitmap?) {
         thumbnail ?: return
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            val thumbnailFile = fileManager.createFileFromBitmap(thumbnail) ?: run {
-                log("Couldn't create a file for thumbnail")
-                _uiState.update { it.copy(isLoading = false) }
-                return@launch
-            }
+        _uiState.update { it.copy(isLoading = true) }
+        val thumbnailFile = fileManager.createFileFromBitmap(thumbnail) ?: run {
+            log("Couldn't create a file for thumbnail")
+            _uiState.update { it.copy(isLoading = false) }
+            return
+        }
+        fun load(videoPath: String) = viewModelScope.launch {
             action.execute {
                 fileRepository.uploadFile(thumbnailFile)
             }.doOnSuccess { fileModel ->
-                uploadVideo(fileModel, uiState.value.uri)
+                uploadVideo(fileModel = fileModel, filePath = videoPath)
             }.doOnError { _, _ ->
                 _uiState.update { it.copy(isLoading = false) }
             }
+        }
+        val sizeInMb = File(uiState.value.uri).length() / 1024 / 1024
+        if (sizeInMb > 10) {
+            fun onCompressFailure() = viewModelScope.launch {
+                notificationsSource.sendError(StringKey.ErrorUnknown.textValue())
+                _uiState.update { it.copy(isLoading = false) }
+            }
+            VideoCompressor.start(
+                context = context,
+                uris = listOf(Uri.fromFile(File(uiState.value.uri))),
+                configureWith = Configuration(
+                    isMinBitrateCheckEnabled = false,
+                ),
+                appSpecificStorageConfiguration = AppSpecificStorageConfiguration(
+                    videoName = "compressed_video",
+                ),
+                listener = object : CompressionListener {
+                    override fun onCancelled(index: Int) {
+                        log("Video compress cancelled")
+                        onCompressFailure()
+                    }
+
+                    override fun onFailure(index: Int, failureMessage: String) {
+                        log("Video compress failure: $failureMessage")
+                        onCompressFailure()
+                    }
+
+                    override fun onProgress(index: Int, percent: Float) {
+                    }
+
+                    override fun onStart(index: Int) {
+                    }
+
+                    override fun onSuccess(index: Int, size: Long, path: String?) {
+                        path ?: return
+                        load(path)
+                    }
+                },
+            )
+        } else {
+            load(uiState.value.uri)
         }
     }
 
@@ -76,7 +125,7 @@ class UploadViewModel @Inject constructor(
             videoFeedRepository.uploadVideo(
                 title = _uiState.value.titleValue.trim(),
                 fileId = fileModel.id,
-                filePath = filePath,
+                file = filePath, /*File(filePath),*/
             )
         }.doOnSuccess {
             startProgressListen(it)
@@ -93,14 +142,17 @@ class UploadViewModel @Inject constructor(
                     _uiState.update { it.copy(uploadingProgress = null) }
                     notificationsSource.sendError(state.error)
                 }
+
                 is UploadStatusSource.State.Progress -> {
                     _uiState.update { it.copy(uploadingProgress = state.progress / 100f) }
                 }
+
                 is UploadStatusSource.State.Success -> {
                     videoFeedRepository.refreshFeed(VideoFeedType.User(null))
                     notificationsSource.sendMessage(StringKey.PreviewVideoMessageSuccess.textValue())
                     _command publish Command.CloseScreen
                 }
+
                 null -> Unit
             }
         }.launchIn(viewModelScope)

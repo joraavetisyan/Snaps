@@ -59,8 +59,8 @@ abstract class VideoFeedViewModel(
     private var authorLoadJob: Job? = null
     private var loaded: Boolean = false // to track load for the first item
     private var currentVideo: VideoClipModel? = null
-
     private var videoFeedPageModel: VideoFeedPageModel? = null
+    private val videoClipsBeingMarkedAsWatched = hashSetOf<Uuid>()
 
     init {
         subscribeToProfile()
@@ -102,11 +102,9 @@ abstract class VideoFeedViewModel(
     }
 
     fun onScrolledToPosition(position: Int) {
-        val current =
-            _uiState.value.videoFeedUiState.items.getOrNull(position) as? VideoClipUiState.Data
+        val current = _uiState.value.videoFeedUiState.items.getOrNull(position) as? VideoClipUiState.Data
         val videoClip = current?.clip ?: return
         currentVideo = videoClip
-        onViewed(videoClip)
         loadComments(videoClip.id)
         loadAuthor(videoClip.authorId)
         loadSubscriptions(videoClip.authorId)
@@ -174,9 +172,18 @@ abstract class VideoFeedViewModel(
         viewModelScope.launch { _command publish Command.OpenProfileScreen(clipModel.authorId) }
     }
 
-    private fun onViewed(clipModel: VideoClipModel) = viewModelScope.launch {
-        action.execute(needsErrorProcessing = false) {
-            videoFeedRepository.view(clipModel.id)
+    fun onVideoClipWatchProgressed(progress: Float, clipModel: VideoClipModel) {
+        if (progress <= 0.7f) return
+        if (videoClipsBeingMarkedAsWatched.contains(clipModel.id)) return
+        if (profileRepository.state.value.dataOrCache?.userId == clipModel.authorId) return
+
+        videoClipsBeingMarkedAsWatched.add(clipModel.id)
+        viewModelScope.launch {
+            action.execute(needsErrorProcessing = false) {
+                videoFeedRepository.markWatched(clipModel.id)
+            }.doOnError { _, _ ->
+                videoClipsBeingMarkedAsWatched.remove(clipModel.id)
+            }
         }
     }
 
@@ -209,7 +216,7 @@ abstract class VideoFeedViewModel(
 
     fun onCommentClicked(clipModel: VideoClipModel) {
         _uiState.update {
-            it.copy(bottomDialogType = BottomDialogType.Comments)
+            it.copy(bottomDialog = BottomDialog.Comments)
         }
         viewModelScope.launch { _command publish Command.ShowBottomDialog }
     }
@@ -289,7 +296,7 @@ abstract class VideoFeedViewModel(
 
     fun onMoreClicked() = viewModelScope.launch {
         _uiState.update {
-            it.copy(bottomDialogType = BottomDialogType.MoreActions)
+            it.copy(bottomDialog = BottomDialog.MoreActions)
         }
         _command publish Command.ShowBottomDialog
     }
@@ -306,7 +313,7 @@ abstract class VideoFeedViewModel(
     private fun onDeleteClicked() = viewModelScope.launch {
         _command publish Command.HideBottomDialog
         _uiState.update {
-            it.copy(dialogType = DialogType.ConfirmDeleteVideo)
+            it.copy(dialog = Dialog.ConfirmDeleteVideo)
         }
     }
 
@@ -317,7 +324,7 @@ abstract class VideoFeedViewModel(
                 videoFeedRepository.deleteVideo(video.id)
             }.doOnSuccess {
                 _uiState.update {
-                    it.copy(dialogType = null)
+                    it.copy(dialog = null)
                 }
                 videoFeedRepository.refreshFeed(videoFeedType).doOnSuccess {
                      if (uiState.value.videoFeedUiState.items.isEmpty()) {
@@ -330,7 +337,7 @@ abstract class VideoFeedViewModel(
 
     fun onDeleteDismissed() {
         _uiState.update {
-            it.copy(dialogType = null)
+            it.copy(dialog = null)
         }
     }
 
@@ -358,8 +365,8 @@ abstract class VideoFeedViewModel(
         val comment: TextFieldValue = TextFieldValue(""),
         val videoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
         val commentsUiState: CommentsUiState = CommentsUiState(),
-        val bottomDialogType: BottomDialogType = BottomDialogType.Comments,
-        val dialogType: DialogType? = null,
+        val bottomDialog: BottomDialog = BottomDialog.Comments,
+        val dialog: Dialog? = null,
         val actions: List<ActionData>,
         val isSubscribeButtonVisible: Boolean = false,
         val isSubscribed: Boolean = false,
@@ -368,13 +375,13 @@ abstract class VideoFeedViewModel(
         val isCommentSendEnabled get() = comment.text.isNotBlank()
     }
 
-    sealed class BottomDialogType {
-        object Comments : BottomDialogType()
-        object MoreActions : BottomDialogType()
+    sealed class Dialog {
+        object ConfirmDeleteVideo : Dialog()
     }
 
-    sealed class DialogType {
-        object ConfirmDeleteVideo : DialogType()
+    sealed class BottomDialog {
+        object Comments : BottomDialog()
+        object MoreActions : BottomDialog()
     }
 
     sealed class Command {

@@ -4,13 +4,21 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
+import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
+import io.snaps.basewallet.data.blockchain.BlockchainTxRepositoryImpl
 import io.snaps.basewallet.data.FakeWalletApi
 import io.snaps.basewallet.data.WalletApi
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.data.WalletRepositoryImpl
+import io.snaps.basewallet.ui.LimitedGasDialogHandler
+import io.snaps.basewallet.ui.LimitedGasDialogHandlerImplDelegate
+import io.snaps.basewallet.ui.TransferTokensDialogHandler
+import io.snaps.basewallet.ui.TransferTokensDialogHandlerImplDelegate
 import io.snaps.coredata.network.ApiConfig
 import io.snaps.coredata.network.ApiService
 import javax.inject.Singleton
@@ -38,4 +46,21 @@ interface DataBindModule {
     @Binds
     @Singleton
     fun walletRepository(bind: WalletRepositoryImpl): WalletRepository
+
+    @Binds
+    @Singleton
+    fun blockchainTxRepository(bind: BlockchainTxRepositoryImpl): BlockchainTxRepository
+}
+
+@Module
+@InstallIn(ViewModelComponent::class)
+interface ViewModelDataBindModule {
+
+    @Binds
+    @ViewModelScoped
+    fun transferTokensHandler(bind: TransferTokensDialogHandlerImplDelegate): TransferTokensDialogHandler
+
+    @Binds
+    @ViewModelScoped
+    fun limitedGasDialogHandler(bind: LimitedGasDialogHandlerImplDelegate): LimitedGasDialogHandler
 }

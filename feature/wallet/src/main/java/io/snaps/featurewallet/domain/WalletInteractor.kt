@@ -36,9 +36,7 @@ class WalletInteractorImpl @Inject constructor(
             is Effect -> when {
                 it.isSuccess -> {
                     val snp = walletRepository.getSnpWalletModel()?.coinValueDouble
-                    Effect.success(
-                        "$${snp?.times(it.requireData.snpExchangeRate)?.toStringValue().orEmpty()}"
-                    )
+                    Effect.success(snp?.times(it.requireData.snpExchangeRate)?.toStringValue().orEmpty())
                 }
                 else -> Effect.error(requireNotNull(it.errorOrNull))
             }

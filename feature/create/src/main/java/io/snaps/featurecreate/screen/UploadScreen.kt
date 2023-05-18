@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntSize
@@ -58,6 +59,7 @@ import io.snaps.coreuicompose.uikit.other.SimpleCard
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
+import io.snaps.coreuitheme.compose.typography
 import io.snaps.featurecreate.ScreenNavigator
 import io.snaps.featurecreate.viewmodel.UploadViewModel
 
@@ -69,6 +71,7 @@ fun UploadScreen(
     val viewModel = hiltViewModel<UploadViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     viewModel.command.collectAsCommand {
         when (it) {
@@ -79,7 +82,7 @@ fun UploadScreen(
     UploadScreen(
         uiState = uiState,
         onBackClicked = router::back,
-        onPublishClicked = viewModel::onPublishClicked,
+        onPublishClicked = { viewModel.onPublishClicked(context = context.applicationContext, thumbnail = it) },
         onTitleChanged = viewModel::onTitleChanged,
         onDescriptionChanged = viewModel::onDescriptionChanged,
     )
@@ -135,7 +138,10 @@ private fun UploadScreen(
         ) {
             TitleTextField(uiState = uiState, onTitleChanged = onTitleChanged)
             /*DescriptionTextField(uiState = uiState, onDescriptionChanged = onDescriptionChanged)*/
-            Text(text = "Select video preview", style = AppTheme.specificTypography.titleSmall)
+            Text(
+                text = LocalStringHolder.current(StringKey.UploadVideoTitlePreview),
+                style = typography { titleSmall },
+            )
             selectedBitmap?.let { bitmap ->
                 Canvas(
                     modifier = Modifier

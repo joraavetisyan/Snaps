@@ -25,6 +25,7 @@ import io.snaps.coreuitheme.compose.AppTheme
 
 object SimpleTextFieldConfig {
 
+    @OptIn(ExperimentalMaterial3Api::class)
     val MinWidth = TextFieldDefaults.MinWidth
     val MinHeight = 48.dp
 
@@ -128,26 +129,29 @@ fun SimpleTextField(
         maxLines = maxLines,
         minLines = minLines,
         decorationBox = @Composable { innerTextField ->
-            TextFieldDefaults.OutlinedTextFieldDecorationBox(
+            OutlinedTextFieldDefaults.DecorationBox(
                 value = value,
                 innerTextField = innerTextField,
                 enabled = enabled,
                 singleLine = maxLines == 1,
                 visualTransformation = visualTransformation,
                 interactionSource = interactionSource,
-                colors = colors.toLibColors(),
                 isError = status.isError(),
-                trailingIcon = trailingIcon,
-                leadingIcon = leadingIcon,
                 label = label,
                 placeholder = placeholder,
+                leadingIcon = leadingIcon,
+                trailingIcon = trailingIcon,
+                colors = colors.toLibColors(),
+                contentPadding = OutlinedTextFieldDefaults.contentPadding(),
                 container = {
-                    TextFieldDefaults.OutlinedBorderContainerBox(
+                    OutlinedTextFieldDefaults.ContainerBox(
                         enabled = enabled,
                         isError = status.isError(),
                         interactionSource = interactionSource,
                         colors = colors.toLibColors(),
                         shape = shape,
+                        focusedBorderThickness = OutlinedTextFieldDefaults.FocusedBorderThickness,
+                        unfocusedBorderThickness = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
                     )
                 },
             )

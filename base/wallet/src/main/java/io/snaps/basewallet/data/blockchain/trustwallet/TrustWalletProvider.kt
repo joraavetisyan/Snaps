@@ -1,4 +1,4 @@
-package io.snaps.basewallet.data.trustwallet
+package io.snaps.basewallet.data.blockchain.trustwallet
 
 import android.app.Activity
 import io.horizontalsystems.ethereumkit.models.Chain

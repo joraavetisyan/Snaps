@@ -1,6 +1,7 @@
 package io.snaps.coreuicompose.uikit.button
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -95,6 +96,27 @@ fun SimpleButtonContentLoader() {
         color = LocalContentColor.current,
         modifier = Modifier.size(getContentHeight()),
     )
+}
+
+@Composable
+fun SimpleButtonContentWithLoader(
+    isLoading: Boolean,
+    text: TextValue?,
+    textColor: Color = LocalContentColor.current,
+    iconLeft: IconValue? = null,
+    iconRight: IconValue? = null,
+    iconTint: Color = Color.Unspecified,
+) {
+    AnimatedContent(targetState = isLoading) {
+        if (it) SimpleButtonContentLoader()
+        else SimpleButtonContent(
+            text = text,
+            textColor = textColor,
+            iconLeft = iconLeft,
+            iconRight = iconRight,
+            iconTint = iconTint,
+        )
+    }
 }
 
 @Composable

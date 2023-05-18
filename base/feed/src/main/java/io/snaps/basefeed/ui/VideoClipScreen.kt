@@ -83,11 +83,14 @@ import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStat
 import io.snaps.coreuicompose.uikit.button.SimpleChip
 import io.snaps.coreuicompose.uikit.button.SimpleChipConfig
 import io.snaps.coreuicompose.uikit.dialog.SimpleConfirmDialogUi
+import io.snaps.coreuicompose.uikit.other.Progress
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.scroll.DetectScroll
 import io.snaps.coreuicompose.uikit.scroll.ScrollInfo
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
+import io.snaps.coreuitheme.compose.colors
+import io.snaps.coreuitheme.compose.icons
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -203,15 +206,15 @@ fun VideoClipScreen(
         ModalBottomSheetLayout(
             sheetState = sheetState,
             sheetContent = {
-                when (uiState.bottomDialogType) {
-                    VideoFeedViewModel.BottomDialogType.Comments -> CommentsScreen(
+                when (uiState.bottomDialog) {
+                    VideoFeedViewModel.BottomDialog.Comments -> CommentsScreen(
                         uiState = uiState,
                         onCommentInputClicked = viewModel::onCommentInputClick,
                         onCloseClicked = sheetState::hideSheet,
                         onReplyClicked = commentInputSheetState::showSheet,
                         onEmojiClicked = viewModel::onEmojiClicked,
                     )
-                    VideoFeedViewModel.BottomDialogType.MoreActions -> ActionsBottomDialog(
+                    VideoFeedViewModel.BottomDialog.MoreActions -> ActionsBottomDialog(
                         title = StringKey.VideoClipTitleAction.textValue(),
                         actions = uiState.actions,
                     )
@@ -252,6 +255,7 @@ fun VideoClipScreen(
                                     item = item,
                                     uiState = uiState,
                                     onMuteClicked = viewModel::onMuteClicked,
+                                    onProgressChanged = viewModel::onVideoClipWatchProgressed,
                                     onAuthorClicked = viewModel::onAuthorClicked,
                                     onLikeClicked = viewModel::onLikeClicked,
                                     onDoubleLikeClicked = viewModel::onDoubleLikeClicked,
@@ -274,12 +278,11 @@ fun VideoClipScreen(
             }
         }
     }
-    uiState.dialogType?.let {
+    uiState.dialog?.let {
         when (it) {
-            VideoFeedViewModel.DialogType.ConfirmDeleteVideo -> SimpleConfirmDialogUi(
+            VideoFeedViewModel.Dialog.ConfirmDeleteVideo -> SimpleConfirmDialogUi(
                 text = StringKey.VideoClipDialogConfirmDeleteMessage.textValue(),
                 confirmButtonText = StringKey.ActionDelete.textValue(),
-                dismissButtonText = StringKey.ActionCancel.textValue(),
                 onDismissRequest = viewModel::onDeleteDismissed,
                 onConfirmRequest = viewModel::onDeleteConfirmed,
             )
@@ -317,6 +320,7 @@ private fun VideoClip(
     item: VideoClipUiState.Data,
     uiState: VideoFeedViewModel.UiState,
     onMuteClicked: (Boolean) -> Unit,
+    onProgressChanged: (Float, VideoClipModel) -> Unit,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onDoubleLikeClicked: (VideoClipModel) -> Unit,
@@ -336,6 +340,8 @@ private fun VideoClip(
         }
     }
 
+    var progress by remember(item.clip.id) { mutableStateOf(0f) }
+
     VideoPlayer(
         networkUrl = item.clip.url,
         shouldPlay = shouldPlay,
@@ -344,6 +350,11 @@ private fun VideoClip(
         onMuted = onMuteClicked,
         isScrolling = pagerState.isScrollInProgress,
         onLiked = { onDoubleLikeClicked(item.clip) },
+        onProgressChanged = {
+            onProgressChanged(it, item.clip)
+            progress = it
+        },
+        progressPollFrequencyInMillis = 10L,
     )
 
     VideoClipItems(
@@ -353,6 +364,7 @@ private fun VideoClip(
         isSubscribed = uiState.isSubscribed,
         authorProfileAvatar = uiState.authorProfileAvatar,
         authorName = uiState.authorName,
+        progress = progress,
         onAuthorClicked = onAuthorClicked,
         onLikeClicked = onLikeClicked,
         onCommentClicked = onCommentClicked,
@@ -372,6 +384,7 @@ private fun VideoClipItems(
     isSubscribed: Boolean,
     authorProfileAvatar: ImageValue?,
     authorName: String,
+    progress: Float,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onCommentClicked: (VideoClipModel) -> Unit,
@@ -409,6 +422,16 @@ private fun VideoClipItems(
                 onMoreClicked = onMoreClicked,
                 onCreateVideoClicked = onCreateVideoClicked,
                 onSubscribeClicked = onSubscribeClicked,
+            )
+            Progress(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                progress = progress,
+                isDashed = false,
+                backColor = AppTheme.specificColorScheme.white_40,
+                fillColor = AppTheme.specificColorScheme.white,
+                height = 2.dp,
             )
         }
     }
@@ -571,17 +594,9 @@ private fun VideoClipEndItems(
         }
 
         TextedIcon(
-            icon = if (clipModel.isLiked) {
-                AppTheme.specificIcons.favorite
-            } else {
-                AppTheme.specificIcons.favoriteBorder
-            },
+            icon = icons { if (clipModel.isLiked) favorite else favoriteBorder },
             text = clipModel.likeCount.toFormatDecimal(),
-            tint = if (clipModel.isLiked) {
-                AppTheme.specificColorScheme.red
-            } else {
-                AppTheme.specificColorScheme.white
-            },
+            tint = colors { if (clipModel.isLiked) red else white },
             onIconClicked = { onLikeClicked(clipModel) },
         )
 

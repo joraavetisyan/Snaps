@@ -48,34 +48,25 @@ class MainVideoFeedViewModel @Inject constructor(
 
     private val args = savedStateHandle.getArg<AppRoute.SingleVideo.Args>()
 
-    private val _screenState = MutableStateFlow(UiState())
+    private val _screenState = MutableStateFlow(
+        UiState(tab = Tab.Main.takeIf { args?.videoClipId == null })
+    )
     val screenState = _screenState.asStateFlow()
 
     init {
         checkOnboarding(OnboardingType.Rank)
-        if (args?.videoClipId == null) {
-            _screenState.update {
-                it.copy(screen = VideoClipScreen.Main)
-            }
-        }
     }
 
-    fun onTabRowClicked(index: Int) {
-        _screenState.update {
-            it.copy(screen = VideoClipScreen.getByOrdinal(index) ?: VideoClipScreen.Main)
-        }
+    fun onTabRowClicked(tab: Tab) {
+        _screenState.update { it.copy(tab = tab) }
     }
 
     data class UiState(
-        val screen: VideoClipScreen? = null,
+        val tab: Tab?,
     )
 
-    enum class VideoClipScreen(val label: TextValue) {
+    enum class Tab(val label: TextValue) {
         Main(StringKey.MainVideoFeedTitleForYou.textValue()),
         Subscriptions(StringKey.MainVideoFeedTitleSubscriptions.textValue());
-
-        companion object {
-            fun getByOrdinal(ordinal: Int) = values().firstOrNull { it.ordinal == ordinal }
-        }
     }
 }
