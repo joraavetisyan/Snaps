@@ -49,10 +49,7 @@ fun CommentPageModel.toCommentsUiState(
             errorState = MessageBannerState.defaultState(onReloadClicked)
         )
         loadedPageItems.isEmpty() -> CommentsUiState(
-            emptyState = EmptyListTileState(
-                title = "No data".textValue(),
-                image = ImageValue.ResImage(R.drawable.img_diamonds),
-            )
+            emptyState = EmptyListTileState.defaultState(),
         )
         else -> CommentsUiState(
             items = loadedPageItems.map {

@@ -122,14 +122,15 @@ object AppTheme {
         get() = MaterialTheme.typography
 }
 
-@Composable
-inline fun withIcons(block: SpecificIcons.() -> IconValue): IconValue =
+// Handy functions when there is some logic in resource selection:
+// colors { if (condition1) white else black }
+inline fun icons(block: SpecificIcons.() -> IconValue): IconValue =
     AppTheme.specificIcons.block()
 
 @Composable
-inline fun withColors(block: SpecificColorScheme.() -> Color): Color =
+inline fun colors(block: SpecificColorScheme.() -> Color): Color =
     AppTheme.specificColorScheme.block()
 
 @Composable
-inline fun withTypography(block: SpecificTypography.() -> TextStyle): TextStyle =
+inline fun typography(block: SpecificTypography.() -> TextStyle): TextStyle =
     AppTheme.specificTypography.block()

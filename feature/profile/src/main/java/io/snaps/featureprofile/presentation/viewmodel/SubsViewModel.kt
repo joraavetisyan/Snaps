@@ -4,14 +4,16 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
-import io.snaps.featureprofile.domain.SubModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.basesubs.data.SubsRepository
+import io.snaps.basesubs.domain.SubModel
+import io.snaps.basesubs.domain.SubPageModel
 import io.snaps.corecommon.model.Uuid
+import io.snaps.coredata.di.Bridged
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.publish
-import io.snaps.featureprofile.data.SubsRepository
-import io.snaps.featureprofile.domain.SubPageModel
+import io.snaps.featureprofile.presentation.screen.ConfirmUnsubscribeData
 import io.snaps.featureprofile.presentation.screen.SubsUiState
 import io.snaps.featureprofile.presentation.screen.toSubsUiState
 import kotlinx.coroutines.channels.Channel
@@ -29,12 +31,19 @@ import javax.inject.Inject
 class SubsViewModel @Inject constructor(
     stateHandle: SavedStateHandle,
     private val action: Action,
-    private val subsRepository: SubsRepository,
+    @Bridged private val subsRepository: SubsRepository,
 ) : SimpleViewModel() {
 
     private val args = stateHandle.requireArgs<AppRoute.Subs.Args>()
 
-    private val _uiState = MutableStateFlow(UiState())
+    private val _uiState = MutableStateFlow(
+        UiState(
+            nickname = args.userName,
+            totalSubscribers = args.totalSubscribers,
+            totalSubscriptions = args.totalSubscriptions,
+            initialPage = args.subsType.ordinal,
+        )
+    )
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
@@ -44,14 +53,6 @@ class SubsViewModel @Inject constructor(
     private var subscriptionsPageModel: SubPageModel? = null
 
     init {
-        _uiState.update {
-            it.copy(
-                nickname = args.nickname,
-                totalSubscribers = args.totalSubscribers,
-                totalSubscriptions = args.totalSubscriptions,
-                initialPage = args.subsPage.ordinal,
-            )
-        }
         subscribeOnSubscriptions()
         subscribeOnSubscribers()
     }
@@ -91,9 +92,13 @@ class SubsViewModel @Inject constructor(
     }
 
     private fun onSubscribeClicked(item: SubModel) = viewModelScope.launch {
-        if (item.isSubscribed) {
+        if (item.isSubscribed!!) {
             _uiState.update {
-                it.copy(dialog = Dialog.ConfirmUnsubscribe(item))
+                it.copy(
+                    dialog = Dialog.ConfirmUnsubscribe(
+                        ConfirmUnsubscribeData(userId = item.userId, avatar = item.avatar, name = item.name)
+                    )
+                )
             }
         } else {
             subscribe(item.userId, true)
@@ -159,13 +164,13 @@ class SubsViewModel @Inject constructor(
         }
     }
 
-    fun onUnsubscribeClicked(item: SubModel) = viewModelScope.launch {
+    fun onUnsubscribeClicked(userId: Uuid) = viewModelScope.launch {
         _uiState.update {
             it.copy(dialog = null)
         }
-        subscribe(item.userId, false)
+        subscribe(userId = userId, isSubscribe = false)
         action.execute {
-            subsRepository.unsubscribe(item.userId)
+            subsRepository.unsubscribe(userId)
         }
     }
 
@@ -186,7 +191,7 @@ class SubsViewModel @Inject constructor(
     )
 
     sealed class Dialog {
-        data class ConfirmUnsubscribe(val data: SubModel) : Dialog()
+        data class ConfirmUnsubscribe(val data: ConfirmUnsubscribeData) : Dialog()
     }
 
     sealed class Command {

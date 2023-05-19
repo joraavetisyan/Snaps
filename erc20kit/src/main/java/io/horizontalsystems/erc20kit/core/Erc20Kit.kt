@@ -13,11 +13,11 @@ import io.reactivex.schedulers.Schedulers
 import java.math.BigInteger
 
 class Erc20Kit(
-        private val ethereumKit: EthereumKit,
-        private val transactionManager: TransactionManager,
-        private val balanceManager: IBalanceManager,
-        private val allowanceManager: AllowanceManager,
-        private val state: KitState = KitState()
+    private val ethereumKit: EthereumKit,
+    private val transactionManager: TransactionManager,
+    private val balanceManager: IBalanceManager,
+    private val allowanceManager: AllowanceManager,
+    private val state: KitState = KitState(),
 ) : IBalanceManagerListener {
 
     private val disposables = CompositeDisposable()
@@ -27,19 +27,19 @@ class Erc20Kit(
         state.balance = balanceManager.balance
 
         ethereumKit.syncStateFlowable
-                .subscribe {
-                    onSyncStateUpdate(it)
-                }.let {
-                    disposables.add(it)
-                }
+            .subscribe {
+                onSyncStateUpdate(it)
+            }.let {
+                disposables.add(it)
+            }
 
         transactionManager.transactionsAsync
-                .subscribeOn(Schedulers.io())
-                .subscribe {
-                    balanceManager.sync()
-                }.let {
-                    disposables.add(it)
-                }
+            .subscribeOn(Schedulers.io())
+            .subscribe {
+                balanceManager.sync()
+            }.let {
+                disposables.add(it)
+            }
     }
 
     val syncState: SyncState
@@ -73,9 +73,14 @@ class Erc20Kit(
         disposables.clear()
     }
 
-    fun refresh() {}
+    fun refresh() {
+        balanceManager.sync()
+    }
 
-    fun getAllowanceAsync(spenderAddress: Address, defaultBlockParameter: DefaultBlockParameter = DefaultBlockParameter.Latest): Single<BigInteger> {
+    fun getAllowanceAsync(
+        spenderAddress: Address,
+        defaultBlockParameter: DefaultBlockParameter = DefaultBlockParameter.Latest
+    ): Single<BigInteger> {
         return allowanceManager.allowance(spenderAddress, defaultBlockParameter)
     }
 
@@ -120,14 +125,15 @@ class Erc20Kit(
     companion object {
 
         fun getInstance(
-                context: Context,
-                ethereumKit: EthereumKit,
-                contractAddress: Address
+            context: Context,
+            ethereumKit: EthereumKit,
+            contractAddress: Address,
         ): Erc20Kit {
 
             val address = ethereumKit.receiveAddress
 
-            val erc20KitDatabase = Erc20DatabaseManager.getErc20Database(context, ethereumKit.chain, ethereumKit.walletId, contractAddress)
+            val erc20KitDatabase =
+                Erc20DatabaseManager.getErc20Database(context, ethereumKit.chain, ethereumKit.walletId, contractAddress)
             val roomStorage = Erc20Storage(erc20KitDatabase)
             val balanceStorage: ITokenBalanceStorage = roomStorage
 
@@ -144,7 +150,12 @@ class Erc20Kit(
         }
 
         fun addTransactionSyncer(ethereumKit: EthereumKit) {
-            ethereumKit.addTransactionSyncer(Erc20TransactionSyncer(ethereumKit.transactionProvider, ethereumKit.eip20Storage))
+            ethereumKit.addTransactionSyncer(
+                Erc20TransactionSyncer(
+                    transactionProvider = ethereumKit.transactionProvider,
+                    storage = ethereumKit.eip20Storage,
+                )
+            )
         }
 
         fun addDecorators(ethereumKit: EthereumKit) {

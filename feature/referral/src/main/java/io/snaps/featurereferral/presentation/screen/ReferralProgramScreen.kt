@@ -74,10 +74,12 @@ import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startSharePhotoIntent
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.LocalBottomNavigationHeight
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.gradientBackground
@@ -92,6 +94,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContentLoader
+import io.snaps.coreuicompose.uikit.button.SimpleButtonContentWithLoader
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
 import io.snaps.coreuicompose.uikit.dialog.DiamondDialog
 import io.snaps.coreuicompose.uikit.dialog.DiamondDialogButtonData
@@ -154,7 +157,7 @@ fun ReferralProgramScreen(
     }
 
     val templatePhoto = generateTemplatePhoto(
-        bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.img_template),
+        bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.img_referral_code_template),
         qr = uiState.referralQr,
         code = uiState.referralCode,
     )
@@ -176,19 +179,18 @@ fun ReferralProgramScreen(
                 )
                 ReferralProgramViewModel.BottomDialog.ReferralProgramFootnote -> FootnoteBottomDialog(
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_guy_eating),
+                        image = R.drawable.img_guy_eating.imageValue(),
                         title = StringKey.ReferralProgramDialogTitleFootnoteMain1.textValue(),
                         text = StringKey.ReferralProgramDialogMessageFootnoteMain1.textValue(),
                     ),
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_guy_glad),
+                        image = R.drawable.img_guy_glad.imageValue(),
                         title = StringKey.ReferralProgramDialogTitleFootnoteMain2.textValue(),
                         text = StringKey.ReferralProgramDialogMessageFootnoteMain2.textValue(),
                         onClick = viewModel::onShowReferralQrClicked,
                         buttonText = StringKey.ReferralProgramDialogActionFootnoteMain2.textValue(),
                     )
                 )
-
                 ReferralProgramViewModel.BottomDialog.ReferralsInvitedFootnote -> ReferralsInvitedBottomDialog()
             }
         },
@@ -359,7 +361,7 @@ private fun Main(
         modifier = Modifier
             .padding(vertical = 12.dp)
             .verticalScroll(rememberScrollState())
-            .padding(bottom = 100.dp),
+            .padding(bottom = LocalBottomNavigationHeight.current),
     ) {
         ReferralCodeCard(onEnterCodeClicked = onEnterCodeClicked)
         Spacer(modifier = Modifier.height(16.dp))
@@ -379,14 +381,14 @@ private fun Main(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             DirectReferralCard(
-                image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
-                title = StringKey.ReferralProgramTitleDirectReferral.textValue("2"),
-                message = StringKey.ReferralProgramMessageDirectReferral.textValue("2"),
+                image = R.drawable.img_guys_surprised_eating.imageValue(),
+                title = StringKey.ReferralProgramTitleDirectReferral.textValue(uiState.firstLevelReferral),
+                message = StringKey.ReferralProgramMessageDirectReferral.textValue(uiState.secondLevelReferral),
             )
             DirectReferralCard(
-                image = ImageValue.ResImage(R.drawable.img_guys_surprised_shadowed_eating),
-                title = StringKey.ReferralProgramTitleDirectReferral.textValue("1"),
-                message = StringKey.ReferralProgramMessageDirectReferral.textValue("1"),
+                image = R.drawable.img_guys_surprised_shadowed_eating.imageValue(),
+                title = StringKey.ReferralProgramTitleDirectReferral.textValue(uiState.secondLevelReferral),
+                message = StringKey.ReferralProgramMessageDirectReferral.textValue(uiState.secondLevelReferral),
             )
         }
         SimpleButtonActionM(
@@ -412,12 +414,12 @@ private fun ReferralCodeCard(
             .heightIn(min = 172.dp, max = 188.dp),
     ) {
         Image(
-            painter = ImageValue.ResImage(R.drawable.img_referral_program_card_background).get(),
+            painter = R.drawable.img_referral_program_card_background.imageValue().get(),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
         )
         Image(
-            painter = ImageValue.ResImage(R.drawable.img_diamonds).get(),
+            painter = R.drawable.img_diamonds.imageValue().get(),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxHeight()
@@ -583,12 +585,10 @@ private fun ReferralCodeDialog(
                 enabled = isInviteUserButtonEnabled,
                 onClick = onInviteUserClicked,
             ) {
-                AnimatedContent(targetState = isLoading) {
-                    if (it) SimpleButtonContentLoader()
-                    else SimpleButtonContent(
-                        text = StringKey.ReferralProgramCodeDialogActionInvite.textValue()
-                    )
-                }
+                SimpleButtonContentWithLoader(
+                    isLoading = isLoading,
+                    text = StringKey.ReferralProgramCodeDialogActionInvite.textValue(),
+                )
             }
         }
     }
@@ -604,9 +604,9 @@ private fun ReferralsInvitedBottomDialog() {
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
                 Image(
-                    painter = ImageValue.ResImage(R.drawable.img_guy_hands_up).get(),
+                    painter = R.drawable.img_guy_hands_up.imageValue().get(),
                     contentDescription = null,
-                    modifier = Modifier.size(320.dp),
+                    modifier = Modifier.size(240.dp),
                 )
                 Text(
                     text = StringKey.ReferralProgramDialogTitleFootnoteMyReferrals.textValue()
@@ -626,21 +626,21 @@ private fun ReferralsInvitedBottomDialog() {
                 ReferralLevelBlock(
                     title = StringKey.ReferralProgramDialogTitleFootnoteMyReferralsLevel1.textValue(),
                     text = StringKey.ReferralProgramDialogMessageFootnoteMyReferralsLevel1.textValue(),
-                    image = ImageValue.ResImage(R.drawable.img_sunglasses4),
+                    image = R.drawable.img_sunglasses4.imageValue(),
                     backgroundColor = AppTheme.specificColorScheme.uiSystemOrange,
                     rotateDegree = -20f,
                 )
                 ReferralLevelBlock(
                     title = StringKey.ReferralProgramDialogTitleFootnoteMyReferralsLevel2.textValue(),
                     text = StringKey.ReferralProgramDialogMessageFootnoteMyReferralsLevel2.textValue(),
-                    image = ImageValue.ResImage(R.drawable.img_sunglasses9),
+                    image = R.drawable.img_sunglasses9.imageValue(),
                     backgroundColor = AppTheme.specificColorScheme.uiSystemBlue,
                     rotateDegree = 15f,
                 )
                 ReferralLevelBlock(
                     title = StringKey.ReferralProgramDialogTitleFootnoteMyReferralsLevel3.textValue(),
                     text = StringKey.ReferralProgramDialogMessageFootnoteMyReferralsLevel3.textValue(),
-                    image = ImageValue.ResImage(R.drawable.img_sunglasses5),
+                    image = R.drawable.img_sunglasses5.imageValue(),
                     backgroundColor = AppTheme.specificColorScheme.uiSystemPurple,
                     rotateDegree = -30f,
                 )

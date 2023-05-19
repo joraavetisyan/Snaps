@@ -15,7 +15,7 @@ import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rDouble
 import io.snaps.corecommon.mock.rInt
 import io.snaps.corecommon.model.Completable
-import io.snaps.corecommon.model.QuestType
+import io.snaps.corecommon.model.TaskType
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
 import retrofit2.http.Body
@@ -25,14 +25,12 @@ class FakeProfileApi : ProfileApi {
 
     override suspend fun userInfo(userId: String?): BaseResponse<UserInfoResponseDto> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = getUserInfo(userId),
         )
     }
 
     override suspend fun createUser(@Body body: UserCreateRequestDto): BaseResponse<UserInfoResponseDto> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = getUserInfo(null),
         )
     }
@@ -40,7 +38,6 @@ class FakeProfileApi : ProfileApi {
     override suspend fun setInviteCode(body: SetInviteCodeRequestDto): BaseResponse<Completable> {
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 0L,
             data = Completable,
         )
     }
@@ -50,7 +47,6 @@ class FakeProfileApi : ProfileApi {
         count: Int
     ): BaseResponse<List<TransactionItemResponseDto>> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = getTransactions()
         ).also {
             delay(mockDelay)
@@ -62,7 +58,6 @@ class FakeProfileApi : ProfileApi {
         count: Int
     ): BaseResponse<List<TransactionItemResponseDto>> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = getTransactions()
         ).also {
             delay(mockDelay)
@@ -71,7 +66,6 @@ class FakeProfileApi : ProfileApi {
 
     override suspend fun balance(): BaseResponse<BalanceResponseDto> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = BalanceResponseDto(
                 lockedTokensBalance = 1.0,
                 unlockedTokensBalance = 1.0,
@@ -85,7 +79,6 @@ class FakeProfileApi : ProfileApi {
 
     override suspend fun connectInstagram(@Body body: ConnectInstagramRequestDto): BaseResponse<UserInfoResponseDto> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = getUserInfo(null)
         ).also {
             delay(mockDelay)
@@ -99,7 +92,6 @@ class FakeProfileApi : ProfileApi {
         @Query(value = "onlyInvited") onlyInvited: Boolean,
     ): BaseResponse<List<UserInfoResponseDto>> {
         return BaseResponse(
-            actualTimestamp = 0L,
             data = List(10) {
                 getUserInfo("user $it")
             },
@@ -136,6 +128,8 @@ class FakeProfileApi : ProfileApi {
             inviteCodeRegisteredBy = null,
             instagramId = null,
             paymentsState = PaymentsState.No,
+            firstLevelReferralMultiplier = 0.03,
+            secondLevelReferralMultiplier = 0.01,
         )
 
         fun getQuestInfo() = QuestInfoResponseDto(
@@ -153,7 +147,7 @@ class FakeProfileApi : ProfileApi {
                     status = null,
                     quest = QuestDto(
                         count = 20,
-                        type = QuestType.Like,
+                        type = TaskType.Like,
                         energy = 20,
                     )
                 ),
@@ -164,7 +158,7 @@ class FakeProfileApi : ProfileApi {
                     status = null,
                     quest = QuestDto(
                         count = rInt,
-                        type = QuestType.PublishVideo,
+                        type = TaskType.PublishVideo,
                         energy = 20,
                     )
                 ),
@@ -175,7 +169,7 @@ class FakeProfileApi : ProfileApi {
                     status = null,
                     quest = QuestDto(
                         count = 20,
-                        type = QuestType.Watch,
+                        type = TaskType.Watch,
                         energy = 20,
                     )
                 ),
@@ -186,7 +180,7 @@ class FakeProfileApi : ProfileApi {
                     status = null,
                     quest = QuestDto(
                         count = 5,
-                        type = QuestType.Subscribe,
+                        type = TaskType.Subscribe,
                         energy = 20,
                     )
                 ),
@@ -197,7 +191,7 @@ class FakeProfileApi : ProfileApi {
                     status = null,
                     quest = QuestDto(
                         count = rInt,
-                        type = QuestType.SocialPost,
+                        type = TaskType.SocialPost,
                         energy = 20,
                     )
                 ),

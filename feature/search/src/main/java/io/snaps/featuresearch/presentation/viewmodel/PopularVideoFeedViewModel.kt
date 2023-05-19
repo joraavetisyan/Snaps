@@ -8,6 +8,8 @@ import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.ui.VideoFeedViewModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
+import io.snaps.basesubs.data.SubsRepository
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
@@ -17,10 +19,11 @@ import javax.inject.Inject
 class PopularVideoFeedViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     action: Action,
-    videoFeedRepository: VideoFeedRepository,
-    profileRepository: ProfileRepository,
-    commentRepository: CommentRepository,
-    bottomDialogBarVisibilityHandlerDelegate: BottomDialogBarVisibilityHandler,
+    @Bridged videoFeedRepository: VideoFeedRepository,
+    @Bridged profileRepository: ProfileRepository,
+    @Bridged commentRepository: CommentRepository,
+    @Bridged subsRepository: SubsRepository,
+    bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
 ) : VideoFeedViewModel(
     videoFeedType = savedStateHandle.requireArgs<AppRoute.PopularVideoFeed.Args>().query.let {
         if (it.isBlank()) VideoFeedType.Popular else VideoFeedType.All(it)
@@ -30,5 +33,6 @@ class PopularVideoFeedViewModel @Inject constructor(
     videoFeedRepository = videoFeedRepository,
     profileRepository = profileRepository,
     commentRepository = commentRepository,
-    bottomDialogBarVisibilityHandlerDelegate = bottomDialogBarVisibilityHandlerDelegate,
+    subsRepository = subsRepository,
+    bottomDialogBarVisibilityHandler = bottomDialogBarVisibilityHandler,
 )

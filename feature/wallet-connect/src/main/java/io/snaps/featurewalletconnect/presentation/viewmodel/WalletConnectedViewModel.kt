@@ -29,7 +29,7 @@ class WalletConnectedViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             action.execute {
-                sessionRepository.onWalletConnect()
+                sessionRepository.onWalletConnected()
             }.doOnComplete {
                 _uiState.update { it.copy(isLoading = false) }
             }

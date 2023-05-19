@@ -22,4 +22,5 @@ dependencies {
     implementation(projects.baseFeed)
     implementation(projects.basePlayer)
     implementation(projects.baseSession)
+    implementation(projects.baseSubs)
 }

@@ -16,6 +16,7 @@ import io.snaps.corecommon.date.toLong
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.State
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -47,18 +48,18 @@ import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class TasksViewModel @Inject constructor(
-    mainHeaderHandler: MainHeaderHandler,
-    onboardingHandlerDelegate: OnboardingHandler,
-    bottomDialogBarVisibilityHandlerDelegate: BottomDialogBarVisibilityHandler,
+    @Bridged mainHeaderHandler: MainHeaderHandler,
+    onboardingHandler: OnboardingHandler,
+    bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     private val action: Action,
     private val appRouteProvider: AppRouteProvider,
-    private val profileRepository: ProfileRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     private val tasksRepository: TasksRepository,
-    private val nftRepository: NftRepository,
+    @Bridged private val nftRepository: NftRepository,
 ) : SimpleViewModel(),
     MainHeaderHandler by mainHeaderHandler,
-    OnboardingHandler by onboardingHandlerDelegate,
-    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandlerDelegate {
+    OnboardingHandler by onboardingHandler,
+    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandler {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()

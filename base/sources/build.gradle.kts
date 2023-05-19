@@ -5,6 +5,7 @@ plugins {
 common()
 dagger()
 lifecycle()
+firebase()
 
 android {
     namespace = "io.snaps.basesources"
@@ -15,6 +16,5 @@ dependencies {
     implementation(projects.coreData)
 
     implementation(*Libs.bundle.preference)
-    implementation(*Libs.bundle.firebase)
-    implementation(Libs.bundle.uploadService)
+    implementation(*Libs.bundle.uploadService)
 }

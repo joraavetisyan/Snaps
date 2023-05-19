@@ -11,10 +11,13 @@ import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.ext.toPercentageFormat
+import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.addPrefix
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.barcode.BarcodeManager
@@ -34,18 +37,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReferralProgramViewModel @Inject constructor(
-    mainHeaderHandlerDelegate: MainHeaderHandler,
-    onboardingHandlerDelegate: OnboardingHandler,
-    bottomDialogBarVisibilityHandlerDelegate: BottomDialogBarVisibilityHandler,
+    @Bridged mainHeaderHandler: MainHeaderHandler,
+    onboardingHandler: OnboardingHandler,
+    bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     private val fileManager: FileManager,
     private val barcodeManager: BarcodeManager,
-    private val profileRepository: ProfileRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel(),
-    MainHeaderHandler by mainHeaderHandlerDelegate,
-    OnboardingHandler by onboardingHandlerDelegate,
-    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandlerDelegate {
+    MainHeaderHandler by mainHeaderHandler,
+    OnboardingHandler by onboardingHandler,
+    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandler {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -64,13 +67,18 @@ class ReferralProgramViewModel @Inject constructor(
 
     private fun subscribeOnCurrentUser() {
         profileRepository.state.onEach { state ->
-            _uiState.update {
-                val inviteCode = state.dataOrCache?.ownInviteCode
-                it.copy(
-                    referralCode = inviteCode.orEmpty().addPrefix("#"),
-                    referralLink = inviteCode.orEmpty().addPrefix("https://snaps.io/"),
-                    referralQr = inviteCode?.let { barcodeManager.getQrCodeBitmap(text = inviteCode, size = 600f) },
-                )
+            if (state is Effect && state.isSuccess) {
+                _uiState.update {
+                    // It's not null for the authed user
+                    val inviteCode = state.requireData.ownInviteCode!!
+                    it.copy(
+                        referralCode = inviteCode.addPrefix("#"),
+                        referralLink = inviteCode.addPrefix("https://snaps.io/"),
+                        referralQr = barcodeManager.getQrCodeBitmap(text = inviteCode, size = 600f),
+                        firstLevelReferral = state.requireData.firstLevelReferralMultiplier.toPercentageFormat(),
+                        secondLevelReferral = state.requireData.secondLevelReferralMultiplier.toPercentageFormat(),
+                    )
+                }
             }
         }.launchIn(viewModelScope)
     }
@@ -99,7 +107,7 @@ class ReferralProgramViewModel @Inject constructor(
 
     private fun onReferralClick(model: UserInfoModel) {
         viewModelScope.launch {
-            _command publish Command.OpenUserInfoScreen(model.entityId)
+            _command publish Command.OpenUserInfoScreen(model.userId)
         }
     }
 
@@ -194,6 +202,8 @@ class ReferralProgramViewModel @Inject constructor(
         val referralsTileState: ReferralsTileState = ReferralsTileState.Shimmer,
         val isInviteUserDialogVisible: Boolean = false,
         val referralQr: Bitmap? = null,
+        val firstLevelReferral: String = "",
+        val secondLevelReferral: String = "",
     ) {
 
         val isReferralCodeValid get() = inviteCodeValue.isNotBlank()

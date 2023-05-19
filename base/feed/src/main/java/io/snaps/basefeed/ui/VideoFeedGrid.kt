@@ -22,6 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.coreuicompose.tools.addIf
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
@@ -57,6 +58,8 @@ fun VideoFeedGrid(
             }
         }
     }
+    uiState.emptyState?.Content(modifier = Modifier.fillMaxSize())
+    uiState.errorState?.Content(modifier = Modifier.fillMaxSize())
 }
 
 @Composable
@@ -70,7 +73,7 @@ private fun Item(
         item.thumbnail?.let {
             Image(
                 modifier = Modifier.fillMaxSize(),
-                painter = ImageValue.Url(it).get(),
+                painter = it.imageValue().get(),
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
             )

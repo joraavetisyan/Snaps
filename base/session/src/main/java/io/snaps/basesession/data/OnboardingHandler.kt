@@ -3,6 +3,7 @@ package io.snaps.basesession.data
 import io.snaps.basenft.data.NftRepository
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
+import io.snaps.coredata.di.Bridged
 import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -26,7 +27,7 @@ interface OnboardingHandler {
     fun closeOnboardingDialog()
 
     data class UiState(
-        val dialogType: OnboardingType? = null,
+        val onboardingType: OnboardingType? = null,
     )
 
     sealed interface Command {
@@ -38,7 +39,7 @@ interface OnboardingHandler {
 class OnboardingHandlerImplDelegate @Inject constructor(
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val sessionRepository: SessionRepository,
-    private val nftRepository: NftRepository,
+    @Bridged private val nftRepository: NftRepository,
 ) : OnboardingHandler {
 
     private val _uiState = MutableStateFlow(OnboardingHandler.UiState())
@@ -63,7 +64,7 @@ class OnboardingHandlerImplDelegate @Inject constructor(
     }
 
     private suspend fun openDialog(type: OnboardingType) {
-        _uiState.update { it.copy(dialogType = type) }
+        _uiState.update { it.copy(onboardingType = type) }
         _command publish OnboardingHandler.Command.OpenDialog(type)
     }
 

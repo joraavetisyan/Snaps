@@ -26,8 +26,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.model.QuestType
+import io.snaps.corecommon.model.TaskType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
@@ -77,12 +78,12 @@ private fun TaskDetailsScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val title = when (uiState.type) {
-        QuestType.Like -> StringKey.TaskLikeTitle
-        QuestType.PublishVideo -> StringKey.TaskPublishVideoTitle
-        QuestType.SocialPost -> StringKey.TaskSocialPostTitle
-        QuestType.SocialShare -> StringKey.TaskSocialShareTitle
-        QuestType.Subscribe -> StringKey.TaskSubscribeTitle
-        QuestType.Watch -> StringKey.TaskWatchVideoTitle
+        TaskType.Like -> StringKey.TaskLikeTitle
+        TaskType.PublishVideo -> StringKey.TaskPublishVideoTitle
+        TaskType.SocialPost -> StringKey.TaskSocialPostTitle
+        TaskType.SocialShare -> StringKey.TaskSocialShareTitle
+        TaskType.Subscribe -> StringKey.TaskSubscribeTitle
+        TaskType.Watch -> StringKey.TaskWatchVideoTitle
     }.textValue()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -91,7 +92,7 @@ private fun TaskDetailsScreen(
                 title = title,
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 progress = when (uiState.type) {
-                    QuestType.SocialPost -> null
+                    TaskType.SocialPost -> null
                     else -> uiState.energy
                 },
                 scrollBehavior = scrollBehavior,
@@ -124,12 +125,12 @@ private fun Content(
     onStartButtonClicked: () -> Unit,
 ) {
     val description = when (uiState.type) {
-        QuestType.Like -> StringKey.TaskLikeMessage
-        QuestType.PublishVideo -> StringKey.TaskPublishVideoMessage
-        QuestType.SocialPost -> StringKey.TaskSocialPostMessage
-        QuestType.SocialShare -> StringKey.TaskSocialShareMessage
-        QuestType.Subscribe -> StringKey.TaskSubscribeMessage
-        QuestType.Watch -> StringKey.TaskWatchVideoMessage
+        TaskType.Like -> StringKey.TaskLikeMessage
+        TaskType.PublishVideo -> StringKey.TaskPublishVideoMessage
+        TaskType.SocialPost -> StringKey.TaskSocialPostMessage
+        TaskType.SocialShare -> StringKey.TaskSocialShareMessage
+        TaskType.Subscribe -> StringKey.TaskSubscribeMessage
+        TaskType.Watch -> StringKey.TaskWatchVideoMessage
     }.textValue()
     SimpleCard {
         TaskProgress(
@@ -193,7 +194,7 @@ private fun TaskCompletedMessage() {
                 style = AppTheme.specificTypography.bodySmall,
             )
             Image(
-                painter = ImageValue.ResImage(R.drawable.img_fire).get(),
+                painter = R.drawable.img_fire.imageValue().get(),
                 contentDescription = null,
                 modifier = Modifier.size(44.dp),
                 contentScale = ContentScale.Crop,

@@ -11,7 +11,7 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
-import io.snaps.corecommon.model.QuestType
+import io.snaps.corecommon.model.TaskType
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.featuretasks.presentation.ui.RemainingTimeTileState
@@ -65,19 +65,19 @@ fun QuestModel.energyProgress(): Int {
     }
 }
 
-fun QuestType.toTaskTitle() = when (this) {
-    QuestType.Like -> StringKey.TasksTitleLike.textValue()
-    QuestType.PublishVideo -> StringKey.TasksTitlePublishVideo.textValue()
-    QuestType.Subscribe -> StringKey.TasksTitleSubscribe.textValue()
-    QuestType.Watch -> StringKey.TasksTitleWatchVideo.textValue()
+fun TaskType.toTaskTitle() = when (this) {
+    TaskType.Like -> StringKey.TasksTitleLike.textValue()
+    TaskType.PublishVideo -> StringKey.TasksTitlePublishVideo.textValue()
+    TaskType.Subscribe -> StringKey.TasksTitleSubscribe.textValue()
+    TaskType.Watch -> StringKey.TasksTitleWatchVideo.textValue()
     else -> StringKey.TasksTitleSocialPost.textValue()
 }
 
-fun QuestType.toTaskDescription() = when (this) {
-    QuestType.Like -> StringKey.TasksMessageLike.textValue()
-    QuestType.PublishVideo -> StringKey.TasksMessagePublishVideo.textValue()
-    QuestType.Subscribe -> StringKey.TasksMessageSubscribe.textValue()
-    QuestType.Watch -> StringKey.TasksMessageWatchVideo.textValue()
+fun TaskType.toTaskDescription() = when (this) {
+    TaskType.Like -> StringKey.TasksMessageLike.textValue()
+    TaskType.PublishVideo -> StringKey.TasksMessagePublishVideo.textValue()
+    TaskType.Subscribe -> StringKey.TasksMessageSubscribe.textValue()
+    TaskType.Watch -> StringKey.TasksMessageWatchVideo.textValue()
     else -> StringKey.TasksMessageSocialPost.textValue()
 }
 
@@ -120,7 +120,14 @@ private fun NftModel.toNftCollectionItemState(
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthy = true,
     isProcessing = false,
+    isLevelInfoVisible = false,
+    level = level,
+    experience = experience,
+    bonus = bonus,
+    upperThreshold = upperThreshold,
+    lowerThreshold = lowerThreshold,
     onRepairClicked = {},
     onItemClicked = { onItemClicked(this) },
     onProcessingClicked = {},
+    onHelpIconClicked = {},
 )

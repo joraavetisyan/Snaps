@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.uikit.status.FullScreenMessage
@@ -19,7 +20,7 @@ fun WalletConnectScreen(
 
     FullScreenMessageUi(
         data = FullScreenMessage(
-            icon = ImageValue.ResImage(R.drawable.img_wallet),
+            icon = R.drawable.img_wallet.imageValue(),
             title = StringKey.ConnectWalletTitle.textValue(),
             message = StringKey.ConnectWalletMessage.textValue(),
             primaryButton = FullScreenMessage.ButtonData(

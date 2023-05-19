@@ -198,9 +198,7 @@ private fun Users(
                 )
             }
         }
-        item {
-            uiState.errorState?.Content(modifier = Modifier)
-            uiState.emptyState?.Content(modifier = Modifier)
-        }
     }
+    uiState.errorState?.Content(modifier = Modifier.fillMaxSize())
+    uiState.emptyState?.Content(modifier = Modifier.fillMaxSize())
 }

@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
@@ -61,7 +62,7 @@ fun RewardsTile(
             description = StringKey.RewardsMessageAvailableRewards.textValue(),
             coin = data.unlockedTokensBalance,
             coinInUsd = data.balanceInUsd,
-            imageValue = ImageValue.ResImage(R.drawable.img_available_rewards_background)
+            imageValue = R.drawable.img_available_rewards_background.imageValue()
         )
         is RewardsTileState.Locked -> RewardsCard(
             modifier = modifier,
@@ -69,7 +70,7 @@ fun RewardsTile(
             description = StringKey.RewardsMessageLockedRewards.textValue(),
             coin = data.lockedTokensBalance,
             coinInUsd = data.balanceInUsd,
-            imageValue = ImageValue.ResImage(R.drawable.img_locked_rewards_background)
+            imageValue = R.drawable.img_locked_rewards_background.imageValue()
         )
         is RewardsTileState.Shimmer -> Shimmer(modifier = modifier)
         is RewardsTileState.Error -> MessageBannerState

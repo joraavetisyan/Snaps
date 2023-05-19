@@ -18,20 +18,27 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.featureprofile.domain.SubModel
+
+data class ConfirmUnsubscribeData(
+    val userId: Uuid,
+    val avatar: ImageValue?,
+    val name: String,
+)
 
 @Composable
 fun ConfirmUnsubscribeDialog(
-    data: SubModel,
+    data: ConfirmUnsubscribeData,
     onDismissRequest: () -> Unit,
-    onUnsubscribeClicked: (SubModel) -> Unit,
+    onUnsubscribeClicked: (Uuid) -> Unit,
 ) {
     val backgroundColor = AppTheme.specificColorScheme.grey
     Dialog(
@@ -48,9 +55,9 @@ fun ConfirmUnsubscribeDialog(
                 modifier = Modifier.padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                data.image?.let {
+                data.avatar?.let {
                     Image(
-                        painter = data.image.get(),
+                        painter = it.get(),
                         contentDescription = null,
                         modifier = Modifier
                             .size(64.dp)
@@ -70,7 +77,7 @@ fun ConfirmUnsubscribeDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .shadow(16.dp, shape = CircleShape),
-                    onClick = { onUnsubscribeClicked(data) },
+                    onClick = { onUnsubscribeClicked(data.userId) },
                 ) {
                     SimpleButtonContent(
                         text = StringKey.ConfirmUnsubscribeDialogActionUnsubscribe.textValue(),

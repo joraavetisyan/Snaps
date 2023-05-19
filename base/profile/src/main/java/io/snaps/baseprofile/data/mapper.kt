@@ -11,12 +11,18 @@ import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
+import io.snaps.corecommon.ext.coinToFormatDecimal
+import io.snaps.corecommon.ext.round
+import io.snaps.corecommon.ext.toFormatDecimal
+import io.snaps.corecommon.ext.toStringValue
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.WalletModel
 import java.lang.Integer.min
 import java.time.ZonedDateTime
+import java.util.Locale
 
 fun List<UserInfoResponseDto>.toModelList() = map(UserInfoResponseDto::toModel)
 
@@ -31,7 +37,7 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
     totalSubscribers = totalSubscribers,
     totalSubscriptions = totalSubscriptions,
     avatarUrl = avatarUrl,
-    avatar = avatarUrl?.let(ImageValue::Url) ?: ImageValue.ResImage(R.drawable.img_avatar),
+    avatar = avatarUrl?.imageValue() ?: R.drawable.img_avatar.imageValue(),
     level = level,
     experience = experience,
     questInfo = questInfo?.toQuestInfoModel(),
@@ -40,6 +46,8 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
     totalPublication = null,
     instagramId = instagramId,
     paymentsState = paymentsState,
+    firstLevelReferralMultiplier = firstLevelReferralMultiplier ?: 0.03,
+    secondLevelReferralMultiplier = secondLevelReferralMultiplier ?: 0.01,
 )
 
 fun BalanceResponseDto.toModel() = BalanceModel(
@@ -89,8 +97,8 @@ fun mainHeaderState(
         MainHeaderState.Data(
             profileImage = profile.requireData.avatar,
             energy = profile.requireData.questInfo?.totalEnergyProgress.toString(),
-            bnb = bnb?.coinValue ?: "-",
-            snp = snp?.coinValue ?: "-",
+            bnb = bnb?.coinValueDouble?.coinToFormatDecimal() ?: "-",
+            snp = snp?.coinValueDouble?.coinToFormatDecimal() ?: "-",
             onProfileClicked = onProfileClicked,
             onWalletClicked = onWalletClicked,
         )

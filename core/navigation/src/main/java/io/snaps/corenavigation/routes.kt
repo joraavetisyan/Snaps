@@ -7,7 +7,7 @@ import androidx.navigation.navArgument
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.NftType
-import io.snaps.corecommon.model.QuestType
+import io.snaps.corecommon.model.TaskType
 import io.snaps.corecommon.model.SubsType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.WalletModel
@@ -124,6 +124,8 @@ object AppRoute {
         )
     }
 
+    object WithdrawSnaps : Route("WithdrawSnaps")
+
     object Exchange : RouteWithArg("Exchange") {
 
         @Serializable
@@ -147,8 +149,8 @@ object AppRoute {
         @Serializable
         data class Args(
             val userId: Uuid? = null,
-            val subsPage: SubsType = SubsType.Subscriptions,
-            val nickname: String,
+            val subsType: SubsType = SubsType.Subscriptions,
+            val userName: String,
             val totalSubscriptions: String,
             val totalSubscribers: String,
         )
@@ -162,7 +164,7 @@ object AppRoute {
 
         @Serializable
         data class Args(
-            val type: QuestType,
+            val type: TaskType,
             val energy: Int,
             val energyProgress: Int,
             val completed: Boolean,
@@ -220,7 +222,15 @@ object AppRoute {
         )
     }
 
-    object WebView : Route("WebView")
+    object WebView : RouteWithArg("WebView") {
+
+        @Serializable
+        data class Args(
+            val url: FullUrl,
+        )
+    }
+
+    object ConnectInstagram : Route("ConnectInstagram")
 }
 
 object AppDeeplink {

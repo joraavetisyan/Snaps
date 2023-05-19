@@ -18,10 +18,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.corenavigation.base.openUrl
+import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
@@ -37,7 +40,14 @@ fun SocialNetworksScreen(
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
     val viewModel = hiltViewModel<SocialNetworksViewModel>()
 
+    val context = LocalContext.current
+
     val uiState by viewModel.uiState.collectAsState()
+    viewModel.command.collectAsCommand {
+        when(it) {
+            is SocialNetworksViewModel.Command.OpenLink -> { context.openUrl(it.link) }
+        }
+    }
 
     SocialNetworksScreen(
         uiState = uiState,

@@ -4,17 +4,19 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.basenft.data.NftRepository
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.ext.coinToFormatDecimal
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.coredata.database.UserDataStorage
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
-import io.snaps.coreui.barcode.BarcodeManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
@@ -26,6 +28,7 @@ import io.snaps.featuretasks.domain.ConnectInstagramInteractor
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -35,24 +38,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShareTemplateViewModel @Inject constructor(
-    barcodeManager: BarcodeManager,
     private val action: Action,
     private val tasksRepository: TasksRepository,
-    private val profileRepository: ProfileRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     private val connectInstagramInteractor: ConnectInstagramInteractor,
-    private val userDataStorage: UserDataStorage,
     private val fileManager: FileManager,
     private val notificationsSource: NotificationsSource,
+    @Bridged private val nftRepository: NftRepository,
 ) : SimpleViewModel() {
 
-    private val _uiState = MutableStateFlow(
-        UiState(
-            qr = barcodeManager.getQrCodeBitmap(
-                text = "https://snapsapp.io/", // todo link to google play
-                size = 300f,
-            ),
-        )
-    )
+    private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
@@ -60,6 +55,7 @@ class ShareTemplateViewModel @Inject constructor(
 
     init {
         subscribeOnCurrentUser()
+        subscribeOnUserNft()
     }
 
     private fun subscribeOnCurrentUser() {
@@ -72,14 +68,26 @@ class ShareTemplateViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    private fun subscribeOnUserNft() {
+        nftRepository.nftCollectionState.combine(flow = profileRepository.balanceState) { nft, profile ->
+            if (nft.dataOrCache != null && profile.dataOrCache != null) {
+                val totalDailyReward = requireNotNull(nft.dataOrCache).sumOf { it.dailyReward }
+                val snpExchangeRate = requireNotNull(profile.dataOrCache).snpExchangeRate
+                totalDailyReward * snpExchangeRate
+            } else 0.0
+        }.onEach { state ->
+            _uiState.update { it.copy(payments = state.coinToFormatDecimal()) }
+        }
+    }
+
     private fun instagramTileState(instagramUserId: Uuid?): CellTileState {
         return if (instagramUserId != null) {
             CellTileState.Data(
                 leftPart = LeftPart.Logo(
-                    ImageValue.ResImage(R.drawable.ic_instagram)
+                    R.drawable.ic_instagram.imageValue()
                 ),
                 middlePart = MiddlePart.Data(
-                    value = userDataStorage.instagramUsername.textValue()
+                    value = instagramUserId.textValue()
                 ),
                 rightPart = RightPart.DeleteIcon(
                     clickListener = ::onDeleteIconClicked,
@@ -88,7 +96,7 @@ class ShareTemplateViewModel @Inject constructor(
         } else {
             CellTileState.Data(
                 leftPart = LeftPart.Logo(
-                    ImageValue.ResImage(R.drawable.ic_instagram),
+                    R.drawable.ic_instagram.imageValue(),
                 ),
                 middlePart = MiddlePart.Data(
                     value = StringKey.TaskShareTitleConnectInstagram.textValue(),
@@ -132,13 +140,13 @@ class ShareTemplateViewModel @Inject constructor(
         }
     }
 
-    fun onPostToInstagramButtonClicked(bitmap: Bitmap) = viewModelScope.launch {
+    fun onPostToInstagramButtonClicked() = viewModelScope.launch {
         val instagramId = profileRepository.state.value.dataOrCache?.instagramId
         if (instagramId != null) {
-            fileManager.createFileFromBitmap(bitmap)?.let {
-                action.execute {
-                    tasksRepository.postToInstagram()
-                }
+            action.execute {
+                tasksRepository.postToInstagram()
+            }.doOnSuccess {
+                notificationsSource.sendMessage(StringKey.TaskShareMessagePostInstagram.textValue())
             }
         } else {
             onConnectClicked()
@@ -165,7 +173,7 @@ class ShareTemplateViewModel @Inject constructor(
             middlePart = MiddlePart.Shimmer(needValueLine = true),
             rightPart = RightPart.Shimmer(needLine = true),
         ),
-        val qr: Bitmap?,
+        val payments: String = "0",
     )
 
     sealed class Command {

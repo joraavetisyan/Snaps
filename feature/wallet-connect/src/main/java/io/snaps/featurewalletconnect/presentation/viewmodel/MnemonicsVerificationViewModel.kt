@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.DeviceNotSecuredException
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
@@ -22,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MnemonicsVerificationViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val walletRepository: WalletRepository,
+    @Bridged private val walletRepository: WalletRepository,
     private val action: Action,
 ) : SimpleViewModel() {
 

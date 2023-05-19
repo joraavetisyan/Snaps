@@ -6,24 +6,28 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 
 class Eip1559GasPriceProvider(
-        private val evmKit: EthereumKit
+    private val evmKit: EthereumKit,
 ) {
     fun feeHistory(
-            blocksCount: Long,
-            rewardPercentile: List<Int>,
-            defaultBlockParameter: DefaultBlockParameter = DefaultBlockParameter.Latest
+        blocksCount: Long,
+        rewardPercentile: List<Int>,
+        defaultBlockParameter: DefaultBlockParameter = DefaultBlockParameter.Latest
     ): Flowable<FeeHistory> {
         return evmKit.lastBlockHeightFlowable
-                .flatMapSingle {
-                    feeHistorySingle(blocksCount, defaultBlockParameter, rewardPercentile)
-                }
+            .flatMapSingle {
+                feeHistorySingle(blocksCount, defaultBlockParameter, rewardPercentile)
+            }
     }
 
-    fun feeHistorySingle(blocksCount: Long, defaultBlockParameter: DefaultBlockParameter, rewardPercentile: List<Int>): Single<FeeHistory> {
+    fun feeHistorySingle(
+        blocksCount: Long,
+        defaultBlockParameter: DefaultBlockParameter,
+        rewardPercentile: List<Int>
+    ): Single<FeeHistory> {
         val feeHistoryRequest = FeeHistoryJsonRpc(
-                blocksCount,
-                defaultBlockParameter,
-                rewardPercentile
+            blocksCount,
+            defaultBlockParameter,
+            rewardPercentile
         )
         return evmKit.rpcSingle(feeHistoryRequest)
     }

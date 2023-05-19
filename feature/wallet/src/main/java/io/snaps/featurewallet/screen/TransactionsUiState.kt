@@ -79,7 +79,7 @@ fun TransactionPageModel.toTransactionsUiState(
         isLoading && loadedPageItems.isEmpty() -> TransactionsUiState(transactions = TransactionsUiState.shimmer())
         error != null -> TransactionsUiState(errorState = MessageBannerState.defaultState(onReloadClicked))
         loadedPageItems.isEmpty() -> TransactionsUiState(
-            emptyState = EmptyListTileState(
+            emptyState = EmptyListTileState.defaultState(
                 title = StringKey.WalletTitleTransactionsEmpty.textValue(),
                 message = StringKey.WalletMessageTransactionsEmpty.textValue(),
             ),

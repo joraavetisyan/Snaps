@@ -5,18 +5,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.IconButton
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,15 +29,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.basefeed.ui.VideoFeedGrid
+import io.snaps.basesubs.domain.SubModel
+import io.snaps.corecommon.R
+import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startShareLinkIntent
+import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.doOnClick
@@ -49,7 +55,6 @@ import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureprofile.ScreenNavigator
-import io.snaps.featureprofile.domain.SubModel
 import io.snaps.featureprofile.presentation.viewmodel.ProfileViewModel
 import io.snaps.featureprofile.presentation.viewmodel.SubsViewModel
 
@@ -69,6 +74,7 @@ fun ProfileScreen(
             is ProfileViewModel.Command.OpenUserVideoFeedScreen -> {
                 router.toUserVideoFeedScreen(userId = it.userId, position = it.position)
             }
+
             is ProfileViewModel.Command.OpenUserLikedVideoFeedScreen -> {
                 router.toUserLikedVideoFeedScreen(position = it.position)
             }
@@ -98,7 +104,7 @@ private fun ProfileScreen(
     onSettingsClicked: () -> Unit,
     onBackClicked: () -> Boolean,
     onSubscribeClicked: () -> Unit,
-    onUnsubscribeClicked: (SubModel) -> Unit,
+    onUnsubscribeClicked: (Uuid) -> Unit,
     onDismissRequest: () -> Unit,
     onVideoClipClicked: (Int) -> Unit,
     onUserLikedVideoClipClicked: (Int) -> Unit,
@@ -106,7 +112,7 @@ private fun ProfileScreen(
     onGalleryIconClicked: () -> Unit,
 ) {
     val title = when (uiState.userType) {
-        ProfileViewModel.UserType.Other -> "@${uiState.nickname}"
+        ProfileViewModel.UserType.Other -> "@${uiState.name}"
         ProfileViewModel.UserType.Current -> LocalStringHolder.current(StringKey.ProfileTitle)
     }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -136,15 +142,12 @@ private fun ProfileScreen(
         },
         floatingActionButton = {
             if (uiState.userType == ProfileViewModel.UserType.Current) {
-                FloatingActionButton(
-                    onClick = onCreateVideoClicked,
-                    shape = CircleShape,
-                    containerColor = AppTheme.specificColorScheme.uiAccent,
-                ) {
+                IconButton(onClick = { onCreateVideoClicked() }) {
                     Icon(
-                        painter = AppTheme.specificIcons.add.get(),
+                        painter = R.drawable.img_create.imageValue().get(),
                         contentDescription = null,
-                        tint = AppTheme.specificColorScheme.white,
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(64.dp),
                     )
                 }
             }
@@ -152,19 +155,21 @@ private fun ProfileScreen(
     ) { paddingValues ->
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(paddingValues)
                 .inset(insetAllExcludeTop()),
         ) {
             uiState.userInfoTileState.Content(modifier = Modifier)
             Spacer(modifier = Modifier.height(12.dp))
-            if (uiState.userType == ProfileViewModel.UserType.Other && !uiState.isLoading) {
+            if (uiState.isSubscribed != null) {
                 SimpleChip(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .shadow(elevation = 12.dp, shape = CircleShape),
+                        .padding(horizontal = 16.dp),
                     selected = !uiState.isSubscribed,
                     label = (if (uiState.isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),
+                    textStyle = AppTheme.specificTypography.titleSmall,
+                    contentPadding = PaddingValues(10.dp),
                     onClick = onSubscribeClicked,
                 )
             } else {
@@ -175,13 +180,18 @@ private fun ProfileScreen(
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
-            AnimatedContent(targetState = uiState.selectedItemIndex) {
+            AnimatedContent(
+                targetState = uiState.selectedItemIndex,
+                modifier = Modifier.fillMaxSize(),
+                label = "",
+            ) {
                 when (it) {
                     0 -> VideoFeedGrid(
                         columnCount = 3,
                         uiState = uiState.videoFeedUiState,
                         onClick = onVideoClipClicked,
                     )
+
                     else -> VideoFeedGrid(
                         columnCount = 3,
                         uiState = uiState.userLikedVideoFeedUiState,
@@ -192,7 +202,7 @@ private fun ProfileScreen(
         }
     }
     when (uiState.dialog) {
-        is SubsViewModel.Dialog.ConfirmUnsubscribe -> ConfirmUnsubscribeDialog(
+        is ProfileViewModel.Dialog.ConfirmUnsubscribe -> ConfirmUnsubscribeDialog(
             data = uiState.dialog.data,
             onDismissRequest = onDismissRequest,
             onUnsubscribeClicked = onUnsubscribeClicked,

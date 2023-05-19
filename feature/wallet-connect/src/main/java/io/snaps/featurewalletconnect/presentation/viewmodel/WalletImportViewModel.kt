@@ -6,6 +6,7 @@ import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.DeviceNotSecuredException
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import kotlinx.coroutines.channels.Channel
@@ -18,8 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WalletImportViewModel @Inject constructor(
-    private val walletRepository: WalletRepository,
-    private val profileRepository: ProfileRepository,
+    @Bridged private val walletRepository: WalletRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     private val sessionRepository: SessionRepository,
     private val action: Action,
 ) : SimpleViewModel() {
@@ -42,7 +43,7 @@ class WalletImportViewModel @Inject constructor(
                             words = _uiState.value.words.trim().lowercase().split(" "),
                         )
                     }.flatMap {
-                        sessionRepository.onWalletConnect()
+                        sessionRepository.onWalletConnected()
                     }
             }.doOnError { error, _ ->
                 if (error.cause is DeviceNotSecuredException) {
@@ -68,12 +69,12 @@ class WalletImportViewModel @Inject constructor(
         val dialog: Dialog? = null,
     ) {
 
-        val isContinueButtonEnabled get() = words.isNotBlank()
+        val isContinueEnabled get() = words.isNotBlank()
     }
-
-    sealed interface Command
 
     enum class Dialog {
         DeviceNotSecured,
     }
+
+    sealed interface Command
 }

@@ -5,6 +5,7 @@ plugins {
 common()
 dagger()
 compose()
+firebase()
 
 android {
     namespace = "io.snaps.corenavigation"
@@ -17,5 +18,4 @@ dependencies {
     implementation(projects.coreCommon)
 
     implementation(*Libs.bundle.browser)
-    implementation(*Libs.bundle.firebase)
 }

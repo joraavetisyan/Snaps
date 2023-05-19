@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -22,9 +23,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.snaps.coreuitheme.compose.AppTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 object SimpleTextFieldConfig {
 
+    @OptIn(ExperimentalMaterial3Api::class)
     val MinWidth = TextFieldDefaults.MinWidth
     val MinHeight = 48.dp
 
@@ -128,26 +129,29 @@ fun SimpleTextField(
         maxLines = maxLines,
         minLines = minLines,
         decorationBox = @Composable { innerTextField ->
-            TextFieldDefaults.OutlinedTextFieldDecorationBox(
+            OutlinedTextFieldDefaults.DecorationBox(
                 value = value,
                 innerTextField = innerTextField,
                 enabled = enabled,
                 singleLine = maxLines == 1,
                 visualTransformation = visualTransformation,
                 interactionSource = interactionSource,
-                colors = colors.toLibColors(),
                 isError = status.isError(),
-                trailingIcon = trailingIcon,
-                leadingIcon = leadingIcon,
                 label = label,
                 placeholder = placeholder,
+                leadingIcon = leadingIcon,
+                trailingIcon = trailingIcon,
+                colors = colors.toLibColors(),
+                contentPadding = OutlinedTextFieldDefaults.contentPadding(),
                 container = {
-                    TextFieldDefaults.OutlinedBorderContainerBox(
+                    OutlinedTextFieldDefaults.ContainerBox(
                         enabled = enabled,
                         isError = status.isError(),
                         interactionSource = interactionSource,
                         colors = colors.toLibColors(),
                         shape = shape,
+                        focusedBorderThickness = OutlinedTextFieldDefaults.FocusedBorderThickness,
+                        unfocusedBorderThickness = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
                     )
                 },
             )
@@ -198,26 +202,29 @@ fun SimpleTextField(
         singleLine = maxLines == 1,
         maxLines = maxLines,
         decorationBox = @Composable { innerTextField ->
-            TextFieldDefaults.OutlinedTextFieldDecorationBox(
+            OutlinedTextFieldDefaults.DecorationBox(
                 value = value.text,
                 innerTextField = innerTextField,
                 enabled = enabled,
                 singleLine = maxLines == 1,
                 visualTransformation = visualTransformation,
                 interactionSource = interactionSource,
-                colors = colors.toLibColors(),
                 isError = status.isError(),
-                trailingIcon = trailingIcon,
-                leadingIcon = leadingIcon,
                 label = label,
                 placeholder = placeholder,
+                leadingIcon = leadingIcon,
+                trailingIcon = trailingIcon,
+                colors = colors.toLibColors(),
+                contentPadding = OutlinedTextFieldDefaults.contentPadding(),
                 container = {
-                    TextFieldDefaults.OutlinedBorderContainerBox(
+                    OutlinedTextFieldDefaults.ContainerBox(
                         enabled = enabled,
                         isError = status.isError(),
                         interactionSource = interactionSource,
                         colors = colors.toLibColors(),
                         shape = shape,
+                        focusedBorderThickness = OutlinedTextFieldDefaults.FocusedBorderThickness,
+                        unfocusedBorderThickness = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
                     )
                 },
             )

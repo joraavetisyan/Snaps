@@ -23,4 +23,5 @@ dependencies {
     implementation(projects.basePlayer)
     implementation(projects.baseSources)
     implementation(projects.baseWallet)
+    implementation(projects.baseSubs)
 }

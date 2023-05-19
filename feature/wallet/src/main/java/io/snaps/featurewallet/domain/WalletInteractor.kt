@@ -9,6 +9,7 @@ import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
+import io.snaps.coredata.di.Bridged
 import io.snaps.coreui.viewmodel.likeStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
@@ -21,13 +22,13 @@ interface WalletInteractor {
 
     val snpFiatState: StateFlow<State<String>>
 
-    suspend fun claim(): Effect<Completable>
+    suspend fun claim(amount: Double): Effect<Completable>
 }
 
 class WalletInteractorImpl @Inject constructor(
     @ApplicationCoroutineScope private val scope: CoroutineScope,
-    private val walletRepository: WalletRepository,
-    private val profileRepository: ProfileRepository,
+    @Bridged private val walletRepository: WalletRepository,
+    @Bridged private val profileRepository: ProfileRepository,
 ) : WalletInteractor {
 
     override val snpFiatState = profileRepository.balanceState.map {
@@ -36,20 +37,18 @@ class WalletInteractorImpl @Inject constructor(
             is Effect -> when {
                 it.isSuccess -> {
                     val snp = walletRepository.getSnpWalletModel()?.coinValueDouble
-                    Effect.success(
-                        "$${snp?.times(it.requireData.snpExchangeRate)?.toStringValue().orEmpty()}"
-                    )
+                    Effect.success(snp?.times(it.requireData.snpExchangeRate)?.toStringValue().orEmpty())
                 }
                 else -> Effect.error(requireNotNull(it.errorOrNull))
             }
         }
     }.likeStateFlow(scope, Loading())
 
-    override suspend fun claim(): Effect<Completable> {
+    override suspend fun claim(amount: Double): Effect<Completable> {
         return profileRepository.updateBalance().flatMap {
             requireNotNull(profileRepository.balanceState.value.dataOrCache).let {
                 if (it.unlocked > 0) {
-                    walletRepository.claim(it.unlocked)
+                    walletRepository.claim(amount)
                 } else {
                     Effect.error(AppError.Custom(cause = InsufficientBalanceError))
                 }

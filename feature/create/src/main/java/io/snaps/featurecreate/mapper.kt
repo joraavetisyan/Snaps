@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.util.Consumer
 import androidx.lifecycle.LifecycleOwner
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.featurecreate.viewmodel.RecordDelay
 import io.snaps.featurecreate.viewmodel.RecordTiming
 import java.io.File
@@ -28,15 +29,16 @@ import kotlin.coroutines.suspendCoroutine
 
 private const val filenameFormat = "yyyy-MM-dd-HH-mm-ss-SSS"
 
-// todo localize
-fun RecordTiming.toTextValue() =
-    (if (seconds > 60) "${(seconds / 60)} min" else "$seconds sec").textValue()
+fun RecordTiming.toTextValue() = if (seconds > 60) {
+    StringKey.FieldMinutes.textValue((seconds / 60).toString())
+} else {
+    StringKey.FieldSeconds.textValue(seconds.toString())
+}
 
-// todo localize
 fun RecordDelay.toTextValue() = when (this) {
-    RecordDelay._0 -> "Cancel"
-    else -> "${seconds}s"
-}.textValue()
+    RecordDelay._0 -> StringKey.ActionCancel.textValue()
+    else -> StringKey.FieldSecondsShort.textValue(seconds.toString())
+}
 
 suspend fun Context.createVideoCaptureUseCase(
     lifecycleOwner: LifecycleOwner,

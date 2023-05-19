@@ -4,6 +4,7 @@ plugins {
 
 common()
 dagger()
+firebase()
 
 android {
     namespace = "io.snaps.corecommon"
@@ -11,7 +12,6 @@ android {
 
 dependencies {
     implementation(*Libs.bundle.kotlinSerialization)
-    implementation(*Libs.bundle.firebase)
 
     // for previews to work properly
     // https://stackoverflow.com/questions/71812710/can-no-longer-view-jetpack-compose-previews-failed-to-instantiate-one-or-more-c

@@ -35,7 +35,7 @@ class BalanceManager(private val storage: IStorage, private val binanceApi: Bina
                 val latestBlock = it.second
 
                 // Sync storage info
-                val balancesToSync = syncStorage( balances,latestBlock )
+                val balancesToSync = syncStorage( balances, latestBlock )
 
                 listener?.onSyncBalances(balancesToSync, latestBlock)
             }, {
@@ -49,17 +49,14 @@ class BalanceManager(private val storage: IStorage, private val binanceApi: Bina
         disposables.dispose()
     }
 
-    private fun syncStorage(balances: List<Balance>, latestBlock: LatestBlock ) :List<Balance>
-    {
+    private fun syncStorage(balances: List<Balance>, latestBlock: LatestBlock) : List<Balance> {
         storage.latestBlock = latestBlock
 
         val allStoredBalances = storage.getAllBalances()
         val balancesToRemove = arrayListOf<Balance>()
 
-        for (balance in allStoredBalances.orEmpty())
-        {
-            if( !balances.any{ it.symbol == balance.symbol} )
-            {
+        for (balance in allStoredBalances.orEmpty()) {
+            if( !balances.any{ it.symbol == balance.symbol} ) {
                 balance.amount = BigDecimal.ZERO
                 balancesToRemove.add(balance)
             }

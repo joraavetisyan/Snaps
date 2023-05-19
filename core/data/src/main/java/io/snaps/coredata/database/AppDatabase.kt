@@ -19,10 +19,13 @@ private const val DATABASE_NAME = "simple.db"
 abstract class AppDatabase : RoomDatabase() {
 
     companion object {
-        fun newInstance(context: Context) = Room
-            .databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
-            .fallbackToDestructiveMigration()
-            .build()
+        fun newInstance(context: Context): AppDatabase {
+            TODO("Scope DB to the user login session!")
+            return Room
+                .databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
+                .fallbackToDestructiveMigration()
+                .build()
+        }
     }
 
     abstract fun stubDao(): StubDao

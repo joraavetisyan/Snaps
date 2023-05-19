@@ -3,7 +3,7 @@ object Libs {
     private const val gmsVersion = "4.3.15"
     private const val gradleVersion = "7.3.1"
     private const val desugarVersion = "1.1.5"
-    private const val kotlinVersion = "1.7.10"
+    private const val kotlinVersion = "1.8.21"
     private const val kotlinSerializationVersion = "1.3.0"
     private const val coroutinesVersion = "1.6.1"
     private const val kotlinterVersion = "3.8.0"
@@ -11,13 +11,13 @@ object Libs {
     private const val benManesVersionsVersion = "0.45.0"
 
     /*Compatibility with Kotlin https://developer.android.com/jetpack/androidx/releases/compose-kotlin*/
-    const val composeCompilerVersion = "1.3.0"
+    const val composeCompilerVersion = "1.4.7"
 
     /*https://developer.android.com/jetpack/androidx/releases/compose*/
-    private const val composeVersion = "1.3.0"
-    private const val composeFoundationVersion = "1.3.0"
-    private const val composeMaterialVersion = "1.3.0"
-    private const val composeMaterial3Version = "1.1.0-alpha03"
+    private const val composeVersion = "1.4.3"
+    private const val composeFoundationVersion = "1.4.3"
+    private const val composeMaterialVersion = "1.4.3"
+    private const val composeMaterial3Version = "1.1.0"
     private const val composeGlanceVersion = "1.0.0-alpha03"
     private const val splashVersion = "1.0.0-beta01"
     private const val activityVersion = "1.4.0"
@@ -35,16 +35,11 @@ object Libs {
     private const val biometricVersion = "1.2.0-alpha04"
     private const val windowVersion = "1.0.0"
 
-    private const val hiltVersion = "2.42"
+    private const val hiltVersion = "2.45"
     private const val hiltJetpackVersion = "1.0.0"
 
     private const val crashlyticsGradleVersion = "2.5.2"
-    private const val authVersion = "21.1.0"
-    private const val crashlyticsVersion = "18.3.3"
-    private const val analyticsVersion = "21.2.0"
-    private const val messagingVersion = "23.1.1"
-    private const val configVersion = "21.2.1"
-    private const val dynamicLinksVersion = "21.1.0"
+    private const val firebaseBomVersion = "32.0.0"
 
     private const val playServicesVersion = "20.4.1"
 
@@ -73,6 +68,8 @@ object Libs {
     private const val barcodeVersion = "4.3.0"
 
     private const val uploadServiceVersion = "4.7.0"
+
+    private const val videoCompressorVersion = "1.2.3"
 
     private const val trustWeb3Version = "2.0.8"
     private const val trustWalletCoreVersion = "3.1.20"
@@ -135,13 +132,14 @@ object Libs {
 
         const val playServices = "com.google.android.gms:play-services-auth:$playServicesVersion"
 
+        val firebaseBom = "com.google.firebase:firebase-bom:$firebaseBomVersion"
         val firebase = arrayOf(
-            "com.google.firebase:firebase-auth-ktx:$authVersion",
-            "com.google.firebase:firebase-crashlytics-ktx:$crashlyticsVersion",
-            "com.google.firebase:firebase-analytics-ktx:$analyticsVersion",
-            "com.google.firebase:firebase-messaging-ktx:$messagingVersion",
-            "com.google.firebase:firebase-config-ktx:$configVersion",
-            "com.google.firebase:firebase-dynamic-links-ktx:$dynamicLinksVersion"
+            "com.google.firebase:firebase-auth-ktx",
+            "com.google.firebase:firebase-crashlytics-ktx",
+            "com.google.firebase:firebase-analytics-ktx",
+            "com.google.firebase:firebase-messaging-ktx",
+            "com.google.firebase:firebase-config-ktx",
+            "com.google.firebase:firebase-dynamic-links-ktx",
         )
 
         val composeCompiler = arrayOf("androidx.compose.compiler:compiler:$composeCompilerVersion")
@@ -247,6 +245,10 @@ object Libs {
             "com.squareup.retrofit2:adapter-rxjava2:2.9.0",
             "com.squareup.retrofit2:converter-scalars:2.9.0",
         )
+        val trustWallet = arrayOf(
+            "com.github.trustwallet:trust-web3-provider:$trustWeb3Version",
+            "com.trustwallet:wallet-core:$trustWalletCoreVersion"
+        )
 
         val gson = arrayOf(
             "com.google.code.gson:gson:2.9.0",
@@ -254,11 +256,13 @@ object Libs {
 
         const val barcode = "com.journeyapps:zxing-android-embedded:$barcodeVersion"
 
-        const val uploadService = "net.gotev:uploadservice:$uploadServiceVersion"
+        val uploadService = arrayOf(
+            "net.gotev:uploadservice:$uploadServiceVersion",
+            "net.gotev:uploadservice-okhttp:$uploadServiceVersion",
+        )
 
-        val trustWallet = arrayOf(
-            "com.github.trustwallet:trust-web3-provider:$trustWeb3Version",
-            "com.trustwallet:wallet-core:$trustWalletCoreVersion"
+        val videoCompressor = arrayOf(
+            "com.github.AbedElazizShe:LightCompressor:$videoCompressorVersion",
         )
 
         val facebook = arrayOf(

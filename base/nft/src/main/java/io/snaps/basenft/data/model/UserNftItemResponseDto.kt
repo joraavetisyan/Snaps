@@ -13,4 +13,14 @@ data class UserNftItemResponseDto(
     @SerialName("type") val data: NftItemResponseDto,
     @SerialName("mintedDate") val mintedDate: DateTime,
     @SerialName("isHealthy") val isHealthy: Boolean,
+    @SerialName("levelInfo") val levelInfo: LevelInfo,
+)
+
+@Serializable
+data class LevelInfo(
+    @SerialName("level") val level: Int,
+    @SerialName("experience") val experience: Int,
+    @SerialName("lowerThreshold") val lowerThreshold: Int,
+    @SerialName("upperThreshold") val upperThreshold: Int,
+    @SerialName("bonus") val bonus: Int,
 )

@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.other.Progress
 
@@ -28,7 +29,7 @@ fun TaskProgress(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Image(
-            painter = ImageValue.ResImage(R.drawable.img_energy).get(),
+            painter = R.drawable.img_energy.imageValue().get(),
             contentDescription = null,
             modifier = Modifier.size(24.dp),
             contentScale = ContentScale.Crop,

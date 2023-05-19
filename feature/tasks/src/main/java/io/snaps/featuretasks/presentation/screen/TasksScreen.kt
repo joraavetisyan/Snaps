@@ -43,6 +43,7 @@ import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
@@ -108,17 +109,17 @@ fun TasksScreen(
                 TasksViewModel.BottomDialog.CurrentTasksFootnote,
                 TasksViewModel.BottomDialog.HistoryTasksFootnote -> FootnoteBottomDialog(
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_guy_eating),
+                        image = R.drawable.img_guy_eating.imageValue(),
                         title = StringKey.TasksDialogTitleFootnote1.textValue(),
                         text = StringKey.TasksDialogMessageFootnote1.textValue(),
                     ),
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_guy_glad),
+                        image = R.drawable.img_guy_glad.imageValue(),
                         title = StringKey.TasksDialogTitleFootnote2.textValue(),
                         text = StringKey.TasksDialogMessageFootnote2.textValue(),
                     ),
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_guy_surprised),
+                        image = R.drawable.img_guy_surprised.imageValue(),
                         title = StringKey.TasksDialogTitleFootnote3.textValue(),
                         text = StringKey.TasksDialogMessageFootnote3.textValue(),
                         onClick = viewModel::onFootnoteStartClicked,

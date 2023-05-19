@@ -2,7 +2,10 @@ package io.snaps.baseprofile.ui
 
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.domain.UsersPageModel
+import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.strings.StringKey
+import io.snaps.corecommon.R
 import io.snaps.coreuicompose.uikit.listtile.EmptyListTileState
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 
@@ -22,8 +25,8 @@ fun UsersPageModel.toUsersUiState(
             errorState = MessageBannerState.defaultState(onReloadClicked)
         )
         loadedPageItems.isEmpty() -> UsersUiState(
-            emptyState = EmptyListTileState(
-                title = "No data".textValue(), // todo localize
+            emptyState = EmptyListTileState.defaultState(
+                title = StringKey.MessageNothingFound.textValue(),
             )
         )
         else -> UsersUiState(

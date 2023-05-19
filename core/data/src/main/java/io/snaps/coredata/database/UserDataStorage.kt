@@ -47,12 +47,6 @@ class UserDataStorage @Inject constructor(
             putInt("lastCheckedAvailableVersionCode", value)
         }
 
-    var instagramUsername: String
-        get() = provider.prefs.getString("instagramUsername", "").orEmpty()
-        set(value) = provider.prefs.edit {
-            putString("instagramUsername", value)
-        }
-
     fun getProcessingNftCount(type: NftType): Int = provider.prefs.getInt("ProcessingNft${type.name}", 0)
 
     // Saves processed + processing nfts count
@@ -60,8 +54,30 @@ class UserDataStorage @Inject constructor(
         putInt("ProcessingNft${type.name}", totalCount)
     }
 
+    fun getNonMintedNfts(): List<String> = provider.prefs.getStringSet("NonMintedNft", null)?.toList() ?: emptyList()
+
+    fun setNonMintedNft(data: String) = provider.prefs.edit {
+        putStringSet("NonMintedNft", getNonMintedNfts().toMutableList().run { add(data); this }.toSet())
+    }
+
+    fun removeNonMintedNft(data: String) = provider.prefs.edit {
+        putStringSet("NonMintedNft", getNonMintedNfts().toMutableList().run { remove(data); this }.toSet())
+    }
+
+    fun getNonRepairedNfts(): List<String> =
+        provider.prefs.getStringSet("NonRepairedNft", null)?.toList() ?: emptyList()
+
+    fun setNonRepairedNft(data: String) = provider.prefs.edit {
+        putStringSet("NonRepairedNft", getNonRepairedNfts().toMutableList().run { add(data); this }.toSet())
+    }
+
+    fun removeNonRepairedNft(data: String) = provider.prefs.edit {
+        putStringSet("NonRepairedNft", getNonRepairedNfts().toMutableList().run { remove(data); this }.toSet())
+    }
+
     fun reset(reason: LogOutReason? = null) {
-        instagramUsername = ""
+        // todo do not clear onboarding related stuff
+        provider.prefs.edit { clear() }
     }
 }
 

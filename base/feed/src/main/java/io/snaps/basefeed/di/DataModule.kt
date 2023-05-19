@@ -3,6 +3,8 @@ package io.snaps.basefeed.di
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.EntryPoint
+import dagger.hilt.EntryPoints
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.snaps.basefeed.data.CommentApi
@@ -15,13 +17,17 @@ import io.snaps.basefeed.data.VideoFeedRepository
 import io.snaps.basefeed.data.VideoFeedRepositoryImpl
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
+import io.snaps.coredata.di.Bridged
+import io.snaps.coredata.di.UserSessionComponent
+import io.snaps.coredata.di.UserSessionComponentManager
+import io.snaps.coredata.di.UserSessionScope
 import io.snaps.coredata.network.ApiConfig
 import io.snaps.coredata.network.ApiService
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class DataModule {
+internal class DataModule {
 
     @Provides
     @Singleton
@@ -47,14 +53,48 @@ class DataModule {
 }
 
 @Module
-@InstallIn(SingletonComponent::class)
-interface DataBindModule {
+@InstallIn(UserSessionComponent::class)
+internal interface DataBindModule {
 
     @Binds
-    @Singleton
+    @UserSessionScope
     fun videoFeedRepository(bind: VideoFeedRepositoryImpl): VideoFeedRepository
 
     @Binds
-    @Singleton
+    @UserSessionScope
     fun commentRepository(bind: CommentRepositoryImpl): CommentRepository
+}
+
+@EntryPoint
+@InstallIn(UserSessionComponent::class)
+internal interface DataBindEntryPoint {
+
+    fun videoFeedRepository(): VideoFeedRepository
+
+    fun commentRepository(): CommentRepository
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+internal object DataBindEntryPointBridge {
+
+    @Bridged
+    @Provides
+    fun videoFeedRepository(
+        componentManager: UserSessionComponentManager,
+    ): VideoFeedRepository {
+        return EntryPoints
+            .get(componentManager, DataBindEntryPoint::class.java)
+            .videoFeedRepository()
+    }
+
+    @Bridged
+    @Provides
+    fun commentRepository(
+        componentManager: UserSessionComponentManager,
+    ): CommentRepository {
+        return EntryPoints
+            .get(componentManager, DataBindEntryPoint::class.java)
+            .commentRepository()
+    }
 }

@@ -1,5 +1,6 @@
 package io.snaps.basenft.data
 
+import io.snaps.basenft.data.model.LevelInfo
 import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.MintNftResponseDto
 import io.snaps.basenft.data.model.MintNftStoreRequestDto
@@ -25,7 +26,6 @@ class FakeNftApi : NftApi {
         log("Requesting nft")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = getUserNft()
         ).also {
             generation++
@@ -36,7 +36,6 @@ class FakeNftApi : NftApi {
         log("Requesting ranks")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = getRanks()
         )
     }
@@ -45,7 +44,6 @@ class FakeNftApi : NftApi {
         log("Requesting add nft")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = MintNftResponseDto(
                 tokenId = rInt,
             ),
@@ -56,7 +54,6 @@ class FakeNftApi : NftApi {
         log("Requesting add nft on store")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = MintNftResponseDto(
                 tokenId = rInt,
             ),
@@ -67,7 +64,6 @@ class FakeNftApi : NftApi {
         log("Requesting repair Glasses")
         delay(mockDelay)
         return BaseResponse(
-            actualTimestamp = 1L,
             data = Completable,
         )
     }
@@ -97,6 +93,13 @@ class FakeNftApi : NftApi {
             data = getRanks()[0],
             mintedDate = "2023-02-07T02:46:30.3218237+00:00",
             isHealthy = false,
+            levelInfo = LevelInfo(
+                level = 0,
+                experience = 0,
+                lowerThreshold = 0,
+                upperThreshold = 0,
+                bonus = 0,
+            ),
         ),
         UserNftItemResponseDto(
             id = "$generation nft",
@@ -105,6 +108,13 @@ class FakeNftApi : NftApi {
             data = getRanks()[1],
             mintedDate = "2023-02-07T02:46:30.3218237+00:00",
             isHealthy = false,
+            levelInfo = LevelInfo(
+                level = 0,
+                experience = 0,
+                lowerThreshold = 0,
+                upperThreshold = 0,
+                bonus = 0,
+            ),
         ),
         UserNftItemResponseDto(
             id = "$generation nft",
@@ -113,6 +123,13 @@ class FakeNftApi : NftApi {
             data = getRanks()[2],
             mintedDate = "2023-02-07T02:46:30.3218237+00:00",
             isHealthy = false,
+            levelInfo = LevelInfo(
+                level = 0,
+                experience = 0,
+                lowerThreshold = 0,
+                upperThreshold = 0,
+                bonus = 0,
+            ),
         ),
     )
 }

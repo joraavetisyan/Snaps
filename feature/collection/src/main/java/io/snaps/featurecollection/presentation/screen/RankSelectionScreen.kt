@@ -29,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
@@ -73,7 +74,7 @@ fun RankSelectionScreen(
             when (uiState.bottomDialog) {
                 RankSelectionViewModel.BottomDialog.RankFootnote -> FootnoteBottomDialog(
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_guy_eating),
+                        image = R.drawable.img_guy_eating.imageValue(),
                         title = StringKey.RankSelectionDialogTitleFootnote1.textValue(),
                         text = StringKey.RankSelectionDialogMessageFootnote1.textValue(),
                         onClick = viewModel::onRaiseNftRankClick,

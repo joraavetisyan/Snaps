@@ -3,7 +3,6 @@ package io.snaps.android.mainscreen
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basesession.ActiveAppZoneProvider
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.SessionRepository
@@ -22,7 +21,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class AppViewModel @AssistedInject constructor(
     @Assisted private var deeplink: String?,
@@ -30,12 +28,16 @@ class AppViewModel @AssistedInject constructor(
     activeAppZoneProvider: ActiveAppZoneProvider,
     userSessionTracker: UserSessionTracker,
     notificationsSource: NotificationsSource,
-    sessionRepository: SessionRepository,
+    private val sessionRepository: SessionRepository,
     private val userDataStorage: UserDataStorage,
     private val appRouteProvider: AppRouteProvider,
 ) : SimpleViewModel() {
 
     init {
+        checkStatus()
+    }
+
+    private fun checkStatus() {
         viewModelScope.launch {
             sessionRepository.checkStatus()
         }
@@ -51,8 +53,11 @@ class AppViewModel @AssistedInject constructor(
             UserSessionTracker.State.NotActive -> StartFlow.RegistrationFlow(
                 needsStartOnBoarding = !userDataStorage.isStartOnBoardingFinished,
             )
+
             is UserSessionTracker.State.Active -> StartFlow.AuthorizedFlow(
+                isError = userSession is UserSessionTracker.State.Active.Error,
                 needsWalletConnect = userSession is UserSessionTracker.State.Active.NeedsWalletConnect,
+                needsWalletImport = userSession is UserSessionTracker.State.Active.NeedsWalletImport,
                 needsInitialization = userSession is UserSessionTracker.State.Active.NeedsInitialization,
                 deeplink = AppDeeplink.parse(deeplink).also { deeplink = null },
             )
@@ -84,6 +89,10 @@ class AppViewModel @AssistedInject constructor(
         appRouteProvider.updateAppRouteState(route)
     }
 
+    fun onRetry() {
+        checkStatus()
+    }
+
     sealed class StartFlow {
 
         object Idle : StartFlow()
@@ -93,7 +102,9 @@ class AppViewModel @AssistedInject constructor(
         ) : StartFlow()
 
         data class AuthorizedFlow(
+            val isError: Boolean,
             val needsWalletConnect: Boolean,
+            val needsWalletImport: Boolean,
             val needsInitialization: Boolean,
             val deeplink: Deeplink? = null,
         ) : StartFlow()

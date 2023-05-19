@@ -2,6 +2,8 @@ package io.snaps.coredata.database
 
 import androidx.core.content.edit
 import io.snaps.corecommon.model.Token
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -9,6 +11,8 @@ import javax.inject.Singleton
 class TokenStorage @Inject constructor(
     private val provider: PreferencesProvider,
 ) {
+    private val _resetState = MutableStateFlow<Unit?>(null)
+    val resetState = _resetState.asStateFlow()
 
     var decodedAccessToken: Token = ""
 
@@ -44,5 +48,6 @@ class TokenStorage @Inject constructor(
         salt = ""
         encodedPinCode = ""
         authToken = null
+        _resetState.tryEmit(Unit)
     }
 }

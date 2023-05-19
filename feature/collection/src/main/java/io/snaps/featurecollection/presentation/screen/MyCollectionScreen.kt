@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,23 +23,35 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
+import io.snaps.basewallet.ui.TransferTokensDialogHandler
+import io.snaps.basewallet.ui.TransferTokensUi
+import io.snaps.corecommon.R
+import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurecollection.ScreenNavigator
 import io.snaps.featurecollection.presentation.viewmodel.MyCollectionViewModel
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MyCollectionScreen(
     navHostController: NavHostController,
@@ -45,6 +61,14 @@ fun MyCollectionScreen(
 
     val uiState by viewModel.uiState.collectAsState()
     val headerState by viewModel.headerUiState.collectAsState()
+    val transferTokensState by viewModel.transferTokensState.collectAsState()
+
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true,
+    )
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     viewModel.headerCommand.collectAsCommand {
         when (it) {
@@ -57,13 +81,40 @@ fun MyCollectionScreen(
         when (it) {
             is MyCollectionViewModel.Command.OpenRankSelectionScreen -> router.toRankSelectionScreen()
             is MyCollectionViewModel.Command.OpenNftDetailsScreen -> router.toUserNftDetailsScreen(it.args)
+            is MyCollectionViewModel.Command.OpenWebViewScreen -> router.toWebView(it.url)
         }
     }
 
-    MyCollectionScreen(
-        uiState = uiState,
-        headerState = headerState,
-    )
+    viewModel.transferTokensCommand.collectAsCommand {
+        when (it) {
+            TransferTokensDialogHandler.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
+            TransferTokensDialogHandler.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
+        }
+    }
+
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetContent = {
+            when (val dialog = transferTokensState.bottomDialog) {
+                TransferTokensDialogHandler.BottomDialog.TokensTransfer -> Unit
+                is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess -> SimpleBottomDialog(
+                    image = R.drawable.img_guy_hands_up.imageValue(),
+                    title = StringKey.MyCollectionDialogRepairSuccessTitle.textValue(),
+                    buttonText = StringKey.MyCollectionDialogRepairSuccessAction.textValue(),
+                    onClick = {
+                        coroutineScope.launch { sheetState.hide() }
+                        context.openUrl(dialog.bscScanLink)
+                    },
+                )
+                null -> Unit
+            }
+        }
+    ) {
+        MyCollectionScreen(
+            uiState = uiState,
+            headerState = headerState,
+        )
+    }
 
     FullScreenLoaderUi(isLoading = uiState.isLoading)
 }

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
@@ -109,7 +110,7 @@ private fun Data(
                     style = AppTheme.specificTypography.labelMedium,
                 )
                 if (data.price.isNotEmpty()) {
-                    ValueWidget(ImageValue.ResImage(R.drawable.img_coin_silver) to data.price)
+                    ValueWidget(R.drawable.img_coin_silver.imageValue() to data.price)
                 }
             }
             Spacer(Modifier.height(4.dp))

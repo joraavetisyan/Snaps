@@ -8,6 +8,7 @@ import io.snaps.baseauth.data.AuthRepository
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.basesources.NotificationsSource
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
@@ -23,7 +24,7 @@ import javax.inject.Inject
 class RegistrationViewModel @Inject constructor(
     private val sessionRepository: SessionRepository,
     private val authRepository: AuthRepository,
-    private val profileRepository: ProfileRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel() {
@@ -46,7 +47,7 @@ class RegistrationViewModel @Inject constructor(
         if (authRepository.isEmailVerified()) {
             _uiState.update {
                 it.copy(
-                    bottomDialogType = BottomDialogType.SignIn,
+                    bottomDialog = BottomDialog.SignIn,
                     confirmPasswordValue = "",
                     passwordValue = "",
                     emailAddressValue = "",
@@ -55,7 +56,7 @@ class RegistrationViewModel @Inject constructor(
             _command publish Command.ShowBottomDialog
         } else {
             _uiState.update {
-                it.copy(dialogType = DialogType.EmailVerification)
+                it.copy(dialog = Dialog.EmailVerification)
             }
         }
     }
@@ -67,7 +68,7 @@ class RegistrationViewModel @Inject constructor(
     fun onForgotPasswordClicked() = viewModelScope.launch {
         _uiState.update {
             it.copy(
-                bottomDialogType = BottomDialogType.ResetPassword,
+                bottomDialog = BottomDialog.ResetPassword,
                 passwordResetEmailValue = "",
             )
         }
@@ -81,7 +82,7 @@ class RegistrationViewModel @Inject constructor(
             )
         }.doOnSuccess {
             _command publish Command.HideBottomDialog
-            _uiState.update { it.copy(dialogType = DialogType.ResetPasswordInstructions) }
+            _uiState.update { it.copy(dialog = Dialog.ResetPasswordInstructions) }
         }.doOnError { error, _ ->
             if (error.cause is FirebaseAuthException) {
                 notificationsSource.sendError(error)
@@ -100,7 +101,7 @@ class RegistrationViewModel @Inject constructor(
     fun showSignInBottomDialog() = viewModelScope.launch {
         _uiState.update {
             it.copy(
-                bottomDialogType = BottomDialogType.SignIn,
+                bottomDialog = BottomDialog.SignIn,
                 confirmPasswordValue = "",
                 passwordValue = "",
                 emailAddressValue = "",
@@ -112,7 +113,7 @@ class RegistrationViewModel @Inject constructor(
     fun showSignUpBottomDialog() = viewModelScope.launch {
         _uiState.update {
             it.copy(
-                bottomDialogType = BottomDialogType.SignUp,
+                bottomDialog = BottomDialog.SignUp,
                 confirmPasswordValue = "",
                 passwordValue = "",
                 emailAddressValue = "",
@@ -184,7 +185,9 @@ class RegistrationViewModel @Inject constructor(
             profileRepository.updateData().doOnSuccess {
                 sessionRepository.onLogin()
             }.doOnError { _, _ ->
-                sessionRepository.onLogout()
+                sessionRepository.logout()
+            }.doOnComplete {
+                _command publish Command.HideBottomDialog
             }
         }
     }
@@ -208,31 +211,31 @@ class RegistrationViewModel @Inject constructor(
         if (!authRepository.isEmailVerified()) {
             _command publish Command.HideBottomDialog
             _uiState.update {
-                it.copy(dialogType = DialogType.EmailVerification)
+                it.copy(dialog = Dialog.EmailVerification)
             }
         }
     }
 
     fun onEmailVerificationDialogDismissRequest() {
         _uiState.update {
-            it.copy(dialogType = null)
+            it.copy(dialog = null)
         }
     }
 
     fun onResetPasswordInstructionsDialogDismissRequest() {
         _uiState.update {
-            it.copy(dialogType = null)
+            it.copy(dialog = null)
         }
     }
 
     data class UiState(
         val isLoading: Boolean = false,
-        val bottomDialogType: BottomDialogType = BottomDialogType.SignIn,
+        val bottomDialog: BottomDialog = BottomDialog.SignIn,
         val emailAddressValue: String = "",
         val passwordResetEmailValue: String = "",
         val passwordValue: String = "",
         val confirmPasswordValue: String = "",
-        val dialogType: DialogType? = null,
+        val dialog: Dialog? = null,
     ) {
 
         val isSignInButtonEnabled
@@ -248,13 +251,13 @@ class RegistrationViewModel @Inject constructor(
         val isResetPasswordButtonEnabled get() = passwordResetEmailValue.isNotBlank()
     }
 
-    enum class BottomDialogType {
+    enum class BottomDialog {
         SignIn, SignUp, ResetPassword,
     }
 
-    sealed class DialogType {
-        object EmailVerification : DialogType()
-        object ResetPasswordInstructions : DialogType()
+    sealed class Dialog {
+        object EmailVerification : Dialog()
+        object ResetPasswordInstructions : Dialog()
     }
 
     sealed class Command {

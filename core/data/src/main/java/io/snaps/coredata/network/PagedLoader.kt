@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
- * [from] - eg, id of last item, null if nothing loaded yet
+ * [from] - eg, id of the last item, null if nothing loaded yet
  */
 typealias PagedLoaderAction<T> = suspend (from: String?, count: Int) -> BaseResponse<List<T>>
 
@@ -94,8 +94,9 @@ abstract class PagedLoaderFactory<K, L, T, R> where L : PagedLoader<T, R> {
 
     private val loadersMap: HashMap<K, L> = hashMapOf()
 
-    fun get(key: K, params: (K) -> PagedLoaderParams<T, R>): L =
-        loadersMap.getOrPut(key) { provide(params(key)) }
+    fun get(key: K, params: (K) -> PagedLoaderParams<T, R>): L = loadersMap.getOrPut(key) { provide(params(key)) }
 
     abstract fun provide(params: PagedLoaderParams<T, R>): L
+
+    fun clear() = loadersMap.clear()
 }

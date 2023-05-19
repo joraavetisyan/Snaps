@@ -19,6 +19,6 @@ data class NftItemResponseDto(
 
     val repairCost: Double get() {
         val multiplier = dailyMaintenanceCostMultiplier ?: return 0.0
-        return (dailyReward * multiplier)
+        return dailyReward * multiplier
     }
 }

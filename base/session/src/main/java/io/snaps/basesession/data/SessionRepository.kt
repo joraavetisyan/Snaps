@@ -1,51 +1,55 @@
 package io.snaps.basesession.data
 
 import com.google.firebase.auth.FirebaseAuth
-import io.snaps.basenft.data.NftRepository
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.DeviceInfoProvider
 import io.snaps.basewallet.data.WalletRepository
+import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.OnboardingType
+import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.database.LogOutReason
 import io.snaps.coredata.database.TokenStorage
 import io.snaps.coredata.database.UserDataStorage
+import io.snaps.coredata.di.Bridged
+import io.snaps.coredata.di.UserSessionComponentManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.net.HttpURLConnection
 import javax.inject.Inject
 
 interface SessionRepository {
 
     fun isOnboardingShown(type: OnboardingType): Boolean
 
-    suspend fun refresh(): Effect<Completable>
+    suspend fun refresh(): Effect<Boolean>
 
     suspend fun checkStatus(): Effect<Completable>
 
     suspend fun onLogin(): Effect<Completable>
 
-    suspend fun onWalletConnect(): Effect<Completable>
+    suspend fun onWalletConnected(): Effect<Completable>
 
-    fun onInitialize()
+    fun onInitialized()
 
-    fun onLogout()
+    fun logout()
 
     fun forceLogout(reason: LogOutReason)
 }
 
 class SessionRepositoryImpl @Inject constructor(
     @ApplicationCoroutineScope private val scope: CoroutineScope,
+    private val userSessionComponentManager: UserSessionComponentManager,
     private val userSessionTracker: UserSessionTracker,
     private val tokenStorage: TokenStorage,
     private val userDataStorage: UserDataStorage,
     private val deviceInfoProvider: DeviceInfoProvider,
     private val auth: FirebaseAuth,
-    private val profileRepository: ProfileRepository,
-    private val walletRepository: WalletRepository,
-    private val nftRepository: NftRepository,
+    @Bridged private val profileRepository: ProfileRepository,
+    @Bridged private val walletRepository: WalletRepository,
 ) : SessionRepository {
 
     override fun isOnboardingShown(type: OnboardingType): Boolean {
@@ -57,7 +61,7 @@ class SessionRepositoryImpl @Inject constructor(
     override suspend fun checkStatus(): Effect<Completable> {
         val userId: String? = auth.currentUser?.uid
         if (tokenStorage.authToken != null && userId != null) {
-            return checkWallet(userId)
+            return checkStatus(userId)
         }
         userSessionTracker.onLogin(UserSessionTracker.State.NotActive)
         return Effect.completable
@@ -66,41 +70,48 @@ class SessionRepositoryImpl @Inject constructor(
     /**
      * Check if user has wallet connected
      */
-    private suspend fun checkWallet(userId: String): Effect<Completable> {
-        if (!walletRepository.hasAccount(userId)) {
-            userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsWalletConnect)
-            return Effect.completable
-        }
-        return checkUser().doOnSuccess { ready ->
-            if (ready) {
-                userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
+    private suspend fun checkStatus(userId: Uuid): Effect<Completable> {
+        return if (!walletRepository.hasAccount(userId)) {
+            profileRepository.updateData().flatMap {
+                userSessionTracker.onLogin(
+                    if (it.wallet == null) {
+                        UserSessionTracker.State.Active.NeedsWalletConnect
+                    } else {
+                        UserSessionTracker.State.Active.NeedsWalletImport
+                    }
+                )
+                Effect.completable
             }
-        }.doOnError { _, _ ->
-            // todo should we really open Main here?
-            userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
-        }.toCompletable()
-    }
-
-    /**
-     * Check if user has name and avatar
-     */
-    private suspend fun checkUser() = profileRepository.updateData().flatMap {
-        if (it.name.isBlank() || it.avatarUrl == null) {
-            userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsInitialization)
-            Effect.success(false)
         } else {
-            Effect.success(true)
+            profileRepository.updateData().flatMap {
+                Effect.success(!(it.name.isBlank() || it.avatarUrl == null))
+            }.doOnSuccess { ready ->
+                if (ready) {
+                    userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
+                } else {
+                    userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsInitialization)
+                }
+            }.doOnError { error, _ ->
+                if (error.code == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    refresh().doOnSuccess {
+                        if (it) checkStatus(userId)
+                    }
+                } else {
+                    userSessionTracker.onLogin(UserSessionTracker.State.Active.Error)
+                }
+            }.toCompletable()
         }
     }
 
-    override suspend fun refresh(): Effect<Completable> {
+    override suspend fun refresh(): Effect<Boolean> {
         val token = auth.currentUser?.getIdToken(false)?.await()?.token
-        if (token != null) {
+        return if (token != null) {
             tokenStorage.authToken = token
+            Effect.success(true)
         } else {
-            onLogout()
+            logout()
+            Effect.success(false)
         }
-        return Effect.completable
     }
 
     override suspend fun onLogin(): Effect<Completable> {
@@ -108,24 +119,20 @@ class SessionRepositoryImpl @Inject constructor(
             if (walletRepository.hasAccount(it)) {
                 walletRepository.setAccountActive(it)
             }
-            return checkWallet(it)
+            return checkStatus(it)
         }
-        return Effect.completable
+        return Effect.error(AppError.Unknown())
     }
 
-    override suspend fun onWalletConnect(): Effect<Completable> {
-        return checkUser().doOnSuccess { ready ->
-            if (ready) {
-                userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
-            }
-        }.toCompletable()
+    override suspend fun onWalletConnected(): Effect<Completable> {
+        return checkStatus()
     }
 
-    override fun onInitialize() {
+    override fun onInitialized() {
         userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
     }
 
-    override fun onLogout() {
+    override fun logout() {
         clearData(null)
     }
 
@@ -144,5 +151,6 @@ class SessionRepositoryImpl @Inject constructor(
             userDataStorage.reset(reason)
             userSessionTracker.onLogout()
         }
+        userSessionComponentManager.onUserLoggedOut()
     }
 }

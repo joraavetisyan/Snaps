@@ -7,6 +7,7 @@ enum class StringKey {
     ActionReply,
     ActionReload,
     ActionContinue,
+    ActionSend,
     ActionConfirm,
     ActionCancel,
     ActionClose,
@@ -14,7 +15,16 @@ enum class StringKey {
     ActionHowItWorks,
     ActionOk,
 
+    MessageSuccess,
+    MessageCopySuccess,
     MessageConnectionSuccess,
+    MessageEmptyVideoFeed,
+    MessageNothingFound,
+
+    FieldMinutes,
+    FieldMinutesShort,
+    FieldSeconds,
+    FieldSecondsShort,
 
     Error,
     ErrorLoadFail,
@@ -175,6 +185,8 @@ enum class StringKey {
     SettingsTitleAboutProject,
     SettingsActionLogout,
     SettingsActionDeleteAccount,
+    SettingsDialogLogoutTitle,
+    SettingsDialogLogoutMessage,
 
     SocialNetworksTitle,
     SocialNetworksTitleDiscord,
@@ -237,6 +249,7 @@ enum class StringKey {
     TaskShareMessagePhotoSaved,
     TaskShareFieldDownloadApp,
     TaskShareFieldEarnCryptocurrencies,
+    TaskShareMessagePostInstagram,
 
     TaskFindPointsTitle,
     TaskFindPointsTitleConnectInstagram,
@@ -259,6 +272,12 @@ enum class StringKey {
     BackupWalletKeyActionHold,
 
     WalletTitle,
+    WalletTitlePaymentStatus,
+    WalletFieldPaymentStatusInProcess,
+    WalletFieldPaymentStatusRejected,
+    WalletTitlePaymentTransactionId,
+    WalletMessagePaymentRejected,
+    WalletActionPaymentRejected,
     WalletActionTopUp,
     WalletActionWithdraw,
     WalletActionExchange,
@@ -284,10 +303,21 @@ enum class StringKey {
     RewardsMessageLockedRewards,
     RewardsActionClaim,
     RewardsErrorInsufficientBalance,
+    RewardsErrorRepairGlasses,
+    RewardsFieldFilterLocked,
+    RewardsFieldFilterUnlocked,
     RewardsDialogTitleFootnote1,
     RewardsDialogTitleFootnote2,
     RewardsDialogMessageFootnote1,
     RewardsDialogMessageFootnote2,
+    RewardsDialogTitleClaim,
+    RewardsDialogActionClaim,
+    RewardsDialogHintClaim,
+    RewardsDialogActionMax,
+    RewardsDialogFieldAvailable,
+    RewardsDialogRepairNftTitle,
+    RewardsDialogRepairNftText,
+    RewardsDialogRepairNftAction,
 
     WithdrawTitle,
     WithdrawHintAddress,
@@ -298,6 +328,10 @@ enum class StringKey {
     WithdrawFieldTotal,
     WithdrawActionConfirmTransaction,
     WithdrawActionSendTransaction,
+    WithdrawErrorInvalidAddress,
+    WithdrawDialogWithdrawSuccessTitle,
+    WithdrawDialogWithdrawSuccessMessage,
+    WithdrawDialogWithdrawSuccessAction,
 
     ExchangeTitle,
 
@@ -322,6 +356,16 @@ enum class StringKey {
     MyCollectionFieldNeedToRepair,
     MyCollectionActionRepairGlasses,
     MyCollectionActionProcessing,
+    MyCollectionFieldBonus,
+    MyCollectionFieldExperience,
+    MyCollectionFieldLevel,
+    MyCollectionFieldUpperThreshold,
+    MyCollectionDialogRepairSuccessTitle,
+    MyCollectionDialogRepairSuccessAction,
+
+    DialogLimitedGasTitle,
+    DialogLimitedGasMessage,
+    DialogLimitedGasAction,
 
     RankSelectionTitle,
     RankSelectionActionFootnote,
@@ -343,6 +387,7 @@ enum class StringKey {
     PreviewVideoMessageSuccess,
 
     UploadVideoTitle,
+    UploadVideoTitlePreview,
     UploadVideoHintTitle,
     UploadVideoHintDescription,
     UploadVideoActionPublish,
@@ -364,6 +409,12 @@ enum class StringKey {
     PurchaseActionBuyWithBNB,
     PurchaseActionFree,
     PurchaseFieldOff,
+    PurchaseMessageSuccess,
+    PurchaseDialogWithBnbTitle,
+    PurchaseErrorNotEnoughBnb,
+    PurchaseDialogWithBnbSuccessTitle,
+    PurchaseDialogWithBnbSuccessMessage,
+    PurchaseDialogWithBnbSuccessAction,
 
     VideoClipActionDelete,
     VideoClipTitleAction,
@@ -376,4 +427,7 @@ enum class StringKey {
     NftDetailsDescriptionCondition,
     NftDetailsTitleLevel,
     NftDetailsDescriptionLevel,
+
+    MainVideoFeedTitleForYou,
+    MainVideoFeedTitleSubscriptions,
 }

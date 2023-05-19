@@ -1,6 +1,7 @@
 package io.snaps.coredata.network
 
 import io.snaps.corecommon.ext.log
+import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
@@ -53,7 +54,7 @@ suspend inline fun <reified T : Any> apiCall(
 }
 
 inline fun <reified T : Any> BaseResponse<T>.toEffect(): Effect<T> {
-    if (isSuccess) {
+    if (isSuccess == null || isSuccess == true) {
         when {
             data != null -> return Effect.success(data)
             T::class == Completable::class -> return Effect.success(Completable as T)
@@ -74,28 +75,27 @@ fun Throwable.toApiError() = when (this) {
 
     is HttpException -> {
         val errorBody = try {
-            KotlinxSerializationJsonProvider().get()
-                .decodeFromStream<ErrorResponse>(response()!!.errorBody()!!.byteStream())
+            KotlinxSerializationJsonProvider().get().decodeFromStream<ErrorResponse>(
+                stream = response()!!.errorBody()!!.byteStream(),
+            )
         } catch (t: Throwable) {
-            log("Couldn't retrieve error body: $t")
+            logE("Couldn't retrieve error body: $t")
             null
         }
         val error = errorBody?.error
         val errorCode = response()?.code()
 
         when {
-            error == null && errorCode == null -> AppError.Unknown()
+            error == null && errorCode == null -> AppError.Unknown(cause = (this as? Exception))
 
             else -> AppError.Custom(
-                message = error?.message,
-                displayMessage = error?.displayMessage,
+                message = error,
+                displayMessage = error,
                 code = errorCode,
                 cause = this as Exception,
             )
         }
     }
 
-    else -> AppError.Unknown().also {
-        log("Unknown api call error: $this")
-    }
+    else -> AppError.Unknown(cause = (this as? Exception))
 }

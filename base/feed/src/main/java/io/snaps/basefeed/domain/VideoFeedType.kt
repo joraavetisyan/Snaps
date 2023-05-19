@@ -16,4 +16,6 @@ sealed interface VideoFeedType {
     data class User(val userId: Uuid?) : VideoFeedType
 
     data class All(val query: String) : VideoFeedType
+
+    object Subscriptions : VideoFeedType
 }

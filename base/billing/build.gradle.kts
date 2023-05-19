@@ -5,6 +5,7 @@ plugins {
 common()
 dagger()
 lifecycle()
+firebase()
 
 android {
     namespace = "io.snaps.basebilling"
@@ -16,6 +17,4 @@ dependencies {
     implementation(projects.coreCommon)
     implementation(projects.coreData)
     implementation(projects.coreUi)
-
-    implementation(*Libs.bundle.firebase)
 }

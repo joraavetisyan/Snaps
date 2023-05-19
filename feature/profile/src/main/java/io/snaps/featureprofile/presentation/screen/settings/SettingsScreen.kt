@@ -32,7 +32,9 @@ import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonRedInlineM
+import io.snaps.coreuicompose.uikit.dialog.SimpleConfirmDialogUi
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
+import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureprofile.ScreenNavigator
@@ -58,10 +60,13 @@ fun SettingsScreen(
 
     SettingsScreen(
         uiState = uiState,
+        onBackClicked = router::back,
         onLogoutClicked = viewModel::onLogoutClicked,
         onDeleteAccountClicked = viewModel::onDeleteAccountClicked,
-        onBackClicked = router::back,
+        onLogoutConfirmed = viewModel::onLogoutConfirmed,
+        onDialogDismissRequest = viewModel::onDialogDismissRequest,
     )
+    FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,6 +76,8 @@ private fun SettingsScreen(
     onLogoutClicked: () -> Unit,
     onDeleteAccountClicked: () -> Unit,
     onBackClicked: () -> Boolean,
+    onLogoutConfirmed: () -> Unit,
+    onDialogDismissRequest: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -132,5 +139,15 @@ private fun SettingsScreen(
                 }
             }
         }
+    }
+    when (uiState.dialog) {
+        is SettingsViewModel.Dialog.ConfirmLogout -> SimpleConfirmDialogUi(
+            title = StringKey.SettingsDialogLogoutTitle.textValue(),
+            text = StringKey.SettingsDialogLogoutMessage.textValue(),
+            onDismissRequest = onDialogDismissRequest,
+            onConfirmRequest = onLogoutConfirmed,
+        )
+
+        null -> Unit
     }
 }

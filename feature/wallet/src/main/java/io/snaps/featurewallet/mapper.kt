@@ -1,21 +1,27 @@
 package io.snaps.featurewallet
 
 import io.snaps.baseprofile.domain.BalanceModel
+import io.snaps.basewallet.data.model.PayoutOrderResponseDto
+import io.snaps.basewallet.data.model.PayoutOrderStatus
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.round
 import io.snaps.corecommon.ext.toStringValue
+import io.snaps.corecommon.model.Coin
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
+import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.WalletModel
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.featurewallet.domain.TransactionModel
+import io.snaps.featurewallet.screen.PayoutStatusState
 import io.snaps.featurewallet.screen.RewardsTileState
 import io.snaps.featurewallet.screen.TransactionTileState
 import java.time.LocalDateTime
@@ -29,12 +35,16 @@ fun WalletModel.toCellTileState(
     onClick: ((WalletModel) -> Unit)?,
 ) = CellTileState(
     middlePart = MiddlePart.Data(
-        value = symbol.textValue(),
+        value = if (symbol == Coin.Type.SNPS.code) {
+            Coin.Type.SNPS.symbol
+        } else {
+            symbol
+        }.textValue(),
     ),
-    leftPart = if (symbol == "SNAPS") {
-        ImageValue.ResImage(R.drawable.ic_snp_token)
+    leftPart = if (symbol == Coin.Type.SNPS.code) {
+        R.drawable.ic_snp_token.imageValue()
     } else {
-        ImageValue.Url(iconUrl)
+        iconUrl.imageValue()
     }.let(LeftPart::Logo),
     rightPart = RightPart.TextMoney(
         coin = coinValue,
@@ -74,7 +84,7 @@ fun TransactionModel.toTransactionTile(
     onClicked: (TransactionModel) -> Unit,
 ) = TransactionTileState.Data(
     id = id,
-    icon = ImageValue.ResImage(R.drawable.ic_snp_token),
+    icon = R.drawable.ic_snp_token.imageValue(),
     type = type,
     coins = "${balanceChange.round().toStringValue()} SNP".textValue(),
     dateTime = date.toStringValue(),
@@ -83,4 +93,31 @@ fun TransactionModel.toTransactionTile(
 
 private fun LocalDateTime.toStringValue(): TextValue {
     return format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")).textValue()
+}
+
+fun State<List<PayoutOrderResponseDto>>.toPayoutStatusState(
+    onContactSupportClick: () -> Unit,
+    onCopyClick: (Uuid) -> Unit,
+): PayoutStatusState? {
+    return when (this) {
+        is Loading -> PayoutStatusState.Shimmer
+        is Effect -> if (isSuccess) {
+            requireData.lastOrNull()?.let {
+                when (it.status) {
+                    PayoutOrderStatus.InProcess -> PayoutStatusState.Data.Processing(
+                        dto = it,
+                        onCopyClick = onCopyClick,
+                    )
+                    PayoutOrderStatus.Rejected -> PayoutStatusState.Data.Rejected(
+                        dto = it,
+                        onContactSupportClick = onContactSupportClick,
+                        onCopyClick = onCopyClick,
+                    )
+                    PayoutOrderStatus.Success -> PayoutStatusState.Success
+                }
+            }
+        } else {
+            null
+        }
+    }
 }

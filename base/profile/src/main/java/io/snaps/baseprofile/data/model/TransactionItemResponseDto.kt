@@ -10,7 +10,7 @@ class TransactionItemResponseDto(
     @SerialName("id") val id: Uuid,
     @SerialName("userId") val userId: Uuid,
     @SerialName("createdAt") val date: DateTime,
-    @SerialName("type") val type: TransactionType,
+    @SerialName("type") val type: TransactionType = TransactionType.Unknown,
     @SerialName("balanceChange") val balanceChange: Double,
 )
 
@@ -24,4 +24,6 @@ enum class TransactionType(val title: String) {
     @SerialName("none") None("Transaction"),
     @SerialName("SubscribersPromo") SubscribersPromo("Subscribers Promo"),
     @SerialName("ViewsPromo") ViewsPromo("Views Promo"),
+    @SerialName("MoveToUnlock") MoveToUnlock("Move to unlock"),
+    Unknown("Unknown"),
 }

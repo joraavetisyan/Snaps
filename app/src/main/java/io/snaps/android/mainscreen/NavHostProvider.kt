@@ -18,6 +18,7 @@ import io.snaps.corenavigation.SearchFeatureProvider
 import io.snaps.corenavigation.TasksFeatureProvider
 import io.snaps.corenavigation.WalletConnectFeatureProvider
 import io.snaps.corenavigation.WalletFeatureProvider
+import io.snaps.corenavigation.WebViewFeatureProvider
 import io.snaps.corenavigation.base.createRoute
 import io.snaps.coreuitheme.compose.AppTheme
 import javax.inject.Inject
@@ -35,6 +36,7 @@ class NavHostProvider @Inject constructor(
     private val tasksFeatureProvider: TasksFeatureProvider,
     private val collectionFeatureProvider: CollectionFeatureProvider,
     private val referralFeatureProvider: ReferralFeatureProvider,
+    private val webViewFeatureProvider: WebViewFeatureProvider,
 ) {
 
     @Composable
@@ -53,11 +55,13 @@ class NavHostProvider @Inject constructor(
     fun AuthorizedGraph(
         navController: NavHostController,
         needsWalletConnect: Boolean,
+        needsWalletImport: Boolean,
         needsInitialization: Boolean,
     ) = Graph(
         navController = navController,
         startDestinationRoute = when {
             needsWalletConnect -> createRoute(AppRoute.WalletConnect)
+            needsWalletImport -> createRoute(AppRoute.WalletImport)
             needsInitialization -> createRoute(AppRoute.UserCreate)
             else -> createRoute(AppRoute.MainBottomBar)
         },
@@ -75,6 +79,7 @@ class NavHostProvider @Inject constructor(
             with(feedFeatureProvider) { feedGraph(navController) }
             with(walletFeatureProvider) { walletGraph(navController) }
             with(createFeatureProvider) { createGraph(navController) }
+            with(webViewFeatureProvider) { webViewGraph(navController) }
             with(bottomBarFeatureProvider) {
                 bottomBarGraph(
                     route = AppRoute.MainBottomBar,
@@ -83,6 +88,7 @@ class NavHostProvider @Inject constructor(
                     with(walletFeatureProvider) { walletGraph(controller) }
                     with(createFeatureProvider) { createGraph(controller) }
                     with(profileFeatureProvider) { profileGraph(controller) }
+                    with(webViewFeatureProvider) { webViewGraph(controller) }
                 }
             }
         }

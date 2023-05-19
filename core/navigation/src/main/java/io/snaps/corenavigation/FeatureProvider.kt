@@ -76,3 +76,8 @@ interface ReferralFeatureProvider {
 
     fun NavGraphBuilder.referralGraph(controller: NavHostController)
 }
+
+interface WebViewFeatureProvider {
+
+    fun NavGraphBuilder.webViewGraph(controller: NavHostController)
+}

@@ -5,6 +5,7 @@ import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
+import io.snaps.coredata.di.Bridged
 import java.io.File
 import javax.inject.Inject
 
@@ -14,9 +15,9 @@ interface CreateUserInteractor {
 }
 
 class CreateUserInteractorImpl @Inject constructor(
-    private val profileRepository: ProfileRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     private val fileRepository: FileRepository,
-    private val walletRepository: WalletRepository,
+    @Bridged private val walletRepository: WalletRepository,
 ) : CreateUserInteractor {
 
     override suspend fun createUser(avatarFile: File, userName: String): Effect<Completable> {
@@ -24,7 +25,7 @@ class CreateUserInteractorImpl @Inject constructor(
             profileRepository.createUser(
                 fileId = it.id,
                 userName = userName,
-                walletAddress = walletRepository.requireActiveWalletReceiveAddress(),
+                address = walletRepository.requireActiveWalletReceiveAddress(),
             )
         }
     }

@@ -65,8 +65,11 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
     }
 
     fun createFileFromBitmap(bitmap: Bitmap): File? {
-        val tempFile =
-            createTempFile(generateName(FileType.Pictures), getCacheDir(FileType.Pictures))
+        val tempFile = createTempFile(
+            prefix = generatePrefix(FileType.Pictures),
+            suffix = generateSuffix(FileType.Pictures),
+            dir = getCacheDir(FileType.Pictures),
+        )
         var outputStream: FileOutputStream? = null
         return try {
             tempFile.createNewFile()
@@ -123,7 +126,7 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
     }
 
     fun createInternalCacheFile(type: FileType): Uri {
-        val file = createTempFile(generateName(type), getCacheDir(type))
+        val file = createTempFile(generatePrefix(type), generateSuffix(type), getCacheDir(type))
         return FileProvider.getUriForFile(context, getFileProviderAuthority(), file)
     }
 
@@ -194,12 +197,18 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
     private fun getCacheDir(type: FileType) = context.cacheDir
 
     private fun createFile(name: String, dir: File?) = File(dir, name)
-    private fun createTempFile(name: String, dir: File?) = File.createTempFile(name, null, dir)
+    // Note that null suffix will result in .tmp extension
+    private fun createTempFile(prefix: String, suffix: String?, dir: File?) = File.createTempFile(prefix, suffix, dir)
 
     private fun getRandomId() = Calendar.getInstance().timeInMillis
-    private fun generateName(type: FileType) = when (type) {
-        FileType.Pictures -> "image_" + getRandomId() + ".jpeg"
-        FileType.Videos -> "video_" + getRandomId() + ".mp4"
+    private fun generateName(type: FileType) = generatePrefix(type) + generateSuffix(type)
+    private fun generatePrefix(type: FileType) = when (type) {
+        FileType.Pictures -> "image_" + getRandomId()
+        FileType.Videos -> "video_" + getRandomId()
+    }
+    private fun generateSuffix(type: FileType) = when (type) {
+        FileType.Pictures -> ".jpeg"
+        FileType.Videos -> ".mp4"
     }
 
     private fun getNameFromUri(uri: Uri): String? {

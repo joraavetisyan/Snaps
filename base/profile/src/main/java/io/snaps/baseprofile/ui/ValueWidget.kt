@@ -18,6 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.MainHeaderElementShape
@@ -25,7 +26,7 @@ import io.snaps.coreuitheme.compose.MainHeaderElementShape
 @Composable
 fun EnergyWidget(value: String, isFull: Boolean = false) {
     ValueWidget(
-        ImageValue.ResImage(R.drawable.img_energy) to value,
+        R.drawable.img_energy.imageValue() to value,
         backgroundColor = if (isFull) {
             AppTheme.specificColorScheme.uiSystemGreen.copy(alpha = 0.2f)
         } else {

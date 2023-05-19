@@ -3,6 +3,7 @@ package io.snaps.basenft.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -21,10 +24,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
@@ -36,6 +43,7 @@ import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
+import io.snaps.coreuicompose.uikit.other.Progress
 import io.snaps.coreuicompose.uikit.other.ShimmerTile
 import io.snaps.coreuicompose.uikit.other.SimpleCard
 import io.snaps.coreuitheme.compose.AppTheme
@@ -52,9 +60,16 @@ sealed class CollectionItemState : TileState {
         val dailyConsumption: String,
         val isHealthy: Boolean,
         val isProcessing: Boolean,
+        val isLevelInfoVisible: Boolean,
+        val level: Int,
+        val experience: Int,
+        val bonus: Int,
+        val upperThreshold: Int,
+        val lowerThreshold: Int,
         val onRepairClicked: () -> Unit,
         val onProcessingClicked: () -> Unit,
         val onItemClicked: () -> Unit,
+        val onHelpIconClicked: () -> Unit,
     ) : CollectionItemState()
 
     data class MysteryBox(
@@ -152,6 +167,16 @@ private fun Nft(
                 value = data.dailyConsumption,
             )
         }
+        if (data.isLevelInfoVisible) {
+            LevelInfoBlock(
+                experience = data.experience,
+                upperThreshold = data.upperThreshold,
+                level = data.level,
+                lowerThreshold = data.lowerThreshold,
+                bonus = data.bonus,
+                onHelpIconClicked = data.onHelpIconClicked,
+            )
+        }
         if (!data.isHealthy) {
             Button(
                 text = StringKey.MyCollectionActionRepairGlasses.textValue(),
@@ -208,6 +233,122 @@ private fun Button(
                 .padding(8.dp),
             textAlign = TextAlign.Center,
         )
+    }
+}
+
+@Composable
+private fun LevelInfoBlock(
+    experience: Int,
+    upperThreshold: Int,
+    level: Int,
+    lowerThreshold: Int,
+    bonus: Int,
+    onHelpIconClicked: () -> Unit,
+) {
+    val upperThresholdText = buildAnnotatedString {
+        val nextLevel = StringKey.MyCollectionFieldLevel.textValue(
+            (level + 1).toString()
+        ).get().text
+        val text = StringKey.MyCollectionFieldUpperThreshold.textValue(
+            (upperThreshold - experience).toString(),
+            nextLevel,
+        ).get().text
+        append(text)
+        val startIndex = text.indexOf(nextLevel)
+        val endIndex = startIndex + nextLevel.length
+        addStyle(
+            style = SpanStyle(
+                color = AppTheme.specificColorScheme.textLink,
+                fontSize = AppTheme.specificTypography.labelSmall.fontSize,
+            ),
+            start = startIndex,
+            end = endIndex,
+        )
+    }
+
+    SimpleCard(
+        color = AppTheme.specificColorScheme.white,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 12.dp),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+                .padding(top = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "XP",
+                style = AppTheme.specificTypography.labelMedium,
+                color = AppTheme.specificColorScheme.textLink,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .border(
+                        width = 2.dp,
+                        color = AppTheme.specificColorScheme.uiAccent,
+                        shape = CircleShape,
+                    )
+                    .size(40.dp)
+                    .wrapContentHeight(align = Alignment.CenterVertically),
+            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.End,
+            ) {
+                Text(
+                    text = StringKey.MyCollectionFieldExperience.textValue(experience).get(),
+                    style = AppTheme.specificTypography.labelSmall,
+                    color = AppTheme.specificColorScheme.textSecondary,
+                )
+                Progress(
+                    modifier = Modifier.fillMaxWidth(),
+                    height = 12.dp,
+                    progress = experience / upperThreshold.toFloat(),
+                    isDashed = false,
+                    backColor = AppTheme.specificColorScheme.darkGrey,
+                    fillColor = AppTheme.specificColorScheme.uiAccent,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = upperThresholdText,
+            style = AppTheme.specificTypography.labelSmall.copy(fontSize = 10.sp),
+            color = AppTheme.specificColorScheme.textSecondary,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            textAlign = TextAlign.End,
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+                .padding(bottom = 8.dp),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Icon(
+                painter = AppTheme.specificIcons.help.get(),
+                contentDescription = null,
+                tint = AppTheme.specificColorScheme.uiAccent,
+                modifier = Modifier
+                    .defaultTileRipple(shape = CircleShape, onClick = onHelpIconClicked)
+                    .size(20.dp),
+            )
+            Text(
+                text = StringKey.MyCollectionFieldBonus.textValue(bonus.toString()).get(),
+                style = AppTheme.specificTypography.bodySmall,
+                color = AppTheme.specificColorScheme.textLink,
+                textAlign = TextAlign.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp),
+            )
+        }
     }
 }
 
@@ -290,13 +431,9 @@ private fun Container(
     Column(
         modifier = modifier
             .heightIn(min = 220.dp)
+            .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
             .background(
                 color = AppTheme.specificColorScheme.white,
-                shape = AppTheme.shapes.medium,
-            )
-            .border(
-                width = 1.dp,
-                color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
                 shape = AppTheme.shapes.medium,
             )
             .padding(12.dp),

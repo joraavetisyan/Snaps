@@ -5,6 +5,7 @@ import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
+import io.snaps.coredata.di.Bridged
 import io.snaps.featuretasks.data.InstagramService
 import javax.inject.Inject
 
@@ -16,8 +17,8 @@ interface ConnectInstagramInteractor {
 }
 
 class ConnectInstagramInteractorImpl @Inject constructor(
-    private val profileRepository: ProfileRepository,
-    private val walletRepository: WalletRepository,
+    @Bridged private val profileRepository: ProfileRepository,
+    @Bridged private val walletRepository: WalletRepository,
     private val instagramService: InstagramService,
 ) : ConnectInstagramInteractor {
 
@@ -27,10 +28,9 @@ class ConnectInstagramInteractorImpl @Inject constructor(
         }.flatMap {
             profileRepository.state.value.dataOrCache?.let { user ->
                 profileRepository.connectInstagram(
-                    instagramId = it.id,
                     instagramUsername = it.username,
                     name = user.name,
-                    walletAddress = walletRepository.requireActiveWalletReceiveAddress(),
+                    address = walletRepository.requireActiveWalletReceiveAddress(),
                     avatar = user.avatarUrl,
                 )
             } ?: Effect.error(AppError.Unknown())
@@ -41,7 +41,7 @@ class ConnectInstagramInteractorImpl @Inject constructor(
         return profileRepository.state.value.dataOrCache?.let {
              profileRepository.disconnectInstagram(
                  name = it.name,
-                 walletAddress = walletRepository.requireActiveWalletReceiveAddress(),
+                 address = walletRepository.requireActiveWalletReceiveAddress(),
                  avatar = it.avatarUrl,
             )
         } ?: Effect.error(AppError.Unknown())

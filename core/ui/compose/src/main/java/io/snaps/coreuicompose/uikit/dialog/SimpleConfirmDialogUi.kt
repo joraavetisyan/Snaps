@@ -6,6 +6,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonInlineM
@@ -15,8 +17,8 @@ import io.snaps.coreuitheme.compose.AppTheme
 fun SimpleConfirmDialogUi(
     title: TextValue? = null,
     text: TextValue,
-    confirmButtonText: TextValue,
-    dismissButtonText: TextValue,
+    confirmButtonText: TextValue = StringKey.ActionConfirm.textValue(),
+    dismissButtonText: TextValue = StringKey.ActionCancel.textValue(),
     onDismissRequest: () -> Unit,
     onConfirmRequest: () -> Unit,
 ) {
@@ -27,7 +29,7 @@ fun SimpleConfirmDialogUi(
                 Text(
                     text = it.get(),
                     modifier = Modifier.fillMaxWidth(),
-                    style = AppTheme.specificTypography.titleLarge,
+                    style = AppTheme.specificTypography.titleMedium,
                     color = AppTheme.specificColorScheme.textPrimary,
                 )
             }

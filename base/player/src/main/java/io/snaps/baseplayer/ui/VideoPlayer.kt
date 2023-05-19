@@ -1,5 +1,6 @@
 package io.snaps.baseplayer.ui
 
+import android.os.Looper
 import android.view.ViewGroup
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -40,8 +41,9 @@ import io.snaps.corecommon.R
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.coreuicompose.tools.get
-import io.snaps.coreuitheme.compose.withColors
-import io.snaps.coreuitheme.compose.withIcons
+import io.snaps.coreuicompose.uikit.other.KeepScreenOn
+import io.snaps.coreuitheme.compose.colors
+import io.snaps.coreuitheme.compose.icons
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -55,33 +57,38 @@ fun VideoPlayer(
     onMuted: ((Boolean) -> Unit)? = null,
     isLiked: Boolean = false,
     onLiked: (() -> Unit)? = null,
-    progressChangePollFrequency: Long = 1000L, /*every 1 second*/
+    progressPollFrequencyInMillis: Long = 1000L, /*every 1 second*/
     onProgressChanged: ((Float) -> Unit)? = null, /*[0f,1f] every [progressChangePollFrequency]*/
     isScrolling: Boolean = false,
     isRepeat: Boolean = true,
+    performAtPosition: (() -> Unit)? = null,
+    performPosition: Float = 0f, /*[0f,1f]*/
 ) {
     require(networkUrl == null || localUri == null) {
         "Don't provide both local and network sources!"
     }
 
+    KeepScreenOn()
+
+    val coroutineScope = rememberCoroutineScope()
+
     val exoPlayer = rememberExoPlayerWithLifecycle(
         networkUrl = networkUrl,
         localUri = localUri,
         isRepeat = isRepeat,
+        performAtPosition = performAtPosition,
+        performPosition = performPosition,
     )
     val playerView = rememberPlayerView(exoPlayer)
 
     var isVolumeIconVisible by remember { mutableStateOf(false) }
 
-    val coroutineScope = rememberCoroutineScope()
-
-    val composition by rememberLottieComposition(
+    val lottieComposition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(R.raw.lottie_like),
     )
     val lottieAnimatable = rememberLottieAnimatable()
 
     val onProgressChangedRemembered by rememberUpdatedState(onProgressChanged)
-
     if (onProgressChangedRemembered != null) {
         LaunchedEffect(exoPlayer) {
             while (isActive) {
@@ -93,7 +100,7 @@ fun VideoPlayer(
                         0f
                     }.coerceIn(0f, 1f)
                 )
-                delay(progressChangePollFrequency)
+                delay(progressPollFrequencyInMillis)
             }
         }
     }
@@ -108,7 +115,7 @@ fun VideoPlayer(
                             onLiked?.let {
                                 it()
                                 coroutineScope.launch {
-                                    lottieAnimatable.animate(composition)
+                                    lottieAnimatable.animate(lottieComposition)
                                 }
                             }
                         },
@@ -137,7 +144,7 @@ fun VideoPlayer(
                                 exoPlayer.playWhenReady = true
                             }
                         },
-                        onLongPress = {}
+                        onLongPress = {},
                     )
                 },
             update = {
@@ -146,17 +153,17 @@ fun VideoPlayer(
             }
         )
 
-        Crossfade(targetState = lottieAnimatable.isPlaying) {
+        Crossfade(targetState = lottieAnimatable.isPlaying, label = "likeLottieAnimation") {
             if (it) {
-                LottieAnimation(composition = composition, progress = { lottieAnimatable.progress })
+                LottieAnimation(composition = lottieComposition, progress = { lottieAnimatable.progress })
             }
         }
 
         if (isVolumeIconVisible) {
             Icon(
-                painter = withIcons { if (isMuted) volumeDown else volumeUp }.get(),
+                painter = icons { if (isMuted) volumeDown else volumeUp }.get(),
                 contentDescription = null,
-                tint = withColors { white },
+                tint = colors { white },
                 modifier = Modifier
                     .align(Alignment.Center)
                     .size(100.dp),
@@ -177,8 +184,11 @@ private fun rememberExoPlayerWithLifecycle(
     networkUrl: String?,
     localUri: String?,
     isRepeat: Boolean,
+    performAtPosition: (() -> Unit)?,
+    performPosition: Float,
 ): ExoPlayer {
     val context = LocalContext.current
+    val performAtPositionRemembered by rememberUpdatedState(newValue = performAtPosition)
     val exoPlayer = remember(networkUrl ?: localUri) {
         ExoPlayer.Builder(context).build().apply {
             videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
@@ -196,12 +206,26 @@ private fun rememberExoPlayerWithLifecycle(
                     .createMediaSource(MediaItem.fromUri(localUri))
                 setMediaSource(source)
             }
+            if (performAtPositionRemembered != null) {
+                addListener(
+                    object : Player.Listener {
+                        override fun onPlaybackStateChanged(playbackState: Int) {
+                            if (playbackState == ExoPlayer.STATE_READY) {
+                                createMessage { _, _ -> performAtPositionRemembered?.invoke() }
+                                    .setLooper(Looper.getMainLooper())
+                                    .setPosition((performPosition * duration).toLong())
+                                    .setPayload(null)
+                                    .setDeleteAfterDelivery(true)
+                                    .send()
+                            }
+                        }
+                    }
+                )
+            }
             prepare()
         }
     }
-    var appInBackground by remember {
-        mutableStateOf(false)
-    }
+    var appInBackground by remember { mutableStateOf(false) }
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(key1 = lifecycleOwner, appInBackground) {
         val lifecycleObserver = getExoPlayerLifecycleObserver(exoPlayer, appInBackground) {

@@ -24,12 +24,17 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -47,27 +52,37 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.model.WalletAddress
+import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.addressEllipsized
+import io.snaps.corenavigation.base.openUrl
+import io.snaps.corenavigation.base.resultFlow
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
@@ -75,22 +90,27 @@ import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialogItem
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonOutlineL
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
+import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.other.TitleSlider
 import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
 import io.snaps.coreuicompose.uikit.status.FootnoteUi
+import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewallet.ScreenNavigator
 import io.snaps.featurewallet.viewmodel.WalletViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun WalletScreen(
     navHostController: NavHostController,
@@ -98,15 +118,31 @@ fun WalletScreen(
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
     val viewModel = hiltViewModel<WalletViewModel>()
 
+    navHostController.resultFlow<Boolean>()?.collectAsCommand(action = viewModel::onSellSnapsResultReceived)
+
     val clipboardManager = LocalClipboardManager.current
 
     val uiState by viewModel.uiState.collectAsState()
+    val pullRefreshState = rememberPullRefreshState(uiState.isRefreshing, { viewModel.refresh() })
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true,
     )
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(key1 = sheetState.currentValue) {
+        if (sheetState.currentValue == ModalBottomSheetValue.Hidden
+            && uiState.bottomDialog == WalletViewModel.BottomDialog.RewardsWithdraw
+        ) {
+            focusRequester.freeFocus()
+            keyboardController?.hide()
+        }
+    }
 
     viewModel.command.collectAsCommand {
         when (it) {
@@ -114,16 +150,14 @@ fun WalletScreen(
             WalletViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
             is WalletViewModel.Command.OpenWithdrawScreen -> router.toWithdrawScreen(it.wallet)
             is WalletViewModel.Command.OpenExchangeScreen -> router.toExchangeScreen(it.wallet)
+            WalletViewModel.Command.OpenWithdrawSnapsScreen -> router.toWithdrawSnapsScreen()
+            is WalletViewModel.Command.CopyText -> clipboardManager.setText(AnnotatedString(it.text))
+            is WalletViewModel.Command.OpenLink -> context.openUrl(it.link)
         }
     }
 
     BackHandler(enabled = sheetState.isVisible) {
         coroutineScope.launch { sheetState.hide() }
-    }
-
-    fun onAddressCopyClicked(address: WalletAddress) {
-        clipboardManager.setText(AnnotatedString(address))
-        viewModel.onAddressCopied()
     }
 
     ModalBottomSheetLayout(
@@ -137,47 +171,73 @@ fun WalletScreen(
                     title = StringKey.WalletDialogTitleTopUp.textValue(dialog.title),
                     address = dialog.address,
                     qr = dialog.qr,
-                    onAddressCopyClicked = { onAddressCopyClicked(dialog.address) },
+                    onAddressCopyClicked = { viewModel.onAddressCopyClicked(dialog.address) },
                 )
                 WalletViewModel.BottomDialog.RewardsFootnote -> FootnoteBottomDialog(
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_guy_eating),
+                        image = R.drawable.img_guy_eating.imageValue(),
                         title = StringKey.RewardsDialogTitleFootnote1.textValue(),
                         text = StringKey.RewardsDialogMessageFootnote1.textValue(),
                     ),
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_guy_glad),
+                        image = R.drawable.img_guy_glad.imageValue(),
                         title = StringKey.RewardsDialogTitleFootnote2.textValue(),
                         text = StringKey.RewardsDialogMessageFootnote2.textValue(),
                     ),
+                )
+                WalletViewModel.BottomDialog.RewardsWithdraw -> RewardsClaimDialog(
+                    amountValue = uiState.amountToClaimValue,
+                    availableTokens = uiState.availableTokens,
+                    isConfirmButtonEnabled = uiState.isConfirmClaimEnabled,
+                    focusRequester = focusRequester,
+                    onAmountValueChanged = viewModel::onAmountToClaimValueChanged,
+                    onConfirmClicked = viewModel::onConfirmClaimClicked,
+                    onMaxButtonClicked = viewModel::onRewardsMaxButtonClicked,
+                )
+                WalletViewModel.BottomDialog.RepairNft -> SimpleBottomDialog(
+                    image = R.drawable.img_guy_sad.imageValue(),
+                    title = StringKey.RewardsDialogRepairNftTitle.textValue(),
+                    text = StringKey.RewardsDialogRepairNftText.textValue(),
+                    buttonText = StringKey.RewardsDialogRepairNftAction.textValue(),
+                    onClick = {
+                        coroutineScope.launch { sheetState.hide() }
+                        router.toMyCollectionScreen()
+                    }
                 )
             }
         },
     ) {
         WalletScreen(
             uiState = uiState,
+            pullRefreshState = pullRefreshState,
             onBackClicked = router::back,
-            onAddressCopyClicked = ::onAddressCopyClicked,
+            onAddressCopyClicked = viewModel::onAddressCopyClicked,
+            onSellSnapsClicked = viewModel::onSellSnapsClicked,
             onTopUpClicked = viewModel::onTopUpClicked,
             onWithdrawClicked = viewModel::onWithdrawClicked,
-            onRewardsWithdrawClicked = viewModel::onRewardsWithdrawClicked,
+            onRewardsWithdrawClicked = viewModel::onRewardsClaimClicked,
             onExchangeClicked = viewModel::onExchangeClicked,
             onRewardsOpened = viewModel::onRewardsOpened,
             onRewardsFootnoteClick = viewModel::onRewardsFootnoteClick,
             onDropdownMenuItemClicked = viewModel::onDropdownMenuItemClicked,
+            onPageSelected = viewModel::onPageSelected,
         )
     }
+    FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
 
 @OptIn(
     ExperimentalMaterial3Api::class,
     ExperimentalFoundationApi::class,
+    ExperimentalMaterialApi::class,
 )
 @Composable
 private fun WalletScreen(
     uiState: WalletViewModel.UiState,
+    pullRefreshState: PullRefreshState,
     onBackClicked: () -> Boolean,
-    onAddressCopyClicked: (WalletAddress) -> Unit,
+    onAddressCopyClicked: (CryptoAddress) -> Unit,
+    onSellSnapsClicked: () -> Unit,
     onTopUpClicked: () -> Unit,
     onWithdrawClicked: () -> Unit,
     onRewardsWithdrawClicked: () -> Unit,
@@ -185,14 +245,18 @@ private fun WalletScreen(
     onRewardsOpened: () -> Unit,
     onRewardsFootnoteClick: () -> Unit,
     onDropdownMenuItemClicked: (WalletViewModel.FilterOptions) -> Unit,
+    onPageSelected: (Int) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
-    val wallet = StringKey.WalletTitle.textValue()
-    val awards = StringKey.RewardsTitle.textValue()
-
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { page ->
+            onPageSelected(page)
+        }
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -202,7 +266,7 @@ private fun WalletScreen(
                 title = {
                     TitleSlider(
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        items = listOf(wallet, awards),
+                        items = WalletViewModel.Screen.values().map { it.label },
                         selectedItemIndex = pagerState.currentPage,
                         onClick = {
                             coroutineScope.launch {
@@ -216,34 +280,45 @@ private fun WalletScreen(
             )
         }
     ) { paddingValues ->
-        HorizontalPager(
-            pageCount = 2,
-            state = pagerState,
+        Box(
             modifier = Modifier
                 .padding(paddingValues)
-                .inset(insetAllExcludeTop()),
+                .inset(insetAllExcludeTop())
+                .pullRefresh(pullRefreshState),
         ) {
-            when (it) {
-                0 -> Wallet(
-                    uiState = uiState,
-                    onAddressCopyClicked = onAddressCopyClicked,
-                    onTopUpClicked = onTopUpClicked,
-                    onWithdrawClicked = onWithdrawClicked,
-                    onExchangeClicked = onExchangeClicked,
-                )
-                1 -> Rewards(
-                    transactions = when (uiState.filterOptions) {
-                        WalletViewModel.FilterOptions.Unlocked -> uiState.unlockedTransactions
-                        WalletViewModel.FilterOptions.Locked -> uiState.lockedTransactions
-                    },
-                    rewards = uiState.rewards,
-                    onOpened = onRewardsOpened,
-                    filterOptions = uiState.filterOptions,
-                    onWithdrawClicked = onRewardsWithdrawClicked,
-                    onRewardsFootnoteClick = onRewardsFootnoteClick,
-                    onDropdownMenuItemClicked = onDropdownMenuItemClicked,
-                )
+            HorizontalPager(
+                pageCount = 2,
+                state = pagerState,
+            ) {
+                when (it) {
+                    0 -> Wallet(
+                        uiState = uiState,
+                        onAddressCopyClicked = onAddressCopyClicked,
+                        onTopUpClicked = onTopUpClicked,
+                        onWithdrawClicked = onWithdrawClicked,
+                        onExchangeClicked = onExchangeClicked,
+                        onSellSnapsClicked = onSellSnapsClicked,
+                    )
+
+                    1 -> Rewards(
+                        transactions = when (uiState.filterOptions) {
+                            WalletViewModel.FilterOptions.Unlocked -> uiState.unlockedTransactions
+                            WalletViewModel.FilterOptions.Locked -> uiState.lockedTransactions
+                        },
+                        filterOptions = uiState.filterOptions,
+                        rewards = uiState.rewards,
+                        onWithdrawClicked = onRewardsWithdrawClicked,
+                        onOpened = onRewardsOpened,
+                        onRewardsFootnoteClick = onRewardsFootnoteClick,
+                        onDropdownMenuItemClicked = onDropdownMenuItemClicked,
+                    )
+                }
             }
+            PullRefreshIndicator(
+                uiState.isRefreshing,
+                pullRefreshState,
+                Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
@@ -251,7 +326,8 @@ private fun WalletScreen(
 @Composable
 private fun Wallet(
     uiState: WalletViewModel.UiState,
-    onAddressCopyClicked: (WalletAddress) -> Unit,
+    onAddressCopyClicked: (CryptoAddress) -> Unit,
+    onSellSnapsClicked: () -> Unit,
     onTopUpClicked: () -> Unit,
     onWithdrawClicked: () -> Unit,
     onExchangeClicked: () -> Unit,
@@ -266,10 +342,18 @@ private fun Wallet(
             style = AppTheme.specificTypography.headlineMedium,
             modifier = Modifier.padding(16.dp),
         )
+        uiState.payoutStatusState?.let {
+            PayoutStatus(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp),
+                data = it,
+            )
+        }
         Balance(
-            totalBalance = uiState.totalBalance,
-            address = uiState.address,
+            uiState = uiState,
             onAddressCopyClicked = { onAddressCopyClicked(uiState.address) },
+            onSellSnapsClicked = onSellSnapsClicked,
         )
         Row(
             modifier = Modifier
@@ -375,7 +459,7 @@ private fun Rewards(
                                     color = AppTheme.specificColorScheme.uiAccent,
                                     shape = CircleShape,
                                 )
-                                .padding(2.dp),
+                                .padding(4.dp),
                         )
                     },
                 )
@@ -414,7 +498,7 @@ private fun Rewards(
                                 },
                             ) {
                                 Text(
-                                    text = it.name, // todo localize filter name
+                                    text = it.label.get(),
                                     style = AppTheme.specificTypography.bodySmall,
                                 )
                             }
@@ -432,9 +516,9 @@ private fun Rewards(
 
 @Composable
 private fun Balance(
-    totalBalance: TotalBalanceModel,
-    address: WalletAddress,
+    uiState: WalletViewModel.UiState,
     onAddressCopyClicked: () -> Unit,
+    onSellSnapsClicked: () -> Unit,
 ) {
     Card(
         shape = AppTheme.shapes.medium,
@@ -459,7 +543,7 @@ private fun Balance(
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = totalBalance.coin,
+                text = uiState.totalBalance.coin,
                 style = AppTheme.specificTypography.titleLarge,
                 color = AppTheme.specificColorScheme.textPrimary,
                 modifier = Modifier
@@ -468,7 +552,7 @@ private fun Balance(
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = totalBalance.fiat,
+                text = uiState.totalBalance.fiat,
                 style = AppTheme.specificTypography.bodySmall,
                 color = AppTheme.specificColorScheme.textSecondary,
                 modifier = Modifier
@@ -477,15 +561,26 @@ private fun Balance(
                 textAlign = TextAlign.Center,
             )
             SimpleButtonGreyM(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(),
+                modifier = Modifier.fillMaxWidth(),
                 onClick = onAddressCopyClicked,
             ) {
                 SimpleButtonContent(
-                    text = address.addressEllipsized.textValue(),
+                    text = uiState.address.addressEllipsized.textValue(),
                     iconRight = AppTheme.specificIcons.copy,
                 )
+            }
+            if (uiState.isSnapsSellEnabled) {
+                SimpleButtonActionM(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    onClick = onSellSnapsClicked,
+                ) {
+                    SimpleButtonContent(
+                        text = "Sell SNAPS".textValue(),
+                        iconLeft = AppTheme.specificIcons.snpToken,
+                    )
+                }
             }
         }
     }
@@ -564,7 +659,7 @@ private fun SelectWalletDialog(
 private fun TopUpDialog(
     title: TextValue,
     qr: Bitmap?,
-    address: WalletAddress,
+    address: CryptoAddress,
     onAddressCopyClicked: () -> Unit,
 ) {
     SimpleBottomDialogUI(header = title) {
@@ -597,6 +692,72 @@ private fun TopUpDialog(
                     .padding(vertical = 16.dp, horizontal = 24.dp),
                 textAlign = TextAlign.Center,
             )
+        }
+    }
+}
+
+@Composable
+private fun RewardsClaimDialog(
+    amountValue: String,
+    availableTokens: Double,
+    isConfirmButtonEnabled: Boolean,
+    focusRequester: FocusRequester,
+    onAmountValueChanged: (String) -> Unit,
+    onMaxButtonClicked: () -> Unit,
+    onConfirmClicked: () -> Unit,
+) {
+    SimpleBottomDialogUI(header = StringKey.RewardsDialogTitleClaim.textValue()) {
+        item {
+            SimpleTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                    .focusRequester(focusRequester),
+                onValueChange = onAmountValueChanged,
+                value = amountValue,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                placeholder = {
+                    Text(
+                        text = StringKey.RewardsDialogHintClaim.textValue().get(),
+                        style = AppTheme.specificTypography.titleSmall,
+                    )
+                },
+                trailingIcon = {
+                    SimpleButtonActionS(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        onClick = onMaxButtonClicked,
+                    ) {
+                        SimpleButtonContent(
+                            text = StringKey.RewardsDialogActionMax.textValue(),
+                        )
+                    }
+                },
+                maxLines = 1,
+            )
+            Text(
+                text = StringKey.RewardsDialogFieldAvailable.textValue(
+                    availableTokens.toString()
+                ).get(),
+                style = AppTheme.specificTypography.bodySmall,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                textAlign = TextAlign.End,
+            )
+            SimpleButtonActionM(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 20.dp),
+                onClick = onConfirmClicked,
+                enabled = isConfirmButtonEnabled,
+            ) {
+                SimpleButtonContent(
+                    text = StringKey.RewardsDialogActionClaim.textValue(),
+                )
+            }
         }
     }
 }

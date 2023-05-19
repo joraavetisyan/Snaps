@@ -2,7 +2,9 @@ package io.snaps.baseprofile.data
 
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.basewallet.data.WalletRepository
+import io.snaps.corecommon.ext.log
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -36,9 +38,9 @@ interface MainHeaderHandler {
 
 class MainHeaderHandlerImplDelegate @Inject constructor(
     @ApplicationCoroutineScope private val scope: CoroutineScope,
-    private val profileRepository: ProfileRepository,
-    private val walletRepository: WalletRepository,
     private val action: Action,
+    @Bridged private val profileRepository: ProfileRepository,
+    @Bridged private val walletRepository: WalletRepository,
 ) : MainHeaderHandler {
 
     private val _uiState = MutableStateFlow(MainHeaderHandler.UiState())
@@ -48,6 +50,7 @@ class MainHeaderHandlerImplDelegate @Inject constructor(
     override val headerCommand = _command.receiveAsFlow()
 
     init {
+        log("init")
         walletRepository.getBnbWalletModel()
         subscribeToData()
         updateData()

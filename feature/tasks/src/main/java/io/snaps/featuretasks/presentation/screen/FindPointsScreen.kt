@@ -41,6 +41,7 @@ import androidx.navigation.NavHostController
 import coil.transform.CircleCropTransformation
 import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.get
@@ -128,7 +129,7 @@ private fun FindPointsScreen(
                         Modifier.background(Color.Unspecified, AppTheme.shapes.medium),
                     ) {
                         Image(
-                            painter = ImageValue.Url("https://picsum.photos/66").get(),
+                            painter = "https://picsum.photos/66".imageValue().get(),
                             contentDescription = null,
                             modifier = Modifier.size(66.dp),
                             contentScale = ContentScale.Crop,

@@ -1,21 +1,23 @@
 package io.snaps.basesources.featuretoggle
 
+private const val allMocks = false
+
 enum class Feature(
     val key: String = "",
-    val defaultValue: Boolean = true,
+    val defaultValue: Boolean,
+    val isRemote: Boolean,
 ) {
+    // Local only
     // Mocks
-    ProfileApiMock("ProfileApiMock", false),
-    FeedApiMock("FeedApiMock", false),
-    CommentApiMock("CommentApiMock", false),
-    SubsApiMock("SubsApiMock", false),
-    WalletApiMock("WalletApiMock", false),
-    TasksApiMock("TasksApiMock", false),
-    NftApiMock("NftApiMock", false),
-    TransactionsApiMock("TransactionsApiMock", false), // todo use or remove
+    ProfileApiMock("ProfileApiMock", allMocks, false),
+    FeedApiMock("FeedApiMock", allMocks, false),
+    CommentApiMock("CommentApiMock", allMocks, false),
+    SubsApiMock("SubsApiMock", allMocks, false),
+    WalletApiMock("WalletApiMock", allMocks, false),
+    TasksApiMock("TasksApiMock", allMocks, false),
+    NftApiMock("NftApiMock", allMocks, false),
 
-    // Ui elements
-    PurchaseNftWithBnb("PurchaseNftWithBnb", true),
-
-    UNKNOWN
+    // Remote
+    PurchaseNftWithBnb("nft_bnb_enabled", false, true),
+    SellSnaps("snaps_cell_enabled", false, true),
 }

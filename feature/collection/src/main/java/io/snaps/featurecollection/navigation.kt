@@ -2,6 +2,7 @@ package io.snaps.featurecollection
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.CollectionFeatureProvider
@@ -41,6 +42,18 @@ internal class ScreenNavigator(navHostController: NavHostController) :
     ) = navHostController navigate FeatureNavDirection(
         route = AppRoute.UserNftDetails,
         arg = args,
+    )
+
+    fun backToMyCollectionScreen() = navHostController.popBackStack(
+        route = AppRoute.RankSelection.path(),
+        inclusive = true
+    )
+
+    fun toWebView(
+        url: FullUrl,
+    ) = navHostController navigate FeatureNavDirection(
+        route = AppRoute.WebView,
+        arg = AppRoute.WebView.Args(url),
     )
 }
 

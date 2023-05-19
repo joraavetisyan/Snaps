@@ -1,5 +1,6 @@
 package io.snaps.coredata.network.interceptors
 
+import io.snaps.corecommon.ext.log
 import io.snaps.coredata.database.TokenStorage
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -16,7 +17,9 @@ class AuthenticationInterceptor(
         val originalRequest = chain.request()
         val customRequest = chain.request().newBuilder()
             .method(originalRequest.method, originalRequest.body)
-            .header(AUTHORIZATION_HEADER, "${tokenStorage.authToken}")
+            .header(AUTHORIZATION_HEADER, "${tokenStorage.authToken.also { 
+                log("Auth $it") // todo release
+            }}")
             .build()
 
         return chain.proceed(customRequest)

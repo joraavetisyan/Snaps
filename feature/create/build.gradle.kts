@@ -23,4 +23,5 @@ dependencies {
     implementation(projects.baseFeed)
 
     implementation(*Libs.bundle.camerax)
+    implementation(*Libs.bundle.videoCompressor)
 }

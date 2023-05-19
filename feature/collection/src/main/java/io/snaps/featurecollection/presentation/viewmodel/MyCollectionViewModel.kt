@@ -9,9 +9,11 @@ import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.domain.NoEnoughSnpToRepair
+import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -29,17 +31,21 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val LEVEL_URL = "https://snaps-docs.gitbook.io/baza-znanii-snaps/features/level-up"
+
 @HiltViewModel
 class MyCollectionViewModel @Inject constructor(
-    mainHeaderHandlerDelegate: MainHeaderHandler,
-    onboardingHandlerDelegate: OnboardingHandler,
+    @Bridged mainHeaderHandler: MainHeaderHandler,
+    onboardingHandler: OnboardingHandler,
+    transferTokensDialogHandler: TransferTokensDialogHandler,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
-    private val nftRepository: NftRepository,
+    @Bridged private val nftRepository: NftRepository,
     private val interactor: MyCollectionInteractor,
 ) : SimpleViewModel(),
-    MainHeaderHandler by mainHeaderHandlerDelegate,
-    OnboardingHandler by onboardingHandlerDelegate {
+    MainHeaderHandler by mainHeaderHandler,
+    OnboardingHandler by onboardingHandler,
+    TransferTokensDialogHandler by transferTokensDialogHandler  {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -63,6 +69,7 @@ class MyCollectionViewModel @Inject constructor(
                 onRepairClicked = ::onRepairClicked,
                 onItemClicked = ::onItemClicked,
                 onProcessingClicked = ::onProcessingClicked,
+                onHelpIconClicked = ::onHelpIconClicked,
             )
         }.onEach { state ->
             _uiState.update { it.copy(nft = state) }
@@ -87,6 +94,10 @@ class MyCollectionViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
         action.execute {
             interactor.repair(nftModel)
+        }.doOnSuccess {
+            if (it.isNotEmpty()) {
+                onSuccessfulTransfer(scope = viewModelScope, txHash = it)
+            }
         }.doOnError { error, _ ->
             if (error.cause is NoEnoughSnpToRepair) {
                 notificationsSource.sendError("No enough SNP to repair".textValue())
@@ -97,10 +108,11 @@ class MyCollectionViewModel @Inject constructor(
     }
 
     private fun onProcessingClicked(nftModel: NftModel) {
-        // todo
+        // do nothing
     }
 
     private fun onItemClicked(nftModel: NftModel) {
+        if (nftModel.isProcessing) return
         viewModelScope.launch {
             _command publish Command.OpenNftDetailsScreen(
                 args = AppRoute.UserNftDetails.Args(
@@ -112,6 +124,12 @@ class MyCollectionViewModel @Inject constructor(
         }
     }
 
+    private fun onHelpIconClicked() {
+        viewModelScope.launch {
+            _command publish Command.OpenWebViewScreen(LEVEL_URL)
+        }
+    }
+
     data class UiState(
         val isLoading: Boolean = false,
         val nft: List<CollectionItemState> = List(6) { CollectionItemState.Shimmer },
@@ -120,5 +138,6 @@ class MyCollectionViewModel @Inject constructor(
     sealed class Command {
         object OpenRankSelectionScreen : Command()
         data class OpenNftDetailsScreen(val args: AppRoute.UserNftDetails.Args) : Command()
+        data class OpenWebViewScreen(val url: FullUrl) : Command()
     }
 }

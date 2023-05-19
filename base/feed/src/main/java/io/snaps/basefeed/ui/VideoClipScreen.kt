@@ -71,17 +71,27 @@ import io.snaps.corecommon.ext.startShareLinkIntent
 import io.snaps.corecommon.ext.toFormatDecimal
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.corecommon.R
+import io.snaps.corecommon.container.imageValue
 import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.LocalBottomNavigationHeight
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.tools.inset
+import io.snaps.coreuicompose.tools.insetBottom
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ActionsBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
+import io.snaps.coreuicompose.uikit.button.SimpleChip
+import io.snaps.coreuicompose.uikit.button.SimpleChipConfig
 import io.snaps.coreuicompose.uikit.dialog.SimpleConfirmDialogUi
+import io.snaps.coreuicompose.uikit.other.Progress
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.scroll.DetectScroll
 import io.snaps.coreuicompose.uikit.scroll.ScrollInfo
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
+import io.snaps.coreuitheme.compose.colors
+import io.snaps.coreuitheme.compose.icons
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -99,6 +109,7 @@ fun VideoClipScreen(
     viewModel: VideoFeedViewModel,
     onAuthorClicked: (Uuid) -> Unit,
     onCreateVideoClicked: (() -> Unit)? = null,
+    onCloseScreen: (() -> Unit)? = null,
     content: @Composable ((BoxScope.(PaddingValues) -> Unit))? = null,
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -150,6 +161,7 @@ fun VideoClipScreen(
                 commentInputSheetState.showSheet()
                 focusRequester.requestFocus()
             }
+            VideoFeedViewModel.Command.CloseScreen -> onCloseScreen?.invoke()
             VideoFeedViewModel.Command.HideCommentInputBottomDialog -> commentInputSheetState.hideSheet()
             is VideoFeedViewModel.Command.ScrollToPosition -> pagerState.scrollToPage(it.position)
             is VideoFeedViewModel.Command.OpenProfileScreen -> onAuthorClicked(it.userId)
@@ -195,15 +207,15 @@ fun VideoClipScreen(
         ModalBottomSheetLayout(
             sheetState = sheetState,
             sheetContent = {
-                when (uiState.bottomDialogType) {
-                    VideoFeedViewModel.BottomDialogType.Comments -> CommentsScreen(
+                when (uiState.bottomDialog) {
+                    VideoFeedViewModel.BottomDialog.Comments -> CommentsScreen(
                         uiState = uiState,
                         onCommentInputClicked = viewModel::onCommentInputClick,
                         onCloseClicked = sheetState::hideSheet,
                         onReplyClicked = commentInputSheetState::showSheet,
                         onEmojiClicked = viewModel::onEmojiClicked,
                     )
-                    VideoFeedViewModel.BottomDialogType.MoreActions -> ActionsBottomDialog(
+                    VideoFeedViewModel.BottomDialog.MoreActions -> ActionsBottomDialog(
                         title = StringKey.VideoClipTitleAction.textValue(),
                         actions = uiState.actions,
                     )
@@ -213,7 +225,9 @@ fun VideoClipScreen(
             val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
             Scaffold(
-                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                modifier = Modifier
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    .inset(insetBottom()),
             ) { paddingValues ->
                 Box {
                     ScrollDetector(
@@ -242,6 +256,7 @@ fun VideoClipScreen(
                                     item = item,
                                     uiState = uiState,
                                     onMuteClicked = viewModel::onMuteClicked,
+                                    onProgressChanged = viewModel::onVideoClipWatchProgressed,
                                     onAuthorClicked = viewModel::onAuthorClicked,
                                     onLikeClicked = viewModel::onLikeClicked,
                                     onDoubleLikeClicked = viewModel::onDoubleLikeClicked,
@@ -249,6 +264,7 @@ fun VideoClipScreen(
                                     onShareClicked = viewModel::onShareClicked,
                                     onMoreClicked = viewModel::onMoreClicked,
                                     onCreateVideoClicked = onCreateVideoClicked,
+                                    onSubscribeClicked = viewModel::onSubscribeClicked,
                                 )
                             }
                             is VideoClipUiState.Shimmer -> FullScreenLoaderUi(
@@ -263,12 +279,11 @@ fun VideoClipScreen(
             }
         }
     }
-    uiState.dialogType?.let {
+    uiState.dialog?.let {
         when (it) {
-            VideoFeedViewModel.DialogType.ConfirmDeleteVideo -> SimpleConfirmDialogUi(
+            VideoFeedViewModel.Dialog.ConfirmDeleteVideo -> SimpleConfirmDialogUi(
                 text = StringKey.VideoClipDialogConfirmDeleteMessage.textValue(),
                 confirmButtonText = StringKey.ActionDelete.textValue(),
-                dismissButtonText = StringKey.ActionCancel.textValue(),
                 onDismissRequest = viewModel::onDeleteDismissed,
                 onConfirmRequest = viewModel::onDeleteConfirmed,
             )
@@ -306,6 +321,7 @@ private fun VideoClip(
     item: VideoClipUiState.Data,
     uiState: VideoFeedViewModel.UiState,
     onMuteClicked: (Boolean) -> Unit,
+    onProgressChanged: (VideoClipModel) -> Unit,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onDoubleLikeClicked: (VideoClipModel) -> Unit,
@@ -313,6 +329,7 @@ private fun VideoClip(
     onShareClicked: (VideoClipModel) -> Unit,
     onMoreClicked: () -> Unit,
     onCreateVideoClicked: (() -> Unit)?,
+    onSubscribeClicked: () -> Unit,
 ) {
     val shouldPlay by remember(pagerState) {
         derivedStateOf {
@@ -324,6 +341,8 @@ private fun VideoClip(
         }
     }
 
+    var progress by remember(item.clip.id) { mutableStateOf(0f) }
+
     VideoPlayer(
         networkUrl = item.clip.url,
         shouldPlay = shouldPlay,
@@ -332,18 +351,27 @@ private fun VideoClip(
         onMuted = onMuteClicked,
         isScrolling = pagerState.isScrollInProgress,
         onLiked = { onDoubleLikeClicked(item.clip) },
+        onProgressChanged = { progress = it },
+        progressPollFrequencyInMillis = 10L,
+        performAtPosition = { onProgressChanged(item.clip) },
+        performPosition = 0.7f,
     )
 
     VideoClipItems(
         videoClipModel = item.clip,
         isMoreIconVisible = uiState.actions.isNotEmpty(),
+        isSubscribeButtonVisible = uiState.isSubscribeButtonVisible,
+        isSubscribed = uiState.isSubscribed,
         authorProfileAvatar = uiState.authorProfileAvatar,
+        authorName = uiState.authorName,
+        progress = progress,
         onAuthorClicked = onAuthorClicked,
         onLikeClicked = onLikeClicked,
         onCommentClicked = onCommentClicked,
         onShareClicked = onShareClicked,
         onMoreClicked = onMoreClicked,
         onCreateVideoClicked = onCreateVideoClicked,
+        onSubscribeClicked = onSubscribeClicked,
     )
 }
 
@@ -352,13 +380,18 @@ private fun VideoClipItems(
     modifier: Modifier = Modifier,
     videoClipModel: VideoClipModel,
     isMoreIconVisible: Boolean,
+    isSubscribeButtonVisible: Boolean,
+    isSubscribed: Boolean,
     authorProfileAvatar: ImageValue?,
+    authorName: String,
+    progress: Float,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onCommentClicked: (VideoClipModel) -> Unit,
     onShareClicked: (VideoClipModel) -> Unit,
     onMoreClicked: () -> Unit,
     onCreateVideoClicked: (() -> Unit)?,
+    onSubscribeClicked: () -> Unit,
 ) {
     Box(modifier = modifier) {
         // Darkening the lower part, so the info items are more contrasted
@@ -373,18 +406,32 @@ private fun VideoClipItems(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 100.dp)
+                .padding(bottom = LocalBottomNavigationHeight.current)
         ) {
             VideoClipInfoItems(
                 clipModel = videoClipModel,
                 isMoreIconVisible = isMoreIconVisible,
+                isSubscribeButtonVisible = isSubscribeButtonVisible,
+                isSubscribed = isSubscribed,
                 authorProfileAvatar = authorProfileAvatar,
+                authorName = authorName,
                 onAuthorClicked = onAuthorClicked,
                 onLikeClicked = onLikeClicked,
                 onCommentClicked = onCommentClicked,
                 onShareClicked = onShareClicked,
                 onMoreClicked = onMoreClicked,
                 onCreateVideoClicked = onCreateVideoClicked,
+                onSubscribeClicked = onSubscribeClicked,
+            )
+            Progress(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                progress = progress,
+                isDashed = false,
+                backColor = AppTheme.specificColorScheme.white_40,
+                fillColor = AppTheme.specificColorScheme.white,
+                height = 2.dp,
             )
         }
     }
@@ -394,21 +441,29 @@ private fun VideoClipItems(
 private fun VideoClipInfoItems(
     clipModel: VideoClipModel,
     isMoreIconVisible: Boolean,
+    isSubscribeButtonVisible: Boolean,
+    isSubscribed: Boolean,
     authorProfileAvatar: ImageValue?,
+    authorName: String,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onCommentClicked: (VideoClipModel) -> Unit,
     onShareClicked: (VideoClipModel) -> Unit,
     onMoreClicked: () -> Unit,
     onCreateVideoClicked: (() -> Unit)?,
+    onSubscribeClicked: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxSize(),
         verticalAlignment = Alignment.Bottom,
     ) {
         VideoClipBottomItems(
-            modifier = Modifier.fillMaxWidth(0.5f),
+            modifier = Modifier.fillMaxWidth(0.7f),
             clipModel = clipModel,
+            authorName = authorName,
+            isSubscribeButtonVisible = isSubscribeButtonVisible,
+            isSubscribed = isSubscribed,
+            onSubscribeClicked = onSubscribeClicked,
         )
         Spacer(modifier = Modifier.weight(1f))
         VideoClipEndItems(
@@ -425,10 +480,15 @@ private fun VideoClipInfoItems(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun VideoClipBottomItems(
     modifier: Modifier = Modifier,
+    isSubscribeButtonVisible: Boolean,
+    isSubscribed: Boolean,
     clipModel: VideoClipModel,
+    authorName: String,
+    onSubscribeClicked: () -> Unit,
 ) {
     var isDescriptionExpanded by remember { mutableStateOf(false) }
     Box(
@@ -441,18 +501,34 @@ private fun VideoClipBottomItems(
             modifier = modifier,
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
-            Text(
-                text = clipModel.title,
-                style = AppTheme.specificTypography.bodyLarge,
-                color = Color.White,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = authorName,
+                    style = AppTheme.specificTypography.bodyLarge,
+                    maxLines = 1,
+                    color = Color.White,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false)
+                )
+                if (isSubscribeButtonVisible) {
+                    SimpleChip(
+                        selected = isSubscribed,
+                        onClick = onSubscribeClicked,
+                        label = (if (isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),
+                        colors = SimpleChipConfig.greyColor(),
+                        leadingIcon = AppTheme.specificIcons.checkBox.toImageValue().takeIf { isSubscribed },
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(4.dp))
             val scrollState = rememberScrollState()
             val interactionSource = remember { MutableInteractionSource() }
             Column(modifier = Modifier.verticalScroll(scrollState)) {
-                Text(text = clipModel.description,
+                Text(
+                    text = clipModel.title,
                     style = AppTheme.specificTypography.bodySmall,
                     maxLines = if (isDescriptionExpanded) Int.MAX_VALUE else 2,
                     color = AppTheme.specificColorScheme.white,
@@ -462,7 +538,8 @@ private fun VideoClipBottomItems(
                             interactionSource = interactionSource,
                             indication = null,
                         ) { isDescriptionExpanded = !isDescriptionExpanded }
-                        .animateContentSize())
+                        .animateContentSize(),
+                )
             }
         }
     }
@@ -517,17 +594,9 @@ private fun VideoClipEndItems(
         }
 
         TextedIcon(
-            icon = if (clipModel.isLiked) {
-                AppTheme.specificIcons.favorite
-            } else {
-                AppTheme.specificIcons.favoriteBorder
-            },
+            icon = icons { if (clipModel.isLiked) favorite else favoriteBorder },
             text = clipModel.likeCount.toFormatDecimal(),
-            tint = if (clipModel.isLiked) {
-                AppTheme.specificColorScheme.red
-            } else {
-                AppTheme.specificColorScheme.white
-            },
+            tint = colors { if (clipModel.isLiked) red else white },
             onIconClicked = { onLikeClicked(clipModel) },
         )
 
@@ -558,10 +627,10 @@ private fun VideoClipEndItems(
         if (onCreateVideoClicked != null) {
             IconButton(onClick = { onCreateVideoClicked() }) {
                 Icon(
-                    painter = AppTheme.specificIcons.addCircled.get(),
+                    painter = R.drawable.img_create.imageValue().get(),
                     contentDescription = null,
                     tint = Color.Unspecified,
-                    modifier = Modifier.size(36.dp),
+                    modifier = Modifier.size(60.dp),
                 )
             }
         }

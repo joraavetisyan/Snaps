@@ -3,9 +3,10 @@ package io.snaps.android.notification
 import android.content.Intent
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import io.snaps.coreui.notification.NotificationHelper
-import io.snaps.android.mainscreen.AppActivity
 import dagger.hilt.android.AndroidEntryPoint
+import io.snaps.android.mainscreen.AppActivity
+import io.snaps.corecommon.ext.log
+import io.snaps.coreui.notification.NotificationHelper
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -18,7 +19,7 @@ class FirebaseNotificationsService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(p0: String) {
-        TODO("NO NEW TOKEN HANDLER")
+        log("NO NEW TOKEN HANDLER")
     }
 
     private fun sendNotification(remoteMessage: RemoteMessage) {
@@ -32,10 +33,4 @@ class FirebaseNotificationsService : FirebaseMessagingService() {
 
         notificationHelper.showSimpleNotification(model)
     }
-//    example
-//    private suspend fun getPushToken(): String = suspendCoroutine { continuation ->
-//        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
-//            continuation.resume(instanceIdResult.token)
-//        }
-//    }
 }

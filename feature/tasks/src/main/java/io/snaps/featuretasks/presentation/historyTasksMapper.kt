@@ -59,10 +59,7 @@ fun TaskPageModel.toHistoryTasksUiState(
             errorState = MessageBannerState.defaultState(onReloadClicked)
         )
         loadedPageItems.isEmpty() -> HistoryTasksUiState(
-            emptyState = EmptyListTileState(
-                title = "No data".textValue(),
-                image = ImageValue.ResImage(R.drawable.img_diamonds),
-            )
+            emptyState = EmptyListTileState.defaultState(),
         )
         else -> HistoryTasksUiState(
             items = loadedPageItems.flatMap { taskModel ->

@@ -3,8 +3,6 @@ package io.snaps.featurereferral.presentation.screen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -115,7 +113,7 @@ private fun Data(
                 .padding(16.dp)
                 .padding(bottom = LocalBottomNavigationHeight.current),
         ) {
-            SimpleButtonContent(text = "Referral program".textValue())
+            SimpleButtonContent(text = "Referral program".textValue()) // todo localize
         }
     }
 }
@@ -124,8 +122,7 @@ private fun Data(
 private fun Empty(
     modifier: Modifier,
 ) {
-    EmptyListTileState(
-        image = ImageValue.ResImage(R.drawable.img_guy_confused),
+    EmptyListTileState.defaultState(
         title = StringKey.ReferralProgramTitleNoReferrals.textValue(),
         message = StringKey.ReferralProgramMessageNoReferrals.textValue(),
     ).Content(modifier = modifier)

@@ -2,6 +2,7 @@ package io.snaps.featureprofile.presentation.viewmodel
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basewallet.data.WalletRepository
+import io.snaps.coredata.di.Bridged
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.featureprofile.presentation.toPhrases
 import kotlinx.coroutines.channels.Channel
@@ -12,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BackupWalletKeyViewModel @Inject constructor(
-    walletRepository: WalletRepository,
+    @Bridged walletRepository: WalletRepository,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState(walletRepository.getMnemonics().toPhrases()))

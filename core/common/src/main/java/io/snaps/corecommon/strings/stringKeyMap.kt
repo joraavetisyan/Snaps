@@ -1,5 +1,6 @@
 package io.snaps.corecommon.strings
 
+/*
 fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.ActionStart -> TODO()
     StringKey.ActionSave -> TODO()
@@ -12,6 +13,8 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.ActionHowItWorks -> TODO()
     StringKey.ActionOk -> TODO()
     StringKey.MessageConnectionSuccess -> TODO()
+    StringKey.MessageEmptyVideoFeed -> TODO()
+    StringKey.MessageNothingFound -> TODO()
     StringKey.Error -> TODO()
     StringKey.ErrorLoadFail -> TODO()
     StringKey.ErrorConnection -> TODO()
@@ -203,6 +206,7 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.TaskShareActionSavePhoto -> TODO()
     StringKey.TaskShareActionPostToInstagram -> TODO()
     StringKey.TaskShareMessagePhotoSaved -> TODO()
+    StringKey.TaskShareMessagePostInstagram -> TODO()
     StringKey.TaskFindPointsTitle -> TODO()
     StringKey.TaskFindPointsTitleConnectInstagram -> TODO()
     StringKey.TaskFindPointsTitlePointId -> TODO()
@@ -245,10 +249,16 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.RewardsMessageLockedRewards -> TODO()
     StringKey.RewardsActionClaim -> TODO()
     StringKey.RewardsErrorInsufficientBalance -> TODO()
+    StringKey.RewardsErrorRepairGlasses -> TODO()
     StringKey.RewardsDialogTitleFootnote1 -> TODO()
     StringKey.RewardsDialogTitleFootnote2 -> TODO()
     StringKey.RewardsDialogMessageFootnote1 -> TODO()
     StringKey.RewardsDialogMessageFootnote2 -> TODO()
+    StringKey.RewardsDialogTitleClaim -> TODO()
+    StringKey.RewardsDialogActionClaim -> TODO()
+    StringKey.RewardsDialogHintClaim -> TODO()
+    StringKey.RewardsDialogActionMax -> TODO()
+    StringKey.RewardsDialogFieldAvailable -> TODO()
     StringKey.WithdrawTitle -> TODO()
     StringKey.WithdrawHintAddress -> TODO()
     StringKey.WithdrawHintAmount -> TODO()
@@ -277,6 +287,10 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.MyCollectionFieldNeedToRepair -> TODO()
     StringKey.MyCollectionActionRepairGlasses -> TODO()
     StringKey.MyCollectionActionProcessing -> TODO()
+    StringKey.MyCollectionFieldBonus -> TODO()
+    StringKey.MyCollectionFieldLevel -> TODO()
+    StringKey.MyCollectionFieldExperience -> TODO()
+    StringKey.MyCollectionFieldUpperThreshold -> TODO()
     StringKey.RankSelectionTitle -> TODO()
     StringKey.RankSelectionActionFootnote -> TODO()
     StringKey.RankSelectionTitleDailyReward -> TODO()
@@ -330,4 +344,4 @@ fun stringKeyMap(key: StringKey): String = when (key) {
     StringKey.NftDetailsDescriptionLevel -> TODO()
     StringKey.WalletImportMessagePhraseExplanation -> TODO()
     StringKey.ActionConfirm -> TODO()
-}
+}*/

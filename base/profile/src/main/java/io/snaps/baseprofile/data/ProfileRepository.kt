@@ -1,23 +1,26 @@
 package io.snaps.baseprofile.data
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
+import io.snaps.baseprofile.data.model.SocialPage
 import io.snaps.baseprofile.data.model.UserCreateRequestDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.baseprofile.domain.BalanceModel
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.domain.UsersPageModel
+import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
-import io.snaps.corecommon.model.WalletAddress
+import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
-import io.snaps.coredata.database.UserDataStorage
+import io.snaps.coredata.json.KotlinxSerializationJsonProvider
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
@@ -29,6 +32,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.decodeFromStream
 import javax.inject.Inject
 
 interface ProfileRepository {
@@ -60,7 +65,7 @@ interface ProfileRepository {
     suspend fun createUser(
         fileId: Uuid,
         userName: String,
-        walletAddress: WalletAddress,
+        address: CryptoAddress,
     ): Effect<Completable>
 
     suspend fun setInviteCode(inviteCode: String): Effect<Completable>
@@ -68,25 +73,25 @@ interface ProfileRepository {
     fun isCurrentUser(userId: Uuid): Boolean
 
     suspend fun connectInstagram(
-        instagramId: String,
         instagramUsername: String,
         name: String,
-        walletAddress: WalletAddress,
+        address: CryptoAddress,
         avatar: FullUrl?,
     ): Effect<Completable>
 
     suspend fun disconnectInstagram(
         name: String,
-        walletAddress: WalletAddress,
+        address: CryptoAddress,
         avatar: FullUrl?,
     ): Effect<Completable>
+
+    suspend fun getSocialPages(): Effect<List<SocialPage>>
 }
 
 class ProfileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val api: ProfileApi,
-    private val userDataStorage: UserDataStorage,
     private val loaderFactory: UsersLoaderFactory,
 ) : ProfileRepository {
 
@@ -120,7 +125,7 @@ class ProfileRepositoryImpl @Inject constructor(
                         onlyInvited = false,
                     )
                 },
-                pageSize = 20,
+                pageSize = 100,
                 nextPageIdFactory = { it.entityId },
                 mapper = { it.toModelList() },
             )
@@ -181,14 +186,14 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun createUser(
         fileId: Uuid,
         userName: String,
-        walletAddress: WalletAddress,
+        address: CryptoAddress,
     ): Effect<Completable> {
         return apiCall(ioDispatcher) {
             api.createUser(
                 UserCreateRequestDto(
                     name = userName,
                     avatarUrl = "http://51.250.36.197:5100/api/v1/file?fileId=$fileId", // todo
-                    wallet = walletAddress,
+                    wallet = address,
                 )
             )
         }.map {
@@ -219,26 +224,24 @@ class ProfileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun connectInstagram(
-        instagramId: String,
         instagramUsername: String,
         name: String,
-        walletAddress: WalletAddress,
+        address: CryptoAddress,
         avatar: FullUrl?,
     ): Effect<Completable> {
         return apiCall(ioDispatcher) {
             api.connectInstagram(
                 ConnectInstagramRequestDto(
-                    instagramId = instagramId,
-                    wallet = walletAddress,
+                    instagramId = instagramUsername,
+                    wallet = address,
                     name = name,
                     avatarUrl = avatar,
                 )
             )
         }.doOnSuccess {
-            userDataStorage.instagramUsername = instagramUsername
             _state.update {
                 if (it is Effect && it.isSuccess) {
-                    Effect.success(it.requireData.copy(instagramId = instagramId))
+                    Effect.success(it.requireData.copy(instagramId = instagramUsername))
                 } else {
                     it
                 }
@@ -248,20 +251,19 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun disconnectInstagram(
         name: String,
-        walletAddress: WalletAddress,
+        address: CryptoAddress,
         avatar: FullUrl?,
     ): Effect<Completable> {
         return apiCall(ioDispatcher) {
             api.connectInstagram(
                 ConnectInstagramRequestDto(
                     instagramId = null,
-                    wallet = walletAddress,
+                    wallet = address,
                     name = name,
                     avatarUrl = avatar,
                 )
             )
         }.doOnSuccess {
-            userDataStorage.instagramUsername = ""
             _state.update {
                 if (it is Effect && it.isSuccess) {
                     Effect.success(it.requireData.copy(instagramId = null))
@@ -270,5 +272,19 @@ class ProfileRepositoryImpl @Inject constructor(
                 }
             }
         }.toCompletable()
+    }
+
+    override suspend fun getSocialPages(): Effect<List<SocialPage>> {
+         // fetch called in FeatureToggleUpdater, todo to separate source with proper success/failure handle
+        val pages = try {
+            FirebaseRemoteConfig.getInstance().getValue("social").let {
+                @OptIn(ExperimentalSerializationApi::class)
+                KotlinxSerializationJsonProvider().get().decodeFromStream<List<SocialPage>>(it.asByteArray().inputStream())
+            }
+        } catch (e: Exception) {
+            log(e)
+            emptyList()
+        }
+        return Effect.success(pages)
     }
 }

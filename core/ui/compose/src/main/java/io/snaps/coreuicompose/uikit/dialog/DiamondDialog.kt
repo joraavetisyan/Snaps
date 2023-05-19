@@ -1,5 +1,6 @@
 package io.snaps.coreuicompose.uikit.dialog
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -45,6 +46,35 @@ fun DiamondDialog(
     onDismissRequest: () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    DiamondDialog(
+        title = title,
+        message = {
+            Text(
+                text = message.get(),
+                style = AppTheme.specificTypography.titleSmall,
+                color = AppTheme.specificColorScheme.textSecondary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp, bottom = 16.dp),
+            )
+        },
+        primaryButton = primaryButton,
+        secondaryButton = secondaryButton,
+        onDismissRequest = onDismissRequest,
+        content = content,
+    )
+}
+
+@Composable
+fun DiamondDialog(
+    title: TextValue,
+    message: @Composable () -> Unit,
+    primaryButton: DiamondDialogButtonData? = null,
+    secondaryButton: DiamondDialogButtonData? = null,
+    onDismissRequest: () -> Unit,
+    content: @Composable ColumnScope.() -> Unit = {},
+) {
     val backgroundColor = AppTheme.specificColorScheme.grey
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -64,9 +94,12 @@ fun DiamondDialog(
                     Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Canvas(modifier = Modifier.size(80.dp), onDraw = {
-                        drawCircle(color = backgroundColor)
-                    })
+                    Canvas(
+                        modifier = Modifier.size(80.dp),
+                        onDraw = {
+                            drawCircle(color = backgroundColor)
+                        },
+                    )
                     Image(
                         painter = AppTheme.specificIcons.gem.get(),
                         contentDescription = null,
@@ -90,15 +123,7 @@ fun DiamondDialog(
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,
                         )
-                        Text(
-                            text = message.get(),
-                            style = AppTheme.specificTypography.titleSmall,
-                            color = AppTheme.specificColorScheme.textSecondary,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 4.dp, bottom = 16.dp),
-                        )
+                        message()
                         content()
                         Spacer(modifier = Modifier.height(16.dp))
                         primaryButton?.let {
@@ -126,9 +151,10 @@ fun DiamondDialog(
     }
 }
 
+@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-@Preview
-fun Test() {
+private fun Preview() {
     DiamondDialog(
         title = "Title".textValue(),
         message = "vjiofjgoi ioghjtohlgjkh fhguygf".textValue(),

@@ -10,11 +10,13 @@ import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
+import io.snaps.basesubs.data.SubsRepository
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppDeeplink
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -35,15 +37,16 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 abstract class VideoFeedViewModel(
-    bottomDialogBarVisibilityHandlerDelegate: BottomDialogBarVisibilityHandler,
+    bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     private val videoFeedType: VideoFeedType,
     private val action: Action,
-    private val videoFeedRepository: VideoFeedRepository,
-    private val profileRepository: ProfileRepository,
-    private val commentRepository: CommentRepository,
+    @Bridged private val videoFeedRepository: VideoFeedRepository,
+    @Bridged private val profileRepository: ProfileRepository,
+    @Bridged private val commentRepository: CommentRepository,
+    @Bridged private val subsRepository: SubsRepository,
     val startPosition: Int = 0,
 ) : SimpleViewModel(),
-    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandlerDelegate {
+    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandler {
 
     private val _uiState = MutableStateFlow(
         UiState(actions = getActions())
@@ -57,8 +60,8 @@ abstract class VideoFeedViewModel(
     private var authorLoadJob: Job? = null
     private var loaded: Boolean = false // to track load for the first item
     private var currentVideo: VideoClipModel? = null
-
     private var videoFeedPageModel: VideoFeedPageModel? = null
+    private val videoClipsBeingMarkedAsWatched = hashSetOf<Uuid>()
 
     init {
         subscribeToProfile()
@@ -100,13 +103,12 @@ abstract class VideoFeedViewModel(
     }
 
     fun onScrolledToPosition(position: Int) {
-        val current =
-            _uiState.value.videoFeedUiState.items.getOrNull(position) as? VideoClipUiState.Data
+        val current = _uiState.value.videoFeedUiState.items.getOrNull(position) as? VideoClipUiState.Data
         val videoClip = current?.clip ?: return
         currentVideo = videoClip
-        onViewed(videoClip)
         loadComments(videoClip.id)
         loadAuthor(videoClip.authorId)
+        checkIfSubscribed(videoClip.authorId)
     }
 
     private fun loadComments(videoId: Uuid) {
@@ -124,6 +126,7 @@ abstract class VideoFeedViewModel(
     }
 
     private fun loadAuthor(authorId: Uuid) {
+        _uiState.update { it.copy(authorProfileAvatar = null, authorName = "") }
         authorLoadJob?.cancel()
         authorLoadJob = viewModelScope.launch {
             action.execute {
@@ -131,7 +134,22 @@ abstract class VideoFeedViewModel(
             }.doOnSuccess { profileModel ->
                 if (!isActive) return@doOnSuccess
                 _uiState.update {
-                    it.copy(authorProfileAvatar = profileModel.avatar)
+                    it.copy(authorProfileAvatar = profileModel.avatar, authorName = profileModel.name)
+                }
+            }
+        }
+    }
+
+    private fun checkIfSubscribed(authorId: Uuid) {
+        viewModelScope.launch {
+            action.execute {
+                subsRepository.isSubscribed(authorId)
+            }.doOnSuccess { isSubscribed ->
+                _uiState.update {
+                    it.copy(
+                        isSubscribed = isSubscribed,
+                        isSubscribeButtonVisible = videoFeedType == VideoFeedType.Main,
+                    )
                 }
             }
         }
@@ -153,9 +171,17 @@ abstract class VideoFeedViewModel(
         viewModelScope.launch { _command publish Command.OpenProfileScreen(clipModel.authorId) }
     }
 
-    private fun onViewed(clipModel: VideoClipModel) = viewModelScope.launch {
-        action.execute(needProcessErrors = false) {
-            videoFeedRepository.view(clipModel.id)
+    fun onVideoClipWatchProgressed(clipModel: VideoClipModel) {
+        if (videoClipsBeingMarkedAsWatched.contains(clipModel.id)) return
+        if (profileRepository.state.value.dataOrCache?.userId == clipModel.authorId) return
+
+        videoClipsBeingMarkedAsWatched.add(clipModel.id)
+        viewModelScope.launch {
+            action.execute(needsErrorProcessing = false) {
+                videoFeedRepository.markWatched(clipModel.id)
+            }.doOnError { _, _ ->
+                videoClipsBeingMarkedAsWatched.remove(clipModel.id)
+            }
         }
     }
 
@@ -188,7 +214,7 @@ abstract class VideoFeedViewModel(
 
     fun onCommentClicked(clipModel: VideoClipModel) {
         _uiState.update {
-            it.copy(bottomDialogType = BottomDialogType.Comments)
+            it.copy(bottomDialog = BottomDialog.Comments)
         }
         viewModelScope.launch { _command publish Command.ShowBottomDialog }
     }
@@ -268,7 +294,7 @@ abstract class VideoFeedViewModel(
 
     fun onMoreClicked() = viewModelScope.launch {
         _uiState.update {
-            it.copy(bottomDialogType = BottomDialogType.MoreActions)
+            it.copy(bottomDialog = BottomDialog.MoreActions)
         }
         _command publish Command.ShowBottomDialog
     }
@@ -279,13 +305,13 @@ abstract class VideoFeedViewModel(
             icon = AppTheme.specificIcons.delete,
             color = ActionColor.Negative,
             onClick = { onDeleteClicked() },
-        ).takeIf { videoFeedType is VideoFeedType.User },
+        ).takeIf { videoFeedType is VideoFeedType.User && videoFeedType.userId == null },
     )
 
     private fun onDeleteClicked() = viewModelScope.launch {
         _command publish Command.HideBottomDialog
         _uiState.update {
-            it.copy(dialogType = DialogType.ConfirmDeleteVideo)
+            it.copy(dialog = Dialog.ConfirmDeleteVideo)
         }
     }
 
@@ -296,22 +322,36 @@ abstract class VideoFeedViewModel(
                 videoFeedRepository.deleteVideo(video.id)
             }.doOnSuccess {
                 _uiState.update {
-                    it.copy(dialogType = null)
+                    it.copy(dialog = null)
                 }
-                videoFeedRepository.refreshFeed(videoFeedType)
-                /*val videoClips = videoFeedPageModel?.loadedPageItems?.filter {
-                    it.id != video.id
-                }.orEmpty()
-                videoFeedPageModel = videoFeedPageModel?.copy(loadedPageItems = videoClips)
-                Log.e("videoClips", videoFeedPageModel?.loadedPageItems?.size.toString())
-                applyVideoClipToState()*/
+                videoFeedRepository.refreshFeed(videoFeedType).doOnSuccess {
+                     if (uiState.value.videoFeedUiState.items.isEmpty()) {
+                         _command publish Command.CloseScreen
+                     }
+                }
             }
         }
     }
 
     fun onDeleteDismissed() {
         _uiState.update {
-            it.copy(dialogType = null)
+            it.copy(dialog = null)
+        }
+    }
+
+    fun onSubscribeClicked() {
+        val video = currentVideo ?: return
+        viewModelScope.launch {
+            action.execute {
+                if (uiState.value.isSubscribed) {
+                    subsRepository.unsubscribe(video.authorId)
+                } else {
+                    subsRepository.subscribe(video.authorId)
+                }
+            }
+            _uiState.update {
+                it.copy(isSubscribed = !it.isSubscribed)
+            }
         }
     }
 
@@ -319,24 +359,27 @@ abstract class VideoFeedViewModel(
         val isMuted: Boolean = false,
         val profileAvatar: ImageValue? = null,
         val authorProfileAvatar: ImageValue? = null,
+        val authorName: String = "",
         val comment: TextFieldValue = TextFieldValue(""),
         val videoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
         val commentsUiState: CommentsUiState = CommentsUiState(),
-        val bottomDialogType: BottomDialogType = BottomDialogType.Comments,
-        val dialogType: DialogType? = null,
+        val bottomDialog: BottomDialog = BottomDialog.Comments,
+        val dialog: Dialog? = null,
         val actions: List<ActionData>,
+        val isSubscribeButtonVisible: Boolean = false,
+        val isSubscribed: Boolean = false,
     ) {
 
         val isCommentSendEnabled get() = comment.text.isNotBlank()
     }
 
-    sealed class BottomDialogType {
-        object Comments : BottomDialogType()
-        object MoreActions : BottomDialogType()
+    sealed class Dialog {
+        object ConfirmDeleteVideo : Dialog()
     }
 
-    sealed class DialogType {
-        object ConfirmDeleteVideo : DialogType()
+    sealed class BottomDialog {
+        object Comments : BottomDialog()
+        object MoreActions : BottomDialog()
     }
 
     sealed class Command {
@@ -344,6 +387,7 @@ abstract class VideoFeedViewModel(
         object HideBottomDialog : Command()
         object ShowCommentInputBottomDialog : Command()
         object HideCommentInputBottomDialog : Command()
+        object CloseScreen : Command()
         data class ScrollToPosition(val position: Int) : Command()
         data class OpenProfileScreen(val userId: Uuid) : Command()
         data class ShareVideoClipLink(val link: FullUrl) : Command()

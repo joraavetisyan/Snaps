@@ -10,6 +10,7 @@ common()
 compose()
 dagger()
 lifecycle()
+firebase()
 
 android {
     namespace = "io.snaps.android"
@@ -93,7 +94,7 @@ android {
     }
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "17"
     }
 }
 
@@ -102,7 +103,6 @@ dependencies {
     implementation(projects.coreData)
     implementation(projects.coreUi)
     implementation(projects.coreNavigation)
-    implementation(projects.coreCrypto)
 
     implementation(projects.baseSources)
     implementation(projects.baseProfile)
@@ -121,12 +121,11 @@ dependencies {
     implementation(projects.featureSearch)
     implementation(projects.featureCreate)
     implementation(projects.featureReferral)
+    implementation(projects.featureWebview)
 
     implementation(*Libs.bundle.splashscreen)
     implementation(*Libs.bundle.appUpdater)
-    implementation(*Libs.bundle.trustWallet)
     implementation(*Libs.bundle.biometric)
-    implementation(*Libs.bundle.firebase)
     implementation(Libs.bundle.playServices)
-    implementation(Libs.bundle.uploadService)
+    implementation(*Libs.bundle.uploadService)
 }
