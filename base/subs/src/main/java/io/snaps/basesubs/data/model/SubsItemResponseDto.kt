@@ -6,9 +6,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-class SubscriptionItemResponseDto(
+class SubsItemResponseDto(
+    @SerialName("entityId") val entityId: Uuid,
     @SerialName("userId") val userId: Uuid,
-    @SerialName("imageUrl") val imageUrl: FullUrl,
-    @SerialName("name") val name: String,
-    @SerialName("isSubscribed") val isSubscribed: Boolean,
+    @SerialName("avatar") val avatar: FullUrl?,
+    @SerialName("name") val name: String?,
 )

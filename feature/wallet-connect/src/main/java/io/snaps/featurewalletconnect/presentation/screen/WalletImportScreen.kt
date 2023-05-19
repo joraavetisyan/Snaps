@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
@@ -29,6 +30,7 @@ import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.dialog.SimpleAlertDialogUi
+import io.snaps.coreuicompose.uikit.duplicate.OnBackIconClick
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
@@ -51,8 +53,10 @@ fun WalletImportScreen(
         uiState = uiState,
         onContinueButtonClicked = viewModel::onContinueButtonClicked,
         onPhraseValueChanged = viewModel::onPhraseValueChanged,
-        onBackClicked = router::back,
         onDialogDismissRequested = viewModel::onDialogDismissRequested,
+        navigationIcon = if (navHostController.previousBackStackEntry?.id != null) {
+            AppTheme.specificIcons.back to router::back
+        } else null,
     )
     FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
@@ -63,8 +67,8 @@ private fun WalletImportScreen(
     uiState: WalletImportViewModel.UiState,
     onContinueButtonClicked: () -> Unit,
     onPhraseValueChanged: (String) -> Unit,
-    onBackClicked: () -> Boolean,
     onDialogDismissRequested: () -> Unit,
+    navigationIcon: Pair<IconValue, OnBackIconClick>?,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -74,7 +78,7 @@ private fun WalletImportScreen(
                 title = StringKey.WalletImportTitle.textValue(),
                 titleTextStyle = AppTheme.specificTypography.titleMedium,
                 scrollBehavior = scrollBehavior,
-                navigationIcon = AppTheme.specificIcons.back to onBackClicked,
+                navigationIcon = navigationIcon,
             )
         },
         floatingActionButton = {
@@ -83,7 +87,7 @@ private fun WalletImportScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp),
                 onClick = onContinueButtonClicked,
-                enabled = uiState.isContinueButtonEnabled,
+                enabled = uiState.isContinueEnabled,
             ) {
                 SimpleButtonContent(text = StringKey.ActionContinue.textValue())
             }

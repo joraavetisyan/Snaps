@@ -3,7 +3,7 @@ package io.snaps.basewallet.ui
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Token
-import io.snaps.corecommon.model.WalletAddress
+import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -32,7 +32,7 @@ interface TransferTokensDialogHandler {
         scope: CoroutineScope,
         txHash: Token,
         sent: String? = null,
-        to: WalletAddress? = null,
+        to: CryptoAddress? = null,
     )
 
     fun onTransferTokensDialogHidden()
@@ -47,7 +47,7 @@ interface TransferTokensDialogHandler {
         data class TokensTransferSuccess(
             val bscScanLink: FullUrl,
             val sent: String?,
-            val to: WalletAddress?,
+            val to: CryptoAddress?,
         ) : BottomDialog()
     }
 
@@ -83,11 +83,11 @@ class TransferTokensDialogHandlerImplDelegate @Inject constructor() : TransferTo
         scope.launch { _command publish TransferTokensDialogHandler.Command.HideBottomDialog }
     }
 
-    override fun onSuccessfulTransfer(scope: CoroutineScope, txHash: Token, sent: String?, to: WalletAddress?) {
+    override fun onSuccessfulTransfer(scope: CoroutineScope, txHash: Token, sent: String?, to: CryptoAddress?) {
         _uiState.update {
             it.copy(
                 bottomDialog = TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess(
-                    // todo mainnet scan
+                    // todo release mainnet scan
                     bscScanLink = "https://testnet.bscscan.com/tx/${txHash}", sent = sent, to = to
                 ),
             )

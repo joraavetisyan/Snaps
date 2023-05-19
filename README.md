@@ -22,7 +22,7 @@ Project with functional modules on the next stack:
 
 #### 1. Single Activity with Navigation Component
 
-There is the single AppActivity, which contains navigation graph with nested feature graph from
+There is a single AppActivity, which contains navigation graph with nested feature graph from
 feature modules.
 BottomBarFragment from feature-bottom-bar is responsible for working with one or more stacks of
 fragments,
@@ -68,16 +68,22 @@ Access to the Tracker object is through AnalyticsTrackerHolder.
 + Navigation extensions (in nav_ext.kt)
 + and many other extensions for some routine
 
-#### Naming
+#### Dependency injection
+
+UserSessionScope and UserSessionComponent are used to inject user session related
+classes (eg repos), so that the user data gets cleared when a new user logs in. 
+Those classes provided with @Bridged qualifier to avoid boilerplate code
+
+#### Naming conventions
 
 + Provider/Source - a Source provide data in a stream, a Provider through getters
 
-## Hiding bottom navigation bar on bottom sheet dialog shown
+#### Hiding bottom navigation bar on bottom sheet dialog shown
 
 - Use ModalBottomSheetTargetStateListener in the screen, BottomDialogBarVisibilityHandler in the
   view model
 
-# Strings naming
+#### Strings naming
 
 Naming scheme for string ui elements: `placeTypeName`
 

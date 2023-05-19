@@ -9,6 +9,7 @@ import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
+import io.snaps.coredata.di.Bridged
 import io.snaps.coreui.viewmodel.likeStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
@@ -26,8 +27,8 @@ interface WalletInteractor {
 
 class WalletInteractorImpl @Inject constructor(
     @ApplicationCoroutineScope private val scope: CoroutineScope,
-    private val walletRepository: WalletRepository,
-    private val profileRepository: ProfileRepository,
+    @Bridged private val walletRepository: WalletRepository,
+    @Bridged private val profileRepository: ProfileRepository,
 ) : WalletInteractor {
 
     override val snpFiatState = profileRepository.balanceState.map {

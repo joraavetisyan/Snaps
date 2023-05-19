@@ -1,13 +1,18 @@
-package io.snaps.basebilling
+package io.snaps.basebilling.di
 
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.snaps.basebilling.BillingRouter
+import io.snaps.basebilling.PurchaseStateProvider
+import io.snaps.basebilling.PurchaseStateProviderImpl
+import io.snaps.basebilling.SimpleBilling
+import io.snaps.basebilling.SimpleBillingImpl
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(SingletonComponent::class) // todo UserSessionScoped?
 interface BillingModule {
 
     @Binds

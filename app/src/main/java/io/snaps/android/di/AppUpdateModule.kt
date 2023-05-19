@@ -1,9 +1,12 @@
-package io.snaps.android.appupdate
+package io.snaps.android.di
 
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.snaps.android.appupdate.AppUpdateProvider
+import io.snaps.android.appupdate.AppUpdateProviderImpl
+import io.snaps.android.appupdate.UpdateRouter
 import javax.inject.Singleton
 
 @Module

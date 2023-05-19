@@ -11,9 +11,10 @@ import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensState
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toStringValue
-import io.snaps.corecommon.model.FiatCurrency
-import io.snaps.corecommon.model.WalletAddress
+import io.snaps.corecommon.model.Fiat.Currency
+import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.model.WalletModel
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
@@ -38,15 +39,15 @@ private const val minGasValue = 0.001
 @HiltViewModel
 class WithdrawViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    transferTokensDialogHandlerImplDelegate: TransferTokensDialogHandler,
-    limitedGasDialogHandlerImplDelegate: LimitedGasDialogHandler,
+    transferTokensDialogHandler: TransferTokensDialogHandler,
+    limitedGasDialogHandler: LimitedGasDialogHandler,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
-    private val blockchainTxRepository: BlockchainTxRepository,
-    private val walletRepository: WalletRepository,
+    @Bridged private val blockchainTxRepository: BlockchainTxRepository,
+    @Bridged private val walletRepository: WalletRepository,
 ) : SimpleViewModel(),
-    TransferTokensDialogHandler by transferTokensDialogHandlerImplDelegate,
-    LimitedGasDialogHandler by limitedGasDialogHandlerImplDelegate {
+    TransferTokensDialogHandler by transferTokensDialogHandler,
+    LimitedGasDialogHandler by limitedGasDialogHandler {
 
     private val args = savedStateHandle.requireArgs<AppRoute.Withdraw.Args>()
 
@@ -173,7 +174,7 @@ class WithdrawViewModel @Inject constructor(
             action.execute {
                 blockchainTxRepository.send(
                     wallet = args.wallet,
-                    walletAddress = _uiState.value.addressValue,
+                    address = _uiState.value.addressValue,
                     amount = amount,
                     gasPrice = _uiState.value.gasPrice,
                     gasLimit = _uiState.value.gasLimit,
@@ -196,14 +197,13 @@ class WithdrawViewModel @Inject constructor(
         val isLoading: Boolean = false,
         val isAddressInvalid: Boolean = false,
         val isCalculating: Boolean = false,
-        val addressValue: WalletAddress = "",
+        val addressValue: CryptoAddress = "",
         val amountValue: String = "",
         val availableAmount: String = "",
         val gasPrice: Long? = null,
         val gasLimit: Long = gasLimitNull,
         val gasPriceString: String = "",
         val amountFormatter: SimpleFormatter = AmountFormatter(
-            fiatCurrency = FiatCurrency.NONE,
             maxLength = 100,
             fractionalPartMaxLength = 100,
         ),

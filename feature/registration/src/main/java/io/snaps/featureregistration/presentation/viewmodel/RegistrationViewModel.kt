@@ -8,6 +8,7 @@ import io.snaps.baseauth.data.AuthRepository
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.basesources.NotificationsSource
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
@@ -23,7 +24,7 @@ import javax.inject.Inject
 class RegistrationViewModel @Inject constructor(
     private val sessionRepository: SessionRepository,
     private val authRepository: AuthRepository,
-    private val profileRepository: ProfileRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel() {
@@ -184,7 +185,7 @@ class RegistrationViewModel @Inject constructor(
             profileRepository.updateData().doOnSuccess {
                 sessionRepository.onLogin()
             }.doOnError { _, _ ->
-                sessionRepository.onLogout()
+                sessionRepository.logout()
             }.doOnComplete {
                 _command publish Command.HideBottomDialog
             }

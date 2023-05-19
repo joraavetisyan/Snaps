@@ -12,12 +12,14 @@ import io.snaps.basesubs.data.SubsRepository
 import io.snaps.basesubs.domain.SubModel
 import io.snaps.corecommon.model.SubsType
 import io.snaps.corecommon.model.Uuid
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppDeeplink
 import io.snaps.corenavigation.AppRoute
-import io.snaps.corenavigation.base.getArg
+import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
+import io.snaps.featureprofile.presentation.screen.ConfirmUnsubscribeData
 import io.snaps.featureprofile.presentation.screen.UserInfoTileState
 import io.snaps.featureprofile.presentation.toUserInfoTileState
 import kotlinx.coroutines.channels.Channel
@@ -34,13 +36,13 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val profileRepository: ProfileRepository,
-    private val videoFeedRepository: VideoFeedRepository,
-    private val subsRepository: SubsRepository,
+    @Bridged private val profileRepository: ProfileRepository,
+    @Bridged private val videoFeedRepository: VideoFeedRepository,
+    @Bridged private val subsRepository: SubsRepository,
     private val action: Action,
 ) : SimpleViewModel() {
 
-    private val args = savedStateHandle.getArg<AppRoute.Profile.Args>()
+    private val args = savedStateHandle.requireArgs<AppRoute.Profile.Args>()
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -49,7 +51,7 @@ class ProfileViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     init {
-        if (args?.userId != null) {
+        if (args.userId != null) {
             viewModelScope.launch {
                 action.execute {
                     profileRepository.updateData()
@@ -64,26 +66,20 @@ class ProfileViewModel @Inject constructor(
                             )
                         }
                         loadUserById(requireNotNull(args.userId))
+                        checkIfSubscribed()
                     } else {
                         subscribeOnCurrentUser()
                         loadCurrentUser()
                     }
-
-                    subscribeOnFeed()
-                    subscribeOnUserLikedFeed()
-
-                    loadSubscriptions()
                 }
             }
         } else {
             subscribeOnCurrentUser()
             loadCurrentUser()
-
-            subscribeOnFeed()
-            subscribeOnUserLikedFeed()
-
-            loadSubscriptions()
         }
+
+        subscribeOnFeed()
+        subscribeOnUserLikedFeed()
     }
 
     private fun subscribeOnCurrentUser() {
@@ -94,7 +90,7 @@ class ProfileViewModel @Inject constructor(
                         onSubscribersClick = { onSubscribersClicked(SubsType.Subscribers) },
                         onSubscriptionsClick = { onSubscribersClicked(SubsType.Subscriptions) }
                     ),
-                    nickname = state.dataOrCache?.name.orEmpty(),
+                    name = state.dataOrCache?.name.orEmpty(),
                     shareLink = state.dataOrCache?.userId?.let { userId ->
                         AppDeeplink.generateSharingLink(AppDeeplink.Profile(userId))
                     }
@@ -109,19 +105,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun loadSubscriptions() = viewModelScope.launch {
-        _uiState.update { it.copy(isLoading = true) }
+    private fun checkIfSubscribed() = viewModelScope.launch {
         action.execute {
-            subsRepository.getSubscriptions()
-        }.doOnSuccess { subscriptions ->
-            _uiState.update {
-                it.copy(
-                    isSubscribed = subscriptions.firstOrNull { it.userId == args?.userId } != null,
-                    isLoading = false,
-                )
-            }
-        }.doOnComplete {
-            _uiState.update { it.copy(isLoading = false) }
+            subsRepository.isSubscribed(args.userId!!)
+        }.doOnSuccess { isSubscribed ->
+            _uiState.update { it.copy(isSubscribed = isSubscribed) }
         }
     }
 
@@ -135,19 +123,20 @@ class ProfileViewModel @Inject constructor(
                         onSubscribersClick = { onSubscribersClicked(SubsType.Subscribers) },
                         onSubscriptionsClick = { onSubscribersClicked(SubsType.Subscriptions) }
                     ),
-                    nickname = user.name,
+                    name = user.name,
                 )
             }
         }
     }
 
-    private fun onSubscribersClicked(subsPage: SubsType) = viewModelScope.launch {
+    private fun onSubscribersClicked(subsType: SubsType) = viewModelScope.launch {
         val userInfo = uiState.value.userInfoTileState
         if (userInfo is UserInfoTileState.Data) {
             _command publish Command.OpenSubsScreen(
                 args = AppRoute.Subs.Args(
-                    subsPage = subsPage,
-                    nickname = uiState.value.nickname,
+                    userId = args.userId,
+                    subsType = subsType,
+                    userName = uiState.value.name,
                     totalSubscriptions = userInfo.subscriptions,
                     totalSubscribers = userInfo.subscribers,
                 )
@@ -156,7 +145,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun subscribeOnFeed() {
-        videoFeedRepository.getFeedState(VideoFeedType.User(args?.userId)).map {
+        videoFeedRepository.getFeedState(VideoFeedType.User(args.userId)).map {
             it.toVideoFeedUiState(
                 shimmerListSize = 12,
                 onClipClicked = {},
@@ -171,14 +160,14 @@ class ProfileViewModel @Inject constructor(
     private fun onListEndReaching() {
         viewModelScope.launch {
             action.execute {
-                videoFeedRepository.loadNextFeedPage(VideoFeedType.User(args?.userId))
+                videoFeedRepository.loadNextFeedPage(VideoFeedType.User(args.userId))
             }
         }
     }
 
     private fun onFeedReloadClicked() = viewModelScope.launch {
         action.execute {
-            videoFeedRepository.refreshFeed(VideoFeedType.User(args?.userId))
+            videoFeedRepository.refreshFeed(VideoFeedType.User(args.userId))
         }
     }
 
@@ -214,17 +203,16 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onSubscribeClicked() = viewModelScope.launch {
-        if (uiState.value.isSubscribed) {
+        if (uiState.value.isSubscribed!!) {
             val userInfo = uiState.value.userInfoTileState
             if (userInfo is UserInfoTileState.Data) {
                 _uiState.update {
                     it.copy(
-                        dialog = SubsViewModel.Dialog.ConfirmUnsubscribe(
-                            SubModel(
-                                userId = requireNotNull(args?.userId),
-                                image = userInfo.profileImage,
-                                name = it.nickname,
-                                isSubscribed = it.isSubscribed,
+                        dialog = Dialog.ConfirmUnsubscribe(
+                            ConfirmUnsubscribeData(
+                                userId = requireNotNull(args.userId),
+                                avatar = userInfo.profileImage,
+                                name = it.name,
                             )
                         )
                     )
@@ -232,23 +220,23 @@ class ProfileViewModel @Inject constructor(
             }
         } else {
             _uiState.update {
-                it.copy(isSubscribed = !it.isSubscribed)
+                it.copy(isSubscribed = !it.isSubscribed!!)
             }
             action.execute {
-                subsRepository.subscribe(requireNotNull(args?.userId))
+                subsRepository.subscribe(requireNotNull(args.userId))
             }
         }
     }
 
-    fun onUnsubscribeClicked(item: SubModel) = viewModelScope.launch {
+    fun onUnsubscribeClicked(userId: Uuid) = viewModelScope.launch {
         _uiState.update {
             it.copy(
                 dialog = null,
-                isSubscribed = !it.isSubscribed,
+                isSubscribed = !it.isSubscribed!!,
             )
         }
         action.execute {
-            subsRepository.unsubscribe(item.userId)
+            subsRepository.unsubscribe(userId)
         }
     }
 
@@ -261,7 +249,7 @@ class ProfileViewModel @Inject constructor(
     fun onVideoClipClicked(position: Int) {
         viewModelScope.launch {
             _command publish Command.OpenUserVideoFeedScreen(
-                userId = args?.userId,
+                userId = args.userId,
                 position = position,
             )
         }
@@ -290,12 +278,13 @@ class ProfileViewModel @Inject constructor(
     data class UiState(
         val isLoading: Boolean = true,
         val userInfoTileState: UserInfoTileState = UserInfoTileState.Shimmer,
-        val nickname: String = "",
-        val isSubscribed: Boolean = false,
+        val name: String = "",
+        // if current authed user is subscribed to this user, null if this user is the current authed one
+        val isSubscribed: Boolean? = null,
         val userType: UserType = UserType.Current,
         val videoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
         val userLikedVideoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
-        val dialog: SubsViewModel.Dialog? = null,
+        val dialog: Dialog? = null,
         val shareLink: String? = null,
         val selectedItemIndex: Int = 0,
     )
@@ -308,7 +297,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     sealed class Dialog {
-        data class ConfirmUnsubscribe(val data: SubModel) : Dialog()
+        data class ConfirmUnsubscribe(val data: ConfirmUnsubscribeData) : Dialog()
     }
 
     enum class UserType {

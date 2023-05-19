@@ -10,7 +10,7 @@ import io.snaps.coredata.network.Action
 import io.snaps.coredata.network.PagedLoader
 import io.snaps.coredata.network.PagedLoaderFactory
 import io.snaps.coredata.network.PagedLoaderParams
-import io.snaps.basesubs.data.model.SubscriptionItemResponseDto
+import io.snaps.basesubs.data.model.SubsItemResponseDto
 import io.snaps.basesubs.domain.SubModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -26,8 +26,8 @@ class SubsLoader @AssistedInject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     action: Action,
-    @Assisted private val params: PagedLoaderParams<SubscriptionItemResponseDto, SubModel>,
-) : PagedLoader<SubscriptionItemResponseDto, SubModel>(
+    @Assisted private val params: PagedLoaderParams<SubsItemResponseDto, SubModel>,
+) : PagedLoader<SubsItemResponseDto, SubModel>(
     ioDispatcher = ioDispatcher,
     scope = scope,
     action = action,
@@ -36,9 +36,9 @@ class SubsLoader @AssistedInject constructor(
 
 @AssistedFactory
 abstract class SubsLoaderFactory :
-    PagedLoaderFactory<SubType, SubsLoader, SubscriptionItemResponseDto, SubModel>() {
+    PagedLoaderFactory<SubType, SubsLoader, SubsItemResponseDto, SubModel>() {
 
-    override fun provide(params: PagedLoaderParams<SubscriptionItemResponseDto, SubModel>) = create(params)
+    override fun provide(params: PagedLoaderParams<SubsItemResponseDto, SubModel>) = create(params)
 
-    abstract fun create(params: PagedLoaderParams<SubscriptionItemResponseDto, SubModel>): SubsLoader
+    abstract fun create(params: PagedLoaderParams<SubsItemResponseDto, SubModel>): SubsLoader
 }

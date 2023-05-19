@@ -25,9 +25,8 @@ fun UsersPageModel.toUsersUiState(
             errorState = MessageBannerState.defaultState(onReloadClicked)
         )
         loadedPageItems.isEmpty() -> UsersUiState(
-            emptyState = EmptyListTileState(
+            emptyState = EmptyListTileState.defaultState(
                 title = StringKey.MessageNothingFound.textValue(),
-                image = ImageValue.ResImage(R.drawable.img_guy_confused),
             )
         )
         else -> UsersUiState(

@@ -43,6 +43,10 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ru to "Успешно!",
         SupportedLanguageKey.En to "Success!",
     ),
+    key(StringKey.MessageCopySuccess) to mapOf(
+        SupportedLanguageKey.Ru to "Скопировано!",
+        SupportedLanguageKey.En to "Copied!",
+    ),
     key(StringKey.MessageConnectionSuccess) to mapOf(
         SupportedLanguageKey.Ru to "Соединение восстановлено",
         SupportedLanguageKey.En to "Connection restored",
@@ -74,6 +78,7 @@ internal val strings = mapOf(
     ),
 
     key(StringKey.Error) to mapOf(
+        // keep it short
         SupportedLanguageKey.En to "Error",
         SupportedLanguageKey.Ru to "Ошибка",
     ),

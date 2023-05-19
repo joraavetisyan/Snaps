@@ -1,7 +1,10 @@
 package io.snaps.basewallet.data
 
 import io.horizontalsystems.ethereumkit.models.Address
+import io.horizontalsystems.marketkit.models.Blockchain
 import io.horizontalsystems.marketkit.models.BlockchainType
+import io.horizontalsystems.marketkit.models.Coin
+import io.horizontalsystems.marketkit.models.Token
 import io.horizontalsystems.marketkit.models.TokenQuery
 import io.horizontalsystems.marketkit.models.TokenType
 import io.snaps.basewallet.data.model.ClaimRequestDto
@@ -11,17 +14,18 @@ import io.snaps.basewallet.data.model.RefillGasRequestDto
 import io.snaps.basewallet.data.model.WalletSaveRequestDto
 import io.snaps.basewallet.domain.DeviceNotSecuredException
 import io.snaps.basewallet.domain.TotalBalanceModel
-import io.snaps.corecommon.ext.fiatToFormatDecimal
 import io.snaps.corecommon.ext.log
+import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.CardNumber
 import io.snaps.corecommon.model.Completable
+import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
-import io.snaps.corecommon.model.WalletAddress
 import io.snaps.corecommon.model.WalletModel
+import io.snaps.corecommon.model.generateUuid
 import io.snaps.corecrypto.core.AdapterState
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.core.IAccountFactory
@@ -29,11 +33,9 @@ import io.snaps.corecrypto.core.IAccountManager
 import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.IWordsManager
 import io.snaps.corecrypto.core.managers.WalletActivator
-import io.snaps.corecrypto.core.managers.defaultTokens
 import io.snaps.corecrypto.core.providers.BalanceService
 import io.snaps.corecrypto.core.providers.BalanceViewItemFactory
 import io.snaps.corecrypto.core.providers.ITotalBalance
-import io.snaps.corecrypto.core.providers.PredefinedBlockchainSettingsProvider
 import io.snaps.corecrypto.core.providers.TotalService
 import io.snaps.corecrypto.core.providers.TotalUIState
 import io.snaps.corecrypto.entities.Account
@@ -58,13 +60,14 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import java.security.InvalidAlgorithmParameterException
 import javax.inject.Inject
+import io.snaps.corecommon.model.Coin as AppCoin
 
 private const val messageNotSecured =
     "java.lang.IllegalStateException: Secure lock screen must be enabled to create keys requiring user authentication"
 
 interface WalletRepository {
 
-    val totalBalanceValue: StateFlow<TotalBalanceModel>
+    val totalBalance: StateFlow<TotalBalanceModel>
 
     val activeWallets: StateFlow<List<WalletModel>>
 
@@ -88,9 +91,9 @@ interface WalletRepository {
 
     fun getWallets(): List<Wallet>
 
-    fun requireActiveWalletReceiveAddress(): WalletAddress
+    fun requireActiveWalletReceiveAddress(): CryptoAddress
 
-    fun isAddressValid(value: WalletAddress): Boolean
+    fun isAddressValid(value: CryptoAddress): Boolean
 
     // region Balances todo flow
     fun getBnbWalletModel(): WalletModel?
@@ -112,33 +115,35 @@ interface WalletRepository {
 class WalletRepositoryImpl @Inject constructor(
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+
     private val accountFactory: IAccountFactory,
     private val walletManager: IWalletManager,
     private val wordsManager: IWordsManager,
     private val accountManager: IAccountManager,
     private val walletActivator: WalletActivator,
-    private val predefinedBlockchainSettingsProvider: PredefinedBlockchainSettingsProvider,
-    private val walletApi: WalletApi,
     private val balanceService: BalanceService,
+    private val totalBalanceManager: ITotalBalance,
     private val balanceViewItemFactory: BalanceViewItemFactory,
-    private val totalBalance: ITotalBalance,
+
+    private val walletApi: WalletApi,
 ) : WalletRepository {
 
     private var account: Account? = null
 
-    private val _totalBalanceValue = MutableStateFlow(TotalBalanceModel.empty)
-    override val totalBalanceValue = _totalBalanceValue.asStateFlow()
+    private val _totalBalance = MutableStateFlow(TotalBalanceModel.empty)
+    override val totalBalance = _totalBalance.asStateFlow()
 
     override val activeWallets: StateFlow<List<WalletModel>> = balanceService.balanceItemsFlow
         .map { items ->
-            totalBalance.setTotalServiceItems(items?.map {
-                TotalService.BalanceItem(
-                    it.balanceData.total,
-                    it.state !is AdapterState.Synced,
-                    it.coinPrice
-                )
-            })
-
+            totalBalanceManager.setTotalServiceItems(
+                map = items?.map {
+                    TotalService.BalanceItem(
+                        value = it.balanceData.total,
+                        isValuePending = it.state !is AdapterState.Synced,
+                        coinPrice = it.coinPrice,
+                    )
+                }
+            )
             items?.map { balanceItem ->
                 val item = balanceViewItemFactory.viewItem(
                     item = balanceItem,
@@ -151,9 +156,7 @@ class WalletRepositoryImpl @Inject constructor(
                     iconUrl = item.coinIconUrl,
                     coinValue = item.primaryValue.value,
                     fiatValue = item.secondaryValue.value,
-                    receiveAddress = CryptoKit.adapterManager.getReceiveAdapterForWallet(
-                        item.wallet
-                    )?.receiveAddress.orEmpty(),
+                    receiveAddress = CryptoKit.adapterManager.getReceiveAdapterForWallet(item.wallet)?.receiveAddress.orEmpty(),
                     coinAddress = item.wallet.tokenAddress,
                 )
             } ?: emptyList()
@@ -163,14 +166,14 @@ class WalletRepositoryImpl @Inject constructor(
     override val payouts = _payouts.asStateFlow()
 
     init {
-        totalBalance.totalUiState.onEach { total ->
-            _totalBalanceValue.update {
+        totalBalanceManager.totalUiState.onEach { total ->
+            _totalBalance.update {
                 if (total !is TotalUIState.Visible) return@update TotalBalanceModel.empty
                 TotalBalanceModel(coin = total.primaryAmountStr, fiat = total.secondaryAmountStr)
             }
         }.launchIn(scope)
         balanceService.start()
-        totalBalance.start(scope)
+        totalBalanceManager.start(scope)
     }
 
     override fun createAccount(userId: Uuid): List<String> {
@@ -213,6 +216,7 @@ class WalletRepositoryImpl @Inject constructor(
     override suspend fun saveLastConnectedAccount(): Effect<Completable> {
         val account = account ?: return Effect.error(AppError.Unknown("No account was created!"))
         try {
+            log("Saving account: $account")
             accountManager.save(account)
         } catch (e: InvalidAlgorithmParameterException) {
             if (e.message == messageNotSecured) {
@@ -220,21 +224,57 @@ class WalletRepositoryImpl @Inject constructor(
             }
             return Effect.error(AppError.Unknown(cause = e))
         }
-        activateDefaultWallets(account)
-        predefinedBlockchainSettingsProvider.prepareNew(account, BlockchainType.Zcash)
+        activateDefaultTokens(account)
         // fixme better way
         while (getActiveWalletReceiveAddress() == null) {
             delay(200)
         }
         return apiCall(ioDispatcher) {
-            walletApi.save(WalletSaveRequestDto(requireActiveWalletReceiveAddress()))
+            walletApi.save(WalletSaveRequestDto(address = requireActiveWalletReceiveAddress()))
         }.toCompletable()
     }
 
-    private fun getActiveWalletReceiveAddress(): WalletAddress? {
-        return getWallets().firstNotNullOfOrNull {
-            CryptoKit.adapterManager.getReceiveAdapterForWallet(it)?.receiveAddress
+    private fun activateDefaultTokens(account: Account) {
+        val tokens = listOf(
+            AppCoin.Type.SNPS.let {
+                Token(
+                    coin = Coin(uid = "snapsCoinUid", name = it.coinName, code = it.code),
+                    // todo release mainnet
+                    blockchain = Blockchain(
+                        type = BlockchainType.BinanceSmartChain,
+                        name = "Testnet",
+                        explorerUrl = "https://testnet.bscscan.com",
+                    ),
+                    type = TokenType.Eip20(it.address),
+                    decimals = it.decimal,
+                )
+            }
+        )
+        // todo construct tokens yourself
+        val tokenQueries = AppCoin.Type.values().filter { it != AppCoin.Type.SNPS }.map {
+            TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Eip20(it.address))
+        } + listOf(
+            TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Native)
+        )
+        log("Activating tokens: ${tokens.joinToString()}")
+        log("Activating tokenQueries: ${tokenQueries.joinToString()}")
+        walletActivator.activateWallets(
+            account = account,
+            tokenQueries = tokenQueries,
+            tokens = tokens,
+        )
+    }
+
+    private fun getActiveWalletReceiveAddress(): CryptoAddress? {
+        return getWallets().firstNotNullOfOrNull { wallet ->
+            CryptoKit.adapterManager.getReceiveAdapterForWallet(wallet)?.receiveAddress.also {
+                if (it == null) logE("No receive adapter for wallet $wallet!")
+            }
         }
+    }
+
+    override fun requireActiveWalletReceiveAddress(): CryptoAddress {
+        return requireNotNull(getActiveWalletReceiveAddress())
     }
 
     override fun hasAccount(userId: Uuid): Boolean {
@@ -250,21 +290,20 @@ class WalletRepositoryImpl @Inject constructor(
     }
 
     override fun getMnemonics(): List<String> {
-        return getActiveAccount()?.let {
-            (it.type as AccountType.Mnemonic).words
-        } ?: emptyList()
+        return getActiveAccount()?.let { (it.type as AccountType.Mnemonic).words } ?: emptyList()
     }
 
     private fun getActiveAccount(): Account? {
-        return accountManager.activeAccount ?: run {
-            log("No active account")
-            null
+        return accountManager.activeAccount.also {
+            if (it == null) logE("No active account!")
         }
     }
 
     override fun getWallets(): List<Wallet> {
         val account = getActiveAccount() ?: return emptyList()
-        return walletManager.getWallets(account)
+        return walletManager.getWallets(account).also {
+            if (it.isEmpty()) logE("No wallets!")
+        }
     }
 
     override fun getBnbWalletModel(): WalletModel? {
@@ -272,28 +311,15 @@ class WalletRepositoryImpl @Inject constructor(
     }
 
     override fun getSnpWalletModel(): WalletModel? {
-        return activeWallets.value.firstOrNull { it.symbol == "SNAPS" }
+        return activeWallets.value.firstOrNull { it.coinAddress == AppCoin.Type.SNPS.address }
     }
 
     override fun deleteAccount(id: Uuid) {
         accountManager.delete(id)
     }
 
-    override fun requireActiveWalletReceiveAddress(): WalletAddress {
-        return requireNotNull(getActiveWalletReceiveAddress()) { "No active wallet receive address" }
-    }
-
-    override fun isAddressValid(value: WalletAddress): Boolean {
+    override fun isAddressValid(value: CryptoAddress): Boolean {
         return kotlin.runCatching { Address(value) }.getOrNull() != null
-    }
-
-    private fun activateDefaultWallets(account: Account) {
-        val tokenQueries = defaultTokens.map {
-            TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Eip20(it))
-        } + listOf(
-            TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Native)
-        )
-        walletActivator.activateWallets(account, tokenQueries)
     }
 
     override suspend fun updateBalance(): Effect<Completable> {

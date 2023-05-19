@@ -6,7 +6,7 @@ import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rInt
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.DateTime
-import io.snaps.corecommon.model.QuestType
+import io.snaps.corecommon.model.TaskType
 import io.snaps.coredata.network.BaseResponse
 import io.snaps.featuretasks.data.model.HistoryTaskItemResponseDto
 import kotlinx.coroutines.delay
@@ -48,7 +48,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = 20,
-                        type = QuestType.Like,
+                        type = TaskType.Like,
                         energy = 20,
                     )
                 ),
@@ -59,7 +59,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = rInt,
-                        type = QuestType.PublishVideo,
+                        type = TaskType.PublishVideo,
                         energy = 20,
                     )
                 ),
@@ -70,7 +70,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = 20,
-                        type = QuestType.Watch,
+                        type = TaskType.Watch,
                         energy = 20,
                     )
                 ),
@@ -81,7 +81,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = 5,
-                        type = QuestType.Subscribe,
+                        type = TaskType.Subscribe,
                         energy = 20,
                     )
                 ),
@@ -92,7 +92,7 @@ class FakeTasksApi : TasksApi {
                     done = null,
                     quest = QuestDto(
                         count = rInt,
-                        type = QuestType.SocialPost,
+                        type = TaskType.SocialPost,
                         energy = 20,
                     )
                 ),
@@ -112,7 +112,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = 20,
-                        type = QuestType.Like,
+                        type = TaskType.Like,
                         energy = 20,
                     )
                 ),
@@ -123,7 +123,7 @@ class FakeTasksApi : TasksApi {
                     done = null,
                     quest = QuestDto(
                         count = rInt,
-                        type = QuestType.PublishVideo,
+                        type = TaskType.PublishVideo,
                         energy = 20,
                     )
                 ),
@@ -134,7 +134,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = 20,
-                        type = QuestType.Watch,
+                        type = TaskType.Watch,
                         energy = 20,
                     )
                 ),
@@ -145,7 +145,7 @@ class FakeTasksApi : TasksApi {
                     done = null,
                     quest = QuestDto(
                         count = 5,
-                        type = QuestType.Subscribe,
+                        type = TaskType.Subscribe,
                         energy = 20,
                     )
                 ),
@@ -156,7 +156,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = rInt,
-                        type = QuestType.SocialPost,
+                        type = TaskType.SocialPost,
                         energy = 20,
                     )
                 ),
@@ -176,7 +176,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = 20,
-                        type = QuestType.Like,
+                        type = TaskType.Like,
                         energy = 20,
                     )
                 ),
@@ -187,7 +187,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = rInt,
-                        type = QuestType.PublishVideo,
+                        type = TaskType.PublishVideo,
                         energy = 20,
                     )
                 ),
@@ -198,7 +198,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = 20,
-                        type = QuestType.Watch,
+                        type = TaskType.Watch,
                         energy = 20,
                     )
                 ),
@@ -209,7 +209,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = 5,
-                        type = QuestType.Subscribe,
+                        type = TaskType.Subscribe,
                         energy = 20,
                     )
                 ),
@@ -220,7 +220,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = rInt,
-                        type = QuestType.SocialPost,
+                        type = TaskType.SocialPost,
                         energy = 20,
                     )
                 ),
@@ -240,7 +240,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = 20,
-                        type = QuestType.Like,
+                        type = TaskType.Like,
                         energy = 20,
                     )
                 ),
@@ -251,7 +251,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = rInt,
-                        type = QuestType.PublishVideo,
+                        type = TaskType.PublishVideo,
                         energy = 20,
                     )
                 ),
@@ -262,7 +262,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = 20,
-                        type = QuestType.Watch,
+                        type = TaskType.Watch,
                         energy = 20,
                     )
                 ),
@@ -273,7 +273,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = 5,
-                        type = QuestType.Subscribe,
+                        type = TaskType.Subscribe,
                         energy = 20,
                     )
                 ),
@@ -284,7 +284,7 @@ class FakeTasksApi : TasksApi {
                     status = null,
                     quest = QuestDto(
                         count = rInt,
-                        type = QuestType.SocialPost,
+                        type = TaskType.SocialPost,
                         energy = 20,
                     )
                 ),

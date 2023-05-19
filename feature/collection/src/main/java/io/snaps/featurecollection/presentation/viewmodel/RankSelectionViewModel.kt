@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.basenft.domain.RankModel
 import io.snaps.corecommon.model.FullUrl
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -25,7 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RankSelectionViewModel @Inject constructor(
     private val action: Action,
-    private val nftRepository: NftRepository,
+    @Bridged private val nftRepository: NftRepository,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())

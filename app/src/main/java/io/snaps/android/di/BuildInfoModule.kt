@@ -1,10 +1,11 @@
-package io.snaps.android
+package io.snaps.android.di
 
 import io.snaps.corecommon.model.BuildInfo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.snaps.android.BuildConfig
 import javax.inject.Singleton
 
 @Module

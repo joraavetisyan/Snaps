@@ -19,14 +19,15 @@ import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.NftModel
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.TxHash
-import io.snaps.corecommon.model.WalletAddress
+import io.snaps.corecommon.model.CryptoAddress
+import io.snaps.corecommon.model.Nft
 import io.snaps.corecommon.model.WalletModel
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.core.ISendEthereumAdapter
 import io.snaps.corecrypto.core.adapters.Eip20Adapter
-import io.snaps.corecrypto.core.managers.SNAPS_NFT
 import io.snaps.corecrypto.entities.Wallet
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.apiCall
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
@@ -39,7 +40,7 @@ interface BlockchainTxRepository {
 
     suspend fun send(
         wallet: WalletModel,
-        walletAddress: WalletAddress,
+        address: CryptoAddress,
         amount: BigInteger,
         gasPrice: Long?,
         gasLimit: Long,
@@ -54,25 +55,25 @@ interface BlockchainTxRepository {
 
     suspend fun calculateGasLimit(
         wallet: WalletModel,
-        address: WalletAddress,
+        address: CryptoAddress,
         value: BigInteger,
         gasPrice: Long?
     ): Effect<Long>
 
-    suspend fun getProfitWalletAddress(): Effect<WalletAddress>
+    suspend fun getProfitWalletAddress(): Effect<CryptoAddress>
 }
 
 class BlockchainTxRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val walletApi: WalletApi,
-    private val walletRepository: WalletRepository,
+    @Bridged private val walletRepository: WalletRepository,
 ) : BlockchainTxRepository {
 
     private val gasPrice = GasPrice.Legacy(10_000_000_000L)
 
     override suspend fun send(
         wallet: WalletModel,
-        walletAddress: String,
+        address: String,
         amount: BigInteger,
         gasPrice: Long?,
         gasLimit: Long,
@@ -80,7 +81,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
     ): Effect<TxHash> {
         return blockchainCall(ioDispatcher) {
             val adapter = requireEthereumAdapter(wallet.coinUid)
-            val address = Address(walletAddress)
+            val address = Address(address)
             val txData = adapter.evmKitWrapper.evmKit.transferTransactionData(
                 address = address, value = amount
             )
@@ -138,7 +139,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                 val wallet = requireSnapsWallet()
                 val adapter = requireEip20Adapter(wallet)
 
-                val address = Address(SNAPS_NFT)
+                val address = Address(Nft.SNAPS.address)
 
                 val method = RepairContractMethod(
                     owner = Address(walletRepository.requireActiveWalletReceiveAddress()),
@@ -215,7 +216,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
 
                 fun error(): Nothing = throw IllegalStateException("Signature data null! $data")
 
-                val address = Address(SNAPS_NFT)
+                val address = Address(Nft.SNAPS.address)
                 val fromAddress = walletRepository.requireActiveWalletReceiveAddress()
 
                 val method = MintContractMethod(
@@ -282,7 +283,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
 
     override suspend fun calculateGasLimit(
         wallet: WalletModel,
-        address: WalletAddress,
+        address: CryptoAddress,
         value: BigInteger,
         gasPrice: Long?,
     ): Effect<Long> {
@@ -309,7 +310,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
 
     private fun Long?.toLegacyGasPriceOrDefault(): GasPrice.Legacy = this?.let(GasPrice::Legacy) ?: gasPrice
 
-    override suspend fun getProfitWalletAddress(): Effect<WalletAddress> {
+    override suspend fun getProfitWalletAddress(): Effect<CryptoAddress> {
         return apiCall(ioDispatcher) {
             walletApi.getRepairSignature(SignatureRequestDto(nonce = 1L, amount = 10.0))
         }.map {

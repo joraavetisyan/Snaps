@@ -27,7 +27,7 @@ import androidx.navigation.NavHostController
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.model.QuestType
+import io.snaps.corecommon.model.TaskType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
@@ -77,12 +77,12 @@ private fun TaskDetailsScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val title = when (uiState.type) {
-        QuestType.Like -> StringKey.TaskLikeTitle
-        QuestType.PublishVideo -> StringKey.TaskPublishVideoTitle
-        QuestType.SocialPost -> StringKey.TaskSocialPostTitle
-        QuestType.SocialShare -> StringKey.TaskSocialShareTitle
-        QuestType.Subscribe -> StringKey.TaskSubscribeTitle
-        QuestType.Watch -> StringKey.TaskWatchVideoTitle
+        TaskType.Like -> StringKey.TaskLikeTitle
+        TaskType.PublishVideo -> StringKey.TaskPublishVideoTitle
+        TaskType.SocialPost -> StringKey.TaskSocialPostTitle
+        TaskType.SocialShare -> StringKey.TaskSocialShareTitle
+        TaskType.Subscribe -> StringKey.TaskSubscribeTitle
+        TaskType.Watch -> StringKey.TaskWatchVideoTitle
     }.textValue()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -91,7 +91,7 @@ private fun TaskDetailsScreen(
                 title = title,
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 progress = when (uiState.type) {
-                    QuestType.SocialPost -> null
+                    TaskType.SocialPost -> null
                     else -> uiState.energy
                 },
                 scrollBehavior = scrollBehavior,
@@ -124,12 +124,12 @@ private fun Content(
     onStartButtonClicked: () -> Unit,
 ) {
     val description = when (uiState.type) {
-        QuestType.Like -> StringKey.TaskLikeDescription
-        QuestType.PublishVideo -> StringKey.TaskPublishVideoDescription
-        QuestType.SocialPost -> StringKey.TaskSocialPostDescription
-        QuestType.SocialShare -> StringKey.TaskSocialShareDescription
-        QuestType.Subscribe -> StringKey.TaskSubscribeDescription
-        QuestType.Watch -> StringKey.TaskWatchVideoDescription
+        TaskType.Like -> StringKey.TaskLikeDescription
+        TaskType.PublishVideo -> StringKey.TaskPublishVideoDescription
+        TaskType.SocialPost -> StringKey.TaskSocialPostDescription
+        TaskType.SocialShare -> StringKey.TaskSocialShareDescription
+        TaskType.Subscribe -> StringKey.TaskSubscribeDescription
+        TaskType.Watch -> StringKey.TaskWatchVideoDescription
     }.textValue()
     SimpleCard {
         TaskProgress(

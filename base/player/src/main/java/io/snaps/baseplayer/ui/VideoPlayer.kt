@@ -1,5 +1,6 @@
 package io.snaps.baseplayer.ui
 
+import android.os.Looper
 import android.view.ViewGroup
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -40,6 +41,7 @@ import io.snaps.corecommon.R
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.uikit.other.KeepScreenOn
 import io.snaps.coreuitheme.compose.colors
 import io.snaps.coreuitheme.compose.icons
 import kotlinx.coroutines.delay
@@ -59,10 +61,14 @@ fun VideoPlayer(
     onProgressChanged: ((Float) -> Unit)? = null, /*[0f,1f] every [progressChangePollFrequency]*/
     isScrolling: Boolean = false,
     isRepeat: Boolean = true,
+    performAtPosition: (() -> Unit)? = null,
+    performPosition: Float = 0f, /*[0f,1f]*/
 ) {
     require(networkUrl == null || localUri == null) {
         "Don't provide both local and network sources!"
     }
+
+    KeepScreenOn()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -70,6 +76,8 @@ fun VideoPlayer(
         networkUrl = networkUrl,
         localUri = localUri,
         isRepeat = isRepeat,
+        performAtPosition = performAtPosition,
+        performPosition = performPosition,
     )
     val playerView = rememberPlayerView(exoPlayer)
 
@@ -176,8 +184,11 @@ private fun rememberExoPlayerWithLifecycle(
     networkUrl: String?,
     localUri: String?,
     isRepeat: Boolean,
+    performAtPosition: (() -> Unit)?,
+    performPosition: Float,
 ): ExoPlayer {
     val context = LocalContext.current
+    val performAtPositionRemembered by rememberUpdatedState(newValue = performAtPosition)
     val exoPlayer = remember(networkUrl ?: localUri) {
         ExoPlayer.Builder(context).build().apply {
             videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
@@ -194,6 +205,22 @@ private fun rememberExoPlayerWithLifecycle(
                 val source = ProgressiveMediaSource.Factory(defaultDataSource)
                     .createMediaSource(MediaItem.fromUri(localUri))
                 setMediaSource(source)
+            }
+            if (performAtPositionRemembered != null) {
+                addListener(
+                    object : Player.Listener {
+                        override fun onPlaybackStateChanged(playbackState: Int) {
+                            if (playbackState == ExoPlayer.STATE_READY) {
+                                createMessage { _, _ -> performAtPositionRemembered?.invoke() }
+                                    .setLooper(Looper.getMainLooper())
+                                    .setPosition((performPosition * duration).toLong())
+                                    .setPayload(null)
+                                    .setDeleteAfterDelivery(true)
+                                    .send()
+                            }
+                        }
+                    }
+                )
             }
             prepare()
         }

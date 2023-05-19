@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basewallet.data.WalletRepository
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
@@ -17,8 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MnemonicsViewModel @Inject constructor(
-    walletRepository: WalletRepository,
-    profileRepository: ProfileRepository,
+    @Bridged walletRepository: WalletRepository,
+    @Bridged profileRepository: ProfileRepository,
     action: Action,
 ) : SimpleViewModel() {
 

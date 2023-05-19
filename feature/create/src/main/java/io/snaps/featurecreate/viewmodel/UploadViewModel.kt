@@ -21,6 +21,7 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
@@ -47,7 +48,7 @@ class UploadViewModel @Inject constructor(
     private val uploadStatusSource: UploadStatusSource,
     private val fileManager: FileManager,
     private val fileRepository: FileRepository,
-    private val videoFeedRepository: VideoFeedRepository,
+    @Bridged private val videoFeedRepository: VideoFeedRepository,
 ) : SimpleViewModel() {
 
     private val args = savedStateHandle.requireArgs<AppRoute.PreviewVideo.Args>()

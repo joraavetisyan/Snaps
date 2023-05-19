@@ -1,4 +1,4 @@
-package io.snaps.android.mainscreen
+package io.snaps.android.di
 
 import android.app.Activity
 import androidx.lifecycle.ViewModel
@@ -8,6 +8,7 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.components.ActivityComponent
+import io.snaps.android.mainscreen.AppViewModel
 
 object AppViewModelFactory {
 

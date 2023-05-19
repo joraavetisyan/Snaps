@@ -16,6 +16,7 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppDeeplink
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -36,16 +37,16 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 abstract class VideoFeedViewModel(
-    bottomDialogBarVisibilityHandlerDelegate: BottomDialogBarVisibilityHandler,
+    bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     private val videoFeedType: VideoFeedType,
     private val action: Action,
-    private val videoFeedRepository: VideoFeedRepository,
-    private val profileRepository: ProfileRepository,
-    private val commentRepository: CommentRepository,
-    private val subsRepository: SubsRepository,
+    @Bridged private val videoFeedRepository: VideoFeedRepository,
+    @Bridged private val profileRepository: ProfileRepository,
+    @Bridged private val commentRepository: CommentRepository,
+    @Bridged private val subsRepository: SubsRepository,
     val startPosition: Int = 0,
 ) : SimpleViewModel(),
-    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandlerDelegate {
+    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandler {
 
     private val _uiState = MutableStateFlow(
         UiState(actions = getActions())
@@ -107,7 +108,7 @@ abstract class VideoFeedViewModel(
         currentVideo = videoClip
         loadComments(videoClip.id)
         loadAuthor(videoClip.authorId)
-        loadSubscriptions(videoClip.authorId)
+        checkIfSubscribed(videoClip.authorId)
     }
 
     private fun loadComments(videoId: Uuid) {
@@ -125,6 +126,7 @@ abstract class VideoFeedViewModel(
     }
 
     private fun loadAuthor(authorId: Uuid) {
+        _uiState.update { it.copy(authorProfileAvatar = null, authorName = "") }
         authorLoadJob?.cancel()
         authorLoadJob = viewModelScope.launch {
             action.execute {
@@ -132,23 +134,20 @@ abstract class VideoFeedViewModel(
             }.doOnSuccess { profileModel ->
                 if (!isActive) return@doOnSuccess
                 _uiState.update {
-                    it.copy(
-                        authorProfileAvatar = profileModel.avatar,
-                        authorName = profileModel.name,
-                    )
+                    it.copy(authorProfileAvatar = profileModel.avatar, authorName = profileModel.name)
                 }
             }
         }
     }
 
-    private fun loadSubscriptions(authorId: Uuid) {
+    private fun checkIfSubscribed(authorId: Uuid) {
         viewModelScope.launch {
             action.execute {
-                subsRepository.getSubscriptions()
-            }.doOnSuccess { subscriptions ->
+                subsRepository.isSubscribed(authorId)
+            }.doOnSuccess { isSubscribed ->
                 _uiState.update {
                     it.copy(
-                        isSubscribed = subscriptions.firstOrNull { it.userId == authorId } != null,
+                        isSubscribed = isSubscribed,
                         isSubscribeButtonVisible = videoFeedType == VideoFeedType.Main,
                     )
                 }
@@ -172,8 +171,7 @@ abstract class VideoFeedViewModel(
         viewModelScope.launch { _command publish Command.OpenProfileScreen(clipModel.authorId) }
     }
 
-    fun onVideoClipWatchProgressed(progress: Float, clipModel: VideoClipModel) {
-        if (progress <= 0.7f) return
+    fun onVideoClipWatchProgressed(clipModel: VideoClipModel) {
         if (videoClipsBeingMarkedAsWatched.contains(clipModel.id)) return
         if (profileRepository.state.value.dataOrCache?.userId == clipModel.authorId) return
 

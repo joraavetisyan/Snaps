@@ -13,6 +13,7 @@ import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -34,17 +35,17 @@ private const val LEVEL_URL = "https://snaps-docs.gitbook.io/baza-znanii-snaps/f
 
 @HiltViewModel
 class MyCollectionViewModel @Inject constructor(
-    mainHeaderHandlerDelegate: MainHeaderHandler,
-    onboardingHandlerDelegate: OnboardingHandler,
-    transferTokensDialogHandlerImplDelegate: TransferTokensDialogHandler,
+    @Bridged mainHeaderHandler: MainHeaderHandler,
+    onboardingHandler: OnboardingHandler,
+    transferTokensDialogHandler: TransferTokensDialogHandler,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
-    private val nftRepository: NftRepository,
+    @Bridged private val nftRepository: NftRepository,
     private val interactor: MyCollectionInteractor,
 ) : SimpleViewModel(),
-    MainHeaderHandler by mainHeaderHandlerDelegate,
-    OnboardingHandler by onboardingHandlerDelegate,
-    TransferTokensDialogHandler by transferTokensDialogHandlerImplDelegate  {
+    MainHeaderHandler by mainHeaderHandler,
+    OnboardingHandler by onboardingHandler,
+    TransferTokensDialogHandler by transferTokensDialogHandler  {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()

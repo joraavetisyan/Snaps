@@ -7,6 +7,7 @@ import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.corecommon.model.OnboardingType
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.base.ROUTE_ARGS_SEPARATOR
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -23,12 +24,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BottomBarViewModel @Inject constructor(
-    onboardingHandlerDelegate: OnboardingHandler,
+    onboardingHandler: OnboardingHandler,
     private val appRouteProvider: AppRouteProvider,
-    private val nftRepository: NftRepository,
+    @Bridged private val nftRepository: NftRepository,
     private val action: Action,
     bottomBarVisibilitySource: BottomBarVisibilitySource,
-) : SimpleViewModel(), OnboardingHandler by onboardingHandlerDelegate {
+) : SimpleViewModel(), OnboardingHandler by onboardingHandler {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()

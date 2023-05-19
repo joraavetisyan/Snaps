@@ -2,6 +2,7 @@ package io.snaps.corecommon.ext
 
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.text.NumberFormat
 import java.util.Locale
 import kotlin.math.max
 import kotlin.math.min
@@ -11,6 +12,12 @@ fun Double.round(places: Int = 2): Double {
     return BigDecimal.valueOf(this)
         .setScale(places, RoundingMode.HALF_UP)
         .toDouble()
+}
+
+fun Double.formatToMoney(): String = try {
+    NumberFormat.getNumberInstance(Locale.US).format(this.round())
+} catch (ex: NumberFormatException) {
+    this.toString()
 }
 
 fun Double.toPercentageFormat() = "${(this * 100).round(1).toStringValue()}%"

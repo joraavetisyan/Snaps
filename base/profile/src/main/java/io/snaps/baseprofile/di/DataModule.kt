@@ -3,6 +3,8 @@ package io.snaps.baseprofile.di
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.EntryPoint
+import dagger.hilt.EntryPoints
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.snaps.baseprofile.data.FakeProfileApi
@@ -13,6 +15,10 @@ import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.data.ProfileRepositoryImpl
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
+import io.snaps.coredata.di.Bridged
+import io.snaps.coredata.di.UserSessionComponent
+import io.snaps.coredata.di.UserSessionComponentManager
+import io.snaps.coredata.di.UserSessionScope
 import io.snaps.coredata.network.ApiConfig
 import io.snaps.coredata.network.ApiService
 import javax.inject.Singleton
@@ -34,14 +40,48 @@ class DataModule {
 }
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(UserSessionComponent::class)
 interface DataBindModule {
 
     @Binds
-    @Singleton
+    @UserSessionScope
     fun mainHeaderHandler(bind: MainHeaderHandlerImplDelegate): MainHeaderHandler
 
     @Binds
-    @Singleton
-    fun profileRepository(repository: ProfileRepositoryImpl): ProfileRepository
+    @UserSessionScope
+    fun profileRepository(bind: ProfileRepositoryImpl): ProfileRepository
+}
+
+@EntryPoint
+@InstallIn(UserSessionComponent::class)
+internal interface DataBindEntryPoint {
+
+    fun mainHeaderHandler(): MainHeaderHandler
+
+    fun profileRepository(): ProfileRepository
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+internal object DataBindEntryPointBridge {
+
+    @Bridged
+    @Provides
+    fun mainHeaderHandler(
+        componentManager: UserSessionComponentManager,
+    ): MainHeaderHandler {
+        return EntryPoints
+            .get(componentManager, DataBindEntryPoint::class.java)
+            .mainHeaderHandler()
+    }
+
+    @Bridged
+    @Provides
+    fun profileRepository(
+        componentManager: UserSessionComponentManager,
+    ): ProfileRepository {
+        return EntryPoints
+            .get(componentManager, DataBindEntryPoint::class.java)
+            .profileRepository()
+    }
 }

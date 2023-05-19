@@ -1,7 +1,7 @@
 package io.snaps.baseprofile.data.model
 
 import io.snaps.corecommon.model.DateTime
-import io.snaps.corecommon.model.QuestType
+import io.snaps.corecommon.model.TaskType
 import io.snaps.corecommon.model.Uuid
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -31,7 +31,7 @@ data class QuestItemDto(
 @Serializable
 data class QuestDto(
     @SerialName("count") val count: Int?,
-    @SerialName("type") val type: QuestType,
+    @SerialName("type") val type: TaskType,
     @SerialName("energy") val energy: Int,
 )
 

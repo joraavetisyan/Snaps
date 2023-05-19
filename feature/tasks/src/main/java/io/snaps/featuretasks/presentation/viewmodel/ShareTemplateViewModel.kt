@@ -13,9 +13,9 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.coinToFormatDecimal
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
-import io.snaps.coreui.barcode.BarcodeManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
@@ -37,14 +37,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShareTemplateViewModel @Inject constructor(
-    barcodeManager: BarcodeManager,
     private val action: Action,
     private val tasksRepository: TasksRepository,
-    private val profileRepository: ProfileRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     private val connectInstagramInteractor: ConnectInstagramInteractor,
     private val fileManager: FileManager,
     private val notificationsSource: NotificationsSource,
-    private val nftRepository: NftRepository,
+    @Bridged private val nftRepository: NftRepository,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())

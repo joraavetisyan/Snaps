@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.model.WalletAddress
+import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.addressEllipsized
 import io.snaps.coreuicompose.tools.get
@@ -36,8 +36,8 @@ sealed class TransferTokensState {
 
     data class Data(
         override val title: TextValue,
-        val from: WalletAddress,
-        val to: WalletAddress,
+        val from: CryptoAddress,
+        val to: CryptoAddress,
         val summary: String,
         val gas: String,
         val total: String,
@@ -150,7 +150,7 @@ private fun Content(
 @Composable
 private fun AddressLine(
     title: TextValue,
-    value: WalletAddress?,
+    value: CryptoAddress?,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp),

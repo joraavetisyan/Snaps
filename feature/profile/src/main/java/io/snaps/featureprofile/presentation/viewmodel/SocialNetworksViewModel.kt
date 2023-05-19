@@ -3,9 +3,11 @@ package io.snaps.featureprofile.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.baseprofile.data.model.SocialPageType
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.strings.capitalizeFirstLetter
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
@@ -25,7 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SocialNetworksViewModel @Inject constructor(
     private val action: Action,
-    private val profileRepository: ProfileRepository,
+    @Bridged private val profileRepository: ProfileRepository,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -41,20 +43,20 @@ class SocialNetworksViewModel @Inject constructor(
             }.map {
                 it.map { socialPage ->
                     CellTileState(
-                        middlePart = MiddlePart.Data(value = socialPage.type.capitalizeFirstLetter().textValue()),
+                        middlePart = MiddlePart.Data(value = socialPage.type.name.textValue()),
                         rightPart = RightPart.NavigateNextIcon(),
                         leftPart = LeftPart.Logo(
                             icons {
                                 when (socialPage.type) {
-                                    "discord" -> discord
-                                    "twitter" -> twitter
-                                    "telegram" -> telegram
-                                    "instagram" -> instagram
+                                    SocialPageType.Discord -> discord
+                                    SocialPageType.Twitter -> twitter
+                                    SocialPageType.Telegram -> telegram
+                                    SocialPageType.Instagram -> instagram
                                     else -> infoRounded
                                 }
                             }.toImageValue()
                         ),
-                        clickListener = { onSocialPageItemClicked(socialPage.link) },
+                        clickListener = { socialPage.link?.let(::onSocialPageItemClicked) },
                     )
                 }
             }.doOnSuccess { items ->

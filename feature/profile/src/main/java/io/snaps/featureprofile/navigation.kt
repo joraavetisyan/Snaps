@@ -34,7 +34,7 @@ internal class ScreenNavigator(navHostController: NavHostController) : Navigator
     fun toCreateVideoScreen() = navHostController.navigate(AppRoute.CreateVideo)
 
     fun toSubsScreen(
-        args: AppRoute.Subs.Args
+        args: AppRoute.Subs.Args,
     ) = navHostController navigate FeatureNavDirection(
         route = AppRoute.Subs,
         arg = args,

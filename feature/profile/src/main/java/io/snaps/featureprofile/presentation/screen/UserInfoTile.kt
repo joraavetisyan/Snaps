@@ -75,15 +75,15 @@ private fun Data(
             StatsLine(data.likes, LocalStringHolder.current(StringKey.ProfileTitleLikes))
             VerticalDivider()
             StatsLine(
-                value = data.subscribers,
-                name = LocalStringHolder.current(StringKey.ProfileTitleSubscribers),
-                // onClick = data.onSubscribersClick, todo раскомментить после того как на бэке сделают запрос для подписок
+                value = data.subscriptions,
+                name = LocalStringHolder.current(StringKey.ProfileTitleSubscriptions),
+                onClick = data.onSubscriptionsClick
             )
             VerticalDivider()
             StatsLine(
-                value = data.subscriptions,
-                name = LocalStringHolder.current(StringKey.ProfileTitleSubscriptions),
-                // onClick = data.onSubscriptionsClick, todo раскомментить после того как на бэке сделают запрос для подписчиков
+                value = data.subscribers,
+                name = LocalStringHolder.current(StringKey.ProfileTitleSubscribers),
+                onClick = data.onSubscribersClick
             )
             data.publication?.let {
                 VerticalDivider()

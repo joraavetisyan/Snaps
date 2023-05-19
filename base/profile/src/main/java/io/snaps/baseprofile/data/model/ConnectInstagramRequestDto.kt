@@ -2,7 +2,7 @@ package io.snaps.baseprofile.data.model
 
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Uuid
-import io.snaps.corecommon.model.WalletAddress
+import io.snaps.corecommon.model.CryptoAddress
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -11,5 +11,5 @@ class ConnectInstagramRequestDto(
     @SerialName("instagramId") val instagramId: Uuid?,
     @SerialName("name") val name: String,
     @SerialName("avatar") val avatarUrl: FullUrl?,
-    @SerialName("wallet") val wallet: WalletAddress,
+    @SerialName("wallet") val wallet: CryptoAddress,
 )

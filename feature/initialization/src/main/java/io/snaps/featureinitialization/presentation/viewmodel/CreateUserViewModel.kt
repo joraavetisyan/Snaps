@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -23,7 +24,7 @@ class CreateUserViewModel @Inject constructor(
     private val fileManager: FileManager,
     private val interactor: CreateUserInteractor,
     private val action: Action,
-    private val profileRepository: ProfileRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     private val sessionRepository: SessionRepository,
 ) : SimpleViewModel() {
 
@@ -101,7 +102,7 @@ class CreateUserViewModel @Inject constructor(
     }
 
     private fun handleCreate() {
-        sessionRepository.onInitialize()
+        sessionRepository.onInitialized()
     }
 
     fun onNickNameValueChanged(value: String) {

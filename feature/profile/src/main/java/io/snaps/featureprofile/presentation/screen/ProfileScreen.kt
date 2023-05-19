@@ -41,6 +41,7 @@ import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startShareLinkIntent
+import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.doOnClick
@@ -102,7 +103,7 @@ private fun ProfileScreen(
     onSettingsClicked: () -> Unit,
     onBackClicked: () -> Boolean,
     onSubscribeClicked: () -> Unit,
-    onUnsubscribeClicked: (SubModel) -> Unit,
+    onUnsubscribeClicked: (Uuid) -> Unit,
     onDismissRequest: () -> Unit,
     onVideoClipClicked: (Int) -> Unit,
     onUserLikedVideoClipClicked: (Int) -> Unit,
@@ -110,7 +111,7 @@ private fun ProfileScreen(
     onGalleryIconClicked: () -> Unit,
 ) {
     val title = when (uiState.userType) {
-        ProfileViewModel.UserType.Other -> "@${uiState.nickname}"
+        ProfileViewModel.UserType.Other -> "@${uiState.name}"
         ProfileViewModel.UserType.Current -> LocalStringHolder.current(StringKey.ProfileTitle)
     }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -159,7 +160,7 @@ private fun ProfileScreen(
         ) {
             uiState.userInfoTileState.Content(modifier = Modifier)
             Spacer(modifier = Modifier.height(12.dp))
-            if (uiState.userType == ProfileViewModel.UserType.Other && !uiState.isLoading) {
+            if (uiState.isSubscribed != null) {
                 SimpleChip(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -200,12 +201,11 @@ private fun ProfileScreen(
         }
     }
     when (uiState.dialog) {
-        is SubsViewModel.Dialog.ConfirmUnsubscribe -> ConfirmUnsubscribeDialog(
+        is ProfileViewModel.Dialog.ConfirmUnsubscribe -> ConfirmUnsubscribeDialog(
             data = uiState.dialog.data,
             onDismissRequest = onDismissRequest,
             onUnsubscribeClicked = onUnsubscribeClicked,
         )
-
         null -> Unit
     }
 }

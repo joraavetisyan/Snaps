@@ -1,11 +1,11 @@
 package io.snaps.basewallet.domain
 
-import io.snaps.corecommon.model.WalletAddress
+import io.snaps.corecommon.model.CryptoAddress
 import java.math.BigDecimal
 
 data class NftMintSummary(
-    val from: WalletAddress,
-    val to: WalletAddress,
+    val from: CryptoAddress,
+    val to: CryptoAddress,
     val summary: BigDecimal,
     val gas: BigDecimal,
     val total: BigDecimal,

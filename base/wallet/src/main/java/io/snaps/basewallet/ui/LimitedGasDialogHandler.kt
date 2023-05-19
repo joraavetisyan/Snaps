@@ -4,6 +4,7 @@ import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.CoroutineScope
@@ -46,7 +47,7 @@ interface LimitedGasDialogHandler {
 class LimitedGasDialogHandlerImplDelegate @Inject constructor(
     private val action: Action,
     private val notificationsSource: NotificationsSource,
-    private val walletRepository: WalletRepository,
+    @Bridged private val walletRepository: WalletRepository,
 ) : LimitedGasDialogHandler {
 
     private val _uiState = MutableStateFlow(LimitedGasDialogHandler.UiState())

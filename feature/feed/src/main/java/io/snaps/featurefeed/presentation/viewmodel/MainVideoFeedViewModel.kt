@@ -15,6 +15,7 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.getArg
@@ -26,14 +27,14 @@ import javax.inject.Inject
 @HiltViewModel
 class MainVideoFeedViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    mainHeaderHandlerDelegate: MainHeaderHandler,
-    onboardingHandlerDelegate: OnboardingHandler,
-    bottomDialogBarVisibilityHandlerDelegate: BottomDialogBarVisibilityHandler,
+    @Bridged mainHeaderHandler: MainHeaderHandler,
+    onboardingHandler: OnboardingHandler,
+    bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     action: Action,
-    videoFeedRepository: VideoFeedRepository,
-    profileRepository: ProfileRepository,
-    commentRepository: CommentRepository,
-    subsRepository: SubsRepository,
+    @Bridged videoFeedRepository: VideoFeedRepository,
+    @Bridged profileRepository: ProfileRepository,
+    @Bridged commentRepository: CommentRepository,
+    @Bridged subsRepository: SubsRepository,
 ) : VideoFeedViewModel(
     videoFeedType = savedStateHandle.getArg<AppRoute.SingleVideo.Args>()?.videoClipId?.let {
         VideoFeedType.Single(it)
@@ -43,8 +44,8 @@ class MainVideoFeedViewModel @Inject constructor(
     profileRepository = profileRepository,
     commentRepository = commentRepository,
     subsRepository = subsRepository,
-    bottomDialogBarVisibilityHandlerDelegate = bottomDialogBarVisibilityHandlerDelegate,
-), MainHeaderHandler by mainHeaderHandlerDelegate, OnboardingHandler by onboardingHandlerDelegate {
+    bottomDialogBarVisibilityHandler = bottomDialogBarVisibilityHandler,
+), MainHeaderHandler by mainHeaderHandler, OnboardingHandler by onboardingHandler {
 
     private val args = savedStateHandle.getArg<AppRoute.SingleVideo.Args>()
 

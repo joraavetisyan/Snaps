@@ -3,7 +3,7 @@ package io.snaps.featuretasks.presentation.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.snaps.corecommon.model.QuestType
+import io.snaps.corecommon.model.TaskType
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
@@ -43,12 +43,12 @@ class TaskDetailsViewModel @Inject constructor(
 
     fun onStartButtonClicked() = viewModelScope.launch {
         val command = when (args.type) {
-            QuestType.Like -> Command.OpenMainVideoFeed
-            QuestType.PublishVideo -> Command.OpenCreateVideo
-            QuestType.SocialPost -> Command.OpenShareTemplate
-            QuestType.SocialShare -> Command.OpenMainVideoFeed
-            QuestType.Subscribe -> Command.OpenMainVideoFeed
-            QuestType.Watch -> Command.OpenMainVideoFeed
+            TaskType.Like -> Command.OpenMainVideoFeed
+            TaskType.PublishVideo -> Command.OpenCreateVideo
+            TaskType.SocialPost -> Command.OpenShareTemplate
+            TaskType.SocialShare -> Command.OpenMainVideoFeed
+            TaskType.Subscribe -> Command.OpenMainVideoFeed
+            TaskType.Watch -> Command.OpenMainVideoFeed
         }
         _command publish command
     }
@@ -70,7 +70,7 @@ class TaskDetailsViewModel @Inject constructor(
     fun onPointsNotFoundButtonClicked() { /*todo*/ }
 
     data class UiState(
-        val type: QuestType,
+        val type: TaskType,
         val energy: Int,
         val energyProgress: Int,
         val completed: Boolean,

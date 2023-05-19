@@ -1,6 +1,6 @@
 package io.snaps.coredata.network.interceptors
 
-import io.snaps.corecommon.model.generateRequestId
+import io.snaps.corecommon.model.generateUuid
 import io.snaps.coredata.database.UserDataStorage
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -15,7 +15,7 @@ class CommonHeaderInterceptor(
         val originalRequest = chain.request()
         val customRequest = chain.request().newBuilder()
             .method(originalRequest.method, originalRequest.body)
-            .header("X-Request-ID", generateRequestId())
+            .header("X-Request-ID", generateUuid())
             .header("Content-Type", "application/json;charset=utf-8")
             .header("Accept", "*/*")
             .build()

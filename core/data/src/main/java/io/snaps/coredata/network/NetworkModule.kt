@@ -1,6 +1,7 @@
 package io.snaps.coredata.network
 
 import android.app.Application
+import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import io.snaps.coredata.database.TokenStorage
 import io.snaps.coredata.database.UserDataStorage
@@ -34,5 +35,10 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun chuckInterceptor(application: Application) = ChuckerInterceptor.Builder(application).build()
+    fun chuckInterceptor(application: Application, collector: ChuckerCollector) =
+        ChuckerInterceptor.Builder(application).collector(collector).build()
+
+    @Provides
+    @Singleton
+    fun chuckCollector(application: Application) = ChuckerCollector(application)
 }

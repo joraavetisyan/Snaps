@@ -77,7 +77,7 @@ import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.model.WalletAddress
+import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.addressEllipsized
 import io.snaps.corenavigation.base.openUrl
@@ -235,7 +235,7 @@ private fun WalletScreen(
     uiState: WalletViewModel.UiState,
     pullRefreshState: PullRefreshState,
     onBackClicked: () -> Boolean,
-    onAddressCopyClicked: (WalletAddress) -> Unit,
+    onAddressCopyClicked: (CryptoAddress) -> Unit,
     onSellSnapsClicked: () -> Unit,
     onTopUpClicked: () -> Unit,
     onWithdrawClicked: () -> Unit,
@@ -325,7 +325,7 @@ private fun WalletScreen(
 @Composable
 private fun Wallet(
     uiState: WalletViewModel.UiState,
-    onAddressCopyClicked: (WalletAddress) -> Unit,
+    onAddressCopyClicked: (CryptoAddress) -> Unit,
     onSellSnapsClicked: () -> Unit,
     onTopUpClicked: () -> Unit,
     onWithdrawClicked: () -> Unit,
@@ -658,7 +658,7 @@ private fun SelectWalletDialog(
 private fun TopUpDialog(
     title: TextValue,
     qr: Bitmap?,
-    address: WalletAddress,
+    address: CryptoAddress,
     onAddressCopyClicked: () -> Unit,
 ) {
     SimpleBottomDialogUI(header = title) {

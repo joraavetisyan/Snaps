@@ -113,7 +113,7 @@ private fun Data(
                 .padding(16.dp)
                 .padding(bottom = LocalBottomNavigationHeight.current),
         ) {
-            SimpleButtonContent(text = "Referral program".textValue())
+            SimpleButtonContent(text = "Referral program".textValue()) // todo localize
         }
     }
 }
@@ -122,8 +122,7 @@ private fun Data(
 private fun Empty(
     modifier: Modifier,
 ) {
-    EmptyListTileState(
-        image = ImageValue.ResImage(R.drawable.img_guy_confused),
+    EmptyListTileState.defaultState(
         title = StringKey.ReferralProgramTitleNoReferrals.textValue(),
         message = StringKey.ReferralProgramMessageNoReferrals.textValue(),
     ).Content(modifier = modifier)

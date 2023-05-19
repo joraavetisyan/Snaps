@@ -16,6 +16,7 @@ enum class StringKey {
     ActionOk,
 
     MessageSuccess,
+    MessageCopySuccess,
     MessageConnectionSuccess,
     MessageEmptyVideoFeed,
     MessageNothingFound,

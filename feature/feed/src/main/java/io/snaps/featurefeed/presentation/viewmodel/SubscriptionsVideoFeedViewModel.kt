@@ -8,17 +8,18 @@ import io.snaps.basefeed.ui.VideoFeedViewModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesubs.data.SubsRepository
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import javax.inject.Inject
 
 @HiltViewModel
 class SubscriptionsVideoFeedViewModel @Inject constructor(
-    bottomDialogBarVisibilityHandlerDelegate: BottomDialogBarVisibilityHandler,
+    bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     action: Action,
-    videoFeedRepository: VideoFeedRepository,
-    profileRepository: ProfileRepository,
-    commentRepository: CommentRepository,
-    subsRepository: SubsRepository,
+    @Bridged videoFeedRepository: VideoFeedRepository,
+    @Bridged profileRepository: ProfileRepository,
+    @Bridged commentRepository: CommentRepository,
+    @Bridged subsRepository: SubsRepository,
 ) : VideoFeedViewModel(
     videoFeedType = VideoFeedType.Subscriptions,
     action = action,
@@ -26,5 +27,5 @@ class SubscriptionsVideoFeedViewModel @Inject constructor(
     profileRepository = profileRepository,
     commentRepository = commentRepository,
     subsRepository = subsRepository,
-    bottomDialogBarVisibilityHandlerDelegate = bottomDialogBarVisibilityHandlerDelegate,
+    bottomDialogBarVisibilityHandler = bottomDialogBarVisibilityHandler,
 )

@@ -9,6 +9,7 @@ import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.SwapTransactionModel
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.WalletModel
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
@@ -27,8 +28,8 @@ class ExchangeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
-    private val walletRepository: WalletRepository,
-    private val blockchainTxRepository: BlockchainTxRepository,
+    @Bridged private val walletRepository: WalletRepository,
+    @Bridged private val blockchainTxRepository: BlockchainTxRepository,
 ) : SimpleViewModel() {
 
     private val args = savedStateHandle.requireArgs<AppRoute.Exchange.Args>()
@@ -46,7 +47,7 @@ class ExchangeViewModel @Inject constructor(
                 action.execute {
                     blockchainTxRepository.send(
                         wallet = it,
-                        walletAddress = transactionModel.address,
+                        address = transactionModel.address,
                         amount = transactionModel.amount,
                         gasPrice = transactionModel.gasPrice.toLong(),
                         gasLimit = transactionModel.gasLimit.toLong(),

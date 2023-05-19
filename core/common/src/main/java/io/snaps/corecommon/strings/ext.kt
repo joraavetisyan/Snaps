@@ -1,6 +1,6 @@
 package io.snaps.corecommon.strings
 
-import io.snaps.corecommon.model.WalletAddress
+import io.snaps.corecommon.model.CryptoAddress
 import java.util.*
 
 val DEFAULT_LOCALE: Locale get() = Locale.getDefault()
@@ -37,7 +37,7 @@ fun String.addPrefix(prefix: String, ignoreEmpty: Boolean = false): String {
     return "$prefix$this"
 }
 
-val WalletAddress.addressEllipsized get() = take(7) + "..." + takeLast(10)
+val CryptoAddress.addressEllipsized get() = take(7) + "..." + takeLast(10)
 
 fun String.capitalizeFirstLetter() = replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 

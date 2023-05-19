@@ -1,6 +1,7 @@
 package io.snaps.coredata.network
 
 import io.snaps.corecommon.ext.log
+import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
@@ -78,7 +79,7 @@ fun Throwable.toApiError() = when (this) {
                 stream = response()!!.errorBody()!!.byteStream(),
             )
         } catch (t: Throwable) {
-            log("Couldn't retrieve error body: $t")
+            logE("Couldn't retrieve error body: $t")
             null
         }
         val error = errorBody?.error
@@ -96,7 +97,5 @@ fun Throwable.toApiError() = when (this) {
         }
     }
 
-    else -> AppError.Unknown().also {
-        log("Unknown api call error: $this")
-    }
+    else -> AppError.Unknown()
 }

@@ -1,14 +1,17 @@
 package io.snaps.basesession.data
 
-import io.snaps.basesources.NotificationsSource
-import io.snaps.corecommon.ext.log
-import io.snaps.corecommon.model.AppError
-import io.snaps.corecommon.model.Effect
-import io.snaps.coredata.network.Action
+import com.chuckerteam.chucker.api.ChuckerCollector
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.snaps.basesources.NotificationsSource
+import io.snaps.corecommon.ext.log
+import io.snaps.corecommon.ext.logTag
+import io.snaps.corecommon.model.AppError
+import io.snaps.corecommon.model.BuildInfo
+import io.snaps.corecommon.model.Effect
+import io.snaps.coredata.network.Action
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
@@ -17,6 +20,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 class ActionImpl @Inject constructor(
+    private val buildInfo: BuildInfo,
+    private val chuckerCollector: ChuckerCollector,
     private val notificationsSource: NotificationsSource,
     private val sessionRepository: SessionRepository,
 ) : Action {
@@ -44,20 +49,27 @@ class ActionImpl @Inject constructor(
         }
 
         return effect.also {
-            if (needsErrorProcessing) it.errorOrNull?.let { error -> handle(error) }
+            it.errorOrNull?.let { error ->
+                if (buildInfo.isDebug) {
+                    error.cause?.let { t -> chuckerCollector.onError(logTag, t) }
+                }
+                if (needsErrorProcessing) {
+                    handle(error)
+                }
+            }
         }
     }
 
     // тут обрабатывем общие ошибки (простые с плашкой),
     // остальные случаи обрабатываются на уровне view model
     private suspend fun handle(error: AppError) {
-        log((error.cause ?: error).fillInStackTrace().stackTraceToString())
+        log(error)
 
         when (error) {
             is AppError.Unknown -> notificationsSource.sendError(error)
             is AppError.Custom -> when (error.code) {
                 HttpURLConnection.HTTP_UNAUTHORIZED -> {
-                    sessionRepository.onLogout()
+                    sessionRepository.logout()
                     notificationsSource.sendError(error)
                 }
                 else -> {}

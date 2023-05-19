@@ -10,18 +10,18 @@ import io.snaps.basesubs.domain.SubPageModel
 
 sealed interface SubUiState {
 
-    val userId: Any
+    val key: Any
 
     data class Data(
-        override val userId: Any,
-        val item: io.snaps.basesubs.domain.SubModel,
+        override val key: Any,
+        val item: SubModel,
         val onClicked: () -> Unit,
         val onSubscribeClicked: () -> Unit,
     ) : SubUiState
 
-    data class Shimmer(override val userId: Any) : SubUiState
+    data class Shimmer(override val key: Any) : SubUiState
 
-    data class Progress(override val userId: Any = -1000) : SubUiState
+    data class Progress(override val key: Any = -1000) : SubUiState
 }
 
 data class SubsUiState(
@@ -31,10 +31,10 @@ data class SubsUiState(
     val onListEndReaching: (() -> Unit)? = null,
 )
 
-fun io.snaps.basesubs.domain.SubPageModel.toSubsUiState(
+fun SubPageModel.toSubsUiState(
     shimmerListSize: Int,
-    onItemClicked: (io.snaps.basesubs.domain.SubModel) -> Unit,
-    onSubscribeClicked: (io.snaps.basesubs.domain.SubModel) -> Unit,
+    onItemClicked: (SubModel) -> Unit,
+    onSubscribeClicked: (SubModel) -> Unit,
     onReloadClicked: () -> Unit,
     onListEndReaching: () -> Unit,
 ): SubsUiState {
@@ -48,24 +48,25 @@ fun io.snaps.basesubs.domain.SubPageModel.toSubsUiState(
             errorState = MessageBannerState.defaultState(onReloadClicked)
         )
         loadedPageItems.isEmpty() -> SubsUiState(
-            emptyState = EmptyListTileState(
-                title = "No data".textValue(),
-                image = ImageValue.ResImage(R.drawable.img_diamonds),
+            emptyState = EmptyListTileState.defaultState(),
+        )
+        else -> if (loadedPageItems.any { it.isSubscribed == null }) {
+            SubsUiState(errorState = MessageBannerState.defaultState(onReloadClicked))
+        } else {
+            SubsUiState(
+                items = loadedPageItems.map {
+                    SubUiState.Data(
+                        key = it.entityId,
+                        item = it,
+                        onClicked = { onItemClicked(it) },
+                        onSubscribeClicked = { onSubscribeClicked(it) }
+                    )
+                }.run {
+                    if (nextPageId == null) this
+                    else this.plus(SubUiState.Progress())
+                },
+                onListEndReaching = onListEndReaching,
             )
-        )
-        else -> SubsUiState(
-            items = loadedPageItems.map {
-                SubUiState.Data(
-                    userId = it.userId,
-                    item = it,
-                    onClicked = { onItemClicked(it) },
-                    onSubscribeClicked = { onSubscribeClicked(it) }
-                )
-            }.run {
-                if (nextPageId == null) this
-                else this.plus(SubUiState.Progress())
-            },
-            onListEndReaching = onListEndReaching,
-        )
+        }
     }
 }

@@ -40,7 +40,7 @@ class SettingsViewModel @Inject constructor(
 
     fun onLogoutConfirmed() {
         _uiState.update { it.copy(isLoading = true, dialog = null) }
-        sessionRepository.onLogout()
+        sessionRepository.logout()
     }
 
     fun onDialogDismissRequest() = viewModelScope.launch {

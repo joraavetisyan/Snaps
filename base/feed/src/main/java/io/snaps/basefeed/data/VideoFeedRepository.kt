@@ -7,7 +7,6 @@ import io.snaps.basefeed.data.model.UserLikedVideoResponseDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseplayer.domain.VideoClipModel
-import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.Completable
@@ -27,6 +26,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import javax.inject.Inject
+
+private const val feedPageSize = 50
 
 interface VideoFeedRepository {
 
@@ -73,23 +74,22 @@ class VideoFeedRepositoryImpl @Inject constructor(
             is VideoFeedType.UserLiked -> userLikedVideoFeedLoaderFactory.get(Unit) {
                 PagedLoaderParams(
                     action = { from, count -> videoFeedApi.likedVideos(from, count) },
-                    pageSize = 20,
+                    pageSize = feedPageSize,
                     nextPageIdFactory = { it.entityId },
                     mapper = { videoFeed -> videoFeed.map { it.video.toModel() } },
                 )
             }
-
             else -> loaderFactory.get(videoFeedType) { type ->
                 when (type) {
                     VideoFeedType.Main -> PagedLoaderParams(
                         action = { from, count -> videoFeedApi.feed(from, count) },
-                        pageSize = 5,
+                        pageSize = 20,
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
                     VideoFeedType.Subscriptions -> PagedLoaderParams(
                         action = { from, count -> videoFeedApi.subscriptionsFeed(from, count) },
-                        pageSize = 5,
+                        pageSize = feedPageSize,
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
@@ -101,7 +101,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     )
                     is VideoFeedType.Popular -> PagedLoaderParams(
                         action = { from, count -> videoFeedApi.popularFeed(from, count) },
-                        pageSize = 12,
+                        pageSize = feedPageSize,
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
@@ -113,13 +113,13 @@ class VideoFeedRepositoryImpl @Inject constructor(
                                 videoFeedApi.myFeed(from, count)
                             }
                         },
-                        pageSize = 20,
+                        pageSize = feedPageSize,
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
                     is VideoFeedType.All -> PagedLoaderParams(
                         action = { from, count -> videoFeedApi.videos(type.query, from, count) },
-                        pageSize = 12,
+                        pageSize = feedPageSize,
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
@@ -131,7 +131,8 @@ class VideoFeedRepositoryImpl @Inject constructor(
 
     private suspend fun getLikedVideos(): List<UserLikedVideoResponseDto> {
         return likedVideos ?: apiCall(ioDispatcher) {
-            videoFeedApi.likedVideos(null, 100)
+            // todo better way once back supports
+            videoFeedApi.likedVideos(null, 1000)
         }.doOnSuccess {
             likedVideos = it
         }.dataOrCache ?: emptyList()
@@ -180,7 +181,6 @@ class VideoFeedRepositoryImpl @Inject constructor(
                 }.startUpload()
                 Effect.success(uploadId)
             } catch (e: Exception) {
-                log(e)
                 Effect.error(AppError.Unknown(cause = e))
             }
         }

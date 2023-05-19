@@ -19,10 +19,12 @@ import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toStringValue
-import io.snaps.corecommon.model.FiatCurrency
+import io.snaps.corecommon.model.Fiat
+import io.snaps.corecommon.model.Fiat.Currency
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.Token
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
@@ -47,17 +49,17 @@ private const val minGasValue = 0.0012
 class PurchaseViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     featureToggle: FeatureToggle,
-    transferTokensDialogHandlerImplDelegate: TransferTokensDialogHandler,
-    limitedGasDialogHandlerImplDelegate: LimitedGasDialogHandler,
-    nftRepository: NftRepository,
+    transferTokensDialogHandler: TransferTokensDialogHandler,
+    limitedGasDialogHandler: LimitedGasDialogHandler,
+    @Bridged nftRepository: NftRepository,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
     private val purchaseStateProvider: PurchaseStateProvider,
     private val billingRouter: BillingRouter,
     private val interactor: MyCollectionInteractor,
 ) : SimpleViewModel(),
-    TransferTokensDialogHandler by transferTokensDialogHandlerImplDelegate,
-    LimitedGasDialogHandler by limitedGasDialogHandlerImplDelegate {
+    TransferTokensDialogHandler by transferTokensDialogHandler,
+    LimitedGasDialogHandler by limitedGasDialogHandler {
 
     private val args = savedStateHandle.requireArgs<AppRoute.Purchase.Args>()
 
@@ -66,7 +68,7 @@ class PurchaseViewModel @Inject constructor(
             nftType = args.type,
             nftImage = ImageValue.Url(args.image),
             // todo currency name
-            cost = "${args.costInUsd}${FiatCurrency.USD.symbol}",
+            cost = "${args.costInUsd}${Fiat.Currency.USD.symbol}",
             dailyUnlock = args.dailyUnlock,
             dailyReward = args.dailyReward,
             isPurchasable = args.isPurchasable,

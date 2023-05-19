@@ -1,20 +1,17 @@
 package io.snaps.basesubs.data
 
-import io.snaps.baseprofile.data.model.PaymentsState
-import io.snaps.baseprofile.data.model.QuestInfoResponseDto
-import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.mock.rImage
-import io.snaps.corecommon.mock.rInt
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import io.snaps.basesubs.data.model.SubscribeRequestDto
-import io.snaps.basesubs.data.model.SubscriptionItemResponseDto
+import io.snaps.basesubs.data.model.SubsItemResponseDto
 import io.snaps.basesubs.data.model.UnsubscribeRequestDto
 import kotlinx.coroutines.delay
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 class FakeSubsApi : SubsApi {
@@ -23,82 +20,71 @@ class FakeSubsApi : SubsApi {
     private var subscriptionGeneration = 0
 
     override suspend fun subscribers(
-        @Query(value = "userId") userId: Uuid?,
+        @Path(value = "userId") userId: Uuid,
         @Query(value = "from") from: Uuid?,
-        @Query(value = "count") count: Int,
-    ): BaseResponse<List<SubscriptionItemResponseDto>> {
+        @Query(value = "count") count: Int
+    ): BaseResponse<List<SubsItemResponseDto>> {
         log("Requesting subscribers: $count subscribers with offset $from")
         delay(mockDelay)
         return BaseResponse(
             data = List(count) {
-                SubscriptionItemResponseDto(
+                SubsItemResponseDto(
+                    entityId = "${subscriberGeneration}subscriber$it",
                     userId = "${subscriberGeneration}subscriber$it",
-                    imageUrl = rImage,
+                    avatar = rImage,
                     name = "$it subscriber",
-                    isSubscribed = rBool,
                 )
             }
         ).also { subscriberGeneration++ }
     }
 
     override suspend fun subscriptions(
-        @Query(value = "userId") userId: Uuid?,
+        @Path(value = "userId") userId: Uuid,
         @Query(value = "from") from: Uuid?,
-        @Query(value = "count") count: Int,
-    ): BaseResponse<List<SubscriptionItemResponseDto>> {
+        @Query(value = "count") count: Int
+    ): BaseResponse<List<SubsItemResponseDto>> {
         log("Requesting subscriptions: $count subscriptions with offset $from")
         delay(mockDelay)
         return BaseResponse(
             data = List(count) {
-                SubscriptionItemResponseDto(
+                SubsItemResponseDto(
+                    entityId = "${subscriptionGeneration}subscription$it",
                     userId = "${subscriptionGeneration}subscription$it",
-                    imageUrl = rImage,
+                    avatar = rImage,
                     name = "$it subscriptions",
-                    isSubscribed = rBool,
                 )
             }
         ).also { subscriptionGeneration++ }
     }
 
-    override suspend fun subscriptions(
-        from: Uuid?,
-        count: Int
-    ): BaseResponse<List<UserInfoResponseDto>> {
-        log("Requesting subscribers: $count subscribers with offset $from")
+    override suspend fun mySubscribers(from: Uuid?, count: Int): BaseResponse<List<SubsItemResponseDto>> {
+        log("Requesting my subscribers: $count subscribers with offset $from")
         delay(mockDelay)
         return BaseResponse(
             data = List(count) {
-                UserInfoResponseDto(
-                    entityId = "${subscriberGeneration}entity$it",
-                    userId = "${subscriberGeneration}subscriber$it",
-                    email = "$it email",
-                    wallet = "$it wallet",
-                    createdDate = "",
-                    avatarUrl = rImage,
+                SubsItemResponseDto(
+                    entityId = "${subscriptionGeneration}subscriber$it",
+                    userId = "${subscriptionGeneration}subscriber$it",
+                    avatar = rImage,
                     name = "$it subscriber",
-                    experience = 0,
-                    level = 1,
-                    instagramId = null,
-                    ownInviteCode = "",
-                    inviteCodeRegisteredBy = null,
-                    questInfo = QuestInfoResponseDto(
-                        quests = emptyList(),
-                        questDate = "",
-                        roundEndDate = "",
-                        experience = 0,
-                        energy = 20,
-                        roundId = "",
-                        id = "",
-                    ),
-                    totalLikes = rInt,
-                    totalSubscribers = rInt,
-                    totalSubscriptions = rInt,
-                    paymentsState = PaymentsState.No,
-                    firstLevelReferralMultiplier = 0.03,
-                    secondLevelReferralMultiplier = 0.01,
                 )
             }
-        ).also { subscriberGeneration++ }
+        ).also { subscriptionGeneration++ }
+    }
+
+    override suspend fun mySubscriptions(from: Uuid?, count: Int): BaseResponse<List<SubsItemResponseDto>> {
+        log("Requesting my subscriptions: $count subscriptions with offset $from")
+        delay(mockDelay)
+        return BaseResponse(
+            data = List(count) {
+                SubsItemResponseDto(
+                    entityId = "${subscriptionGeneration}subscription$it",
+                    userId = "${subscriptionGeneration}subscription$it",
+                    avatar = rImage,
+                    name = "$it subscriptions",
+                )
+            }
+        ).also { subscriptionGeneration++ }
     }
 
     override suspend fun subscribe(body: SubscribeRequestDto): BaseResponse<Completable> {

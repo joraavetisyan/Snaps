@@ -76,6 +76,7 @@ class UserDataStorage @Inject constructor(
     }
 
     fun reset(reason: LogOutReason? = null) {
+        // todo do not clear onboarding related stuff
         provider.prefs.edit { clear() }
     }
 }

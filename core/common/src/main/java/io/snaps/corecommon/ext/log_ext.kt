@@ -15,10 +15,18 @@ fun log(value: String) {
     Log.d(logTagPrefix, value)
 }
 
-inline fun Any.log(value: Exception) {
+inline fun Any.logE(value: String) {
+    Log.e(logTag, value, Exception(value))
+}
+
+fun logE(value: String) {
+    Log.e(logTagPrefix, value, Exception(value))
+}
+
+inline fun Any.log(value: Throwable) {
     Log.e(logTag, "Error: ", value)
 }
 
-fun log(value: Exception) {
+fun log(value: Throwable) {
     Log.e(logTagPrefix, "Error: ", value)
 }

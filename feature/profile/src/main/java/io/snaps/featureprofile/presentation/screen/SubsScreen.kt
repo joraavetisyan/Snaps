@@ -45,6 +45,7 @@ import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.basesubs.domain.SubModel
+import io.snaps.corecommon.model.Uuid
 import io.snaps.featureprofile.presentation.viewmodel.SubsViewModel
 import kotlinx.coroutines.launch
 
@@ -76,7 +77,7 @@ fun SubsScreen(
 private fun SubsScreen(
     uiState: SubsViewModel.UiState,
     onBackClicked: () -> Boolean,
-    onUnsubscribeClicked: (SubModel) -> Unit,
+    onUnsubscribeClicked: (Uuid) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -97,10 +98,8 @@ private fun SubsScreen(
                 .inset(insetAllExcludeTop()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val subscriptions = StringKey.SubsActionSubscriptions.textValue(
-                uiState.totalSubscribers
-            )
-            val subscribers = StringKey.SubsActionSubscribers.textValue(uiState.totalSubscriptions)
+            val subscriptions = StringKey.SubsActionSubscriptions.textValue(uiState.totalSubscriptions)
+            val subscribers = StringKey.SubsActionSubscribers.textValue(uiState.totalSubscribers)
 
             val pages = listOf(uiState.subscriptionsUiState, uiState.subscribersUiState)
             val pagerState = rememberPagerState(uiState.initialPage)
@@ -126,26 +125,10 @@ private fun SubsScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     onScrollEndDetected = pages[pagerState.currentPage].onListEndReaching
                 ) {
-                    items(pages[it].items, key = { it.userId }) {
-                        when (it) {
-                            is SubUiState.Data -> Item(it)
-                            is SubUiState.Shimmer -> CellTile(
-                                data = CellTileState.Data(
-                                    leftPart = LeftPart.Shimmer,
-                                    middlePart = MiddlePart.Shimmer(
-                                        needValueLine = true,
-                                    ),
-                                    rightPart = RightPart.Shimmer(needCircle = true),
-                                )
-                            )
-                            is SubUiState.Progress -> Box(modifier = Modifier.fillMaxWidth()) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                        .align(Alignment.Center),
-                                )
-                            }
-                        }
+                    items(pages[it].items, key = { it.key }) { Sub(it) }
+                    item {
+                        pages[it].errorState?.Content(modifier = Modifier)
+                        pages[it].emptyState?.Content(modifier = Modifier)
                     }
                 }
             }
@@ -162,20 +145,42 @@ private fun SubsScreen(
 }
 
 @Composable
-private fun Item(
-    data: SubUiState.Data,
-) {
-    val item = data.item
-    CellTileState.Data(
-        leftPart = item.image?.let {
-            LeftPart.Logo(it) { transformations(CircleCropTransformation()) }
-        } ?: LeftPart.Shimmer,
-        middlePart = MiddlePart.Data(valueBold = item.name.textValue()),
-        rightPart = RightPart.ChipData(
-            text = (if (item.isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),
-            selected = !item.isSubscribed,
-            onClick = data.onSubscribeClicked,
-        ),
-        clickListener = data.onClicked,
-    ).Content(modifier = Modifier)
+private fun Sub(data: SubUiState) {
+    when (data) {
+        is SubUiState.Data -> {
+            val item = data.item
+            CellTileState.Data(
+                leftPart = item.avatar?.let {
+                    LeftPart.Logo(it) { transformations(CircleCropTransformation()) }
+                } ?: LeftPart.Shimmer,
+                middlePart = MiddlePart.Data(valueBold = item.name.textValue()),
+                rightPart = RightPart.ChipData(
+                    text = when (item.isSubscribed) {
+                        true -> StringKey.SubsActionFollowing
+                        false -> StringKey.SubsActionFollow
+                        null -> StringKey.Error
+                    }.textValue(),
+                    selected = item.isSubscribed?.not() ?: false,
+                    onClick = { if (item.isSubscribed != null) data.onSubscribeClicked() },
+                ),
+                clickListener = data.onClicked,
+            ).Content(modifier = Modifier)
+        }
+        is SubUiState.Shimmer -> CellTile(
+            data = CellTileState.Data(
+                leftPart = LeftPart.Shimmer,
+                middlePart = MiddlePart.Shimmer(
+                    needValueLine = true,
+                ),
+                rightPart = RightPart.Shimmer(needCircle = true),
+            )
+        )
+        is SubUiState.Progress -> Box(modifier = Modifier.fillMaxWidth()) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.Center),
+            )
+        }
+    }
 }

@@ -38,7 +38,6 @@ data class VideoFeedUiState(
 fun VideoFeedPageModel.toVideoFeedUiState(
     shimmerListSize: Int,
     emptyMessage: TextValue = StringKey.MessageEmptyVideoFeed.textValue(),
-    emptyImage: ImageValue = ImageValue.ResImage(R.drawable.img_guy_confused),
     onClipClicked: (VideoClipModel) -> Unit,
     onReloadClicked: () -> Unit,
     onListEndReaching: () -> Unit,
@@ -53,10 +52,7 @@ fun VideoFeedPageModel.toVideoFeedUiState(
             errorState = MessageBannerState.defaultState(onReloadClicked)
         )
         loadedPageItems.isEmpty() -> VideoFeedUiState(
-            emptyState = EmptyListTileState(
-                title = emptyMessage,
-                image = emptyImage,
-            )
+            emptyState = EmptyListTileState.defaultState(title = emptyMessage)
         )
         else -> VideoFeedUiState(
             items = loadedPageItems.map {

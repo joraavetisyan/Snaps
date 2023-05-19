@@ -74,6 +74,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonInlineL
 import io.snaps.coreuicompose.uikit.button.SimpleButtonLightS
+import io.snaps.coreuicompose.uikit.other.KeepScreenOn
 import io.snaps.coreuicompose.uikit.other.Progress
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurecreate.ScreenNavigator
@@ -226,6 +227,8 @@ fun BoxScope.PermissionGrantedContent(
     val cameraSelector: MutableState<CameraSelector> = remember {
         mutableStateOf(DEFAULT_BACK_CAMERA)
     }
+
+    KeepScreenOn()
 
     LaunchedEffect(previewView) {
         videoCapture.value = context.createVideoCaptureUseCase(

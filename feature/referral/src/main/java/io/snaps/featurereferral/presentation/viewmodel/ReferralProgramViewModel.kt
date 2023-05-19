@@ -17,6 +17,7 @@ import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.addPrefix
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.barcode.BarcodeManager
@@ -36,18 +37,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReferralProgramViewModel @Inject constructor(
-    mainHeaderHandlerDelegate: MainHeaderHandler,
-    onboardingHandlerDelegate: OnboardingHandler,
-    bottomDialogBarVisibilityHandlerDelegate: BottomDialogBarVisibilityHandler,
+    @Bridged mainHeaderHandler: MainHeaderHandler,
+    onboardingHandler: OnboardingHandler,
+    bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     private val fileManager: FileManager,
     private val barcodeManager: BarcodeManager,
-    private val profileRepository: ProfileRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel(),
-    MainHeaderHandler by mainHeaderHandlerDelegate,
-    OnboardingHandler by onboardingHandlerDelegate,
-    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandlerDelegate {
+    MainHeaderHandler by mainHeaderHandler,
+    OnboardingHandler by onboardingHandler,
+    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandler {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -106,7 +107,7 @@ class ReferralProgramViewModel @Inject constructor(
 
     private fun onReferralClick(model: UserInfoModel) {
         viewModelScope.launch {
-            _command publish Command.OpenUserInfoScreen(model.entityId)
+            _command publish Command.OpenUserInfoScreen(model.userId)
         }
     }
 

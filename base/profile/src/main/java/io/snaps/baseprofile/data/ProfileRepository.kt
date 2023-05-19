@@ -10,13 +10,14 @@ import io.snaps.baseprofile.domain.BalanceModel
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.domain.UsersPageModel
+import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
-import io.snaps.corecommon.model.WalletAddress
+import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.json.KotlinxSerializationJsonProvider
@@ -64,7 +65,7 @@ interface ProfileRepository {
     suspend fun createUser(
         fileId: Uuid,
         userName: String,
-        walletAddress: WalletAddress,
+        address: CryptoAddress,
     ): Effect<Completable>
 
     suspend fun setInviteCode(inviteCode: String): Effect<Completable>
@@ -74,13 +75,13 @@ interface ProfileRepository {
     suspend fun connectInstagram(
         instagramUsername: String,
         name: String,
-        walletAddress: WalletAddress,
+        address: CryptoAddress,
         avatar: FullUrl?,
     ): Effect<Completable>
 
     suspend fun disconnectInstagram(
         name: String,
-        walletAddress: WalletAddress,
+        address: CryptoAddress,
         avatar: FullUrl?,
     ): Effect<Completable>
 
@@ -124,7 +125,7 @@ class ProfileRepositoryImpl @Inject constructor(
                         onlyInvited = false,
                     )
                 },
-                pageSize = 20,
+                pageSize = 100,
                 nextPageIdFactory = { it.entityId },
                 mapper = { it.toModelList() },
             )
@@ -185,14 +186,14 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun createUser(
         fileId: Uuid,
         userName: String,
-        walletAddress: WalletAddress,
+        address: CryptoAddress,
     ): Effect<Completable> {
         return apiCall(ioDispatcher) {
             api.createUser(
                 UserCreateRequestDto(
                     name = userName,
                     avatarUrl = "http://51.250.36.197:5100/api/v1/file?fileId=$fileId", // todo
-                    wallet = walletAddress,
+                    wallet = address,
                 )
             )
         }.map {
@@ -225,14 +226,14 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun connectInstagram(
         instagramUsername: String,
         name: String,
-        walletAddress: WalletAddress,
+        address: CryptoAddress,
         avatar: FullUrl?,
     ): Effect<Completable> {
         return apiCall(ioDispatcher) {
             api.connectInstagram(
                 ConnectInstagramRequestDto(
                     instagramId = instagramUsername,
-                    wallet = walletAddress,
+                    wallet = address,
                     name = name,
                     avatarUrl = avatar,
                 )
@@ -250,14 +251,14 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun disconnectInstagram(
         name: String,
-        walletAddress: WalletAddress,
+        address: CryptoAddress,
         avatar: FullUrl?,
     ): Effect<Completable> {
         return apiCall(ioDispatcher) {
             api.connectInstagram(
                 ConnectInstagramRequestDto(
                     instagramId = null,
-                    wallet = walletAddress,
+                    wallet = address,
                     name = name,
                     avatarUrl = avatar,
                 )
@@ -275,9 +276,14 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun getSocialPages(): Effect<List<SocialPage>> {
          // fetch called in FeatureToggleUpdater, todo to separate source with proper success/failure handle
-        val pages = FirebaseRemoteConfig.getInstance().getValue("social").let {
-            @OptIn(ExperimentalSerializationApi::class)
-            KotlinxSerializationJsonProvider().get().decodeFromStream<List<SocialPage>>(it.asByteArray().inputStream())
+        val pages = try {
+            FirebaseRemoteConfig.getInstance().getValue("social").let {
+                @OptIn(ExperimentalSerializationApi::class)
+                KotlinxSerializationJsonProvider().get().decodeFromStream<List<SocialPage>>(it.asByteArray().inputStream())
+            }
+        } catch (e: Exception) {
+            log(e)
+            emptyList()
         }
         return Effect.success(pages)
     }

@@ -67,7 +67,6 @@ object MessageBannerConfig {
     fun elevation() = CardDefaults.cardElevation()
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessageBannerTile(
     modifier: Modifier = Modifier,

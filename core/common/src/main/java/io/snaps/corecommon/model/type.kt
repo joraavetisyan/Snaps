@@ -2,12 +2,12 @@ package io.snaps.corecommon.model
 
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.ext.formatToMoney
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.util.UUID
-import java.util.Currency
 
 typealias DateTime = String
 typealias Timestamp = Long
@@ -16,70 +16,102 @@ typealias FullUrl = String
 typealias DeviceId = String
 typealias Uuid = String
 typealias CardNumber = String
-typealias CurrencySymbol = String
-typealias WalletAddress = String
+typealias MoneySymbol = String
+typealias CryptoAddress = String
 typealias TxHash = String // blockchain transaction hash
 typealias NftTypeInt = Int
 
 fun generateCurrentDateTime() = ZonedDateTime.now().toString()
-fun generateRequestId() = UUID.randomUUID().toString()
+fun generateUuid() = UUID.randomUUID().toString()
+
+interface Money {
+
+    val symbol: String
+}
 
 @Serializable
-enum class FiatCurrency(
-    val symbol: CurrencySymbol,
+data class Fiat(
+    @SerialName("currency") val currency: Currency,
+    @SerialName("value") val value: Double,
 ) {
-    @SerialName("643") RUB("₽"),
-    @SerialName("840") USD("$"),
-    @SerialName("978") EUR("€"),
-    NONE(""),
-    ;
 
-    val displayName
-        get() = runCatching {
-            Currency.getInstance(name).displayName
-        }.getOrNull().orEmpty()
+    @Serializable
+    enum class Currency(
+        override val symbol: MoneySymbol,
+    ) : Money {
+        @SerialName("643") RUB("₽"),
+        @SerialName("840") USD("$"),
+        @SerialName("978") EUR("€"),
+        ;
+
+        val displayName
+            get() = runCatching { java.util.Currency.getInstance(name).displayName }.getOrNull() ?: name
+    }
+
+    fun getFormattedMoney() = value.formatToMoney()
+
+    fun getFormattedMoneyWithCurrency(currencyFirst: Boolean = true) = "%s %s".run {
+        if (currencyFirst) format(currency.symbol, getFormattedMoney())
+        else format(getFormattedMoney(), currency.symbol)
+    }
+}
+
+@Serializable
+data class Coin(
+    val type: Type,
+    val value: Double,
+) {
+
+    @Serializable
+    enum class Type(
+        override val symbol: String,
+        val coinName: String,
+        val code: String,
+        val address: CryptoAddress,
+        val decimal: Int,
+    ) : Money {
+        SNPS("SNPS", "Snaps", "SNAPS", "0x92677918569A2BEA213Af66b54e0C9B9811d021c", 18),
+        // WBNB("WBNB","WBNB", "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", "WBNB", 18),
+        BUSD("BUSD", "BUSD", "BUSD", "0xe9e7cea3dedca5984780bafc599bd69add087d56", 18),
+        USDT("USDT", "Tether USD", "USDT", "0x55d398326f99059ff775485246999027b3197955", 18),
+        BNB("BNB", "BNB", "BNB", "0x242a1ff6ee06f2131b7924cacb74c7f9e3a5edc9", 18),
+    }
+
+    fun getFormattedValue() = value.formatToMoney()
+
+    fun getFormattedValueWithType() = "%s %s".format(getFormattedValue(), type.symbol)
+}
+
+@Serializable
+enum class Nft(val address: CryptoAddress) {
+    SNAPS("0x5F0cF62ad1DD5A267427DC161ff365b75142E3b3")
 }
 
 @Serializable
 enum class SubsType {
-    Subscriptions, Subscribers,
+    Subscriptions,
+    Subscribers,
 }
 
 @Serializable
-data class WalletModel(
-    val coinUid: String,
-    val receiveAddress: WalletAddress,
-    val symbol: String,
-    val iconUrl: FullUrl,
-    val coinValue: String,
-    val fiatValue: String,
-    val decimal: Int,
-    val coinAddress: String?,
-) {
-
-    val coinValueDouble: Double
-        get() = coinValue.replace(",", ".")
-            .filter { it.isDigit() || it == '.' }
-            .toDoubleOrNull() ?: 0.0
-}
-
-@Serializable
-enum class SocialNetwork(
-    val url: String
-) {
-    Instagram("com.instagram.android"),
-    Facebook("com.facebook.katana"),
-    Twitter("com.twitter.android"),
-}
-
-@Serializable
-enum class QuestType {
+enum class TaskType {
     Like,
     PublishVideo,
     Subscribe,
     Watch,
     SocialShare,
     SocialPost,
+}
+
+@Serializable
+enum class OnboardingType {
+    Rank,
+    Popular,
+    Tasks,
+    Nft,
+    Referral,
+    Wallet,
+    Rewards,
 }
 
 @Serializable
@@ -119,14 +151,22 @@ enum class NftType(val intType: NftTypeInt, val storeId: String?) {
     }
 }
 
-enum class OnboardingType {
-    Rank,
-    Popular,
-    Tasks,
-    Nft,
-    Referral,
-    Wallet,
-    Rewards,
+@Serializable
+data class WalletModel(
+    val coinUid: String,
+    val receiveAddress: CryptoAddress,
+    val symbol: String,
+    val iconUrl: FullUrl,
+    val coinValue: String,
+    val fiatValue: String,
+    val decimal: Int,
+    val coinAddress: String?,
+) {
+
+    val coinValueDouble: Double
+        get() = coinValue.replace(",", ".")
+            .filter { it.isDigit() || it == '.' }
+            .toDoubleOrNull() ?: 0.0
 }
 
 data class NftModel(

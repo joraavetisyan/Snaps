@@ -6,6 +6,8 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.annotation.CallSuper
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
@@ -14,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -22,8 +25,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import io.snaps.android.di.AppViewModelFactory
 import io.snaps.corenavigation.base.navigate
 import io.snaps.coreuicompose.tools.SystemBarsIconsColor
+import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 import io.snaps.coreuicompose.uikit.status.MessageBannerUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
@@ -75,22 +80,28 @@ class AppActivity : FragmentActivity() {
                     )
                 }
                 is AppViewModel.StartFlow.AuthorizedFlow -> {
-                    SideEffect { shouldKeepSplashScreen = false }
-                    navHostProvider.AuthorizedGraph(
-                        navController = navController,
-                        needsWalletConnect = currentFlow.needsWalletConnect,
-                        needsWalletImport = currentFlow.needsWalletImport,
-                        needsInitialization = currentFlow.needsInitialization,
-                    )
-                    LaunchedEffect(Unit) {
-                        navController.navigate(currentFlow.deeplink)
+                    if (currentFlow.isError) {
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            MessageBannerState.defaultState(onClick = viewModel::onRetry)
+                        }
+                    } else {
+                        SideEffect { shouldKeepSplashScreen = false }
+                        navHostProvider.AuthorizedGraph(
+                            navController = navController,
+                            needsWalletConnect = currentFlow.needsWalletConnect,
+                            needsWalletImport = currentFlow.needsWalletImport,
+                            needsInitialization = currentFlow.needsInitialization,
+                        )
+                        LaunchedEffect(Unit) {
+                            navController.navigate(currentFlow.deeplink)
+                        }
+                        // When firebase dynamic links support is added, use this instead of the custom intent handle
+                        /*Firebase.dynamicLinks
+                            .getDynamicLink(intent)
+                            .addOnSuccessListener {
+                                navController.navigate(AppDeeplink.parse(it?.link.toString()))
+                            }*/
                     }
-                    // When firebase dynamic links support is added, use this instead of the custom intent handle
-                    /*Firebase.dynamicLinks
-                        .getDynamicLink(intent)
-                        .addOnSuccessListener {
-                            navController.navigate(AppDeeplink.parse(it?.link.toString()))
-                        }*/
                 }
             }
             viewModel.updateAppRoute(navBackStackEntry?.destination?.route)

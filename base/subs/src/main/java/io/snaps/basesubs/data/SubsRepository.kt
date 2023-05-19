@@ -1,16 +1,16 @@
 package io.snaps.basesubs.data
 
-import io.snaps.baseprofile.data.model.UserInfoResponseDto
+import io.snaps.basesubs.data.model.SubsItemResponseDto
+import io.snaps.basesubs.data.model.SubscribeRequestDto
+import io.snaps.basesubs.data.model.UnsubscribeRequestDto
+import io.snaps.basesubs.domain.SubPageModel
+import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
-import io.snaps.basesubs.data.model.SubscribeRequestDto
-import io.snaps.basesubs.data.model.SubscriptionItemResponseDto
-import io.snaps.basesubs.data.model.UnsubscribeRequestDto
-import io.snaps.basesubs.domain.SubPageModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
@@ -33,7 +33,7 @@ interface SubsRepository {
 
     suspend fun unsubscribe(subscriptionId: Uuid): Effect<Completable>
 
-    suspend fun getSubscriptions(): Effect<List<UserInfoResponseDto>>
+    suspend fun isSubscribed(userId: Uuid): Effect<Boolean>
 }
 
 class SubsRepositoryImpl @Inject constructor(
@@ -42,24 +42,34 @@ class SubsRepositoryImpl @Inject constructor(
     private val loaderFactory: SubsLoaderFactory,
 ) : SubsRepository {
 
+    private var mySubscriptions: List<SubsItemResponseDto>? = null
+
     private fun getLoader(subType: SubType): SubsLoader {
         return loaderFactory.get(subType) { type ->
             when (type) {
                 is SubType.Subscription -> PagedLoaderParams(
                     action = { from, count ->
-                        subsApi.subscriptions(from = from, count = count, userId = type.userId)
+                        if (type.userId == null) {
+                            subsApi.mySubscriptions(from = from, count = count)
+                        } else {
+                            subsApi.subscriptions(from = from, count = count, userId = type.userId)
+                        }
                     },
-                    pageSize = 20,
+                    pageSize = 100,
                     nextPageIdFactory = { it.userId },
-                    mapper = List<SubscriptionItemResponseDto>::toModelList,
+                    mapper = { it.toModelList(mySubscriptions = mySubscriptions().data) },
                 )
                 is SubType.Subscriber -> PagedLoaderParams(
                     action = { from, count ->
-                        subsApi.subscribers(from = from, count = count, userId = type.userId)
+                        if (type.userId == null) {
+                            subsApi.mySubscribers(from = from, count = count)
+                        } else {
+                            subsApi.subscribers(from = from, count = count, userId = type.userId)
+                        }
                     },
-                    pageSize = 20,
+                    pageSize = 100,
                     nextPageIdFactory = { it.userId },
-                    mapper = List<SubscriptionItemResponseDto>::toModelList,
+                    mapper = { it.toModelList(mySubscriptions = mySubscriptions().data) },
                 )
             }
         }
@@ -99,9 +109,15 @@ class SubsRepositoryImpl @Inject constructor(
         }
     }
 
-     override suspend fun getSubscriptions(): Effect<List<UserInfoResponseDto>> {
-         return apiCall(ioDispatcher) {
-            subsApi.subscriptions(null, 100)
+    override suspend fun isSubscribed(userId: Uuid): Effect<Boolean> {
+        return mySubscriptions().map { subscriptions -> subscriptions.any { it.userId == userId } }
+    }
+
+    private suspend fun mySubscriptions(): Effect<List<SubsItemResponseDto>> {
+        return mySubscriptions?.let(Effect.Companion::success) ?: apiCall(ioDispatcher) {
+            subsApi.mySubscriptions(from = null, count = 1000)
+        }.doOnSuccess {
+            mySubscriptions = it
         }
     }
 }

@@ -6,7 +6,7 @@ import io.horizontalsystems.ethereumkit.core.hexStringToByteArrayOrNull
 import io.horizontalsystems.ethereumkit.core.stripHexPrefix
 import io.snaps.basewallet.domain.SwapTransactionModel
 import io.snaps.corecommon.ext.log
-import io.snaps.corecommon.model.WalletAddress
+import io.snaps.corecommon.model.CryptoAddress
 import org.json.JSONObject
 import java.math.BigInteger
 
@@ -14,7 +14,7 @@ import java.math.BigInteger
  * This class is used to communicate with the webview
  */
 class TrustWalletWebAppInterface(
-    private val address: WalletAddress,
+    private val address: CryptoAddress,
     private val webView: WebView,
     private val sendTransaction: (SwapTransactionModel) -> Unit,
 ) {

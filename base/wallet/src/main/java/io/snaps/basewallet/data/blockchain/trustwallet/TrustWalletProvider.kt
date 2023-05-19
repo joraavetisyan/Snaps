@@ -3,7 +3,7 @@ package io.snaps.basewallet.data.blockchain.trustwallet
 import android.app.Activity
 import io.horizontalsystems.ethereumkit.models.Chain
 import io.snaps.basewallet.R
-import io.snaps.corecommon.model.WalletAddress
+import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecrypto.core.CryptoKit
 
 private const val SwapUrl = "https://pancakeswap.finance/swap?outputCurrency=BNB&inputCurrency=%s"
@@ -17,7 +17,7 @@ object TrustWalletProvider {
             .use { it.readText() }
     }
 
-    fun loadInitJs(address: WalletAddress): String {
+    fun loadInitJs(address: CryptoAddress): String {
         return """
         (function() {
             var config = {                

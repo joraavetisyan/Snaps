@@ -320,7 +320,7 @@ private fun VideoClip(
     item: VideoClipUiState.Data,
     uiState: VideoFeedViewModel.UiState,
     onMuteClicked: (Boolean) -> Unit,
-    onProgressChanged: (Float, VideoClipModel) -> Unit,
+    onProgressChanged: (VideoClipModel) -> Unit,
     onAuthorClicked: (VideoClipModel) -> Unit,
     onLikeClicked: (VideoClipModel) -> Unit,
     onDoubleLikeClicked: (VideoClipModel) -> Unit,
@@ -350,11 +350,10 @@ private fun VideoClip(
         onMuted = onMuteClicked,
         isScrolling = pagerState.isScrollInProgress,
         onLiked = { onDoubleLikeClicked(item.clip) },
-        onProgressChanged = {
-            onProgressChanged(it, item.clip)
-            progress = it
-        },
+        onProgressChanged = { progress = it },
         progressPollFrequencyInMillis = 10L,
+        performAtPosition = { onProgressChanged(item.clip) },
+        performPosition = 0.7f,
     )
 
     VideoClipItems(

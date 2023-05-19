@@ -11,6 +11,7 @@ import io.snaps.corecommon.model.NftModel
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.Token
 import io.snaps.corecommon.model.TxHash
+import io.snaps.coredata.di.Bridged
 import javax.inject.Inject
 
 interface MyCollectionInteractor {
@@ -28,9 +29,9 @@ interface MyCollectionInteractor {
 }
 
 class MyCollectionInteractorImpl @Inject constructor(
-    private val profileRepository: ProfileRepository,
-    private val nftRepository: NftRepository,
-    private val blockchainTxRepository: BlockchainTxRepository,
+    @Bridged private val profileRepository: ProfileRepository,
+    @Bridged private val nftRepository: NftRepository,
+    @Bridged private val blockchainTxRepository: BlockchainTxRepository,
 ) : MyCollectionInteractor {
 
     override suspend fun repair(nftModel: NftModel): Effect<TxHash> {

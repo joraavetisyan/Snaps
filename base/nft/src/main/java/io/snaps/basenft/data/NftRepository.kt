@@ -79,7 +79,6 @@ class NftRepositoryImpl @Inject constructor(
                 it.isSuccess -> Effect.success(
                     it.requireData.count { nft -> !nft.isHealthy }
                 )
-
                 else -> Effect.error(requireNotNull(it.errorOrNull))
             }
         }

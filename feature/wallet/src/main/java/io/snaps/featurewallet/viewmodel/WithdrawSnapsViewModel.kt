@@ -4,15 +4,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.data.model.PaymentsState
-import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
 import io.snaps.basewallet.ui.LimitedGasDialogHandler
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.toStringValue
-import io.snaps.corecommon.model.FiatCurrency
 import io.snaps.corecommon.model.WalletModel
 import io.snaps.corecommon.strings.digitsOnly
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreuicompose.uikit.input.formatter.AmountFormatter
@@ -37,14 +36,13 @@ private const val minGasValue = 0.001
 
 @HiltViewModel
 class WithdrawSnapsViewModel @Inject constructor(
-    limitedGasDialogHandlerImplDelegate: LimitedGasDialogHandler,
+    limitedGasDialogHandler: LimitedGasDialogHandler,
     private val action: Action,
-    private val notificationsSource: NotificationsSource,
-    private val profileRepository: ProfileRepository,
-    private val walletRepository: WalletRepository,
-    private val blockchainTxRepository: BlockchainTxRepository,
+    @Bridged private val profileRepository: ProfileRepository,
+    @Bridged private val walletRepository: WalletRepository,
+    @Bridged private val blockchainTxRepository: BlockchainTxRepository,
 ) : SimpleViewModel(),
-    LimitedGasDialogHandler by limitedGasDialogHandlerImplDelegate {
+    LimitedGasDialogHandler by limitedGasDialogHandler {
 
     private val snpWallet = walletRepository.getSnpWalletModel()
 
@@ -159,7 +157,7 @@ class WithdrawSnapsViewModel @Inject constructor(
             blockchainTxRepository.getProfitWalletAddress().flatMap {
                 blockchainTxRepository.send(
                     wallet = snpWalletModel,
-                    walletAddress = it,
+                    address = it,
                     amount = amount,
                     gasPrice = _uiState.value.gasPrice,
                     gasLimit = _uiState.value.gasLimit,
@@ -183,7 +181,6 @@ class WithdrawSnapsViewModel @Inject constructor(
         val availableAmount: String,
         val amountValue: String = "",
         val amountFormatter: SimpleFormatter = AmountFormatter(
-            fiatCurrency = FiatCurrency.NONE,
             maxLength = 100,
             fractionalPartMaxLength = 100,
         ),

@@ -16,10 +16,10 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 
 class CommentLoader @AssistedInject constructor(
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @ApplicationCoroutineScope private val scope: CoroutineScope,
+    @IoDispatcher ioDispatcher: CoroutineDispatcher,
+    @ApplicationCoroutineScope scope: CoroutineScope,
     action: Action,
-    @Assisted private val params: PagedLoaderParams<CommentResponseDto, CommentModel>,
+    @Assisted params: PagedLoaderParams<CommentResponseDto, CommentModel>,
 ) : PagedLoader<CommentResponseDto, CommentModel>(
     ioDispatcher = ioDispatcher,
     scope = scope,

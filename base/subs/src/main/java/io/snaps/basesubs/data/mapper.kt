@@ -1,14 +1,21 @@
 package io.snaps.basesubs.data
 
-import io.snaps.corecommon.container.ImageValue
-import io.snaps.basesubs.data.model.SubscriptionItemResponseDto
+import io.snaps.basesubs.data.model.SubsItemResponseDto
 import io.snaps.basesubs.domain.SubModel
+import io.snaps.corecommon.container.ImageValue
 
-fun List<SubscriptionItemResponseDto>.toModelList() = map(SubscriptionItemResponseDto::toSubModel)
+fun List<SubsItemResponseDto>.toModelList(mySubscriptions: List<SubsItemResponseDto>?) = map { sub ->
+    sub.toSubModel(
+        mySubscriptions?.let { list ->
+            list.firstOrNull { it.entityId == sub.entityId } != null
+        }
+    )
+}
 
-fun SubscriptionItemResponseDto.toSubModel() = SubModel(
+fun SubsItemResponseDto.toSubModel(isSubscribed: Boolean?) = SubModel(
+    entityId = entityId,
     userId = userId,
-    image = ImageValue.Url(imageUrl),
-    name = name,
+    avatar = avatar?.let(ImageValue::Url),
+    name = name.orEmpty(),
     isSubscribed = isSubscribed,
 )

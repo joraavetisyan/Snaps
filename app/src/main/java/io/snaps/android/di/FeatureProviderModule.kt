@@ -1,4 +1,4 @@
-package io.snaps.android
+package io.snaps.android.di
 
 import dagger.Binds
 import dagger.Module

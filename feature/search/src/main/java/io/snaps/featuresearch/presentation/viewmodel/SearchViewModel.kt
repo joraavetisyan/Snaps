@@ -17,6 +17,7 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
@@ -36,14 +37,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    mainHeaderHandlerDelegate: MainHeaderHandler,
-    onboardingHandlerDelegate: OnboardingHandler,
-    private val videoFeedRepository: VideoFeedRepository,
-    private val profileRepository: ProfileRepository,
+    @Bridged mainHeaderHandler: MainHeaderHandler,
+    onboardingHandler: OnboardingHandler,
+    @Bridged private val videoFeedRepository: VideoFeedRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     private val action: Action,
 ) : SimpleViewModel(),
-    MainHeaderHandler by mainHeaderHandlerDelegate,
-    OnboardingHandler by onboardingHandlerDelegate {
+    MainHeaderHandler by mainHeaderHandler,
+    OnboardingHandler by onboardingHandler {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
