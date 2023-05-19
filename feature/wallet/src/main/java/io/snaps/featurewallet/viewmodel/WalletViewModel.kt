@@ -16,6 +16,7 @@ import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.fiatToFormatDecimal
+import io.snaps.corecommon.model.Coin
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.CryptoAddress
@@ -97,7 +98,7 @@ class WalletViewModel @Inject constructor(
     private fun subscribeToWallets() {
         walletRepository.activeWallets.combine(flow = walletInteractor.snpFiatState) { wallets, balance ->
             wallets.map {
-                if (it.symbol == "SNAPS") {
+                if (it.symbol == Coin.Type.SNPS.code) {
                     it.copy(fiatValue = " $${balance.dataOrCache?.toDoubleOrNull()?.fiatToFormatDecimal() ?: "0"}")
                 } else {
                     it

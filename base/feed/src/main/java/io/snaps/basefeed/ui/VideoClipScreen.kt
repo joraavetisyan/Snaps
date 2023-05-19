@@ -72,6 +72,7 @@ import io.snaps.corecommon.ext.toFormatDecimal
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.R
+import io.snaps.corecommon.container.imageValue
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.LocalBottomNavigationHeight
 import io.snaps.coreuicompose.tools.defaultTileRipple
@@ -626,7 +627,7 @@ private fun VideoClipEndItems(
         if (onCreateVideoClicked != null) {
             IconButton(onClick = { onCreateVideoClicked() }) {
                 Icon(
-                    painter = ImageValue.ResImage(R.drawable.img_create).get(),
+                    painter = R.drawable.img_create.imageValue().get(),
                     contentDescription = null,
                     tint = Color.Unspecified,
                     modifier = Modifier.size(60.dp),

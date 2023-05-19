@@ -76,6 +76,7 @@ import io.snaps.corecommon.R
 import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.strings.StringKey
@@ -174,12 +175,12 @@ fun WalletScreen(
                 )
                 WalletViewModel.BottomDialog.RewardsFootnote -> FootnoteBottomDialog(
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_guy_eating),
+                        image = R.drawable.img_guy_eating.imageValue(),
                         title = StringKey.RewardsDialogTitleFootnote1.textValue(),
                         text = StringKey.RewardsDialogMessageFootnote1.textValue(),
                     ),
                     FootnoteBottomDialogItem(
-                        image = ImageValue.ResImage(R.drawable.img_guy_glad),
+                        image = R.drawable.img_guy_glad.imageValue(),
                         title = StringKey.RewardsDialogTitleFootnote2.textValue(),
                         text = StringKey.RewardsDialogMessageFootnote2.textValue(),
                     ),
@@ -194,7 +195,7 @@ fun WalletScreen(
                     onMaxButtonClicked = viewModel::onRewardsMaxButtonClicked,
                 )
                 WalletViewModel.BottomDialog.RepairNft -> SimpleBottomDialog(
-                    image = ImageValue.ResImage(R.drawable.img_guy_sad),
+                    image = R.drawable.img_guy_sad.imageValue(),
                     title = StringKey.RewardsDialogRepairNftTitle.textValue(),
                     text = StringKey.RewardsDialogRepairNftText.textValue(),
                     buttonText = StringKey.RewardsDialogRepairNftAction.textValue(),

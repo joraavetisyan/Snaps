@@ -14,6 +14,7 @@ import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.corecommon.R
+import io.snaps.corecommon.container.imageValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
@@ -27,7 +28,7 @@ class UserNftDetailsViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(
         UiState(
-            nftImage = ImageValue.Url(args.image),
+            nftImage = args.image.imageValue(),
             items = getItems(),
         )
     )
@@ -48,7 +49,7 @@ class UserNftDetailsViewModel @Inject constructor(
                 ),
             ),
             rightPart = RightPart.ActionIcon(
-                source = ImageValue.ResImage(R.drawable.img_snps),
+                source = R.drawable.img_snps.imageValue(),
                 tint = Color.Unspecified,
                 size = 64.dp,
             )
@@ -59,7 +60,7 @@ class UserNftDetailsViewModel @Inject constructor(
                 description = StringKey.NftDetailsDescriptionCondition.textValue(),
             ),
             rightPart = RightPart.ActionIcon(
-                source = ImageValue.ResImage(R.drawable.img_repair),
+                source = R.drawable.img_repair.imageValue(),
                 tint = Color.Unspecified,
                 size = 56.dp,
             )
@@ -70,7 +71,7 @@ class UserNftDetailsViewModel @Inject constructor(
                 description = StringKey.NftDetailsDescriptionLevel.textValue(),
             ),
             rightPart = RightPart.ActionIcon(
-                source = ImageValue.ResImage(R.drawable.img_unlock),
+                source = R.drawable.img_unlock.imageValue(),
                 tint = Color.Unspecified,
                 size = 56.dp,
             )

@@ -11,6 +11,7 @@ import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
 import io.snaps.corecommon.ext.coinToFormatDecimal
 import io.snaps.corecommon.ext.round
@@ -36,7 +37,7 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
     totalSubscribers = totalSubscribers,
     totalSubscriptions = totalSubscriptions,
     avatarUrl = avatarUrl,
-    avatar = avatarUrl?.let(ImageValue::Url) ?: ImageValue.ResImage(R.drawable.img_avatar),
+    avatar = avatarUrl?.imageValue() ?: R.drawable.img_avatar.imageValue(),
     level = level,
     experience = experience,
     questInfo = questInfo?.toQuestInfoModel(),

@@ -55,6 +55,7 @@ import io.snaps.basewallet.ui.TransferTokensUi
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.NftType
@@ -133,7 +134,7 @@ fun PurchaseScreen(
                     data = transferTokensState.state,
                 )
                 is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess -> SimpleBottomDialog(
-                    image = ImageValue.ResImage(R.drawable.img_guy_hands_up),
+                    image = R.drawable.img_guy_hands_up.imageValue(),
                     title = StringKey.PurchaseDialogWithBnbSuccessTitle.textValue(),
                     text = StringKey.PurchaseDialogWithBnbSuccessMessage.textValue(),
                     buttonText = StringKey.PurchaseDialogWithBnbSuccessAction.textValue(),
@@ -364,7 +365,7 @@ private fun NftInfoBlock(
                     style = AppTheme.specificTypography.bodyMedium,
                     color = AppTheme.specificColorScheme.textSecondary,
                 )
-                ValueWidget(ImageValue.ResImage(R.drawable.img_coin_silver) to cost)
+                ValueWidget(R.drawable.img_coin_silver.imageValue() to cost)
             }
         }
     }

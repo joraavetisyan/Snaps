@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.defaultTileRipple
@@ -79,8 +80,8 @@ private fun Data(
         EnergyWidget(state.energy)
         Spacer(Modifier.width(4.dp))
         ValueWidget(
-            ImageValue.ResImage(R.drawable.ic_bnb_token) to state.bnb,
-            ImageValue.ResImage(R.drawable.ic_snp_token) to state.snp,
+            R.drawable.ic_bnb_token.imageValue() to state.bnb,
+            R.drawable.ic_snp_token.imageValue() to state.snp,
             modifier = Modifier.defaultTileRipple(onClick = state.onWalletClicked),
         )
     }
@@ -109,7 +110,7 @@ private fun Error(
     Container(modifier) {
         Avatar(
             onProfileClicked = state.onProfileClicked,
-            imageValue = ImageValue.ResImage(R.drawable.img_avatar),
+            imageValue = R.drawable.img_avatar.imageValue(),
         )
         Spacer(Modifier.weight(1f))
         ValueWidget(null to StringKey.Error.textValue().get().text)
@@ -154,7 +155,7 @@ private fun Container(
 private fun Preview() {
     MainHeader(
         state = MainHeaderState.Data(
-            profileImage = ImageValue.ResImage(R.drawable.img_guy_welcoming),
+            profileImage = R.drawable.img_guy_welcoming.imageValue(),
             energy = "12",
             snp = "12",
             bnb = "12",

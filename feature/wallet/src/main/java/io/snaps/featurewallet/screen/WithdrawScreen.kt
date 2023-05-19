@@ -37,6 +37,7 @@ import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensUi
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corenavigation.base.openUrl
@@ -113,9 +114,12 @@ fun WithdrawScreen(
                     data = transferTokensState.state,
                 )
                 is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess -> SimpleBottomDialog(
-                    image = ImageValue.ResImage(R.drawable.img_guy_hands_up),
+                    image = R.drawable.img_guy_hands_up.imageValue(),
                     title = StringKey.WithdrawDialogWithdrawSuccessTitle.textValue(),
-                    text = StringKey.WithdrawDialogWithdrawSuccessMessage.textValue(dialog.sent.orEmpty(), dialog.to.orEmpty()),
+                    text = StringKey.WithdrawDialogWithdrawSuccessMessage.textValue(
+                        dialog.sent.orEmpty(),
+                        dialog.to.orEmpty()
+                    ),
                     buttonText = StringKey.WithdrawDialogWithdrawSuccessAction.textValue(),
                     onClick = {
                         coroutineScope.launch { sheetState.hide() }

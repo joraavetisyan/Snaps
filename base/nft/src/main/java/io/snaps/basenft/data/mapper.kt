@@ -5,6 +5,7 @@ import io.snaps.basenft.data.model.UserNftItemResponseDto
 import io.snaps.corecommon.model.NftModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
 import java.time.ZonedDateTime
 
@@ -14,7 +15,7 @@ private fun NftItemResponseDto.toModel() = RankModel(
     type = type,
     costInUsd = costInUsd,
     costInRealTokens = costInRealTokens,
-    image = pathToImage.let(ImageValue::Url),
+    image = pathToImage.imageValue(),
     dailyReward = dailyReward,
     dailyUnlock = percentGrowingPerDay,
     dailyConsumption = dailyMaintenanceCostMultiplier ?: 0.0,
@@ -32,7 +33,7 @@ private fun UserNftItemResponseDto.toModel() = NftModel(
     type = data.type,
     costInUsd = data.costInUsd,
     costInRealTokens = data.costInRealTokens,
-    image = data.pathToImage.let(ImageValue::Url),
+    image = data.pathToImage.imageValue(),
     dailyReward = data.dailyReward,
     dailyUnlock = data.percentGrowingPerDay,
     dailyConsumption = data.dailyMaintenanceCostMultiplier ?: 0.0,

@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.TaskType
 import io.snaps.corecommon.strings.StringKey
@@ -193,7 +194,7 @@ private fun TaskCompletedMessage() {
                 style = AppTheme.specificTypography.bodySmall,
             )
             Image(
-                painter = ImageValue.ResImage(R.drawable.img_fire).get(),
+                painter = R.drawable.img_fire.imageValue().get(),
                 contentDescription = null,
                 modifier = Modifier.size(44.dp),
                 contentScale = ContentScale.Crop,

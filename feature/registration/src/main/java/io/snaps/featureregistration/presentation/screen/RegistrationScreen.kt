@@ -59,6 +59,7 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.strings.StringKey
@@ -262,7 +263,7 @@ private fun RegistrationScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
-            painter = ImageValue.ResImage(R.drawable.img_guy_welcoming).get(),
+            painter = R.drawable.img_guy_welcoming.imageValue().get(),
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.End)

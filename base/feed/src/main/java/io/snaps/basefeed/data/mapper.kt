@@ -8,6 +8,7 @@ import io.snaps.basefeed.domain.CommentModel
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
 import io.snaps.corecommon.model.Uuid
 import java.time.ZonedDateTime
@@ -57,7 +58,7 @@ fun CommentResponseDto.toModel(
     createdDate = requireNotNull(ZonedDateTime.parse(createdDate)).toOffsetLocalDateTime(),
     videoId = videoId,
     text = text,
-    ownerImage = owner?.avatarUrl?.let(ImageValue::Url),
+    ownerImage = owner?.avatarUrl?.imageValue(),
     ownerName = owner?.name.orEmpty(),
 
     isOwnerVerified = null,

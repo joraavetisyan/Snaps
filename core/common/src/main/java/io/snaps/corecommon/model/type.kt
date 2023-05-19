@@ -2,6 +2,7 @@ package io.snaps.corecommon.model
 
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.ext.formatToMoney
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -71,7 +72,7 @@ data class Coin(
         val decimal: Int,
     ) : Money {
         SNPS("SNPS", "Snaps", "SNAPS", "0x92677918569A2BEA213Af66b54e0C9B9811d021c", 18),
-        // WBNB("WBNB","WBNB", "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", "WBNB", 18),
+        // WBNB("WBNB","WBNB", "WBNB", "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", 18),
         BUSD("BUSD", "BUSD", "BUSD", "0xe9e7cea3dedca5984780bafc599bd69add087d56", 18),
         USDT("USDT", "Tether USD", "USDT", "0x55d398326f99059ff775485246999027b3197955", 18),
         BNB("BNB", "BNB", "BNB", "0x242a1ff6ee06f2131b7924cacb74c7f9e3a5edc9", 18),
@@ -143,7 +144,7 @@ enum class NftType(val intType: NftTypeInt, val storeId: String?) {
         Rockstar -> R.drawable.img_sunglasses9
         SuperStar -> R.drawable.img_sunglasses10
         Legend -> R.drawable.img_sunglasses10
-    }.let(ImageValue::ResImage)
+    }.imageValue()
 
     companion object {
 

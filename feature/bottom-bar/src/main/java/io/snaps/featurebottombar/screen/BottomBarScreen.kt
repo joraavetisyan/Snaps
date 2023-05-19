@@ -41,6 +41,7 @@ import androidx.navigation.navigation
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.strings.StringKey
@@ -216,7 +217,7 @@ private fun OnboardingDialog(
 ) {
     when (onboardingState.onboardingType) {
         OnboardingType.Rank -> SimpleBottomDialog(
-            image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
+            image = R.drawable.img_guys_surprised_eating.imageValue(),
             title = StringKey.OnboardingRankTitle.textValue(),
             text = StringKey.OnboardingRankText.textValue(),
             buttonText = StringKey.OnboardingRankAction.textValue(),
@@ -225,7 +226,7 @@ private fun OnboardingDialog(
             },
         )
         OnboardingType.Popular -> SimpleBottomDialog(
-            image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
+            image = R.drawable.img_guys_surprised_eating.imageValue(),
             title = StringKey.OnboardingPopularTitle.textValue(),
             text = StringKey.OnboardingPopularText.textValue(),
             buttonText = StringKey.OnboardingPopularAction.textValue(),
@@ -234,7 +235,7 @@ private fun OnboardingDialog(
             },
         )
         OnboardingType.Tasks -> SimpleBottomDialog(
-            image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
+            image = R.drawable.img_guys_surprised_eating.imageValue(),
             title = StringKey.OnboardingTasksTitle.textValue(),
             text = StringKey.OnboardingTasksText.textValue(),
             buttonText = StringKey.OnboardingTasksAction.textValue(),
@@ -243,7 +244,7 @@ private fun OnboardingDialog(
             },
         )
         OnboardingType.Nft -> SimpleBottomDialog(
-            image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
+            image = R.drawable.img_guys_surprised_eating.imageValue(),
             title = StringKey.OnboardingNftTitle.textValue(),
             text = StringKey.OnboardingNftText.textValue(),
             buttonText = StringKey.OnboardingNftAction.textValue(),
@@ -252,7 +253,7 @@ private fun OnboardingDialog(
             },
         )
         OnboardingType.Referral -> SimpleBottomDialog(
-            image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
+            image = R.drawable.img_guys_surprised_eating.imageValue(),
             title = StringKey.OnboardingReferralTitle.textValue(),
             text = StringKey.OnboardingReferralText.textValue(),
             buttonText = StringKey.OnboardingReferralAction.textValue(),
@@ -261,7 +262,7 @@ private fun OnboardingDialog(
             },
         )
         OnboardingType.Wallet -> SimpleBottomDialog(
-            image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
+            image = R.drawable.img_guys_surprised_eating.imageValue(),
             title = StringKey.OnboardingWalletTitle.textValue(),
             text = StringKey.OnboardingWalletText.textValue(),
             buttonText = StringKey.OnboardingWalletAction.textValue(),
@@ -270,7 +271,7 @@ private fun OnboardingDialog(
             },
         )
         OnboardingType.Rewards -> SimpleBottomDialog(
-            image = ImageValue.ResImage(R.drawable.img_guys_surprised_eating),
+            image = R.drawable.img_guys_surprised_eating.imageValue(),
             title = StringKey.OnboardingRewardsTitle.textValue(),
             text = StringKey.OnboardingRewardsText.textValue(),
             buttonText = StringKey.OnboardingRewardsAction.textValue(),

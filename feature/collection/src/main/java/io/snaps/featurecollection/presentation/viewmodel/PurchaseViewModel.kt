@@ -17,6 +17,7 @@ import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensState
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toStringValue
 import io.snaps.corecommon.model.Fiat
@@ -66,7 +67,7 @@ class PurchaseViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(
         UiState(
             nftType = args.type,
-            nftImage = ImageValue.Url(args.image),
+            nftImage = args.image.imageValue(),
             // todo currency name
             cost = "${args.costInUsd}${Fiat.Currency.USD.symbol}",
             dailyUnlock = args.dailyUnlock,

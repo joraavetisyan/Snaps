@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
@@ -39,7 +40,7 @@ fun WalletCreateScreen(
         FullScreenMessageUi(
             modifier = Modifier.padding(it),
             data = FullScreenMessage(
-                icon = ImageValue.ResImage(R.drawable.img_guy_warning),
+                icon = R.drawable.img_guy_warning.imageValue(),
                 title = StringKey.CreateWalletTitle.textValue(),
                 message = StringKey.CreateWalletMessage.textValue(),
                 primaryButton = FullScreenMessage.ButtonData(

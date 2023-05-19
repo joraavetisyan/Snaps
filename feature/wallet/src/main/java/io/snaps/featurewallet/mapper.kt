@@ -6,9 +6,11 @@ import io.snaps.basewallet.data.model.PayoutOrderStatus
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.round
 import io.snaps.corecommon.ext.toStringValue
+import io.snaps.corecommon.model.Coin
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
@@ -33,12 +35,16 @@ fun WalletModel.toCellTileState(
     onClick: ((WalletModel) -> Unit)?,
 ) = CellTileState(
     middlePart = MiddlePart.Data(
-        value = symbol.textValue(),
+        value = if (symbol == Coin.Type.SNPS.code) {
+            Coin.Type.SNPS.symbol
+        } else {
+            symbol
+        }.textValue(),
     ),
-    leftPart = if (symbol == "SNAPS") {
-        ImageValue.ResImage(R.drawable.ic_snp_token)
+    leftPart = if (symbol == Coin.Type.SNPS.code) {
+        R.drawable.ic_snp_token.imageValue()
     } else {
-        ImageValue.Url(iconUrl)
+        iconUrl.imageValue()
     }.let(LeftPart::Logo),
     rightPart = RightPart.TextMoney(
         coin = coinValue,
@@ -78,7 +84,7 @@ fun TransactionModel.toTransactionTile(
     onClicked: (TransactionModel) -> Unit,
 ) = TransactionTileState.Data(
     id = id,
-    icon = ImageValue.ResImage(R.drawable.ic_snp_token),
+    icon = R.drawable.ic_snp_token.imageValue(),
     type = type,
     coins = "${balanceChange.round().toStringValue()} SNP".textValue(),
     dateTime = date.toStringValue(),

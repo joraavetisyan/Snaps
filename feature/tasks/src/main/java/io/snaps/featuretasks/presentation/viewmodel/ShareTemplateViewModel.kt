@@ -9,6 +9,7 @@ import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.coinToFormatDecimal
 import io.snaps.corecommon.model.Uuid
@@ -83,7 +84,7 @@ class ShareTemplateViewModel @Inject constructor(
         return if (instagramUserId != null) {
             CellTileState.Data(
                 leftPart = LeftPart.Logo(
-                    ImageValue.ResImage(R.drawable.ic_instagram)
+                    R.drawable.ic_instagram.imageValue()
                 ),
                 middlePart = MiddlePart.Data(
                     value = instagramUserId.textValue()
@@ -95,7 +96,7 @@ class ShareTemplateViewModel @Inject constructor(
         } else {
             CellTileState.Data(
                 leftPart = LeftPart.Logo(
-                    ImageValue.ResImage(R.drawable.ic_instagram),
+                    R.drawable.ic_instagram.imageValue(),
                 ),
                 middlePart = MiddlePart.Data(
                     value = StringKey.TaskShareTitleConnectInstagram.textValue(),

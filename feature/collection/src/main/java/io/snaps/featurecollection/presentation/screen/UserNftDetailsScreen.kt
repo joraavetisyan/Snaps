@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
@@ -74,7 +75,7 @@ private fun UserNftDetailsScreen(
                         contentAlignment = Alignment.Center,
                     ) {
                         Image(
-                            painter = ImageValue.ResImage(R.drawable.img_background).get(),
+                            painter = R.drawable.img_background.imageValue().get(),
                             contentDescription = null,
                             contentScale = ContentScale.FillWidth,
                             modifier = Modifier.fillMaxSize(),

@@ -39,6 +39,7 @@ import io.snaps.basefeed.ui.VideoFeedGrid
 import io.snaps.basesubs.domain.SubModel
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startShareLinkIntent
 import io.snaps.corecommon.model.Uuid
@@ -143,7 +144,7 @@ private fun ProfileScreen(
             if (uiState.userType == ProfileViewModel.UserType.Current) {
                 IconButton(onClick = { onCreateVideoClicked() }) {
                     Icon(
-                        painter = ImageValue.ResImage(R.drawable.img_create).get(),
+                        painter = R.drawable.img_create.imageValue().get(),
                         contentDescription = null,
                         tint = Color.Unspecified,
                         modifier = Modifier.size(64.dp),

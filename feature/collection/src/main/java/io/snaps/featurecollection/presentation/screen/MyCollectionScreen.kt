@@ -36,6 +36,7 @@ import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensUi
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corenavigation.base.openUrl
@@ -97,7 +98,7 @@ fun MyCollectionScreen(
             when (val dialog = transferTokensState.bottomDialog) {
                 TransferTokensDialogHandler.BottomDialog.TokensTransfer -> Unit
                 is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess -> SimpleBottomDialog(
-                    image = ImageValue.ResImage(R.drawable.img_guy_hands_up),
+                    image = R.drawable.img_guy_hands_up.imageValue(),
                     title = StringKey.MyCollectionDialogRepairSuccessTitle.textValue(),
                     buttonText = StringKey.MyCollectionDialogRepairSuccessAction.textValue(),
                     onClick = {

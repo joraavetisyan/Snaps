@@ -86,7 +86,7 @@ fun Throwable.toApiError() = when (this) {
         val errorCode = response()?.code()
 
         when {
-            error == null && errorCode == null -> AppError.Unknown()
+            error == null && errorCode == null -> AppError.Unknown(cause = (this as? Exception))
 
             else -> AppError.Custom(
                 message = error,
@@ -97,5 +97,5 @@ fun Throwable.toApiError() = when (this) {
         }
     }
 
-    else -> AppError.Unknown()
+    else -> AppError.Unknown(cause = (this as? Exception))
 }
