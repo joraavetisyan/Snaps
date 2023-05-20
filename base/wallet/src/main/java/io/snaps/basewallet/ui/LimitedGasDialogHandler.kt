@@ -78,9 +78,7 @@ class LimitedGasDialogHandlerImplDelegate @Inject constructor(
     }
 
     private fun isGasEnough(minValue: Double): Boolean {
-        return walletRepository.bnb.value?.coinValue?.value?.let { bnbValue ->
-            bnbValue >= minValue
-        } ?: false
+        return walletRepository.bnb.value?.coinValue?.value?.let { it >= minValue } ?: false
     }
 
     private fun onRefillClicked(scope: CoroutineScope, amount: Double) {

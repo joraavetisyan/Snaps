@@ -1,9 +1,9 @@
 package io.snaps.corecommon.ext
 
+import io.snaps.corecommon.strings.DEFAULT_LOCALE
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.NumberFormat
-import java.util.Locale
 
 fun Double.round(places: Int = 2): Double {
     require(places >= 0)
@@ -12,28 +12,35 @@ fun Double.round(places: Int = 2): Double {
         .toDouble()
 }
 
-fun Double.toNumberFormat(): String = try {
-    NumberFormat.getNumberInstance(Locale.US).format(round())
+fun Double.toMoneyFormat(roundPlaces: Int = 2): String = try {
+    NumberFormat.getNumberInstance(DEFAULT_LOCALE).format(round(roundPlaces)).stripUselessDecimals()
 } catch (ex: NumberFormatException) {
     this.toString()
 }
 
+/**
+ * eg 2000000.0 -> 2M
+ */
 fun Double.toCompactDecimalFormat(): String {
     val number = round(3)
     number.toInt().let {
-        if (it >= 100000) {
-            return it.toCompactDecimalFormat(Locale.US)
+        if (it >= 100_000) {
+            return it.toCompactDecimalFormat()
         }
     }
     return number.stripUselessDecimals()
 }
 
-private fun Double.stripUselessDecimals(): String {
-    var number = toBigDecimal().toPlainString()
-    if (number.endsWith(".0")) {
-        number = number.removeSuffix(".0")
+fun Double.stripUselessDecimals(): String = toBigDecimal().toPlainString().stripUselessDecimals()
+
+private fun String.stripUselessDecimals(): String = if (contains('.')) {
+    var s = this
+    while (s.endsWith("0")) {
+        s = s.removeSuffix("0")
     }
-    return number
+    s.removeSuffix(".")
+} else {
+    this
 }
 
 fun Double.toPercentageFormat() = "${(this * 100).round(1).stripUselessDecimals()}%"

@@ -971,8 +971,8 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ru to "Mакс",
     ),
     key(StringKey.RewardsDialogFieldAvailable) to mapOf(
-        SupportedLanguageKey.En to "Available: %s SNAPS",
-        SupportedLanguageKey.Ru to "Доступно: %s SNAPS",
+        SupportedLanguageKey.En to "Available: %s",
+        SupportedLanguageKey.Ru to "Доступно: %s",
     ),
     key(StringKey.RewardsDialogRepairNftTitle) to mapOf(
         SupportedLanguageKey.En to "Need to repair glasses first",

@@ -112,7 +112,7 @@ private fun NftModel.toNftCollectionItemState(
 ) = CollectionItemState.Nft(
     type = type,
     image = image,
-    dailyReward = dailyReward.toFiat(rate = 100.0),
+    dailyReward = dailyReward.toFiat(rate = 0.001),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthy = true,

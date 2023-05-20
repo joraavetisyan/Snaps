@@ -9,6 +9,7 @@ import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.SwapTransactionModel
 import io.snaps.corecommon.container.textValue
 import io.snaps.basewallet.domain.WalletModel
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -58,7 +59,7 @@ class ExchangeViewModel @Inject constructor(
                 }.doOnComplete {
                     _uiState.update { it.copy(isLoading = false) }
                 }.doOnSuccess {
-                    notificationsSource.sendMessage("Success".textValue())
+                    notificationsSource.sendMessage(StringKey.MessageSuccess.textValue())
                     _command publish Command.CloseScreen
                 }
             }

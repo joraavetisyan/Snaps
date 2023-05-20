@@ -70,9 +70,9 @@ class ShareTemplateViewModel @Inject constructor(
     }
 
     private fun subscribeOnUserNft() {
-        nftRepository.nftCollectionState.combine(flow = walletRepository.balanceState) { collection, balance ->
+        nftRepository.nftCollectionState.combine(flow = walletRepository.snpsAccountState) { collection, balance ->
             val totalDailyReward = collection.dataOrCache?.sumOf { it.dailyReward.value } ?: 0.0
-            val snpExchangeRate = balance.dataOrCache?.snpExchangeRate ?: 0.0
+            val snpExchangeRate = balance.dataOrCache?.snpsUsdExchangeRate ?: 0.0
             totalDailyReward * snpExchangeRate
         }.onEach { state ->
             _uiState.update { it.copy(payments = state.toCompactDecimalFormat()) }

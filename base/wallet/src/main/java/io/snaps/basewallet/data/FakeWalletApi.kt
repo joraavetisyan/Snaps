@@ -1,6 +1,6 @@
 package io.snaps.basewallet.data
 
-import io.snaps.basewallet.data.model.BalanceResponseDto
+import io.snaps.basewallet.data.model.SnpsAccountResponseDto
 import io.snaps.basewallet.data.model.ClaimRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
@@ -15,12 +15,12 @@ import kotlinx.coroutines.delay
 
 class FakeWalletApi : WalletApi {
 
-    override suspend fun balance(): BaseResponse<BalanceResponseDto> {
+    override suspend fun getSnpsAccount(): BaseResponse<SnpsAccountResponseDto> {
         return BaseResponse(
-            data = BalanceResponseDto(
+            data = SnpsAccountResponseDto(
                 lockedTokensBalance = 1.0,
                 unlockedTokensBalance = 1.0,
-                snpExchangeRate = 342.01,
+                snpsExchangeRate = 342.01,
                 bnbExchangeRate = 342.01,
             )
         ).also {

@@ -12,25 +12,19 @@ import io.snaps.basewallet.data.model.PayoutOrderRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
 import io.snaps.basewallet.data.model.RefillGasRequestDto
 import io.snaps.basewallet.data.model.WalletSaveRequestDto
-import io.snaps.basewallet.domain.BalanceModel
+import io.snaps.basewallet.domain.SnpsAccountModel
 import io.snaps.basewallet.domain.DeviceNotSecuredException
 import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.basewallet.domain.WalletModel
-import io.snaps.corecommon.R
-import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.logE
-import io.snaps.corecommon.ext.stringAmountToDoubleOrZero
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.CardNumber
-import io.snaps.corecommon.model.CoinBNB
 import io.snaps.corecommon.model.CoinType
-import io.snaps.corecommon.model.CoinValue
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FiatCurrency
-import io.snaps.corecommon.model.FiatUSD
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
@@ -41,11 +35,11 @@ import io.snaps.corecrypto.core.IAccountManager
 import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.IWordsManager
 import io.snaps.corecrypto.core.managers.WalletActivator
+import io.snaps.corecrypto.core.providers.BalanceItem
 import io.snaps.corecrypto.core.providers.BalanceService
 import io.snaps.corecrypto.core.providers.BalanceViewItemFactory
 import io.snaps.corecrypto.core.providers.ITotalBalance
 import io.snaps.corecrypto.core.providers.TotalService
-import io.snaps.corecrypto.core.providers.TotalUIState
 import io.snaps.corecrypto.entities.Account
 import io.snaps.corecrypto.entities.AccountOrigin
 import io.snaps.corecrypto.entities.AccountType
@@ -65,7 +59,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -77,7 +70,7 @@ private const val messageNotSecured =
 
 interface WalletRepository {
 
-    val balanceState: StateFlow<State<BalanceModel>> // todo rename
+    val snpsAccountState: StateFlow<State<SnpsAccountModel>>
 
     val totalBalance: StateFlow<TotalBalanceModel>
 
@@ -89,7 +82,7 @@ interface WalletRepository {
 
     val payouts: StateFlow<State<List<PayoutOrderResponseDto>>>
 
-    suspend fun updateBalance(): Effect<Completable>
+    suspend fun updateSnpsAccount(): Effect<Completable>
 
     suspend fun updateTotalBalance(): Effect<Completable>
 
@@ -138,59 +131,17 @@ class WalletRepositoryImpl @Inject constructor(
     private val walletApi: WalletApi,
 ) : WalletRepository {
 
-    private var account: Account? = null
-
-    private val _balanceState = MutableStateFlow<State<BalanceModel>>(Loading())
-    override val balanceState = _balanceState.asStateFlow()
+    private val _snpsAccountState = MutableStateFlow<State<SnpsAccountModel>>(Loading())
+    override val snpsAccountState = _snpsAccountState.asStateFlow()
 
     private val _totalBalance = MutableStateFlow(TotalBalanceModel.empty)
     override val totalBalance = _totalBalance.asStateFlow()
 
     override val activeWallets: StateFlow<List<WalletModel>> = balanceService.balanceItemsFlow
-        .map { items ->
-            totalBalanceManager.setTotalServiceItems(
-                map = items?.map {
-                    TotalService.BalanceItem(
-                        value = it.balanceData.total,
-                        isValuePending = it.state !is AdapterState.Synced,
-                        coinPrice = it.coinPrice,
-                    )
-                }
-            )
-            items?.mapNotNull { balanceItem ->
-                val item = balanceViewItemFactory.viewItem(
-                    item = balanceItem,
-                    currency = Currency(FiatCurrency.USD.name, FiatCurrency.USD.symbol, 2, 0),
-                )
-                log("Creating wallet for $item")
-                if (item.wallet.token.type == TokenType.Native) {
-                    CoinType.BNB
-                } else {
-                    CoinType.byAddress(item.wallet.tokenAddress.orEmpty())
-                }?.let {
-                    val coinValue = CoinValue(it, item.primaryValue.value.stringAmountToDoubleOrZero())
-                    updateBalance()
-                    WalletModel(
-                        coinUid = item.wallet.coin.uid,
-                        coinType = it,
-                        image = if (it == CoinType.SNPS) {
-                            R.drawable.ic_snp_token.imageValue()
-                        } else {
-                            item.coinIconUrl.imageValue()
-                        },
-                        coinValue = coinValue,
-                        fiatValue = if (it == CoinType.SNPS) {
-                            coinValue.toFiat(_balanceState.value.dataOrCache?.snpExchangeRate ?: 0.0)
-                        } else {
-                            FiatUSD(item.secondaryValue.value.stringAmountToDoubleOrZero())
-                        },
-                        receiveAddress = CryptoKit.adapterManager.getReceiveAdapterForWallet(item.wallet)?.receiveAddress.orEmpty(),
-                    )
-                }.also {
-                    if (it == null) logE("Couldn't create wallet for $item")
-                }
-            } ?: emptyList()
-        }.likeStateFlow(scope, emptyList())
+        .onEach(::setTotalServiceItems)
+        .mapNotNull { items -> items?.takeIf { it.isNotEmpty() } }
+        .combine(snpsAccountState, ::walletModels)
+        .likeStateFlow(scope, emptyList())
 
     override val bnb: StateFlow<WalletModel?> = activeWallets.mapNotNull { wallets ->
         wallets.find { it.coinType == CoinType.BNB }
@@ -203,40 +154,52 @@ class WalletRepositoryImpl @Inject constructor(
     private val _payouts = MutableStateFlow<State<List<PayoutOrderResponseDto>>>(Loading())
     override val payouts = _payouts.asStateFlow()
 
+    private var account: Account? = null
+
     init {
-        totalBalanceManager.totalUiState
-            .combine(snps) { total, snps -> total to snps }
-            .onEach { (total, snps) ->
-                _totalBalance.update {
-                    if (total !is TotalUIState.Visible) return@update TotalBalanceModel.empty
-                    TotalBalanceModel(
-                        coin = run {
-                            val bnb = CoinBNB(total.primaryAmountStr.stringAmountToDoubleOrZero())
-                            val snpsToBnb = snps?.coinValue?.toCoin(
-                                _balanceState.value.dataOrCache?.bnbExchangeRate ?: 0.0
-                            )
-                            snpsToBnb?.plus(bnb) ?: bnb
-                        },
-                        fiat = run {
-                            val bnbInUsd = FiatUSD(total.secondaryAmountStr.stringAmountToDoubleOrZero())
-                            val snpsInUsd = snps?.fiatValue
-                            snpsInUsd?.plus(bnbInUsd) ?: bnbInUsd
-                        },
-                    )
-                }
-            }.launchIn(scope)
+        combine(totalBalanceManager.totalUiState, snps) { totalUIState, snps ->
+            totalBalanceModel(
+                totalUIState = totalUIState,
+                snps = snps,
+                balance = snpsAccountState.value,
+            )
+        }.onEach { balanceModel ->
+            _totalBalance.update { balanceModel }
+        }.launchIn(scope)
         balanceService.start()
         totalBalanceManager.start(scope)
     }
 
-    override suspend fun updateBalance(): Effect<Completable> {
-        _balanceState tryPublish Loading()
+    private fun setTotalServiceItems(balanceItems: List<BalanceItem>?) {
+        totalBalanceManager.setTotalServiceItems(
+            map = balanceItems?.map {
+                TotalService.BalanceItem(
+                    value = it.balanceData.total,
+                    isValuePending = it.state !is AdapterState.Synced,
+                    coinPrice = it.coinPrice,
+                )
+            }
+        )
+    }
+
+    private fun walletModels(
+        balanceItems: List<BalanceItem>,
+        snpsAccount: State<SnpsAccountModel>,
+    ) = balanceItems.mapNotNull {
+        balanceViewItemFactory.viewItem(
+            item = it,
+            currency = Currency(FiatCurrency.USD.name, FiatCurrency.USD.symbol, 2, 0),
+        ).toWalletModel(snpsAccount)
+    }
+
+    override suspend fun updateSnpsAccount(): Effect<Completable> {
+        _snpsAccountState tryPublish Loading()
         return apiCall(ioDispatcher) {
-            walletApi.balance()
+            walletApi.getSnpsAccount()
         }.map {
             it.toModel()
         }.also {
-            _balanceState tryPublish it
+            _snpsAccountState tryPublish it
         }.toCompletable()
     }
 

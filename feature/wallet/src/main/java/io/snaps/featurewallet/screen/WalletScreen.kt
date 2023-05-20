@@ -77,6 +77,7 @@ import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.CoinValue
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.addressEllipsized
@@ -186,7 +187,7 @@ fun WalletScreen(
                 )
                 WalletViewModel.BottomDialog.RewardsWithdraw -> RewardsClaimDialog(
                     amountValue = uiState.claimAmountValue,
-                    availableTokens = uiState.availableTokenAmount,
+                    availableTokens = uiState.availableTokens,
                     isConfirmButtonEnabled = uiState.isConfirmClaimEnabled,
                     focusRequester = focusRequester,
                     onAmountValueChanged = viewModel::onAmountToClaimValueChanged,
@@ -694,7 +695,7 @@ private fun TopUpDialog(
 @Composable
 private fun RewardsClaimDialog(
     amountValue: String,
-    availableTokens: Double,
+    availableTokens: CoinValue,
     isConfirmButtonEnabled: Boolean,
     focusRequester: FocusRequester,
     onAmountValueChanged: (String) -> Unit,
@@ -733,9 +734,7 @@ private fun RewardsClaimDialog(
                 maxLines = 1,
             )
             Text(
-                text = StringKey.RewardsDialogFieldAvailable.textValue(
-                    availableTokens.toString()
-                ).get(),
+                text = StringKey.RewardsDialogFieldAvailable.textValue(availableTokens.getFormatted()).get(),
                 style = AppTheme.specificTypography.bodySmall,
                 modifier = Modifier
                     .fillMaxWidth()

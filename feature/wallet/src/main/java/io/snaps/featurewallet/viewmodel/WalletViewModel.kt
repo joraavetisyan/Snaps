@@ -13,13 +13,17 @@ import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.TotalBalanceModel
+import io.snaps.basewallet.domain.WalletModel
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.ext.stringAmountToDoubleOrZero
+import io.snaps.corecommon.ext.stripUselessDecimals
+import io.snaps.corecommon.model.CoinSNPS
+import io.snaps.corecommon.model.CoinType
+import io.snaps.corecommon.model.CoinValue
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
-import io.snaps.basewallet.domain.WalletModel
-import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
@@ -161,9 +165,9 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun subscribeToRewards() {
-        walletRepository.balanceState.map { state ->
+        walletRepository.snpsAccountState.map { state ->
             _uiState.update {
-                it.copy(availableTokenAmount = state.dataOrCache?.unlocked?.value ?: 0.0)
+                it.copy(availableTokens = state.dataOrCache?.unlocked ?: CoinSNPS(0.0))
             }
             state.toRewardsTileState(::onRewardReloadClicked)
         }.onEach { rewards ->
@@ -200,7 +204,7 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun updateBalance() = viewModelScope.launch {
-        action.execute { walletRepository.updateBalance() }
+        action.execute { walletRepository.updateSnpsAccount() }
     }
 
     fun onRewardsFootnoteClick() {
@@ -245,7 +249,7 @@ class WalletViewModel @Inject constructor(
             if (profileRepository.state.value.dataOrCache?.paymentsState == PaymentsState.InApp && brokenNftCount > 0) {
                 _uiState.update { it.copy(bottomDialog = BottomDialog.RepairNft) }
                 _command publish Command.ShowBottomDialog
-            } else if (uiState.value.availableTokenAmount == 0.0) {
+            } else if (uiState.value.availableTokens.value == 0.0) {
                 notificationsSource.sendError(StringKey.RewardsErrorInsufficientBalance.textValue())
             } else {
                 _command publish Command.ShowBottomDialog
@@ -259,9 +263,7 @@ class WalletViewModel @Inject constructor(
     }
 
     fun onRewardsMaxButtonClicked() {
-        _uiState.update {
-            it.copy(claimAmountValue = it.availableTokenAmount.toString())
-        }
+        onAmountToClaimValueChanged(_uiState.value.availableTokens.value.stripUselessDecimals())
     }
 
     fun onConfirmClaimClicked() = viewModelScope.launch {
@@ -269,7 +271,7 @@ class WalletViewModel @Inject constructor(
         action.execute {
             walletInteractor.claim(amount = uiState.value.claimAmountValue.toDouble())
         }.doOnSuccess {
-            walletRepository.updateBalance()
+            walletRepository.updateSnpsAccount()
             _command publish Command.HideBottomDialog
         }.doOnError { error, _ ->
             when (error.cause) {
@@ -342,7 +344,7 @@ class WalletViewModel @Inject constructor(
     private fun refreshRewards() = viewModelScope.launch {
         _uiState.update { it.copy(isRefreshing = true) }
         action.execute {
-            val loadBalanceDeferred = viewModelScope.async { walletRepository.updateBalance() }
+            val loadBalanceDeferred = viewModelScope.async { walletRepository.updateSnpsAccount() }
             val loadUnlockedTransactionsDeferred = viewModelScope.async {
                 transactionsRepository.refreshTransactions(TransactionsType.Unlocked)
             }
@@ -416,12 +418,12 @@ class WalletViewModel @Inject constructor(
         val filter: Filter = Filter.Unlocked,
         val unlockedTransactions: TransactionsUiState = TransactionsUiState(),
         val lockedTransactions: TransactionsUiState = TransactionsUiState(),
-        val availableTokenAmount: Double = 0.0,
+        val availableTokens: CoinValue = CoinSNPS(0.0),
         val claimAmountValue: String = "",
     ) {
 
         val isConfirmClaimEnabled
-            get() = claimAmountValue.toDoubleOrNull()?.let { it <= availableTokenAmount && it > 0 } ?: false
+            get() = claimAmountValue.stringAmountToDoubleOrZero().let { it > 0 && it <= availableTokens.value }
 
         val transactions: TransactionsUiState
             get() = when (filter) {

@@ -19,8 +19,8 @@ class WalletInteractorImpl @Inject constructor(
 ) : WalletInteractor {
 
     override suspend fun claim(amount: Double): Effect<Completable> {
-        return walletRepository.updateBalance().flatMap {
-            requireNotNull(walletRepository.balanceState.value.dataOrCache).let {
+        return walletRepository.updateSnpsAccount().flatMap {
+            requireNotNull(walletRepository.snpsAccountState.value.dataOrCache).let {
                 if (it.unlocked.value > 0) {
                     walletRepository.claim(amount)
                 } else {

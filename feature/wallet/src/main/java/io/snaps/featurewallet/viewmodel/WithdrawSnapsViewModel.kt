@@ -13,6 +13,8 @@ import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.stringAmountToDouble
 import io.snaps.corecommon.ext.stringAmountToDoubleOrZero
 import io.snaps.corecommon.ext.stringAmountToDoubleSafely
+import io.snaps.corecommon.ext.stripUselessDecimals
+import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.model.FiatUSD
 import io.snaps.corecommon.model.FiatValue
@@ -75,20 +77,15 @@ class WithdrawSnapsViewModel @Inject constructor(
     }
 
     fun onMaxButtonClicked() {
-        _uiState.update { state ->
-            state.copy(amountValue = _uiState.value.snpWalletModel?.coinValue?.value?.toString().orEmpty())
-        }
+        onAmountValueChanged(_uiState.value.snpWalletModel?.coinValue?.value?.stripUselessDecimals().orEmpty())
     }
 
     fun onAmountValueChanged(value: String) {
         _uiState.update {
             it.copy(
                 amountValue = value,
-                total = FiatUSD(
-                    walletRepository.balanceState.value.dataOrCache?.snpExchangeRate?.let { rate ->
-                        value.stringAmountToDoubleSafely()?.times(rate)
-                    } ?: 0.0
-                ),
+                total = CoinSNPS(value.stringAmountToDoubleSafely() ?: 0.0)
+                    .toFiat(walletRepository.snpsAccountState.value.dataOrCache?.snpsUsdExchangeRate ?: 0.0),
             )
         }
         scheduleGasLimitCalculate()
@@ -136,7 +133,7 @@ class WithdrawSnapsViewModel @Inject constructor(
     }
 
     fun onSendClicked() {
-        val amount = getValueDecimalApplied() ?: kotlin.run { log("Invalid amount!"); return }
+        val amount = requireNotNull(getValueDecimalApplied())
         val snpWalletModel = _uiState.value.snpWalletModel ?: return
         when (profileRepository.state.value.dataOrCache?.paymentsState) {
             null,
@@ -167,7 +164,9 @@ class WithdrawSnapsViewModel @Inject constructor(
                     cardNumber = _uiState.value.cardNumberValue.digitsOnly(),
                 )
             }
-        }.doOnSuccess {}.doOnComplete {
+        }.doOnSuccess {
+
+        }.doOnComplete {
             _uiState.update { it.copy(isLoading = false) }
         }
     }

@@ -17,6 +17,7 @@ import io.snaps.corecommon.model.CoinBNB
 import io.snaps.corecommon.model.CoinValue
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.basewallet.domain.WalletModel
+import io.snaps.corecommon.ext.stripUselessDecimals
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -142,7 +143,7 @@ class WithdrawViewModel @Inject constructor(
 
     fun onMaxButtonClicked() {
         _uiState.update { state ->
-            state.copy(amountValue = state.availableAmount?.value?.toString().orEmpty())
+            state.copy(amountValue = state.availableAmount?.value?.stripUselessDecimals().orEmpty())
         }
         scheduleGasLimitCalculate()
     }

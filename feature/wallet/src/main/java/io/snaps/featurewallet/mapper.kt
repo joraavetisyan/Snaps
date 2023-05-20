@@ -1,6 +1,6 @@
 package io.snaps.featurewallet
 
-import io.snaps.basewallet.domain.BalanceModel
+import io.snaps.basewallet.domain.SnpsAccountModel
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
 import io.snaps.basewallet.data.model.PayoutOrderStatus
 import io.snaps.corecommon.R
@@ -43,7 +43,7 @@ fun WalletModel.toCellTileState(
     clickListener = onClick?.let { { it.invoke(this) } },
 )
 
-fun State<BalanceModel>.toRewardsTileState(
+fun State<SnpsAccountModel>.toRewardsTileState(
     onRewardReloadClicked: () -> Unit,
 ): List<RewardsTileState> {
     return when (this) {
@@ -55,7 +55,7 @@ fun State<BalanceModel>.toRewardsTileState(
     }
 }
 
-fun BalanceModel.toRewardsTileState() = listOf(
+fun SnpsAccountModel.toRewardsTileState() = listOf(
     RewardsTileState.Unlocked(
         balance = unlocked,
         fiatValue = unlockedInFiat,

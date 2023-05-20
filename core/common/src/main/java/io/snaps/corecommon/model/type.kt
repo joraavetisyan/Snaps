@@ -3,7 +3,7 @@
 package io.snaps.corecommon.model
 
 import io.snaps.corecommon.ext.log
-import io.snaps.corecommon.ext.toNumberFormat
+import io.snaps.corecommon.ext.toMoneyFormat
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.ZonedDateTime
@@ -70,11 +70,11 @@ data class FiatValue(
     @SerialName("value") val value: Double,
 ) {
 
-    fun getFormattedValueOnly() = value.toNumberFormat()
+    fun getFormattedValue() = value.toMoneyFormat()
 
     fun getFormatted(currencyFirst: Boolean = false) = "%s %s".run {
-        if (currencyFirst) format(currency.symbol, getFormattedValueOnly())
-        else format(getFormattedValueOnly(), currency.symbol)
+        if (currencyFirst) format(currency.symbol, getFormattedValue())
+        else format(getFormattedValue(), currency.symbol)
     }
 
     operator fun plus(other: FiatValue): FiatValue {
@@ -93,20 +93,28 @@ data class CoinValue(
     val value: Double,
 ) {
 
-    fun getFormattedValueOnly() = value.toNumberFormat()
+    fun getFormattedValue() = value.toMoneyFormat(value.calculateRoundPlaces())
 
-    fun getFormatted() = "%s %s".format(getFormattedValueOnly(), type.symbol)
+    private fun Double.calculateRoundPlaces(): Int {
+        val string = toBigDecimal().toPlainString()
+        var count = 3
+        val pointIndex = string.indexOf('.')
+        if (pointIndex != -1) for (i in pointIndex + 1..string.lastIndex) {
+            if (string[i] == '0') count++ else break
+        }
+        return count
+    }
+
+    fun getFormatted() = "%s %s".format(getFormattedValue(), type.symbol)
 
     fun toFiat(rate: Double, currency: FiatCurrency = FiatCurrency.USD): FiatValue {
         log("$type to $currency with rate $rate")
-        if (rate <= 0.0) return FiatValue(currency, 0.0)
-        return FiatValue(currency, value / rate)
+        return FiatValue(currency, value * rate)
     }
 
     fun toCoin(rate: Double, type: CoinType = CoinType.BNB): CoinValue {
         log("${this.type} to $type with rate $rate")
-        if (rate <= 0.0) return CoinValue(type, 0.0)
-        return CoinValue(type, value / rate)
+        return CoinValue(type, value * rate)
     }
 
     operator fun plus(other: CoinValue): CoinValue {
