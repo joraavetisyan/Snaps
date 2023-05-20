@@ -120,8 +120,9 @@ private fun Data(
                     .clip(CircleShape),
             )
             Text(
-                text = data.type.title,
+                text = data.type.title.replaceFirst(" ", "\n"),
                 style = AppTheme.specificTypography.labelMedium,
+                maxLines = 2,
             )
         }
         Text(

@@ -24,7 +24,6 @@ import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.model.Effect
-import io.snaps.corecommon.model.FiatCurrency
 import io.snaps.corecommon.model.FiatValue
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
@@ -64,7 +63,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import java.security.InvalidAlgorithmParameterException
 import javax.inject.Inject
 

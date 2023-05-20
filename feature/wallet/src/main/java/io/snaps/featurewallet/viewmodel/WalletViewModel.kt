@@ -18,7 +18,6 @@ import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensSuccessData
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.ext.stringAmountToDouble
 import io.snaps.corecommon.ext.stringAmountToDoubleOrZero
 import io.snaps.corecommon.ext.stripTrailingZeros
 import io.snaps.corecommon.model.CoinSNPS

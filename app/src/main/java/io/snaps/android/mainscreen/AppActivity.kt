@@ -92,8 +92,10 @@ class AppActivity : FragmentActivity() {
                             needsWalletImport = currentFlow.needsWalletImport,
                             needsInitialization = currentFlow.needsInitialization,
                         )
-                        LaunchedEffect(Unit) {
-                            navController.navigate(currentFlow.deeplink)
+                        LaunchedEffect(currentFlow.isReady) {
+                            if (currentFlow.isReady) {
+                                navController.navigate(currentFlow.deeplink)
+                            }
                         }
                         // When firebase dynamic links support is added, use this instead of the custom intent handle
                         /*Firebase.dynamicLinks

@@ -198,7 +198,7 @@ fun RightPartTile(modifier: Modifier, data: RightPart) {
             }
             is RightPart.ChipData -> {
                 SimpleChip(
-                    modifier = Modifier.width(100.dp),
+                    modifier = Modifier.width(124.dp),
                     selected = data.selected,
                     label = data.text,
                     textStyle = AppTheme.specificTypography.labelSmall,

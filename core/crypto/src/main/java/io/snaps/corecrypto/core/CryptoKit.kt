@@ -9,6 +9,7 @@ import io.horizontalsystems.ethereumkit.models.IS_CRYPTO_IN_TEST_MODE
 import io.horizontalsystems.hdwalletkit.Mnemonic
 import io.reactivex.plugins.RxJavaPlugins
 import io.snaps.corecommon.BuildConfig
+import io.snaps.corecommon.ext.logTag
 import io.snaps.corecrypto.core.factories.AccountFactory
 import io.snaps.corecrypto.core.factories.AdapterFactory
 import io.snaps.corecrypto.core.factories.AddressParserFactory
@@ -143,7 +144,7 @@ class CryptoKit : CoreApp(), WorkConfiguration.Provider {
             }
 
             RxJavaPlugins.setErrorHandler { e: Throwable? ->
-                Log.w("RxJava ErrorHandler", e)
+                Log.e(logTag, "", e)
             }
 
             EthereumKit.init()
@@ -347,11 +348,6 @@ class CryptoKit : CoreApp(), WorkConfiguration.Provider {
                 adapterManager.preloadAdapters()
                 // clear deleted accounts
                 accountManager.clearAccounts()
-
-                AppVersionManager(
-                    systemInfoManager = systemInfoManager,
-                    localStorage = localStorage,
-                ).apply { storeAppVersion() }
 
                 evmLabelManager.sync()
 

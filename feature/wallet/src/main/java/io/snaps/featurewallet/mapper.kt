@@ -82,7 +82,7 @@ fun TransactionModel.toTransactionTile(
 )
 
 private fun LocalDateTime.toStringValue(): TextValue {
-    return format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")).textValue()
+    return format(DateTimeFormatter.ofPattern("dd MMMM HH:mm")).textValue()
 }
 
 fun State<List<PayoutOrderResponseDto>>.toPayoutStatusState(

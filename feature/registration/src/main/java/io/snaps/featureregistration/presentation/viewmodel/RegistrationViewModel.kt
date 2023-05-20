@@ -8,6 +8,9 @@ import io.snaps.baseauth.data.AuthRepository
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.basesources.NotificationsSource
+import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.FullUrl
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -36,11 +39,15 @@ class RegistrationViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     fun onPrivacyPolicyClicked() {
-        /*TODO*/
+        viewModelScope.launch {
+            _command publish Command.OpenLink("https://snaps-docs.gitbook.io/privacy-policy-snaps/")
+        }
     }
 
     fun onTermsOfUserClicked() {
-        /*TODO*/
+        viewModelScope.launch {
+            _command publish Command.OpenLink("https://snaps-docs.gitbook.io/terms-of-service/")
+        }
     }
 
     fun onLoginWithEmailClicked() = viewModelScope.launch {
@@ -57,6 +64,19 @@ class RegistrationViewModel @Inject constructor(
         } else {
             _uiState.update {
                 it.copy(dialog = Dialog.EmailVerification)
+            }
+        }
+    }
+
+    fun onOneTapSignInStarted() {
+        _uiState.update { it.copy(isLoading = true) }
+    }
+
+    fun onOneTapSignInCompleted(isSuccess: Boolean) {
+        _uiState.update { it.copy(isLoading = false) }
+        if (!isSuccess) {
+            viewModelScope.launch {
+                notificationsSource.sendError(StringKey.ErrorUnknown.textValue())
             }
         }
     }
@@ -264,5 +284,6 @@ class RegistrationViewModel @Inject constructor(
         object ShowBottomDialog : Command()
         object HideBottomDialog : Command()
         object OpenConnectWalletScreen : Command()
+        data class OpenLink(val link: FullUrl) : Command()
     }
 }

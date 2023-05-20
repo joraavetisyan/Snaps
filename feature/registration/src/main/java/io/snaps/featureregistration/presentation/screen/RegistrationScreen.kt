@@ -62,6 +62,7 @@ import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
@@ -165,6 +166,7 @@ fun RegistrationScreen(
                 sheetState.hide()
             }
             RegistrationViewModel.Command.OpenConnectWalletScreen -> router.toConnectWalletScreen()
+            is RegistrationViewModel.Command.OpenLink -> context.openUrl(it.link)
         }
     }
 
@@ -212,17 +214,22 @@ fun RegistrationScreen(
             uiState = uiState,
             onLoginWithTwitterClicked = viewModel::onLoginWithTwitterClicked,
             onLoginWithGoogleClicked = {
+                viewModel.onOneTapSignInStarted()
                 oneTapClient.beginSignIn(googleSignInRequest)
                     .addOnSuccessListener(context as Activity) { result ->
+                        viewModel.onOneTapSignInCompleted(true)
                         val intentSenderRequest = IntentSenderRequest.Builder(
                             result.pendingIntent.intentSender
                         ).build()
                         googleSignInLauncher.launch(intentSenderRequest)
                     }.addOnFailureListener {
-                        log("""
+                        viewModel.onOneTapSignInCompleted(false)
+                        log(
+                            it,
+                            """
                             If this is "com.google.android.gms.common.api.ApiException: 10: Developer console is not set up correctly." add your machine's sha1 to the firebase console
-                        """.trimIndent())
-                        log(it)
+                            """.trimIndent(),
+                        )
                     }
             },
             onLoginWithEmailClicked = viewModel::onLoginWithEmailClicked,
@@ -395,6 +402,7 @@ private fun PrivacyPolicy(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun LoginWithEmailDialog(
     uiState: RegistrationViewModel.UiState,
@@ -405,6 +413,7 @@ private fun LoginWithEmailDialog(
     onSignUpClicked: () -> Unit,
     onForgotPasswordClicked: () -> Unit,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     SimpleBottomDialogUI(header = StringKey.RegistrationDialogSignInTitle.textValue()) {
         item {
             Text(
@@ -460,7 +469,7 @@ private fun LoginWithEmailDialog(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 enabled = uiState.isSignInButtonEnabled,
-                onClick = onLoginWithEmailClicked,
+                onClick = { keyboardController?.hide(); onLoginWithEmailClicked() },
             ) {
                 SimpleButtonContent(text = StringKey.RegistrationDialogSignInActionLogin.textValue())
             }
@@ -484,6 +493,7 @@ private fun LoginWithEmailDialog(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun RegistrationWithEmailDialog(
     focusRequester: FocusRequester,
@@ -496,6 +506,7 @@ private fun RegistrationWithEmailDialog(
     onPrivacyPolicyClicked: () -> Unit,
     onTermsOfUserClicked: () -> Unit,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     SimpleBottomDialogUI(header = StringKey.RegistrationDialogSignUpTitle.textValue()) {
         item {
             Text(
@@ -570,7 +581,7 @@ private fun RegistrationWithEmailDialog(
                     .fillMaxWidth()
                     .padding(16.dp),
                 enabled = uiState.isSignUpButtonEnabled,
-                onClick = onSignUpClicked,
+                onClick = { keyboardController?.hide(); onSignUpClicked() },
             ) {
                 SimpleButtonContent(text = StringKey.RegistrationDialogSignUpActionRegistration.textValue())
             }

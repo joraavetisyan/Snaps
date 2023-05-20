@@ -256,7 +256,7 @@ abstract class VideoFeedViewModel(
         val videoClips = videoFeedPageModel?.loadedPageItems?.map {
             when (it.id) {
                 video.id -> it.copy(
-                    commentCount = video.commentCount + 1
+                    commentCount = it.commentCount + 1
                 )
                 else -> it
             }

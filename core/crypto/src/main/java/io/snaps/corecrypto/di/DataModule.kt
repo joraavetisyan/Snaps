@@ -59,13 +59,6 @@ class DataModule {
     fun balanceViewItemFactory(): BalanceViewItemFactory = BalanceViewItemFactory()
 
     @Provides
-    fun predefinedBlockchainSettingsProvider(): PredefinedBlockchainSettingsProvider =
-        PredefinedBlockchainSettingsProvider(
-            manager = CryptoKit.restoreSettingsManager,
-            zcashBirthdayProvider = CryptoKit.zcashBirthdayProvider,
-        )
-
-    @Provides
     fun balanceService(): BalanceService = BalanceService(
         activeWalletRepository = BalanceActiveWalletRepository(
             walletManager = CryptoKit.walletManager,

@@ -122,7 +122,7 @@ class TransferTokensDialogHandlerImplDelegate @Inject constructor() : TransferTo
     }
 
     // todo release mainnet scan
-    private fun TxHash.scanLink() = "https://testnet.bscscan.com/tx/${this}"
+    private fun TxHash.scanLink() = "https://testnet.bscscan.com/tx/$this"
 
     override fun onSuccessfulSell(scope: CoroutineScope, data: TransferTokensSuccessData) {
         _uiState.update {

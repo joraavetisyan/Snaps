@@ -16,17 +16,17 @@ fun log(value: String) {
 }
 
 inline fun Any.logE(value: String) {
-    Log.e(logTag, value, Exception(value))
+    Log.e(logTag, "Error: ", Exception(value))
 }
 
 fun logE(value: String) {
-    Log.e(logTagPrefix, value, Exception(value))
+    Log.e(logTagPrefix, "Error: ", Exception(value))
 }
 
-inline fun Any.log(value: Throwable) {
-    Log.e(logTag, "Error: ", value)
+inline fun Any.log(value: Throwable, message: String = "Error: ") {
+    Log.e(logTag, message, value)
 }
 
-fun log(value: Throwable) {
-    Log.e(logTagPrefix, "Error: ", value)
+fun log(value: Throwable, message: String = "Error: ") {
+    Log.e(logTagPrefix, message, value)
 }

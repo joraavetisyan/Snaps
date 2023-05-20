@@ -101,12 +101,16 @@ class AppViewModel @AssistedInject constructor(
             val needsStartOnBoarding: Boolean,
         ) : StartFlow()
 
+        // todo better way than multiple flags
         data class AuthorizedFlow(
             val isError: Boolean,
             val needsWalletConnect: Boolean,
             val needsWalletImport: Boolean,
             val needsInitialization: Boolean,
             val deeplink: Deeplink? = null,
-        ) : StartFlow()
+        ) : StartFlow() {
+
+            val isReady get() = !needsWalletConnect && !needsWalletImport && !needsInitialization
+        }
     }
 }

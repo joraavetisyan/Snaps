@@ -92,7 +92,6 @@ import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialogItem
-import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetCurrentStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI

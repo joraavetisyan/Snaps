@@ -190,6 +190,8 @@ enum class NftType(val intType: NftTypeInt, val storeId: String?) {
     @SerialName("Legend") Legend(11, null),
     ;
 
+    val displayName get() = name
+
     companion object {
 
         fun byIntType(intType: NftTypeInt) = values().first { it.intType == intType }
