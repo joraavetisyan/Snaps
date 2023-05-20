@@ -14,10 +14,13 @@ import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.basewallet.domain.WalletModel
+import io.snaps.basewallet.ui.TransferTokensDialogHandler
+import io.snaps.basewallet.ui.TransferTokensSuccessData
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.ext.stringAmountToDouble
 import io.snaps.corecommon.ext.stringAmountToDoubleOrZero
-import io.snaps.corecommon.ext.stripUselessDecimals
+import io.snaps.corecommon.ext.stripTrailingZeros
 import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.model.CoinValue
@@ -60,6 +63,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WalletViewModel @Inject constructor(
     onboardingHandler: OnboardingHandler,
+    transferTokensDialogHandler: TransferTokensDialogHandler,
     featureToggle: FeatureToggle,
     private val action: Action,
     private val barcodeManager: BarcodeManager,
@@ -69,7 +73,9 @@ class WalletViewModel @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
     @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val nftRepository: NftRepository,
-) : SimpleViewModel(), OnboardingHandler by onboardingHandler {
+) : SimpleViewModel(),
+    TransferTokensDialogHandler by transferTokensDialogHandler,
+    OnboardingHandler by onboardingHandler {
 
     private val _uiState = MutableStateFlow(UiState(isSnapsSellEnabled = featureToggle.isEnabled(Feature.SellSnaps)))
     val uiState = _uiState.asStateFlow()
@@ -263,7 +269,7 @@ class WalletViewModel @Inject constructor(
     }
 
     fun onRewardsMaxButtonClicked() {
-        onAmountToClaimValueChanged(_uiState.value.availableTokens.value.stripUselessDecimals())
+        onAmountToClaimValueChanged(_uiState.value.availableTokens.value.stripTrailingZeros())
     }
 
     fun onConfirmClaimClicked() = viewModelScope.launch {
@@ -334,7 +340,7 @@ class WalletViewModel @Inject constructor(
     private fun refreshWallet() = viewModelScope.launch {
         _uiState.update { it.copy(isRefreshing = true) }
         action.execute {
-            walletRepository.updateTotalBalance()
+            walletRepository.updateTotalBalanceAndPayouts(isSilently = true)
         }.doOnComplete {
             _uiState.update { it.copy(isRefreshing = false) }
         }
@@ -391,15 +397,34 @@ class WalletViewModel @Inject constructor(
         viewModelScope.launch { _command publish Command.OpenWithdrawSnapsScreen }
     }
 
-    fun onSellSnapsResultReceived(sold: Boolean) {
-        if (sold) updatePayouts(isSilently = false)
+    fun onTransactionResultReceived(result: TransferTokensSuccessData?) {
+        when (result?.type) {
+            TransferTokensSuccessData.Type.Send -> {
+                updateTotalBalance()
+                onSuccessfulTransfer(scope = viewModelScope, data = result)
+            }
+            TransferTokensSuccessData.Type.Sell -> {
+                updateTotalBalance()
+                updatePayouts(isSilently = false)
+                onSuccessfulSell(scope = viewModelScope, data = result)
+            }
+            null -> Unit
+        }
+    }
+
+    private fun updateTotalBalance() {
+        viewModelScope.launch { action.execute { walletRepository.updateTotalBalance() } }
+    }
+
+    fun onBottomDialogHidden() {
+        _uiState.update { it.copy(bottomDialog = null) }
     }
 
     data class UiState(
         val isLoading: Boolean = false,
         val isRefreshing: Boolean = false,
         val screen: Screen = Screen.Wallet,
-        val bottomDialog: BottomDialog = BottomDialog.SelectWallet(),
+        val bottomDialog: BottomDialog? = null,
 
         val payoutStatusState: PayoutStatusState? = null,
         val address: CryptoAddress = "",

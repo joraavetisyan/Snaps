@@ -2,9 +2,10 @@ package io.snaps.basewallet.ui
 
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.CoinValue
+import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Token
-import io.snaps.corecommon.model.CryptoAddress
+import io.snaps.corecommon.model.TxHash
 import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -15,7 +16,22 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import javax.inject.Inject
+
+@Serializable
+data class TransferTokensSuccessData(
+    val txHash: Token,
+    val sent: CoinValue? = null,
+    val to: CryptoAddress? = null,
+    val type: Type? = null,
+) {
+
+    @Serializable
+    enum class Type {
+        Send, Sell
+    }
+}
 
 interface TransferTokensDialogHandler {
 
@@ -31,9 +47,12 @@ interface TransferTokensDialogHandler {
 
     fun onSuccessfulTransfer(
         scope: CoroutineScope,
-        txHash: Token,
-        sent: CoinValue? = null,
-        to: CryptoAddress? = null,
+        data: TransferTokensSuccessData,
+    )
+
+    fun onSuccessfulSell(
+        scope: CoroutineScope,
+        data: TransferTokensSuccessData,
     )
 
     fun onTransferTokensDialogHidden()
@@ -45,6 +64,9 @@ interface TransferTokensDialogHandler {
 
     sealed class BottomDialog {
         object TokensTransfer : BottomDialog()
+        data class TokensSellSuccess(
+            val bscScanLink: FullUrl,
+        ) : BottomDialog()
         data class TokensTransferSuccess(
             val bscScanLink: FullUrl,
             val sent: CoinValue?,
@@ -84,12 +106,29 @@ class TransferTokensDialogHandlerImplDelegate @Inject constructor() : TransferTo
         scope.launch { _command publish TransferTokensDialogHandler.Command.HideBottomDialog }
     }
 
-    override fun onSuccessfulTransfer(scope: CoroutineScope, txHash: Token, sent: CoinValue?, to: CryptoAddress?) {
+    override fun onSuccessfulTransfer(scope: CoroutineScope, data: TransferTokensSuccessData) {
         _uiState.update {
             it.copy(
                 bottomDialog = TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess(
-                    // todo release mainnet scan
-                    bscScanLink = "https://testnet.bscscan.com/tx/$txHash", sent = sent, to = to
+                    bscScanLink = data.txHash.scanLink(),
+                    sent = data.sent,
+                    to = data.to,
+                ),
+            )
+        }
+        scope.launch {
+            _command publish TransferTokensDialogHandler.Command.ShowBottomDialog
+        }
+    }
+
+    // todo release mainnet scan
+    private fun TxHash.scanLink() = "https://testnet.bscscan.com/tx/${this}"
+
+    override fun onSuccessfulSell(scope: CoroutineScope, data: TransferTokensSuccessData) {
+        _uiState.update {
+            it.copy(
+                bottomDialog = TransferTokensDialogHandler.BottomDialog.TokensSellSuccess(
+                    bscScanLink = data.txHash.scanLink(),
                 ),
             )
         }

@@ -23,8 +23,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -45,19 +47,15 @@ import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
-import io.snaps.coreuicompose.uikit.dialog.DiamondDialog
-import io.snaps.coreuicompose.uikit.dialog.DiamondDialogButtonData
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
-import io.snaps.coreuicompose.uikit.text.LinkText
-import io.snaps.coreuicompose.uikit.text.LinkTextData
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewallet.ScreenNavigator
 import io.snaps.featurewallet.viewmodel.WithdrawSnapsViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun WithdrawSnapsScreen(
     navHostController: NavHostController,
@@ -74,14 +72,19 @@ fun WithdrawSnapsScreen(
     )
     val coroutineScope = rememberCoroutineScope()
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     viewModel.command.collectAsCommand {
         when (it) {
-            WithdrawSnapsViewModel.Command.CloseScreen -> navHostController.popBackStackWithResult(true)
+            is WithdrawSnapsViewModel.Command.CloseScreenOnSuccess -> navHostController.popBackStackWithResult(it.data)
         }
     }
     viewModel.limitedGasCommand.collectAsCommand {
         when (it) {
-            LimitedGasDialogHandler.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
+            LimitedGasDialogHandler.Command.ShowBottomDialog -> coroutineScope.launch {
+                keyboardController?.hide()
+                sheetState.show()
+            }
             LimitedGasDialogHandler.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
         }
     }
@@ -268,25 +271,4 @@ private fun WithdrawSnapsScreen(
             }
         }
     }
-}
-
-@Composable
-private fun WithdrawSuccessfulDialog(onDialogDismissRequested: () -> Unit) {
-    // todo localize
-    DiamondDialog(
-        title = "Successfully!".textValue(),
-        message = {
-            LinkText(
-                text = "Your funds have been withdrawn to your bank card and you will receive them within a few minutes. Check the status of your payment.".textValue(),
-                linkTextData = listOf(
-                    LinkTextData(text = "Check the status".textValue(), clickListener = {}),
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 4.dp, bottom = 16.dp),
-            )
-        },
-        onDismissRequest = onDialogDismissRequested,
-        primaryButton = DiamondDialogButtonData("Check the status".textValue(), {}),
-    )
 }

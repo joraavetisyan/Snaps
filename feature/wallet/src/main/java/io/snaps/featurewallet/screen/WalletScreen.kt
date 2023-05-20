@@ -72,6 +72,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.basewallet.ui.TransferTokensDialogHandler
+import io.snaps.basewallet.ui.TransferTokensSuccessData
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.TextValue
@@ -90,6 +92,8 @@ import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialogItem
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetCurrentStateListener
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
@@ -97,7 +101,6 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
-import io.snaps.coreuicompose.uikit.button.SimpleButtonOutlineL
 import io.snaps.coreuicompose.uikit.button.SimpleButtonOutlineM
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
@@ -119,11 +122,12 @@ fun WalletScreen(
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
     val viewModel = hiltViewModel<WalletViewModel>()
 
-    navHostController.resultFlow<Boolean>()?.collectAsCommand(action = viewModel::onSellSnapsResultReceived)
+    navHostController.resultFlow<TransferTokensSuccessData?>()?.collectAsCommand(action = viewModel::onTransactionResultReceived)
 
     val clipboardManager = LocalClipboardManager.current
 
     val uiState by viewModel.uiState.collectAsState()
+    val transferTokensState by viewModel.transferTokensState.collectAsState()
     val pullRefreshState = rememberPullRefreshState(uiState.isRefreshing, { viewModel.refresh() })
 
     val sheetState = rememberModalBottomSheetState(
@@ -145,6 +149,16 @@ fun WalletScreen(
         }
     }
 
+    ModalBottomSheetTargetStateListener(
+        sheetState = sheetState,
+        onStateToChange = {
+            if (it) {
+                viewModel.onBottomDialogHidden()
+                viewModel.onTransferTokensDialogHidden()
+            }
+        },
+    )
+
     viewModel.command.collectAsCommand {
         when (it) {
             WalletViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
@@ -154,6 +168,12 @@ fun WalletScreen(
             WalletViewModel.Command.OpenWithdrawSnapsScreen -> router.toWithdrawSnapsScreen()
             is WalletViewModel.Command.CopyText -> clipboardManager.setText(AnnotatedString(it.text))
             is WalletViewModel.Command.OpenLink -> context.openUrl(it.link)
+        }
+    }
+    viewModel.transferTokensCommand.collectAsCommand {
+        when (it) {
+            TransferTokensDialogHandler.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
+            TransferTokensDialogHandler.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
         }
     }
 
@@ -205,6 +225,35 @@ fun WalletScreen(
                         router.toMyCollectionScreen()
                     }
                 )
+                null -> Unit
+            }
+            when (val dialog = transferTokensState.bottomDialog) {
+                is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess -> SimpleBottomDialog(
+                    image = R.drawable.img_guy_hands_up.imageValue(),
+                    title = StringKey.WithdrawDialogWithdrawSuccessTitle.textValue(),
+                    text = StringKey.WithdrawDialogWithdrawSuccessMessage.textValue(
+                        dialog.sent?.getFormatted().orEmpty(),
+                        dialog.to.orEmpty()
+                    ),
+                    buttonText = StringKey.WithdrawDialogWithdrawSuccessAction.textValue(),
+                    onClick = {
+                        coroutineScope.launch { sheetState.hide() }
+                        context.openUrl(dialog.bscScanLink)
+                    },
+                )
+                is TransferTokensDialogHandler.BottomDialog.TokensSellSuccess -> SimpleBottomDialog(
+                    image = R.drawable.img_guy_hands_up.imageValue(),
+                    title = StringKey.MessageSuccess.textValue(),
+                    // todo localize
+                    text = "Your funds have been withdrawn to your bank card and you will receive them within a few minutes. Check the status of your payment.".textValue(),
+                    buttonText = StringKey.WithdrawDialogWithdrawSuccessAction.textValue(),
+                    onClick = {
+                        coroutineScope.launch { sheetState.hide() }
+                        context.openUrl(dialog.bscScanLink)
+                    },
+                )
+                TransferTokensDialogHandler.BottomDialog.TokensTransfer,
+                null -> Unit
             }
         },
     ) {

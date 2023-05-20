@@ -15,6 +15,7 @@ import io.snaps.basewallet.domain.NftMintSummary
 import io.snaps.basewallet.ui.LimitedGasDialogHandler
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensState
+import io.snaps.basewallet.ui.TransferTokensSuccessData
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
@@ -182,7 +183,7 @@ class PurchaseViewModel @Inject constructor(
             action.execute {
                 interactor.mintOnBlockchain(nftType = args.type, summary = summary)
             }.doOnSuccess { hash ->
-                onSuccessfulTransfer(scope = viewModelScope, txHash = hash)
+                onSuccessfulTransfer(scope = viewModelScope, data = TransferTokensSuccessData(txHash = hash))
             }.doOnError { error, _ ->
                 if (error.code == 400) notificationsSource.sendError(error)
             }.doOnComplete {

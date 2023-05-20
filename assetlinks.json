@@ -1,0 +1,38 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.snaps.android",
+      "sha256_cert_fingerprints": [
+        "4D:A3:AD:9E:89:AC:52:6D:03:04:01:EF:5C:70:4B:83:B0:B4:9F:F9:00:DC:41:FF:F1:37:36:44:07:AC:E9:76"
+      ]
+    }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.snaps.android",
+      "sha256_cert_fingerprints": [
+        "A0:79:92:0A:DA:CC:91:14:B2:68:AE:A6:E9:7B:DB:9E:6D:A2:DB:DF:68:79:0A:AE:A6:7E:FF:AA:00:DF:D3:8A"
+      ]
+    }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.snaps.android.debug",
+      "sha256_cert_fingerprints": [
+        "75:56:83:58:E7:F4:F3:EC:0E:19:7A:81:16:BA:75:BE:CB:5D:FD:3E:C6:A4:65:D6:DC:DA:4D:21:B2:9F:F6:E3"
+      ]
+    }
+  }
+]

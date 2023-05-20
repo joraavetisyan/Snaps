@@ -17,12 +17,14 @@ import io.snaps.corecommon.model.CoinBNB
 import io.snaps.corecommon.model.CoinValue
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.basewallet.domain.WalletModel
-import io.snaps.corecommon.ext.stripUselessDecimals
+import io.snaps.basewallet.ui.TransferTokensSuccessData
+import io.snaps.corecommon.ext.stripTrailingZeros
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.SimpleViewModel
+import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.input.formatter.BigAmountFormatter
 import io.snaps.coreuicompose.uikit.input.formatter.SimpleFormatter
 import kotlinx.coroutines.Job
@@ -143,7 +145,7 @@ class WithdrawViewModel @Inject constructor(
 
     fun onMaxButtonClicked() {
         _uiState.update { state ->
-            state.copy(amountValue = state.availableAmount?.value?.stripUselessDecimals().orEmpty())
+            state.copy(amountValue = state.availableAmount?.value?.stripTrailingZeros().orEmpty())
         }
         scheduleGasLimitCalculate()
     }
@@ -186,11 +188,16 @@ class WithdrawViewModel @Inject constructor(
             }.doOnComplete {
                 _uiState.update { it.copy(isLoading = false) }
             }.doOnSuccess {
-                onSuccessfulTransfer(
-                    scope = viewModelScope,
-                    txHash = it,
-                    sent = CoinValue(_uiState.value.walletModel.coinType, _uiState.value.amountValue.stringAmountToDouble()),
-                    to = _uiState.value.addressValue,
+                _command publish Command.CloseScreenOnSuccess(
+                    TransferTokensSuccessData(
+                        txHash = it,
+                        sent = CoinValue(
+                            _uiState.value.walletModel.coinType,
+                            _uiState.value.amountValue.stringAmountToDouble(),
+                        ),
+                        to = _uiState.value.addressValue,
+                        type = TransferTokensSuccessData.Type.Send,
+                    )
                 )
             }
         }
@@ -220,6 +227,6 @@ class WithdrawViewModel @Inject constructor(
     }
 
     sealed interface Command {
-        object CloseScreen : Command
+        data class CloseScreenOnSuccess(val data: TransferTokensSuccessData) : Command
     }
 }

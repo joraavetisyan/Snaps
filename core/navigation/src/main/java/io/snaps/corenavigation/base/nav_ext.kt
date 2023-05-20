@@ -23,6 +23,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -83,8 +84,8 @@ fun NavOptionsBuilder.tryPopBackStack(route: String) {
     popUpTo(route) { inclusive = true }
 }
 
-fun <T> NavController.popBackStackWithResult(result: T) {
-    previousBackStackEntry?.savedStateHandle?.set(RESULT_KEY, result)
+inline fun <reified T> NavController.popBackStackWithResult(result: T) {
+    previousBackStackEntry?.savedStateHandle?.set(RESULT_KEY, Json.encodeToString(result))
     popBackStack()
 }
 
@@ -93,14 +94,14 @@ inline infix fun <reified ARG> NavController.navigate(direction: FeatureNavDirec
     builder = direction.optionsBuilder,
 )
 
-fun <T> NavController.resultFlow(): Flow<T>? {
-    return currentBackStackEntry?.savedStateHandle?.getLiveData<T>(RESULT_KEY)?.asFlow()?.onEach {
+inline fun <reified T> NavController.resultFlow(): Flow<T>? {
+    return currentBackStackEntry?.savedStateHandle?.getLiveData<String>(RESULT_KEY)?.asFlow()?.onEach {
         currentBackStackEntry?.savedStateHandle?.remove<T>(RESULT_KEY)
-    }
+    }?.map { Json.decodeFromString(it) }
 }
 
 @OptIn(DelicateCoroutinesApi::class)
-private fun <T> LiveData<T>.asFlow(): Flow<T> = callbackFlow {
+fun <T> LiveData<T>.asFlow(): Flow<T> = callbackFlow {
     val observer = Observer<T> {
         trySend(it)
     }

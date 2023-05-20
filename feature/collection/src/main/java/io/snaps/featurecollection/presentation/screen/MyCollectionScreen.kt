@@ -104,6 +104,7 @@ fun MyCollectionScreen(
                         context.openUrl(dialog.bscScanLink)
                     },
                 )
+                is TransferTokensDialogHandler.BottomDialog.TokensSellSuccess,
                 null -> Unit
             }
         }

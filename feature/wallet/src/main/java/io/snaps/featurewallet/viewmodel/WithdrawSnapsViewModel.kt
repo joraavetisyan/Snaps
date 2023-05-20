@@ -8,12 +8,14 @@ import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
 import io.snaps.basewallet.domain.WalletModel
 import io.snaps.basewallet.ui.LimitedGasDialogHandler
+import io.snaps.basewallet.ui.TransferTokensDialogHandler
+import io.snaps.basewallet.ui.TransferTokensSuccessData
 import io.snaps.corecommon.ext.applyDecimal
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.stringAmountToDouble
 import io.snaps.corecommon.ext.stringAmountToDoubleOrZero
 import io.snaps.corecommon.ext.stringAmountToDoubleSafely
-import io.snaps.corecommon.ext.stripUselessDecimals
+import io.snaps.corecommon.ext.stripTrailingZeros
 import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.model.FiatUSD
@@ -22,6 +24,7 @@ import io.snaps.corecommon.strings.digitsOnly
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
+import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.input.formatter.BigAmountFormatter
 import io.snaps.coreuicompose.uikit.input.formatter.CardNumberFormatter
 import io.snaps.coreuicompose.uikit.input.formatter.SimpleFormatter
@@ -46,11 +49,13 @@ private const val minGasValue = 0.001
 @HiltViewModel
 class WithdrawSnapsViewModel @Inject constructor(
     limitedGasDialogHandler: LimitedGasDialogHandler,
+    transferTokensDialogHandler: TransferTokensDialogHandler,
     private val action: Action,
     @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val walletRepository: WalletRepository,
     @Bridged private val blockchainTxRepository: BlockchainTxRepository,
 ) : SimpleViewModel(),
+    TransferTokensDialogHandler by transferTokensDialogHandler,
     LimitedGasDialogHandler by limitedGasDialogHandler {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -77,7 +82,7 @@ class WithdrawSnapsViewModel @Inject constructor(
     }
 
     fun onMaxButtonClicked() {
-        onAmountValueChanged(_uiState.value.snpWalletModel?.coinValue?.value?.stripUselessDecimals().orEmpty())
+        onAmountValueChanged(_uiState.value.snpWalletModel?.coinValue?.value?.stripTrailingZeros().orEmpty())
     }
 
     fun onAmountValueChanged(value: String) {
@@ -158,14 +163,18 @@ class WithdrawSnapsViewModel @Inject constructor(
                     gasPrice = _uiState.value.gasPrice,
                     gasLimit = _uiState.value.gasLimit,
                 )
-            }.flatMap {
+            }.flatMap { hash ->
                 walletRepository.confirmPayout(
                     amount = _uiState.value.amountValue.stringAmountToDouble(),
                     cardNumber = _uiState.value.cardNumberValue.digitsOnly(),
-                )
+                ).map {
+                    hash
+                }
             }
         }.doOnSuccess {
-
+            _command publish Command.CloseScreenOnSuccess(
+                data = TransferTokensSuccessData(txHash = it, type = TransferTokensSuccessData.Type.Sell)
+            )
         }.doOnComplete {
             _uiState.update { it.copy(isLoading = false) }
         }
@@ -197,6 +206,6 @@ class WithdrawSnapsViewModel @Inject constructor(
     }
 
     sealed interface Command {
-        object CloseScreen : Command
+        data class CloseScreenOnSuccess(val data: TransferTokensSuccessData) : Command
     }
 }

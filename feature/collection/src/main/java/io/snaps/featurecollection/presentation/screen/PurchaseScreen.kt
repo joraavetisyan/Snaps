@@ -67,6 +67,7 @@ import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetCurrentStateListener
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
@@ -99,9 +100,9 @@ fun PurchaseScreen(
     )
     val coroutineScope = rememberCoroutineScope()
 
-    ModalBottomSheetCurrentStateListener(
+    ModalBottomSheetTargetStateListener(
         sheetState = sheetState,
-        onStateChanged = {
+        onStateToChange = {
             if (it) {
                 viewModel.onLimitedGasDialogHidden()
                 viewModel.onTransferTokensDialogHidden()
@@ -144,6 +145,7 @@ fun PurchaseScreen(
                         context.openUrl(dialog.bscScanLink)
                     },
                 )
+                is TransferTokensDialogHandler.BottomDialog.TokensSellSuccess,
                 null -> Unit
             }
             when (val dialog = limitedGasState.bottomDialog) {

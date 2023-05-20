@@ -7,8 +7,6 @@ import io.snaps.corecommon.model.Effect
 import io.snaps.coredata.di.Bridged
 import javax.inject.Inject
 
-internal object InsufficientBalanceError : Exception() // todo to domain package
-
 interface WalletInteractor {
 
     suspend fun claim(amount: Double): Effect<Completable>

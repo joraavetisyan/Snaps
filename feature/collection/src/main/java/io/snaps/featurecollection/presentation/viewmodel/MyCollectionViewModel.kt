@@ -10,6 +10,7 @@ import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.NotificationsSource
 import io.snaps.featurecollection.domain.NoEnoughSnpToRepair
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
+import io.snaps.basewallet.ui.TransferTokensSuccessData
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
@@ -96,11 +97,11 @@ class MyCollectionViewModel @Inject constructor(
             interactor.repair(nftModel)
         }.doOnSuccess {
             if (it.isNotEmpty()) {
-                onSuccessfulTransfer(scope = viewModelScope, txHash = it)
+                onSuccessfulTransfer(scope = viewModelScope, data = TransferTokensSuccessData(txHash = it))
             }
         }.doOnError { error, _ ->
             if (error.cause is NoEnoughSnpToRepair) {
-                notificationsSource.sendError("No enough SNP to repair".textValue())
+                notificationsSource.sendError("No enough SNP to repair".textValue()) // todo localize
             }
         }.doOnComplete {
             _uiState.update { it.copy(isLoading = false) }

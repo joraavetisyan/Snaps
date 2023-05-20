@@ -22,9 +22,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +42,7 @@ import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corenavigation.base.openUrl
+import io.snaps.corenavigation.base.popBackStackWithResult
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
@@ -59,7 +62,7 @@ import io.snaps.featurewallet.ScreenNavigator
 import io.snaps.featurewallet.viewmodel.WithdrawViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun WithdrawScreen(
     navHostController: NavHostController,
@@ -76,7 +79,8 @@ fun WithdrawScreen(
         skipHalfExpanded = true,
     )
     val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
+
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     ModalBottomSheetCurrentStateListener(
         sheetState = sheetState,
@@ -90,41 +94,37 @@ fun WithdrawScreen(
 
     viewModel.command.collectAsCommand {
         when (it) {
-            WithdrawViewModel.Command.CloseScreen -> router.back()
+            is WithdrawViewModel.Command.CloseScreenOnSuccess -> navHostController.popBackStackWithResult(it.data)
         }
     }
     viewModel.transferTokensCommand.collectAsCommand {
         when (it) {
-            TransferTokensDialogHandler.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
+            TransferTokensDialogHandler.Command.ShowBottomDialog -> coroutineScope.launch {
+                keyboardController?.hide()
+                sheetState.show()
+            }
             TransferTokensDialogHandler.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
         }
     }
     viewModel.limitedGasCommand.collectAsCommand {
         when (it) {
-            LimitedGasDialogHandler.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
+            LimitedGasDialogHandler.Command.ShowBottomDialog -> coroutineScope.launch {
+                keyboardController?.hide()
+                sheetState.show()
+            }
             LimitedGasDialogHandler.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
         }
     }
+
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-            when (val dialog = transferTokensState.bottomDialog) {
+            when (transferTokensState.bottomDialog) {
                 TransferTokensDialogHandler.BottomDialog.TokensTransfer -> TransferTokensUi(
                     data = transferTokensState.state,
                 )
-                is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess -> SimpleBottomDialog(
-                    image = R.drawable.img_guy_hands_up.imageValue(),
-                    title = StringKey.WithdrawDialogWithdrawSuccessTitle.textValue(),
-                    text = StringKey.WithdrawDialogWithdrawSuccessMessage.textValue(
-                        dialog.sent?.getFormatted().orEmpty(),
-                        dialog.to.orEmpty()
-                    ),
-                    buttonText = StringKey.WithdrawDialogWithdrawSuccessAction.textValue(),
-                    onClick = {
-                        coroutineScope.launch { sheetState.hide() }
-                        context.openUrl(dialog.bscScanLink)
-                    },
-                )
+                is TransferTokensDialogHandler.BottomDialog.TokensSellSuccess,
+                is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess,
                 null -> Unit
             }
             when (val dialog = limitedGasState.bottomDialog) {

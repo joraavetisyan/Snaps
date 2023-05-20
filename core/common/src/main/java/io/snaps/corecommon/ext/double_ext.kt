@@ -12,9 +12,12 @@ fun Double.round(places: Int = 2): Double {
         .toDouble()
 }
 
-fun Double.toMoneyFormat(roundPlaces: Int = 2): String = try {
-    NumberFormat.getNumberInstance(DEFAULT_LOCALE).format(round(roundPlaces)).stripUselessDecimals()
+fun Double.toMoneyFormat(roundPlaces: Int): String = try {
+    NumberFormat.getNumberInstance(DEFAULT_LOCALE).apply {
+        maximumFractionDigits = Int.MAX_VALUE
+    }.format(round(roundPlaces))
 } catch (ex: NumberFormatException) {
+    log(ex)
     this.toString()
 }
 
@@ -28,19 +31,9 @@ fun Double.toCompactDecimalFormat(): String {
             return it.toCompactDecimalFormat()
         }
     }
-    return number.stripUselessDecimals()
+    return number.stripTrailingZeros()
 }
 
-fun Double.stripUselessDecimals(): String = toBigDecimal().toPlainString().stripUselessDecimals()
+fun Double.stripTrailingZeros(): String = toBigDecimal().stripTrailingZeros().toPlainString()
 
-private fun String.stripUselessDecimals(): String = if (contains('.')) {
-    var s = this
-    while (s.endsWith("0")) {
-        s = s.removeSuffix("0")
-    }
-    s.removeSuffix(".")
-} else {
-    this
-}
-
-fun Double.toPercentageFormat() = "${(this * 100).round(1).stripUselessDecimals()}%"
+fun Double.toPercentageFormat() = "${(this * 100).round(1).stripTrailingZeros()}%"

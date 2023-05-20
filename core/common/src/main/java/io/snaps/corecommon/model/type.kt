@@ -70,7 +70,14 @@ data class FiatValue(
     @SerialName("value") val value: Double,
 ) {
 
-    fun getFormattedValue() = value.toMoneyFormat()
+    companion object {
+
+        const val decimals = 2
+
+        val default = FiatCurrency.USD
+    }
+
+    fun getFormattedValue() = value.toMoneyFormat(decimals)
 
     fun getFormatted(currencyFirst: Boolean = false) = "%s %s".run {
         if (currencyFirst) format(currency.symbol, getFormattedValue())
@@ -93,11 +100,18 @@ data class CoinValue(
     val value: Double,
 ) {
 
-    fun getFormattedValue() = value.toMoneyFormat(value.calculateRoundPlaces())
+    companion object {
 
-    private fun Double.calculateRoundPlaces(): Int {
-        val string = toBigDecimal().toPlainString()
-        var count = 3
+        private const val significantFigureCount = 3
+
+        val native = CoinType.BNB
+    }
+
+    fun getFormattedValue() = value.toMoneyFormat(calculateRoundPlaces())
+
+    private fun calculateRoundPlaces(): Int {
+        val string = value.toBigDecimal().toPlainString()
+        var count = significantFigureCount
         val pointIndex = string.indexOf('.')
         if (pointIndex != -1) for (i in pointIndex + 1..string.lastIndex) {
             if (string[i] == '0') count++ else break
@@ -107,12 +121,12 @@ data class CoinValue(
 
     fun getFormatted() = "%s %s".format(getFormattedValue(), type.symbol)
 
-    fun toFiat(rate: Double, currency: FiatCurrency = FiatCurrency.USD): FiatValue {
+    fun toFiat(rate: Double, currency: FiatCurrency = FiatValue.default): FiatValue {
         log("$type to $currency with rate $rate")
         return FiatValue(currency, value * rate)
     }
 
-    fun toCoin(rate: Double, type: CoinType = CoinType.BNB): CoinValue {
+    fun toCoin(rate: Double, type: CoinType = native): CoinValue {
         log("${this.type} to $type with rate $rate")
         return CoinValue(type, value * rate)
     }

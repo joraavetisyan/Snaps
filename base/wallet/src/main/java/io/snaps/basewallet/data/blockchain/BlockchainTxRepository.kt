@@ -18,6 +18,7 @@ import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.model.Nft
 import io.snaps.basewallet.domain.WalletModel
 import io.snaps.corecommon.ext.applyDecimal
+import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.ext.unapplyDecimal
 import io.snaps.corecommon.model.CoinType
@@ -79,7 +80,13 @@ class BlockchainTxRepositoryImpl @Inject constructor(
         return blockchainCall(ioDispatcher) {
             LegacyGasPriceProvider(
                 requireEthereumAdapter(wallet.coinUid).evmKitWrapper.evmKit
-            ).gasPriceSingle().blockingGet()
+            ).gasPriceSingle().blockingGet().also {
+                log(
+                    """Fetched legacy gas price. 
+                       |wallet: $wallet 
+                       |result: $it""".trimMargin()
+                )
+            }
         }
     }
 
@@ -106,6 +113,13 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                     transactionData = gasLimitTD,
                     gasPrice = gasPrice.toLegacyGasPriceOrDefault(),
                 ).blockingGet()
+            }.also {
+                log(
+                    """Calculated gas limit. 
+                       |value: $value 
+                       |wallet: $wallet 
+                       |result: $it""".trimMargin()
+                )
             }
         }
     }
@@ -124,18 +138,44 @@ class BlockchainTxRepositoryImpl @Inject constructor(
         amount: BigInteger,
         gasPrice: Long?,
         gasLimit: Long,
-        data: ByteArray
+        data: ByteArray,
     ): Effect<TxHash> {
+        log(
+            """Sending. 
+               |address: $address 
+               |amount: $amount 
+               |wallet: $wallet 
+               |gasPrice: $gasPrice 
+               |gasLimit $gasLimit 
+               |data $data""".trimMargin()
+        )
         return blockchainCall(ioDispatcher) {
-            val adapter = requireEthereumAdapter(wallet.coinUid)
-            val txData = adapter.evmKitWrapper.evmKit.transferTransactionData(
-                address = Address(address), value = amount
-            )
-            adapter.evmKitWrapper.sendSingle(
-                transactionData = txData,
-                gasPrice = gasPrice.toLegacyGasPriceOrDefault(),
-                gasLimit = gasLimit,
-            ).blockingGet().transaction.hash.toHexString()
+            if (wallet.coinType == CoinType.BNB) {
+                val adapter = requireEthereumAdapter(wallet.coinUid)
+                val txData = adapter.evmKitWrapper.evmKit.transferTransactionData(
+                    address = Address(address), value = amount
+                )
+                adapter.evmKitWrapper.sendSingle(
+                    transactionData = txData,
+                    gasPrice = gasPrice.toLegacyGasPriceOrDefault(),
+                    gasLimit = gasLimit,
+                )
+            } else {
+                val adapter = requireEip20Adapter(requireWallet(wallet.coinUid))
+                val txData = adapter.eip20Kit.buildTransferTransactionData(
+                    to = Address(address), value = amount
+                )
+                adapter.evmKitWrapper.sendSingle(
+                    transactionData = txData,
+                    gasPrice = gasPrice.toLegacyGasPriceOrDefault(),
+                    gasLimit = gasLimit,
+                )
+            }.blockingGet().transaction.hash.toHexString().also {
+                log(
+                    """Sent. 
+                       |result: $it""".trimMargin()
+                )
+            }
         }
     }
 

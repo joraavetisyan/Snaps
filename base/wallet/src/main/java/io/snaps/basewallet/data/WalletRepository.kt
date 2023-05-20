@@ -25,6 +25,7 @@ import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FiatCurrency
+import io.snaps.corecommon.model.FiatValue
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
@@ -53,6 +54,7 @@ import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreui.viewmodel.tryPublish
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -62,6 +64,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.security.InvalidAlgorithmParameterException
 import javax.inject.Inject
 
@@ -86,6 +89,10 @@ interface WalletRepository {
 
     suspend fun updateTotalBalance(): Effect<Completable>
 
+    suspend fun updatePayouts(isSilently: Boolean = false): Effect<Completable>
+
+    suspend fun updateTotalBalanceAndPayouts(isSilently: Boolean = false): Effect<Completable>
+
     fun createAccount(userId: Uuid): List<String>
 
     suspend fun importAccount(userId: Uuid, words: List<String>): Effect<Completable>
@@ -109,8 +116,6 @@ interface WalletRepository {
     suspend fun claim(amount: Double): Effect<Completable>
 
     suspend fun confirmPayout(amount: Double, cardNumber: CardNumber): Effect<Completable>
-
-    suspend fun updatePayouts(isSilently: Boolean = false): Effect<Completable>
 
     suspend fun refillGas(amount: Double): Effect<Completable>
 }
@@ -188,7 +193,7 @@ class WalletRepositoryImpl @Inject constructor(
     ) = balanceItems.mapNotNull {
         balanceViewItemFactory.viewItem(
             item = it,
-            currency = Currency(FiatCurrency.USD.name, FiatCurrency.USD.symbol, 2, 0),
+            currency = Currency(FiatValue.default.name, FiatValue.default.symbol, FiatValue.decimals, 0),
         ).toWalletModel(snpsAccount)
     }
 
@@ -373,6 +378,18 @@ class WalletRepositoryImpl @Inject constructor(
     override suspend fun refillGas(amount: Double): Effect<Completable> {
         return apiCall(ioDispatcher) {
             walletApi.refillGas(RefillGasRequestDto(amount = amount))
+        }
+    }
+
+    override suspend fun updateTotalBalanceAndPayouts(isSilently: Boolean): Effect<Completable> {
+        val updateTotalBalanceAsync = scope.async { updateTotalBalance() }
+        val updatePayoutsAsync = scope.async { updatePayouts(isSilently = isSilently) }
+        val updateTotalBalance = updateTotalBalanceAsync.await()
+        val updatePayouts = updatePayoutsAsync.await()
+        return if (updateTotalBalance.isSuccess && updatePayouts.isSuccess) {
+            Effect.completable
+        } else {
+            Effect.error((updateTotalBalance.errorOrNull ?: updatePayouts.errorOrNull)!!)
         }
     }
 }
