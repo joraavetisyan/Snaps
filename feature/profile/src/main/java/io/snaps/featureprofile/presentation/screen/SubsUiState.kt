@@ -1,8 +1,5 @@
 package io.snaps.featureprofile.presentation.screen
 
-import io.snaps.corecommon.R
-import io.snaps.corecommon.container.ImageValue
-import io.snaps.corecommon.container.textValue
 import io.snaps.coreuicompose.uikit.listtile.EmptyListTileState
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 import io.snaps.basesubs.domain.SubModel

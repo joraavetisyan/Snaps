@@ -12,20 +12,28 @@ import io.snaps.basewallet.data.model.PayoutOrderRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
 import io.snaps.basewallet.data.model.RefillGasRequestDto
 import io.snaps.basewallet.data.model.WalletSaveRequestDto
+import io.snaps.basewallet.domain.BalanceModel
 import io.snaps.basewallet.domain.DeviceNotSecuredException
 import io.snaps.basewallet.domain.TotalBalanceModel
+import io.snaps.basewallet.domain.WalletModel
+import io.snaps.corecommon.R
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.logE
+import io.snaps.corecommon.ext.stringAmountToDoubleOrZero
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.CardNumber
+import io.snaps.corecommon.model.CoinBNB
+import io.snaps.corecommon.model.CoinType
+import io.snaps.corecommon.model.CoinValue
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.model.Effect
+import io.snaps.corecommon.model.FiatCurrency
+import io.snaps.corecommon.model.FiatUSD
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
-import io.snaps.corecommon.model.WalletModel
-import io.snaps.corecommon.model.generateUuid
 import io.snaps.corecrypto.core.AdapterState
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.core.IAccountFactory
@@ -41,6 +49,7 @@ import io.snaps.corecrypto.core.providers.TotalUIState
 import io.snaps.corecrypto.entities.Account
 import io.snaps.corecrypto.entities.AccountOrigin
 import io.snaps.corecrypto.entities.AccountType
+import io.snaps.corecrypto.entities.Currency
 import io.snaps.corecrypto.entities.Wallet
 import io.snaps.corecrypto.entities.normalizeNFKD
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
@@ -54,24 +63,35 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import java.security.InvalidAlgorithmParameterException
 import javax.inject.Inject
-import io.snaps.corecommon.model.Coin as AppCoin
 
 private const val messageNotSecured =
     "java.lang.IllegalStateException: Secure lock screen must be enabled to create keys requiring user authentication"
 
 interface WalletRepository {
 
+    val balanceState: StateFlow<State<BalanceModel>> // todo rename
+
     val totalBalance: StateFlow<TotalBalanceModel>
 
     val activeWallets: StateFlow<List<WalletModel>>
 
+    val snps: StateFlow<WalletModel?>
+
+    val bnb: StateFlow<WalletModel?>
+
     val payouts: StateFlow<State<List<PayoutOrderResponseDto>>>
+
+    suspend fun updateBalance(): Effect<Completable>
+
+    suspend fun updateTotalBalance(): Effect<Completable>
 
     fun createAccount(userId: Uuid): List<String>
 
@@ -89,19 +109,9 @@ interface WalletRepository {
 
     fun getMnemonics(): List<String>
 
-    fun getWallets(): List<Wallet>
-
     fun requireActiveWalletReceiveAddress(): CryptoAddress
 
     fun isAddressValid(value: CryptoAddress): Boolean
-
-    // region Balances todo flow
-    fun getBnbWalletModel(): WalletModel?
-
-    fun getSnpWalletModel(): WalletModel?
-    // endregion
-
-    suspend fun updateBalance(): Effect<Completable>
 
     suspend fun claim(amount: Double): Effect<Completable>
 
@@ -130,6 +140,9 @@ class WalletRepositoryImpl @Inject constructor(
 
     private var account: Account? = null
 
+    private val _balanceState = MutableStateFlow<State<BalanceModel>>(Loading())
+    override val balanceState = _balanceState.asStateFlow()
+
     private val _totalBalance = MutableStateFlow(TotalBalanceModel.empty)
     override val totalBalance = _totalBalance.asStateFlow()
 
@@ -144,36 +157,87 @@ class WalletRepositoryImpl @Inject constructor(
                     )
                 }
             )
-            items?.map { balanceItem ->
+            items?.mapNotNull { balanceItem ->
                 val item = balanceViewItemFactory.viewItem(
                     item = balanceItem,
-                    currency = balanceService.baseCurrency,
+                    currency = Currency(FiatCurrency.USD.name, FiatCurrency.USD.symbol, 2, 0),
                 )
-                WalletModel(
-                    coinUid = item.wallet.coin.uid,
-                    decimal = item.wallet.decimal,
-                    symbol = item.coinCode,
-                    iconUrl = item.coinIconUrl,
-                    coinValue = item.primaryValue.value,
-                    fiatValue = item.secondaryValue.value,
-                    receiveAddress = CryptoKit.adapterManager.getReceiveAdapterForWallet(item.wallet)?.receiveAddress.orEmpty(),
-                    coinAddress = item.wallet.tokenAddress,
-                )
+                log("Creating wallet for $item")
+                if (item.wallet.token.type == TokenType.Native) {
+                    CoinType.BNB
+                } else {
+                    CoinType.byAddress(item.wallet.tokenAddress.orEmpty())
+                }?.let {
+                    val coinValue = CoinValue(it, item.primaryValue.value.stringAmountToDoubleOrZero())
+                    updateBalance()
+                    WalletModel(
+                        coinUid = item.wallet.coin.uid,
+                        coinType = it,
+                        image = if (it == CoinType.SNPS) {
+                            R.drawable.ic_snp_token.imageValue()
+                        } else {
+                            item.coinIconUrl.imageValue()
+                        },
+                        coinValue = coinValue,
+                        fiatValue = if (it == CoinType.SNPS) {
+                            coinValue.toFiat(_balanceState.value.dataOrCache?.snpExchangeRate ?: 0.0)
+                        } else {
+                            FiatUSD(item.secondaryValue.value.stringAmountToDoubleOrZero())
+                        },
+                        receiveAddress = CryptoKit.adapterManager.getReceiveAdapterForWallet(item.wallet)?.receiveAddress.orEmpty(),
+                    )
+                }.also {
+                    if (it == null) logE("Couldn't create wallet for $item")
+                }
             } ?: emptyList()
         }.likeStateFlow(scope, emptyList())
+
+    override val bnb: StateFlow<WalletModel?> = activeWallets.mapNotNull { wallets ->
+        wallets.find { it.coinType == CoinType.BNB }
+    }.likeStateFlow(scope, null)
+
+    override val snps: StateFlow<WalletModel?> = activeWallets.mapNotNull { wallets ->
+        wallets.find { it.coinType == CoinType.SNPS }
+    }.likeStateFlow(scope, null)
 
     private val _payouts = MutableStateFlow<State<List<PayoutOrderResponseDto>>>(Loading())
     override val payouts = _payouts.asStateFlow()
 
     init {
-        totalBalanceManager.totalUiState.onEach { total ->
-            _totalBalance.update {
-                if (total !is TotalUIState.Visible) return@update TotalBalanceModel.empty
-                TotalBalanceModel(coin = total.primaryAmountStr, fiat = total.secondaryAmountStr)
-            }
-        }.launchIn(scope)
+        totalBalanceManager.totalUiState
+            .combine(snps) { total, snps -> total to snps }
+            .onEach { (total, snps) ->
+                _totalBalance.update {
+                    if (total !is TotalUIState.Visible) return@update TotalBalanceModel.empty
+                    TotalBalanceModel(
+                        coin = run {
+                            val bnb = CoinBNB(total.primaryAmountStr.stringAmountToDoubleOrZero())
+                            val snpsToBnb = snps?.coinValue?.toCoin(
+                                _balanceState.value.dataOrCache?.bnbExchangeRate ?: 0.0
+                            )
+                            snpsToBnb?.plus(bnb) ?: bnb
+                        },
+                        fiat = run {
+                            val bnbInUsd = FiatUSD(total.secondaryAmountStr.stringAmountToDoubleOrZero())
+                            val snpsInUsd = snps?.fiatValue
+                            snpsInUsd?.plus(bnbInUsd) ?: bnbInUsd
+                        },
+                    )
+                }
+            }.launchIn(scope)
         balanceService.start()
         totalBalanceManager.start(scope)
+    }
+
+    override suspend fun updateBalance(): Effect<Completable> {
+        _balanceState tryPublish Loading()
+        return apiCall(ioDispatcher) {
+            walletApi.balance()
+        }.map {
+            it.toModel()
+        }.also {
+            _balanceState tryPublish it
+        }.toCompletable()
     }
 
     override fun createAccount(userId: Uuid): List<String> {
@@ -236,7 +300,7 @@ class WalletRepositoryImpl @Inject constructor(
 
     private fun activateDefaultTokens(account: Account) {
         val tokens = listOf(
-            AppCoin.Type.SNPS.let {
+            CoinType.SNPS.let {
                 Token(
                     coin = Coin(uid = "snapsCoinUid", name = it.coinName, code = it.code),
                     // todo release mainnet
@@ -251,7 +315,7 @@ class WalletRepositoryImpl @Inject constructor(
             }
         )
         // todo construct tokens yourself
-        val tokenQueries = AppCoin.Type.values().filter { it != AppCoin.Type.SNPS }.map {
+        val tokenQueries = CoinType.values().filter { it != CoinType.SNPS }.map {
             TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Eip20(it.address))
         } + listOf(
             TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Native)
@@ -277,6 +341,13 @@ class WalletRepositoryImpl @Inject constructor(
         return requireNotNull(getActiveWalletReceiveAddress())
     }
 
+    private fun getWallets(): List<Wallet> {
+        val account = getActiveAccount() ?: return emptyList()
+        return walletManager.getWallets(account).also {
+            if (it.isEmpty()) logE("No wallets!")
+        }
+    }
+
     override fun hasAccount(userId: Uuid): Boolean {
         return accountManager.account(userId) != null
     }
@@ -299,21 +370,6 @@ class WalletRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getWallets(): List<Wallet> {
-        val account = getActiveAccount() ?: return emptyList()
-        return walletManager.getWallets(account).also {
-            if (it.isEmpty()) logE("No wallets!")
-        }
-    }
-
-    override fun getBnbWalletModel(): WalletModel? {
-        return activeWallets.value.firstOrNull { it.coinUid == "binancecoin" }
-    }
-
-    override fun getSnpWalletModel(): WalletModel? {
-        return activeWallets.value.firstOrNull { it.coinAddress == AppCoin.Type.SNPS.address }
-    }
-
     override fun deleteAccount(id: Uuid) {
         accountManager.delete(id)
     }
@@ -322,7 +378,7 @@ class WalletRepositoryImpl @Inject constructor(
         return kotlin.runCatching { Address(value) }.getOrNull() != null
     }
 
-    override suspend fun updateBalance(): Effect<Completable> {
+    override suspend fun updateTotalBalance(): Effect<Completable> {
         balanceService.refresh()
         delay(500) // usually it's very fast
         return Effect.completable

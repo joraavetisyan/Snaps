@@ -15,12 +15,11 @@ import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.ext.fiatToFormatDecimal
-import io.snaps.corecommon.model.Coin
+import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
-import io.snaps.corecommon.model.CryptoAddress
-import io.snaps.corecommon.model.WalletModel
+import io.snaps.basewallet.domain.WalletModel
+import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
@@ -46,7 +45,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -76,6 +74,7 @@ class WalletViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     private var isSubscribedToRewardsData = false
+    private var brokenNftCount: Int = 0
     private var wallets = listOf<WalletModel>()
 
     init {
@@ -96,22 +95,12 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun subscribeToWallets() {
-        walletRepository.activeWallets.combine(flow = walletInteractor.snpFiatState) { wallets, balance ->
-            wallets.map {
-                if (it.symbol == Coin.Type.SNPS.code) {
-                    it.copy(fiatValue = " $${balance.dataOrCache?.toDoubleOrNull()?.fiatToFormatDecimal() ?: "0"}")
-                } else {
-                    it
-                }
-            }
-        }.onEach { state ->
-            this.wallets = state
+        walletRepository.activeWallets.onEach { wallets ->
+            this.wallets = wallets
             _uiState.update {
                 it.copy(
-                    address = state.firstOrNull()?.receiveAddress.orEmpty(),
-                    wallets = state.toCellTileStateList(
-                        onClick = ::openWithdrawScreen,
-                    ),
+                    address = wallets.firstOrNull()?.receiveAddress.orEmpty(),
+                    wallets = wallets.toCellTileStateList(onClick = ::openWithdrawScreen),
                 )
             }
         }.launchIn(viewModelScope)
@@ -119,11 +108,7 @@ class WalletViewModel @Inject constructor(
 
     private fun subscribeToUserNft() {
         nftRepository.countBrokenGlassesState.onEach { state ->
-            _uiState.update {
-                it.copy(
-                    countBrokenGlasses = state.dataOrCache ?: 0,
-                )
-            }
+            brokenNftCount = state.dataOrCache ?: 0
         }.launchIn(viewModelScope)
     }
 
@@ -131,16 +116,18 @@ class WalletViewModel @Inject constructor(
         walletRepository.payouts.map { state ->
             state.toPayoutStatusState(
                 onContactSupportClick = ::openSupport,
-                onCopyClick = {
-                    viewModelScope.launch {
-                        _command publish Command.CopyText(it)
-                        notificationsSource.sendMessage(StringKey.MessageCopySuccess.textValue())
-                    }
-                },
+                onCopyClick = { copyToClipboard(text = it, message = StringKey.MessageCopySuccess.textValue()) },
             )
         }.onEach { state ->
             _uiState.update { it.copy(payoutStatusState = state) }
         }.launchIn(viewModelScope)
+    }
+
+    private fun copyToClipboard(text: String, message: TextValue) {
+        viewModelScope.launch {
+            _command publish Command.CopyText(text)
+            notificationsSource.sendMessage(message)
+        }
     }
 
     private fun openSupport() {
@@ -148,7 +135,7 @@ class WalletViewModel @Inject constructor(
             action.execute {
                 profileRepository.getSocialPages()
             }.doOnSuccess { pages ->
-                pages.firstOrNull { it.type == SocialPageType.Support }?.link?.let {
+                pages.find { it.type == SocialPageType.Support }?.link?.let {
                     _command publish Command.OpenLink(it)
                 }
             }
@@ -174,9 +161,9 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun subscribeToRewards() {
-        profileRepository.balanceState.map { state ->
+        walletRepository.balanceState.map { state ->
             _uiState.update {
-                it.copy(availableTokens = state.dataOrCache?.unlocked ?: 0.0)
+                it.copy(availableTokenAmount = state.dataOrCache?.unlocked?.value ?: 0.0)
             }
             state.toRewardsTileState(::onRewardReloadClicked)
         }.onEach { rewards ->
@@ -213,7 +200,7 @@ class WalletViewModel @Inject constructor(
     }
 
     private fun updateBalance() = viewModelScope.launch {
-        action.execute { profileRepository.updateBalance() }
+        action.execute { walletRepository.updateBalance() }
     }
 
     fun onRewardsFootnoteClick() {
@@ -230,7 +217,7 @@ class WalletViewModel @Inject constructor(
                     val qr = barcodeManager.getQrCodeBitmap(walletModel.receiveAddress)
                     it.copy(
                         bottomDialog = BottomDialog.TopUp(
-                            title = walletModel.symbol,
+                            title = walletModel.coinType.symbol,
                             address = walletModel.receiveAddress,
                             qr = qr,
                         )
@@ -249,48 +236,40 @@ class WalletViewModel @Inject constructor(
 
     private fun openWithdrawScreen(model: WalletModel) {
         viewModelScope.launch {
-            _command publish Command.OpenWithdrawScreen(model)
+            _command publish Command.OpenWithdrawScreen(model.coinType)
         }
     }
 
     fun onRewardsClaimClicked() {
         viewModelScope.launch {
-            if (
-                profileRepository.state.value.dataOrCache?.paymentsState == PaymentsState.InApp
-                && uiState.value.countBrokenGlasses > 0
-            ) {
+            if (profileRepository.state.value.dataOrCache?.paymentsState == PaymentsState.InApp && brokenNftCount > 0) {
                 _uiState.update { it.copy(bottomDialog = BottomDialog.RepairNft) }
                 _command publish Command.ShowBottomDialog
-            } else if (uiState.value.availableTokens == 0.0) {
+            } else if (uiState.value.availableTokenAmount == 0.0) {
                 notificationsSource.sendError(StringKey.RewardsErrorInsufficientBalance.textValue())
             } else {
                 _command publish Command.ShowBottomDialog
-                _uiState.update {
-                    it.copy(
-                        amountToClaimValue = "",
-                        bottomDialog = BottomDialog.RewardsWithdraw,
-                    )
-                }
+                _uiState.update { it.copy(claimAmountValue = "", bottomDialog = BottomDialog.RewardsWithdraw) }
             }
         }
     }
 
     fun onAmountToClaimValueChanged(amount: String) {
-        _uiState.update { it.copy(amountToClaimValue = amount) }
+        _uiState.update { it.copy(claimAmountValue = amount) }
     }
 
     fun onRewardsMaxButtonClicked() {
         _uiState.update {
-            it.copy(amountToClaimValue = it.availableTokens.toString())
+            it.copy(claimAmountValue = it.availableTokenAmount.toString())
         }
     }
 
     fun onConfirmClaimClicked() = viewModelScope.launch {
         _uiState.update { it.copy(isLoading = true) }
         action.execute {
-            walletInteractor.claim(amount = uiState.value.amountToClaimValue.toDouble())
+            walletInteractor.claim(amount = uiState.value.claimAmountValue.toDouble())
         }.doOnSuccess {
-            profileRepository.updateBalance()
+            walletRepository.updateBalance()
             _command publish Command.HideBottomDialog
         }.doOnError { error, _ ->
             when (error.cause) {
@@ -303,24 +282,22 @@ class WalletViewModel @Inject constructor(
         }
     }
 
-    fun onDropdownMenuItemClicked(filterOptions: FilterOptions) {
+    fun onDropdownMenuItemClicked(filter: Filter) {
         _uiState.update {
-            it.copy(filterOptions = filterOptions)
+            it.copy(filter = filter)
         }
     }
 
     fun onExchangeClicked() {
         showWalletSelectBottomDialog {
             viewModelScope.launch {
-                _command publish Command.OpenExchangeScreen(it)
+                _command publish Command.OpenExchangeScreen(it.coinType)
             }
         }
     }
 
     fun onPageSelected(index: Int) {
-        _uiState.update {
-            it.copy(screen = Screen.getByOrdinal(index) ?: Screen.Wallet)
-        }
+        _uiState.update { it.copy(screen = Screen.byOrdinal(index)) }
     }
 
     private fun showWalletSelectBottomDialog(onSelected: (WalletModel) -> Unit) =
@@ -341,10 +318,7 @@ class WalletViewModel @Inject constructor(
         }
 
     fun onAddressCopyClicked(address: CryptoAddress) {
-        viewModelScope.launch {
-            _command publish Command.CopyText(address)
-            notificationsSource.sendMessage(StringKey.WalletMessageAddressCopied.textValue())
-        }
+        copyToClipboard(text = address, message = StringKey.WalletMessageAddressCopied.textValue())
     }
 
     fun refresh() {
@@ -357,7 +331,7 @@ class WalletViewModel @Inject constructor(
     private fun refreshWallet() = viewModelScope.launch {
         _uiState.update { it.copy(isRefreshing = true) }
         action.execute {
-            val loadBalanceDeferred = viewModelScope.async { walletRepository.updateBalance() }
+            val loadBalanceDeferred = viewModelScope.async { walletRepository.updateTotalBalance() }
 
             loadBalanceDeferred.await()
         }.doOnComplete {
@@ -368,7 +342,7 @@ class WalletViewModel @Inject constructor(
     private fun refreshRewards() = viewModelScope.launch {
         _uiState.update { it.copy(isRefreshing = true) }
         action.execute {
-            val loadBalanceDeferred = viewModelScope.async { profileRepository.updateBalance() }
+            val loadBalanceDeferred = viewModelScope.async { walletRepository.updateBalance() }
             val loadUnlockedTransactionsDeferred = viewModelScope.async {
                 transactionsRepository.refreshTransactions(TransactionsType.Unlocked)
             }
@@ -421,9 +395,15 @@ class WalletViewModel @Inject constructor(
     }
 
     data class UiState(
-        val isSnapsSellEnabled: Boolean,
-        val address: String = "",
+        val isLoading: Boolean = false,
+        val isRefreshing: Boolean = false,
+        val screen: Screen = Screen.Wallet,
+        val bottomDialog: BottomDialog = BottomDialog.SelectWallet(),
+
+        val payoutStatusState: PayoutStatusState? = null,
+        val address: CryptoAddress = "",
         val totalBalance: TotalBalanceModel = TotalBalanceModel.empty,
+        val isSnapsSellEnabled: Boolean,
         val wallets: List<CellTileState> = List(3) {
             CellTileState.Shimmer(
                 leftPart = LeftPart.Shimmer,
@@ -431,24 +411,23 @@ class WalletViewModel @Inject constructor(
                 rightPart = RightPart.Shimmer(needLine = true),
             )
         },
+
         val rewards: List<RewardsTileState> = List(2) { RewardsTileState.Shimmer },
-        val bottomDialog: BottomDialog = BottomDialog.SelectWallet(),
+        val filter: Filter = Filter.Unlocked,
         val unlockedTransactions: TransactionsUiState = TransactionsUiState(),
         val lockedTransactions: TransactionsUiState = TransactionsUiState(),
-        val filterOptions: FilterOptions = FilterOptions.Unlocked,
-        val countBrokenGlasses: Int = 0,
-        val isRefreshing: Boolean = false,
-        val screen: Screen = Screen.Wallet,
-        val amountToClaimValue: String = "",
-        val availableTokens: Double = 0.0,
-        val isLoading: Boolean = false,
-        val payoutStatusState: PayoutStatusState? = null,
+        val availableTokenAmount: Double = 0.0,
+        val claimAmountValue: String = "",
     ) {
 
         val isConfirmClaimEnabled
-            get() = amountToClaimValue.toDoubleOrNull()?.let {
-                it <= availableTokens && it > 0
-            } ?: false
+            get() = claimAmountValue.toDoubleOrNull()?.let { it <= availableTokenAmount && it > 0 } ?: false
+
+        val transactions: TransactionsUiState
+            get() = when (filter) {
+                Filter.Unlocked -> unlockedTransactions
+                Filter.Locked -> lockedTransactions
+            }
     }
 
     sealed class BottomDialog {
@@ -470,7 +449,7 @@ class WalletViewModel @Inject constructor(
         object RewardsWithdraw : BottomDialog()
     }
 
-    enum class FilterOptions(val label: TextValue) {
+    enum class Filter(val label: TextValue) {
         Unlocked(StringKey.RewardsFieldFilterUnlocked.textValue()),
         Locked(StringKey.RewardsFieldFilterLocked.textValue()),
         ;
@@ -482,14 +461,15 @@ class WalletViewModel @Inject constructor(
         ;
 
         companion object {
-            fun getByOrdinal(ordinal: Int) = values().firstOrNull { it.ordinal == ordinal }
+
+            fun byOrdinal(ordinal: Int) = values().first { it.ordinal == ordinal }
         }
     }
 
     sealed class Command {
-        data class OpenWithdrawScreen(val wallet: WalletModel) : Command()
+        data class OpenWithdrawScreen(val coinType: CoinType) : Command()
         object OpenWithdrawSnapsScreen : Command()
-        data class OpenExchangeScreen(val wallet: WalletModel) : Command()
+        data class OpenExchangeScreen(val coinType: CoinType) : Command()
         data class OpenLink(val link: FullUrl) : Command()
         data class CopyText(val text: String) : Command()
         object ShowBottomDialog : Command()

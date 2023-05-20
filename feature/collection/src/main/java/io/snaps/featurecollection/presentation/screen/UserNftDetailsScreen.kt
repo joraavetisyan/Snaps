@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.corecommon.R
-import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
@@ -64,7 +63,7 @@ private fun UserNftDetailsScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SimpleTopAppBar(
-                title = {},
+                title = uiState.title,
                 scrollBehavior = scrollBehavior,
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 additional = {

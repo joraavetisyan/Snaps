@@ -2,7 +2,6 @@ package io.snaps.basesubs.data
 
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.mock.mockDelay
-import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.mock.rImage
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Uuid

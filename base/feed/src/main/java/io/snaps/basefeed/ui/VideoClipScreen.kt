@@ -68,7 +68,7 @@ import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startShareLinkIntent
-import io.snaps.corecommon.ext.toFormatDecimal
+import io.snaps.corecommon.ext.toCompactDecimalFormat
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.R
@@ -595,14 +595,14 @@ private fun VideoClipEndItems(
 
         TextedIcon(
             icon = icons { if (clipModel.isLiked) favorite else favoriteBorder },
-            text = clipModel.likeCount.toFormatDecimal(),
+            text = clipModel.likeCount.toCompactDecimalFormat(),
             tint = colors { if (clipModel.isLiked) red else white },
             onIconClicked = { onLikeClicked(clipModel) },
         )
 
         TextedIcon(
             icon = AppTheme.specificIcons.comment,
-            text = clipModel.commentCount.toFormatDecimal(),
+            text = clipModel.commentCount.toCompactDecimalFormat(),
             onIconClicked = { onCommentClicked(clipModel) },
         )
 

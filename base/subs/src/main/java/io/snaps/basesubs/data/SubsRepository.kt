@@ -4,7 +4,6 @@ import io.snaps.basesubs.data.model.SubsItemResponseDto
 import io.snaps.basesubs.data.model.SubscribeRequestDto
 import io.snaps.basesubs.data.model.UnsubscribeRequestDto
 import io.snaps.basesubs.domain.SubPageModel
-import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid

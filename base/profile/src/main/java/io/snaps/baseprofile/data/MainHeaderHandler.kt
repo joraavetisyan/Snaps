@@ -3,6 +3,7 @@ package io.snaps.baseprofile.data
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.ext.log
+import io.snaps.corecommon.model.CoinType
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
@@ -51,17 +52,16 @@ class MainHeaderHandlerImplDelegate @Inject constructor(
 
     init {
         log("init")
-        walletRepository.getBnbWalletModel()
         subscribeToData()
         updateData()
     }
 
     private fun subscribeToData() {
-        profileRepository.state.combine(flow = walletRepository.activeWallets) { profile, _ ->
+        profileRepository.state.combine(flow = walletRepository.activeWallets) { profile, wallets ->
             mainHeaderState(
                 profile = profile,
-                snp = walletRepository.getSnpWalletModel(),
-                bnb = walletRepository.getBnbWalletModel(),
+                snp = wallets.find { it.coinType == CoinType.SNPS }?.coinValue,
+                bnb = wallets.find { it.coinType == CoinType.BNB }?.coinValue,
                 onProfileClicked = ::onProfileClicked,
                 onWalletClicked = ::onWalletClicked,
             )
@@ -81,7 +81,7 @@ class MainHeaderHandlerImplDelegate @Inject constructor(
     private fun updateData() {
         scope.launch {
             action.execute { profileRepository.updateData() }
-            action.execute { profileRepository.updateBalance() }
+            action.execute { walletRepository.updateBalance() }
         }
     }
 }

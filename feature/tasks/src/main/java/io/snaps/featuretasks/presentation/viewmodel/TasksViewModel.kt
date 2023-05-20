@@ -3,7 +3,7 @@ package io.snaps.featuretasks.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
-import io.snaps.corecommon.model.NftModel
+import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
@@ -13,7 +13,6 @@ import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.corecommon.date.toLong
-import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.State
 import io.snaps.coredata.di.Bridged
@@ -211,11 +210,7 @@ class TasksViewModel @Inject constructor(
     private fun onItemClicked(nftModel: NftModel) {
         viewModelScope.launch {
             _command publish Command.OpenNftDetailsScreen(
-                args = AppRoute.UserNftDetails.Args(
-                    type = nftModel.type,
-                    dailyReward = nftModel.dailyReward,
-                    image = nftModel.image.value as FullUrl,
-                )
+                args = AppRoute.UserNftDetails.Args(nftId = nftModel.id)
             )
         }
     }

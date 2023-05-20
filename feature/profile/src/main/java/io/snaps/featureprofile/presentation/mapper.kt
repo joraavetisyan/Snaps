@@ -1,7 +1,7 @@
 package io.snaps.featureprofile.presentation
 
 import io.snaps.baseprofile.domain.UserInfoModel
-import io.snaps.corecommon.ext.toFormatDecimal
+import io.snaps.corecommon.ext.toCompactDecimalFormat
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
@@ -31,10 +31,10 @@ fun UserInfoModel.toUserInfoTileState(
     onSubscriptionsClick: () -> Unit,
 ) = UserInfoTileState.Data(
     profileImage = avatar,
-    likes = totalLikes.toFormatDecimal(),
-    subscriptions = totalSubscriptions.toFormatDecimal(),
-    subscribers = totalSubscribers.toFormatDecimal(),
-    publication = totalPublication?.toFormatDecimal(),
+    likes = totalLikes.toCompactDecimalFormat(),
+    subscriptions = totalSubscriptions.toCompactDecimalFormat(),
+    subscribers = totalSubscribers.toCompactDecimalFormat(),
+    publication = totalPublication?.toCompactDecimalFormat(),
     onSubscribersClick = onSubscribersClick,
     onSubscriptionsClick = onSubscriptionsClick,
 )

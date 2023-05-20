@@ -36,7 +36,6 @@ import io.snaps.basewallet.ui.LimitedGasDialogHandler
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensUi
 import io.snaps.corecommon.R
-import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
@@ -117,7 +116,7 @@ fun WithdrawScreen(
                     image = R.drawable.img_guy_hands_up.imageValue(),
                     title = StringKey.WithdrawDialogWithdrawSuccessTitle.textValue(),
                     text = StringKey.WithdrawDialogWithdrawSuccessMessage.textValue(
-                        dialog.sent.orEmpty(),
+                        dialog.sent?.getFormatted().orEmpty(),
                         dialog.to.orEmpty()
                     ),
                     buttonText = StringKey.WithdrawDialogWithdrawSuccessAction.textValue(),
@@ -166,7 +165,7 @@ private fun WithdrawScreen(
         topBar = {
             SimpleTopAppBar(
                 title = {
-                    Text(text = StringKey.WithdrawTitle.textValue(uiState.walletModel.symbol).get())
+                    Text(text = StringKey.WithdrawTitle.textValue(uiState.walletModel.coinType.symbol).get())
                 },
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 scrollBehavior = scrollBehavior,
@@ -225,8 +224,9 @@ private fun WithdrawScreen(
                 maxLines = 1,
             )
             Text(
-                text = StringKey.WithdrawFieldAvailable.textValue(uiState.availableAmount)
-                    .get(),
+                text = StringKey.WithdrawFieldAvailable.textValue(
+                    uiState.availableAmount?.getFormatted().orEmpty()
+                ).get(),
                 style = AppTheme.specificTypography.bodySmall,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -247,7 +247,7 @@ private fun WithdrawScreen(
                     modifier = Modifier.padding(horizontal = 12.dp),
                 )
                 Text(
-                    text = uiState.gasPriceString,
+                    text = uiState.gasValue.getFormatted(),
                     style = AppTheme.specificTypography.bodySmall,
                     color = AppTheme.specificColorScheme.textPrimary,
                     modifier = Modifier

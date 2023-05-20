@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.model.CoinValue
+import io.snaps.corecommon.model.FiatValue
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.addIf
 import io.snaps.coreuicompose.tools.doOnClick
@@ -57,8 +59,8 @@ sealed class RightPart : TileState {
     data class Text(val text: TextValue) : RightPart()
 
     data class TextMoney(
-        val coin: String,
-        val fiatCurrency: String,
+        val coin: CoinValue,
+        val fiat: FiatValue,
     ) : RightPart()
 
     data class ButtonData(
@@ -175,14 +177,14 @@ fun RightPartTile(modifier: Modifier, data: RightPart) {
             )
             is RightPart.TextMoney -> {
                 Text(
-                    text = data.coin,
+                    text = data.coin.getFormatted(),
                     color = AppTheme.specificColorScheme.textPrimary,
                     style = AppTheme.specificTypography.bodySmall,
                     maxLines = 1,
                     textAlign = TextAlign.End,
                 )
                 Text(
-                    text = "≈ ${data.fiatCurrency}",
+                    text = data.fiat.getFormatted(),
                     color = AppTheme.specificColorScheme.textSecondary,
                     style = AppTheme.specificTypography.bodySmall,
                     maxLines = 1,

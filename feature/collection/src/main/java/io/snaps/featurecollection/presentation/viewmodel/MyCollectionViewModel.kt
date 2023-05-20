@@ -3,12 +3,12 @@ package io.snaps.featurecollection.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
-import io.snaps.corecommon.model.NftModel
+import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.NotificationsSource
-import io.snaps.basewallet.domain.NoEnoughSnpToRepair
+import io.snaps.featurecollection.domain.NoEnoughSnpToRepair
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FullUrl
@@ -45,7 +45,7 @@ class MyCollectionViewModel @Inject constructor(
 ) : SimpleViewModel(),
     MainHeaderHandler by mainHeaderHandler,
     OnboardingHandler by onboardingHandler,
-    TransferTokensDialogHandler by transferTokensDialogHandler  {
+    TransferTokensDialogHandler by transferTokensDialogHandler {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -112,14 +112,10 @@ class MyCollectionViewModel @Inject constructor(
     }
 
     private fun onItemClicked(nftModel: NftModel) {
-        if (nftModel.isProcessing) return
+        if (nftModel.isProcessed) return
         viewModelScope.launch {
             _command publish Command.OpenNftDetailsScreen(
-                args = AppRoute.UserNftDetails.Args(
-                    type = nftModel.type,
-                    dailyReward = nftModel.dailyReward,
-                    image = nftModel.image.value as FullUrl,
-                )
+                args = AppRoute.UserNftDetails.Args(nftId = nftModel.id)
             )
         }
     }

@@ -2,9 +2,6 @@ package io.snaps.basefeed.ui
 
 import io.snaps.basefeed.domain.CommentModel
 import io.snaps.basefeed.domain.CommentPageModel
-import io.snaps.corecommon.R
-import io.snaps.corecommon.container.ImageValue
-import io.snaps.corecommon.container.textValue
 import io.snaps.coreuicompose.uikit.listtile.EmptyListTileState
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 

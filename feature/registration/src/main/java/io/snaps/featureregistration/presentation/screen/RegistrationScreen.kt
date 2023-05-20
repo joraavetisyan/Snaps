@@ -58,7 +58,6 @@ import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import io.snaps.corecommon.R
-import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.log

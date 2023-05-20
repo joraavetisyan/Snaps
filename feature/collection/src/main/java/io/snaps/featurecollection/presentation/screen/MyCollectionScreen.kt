@@ -33,9 +33,7 @@ import androidx.navigation.NavHostController
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
-import io.snaps.basewallet.ui.TransferTokensUi
 import io.snaps.corecommon.R
-import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey

@@ -83,7 +83,7 @@ abstract class CoreApp {
 
         override lateinit var instance: Application
 
-        override val testMode = IS_CRYPTO_IN_TEST_MODE
+        override val testMode = IS_CRYPTO_IN_TEST_MODE // todo release from build type, set our own api keys to fetch rpc
     }
 }
 

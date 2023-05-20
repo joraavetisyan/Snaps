@@ -3,7 +3,7 @@ package io.snaps.coreuicompose.uikit.input.formatter
 import androidx.compose.ui.graphics.Color
 import io.snaps.corecommon.container.textValue
 
-class CardNumberFormatter(format: String) : SimpleFormatter {
+class CardNumberFormatter(format: String = "#### #### #### ####") : SimpleFormatter {
 
     private val pattern = format.map {
         when (it) {

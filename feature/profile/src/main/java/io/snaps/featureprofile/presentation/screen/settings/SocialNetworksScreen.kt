@@ -44,7 +44,7 @@ fun SocialNetworksScreen(
 
     val uiState by viewModel.uiState.collectAsState()
     viewModel.command.collectAsCommand {
-        when(it) {
+        when (it) {
             is SocialNetworksViewModel.Command.OpenLink -> { context.openUrl(it.link) }
         }
     }

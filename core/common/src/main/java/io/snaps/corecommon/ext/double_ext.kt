@@ -4,8 +4,6 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.NumberFormat
 import java.util.Locale
-import kotlin.math.max
-import kotlin.math.min
 
 fun Double.round(places: Int = 2): Double {
     require(places >= 0)
@@ -14,42 +12,28 @@ fun Double.round(places: Int = 2): Double {
         .toDouble()
 }
 
-fun Double.formatToMoney(): String = try {
-    NumberFormat.getNumberInstance(Locale.US).format(this.round())
+fun Double.toNumberFormat(): String = try {
+    NumberFormat.getNumberInstance(Locale.US).format(round())
 } catch (ex: NumberFormatException) {
     this.toString()
 }
 
-fun Double.toPercentageFormat() = "${(this * 100).round(1).toStringValue()}%"
+fun Double.toCompactDecimalFormat(): String {
+    val number = round(3)
+    number.toInt().let {
+        if (it >= 100000) {
+            return it.toCompactDecimalFormat(Locale.US)
+        }
+    }
+    return number.stripUselessDecimals()
+}
 
-fun Double.toStringValue(): String {
-    var number = this.toBigDecimal().toPlainString()
+private fun Double.stripUselessDecimals(): String {
+    var number = toBigDecimal().toPlainString()
     if (number.endsWith(".0")) {
         number = number.removeSuffix(".0")
     }
     return number
 }
 
-fun BigDecimal.toStringValue(): String {
-    var number = this.toPlainString()
-    while (number.last() == '0' || number.last() == '.') {
-        number = number.removeSuffix("0")
-        number = number.removeSuffix(".")
-    }
-    return number
-}
-
-fun Double.coinToFormatDecimal(): String {
-    val number = this.round(3)
-    if (number.toInt() >= 100000) {
-        return number.toInt().toFormatDecimal(Locale.US)
-    }
-    return number.toStringValue()
-}
-
-fun Double.fiatToFormatDecimal(): String {
-    val number = toString()
-    val pointIndex = number.indexOf('.')
-    if (pointIndex == -1) return number
-    return number.substring(0, min(pointIndex + 3, number.length))
-}
+fun Double.toPercentageFormat() = "${(this * 100).round(1).stripUselessDecimals()}%"

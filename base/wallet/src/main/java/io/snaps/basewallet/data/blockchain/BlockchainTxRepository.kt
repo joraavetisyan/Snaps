@@ -8,26 +8,27 @@ import io.horizontalsystems.ethereumkit.models.Address
 import io.horizontalsystems.ethereumkit.models.GasPrice
 import io.horizontalsystems.ethereumkit.models.TransactionData
 import io.snaps.basewallet.data.WalletApi
-import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.data.blockchainCall
 import io.snaps.basewallet.data.model.SignatureRequestDto
 import io.snaps.basewallet.domain.NftMintSummary
-import io.snaps.basewallet.domain.NoEnoughBnbToMint
-import io.snaps.basewallet.domain.NoEnoughSnpToRepair
-import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Effect
-import io.snaps.corecommon.model.NftModel
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.TxHash
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.model.Nft
-import io.snaps.corecommon.model.WalletModel
+import io.snaps.basewallet.domain.WalletModel
+import io.snaps.corecommon.ext.applyDecimal
+import io.snaps.corecommon.ext.logE
+import io.snaps.corecommon.ext.unapplyDecimal
+import io.snaps.corecommon.model.CoinType
 import io.snaps.corecrypto.core.CryptoKit
+import io.snaps.corecrypto.core.IAccountManager
 import io.snaps.corecrypto.core.ISendEthereumAdapter
+import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.adapters.Eip20Adapter
+import io.snaps.corecrypto.entities.Account
 import io.snaps.corecrypto.entities.Wallet
 import io.snaps.coredata.coroutine.IoDispatcher
-import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.apiCall
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
@@ -38,6 +39,15 @@ interface BlockchainTxRepository {
 
     suspend fun getLegacyGasPrice(wallet: WalletModel): Effect<Long>
 
+    suspend fun getProfitWalletAddress(): Effect<CryptoAddress>
+
+    suspend fun calculateGasLimit(
+        wallet: WalletModel,
+        address: CryptoAddress,
+        value: BigInteger,
+        gasPrice: Long?,
+    ): Effect<Long>
+
     suspend fun send(
         wallet: WalletModel,
         address: CryptoAddress,
@@ -47,29 +57,66 @@ interface BlockchainTxRepository {
         data: ByteArray = byteArrayOf(),
     ): Effect<TxHash>
 
-    suspend fun repairNft(nftModel: NftModel): Effect<TxHash>
+    suspend fun repairNft(repairCost: Double): Effect<TxHash>
 
-    suspend fun getNftMintSummary(nftType: NftType): Effect<NftMintSummary>
+    suspend fun getNftMintSummary(nftType: NftType, amount: Double): Effect<NftMintSummary>
 
     suspend fun mintNft(nftType: NftType, summary: NftMintSummary): Effect<TxHash>
-
-    suspend fun calculateGasLimit(
-        wallet: WalletModel,
-        address: CryptoAddress,
-        value: BigInteger,
-        gasPrice: Long?
-    ): Effect<Long>
-
-    suspend fun getProfitWalletAddress(): Effect<CryptoAddress>
 }
 
 class BlockchainTxRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+
+    private val walletManager: IWalletManager,
+    private val accountManager: IAccountManager,
+
     private val walletApi: WalletApi,
-    @Bridged private val walletRepository: WalletRepository,
 ) : BlockchainTxRepository {
 
-    private val gasPrice = GasPrice.Legacy(10_000_000_000L)
+    private val defaultGasPrice = GasPrice.Legacy(10_000_000_000L)
+
+    override suspend fun getLegacyGasPrice(wallet: WalletModel): Effect<Long> {
+        return blockchainCall(ioDispatcher) {
+            LegacyGasPriceProvider(
+                requireEthereumAdapter(wallet.coinUid).evmKitWrapper.evmKit
+            ).gasPriceSingle().blockingGet()
+        }
+    }
+
+    override suspend fun calculateGasLimit(
+        wallet: WalletModel,
+        address: CryptoAddress,
+        value: BigInteger,
+        gasPrice: Long?,
+    ): Effect<Long> {
+        return blockchainCall(ioDispatcher) {
+            if (wallet.coinType == CoinType.BNB) {
+                requireEthereumAdapter(wallet.coinUid).evmKitWrapper.evmKit.estimateGas(
+                    to = Address(address),
+                    value = value,
+                    gasPrice = gasPrice.toLegacyGasPriceOrDefault(),
+                ).blockingGet()
+            } else {
+                val adapter = requireEip20Adapter(requireWallet(wallet.coinUid))
+                val gasLimitTD: TransactionData = adapter.eip20Kit.buildTransferTransactionData(
+                    to = Address(address),
+                    value = value,
+                )
+                adapter.evmKitWrapper.evmKit.estimateGas(
+                    transactionData = gasLimitTD,
+                    gasPrice = gasPrice.toLegacyGasPriceOrDefault(),
+                ).blockingGet()
+            }
+        }
+    }
+
+    override suspend fun getProfitWalletAddress(): Effect<CryptoAddress> {
+        return apiCall(ioDispatcher) {
+            walletApi.getRepairSignature(SignatureRequestDto(nonce = 1L, amount = 10.0))
+        }.map {
+            it.profitWallet.orEmpty()
+        }
+    }
 
     override suspend fun send(
         wallet: WalletModel,
@@ -81,9 +128,8 @@ class BlockchainTxRepositoryImpl @Inject constructor(
     ): Effect<TxHash> {
         return blockchainCall(ioDispatcher) {
             val adapter = requireEthereumAdapter(wallet.coinUid)
-            val address = Address(address)
             val txData = adapter.evmKitWrapper.evmKit.transferTransactionData(
-                address = address, value = amount
+                address = Address(address), value = amount
             )
             adapter.evmKitWrapper.sendSingle(
                 transactionData = txData,
@@ -93,21 +139,13 @@ class BlockchainTxRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getLegacyGasPrice(wallet: WalletModel): Effect<Long> {
-        return blockchainCall(ioDispatcher) {
-            LegacyGasPriceProvider(
-                requireEthereumAdapter(wallet.coinUid).evmKitWrapper.evmKit
-            ).gasPriceSingle().blockingGet()
-        }
-    }
-
     private fun ethereumAdapter(coinUid: String): ISendEthereumAdapter? {
         return getWallet(coinUid)?.let {
             CryptoKit.adapterManager.getAdapterForWallet(it) as ISendEthereumAdapter
         }
     }
 
-    private fun getWallet(coinUid: String) = walletRepository.getWallets().firstOrNull { it.coin.uid == coinUid }
+    private fun getWallet(coinUid: String) = getWallets().firstOrNull { it.coin.uid == coinUid }
 
     private fun requireWallet(coinUid: String) = requireNotNull(getWallet(coinUid)) {
         "Wallet is null for $coinUid"
@@ -124,15 +162,11 @@ class BlockchainTxRepositoryImpl @Inject constructor(
         "Eip20Adapter is null for $wallet"
     }
 
-    override suspend fun repairNft(nftModel: NftModel): Effect<TxHash> {
-        if ((walletRepository.getSnpWalletModel()?.coinValueDouble ?: 0.0) < nftModel.repairCost) {
-            return Effect.error(AppError.Custom(cause = NoEnoughSnpToRepair))
-        }
-
+    override suspend fun repairNft(repairCost: Double): Effect<TxHash> {
         val nonceRaw = getNonceRaw()
 
         return apiCall(ioDispatcher) {
-            walletApi.getRepairSignature(body = SignatureRequestDto(nonce = nonceRaw, amount = nftModel.repairCost))
+            walletApi.getRepairSignature(body = SignatureRequestDto(nonce = nonceRaw, amount = repairCost))
         }.flatMap { data ->
             blockchainCall(ioDispatcher) {
                 fun error(): Nothing = throw IllegalStateException("Signature data null! $data")
@@ -142,7 +176,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                 val address = Address(Nft.SNAPS.address)
 
                 val method = RepairContractMethod(
-                    owner = Address(walletRepository.requireActiveWalletReceiveAddress()),
+                    owner = Address(requireActiveWalletReceiveAddress()),
                     fromAccountAmounts = data.amountReceiver?.let(::BigInteger) ?: error(),
                     deadline = data.deadline?.toBigInteger() ?: error(),
                     nonce = nonceRaw.toBigInteger(),
@@ -154,20 +188,20 @@ class BlockchainTxRepositoryImpl @Inject constructor(
 
                 val approveGasLimitTD: TransactionData = adapter.eip20Kit.buildTransferTransactionData(
                     to = address,
-                    value = nftModel.repairCost.applyDecimal(wallet),
+                    value = repairCost.applyDecimal(wallet.decimal),
                 )
                 val approveGasLimit = adapter.evmKit.estimateGas(
                     transactionData = approveGasLimitTD,
-                    gasPrice = gasPrice,
+                    gasPrice = defaultGasPrice,
                 ).blockingGet()
 
                 val approveTD = adapter.eip20Kit.buildApproveTransactionData(
                     spenderAddress = address,
-                    amount = nftModel.repairCost.applyDecimal(wallet),
+                    amount = repairCost.applyDecimal(wallet.decimal),
                 )
                 adapter.evmKitWrapper.sendSingle(
                     transactionData = approveTD,
-                    gasPrice = gasPrice,
+                    gasPrice = defaultGasPrice,
                     gasLimit = approveGasLimit,
                 ).blockingGet()
 
@@ -178,7 +212,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                 )
                 val repairGasLimit = adapter.evmKit.estimateGas(
                     transactionData = repairGasLimitTD,
-                    gasPrice = gasPrice,
+                    gasPrice = defaultGasPrice,
                 ).blockingGet()
 
                 val repairTD = TransactionData(
@@ -188,23 +222,26 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                 )
                 adapter.evmKitWrapper.sendSingle(
                     transactionData = repairTD,
-                    gasPrice = gasPrice,
+                    gasPrice = defaultGasPrice,
                     gasLimit = repairGasLimit,
                 ).blockingGet().transaction.hash.toHexString()
             }
         }
     }
 
-    private fun Double.applyDecimal(wallet: Wallet) = toBigDecimal()
-        .movePointRight(wallet.decimal)
-        .toBigInteger()
-
-    override suspend fun getNftMintSummary(nftType: NftType): Effect<NftMintSummary> {
-        val amount = 0.005
-        if ((walletRepository.getBnbWalletModel()?.coinValueDouble ?: 0.0) < amount) {
-            return Effect.error(AppError.Custom(cause = NoEnoughBnbToMint))
+    private fun getActiveWalletReceiveAddress(): CryptoAddress? {
+        return getWallets().firstNotNullOfOrNull { wallet ->
+            CryptoKit.adapterManager.getReceiveAdapterForWallet(wallet)?.receiveAddress.also {
+                if (it == null) logE("No receive adapter for wallet $wallet!")
+            }
         }
+    }
 
+    private fun requireActiveWalletReceiveAddress(): CryptoAddress {
+        return requireNotNull(getActiveWalletReceiveAddress())
+    }
+
+    override suspend fun getNftMintSummary(nftType: NftType, amount: Double): Effect<NftMintSummary> {
         val nonceRaw = getNonceRaw()
 
         return apiCall(ioDispatcher) {
@@ -217,7 +254,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                 fun error(): Nothing = throw IllegalStateException("Signature data null! $data")
 
                 val address = Address(Nft.SNAPS.address)
-                val fromAddress = walletRepository.requireActiveWalletReceiveAddress()
+                val fromAddress = requireActiveWalletReceiveAddress()
 
                 val method = MintContractMethod(
                     owner = Address(fromAddress),
@@ -229,7 +266,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                 )
                 val encodedAbi: ByteArray = method.encodedABI()
 
-                val valueApplied = amount.applyDecimal(wallet)
+                val valueApplied = amount.applyDecimal(wallet.decimal)
                 val transactionData = TransactionData(
                     to = address,
                     value = valueApplied,
@@ -237,10 +274,9 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                 )
                 val gasLimit = adapter.evmKit.estimateGas(
                     transactionData = transactionData,
-                    gasPrice = gasPrice,
+                    gasPrice = defaultGasPrice,
                 ).blockingGet()
-                val gasPriceDecimal = gasPrice.max.toBigDecimal()
-                    .movePointLeft(wallet.decimal)
+                val gasPriceDecimal = defaultGasPrice.max.unapplyDecimal(wallet.decimal)
                     .times(gasLimit.toBigDecimal())
 
                 NftMintSummary(
@@ -263,7 +299,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
             val adapter = requireEip20Adapter(requireSnapsWallet())
             val hash = adapter.evmKitWrapper.sendSingle(
                 transactionData = summary.transactionData as TransactionData,
-                gasPrice = gasPrice,
+                gasPrice = defaultGasPrice,
                 gasLimit = summary.gasLimit,
             ).blockingGet().transaction.hash
             var receipt: RpcTransactionReceipt? = null
@@ -277,44 +313,18 @@ class BlockchainTxRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun getSnapsWallet() = walletRepository.getWallets().firstOrNull { it.coin.code == "SNAPS" }
+    private fun getSnapsWallet() = getWallets().firstOrNull { it.coin.code == CoinType.SNPS.code }
 
     private fun requireSnapsWallet() = requireNotNull(getSnapsWallet()) { "Snaps wallet is null!!!" }
 
-    override suspend fun calculateGasLimit(
-        wallet: WalletModel,
-        address: CryptoAddress,
-        value: BigInteger,
-        gasPrice: Long?,
-    ): Effect<Long> {
-        return blockchainCall(ioDispatcher) {
-            if (wallet.coinUid == "binancecoin") {
-                requireEthereumAdapter(wallet.coinUid).evmKitWrapper.evmKit.estimateGas(
-                    to = Address(address),
-                    value = value,
-                    gasPrice = gasPrice.toLegacyGasPriceOrDefault(),
-                ).blockingGet()
-            } else {
-                val adapter = requireEip20Adapter(requireWallet(wallet.coinUid))
-                val gasLimitTD: TransactionData = adapter.eip20Kit.buildTransferTransactionData(
-                    to = Address(address),
-                    value = value,
-                )
-                adapter.evmKitWrapper.evmKit.estimateGas(
-                    transactionData = gasLimitTD,
-                    gasPrice = gasPrice.toLegacyGasPriceOrDefault(),
-                ).blockingGet()
-            }
-        }
+    private fun getWallets(): List<Wallet> {
+        val account = getActiveAccount() ?: return emptyList()
+        return walletManager.getWallets(account).also { if (it.isEmpty()) logE("No wallets!") }
     }
 
-    private fun Long?.toLegacyGasPriceOrDefault(): GasPrice.Legacy = this?.let(GasPrice::Legacy) ?: gasPrice
-
-    override suspend fun getProfitWalletAddress(): Effect<CryptoAddress> {
-        return apiCall(ioDispatcher) {
-            walletApi.getRepairSignature(SignatureRequestDto(nonce = 1L, amount = 10.0))
-        }.map {
-            it.profitWallet.orEmpty()
-        }
+    private fun getActiveAccount(): Account? {
+        return accountManager.activeAccount.also { if (it == null) logE("No active account!") }
     }
+
+    private fun Long?.toLegacyGasPriceOrDefault(): GasPrice.Legacy = this?.let(GasPrice::Legacy) ?: defaultGasPrice
 }

@@ -7,21 +7,20 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basebilling.BillingRouter
 import io.snaps.basebilling.PurchaseStateProvider
 import io.snaps.basenft.data.NftRepository
+import io.snaps.basenft.ui.getSunglassesImage
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basewallet.domain.NftMintSummary
-import io.snaps.basewallet.domain.NoEnoughBnbToMint
 import io.snaps.basewallet.ui.LimitedGasDialogHandler
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensState
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
-import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.ext.toStringValue
-import io.snaps.corecommon.model.Fiat
-import io.snaps.corecommon.model.Fiat.Currency
+import io.snaps.corecommon.model.CoinBNB
+import io.snaps.corecommon.model.CoinValue
+import io.snaps.corecommon.model.FiatValue
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.Token
 import io.snaps.corecommon.strings.StringKey
@@ -34,6 +33,7 @@ import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurecollection.domain.MyCollectionInteractor
+import io.snaps.featurecollection.domain.NoEnoughBnbToMint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -65,26 +65,28 @@ class PurchaseViewModel @Inject constructor(
     private val args = savedStateHandle.requireArgs<AppRoute.Purchase.Args>()
 
     private val _uiState = MutableStateFlow(
-        UiState(
-            nftType = args.type,
-            nftImage = args.image.imageValue(),
-            // todo currency name
-            cost = "${args.costInUsd}${Fiat.Currency.USD.symbol}",
-            dailyUnlock = args.dailyUnlock,
-            dailyReward = args.dailyReward,
-            isPurchasable = args.isPurchasable,
-            isPurchasableWithBnb = args.type != NftType.Free && featureToggle.isEnabled(Feature.PurchaseNftWithBnb),
-            prevNftImage = (args.type.intType - 1).let {
-                if (it != -1) {
-                    NftType.fromIntType(it).getSunglassesImage()
-                } else {
-                    NftType.Free.getSunglassesImage()
-                }
-            },
-            isFreeButtonVisible = args.type == NftType.Free
-                && (nftRepository.nftCollectionState.value.dataOrCache?.none { it.type == NftType.Free } ?: true),
-        )
+        with(requireNotNull(nftRepository.ranksState.value.dataOrCache?.first { it.type == args.type })) {
+            val isFreePurchased = nftRepository.nftCollectionState.value.dataOrCache?.any {
+                it.type == NftType.Free
+            } ?: false
+            val prevNftImage = (type.intType - 1).let {
+                if (it != -1) NftType.byIntType(it).getSunglassesImage()
+                else NftType.Free.getSunglassesImage()
+            }
+            UiState(
+                nftType = type,
+                nftImage = image,
+                cost = cost,
+                dailyUnlock = dailyUnlock,
+                dailyReward = dailyReward,
+                isPurchasable = isPurchasable,
+                isPurchasableWithBnb = type != NftType.Free && featureToggle.isEnabled(Feature.PurchaseNftWithBnb),
+                prevNftImage = prevNftImage,
+                isPurchasableForFree = type == NftType.Free && !isFreePurchased,
+            )
+        }
     )
+
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
@@ -150,10 +152,9 @@ class PurchaseViewModel @Inject constructor(
                     title = purchaseWithBnbDialogTitle,
                     from = summary.from,
                     to = summary.to,
-                    // todo currency name
-                    summary = summary.summary.toStringValue() + " BNB",
-                    gas = summary.gas.toStringValue() + " BNB",
-                    total = summary.total.toStringValue() + " BNB",
+                    summary = CoinBNB(summary.summary.toDouble()),
+                    gas = CoinBNB(summary.gas.toDouble()),
+                    total = CoinBNB(summary.total.toDouble()),
                     onConfirmClick = { onConfirmed(summary) },
                     onCancelClick = { hideTransferTokensBottomDialog(viewModelScope) },
                 )
@@ -194,15 +195,15 @@ class PurchaseViewModel @Inject constructor(
 
     data class UiState(
         val isLoading: Boolean = false,
-        val nftImage: ImageValue,
         val nftType: NftType,
-        val cost: String,
-        val dailyReward: Int,
+        val prevNftImage: ImageValue,
+        val nftImage: ImageValue,
+        val cost: FiatValue?,
+        val dailyReward: CoinValue,
         val dailyUnlock: Double,
         val isPurchasable: Boolean,
         val isPurchasableWithBnb: Boolean,
-        val prevNftImage: ImageValue,
-        val isFreeButtonVisible: Boolean,
+        val isPurchasableForFree: Boolean,
     )
 
     sealed class Command {

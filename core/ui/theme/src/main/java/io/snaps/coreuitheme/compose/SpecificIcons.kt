@@ -34,7 +34,6 @@ import androidx.compose.material.icons.rounded.Videocam
 import androidx.compose.material.icons.rounded.VolumeMute
 import androidx.compose.material.icons.rounded.VolumeUp
 import io.snaps.corecommon.R
-import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.iconValue
 
 object SpecificIcons {

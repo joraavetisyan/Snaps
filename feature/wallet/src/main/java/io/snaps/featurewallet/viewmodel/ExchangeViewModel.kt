@@ -8,7 +8,7 @@ import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.SwapTransactionModel
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.model.WalletModel
+import io.snaps.basewallet.domain.WalletModel
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -34,14 +34,16 @@ class ExchangeViewModel @Inject constructor(
 
     private val args = savedStateHandle.requireArgs<AppRoute.Exchange.Args>()
 
-    private val _uiState = MutableStateFlow(UiState(walletModel = args.wallet))
+    private val _uiState = MutableStateFlow(
+        UiState(walletModel = walletRepository.activeWallets.value.first { it.coinType == args.coin })
+    )
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
     fun onTransactionSendClicked(transactionModel: SwapTransactionModel) {
-        walletRepository.getBnbWalletModel()?.let {
+        walletRepository.bnb.value?.let {
             _uiState.update { it.copy(isLoading = true) }
             viewModelScope.launch {
                 action.execute {

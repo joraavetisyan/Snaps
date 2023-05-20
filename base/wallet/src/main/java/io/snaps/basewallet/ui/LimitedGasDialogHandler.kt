@@ -78,7 +78,7 @@ class LimitedGasDialogHandlerImplDelegate @Inject constructor(
     }
 
     private fun isGasEnough(minValue: Double): Boolean {
-        return walletRepository.getBnbWalletModel()?.coinValueDouble?.let { bnbValue ->
+        return walletRepository.bnb.value?.coinValue?.value?.let { bnbValue ->
             bnbValue >= minValue
         } ?: false
     }
@@ -92,7 +92,7 @@ class LimitedGasDialogHandlerImplDelegate @Inject constructor(
             }.doOnSuccess {
                 // todo possible inf loop
                 while (!isGasEnough(minValue = amount)) {
-                    walletRepository.updateBalance()
+                    walletRepository.updateTotalBalance()
                     delay(1000L)
                 }
                 notificationsSource.sendMessage(StringKey.MessageSuccess.textValue())

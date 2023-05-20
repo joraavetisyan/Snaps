@@ -1,10 +1,8 @@
 package io.snaps.featurecollection.presentation
 
-import io.snaps.corecommon.model.NftModel
+import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.basenft.ui.CollectionItemState
-import io.snaps.basenft.ui.costToString
-import io.snaps.basenft.ui.dailyRewardToString
 import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
@@ -32,9 +30,9 @@ private fun RankModel.toRankTileState(
     onItemClicked: (RankModel) -> Unit,
 ) = RankTileState.Data(
     type = type,
-    price = costInUsd?.costToString() ?: "",
+    cost = cost,
     image = image,
-    dailyReward = dailyReward.dailyRewardToString(),
+    dailyReward = dailyReward.toFiat(rate = 100.0),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isPurchasable = isPurchasable,
@@ -75,14 +73,13 @@ private fun NftModel.toNftCollectionItemState(
     onHelpIconClicked: () -> Unit,
 ) = CollectionItemState.Nft(
     type = type,
-    price = costInUsd?.costToString() ?: "",
     image = image,
-    dailyReward = dailyReward.dailyRewardToString(),
+    dailyReward = dailyReward.toFiat(rate = 100.0),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthy = isHealthy,
-    isProcessing = isProcessing,
-    isLevelInfoVisible = !isProcessing,
+    isProcessing = isProcessed,
+    isLevelInfoVisible = !isProcessed,
     level = level,
     upperThreshold = upperThreshold,
     lowerThreshold = lowerThreshold,

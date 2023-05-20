@@ -36,9 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.basefeed.ui.VideoFeedGrid
-import io.snaps.basesubs.domain.SubModel
 import io.snaps.corecommon.R
-import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startShareLinkIntent
@@ -56,7 +54,6 @@ import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.featureprofile.presentation.viewmodel.ProfileViewModel
-import io.snaps.featureprofile.presentation.viewmodel.SubsViewModel
 
 @Composable
 fun ProfileScreen(

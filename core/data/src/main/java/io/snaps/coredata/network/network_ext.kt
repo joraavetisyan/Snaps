@@ -1,6 +1,5 @@
 package io.snaps.coredata.network
 
-import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable

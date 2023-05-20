@@ -3,12 +3,15 @@ package io.snaps.basenft.data
 import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.MintNftStoreRequestDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
+import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
+import io.snaps.basenft.ui.getSunglassesImage
 import io.snaps.corecommon.ext.log
+import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
+import io.snaps.corecommon.model.FiatUSD
 import io.snaps.corecommon.model.Loading
-import io.snaps.corecommon.model.NftModel
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Token
@@ -79,6 +82,7 @@ class NftRepositoryImpl @Inject constructor(
                 it.isSuccess -> Effect.success(
                     it.requireData.count { nft -> !nft.isHealthy }
                 )
+
                 else -> Effect.error(requireNotNull(it.errorOrNull))
             }
         }
@@ -137,23 +141,22 @@ class NftRepositoryImpl @Inject constructor(
                     userDataStorage.setProcessingNftCount(type, max(processingCount, list.size))
                     list + List(overCount) { i ->
                         list.firstOrNull()?.let {
-                            it.copy(id = it.id + "processing$i", isProcessing = true)
+                            it.copy(id = it.id + "processing$i", isProcessed = true)
                         } ?: NftModel(
                             id = "${type.name}processing$i",
                             tokenId = "",
                             userId = "",
                             type = type,
                             image = type.getSunglassesImage(),
-                            dailyReward = 0,
+                            dailyReward = CoinSNPS(0.0),
                             dailyUnlock = 0.0,
                             dailyConsumption = 0.0,
-                            isAvailableToPurchase = false,
-                            costInUsd = 0,
-                            costInRealTokens = 0,
-                            mintedDate = LocalDateTime.now(),
+                            isPurchasable = false,
+                            fiatCost = FiatUSD(0.0),
+                            mintDate = LocalDateTime.now(),
                             isHealthy = true,
-                            repairCost = 0.0,
-                            isProcessing = true,
+                            repairCost = CoinSNPS(0.0),
+                            isProcessed = true,
                             level = 0,
                             experience = 0,
                             lowerThreshold = 0,

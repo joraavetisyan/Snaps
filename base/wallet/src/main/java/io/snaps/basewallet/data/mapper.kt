@@ -1,7 +1,10 @@
 package io.snaps.basewallet.data
 
 import io.horizontalsystems.ethereumkit.api.jsonrpc.JsonRpc
+import io.snaps.basewallet.data.model.BalanceResponseDto
+import io.snaps.basewallet.domain.BalanceModel
 import io.snaps.corecommon.model.AppError
+import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.Effect
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -24,3 +27,10 @@ suspend inline fun <reified T : Any> blockchainCall(
         Effect.error(AppError.Unknown(cause = error))
     }
 }
+
+fun BalanceResponseDto.toModel() = BalanceModel(
+    unlocked = CoinSNPS(unlockedTokensBalance),
+    locked = CoinSNPS(lockedTokensBalance),
+    snpExchangeRate = snpExchangeRate,
+    bnbExchangeRate = bnbExchangeRate,
+)

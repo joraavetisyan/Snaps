@@ -9,7 +9,6 @@ import io.snaps.basefeed.ui.VideoFeedUiState
 import io.snaps.basefeed.ui.toVideoFeedUiState
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesubs.data.SubsRepository
-import io.snaps.basesubs.domain.SubModel
 import io.snaps.corecommon.model.SubsType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.di.Bridged

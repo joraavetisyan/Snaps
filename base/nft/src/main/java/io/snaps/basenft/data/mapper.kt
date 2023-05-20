@@ -2,21 +2,21 @@ package io.snaps.basenft.data
 
 import io.snaps.basenft.data.model.NftItemResponseDto
 import io.snaps.basenft.data.model.UserNftItemResponseDto
-import io.snaps.corecommon.model.NftModel
 import io.snaps.basenft.domain.RankModel
-import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
+import io.snaps.corecommon.model.CoinSNPS
+import io.snaps.corecommon.model.FiatUSD
+import io.snaps.basenft.domain.NftModel
 import java.time.ZonedDateTime
 
 fun List<NftItemResponseDto>.toRankModelList() = map(NftItemResponseDto::toModel)
 
 private fun NftItemResponseDto.toModel() = RankModel(
     type = type,
-    costInUsd = costInUsd,
-    costInRealTokens = costInRealTokens,
+    cost = costInUsd?.let { FiatUSD(it.toDouble()) },
     image = pathToImage.imageValue(),
-    dailyReward = dailyReward,
+    dailyReward = CoinSNPS(dailyReward.toDouble()),
     dailyUnlock = percentGrowingPerDay,
     dailyConsumption = dailyMaintenanceCostMultiplier ?: 0.0,
     isPurchasable = isAvailableToPurchase,
@@ -29,17 +29,16 @@ private fun UserNftItemResponseDto.toModel() = NftModel(
     userId = userId,
     tokenId = tokenId,
     isHealthy = isHealthy,
-    mintedDate = requireNotNull(ZonedDateTime.parse(mintedDate)).toOffsetLocalDateTime(),
+    mintDate = requireNotNull(ZonedDateTime.parse(mintedDate)).toOffsetLocalDateTime(),
     type = data.type,
-    costInUsd = data.costInUsd,
-    costInRealTokens = data.costInRealTokens,
+    fiatCost = data.costInUsd?.let { FiatUSD(it.toDouble()) },
     image = data.pathToImage.imageValue(),
-    dailyReward = data.dailyReward,
+    dailyReward = CoinSNPS(data.dailyReward.toDouble()),
     dailyUnlock = data.percentGrowingPerDay,
     dailyConsumption = data.dailyMaintenanceCostMultiplier ?: 0.0,
-    isAvailableToPurchase = data.isAvailableToPurchase,
-    repairCost = data.repairCost,
-    isProcessing = false,
+    isPurchasable = data.isAvailableToPurchase,
+    repairCost = CoinSNPS(data.repairCost),
+    isProcessed = false,
     level = levelInfo.level,
     lowerThreshold = levelInfo.lowerThreshold,
     upperThreshold = levelInfo.upperThreshold,

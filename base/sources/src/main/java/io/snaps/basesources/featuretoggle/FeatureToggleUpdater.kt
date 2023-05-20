@@ -16,7 +16,7 @@ class FeatureToggleUpdater @Inject constructor(
     private val firebaseRemoteConfig by lazy { FirebaseRemoteConfig.getInstance() }
 
     init {
-        //initDefaultValues()
+        // initDefaultValues()
         saveRemoteValues()
     }
 

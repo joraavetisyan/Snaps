@@ -27,8 +27,6 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import javax.inject.Inject
 
-private const val feedPageSize = 50
-
 interface VideoFeedRepository {
 
     fun getFeedState(feedType: VideoFeedType): StateFlow<VideoFeedPageModel>
@@ -74,7 +72,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
             is VideoFeedType.UserLiked -> userLikedVideoFeedLoaderFactory.get(Unit) {
                 PagedLoaderParams(
                     action = { from, count -> videoFeedApi.likedVideos(from, count) },
-                    pageSize = feedPageSize,
+                    pageSize = 50,
                     nextPageIdFactory = { it.entityId },
                     mapper = { videoFeed -> videoFeed.map { it.video.toModel() } },
                 )
@@ -89,7 +87,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     )
                     VideoFeedType.Subscriptions -> PagedLoaderParams(
                         action = { from, count -> videoFeedApi.subscriptionsFeed(from, count) },
-                        pageSize = feedPageSize,
+                        pageSize = 5,
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
@@ -101,25 +99,25 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     )
                     is VideoFeedType.Popular -> PagedLoaderParams(
                         action = { from, count -> videoFeedApi.popularFeed(from, count) },
-                        pageSize = feedPageSize,
+                        pageSize = 50,
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
                     is VideoFeedType.User -> PagedLoaderParams(
                         action = { from, count ->
                             if (type.userId != null) {
-                                videoFeedApi.userFeed(type.userId, from, count)
+                                videoFeedApi.userFeed(userId = type.userId, from = from, count = count)
                             } else {
-                                videoFeedApi.myFeed(from, count)
+                                videoFeedApi.myFeed(from = from, count = count)
                             }
                         },
-                        pageSize = feedPageSize,
+                        pageSize = 50,
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
                     is VideoFeedType.All -> PagedLoaderParams(
-                        action = { from, count -> videoFeedApi.videos(type.query, from, count) },
-                        pageSize = feedPageSize,
+                        action = { from, count -> videoFeedApi.videos(query = type.query, from = from, count = count) },
+                        pageSize = 50,
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )

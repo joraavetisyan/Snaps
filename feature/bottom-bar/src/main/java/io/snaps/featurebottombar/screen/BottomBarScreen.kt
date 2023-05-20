@@ -40,7 +40,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.corecommon.R
-import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.OnboardingType

@@ -262,6 +262,7 @@ enum class StringKey {
 
     WalletSettingsTitle,
     WalletSettingsTitleBackup,
+    // todo description to message
     WalletSettingsDescriptionBackup,
     WalletSettingsBackupDialogTitle,
     WalletSettingsBackupDialogMessage,
@@ -398,6 +399,7 @@ enum class StringKey {
     PurchaseTitleRank,
     PurchaseFieldLevel,
     PurchaseTitleDailyReward,
+    // todo description to message
     PurchaseDescriptionDailyReward,
     PurchaseMessageDailyReward,
     PurchaseTitleDailyUnlock,
@@ -420,6 +422,7 @@ enum class StringKey {
     VideoClipTitleAction,
     VideoClipDialogConfirmDeleteMessage,
 
+    // todo description to message
     NftDetailsDescriptionDailyReward,
     NftDetailsTitleEarnings,
     NftDetailsDescriptionEarnings,

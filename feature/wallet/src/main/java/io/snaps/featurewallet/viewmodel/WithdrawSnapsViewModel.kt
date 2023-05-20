@@ -6,15 +6,21 @@ import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.data.model.PaymentsState
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
+import io.snaps.basewallet.domain.WalletModel
 import io.snaps.basewallet.ui.LimitedGasDialogHandler
+import io.snaps.corecommon.ext.applyDecimal
 import io.snaps.corecommon.ext.log
-import io.snaps.corecommon.ext.toStringValue
-import io.snaps.corecommon.model.WalletModel
+import io.snaps.corecommon.ext.stringAmountToDouble
+import io.snaps.corecommon.ext.stringAmountToDoubleOrZero
+import io.snaps.corecommon.ext.stringAmountToDoubleSafely
+import io.snaps.corecommon.model.CoinType
+import io.snaps.corecommon.model.FiatUSD
+import io.snaps.corecommon.model.FiatValue
 import io.snaps.corecommon.strings.digitsOnly
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
-import io.snaps.coreuicompose.uikit.input.formatter.AmountFormatter
+import io.snaps.coreuicompose.uikit.input.formatter.BigAmountFormatter
 import io.snaps.coreuicompose.uikit.input.formatter.CardNumberFormatter
 import io.snaps.coreuicompose.uikit.input.formatter.SimpleFormatter
 import kotlinx.coroutines.Job
@@ -22,11 +28,12 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -44,11 +51,7 @@ class WithdrawSnapsViewModel @Inject constructor(
 ) : SimpleViewModel(),
     LimitedGasDialogHandler by limitedGasDialogHandler {
 
-    private val snpWallet = walletRepository.getSnpWalletModel()
-
-    private val _uiState = MutableStateFlow(
-        UiState(availableAmount = snpWallet?.coinValueDouble?.toStringValue() ?: "-")
-    )
+    private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
@@ -57,11 +60,13 @@ class WithdrawSnapsViewModel @Inject constructor(
     private var gasLimitCalculateJob: Job? = null
 
     init {
-        loadLegacyGasPrice()
+        walletRepository.snps.onEach { walletModel ->
+            if (walletModel != null) loadLegacyGasPrice(walletModel)
+            _uiState.update { it.copy(snpWalletModel = walletModel) }
+        }.launchIn(viewModelScope)
     }
 
-    private fun loadLegacyGasPrice() {
-        val snpWalletModel = snpWallet ?: kotlin.run { log("No SNAPS wallet!"); return }
+    private fun loadLegacyGasPrice(snpWalletModel: WalletModel) {
         viewModelScope.launch {
             action.execute {
                 blockchainTxRepository.getLegacyGasPrice(snpWalletModel)
@@ -71,7 +76,7 @@ class WithdrawSnapsViewModel @Inject constructor(
 
     fun onMaxButtonClicked() {
         _uiState.update { state ->
-            state.copy(amountValue = state.availableAmount.filter { it.isDigit() || it == '.' })
+            state.copy(amountValue = _uiState.value.snpWalletModel?.coinValue?.value?.toString().orEmpty())
         }
     }
 
@@ -79,22 +84,20 @@ class WithdrawSnapsViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 amountValue = value,
-                total = profileRepository.balanceState.value.dataOrCache
-                    ?.snpExchangeRate
-                    ?.let { rate ->
-                        value.replace(',', '.').toDoubleOrNull()?.times(rate)
-                    }
-                    ?.toStringValue()
-                    .orEmpty(),
+                total = FiatUSD(
+                    walletRepository.balanceState.value.dataOrCache?.snpExchangeRate?.let { rate ->
+                        value.stringAmountToDoubleSafely()?.times(rate)
+                    } ?: 0.0
+                ),
             )
         }
         scheduleGasLimitCalculate()
     }
 
     private fun scheduleGasLimitCalculate() {
-        val snpWalletModel = snpWallet ?: kotlin.run { log("No SNAPS wallet!"); return }
+        val snpWalletModel = _uiState.value.snpWalletModel ?: return
         gasLimitCalculateJob?.cancel()
-        val value = getAmount()
+        val value = getValueDecimalApplied()
         if (value == null) {
             _uiState.update { it.copy(isCalculating = false, gasLimit = gasLimitNull) }
             return
@@ -120,13 +123,9 @@ class WithdrawSnapsViewModel @Inject constructor(
         }
     }
 
-    private fun getAmount() = getAmountCorrected()
-        .toBigDecimalOrNull()
-        ?.movePointRight(18)
-        ?.takeIf { it > BigDecimal.ZERO }
-        ?.toBigInteger()
-
-    private fun getAmountCorrected() = _uiState.value.amountValue.replace(',', '.')
+    private fun getValueDecimalApplied(): BigInteger? = _uiState.value.amountValue
+        .applyDecimal(CoinType.SNPS.decimal)
+        ?.takeIf { it > BigInteger.ZERO }
 
     fun onCardNumberValueChanged(value: String) {
         _uiState.update { it.copy(cardNumberValue = value) }
@@ -137,8 +136,8 @@ class WithdrawSnapsViewModel @Inject constructor(
     }
 
     fun onSendClicked() {
-        val amount = getAmount() ?: kotlin.run { log("Invalid amount!"); return }
-        val snpWalletModel = snpWallet ?: kotlin.run { log("No SNAPS wallet!"); return }
+        val amount = getValueDecimalApplied() ?: kotlin.run { log("Invalid amount!"); return }
+        val snpWalletModel = _uiState.value.snpWalletModel ?: return
         when (profileRepository.state.value.dataOrCache?.paymentsState) {
             null,
             PaymentsState.No,
@@ -164,13 +163,11 @@ class WithdrawSnapsViewModel @Inject constructor(
                 )
             }.flatMap {
                 walletRepository.confirmPayout(
-                    amount = getAmountCorrected().toDouble(),
+                    amount = _uiState.value.amountValue.stringAmountToDouble(),
                     cardNumber = _uiState.value.cardNumberValue.digitsOnly(),
                 )
             }
-        }.doOnSuccess {
-
-        }.doOnComplete {
+        }.doOnSuccess {}.doOnComplete {
             _uiState.update { it.copy(isLoading = false) }
         }
     }
@@ -178,27 +175,25 @@ class WithdrawSnapsViewModel @Inject constructor(
     data class UiState(
         val isLoading: Boolean = false,
         val isCalculating: Boolean = false,
-        val availableAmount: String,
+        val snpWalletModel: WalletModel? = null,
         val amountValue: String = "",
-        val amountFormatter: SimpleFormatter = AmountFormatter(
-            maxLength = 100,
-            fractionalPartMaxLength = 100,
-        ),
         val cardNumberValue: String = "",
-        val cardNumberFormatter: SimpleFormatter = CardNumberFormatter("#### #### #### ####"),
         val repeatCardNumberValue: String = "",
+        val commission: Int = 2,
+        val total: FiatValue = FiatUSD(0.0),
+
+        val amountFormatter: SimpleFormatter = BigAmountFormatter(),
+        val cardNumberFormatter: SimpleFormatter = CardNumberFormatter(),
+
         val gasPrice: Long? = null,
         val gasLimit: Long = gasLimitNull,
-        val commission: String = "2",
-        val total: String = "0",
     ) {
 
         val isSendEnabled: Boolean
             get() = !isCalculating
                 && gasLimit != gasLimitNull
-                && amountValue.isNotBlank()
+                && amountValue.stringAmountToDoubleOrZero() > 0.0
                 && cardNumberValue.digitsOnly().length == 16
-                && repeatCardNumberValue.digitsOnly().length == 16
                 && cardNumberValue.digitsOnly() == repeatCardNumberValue.digitsOnly()
     }
 

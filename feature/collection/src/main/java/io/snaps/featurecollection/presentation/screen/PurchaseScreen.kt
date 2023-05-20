@@ -47,6 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.basenft.ui.rankCostToString
 import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.basewallet.ui.LimitedGasDialog
 import io.snaps.basewallet.ui.LimitedGasDialogHandler
@@ -197,7 +198,7 @@ private fun PurchaseScreen(
                     onBuyWithBNBClicked = onBuyWithBNBClicked,
                     onFreeClicked = onFreeClicked,
                     onBuyWithGooglePlayClicked = onBuyWithGooglePlayClicked,
-                    isFreeButtonVisible = uiState.isFreeButtonVisible,
+                    isFreeButtonVisible = uiState.isPurchasableForFree,
                 )
             }
         },
@@ -215,7 +216,7 @@ private fun PurchaseScreen(
                 NftInfoBlock(
                     nftType = uiState.nftType,
                     nftImage = uiState.nftImage,
-                    cost = uiState.cost,
+                    cost = uiState.cost.rankCostToString(),
                 )
             } else {
                 UnavailableNftInfoBlock(
@@ -225,9 +226,7 @@ private fun PurchaseScreen(
                 )
             }
             CardBlock(
-                title = StringKey.PurchaseTitleDailyReward.textValue(
-                    uiState.dailyReward.toString()
-                ),
+                title = StringKey.PurchaseTitleDailyReward.textValue(uiState.dailyReward.getFormatted()),
                 description = StringKey.PurchaseDescriptionDailyReward.textValue(),
                 message = StringKey.PurchaseMessageDailyReward.textValue(),
             )

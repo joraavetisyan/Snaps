@@ -25,8 +25,10 @@ import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.imageValue
+import io.snaps.corecommon.model.FiatValue
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.corecommon.strings.approximated
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.addIf
 import io.snaps.coreuicompose.tools.defaultTileRipple
@@ -41,9 +43,9 @@ sealed class RankTileState : TileState {
 
     data class Data(
         val type: NftType,
-        val price: String,
+        val cost: FiatValue?,
         val image: ImageValue,
-        val dailyReward: String,
+        val dailyReward: FiatValue,
         val dailyUnlock: String,
         val dailyConsumption: String,
         val isPurchasable: Boolean,
@@ -109,14 +111,14 @@ private fun Data(
                     text = data.type.name,
                     style = AppTheme.specificTypography.labelMedium,
                 )
-                if (data.price.isNotEmpty()) {
-                    ValueWidget(R.drawable.img_coin_silver.imageValue() to data.price)
+                if (data.cost != null) {
+                    ValueWidget(R.drawable.img_coin_silver.imageValue() to data.cost.getFormatted())
                 }
             }
             Spacer(Modifier.height(4.dp))
             Line(
                 name = LocalStringHolder.current(StringKey.RankSelectionTitleDailyReward),
-                value = data.dailyReward,
+                value = data.dailyReward.getFormatted().approximated,
             )
             Line(
                 name = LocalStringHolder.current(StringKey.RankSelectionTitleDailyUnlock),

@@ -1,21 +1,19 @@
 package io.snaps.featurewallet
 
-import io.snaps.baseprofile.domain.BalanceModel
+import io.snaps.basewallet.domain.BalanceModel
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
 import io.snaps.basewallet.data.model.PayoutOrderStatus
 import io.snaps.corecommon.R
-import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.round
-import io.snaps.corecommon.ext.toStringValue
-import io.snaps.corecommon.model.Coin
+import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
-import io.snaps.corecommon.model.WalletModel
+import io.snaps.basewallet.domain.WalletModel
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
@@ -35,20 +33,12 @@ fun WalletModel.toCellTileState(
     onClick: ((WalletModel) -> Unit)?,
 ) = CellTileState(
     middlePart = MiddlePart.Data(
-        value = if (symbol == Coin.Type.SNPS.code) {
-            Coin.Type.SNPS.symbol
-        } else {
-            symbol
-        }.textValue(),
+        value = coinType.symbol.textValue(),
     ),
-    leftPart = if (symbol == Coin.Type.SNPS.code) {
-        R.drawable.ic_snp_token.imageValue()
-    } else {
-        iconUrl.imageValue()
-    }.let(LeftPart::Logo),
+    leftPart = LeftPart.Logo(image),
     rightPart = RightPart.TextMoney(
         coin = coinValue,
-        fiatCurrency = fiatValue,
+        fiat = fiatValue,
     ),
     clickListener = onClick?.let { { it.invoke(this) } },
 )
@@ -67,12 +57,12 @@ fun State<BalanceModel>.toRewardsTileState(
 
 fun BalanceModel.toRewardsTileState() = listOf(
     RewardsTileState.Unlocked(
-        unlockedTokensBalance = unlocked.round().toStringValue(),
-        balanceInUsd = (unlocked * snpExchangeRate).round().toStringValue(),
+        balance = unlocked,
+        fiatValue = unlockedInFiat,
     ),
     RewardsTileState.Locked(
-        lockedTokensBalance = locked.round().toStringValue(),
-        balanceInUsd = (locked * snpExchangeRate).round().toStringValue(),
+        balance = locked,
+        fiatValue = lockedInFiat,
     ),
 )
 
@@ -86,7 +76,7 @@ fun TransactionModel.toTransactionTile(
     id = id,
     icon = R.drawable.ic_snp_token.imageValue(),
     type = type,
-    coins = "${balanceChange.round().toStringValue()} SNP".textValue(),
+    value = CoinSNPS(balanceChange.round()),
     dateTime = date.toStringValue(),
     clickListener = { onClicked(this) },
 )

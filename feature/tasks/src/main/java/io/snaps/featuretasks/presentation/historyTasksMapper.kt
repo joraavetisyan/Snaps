@@ -10,8 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.snaps.baseprofile.domain.QuestModel
-import io.snaps.corecommon.R
-import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.date.toStringValue
 import io.snaps.coreuicompose.uikit.listtile.EmptyListTileState

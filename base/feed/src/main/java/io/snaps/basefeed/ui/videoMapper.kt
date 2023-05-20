@@ -2,8 +2,6 @@ package io.snaps.basefeed.ui
 
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.baseplayer.domain.VideoClipModel
-import io.snaps.corecommon.R
-import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey

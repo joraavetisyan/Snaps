@@ -1,9 +1,7 @@
 package io.snaps.featuretasks.presentation
 
-import io.snaps.corecommon.model.NftModel
+import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.ui.CollectionItemState
-import io.snaps.basenft.ui.costToString
-import io.snaps.basenft.ui.dailyRewardToString
 import io.snaps.baseprofile.data.model.SocialPostStatus
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.QuestModel
@@ -113,9 +111,8 @@ private fun NftModel.toNftCollectionItemState(
     onItemClicked: (NftModel) -> Unit,
 ) = CollectionItemState.Nft(
     type = type,
-    price = costInUsd?.costToString() ?: "",
     image = image,
-    dailyReward = dailyReward.dailyRewardToString(),
+    dailyReward = dailyReward.toFiat(rate = 100.0),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthy = true,

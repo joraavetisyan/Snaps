@@ -3,6 +3,7 @@ package io.snaps.basewallet.data.blockchain.trustwallet
 import android.app.Activity
 import io.horizontalsystems.ethereumkit.models.Chain
 import io.snaps.basewallet.R
+import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecrypto.core.CryptoKit
 
@@ -40,5 +41,5 @@ object TrustWalletProvider {
         """
     }
 
-    fun swapProvideUrl(symbol: String) = SwapUrl.format(symbol)
+    fun swapProvideUrl(coinType: CoinType) = SwapUrl.format(coinType.symbol)
 }

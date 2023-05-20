@@ -1,13 +1,15 @@
 package io.snaps.featurecollection.domain
 
 import io.snaps.basenft.data.NftRepository
+import io.snaps.basenft.domain.NftModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.data.model.PaymentsState
+import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
 import io.snaps.basewallet.domain.NftMintSummary
+import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
-import io.snaps.corecommon.model.NftModel
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.Token
 import io.snaps.corecommon.model.TxHash
@@ -32,18 +34,21 @@ class MyCollectionInteractorImpl @Inject constructor(
     @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val nftRepository: NftRepository,
     @Bridged private val blockchainTxRepository: BlockchainTxRepository,
+    @Bridged private val walletRepository: WalletRepository,
 ) : MyCollectionInteractor {
 
     override suspend fun repair(nftModel: NftModel): Effect<TxHash> {
         return profileRepository.updateData(isSilently = true).flatMap { userInfoModel ->
             if (userInfoModel.paymentsState == PaymentsState.Blockchain) {
-                blockchainTxRepository.repairNft(nftModel = nftModel).flatMap { hash ->
+                if ((walletRepository.snps.value?.coinValue?.value ?: 0.0) < nftModel.repairCost.value) {
+                    Effect.error(AppError.Custom(cause = NoEnoughSnpToRepair))
+                } else blockchainTxRepository.repairNft(repairCost = nftModel.repairCost.value).flatMap { hash ->
                     nftRepository.repairNft(nftModel = nftModel, transactionHash = hash).map { hash }
                 }
             } else {
                 nftRepository.repairNft(
                     nftModel = nftModel,
-                    offChainAmount = nftModel.repairCost.toLong(),
+                    offChainAmount = nftModel.repairCost.value.toLong(),
                 ).map { "" }
             }
         }
@@ -61,7 +66,11 @@ class MyCollectionInteractorImpl @Inject constructor(
     }
 
     override suspend fun getNftMintSummary(nftType: NftType): Effect<NftMintSummary> {
-        return blockchainTxRepository.getNftMintSummary(nftType)
+        val amount = 0.005
+        if ((walletRepository.bnb.value?.coinValue?.value ?: 0.0) < amount) {
+            return Effect.error(AppError.Custom(cause = NoEnoughBnbToMint))
+        }
+        return blockchainTxRepository.getNftMintSummary(nftType = nftType, amount = amount)
     }
 
     override suspend fun mintOnBlockchain(

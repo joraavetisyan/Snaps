@@ -1,6 +1,5 @@
 package io.snaps.baseprofile.data
 
-import io.snaps.baseprofile.data.model.BalanceResponseDto
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.TransactionItemResponseDto
@@ -41,9 +40,6 @@ interface ProfileApi {
         @Query("from") from: String?,
         @Query("count") count: Int,
     ): BaseResponse<List<TransactionItemResponseDto>>
-
-    @GET("user/balance")
-    suspend fun balance(): BaseResponse<BalanceResponseDto>
 
     @POST("user")
     suspend fun connectInstagram(

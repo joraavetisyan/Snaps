@@ -44,7 +44,6 @@ import io.snaps.coreuicompose.uikit.other.TitleSlider
 import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featureprofile.ScreenNavigator
-import io.snaps.basesubs.domain.SubModel
 import io.snaps.corecommon.model.Uuid
 import io.snaps.featureprofile.presentation.viewmodel.SubsViewModel
 import kotlinx.coroutines.launch

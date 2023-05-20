@@ -1242,8 +1242,8 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Daily consumption of your NFT points. Every NFT point, except for the FREE rank, deteriorates every day and needs to be restored in order to continue further use and generate income.",
     ),
     key(StringKey.PurchaseTitleDailyReward) to mapOf(
-        SupportedLanguageKey.En to "Daily Reward\n%s SNPS",
-        SupportedLanguageKey.Ru to "Ежедневная награда\n%s SNPS",
+        SupportedLanguageKey.En to "Daily Reward\n%s",
+        SupportedLanguageKey.Ru to "Ежедневная награда\n%s",
     ),
     key(StringKey.PurchaseDescriptionDailyReward) to mapOf(
         SupportedLanguageKey.En to "Estimated daily reward in tokens when completing tasks",
@@ -1310,13 +1310,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Earnings",
     ),
     key(StringKey.NftDetailsDescriptionEarnings) to mapOf(
-        SupportedLanguageKey.En to "Daily Reward\n%s SNPS",
+        SupportedLanguageKey.En to "Daily Reward\n%s",
     ),
     key(StringKey.NftDetailsTitleCondition) to mapOf(
         SupportedLanguageKey.En to "Condition",
     ),
     key(StringKey.NftDetailsDescriptionCondition) to mapOf(
-        SupportedLanguageKey.En to "Make sure that your NFT glasses are always in excellent condition. If you do not repair NFT glasses for more than 3 days, they will break.",
+        SupportedLanguageKey.En to "Daily repair cost\n%s\n\nMake sure that your NFT glasses are always in excellent condition. If need to repair NFT glasses every day.",
     ),
     key(StringKey.NftDetailsTitleLevel) to mapOf(
         SupportedLanguageKey.En to "Level and XP",

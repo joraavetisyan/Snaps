@@ -50,7 +50,7 @@ interface VideoFeedApi {
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
 
-    // todo there must not be from and count
+    // todo there must not be from and count, fix once api supports
     @GET("user/likes")
     suspend fun likedVideos(
         @Query("from") from: Uuid?,

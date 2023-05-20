@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.basenft.domain.RankModel
-import io.snaps.corecommon.model.FullUrl
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -62,16 +61,7 @@ class RankSelectionViewModel @Inject constructor(
     }
 
     private fun onItemClicked(rank: RankModel) = viewModelScope.launch {
-        _command publish Command.OpenPurchase(
-            args = AppRoute.Purchase.Args(
-                type = rank.type,
-                costInUsd = rank.costInUsd,
-                dailyReward = rank.dailyReward,
-                dailyUnlock = rank.dailyUnlock,
-                image = rank.image.value as FullUrl,
-                isPurchasable = rank.isPurchasable,
-            )
-        )
+        _command publish Command.OpenPurchase(args = AppRoute.Purchase.Args(type = rank.type))
     }
 
     fun onRankFootnoteClick() {

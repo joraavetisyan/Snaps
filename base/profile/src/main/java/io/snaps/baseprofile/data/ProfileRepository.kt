@@ -6,7 +6,6 @@ import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.SocialPage
 import io.snaps.baseprofile.data.model.UserCreateRequestDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
-import io.snaps.baseprofile.domain.BalanceModel
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.domain.UsersPageModel
@@ -40,8 +39,6 @@ interface ProfileRepository {
 
     val state: StateFlow<State<UserInfoModel>>
 
-    val balanceState: StateFlow<State<BalanceModel>>
-
     val currentQuestsState: StateFlow<State<QuestInfoModel>>
 
     val referralsState: StateFlow<State<List<UserInfoModel>>>
@@ -55,8 +52,6 @@ interface ProfileRepository {
     suspend fun updateData(
         isSilently: Boolean = false,
     ): Effect<UserInfoModel>
-
-    suspend fun updateBalance(): Effect<Completable>
 
     suspend fun updateReferrals(): Effect<Completable>
 
@@ -97,9 +92,6 @@ class ProfileRepositoryImpl @Inject constructor(
 
     private val _state = MutableStateFlow<State<UserInfoModel>>(Loading())
     override val state = _state.asStateFlow()
-
-    private val _balanceState = MutableStateFlow<State<BalanceModel>>(Loading())
-    override val balanceState = _balanceState.asStateFlow()
 
     private val _referralsState = MutableStateFlow<State<List<UserInfoModel>>>(Loading())
     override val referralsState = _referralsState.asStateFlow()
@@ -151,17 +143,6 @@ class ProfileRepositoryImpl @Inject constructor(
         }.also {
             _state tryPublish it
         }
-    }
-
-    override suspend fun updateBalance(): Effect<Completable> {
-        _balanceState tryPublish Loading()
-        return apiCall(ioDispatcher) {
-            api.balance()
-        }.map {
-            it.toModel()
-        }.also {
-            _balanceState tryPublish it
-        }.toCompletable()
     }
 
     override suspend fun updateReferrals(): Effect<Completable> {

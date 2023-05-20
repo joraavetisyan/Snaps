@@ -1,7 +1,7 @@
 package io.snaps.corecommon.strings
 
 import io.snaps.corecommon.model.CryptoAddress
-import java.util.*
+import java.util.Locale
 
 val DEFAULT_LOCALE: Locale get() = Locale.getDefault()
 val RU_LOCALE: Locale get() = Locale("ru")
@@ -38,6 +38,8 @@ fun String.addPrefix(prefix: String, ignoreEmpty: Boolean = false): String {
 }
 
 val CryptoAddress.addressEllipsized get() = take(7) + "..." + takeLast(10)
+
+val String.approximated get() = "~ $this"
 
 fun String.capitalizeFirstLetter() = replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 

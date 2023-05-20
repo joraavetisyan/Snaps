@@ -4,7 +4,6 @@ import io.snaps.basefeed.data.model.CreateCommentRequestDto
 import io.snaps.basefeed.domain.CommentPageModel
 import io.snaps.baseprofile.data.ProfileApi
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
-import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid

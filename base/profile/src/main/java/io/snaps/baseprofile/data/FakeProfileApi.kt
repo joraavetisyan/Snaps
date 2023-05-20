@@ -1,6 +1,5 @@
 package io.snaps.baseprofile.data
 
-import io.snaps.baseprofile.data.model.BalanceResponseDto
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.PaymentsState
 import io.snaps.baseprofile.data.model.QuestDto
@@ -59,19 +58,6 @@ class FakeProfileApi : ProfileApi {
     ): BaseResponse<List<TransactionItemResponseDto>> {
         return BaseResponse(
             data = getTransactions()
-        ).also {
-            delay(mockDelay)
-        }
-    }
-
-    override suspend fun balance(): BaseResponse<BalanceResponseDto> {
-        return BaseResponse(
-            data = BalanceResponseDto(
-                lockedTokensBalance = 1.0,
-                unlockedTokensBalance = 1.0,
-                snpExchangeRate = 342.01,
-                bnbExchangeRate = 342.01,
-            )
         ).also {
             delay(mockDelay)
         }

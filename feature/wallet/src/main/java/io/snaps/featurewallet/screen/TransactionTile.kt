@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.model.CoinValue
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.get
@@ -36,7 +37,7 @@ sealed class TransactionTileState(val key: Any) : TileState {
     data class Data(
         val id: Uuid,
         val type: TransactionType,
-        val coins: TextValue,
+        val value: CoinValue,
         val icon: ImageValue,
         val dateTime: TextValue,
         val clickListener: () -> Unit,
@@ -124,7 +125,7 @@ private fun Data(
             )
         }
         Text(
-            text = data.coins.get(),
+            text = data.value.getFormatted(),
             style = AppTheme.specificTypography.bodySmall,
         )
         Text(

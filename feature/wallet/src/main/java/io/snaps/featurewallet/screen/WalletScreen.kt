@@ -74,7 +74,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.IconValue
-import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
@@ -148,8 +147,8 @@ fun WalletScreen(
         when (it) {
             WalletViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             WalletViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
-            is WalletViewModel.Command.OpenWithdrawScreen -> router.toWithdrawScreen(it.wallet)
-            is WalletViewModel.Command.OpenExchangeScreen -> router.toExchangeScreen(it.wallet)
+            is WalletViewModel.Command.OpenWithdrawScreen -> router.toWithdrawScreen(coinType = it.coinType)
+            is WalletViewModel.Command.OpenExchangeScreen -> router.toExchangeScreen(coinType = it.coinType)
             WalletViewModel.Command.OpenWithdrawSnapsScreen -> router.toWithdrawSnapsScreen()
             is WalletViewModel.Command.CopyText -> clipboardManager.setText(AnnotatedString(it.text))
             is WalletViewModel.Command.OpenLink -> context.openUrl(it.link)
@@ -186,8 +185,8 @@ fun WalletScreen(
                     ),
                 )
                 WalletViewModel.BottomDialog.RewardsWithdraw -> RewardsClaimDialog(
-                    amountValue = uiState.amountToClaimValue,
-                    availableTokens = uiState.availableTokens,
+                    amountValue = uiState.claimAmountValue,
+                    availableTokens = uiState.availableTokenAmount,
                     isConfirmButtonEnabled = uiState.isConfirmClaimEnabled,
                     focusRequester = focusRequester,
                     onAmountValueChanged = viewModel::onAmountToClaimValueChanged,
@@ -244,7 +243,7 @@ private fun WalletScreen(
     onExchangeClicked: () -> Unit,
     onRewardsOpened: () -> Unit,
     onRewardsFootnoteClick: () -> Unit,
-    onDropdownMenuItemClicked: (WalletViewModel.FilterOptions) -> Unit,
+    onDropdownMenuItemClicked: (WalletViewModel.Filter) -> Unit,
     onPageSelected: (Int) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -299,13 +298,9 @@ private fun WalletScreen(
                         onExchangeClicked = onExchangeClicked,
                         onSellSnapsClicked = onSellSnapsClicked,
                     )
-
                     1 -> Rewards(
-                        transactions = when (uiState.filterOptions) {
-                            WalletViewModel.FilterOptions.Unlocked -> uiState.unlockedTransactions
-                            WalletViewModel.FilterOptions.Locked -> uiState.lockedTransactions
-                        },
-                        filterOptions = uiState.filterOptions,
+                        transactions = uiState.transactions,
+                        filter = uiState.filter,
                         rewards = uiState.rewards,
                         onWithdrawClicked = onRewardsWithdrawClicked,
                         onOpened = onRewardsOpened,
@@ -315,9 +310,9 @@ private fun WalletScreen(
                 }
             }
             PullRefreshIndicator(
-                uiState.isRefreshing,
-                pullRefreshState,
-                Modifier.align(Alignment.TopCenter)
+                refreshing = uiState.isRefreshing,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter),
             )
         }
     }
@@ -411,12 +406,12 @@ private fun Wallet(
 @Composable
 private fun Rewards(
     transactions: TransactionsUiState,
-    filterOptions: WalletViewModel.FilterOptions,
+    filter: WalletViewModel.Filter,
     rewards: List<RewardsTileState>,
     onWithdrawClicked: () -> Unit,
     onOpened: () -> Unit,
     onRewardsFootnoteClick: () -> Unit,
-    onDropdownMenuItemClicked: (WalletViewModel.FilterOptions) -> Unit,
+    onDropdownMenuItemClicked: (WalletViewModel.Filter) -> Unit,
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     LaunchedEffect(key1 = Unit) {
@@ -480,7 +475,7 @@ private fun Rewards(
                         onClick = { isMenuExpanded = true }
                     ) {
                         SimpleButtonContent(
-                            text = filterOptions.name.textValue(),
+                            text = filter.name.textValue(),
                             iconRight = AppTheme.specificIcons.arrowDropDown,
                             iconTint = AppTheme.specificColorScheme.black_80,
                             textColor = AppTheme.specificColorScheme.black_80,
@@ -490,7 +485,7 @@ private fun Rewards(
                         expanded = isMenuExpanded,
                         onDismissRequest = { isMenuExpanded = false },
                     ) {
-                        WalletViewModel.FilterOptions.values().forEach {
+                        WalletViewModel.Filter.values().forEach {
                             DropdownMenuItem(
                                 onClick = {
                                     onDropdownMenuItemClicked(it)
@@ -543,7 +538,7 @@ private fun Balance(
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = uiState.totalBalance.coin,
+                text = uiState.totalBalance.coin.getFormatted(),
                 style = AppTheme.specificTypography.titleLarge,
                 color = AppTheme.specificColorScheme.textPrimary,
                 modifier = Modifier
@@ -552,7 +547,7 @@ private fun Balance(
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = uiState.totalBalance.fiat,
+                text = uiState.totalBalance.fiat.getFormatted(),
                 style = AppTheme.specificTypography.bodySmall,
                 color = AppTheme.specificColorScheme.textSecondary,
                 modifier = Modifier

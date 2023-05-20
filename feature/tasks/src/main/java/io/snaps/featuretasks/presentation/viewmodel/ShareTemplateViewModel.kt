@@ -7,11 +7,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.NotificationsSource
+import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.R
-import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.ext.coinToFormatDecimal
+import io.snaps.corecommon.ext.toCompactDecimalFormat
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.di.Bridged
@@ -45,6 +45,7 @@ class ShareTemplateViewModel @Inject constructor(
     private val fileManager: FileManager,
     private val notificationsSource: NotificationsSource,
     @Bridged private val nftRepository: NftRepository,
+    @Bridged private val walletRepository: WalletRepository,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -69,25 +70,23 @@ class ShareTemplateViewModel @Inject constructor(
     }
 
     private fun subscribeOnUserNft() {
-        nftRepository.nftCollectionState.combine(flow = profileRepository.balanceState) { nft, profile ->
-            if (nft.dataOrCache != null && profile.dataOrCache != null) {
-                val totalDailyReward = requireNotNull(nft.dataOrCache).sumOf { it.dailyReward }
-                val snpExchangeRate = requireNotNull(profile.dataOrCache).snpExchangeRate
-                totalDailyReward * snpExchangeRate
-            } else 0.0
+        nftRepository.nftCollectionState.combine(flow = walletRepository.balanceState) { collection, balance ->
+            val totalDailyReward = collection.dataOrCache?.sumOf { it.dailyReward.value } ?: 0.0
+            val snpExchangeRate = balance.dataOrCache?.snpExchangeRate ?: 0.0
+            totalDailyReward * snpExchangeRate
         }.onEach { state ->
-            _uiState.update { it.copy(payments = state.coinToFormatDecimal()) }
-        }
+            _uiState.update { it.copy(payments = state.toCompactDecimalFormat()) }
+        }.launchIn(viewModelScope)
     }
 
     private fun instagramTileState(instagramUserId: Uuid?): CellTileState {
         return if (instagramUserId != null) {
             CellTileState.Data(
                 leftPart = LeftPart.Logo(
-                    R.drawable.ic_instagram.imageValue()
+                    R.drawable.ic_instagram.imageValue(),
                 ),
                 middlePart = MiddlePart.Data(
-                    value = instagramUserId.textValue()
+                    value = instagramUserId.textValue(),
                 ),
                 rightPart = RightPart.DeleteIcon(
                     clickListener = ::onDeleteIconClicked,
@@ -128,9 +127,7 @@ class ShareTemplateViewModel @Inject constructor(
 
     fun onShareIconClicked(bitmap: Bitmap) = viewModelScope.launch {
         fileManager.createFileFromBitmap(bitmap)?.let {
-            _command publish Command.OpenShareDialog(
-                uri = fileManager.getUriForFile(it)
-            )
+            _command publish Command.OpenShareDialog(uri = fileManager.getUriForFile(it))
         }
     }
 
@@ -141,8 +138,7 @@ class ShareTemplateViewModel @Inject constructor(
     }
 
     fun onPostToInstagramButtonClicked() = viewModelScope.launch {
-        val instagramId = profileRepository.state.value.dataOrCache?.instagramId
-        if (instagramId != null) {
+        if (profileRepository.state.value.dataOrCache?.instagramId != null) {
             action.execute {
                 tasksRepository.postToInstagram()
             }.doOnSuccess {

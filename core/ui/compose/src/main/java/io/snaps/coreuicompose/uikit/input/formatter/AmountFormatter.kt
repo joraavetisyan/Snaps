@@ -18,6 +18,12 @@ private const val trueSpace = ' '
 
 const val amountDivider = ','
 
+@Suppress("FunctionName")
+fun BigAmountFormatter() = AmountFormatter(
+    maxLength = 100,
+    fractionalPartMaxLength = 100,
+)
+
 class AmountFormatter(
     private val money: Money? = null,
     private val maxLength: Int = 10,

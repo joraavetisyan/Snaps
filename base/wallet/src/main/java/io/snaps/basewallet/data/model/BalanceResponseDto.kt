@@ -1,4 +1,4 @@
-package io.snaps.baseprofile.data.model
+package io.snaps.basewallet.data.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

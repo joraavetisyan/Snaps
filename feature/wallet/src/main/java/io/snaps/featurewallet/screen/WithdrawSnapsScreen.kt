@@ -35,13 +35,13 @@ import io.snaps.basewallet.ui.LimitedGasDialog
 import io.snaps.basewallet.ui.LimitedGasDialogHandler
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corenavigation.base.popBackStackWithResult
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
-import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetCurrentStateListener
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
@@ -126,8 +126,9 @@ private fun WithdrawSnapsScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
+            // todo localize
             SimpleTopAppBar(
-                title = "Withdraw Funds".textValue(),
+                title = "Sell ${CoinType.SNPS.symbol}".textValue(),
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 scrollBehavior = scrollBehavior,
             )
@@ -139,6 +140,7 @@ private fun WithdrawSnapsScreen(
                 .inset(insetAllExcludeTop()),
         ) {
             Text(
+                // todo localize
                 text = "All data is encrypted and never shared with third parties",
                 style = AppTheme.specificTypography.bodySmall,
                 color = AppTheme.specificColorScheme.textSecondary,
@@ -158,6 +160,7 @@ private fun WithdrawSnapsScreen(
                 ),
                 placeholder = {
                     Text(
+                        // todo localize
                         text = "Transfer amount",
                         style = AppTheme.specificTypography.titleSmall,
                     )
@@ -167,6 +170,7 @@ private fun WithdrawSnapsScreen(
                         modifier = Modifier.padding(horizontal = 12.dp),
                         onClick = onMaxButtonClicked,
                     ) {
+                        // todo localize
                         SimpleButtonContent(text = "Max".textValue())
                     }
                 },
@@ -183,6 +187,7 @@ private fun WithdrawSnapsScreen(
                 ),
                 placeholder = {
                     Text(
+                        // todo localize
                         text = "Enter card number",
                         style = AppTheme.specificTypography.titleSmall,
                     )
@@ -204,6 +209,7 @@ private fun WithdrawSnapsScreen(
                 ),
                 placeholder = {
                     Text(
+                        // todo localize
                         text = "Repeat card number",
                         style = AppTheme.specificTypography.titleSmall,
                     )
@@ -214,7 +220,8 @@ private fun WithdrawSnapsScreen(
                     ),*/
             )
             Text(
-                text = "Текущий баланс: ${uiState.availableAmount} SNAPS".textValue().get(),
+                // todo localize
+                text = "Текущий баланс: ${uiState.snpWalletModel?.coinValue?.getFormatted().orEmpty()}".textValue().get(),
                 style = AppTheme.specificTypography.bodySmall,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -246,8 +253,10 @@ private fun WithdrawSnapsScreen(
                     modifier = Modifier.padding(horizontal = 12.dp),
                 )
             }
+            // todo localize
             Line("Commission".textValue(), "${uiState.commission}%".textValue())
-            Line("Total".textValue(), "${uiState.total} $".textValue())
+            // todo localize
+            Line("Total".textValue(), uiState.total.getFormatted().textValue())
             SimpleButtonActionM(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -263,6 +272,7 @@ private fun WithdrawSnapsScreen(
 
 @Composable
 private fun WithdrawSuccessfulDialog(onDialogDismissRequested: () -> Unit) {
+    // todo localize
     DiamondDialog(
         title = "Successfully!".textValue(),
         message = {

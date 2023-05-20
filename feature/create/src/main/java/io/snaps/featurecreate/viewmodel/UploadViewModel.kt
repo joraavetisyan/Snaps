@@ -3,7 +3,6 @@ package io.snaps.featurecreate.viewmodel
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.abedelazizshe.lightcompressorlibrary.CompressionListener

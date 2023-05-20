@@ -18,6 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.CoinBNB
+import io.snaps.corecommon.model.CoinValue
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.addressEllipsized
@@ -38,9 +40,9 @@ sealed class TransferTokensState {
         override val title: TextValue,
         val from: CryptoAddress,
         val to: CryptoAddress,
-        val summary: String,
-        val gas: String,
-        val total: String,
+        val summary: CoinValue,
+        val gas: CoinValue,
+        val total: CoinValue,
         val onConfirmClick: () -> Unit,
         val onCancelClick: () -> Unit,
     ) : TransferTokensState()
@@ -91,9 +93,9 @@ private fun Data(
 private fun Content(
     from: String? = null,
     to: String? = null,
-    summary: String? = null,
-    gas: String? = null,
-    total: String? = null,
+    summary: CoinValue? = null,
+    gas: CoinValue? = null,
+    total: CoinValue? = null,
     onConfirmClick: (() -> Unit)? = null,
     onCancelClick: (() -> Unit)? = null,
 ) {
@@ -109,7 +111,7 @@ private fun Content(
     Spacer(modifier = Modifier.height(8.dp))
     if (summary != null) {
         Text(
-            text = summary,
+            text = summary.getFormatted(),
             style = AppTheme.specificTypography.displaySmall,
         )
     } else {
@@ -125,9 +127,10 @@ private fun Content(
             )
             .padding(8.dp),
     ) {
-        PriceLine(title = "Gas price:".textValue(), value = gas?.textValue())
+        // todo localize
+        PriceLine(title = "Gas price:".textValue(), value = gas?.getFormatted()?.textValue())
         Spacer(modifier = Modifier.height(12.dp))
-        PriceLine(title = "Total:".textValue(), value = total?.textValue())
+        PriceLine(title = "Total:".textValue(), value = total?.getFormatted()?.textValue())
     }
     Spacer(modifier = Modifier.height(24.dp))
     SimpleButtonActionM(
@@ -233,7 +236,7 @@ private fun Container(
 }
 
 @Preview(showBackground = true)
-//@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+// @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewData() {
     TransferTokensUi(
@@ -242,9 +245,9 @@ private fun PreviewData() {
             title = "Newbie".textValue(),
             from = "0x5F0cF62ad1DD5A267427DC161ff365b75142E3b3",
             to = "0x5F0cF62ad1DD5A267427DC161ff365b75142E3b3",
-            summary = "0.0005 BNB",
-            gas = "0.000982324324245 BNB",
-            total = "0.011982324324245 BNB",
+            summary = CoinBNB(0.0005),
+            gas = CoinBNB(0.000982324324245),
+            total = CoinBNB(0.011982324324245),
             onConfirmClick = {},
             onCancelClick = {},
         ),
@@ -252,7 +255,7 @@ private fun PreviewData() {
 }
 
 @Preview(showBackground = true)
-//@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+// @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewError() {
     TransferTokensUi(
@@ -262,7 +265,7 @@ private fun PreviewError() {
 }
 
 @Preview(showBackground = true)
-//@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+// @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewShimmer() {
     TransferTokensUi(

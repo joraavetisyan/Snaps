@@ -5,12 +5,12 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import io.snaps.corecommon.ext.log
+import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.TaskType
 import io.snaps.corecommon.model.SubsType
 import io.snaps.corecommon.model.Uuid
-import io.snaps.corecommon.model.WalletModel
 import kotlinx.serialization.Serializable
 
 const val DefaultArgKey = "arg"
@@ -120,7 +120,7 @@ object AppRoute {
 
         @Serializable
         data class Args(
-            val wallet: WalletModel,
+            val coin: CoinType,
         )
     }
 
@@ -130,7 +130,7 @@ object AppRoute {
 
         @Serializable
         data class Args(
-            val wallet: WalletModel,
+            val coin: CoinType,
         )
     }
 
@@ -204,11 +204,6 @@ object AppRoute {
         @Serializable
         data class Args(
             val type: NftType,
-            val image: FullUrl, // todo why FullUrl?
-            val dailyReward: Int,
-            val dailyUnlock: Double,
-            val costInUsd: Int?,
-            val isPurchasable: Boolean,
         )
     }
 
@@ -216,9 +211,7 @@ object AppRoute {
 
         @Serializable
         data class Args(
-            val type: NftType,
-            val image: FullUrl, // todo why FullUrl?
-            val dailyReward: Int,
+            val nftId: Uuid,
         )
     }
 
@@ -237,9 +230,9 @@ object AppDeeplink {
 
     private val BaseUri = "https://snapsapp.io".toUri()
 
-    private fun pathProfile() = "${BaseUri}/blogger?id="
-    private fun pathVideoClip() = "${BaseUri}/video?id="
-    private fun pathInvite() = "${BaseUri}/invite"
+    private fun pathProfile() = "$BaseUri/blogger?id="
+    private fun pathVideoClip() = "$BaseUri/video?id="
+    private fun pathInvite() = "$BaseUri/invite"
 
     fun parse(deeplink: String?): Deeplink? {
         val result = when {

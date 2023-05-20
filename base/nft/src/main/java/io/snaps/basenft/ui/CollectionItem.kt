@@ -35,8 +35,10 @@ import androidx.compose.ui.unit.sp
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.FiatValue
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.corecommon.strings.approximated
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.addIf
 import io.snaps.coreuicompose.tools.defaultTileRipple
@@ -53,9 +55,8 @@ sealed class CollectionItemState : TileState {
 
     data class Nft(
         val type: NftType,
-        val price: String,
         val image: ImageValue,
-        val dailyReward: String,
+        val dailyReward: FiatValue,
         val dailyUnlock: String,
         val dailyConsumption: String,
         val isHealthy: Boolean,
@@ -154,7 +155,7 @@ private fun Nft(
             Spacer(modifier = Modifier.height(8.dp))
             Line(
                 name = LocalStringHolder.current(StringKey.RankSelectionTitleDailyReward),
-                value = data.dailyReward,
+                value = data.dailyReward.getFormatted().approximated,
             )
             Spacer(modifier = Modifier.height(4.dp))
             Line(

@@ -20,7 +20,10 @@ import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.CoinValue
+import io.snaps.corecommon.model.FiatValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.corecommon.strings.approximated
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
@@ -31,13 +34,13 @@ import io.snaps.coreuitheme.compose.AppTheme
 sealed class RewardsTileState : TileState {
 
     data class Locked(
-        val lockedTokensBalance: String,
-        val balanceInUsd: String,
+        val balance: CoinValue,
+        val fiatValue: FiatValue,
     ) : RewardsTileState()
 
     data class Unlocked(
-        val unlockedTokensBalance: String,
-        val balanceInUsd: String,
+        val balance: CoinValue,
+        val fiatValue: FiatValue,
     ) : RewardsTileState()
 
     object Shimmer : RewardsTileState()
@@ -60,16 +63,16 @@ fun RewardsTile(
             modifier = modifier,
             title = StringKey.RewardsTitleAvailableRewards.textValue(),
             description = StringKey.RewardsMessageAvailableRewards.textValue(),
-            coin = data.unlockedTokensBalance,
-            coinInUsd = data.balanceInUsd,
+            balance = data.balance,
+            fiatValue = data.fiatValue,
             imageValue = R.drawable.img_available_rewards_background.imageValue()
         )
         is RewardsTileState.Locked -> RewardsCard(
             modifier = modifier,
             title = StringKey.RewardsTitleLockedRewards.textValue(),
             description = StringKey.RewardsMessageLockedRewards.textValue(),
-            coin = data.lockedTokensBalance,
-            coinInUsd = data.balanceInUsd,
+            balance = data.balance,
+            fiatValue = data.fiatValue,
             imageValue = R.drawable.img_locked_rewards_background.imageValue()
         )
         is RewardsTileState.Shimmer -> Shimmer(modifier = modifier)
@@ -112,8 +115,8 @@ private fun RewardsCard(
     modifier: Modifier,
     title: TextValue,
     description: TextValue,
-    coin: String,
-    coinInUsd: String,
+    balance: CoinValue,
+    fiatValue: FiatValue,
     imageValue: ImageValue,
 ) {
     Box(
@@ -137,12 +140,12 @@ private fun RewardsCard(
                 color = AppTheme.specificColorScheme.white,
             )
             Text(
-                text = "$coin SNPS",
+                text = balance.getFormatted(),
                 style = AppTheme.specificTypography.headlineLarge,
                 color = AppTheme.specificColorScheme.white,
             )
             Text(
-                text = "≈ $coinInUsd USDT",
+                text = fiatValue.getFormatted().approximated,
                 style = AppTheme.specificTypography.bodySmall,
                 color = AppTheme.specificColorScheme.white,
             )

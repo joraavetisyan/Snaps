@@ -1,5 +1,6 @@
 package io.snaps.basewallet.data
 
+import io.snaps.basewallet.data.model.BalanceResponseDto
 import io.snaps.basewallet.data.model.ClaimRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
@@ -7,10 +8,25 @@ import io.snaps.basewallet.data.model.RefillGasRequestDto
 import io.snaps.basewallet.data.model.SignatureRequestDto
 import io.snaps.basewallet.data.model.SignatureResponseDto
 import io.snaps.basewallet.data.model.WalletSaveRequestDto
+import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.model.Completable
 import io.snaps.coredata.network.BaseResponse
+import kotlinx.coroutines.delay
 
 class FakeWalletApi : WalletApi {
+
+    override suspend fun balance(): BaseResponse<BalanceResponseDto> {
+        return BaseResponse(
+            data = BalanceResponseDto(
+                lockedTokensBalance = 1.0,
+                unlockedTokensBalance = 1.0,
+                snpExchangeRate = 342.01,
+                bnbExchangeRate = 342.01,
+            )
+        ).also {
+            delay(mockDelay)
+        }
+    }
 
     override suspend fun save(body: WalletSaveRequestDto): BaseResponse<Completable> {
         return BaseResponse(Completable)

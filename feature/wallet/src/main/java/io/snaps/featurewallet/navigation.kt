@@ -2,7 +2,7 @@ package io.snaps.featurewallet
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import io.snaps.corecommon.model.WalletModel
+import io.snaps.corecommon.model.CoinType
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.WalletFeatureProvider
 import io.snaps.corenavigation.base.FeatureNavDirection
@@ -17,14 +17,14 @@ import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController) {
 
-    fun toWithdrawScreen(walletModel: WalletModel) = navHostController navigate FeatureNavDirection(
+    fun toWithdrawScreen(coinType: CoinType) = navHostController navigate FeatureNavDirection(
         route = AppRoute.Withdraw,
-        arg = AppRoute.Withdraw.Args(wallet = walletModel),
+        arg = AppRoute.Withdraw.Args(coin = coinType),
     )
 
-    fun toExchangeScreen(walletModel: WalletModel) = navHostController navigate FeatureNavDirection(
+    fun toExchangeScreen(coinType: CoinType) = navHostController navigate FeatureNavDirection(
         route = AppRoute.Exchange,
-        arg = AppRoute.Exchange.Args(wallet = walletModel),
+        arg = AppRoute.Exchange.Args(coin = coinType),
     )
 
     fun toWithdrawSnapsScreen() = navHostController.navigate(AppRoute.WithdrawSnaps)

@@ -4,17 +4,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.basenft.data.NftRepository
+import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.basenft.domain.NftModel
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coredata.di.Bridged
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
-import io.snaps.corecommon.R
-import io.snaps.corecommon.container.imageValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
@@ -22,31 +26,29 @@ import javax.inject.Inject
 @HiltViewModel
 class UserNftDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    @Bridged nftRepository: NftRepository,
 ) : SimpleViewModel() {
 
     private val args = savedStateHandle.requireArgs<AppRoute.UserNftDetails.Args>()
 
     private val _uiState = MutableStateFlow(
-        UiState(
-            nftImage = args.image.imageValue(),
-            items = getItems(),
-        )
+        with(requireNotNull(nftRepository.nftCollectionState.value.dataOrCache?.first { it.id == args.nftId })) {
+            UiState(title = displayName, nftImage = image, items = getItems(this))
+        }
     )
     val uiState = _uiState.asStateFlow()
 
-    private fun getItems() = listOf(
+    private fun getItems(model: NftModel) = listOf(
         CellTileState.Data(
             middlePart = MiddlePart.Data(
-                valueBold = args.type.name.textValue(),
+                valueBold = model.displayName,
                 description = StringKey.NftDetailsDescriptionDailyReward.textValue(),
             ),
         ),
         CellTileState.Data(
             middlePart = MiddlePart.Data(
                 valueBold = StringKey.NftDetailsTitleEarnings.textValue(),
-                description = StringKey.NftDetailsDescriptionEarnings.textValue(
-                    args.dailyReward.toString()
-                ),
+                description = StringKey.NftDetailsDescriptionEarnings.textValue(model.dailyReward.getFormatted()),
             ),
             rightPart = RightPart.ActionIcon(
                 source = R.drawable.img_snps.imageValue(),
@@ -57,7 +59,7 @@ class UserNftDetailsViewModel @Inject constructor(
         CellTileState.Data(
             middlePart = MiddlePart.Data(
                 valueBold = StringKey.NftDetailsTitleCondition.textValue(),
-                description = StringKey.NftDetailsDescriptionCondition.textValue(),
+                description = StringKey.NftDetailsDescriptionCondition.textValue(model.repairCost.getFormatted()),
             ),
             rightPart = RightPart.ActionIcon(
                 source = R.drawable.img_repair.imageValue(),
@@ -79,6 +81,7 @@ class UserNftDetailsViewModel @Inject constructor(
     )
 
     data class UiState(
+        val title: TextValue,
         val nftImage: ImageValue,
         val items: List<CellTileState>,
     )

@@ -6,7 +6,6 @@ import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.data.model.SocialPageType
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FullUrl
-import io.snaps.corecommon.strings.capitalizeFirstLetter
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel

@@ -1,9 +1,10 @@
 package io.snaps.basewallet.data
 
+import io.snaps.basewallet.data.model.BalanceResponseDto
 import io.snaps.basewallet.data.model.ClaimRequestDto
-import io.snaps.basewallet.data.model.RefillGasRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
+import io.snaps.basewallet.data.model.RefillGasRequestDto
 import io.snaps.basewallet.data.model.SignatureRequestDto
 import io.snaps.basewallet.data.model.SignatureResponseDto
 import io.snaps.basewallet.data.model.WalletSaveRequestDto
@@ -14,6 +15,9 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface WalletApi {
+
+    @GET("user/balance")
+    suspend fun balance(): BaseResponse<BalanceResponseDto>
 
     @POST("wallet")
     suspend fun save(
