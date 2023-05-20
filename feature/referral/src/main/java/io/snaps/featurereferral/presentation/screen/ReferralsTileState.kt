@@ -1,6 +1,7 @@
 package io.snaps.featurereferral.presentation.screen
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -26,18 +27,25 @@ import io.snaps.coreuitheme.compose.AppTheme
 
 sealed class ReferralsTileState : TileState {
 
+    abstract val onShowQrClick: () -> Unit
+
     data class Data(
         val values: List<UserInfoModel>,
         val onReferralClick: (UserInfoModel) -> Unit,
-        val onShowQrClick: () -> Unit,
+        override val onShowQrClick: () -> Unit,
     ) : ReferralsTileState()
 
-    object Empty : ReferralsTileState()
+    data class Empty(
+        override val onShowQrClick: () -> Unit,
+    ) : ReferralsTileState()
 
-    object Shimmer : ReferralsTileState()
+    data class Shimmer(
+        override val onShowQrClick: () -> Unit,
+    ) : ReferralsTileState()
 
     data class Error(
         val onReloadClick: () -> Unit,
+        override val onShowQrClick: () -> Unit,
     ) : ReferralsTileState()
 
     @Composable
@@ -52,9 +60,9 @@ fun ReferralsTile(
     data: ReferralsTileState,
 ) {
     when (data) {
-        ReferralsTileState.Shimmer -> Shimmer(modifier = modifier)
+        is ReferralsTileState.Shimmer -> Shimmer(modifier = modifier, data = data)
         is ReferralsTileState.Data -> Data(modifier = modifier, data = data)
-        ReferralsTileState.Empty -> Empty(modifier = modifier)
+        is ReferralsTileState.Empty -> Empty(modifier = modifier, data = data)
         is ReferralsTileState.Error -> Error(modifier = modifier, data = data)
     }
 }
@@ -62,8 +70,9 @@ fun ReferralsTile(
 @Composable
 private fun Shimmer(
     modifier: Modifier,
+    data: ReferralsTileState.Shimmer,
 ) {
-    Column(modifier = modifier) {
+    Content(modifier = modifier, data = data) {
         repeat(3) {
             CellTileState(
                 leftPart = LeftPart.Shimmer,
@@ -77,11 +86,31 @@ private fun Shimmer(
 }
 
 @Composable
+private fun Content(
+    modifier: Modifier,
+    data: ReferralsTileState,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(modifier = modifier) {
+        content()
+        SimpleButtonActionL(
+            onClick = data.onShowQrClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .padding(bottom = LocalBottomNavigationHeight.current),
+        ) {
+            SimpleButtonContent(text = "Referral program".textValue()) // todo localize
+        }
+    }
+}
+
+@Composable
 private fun Data(
     modifier: Modifier,
     data: ReferralsTileState.Data,
 ) {
-    Column(modifier = modifier) {
+    Content(modifier = modifier, data = data) {
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -104,26 +133,20 @@ private fun Data(
                 ).Content(modifier = Modifier.padding(8.dp))
             }
         }
-        SimpleButtonActionL(
-            onClick = data.onShowQrClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .padding(bottom = LocalBottomNavigationHeight.current),
-        ) {
-            SimpleButtonContent(text = "Referral program".textValue()) // todo localize
-        }
     }
 }
 
 @Composable
 private fun Empty(
     modifier: Modifier,
+    data: ReferralsTileState.Empty,
 ) {
-    EmptyListTileState.defaultState(
-        title = StringKey.ReferralProgramTitleNoReferrals.textValue(),
-        message = StringKey.ReferralProgramMessageNoReferrals.textValue(),
-    ).Content(modifier = modifier)
+    Content(modifier = modifier, data = data) {
+        EmptyListTileState.defaultState(
+            title = StringKey.ReferralProgramTitleNoReferrals.textValue(),
+            message = StringKey.ReferralProgramMessageNoReferrals.textValue(),
+        ).Content(modifier = modifier)
+    }
 }
 
 @Composable
@@ -131,7 +154,9 @@ private fun Error(
     modifier: Modifier,
     data: ReferralsTileState.Error,
 ) {
-    MessageBannerState
-        .defaultState(onClick = data.onReloadClick)
-        .Content(modifier = modifier)
+    Content(modifier = modifier, data = data) {
+        MessageBannerState
+            .defaultState(onClick = data.onReloadClick)
+            .Content(modifier = modifier)
+    }
 }

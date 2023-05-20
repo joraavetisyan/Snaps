@@ -11,8 +11,8 @@ import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
 import io.snaps.featureprofile.presentation.screen.ProfileScreen
 import io.snaps.featureprofile.presentation.screen.SubsScreen
-import io.snaps.featureprofile.presentation.screen.UserLikedVideoFeedScreen
-import io.snaps.featureprofile.presentation.screen.UserVideoFeedScreen
+import io.snaps.featureprofile.presentation.screen.LikedFeedScreen
+import io.snaps.featureprofile.presentation.screen.UserFeedScreen
 import io.snaps.featureprofile.presentation.screen.settings.BackupWalletKeyScreen
 import io.snaps.featureprofile.presentation.screen.settings.SettingsScreen
 import io.snaps.featureprofile.presentation.screen.settings.SocialNetworksScreen
@@ -47,17 +47,15 @@ internal class ScreenNavigator(navHostController: NavHostController) : Navigator
         arg = AppRoute.Profile.Args(userId = userId),
     )
 
-    fun toUserVideoFeedScreen(userId: Uuid?, position: Int) =
-        navHostController navigate FeatureNavDirection(
-            route = AppRoute.UserVideoFeed,
-            arg = AppRoute.UserVideoFeed.Args(userId = userId, position = position),
-        )
+    fun toUserFeedScreen(userId: Uuid?, position: Int) = navHostController navigate FeatureNavDirection(
+        route = AppRoute.UserFeed,
+        arg = AppRoute.UserFeed.Args(userId = userId, position = position),
+    )
 
-    fun toUserLikedVideoFeedScreen(position: Int) =
-        navHostController navigate FeatureNavDirection(
-            route = AppRoute.UserLikedVideoFeed,
-            arg = AppRoute.UserLikedVideoFeed.Args(position = position),
-        )
+    fun toLikedFeedScreen(userId: Uuid?, position: Int) = navHostController navigate FeatureNavDirection(
+        route = AppRoute.LikedFeed,
+        arg = AppRoute.LikedFeed.Args(userId = userId, position = position),
+    )
 }
 
 class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider {
@@ -69,7 +67,7 @@ class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider 
         composable(AppRoute.BackupWalletKey) { BackupWalletKeyScreen(controller) }
         composable(AppRoute.WalletSettings) { WalletSettingsScreen(controller) }
         composable(AppRoute.Subs) { SubsScreen(controller) }
-        composable(AppRoute.UserVideoFeed) { UserVideoFeedScreen(controller) }
-        composable(AppRoute.UserLikedVideoFeed) { UserLikedVideoFeedScreen(controller) }
+        composable(AppRoute.UserFeed) { UserFeedScreen(controller) }
+        composable(AppRoute.LikedFeed) { LikedFeedScreen(controller) }
     }
 }

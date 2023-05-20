@@ -270,9 +270,11 @@ class WalletViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
         action.execute {
             walletInteractor.claim(amount = uiState.value.claimAmountValue.toDouble())
-        }.doOnSuccess {
-            walletRepository.updateSnpsAccount()
-            _command publish Command.HideBottomDialog
+                .doOnSuccess {
+                    notificationsSource.sendMessage(StringKey.MessageSuccess.textValue())
+                }.flatMap {
+                    walletRepository.updateSnpsAccount()
+                }
         }.doOnError { error, _ ->
             when (error.cause) {
                 InsufficientBalanceError -> notificationsSource.sendError(
@@ -280,14 +282,13 @@ class WalletViewModel @Inject constructor(
                 )
             }
         }.doOnComplete {
+            _command publish Command.HideBottomDialog
             _uiState.update { it.copy(isLoading = false) }
         }
     }
 
     fun onDropdownMenuItemClicked(filter: Filter) {
-        _uiState.update {
-            it.copy(filter = filter)
-        }
+        _uiState.update { it.copy(filter = filter) }
     }
 
     fun onExchangeClicked() {
@@ -333,9 +334,7 @@ class WalletViewModel @Inject constructor(
     private fun refreshWallet() = viewModelScope.launch {
         _uiState.update { it.copy(isRefreshing = true) }
         action.execute {
-            val loadBalanceDeferred = viewModelScope.async { walletRepository.updateTotalBalance() }
-
-            loadBalanceDeferred.await()
+            walletRepository.updateTotalBalance()
         }.doOnComplete {
             _uiState.update { it.copy(isRefreshing = false) }
         }

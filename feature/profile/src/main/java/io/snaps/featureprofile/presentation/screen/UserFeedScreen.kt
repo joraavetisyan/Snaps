@@ -10,13 +10,13 @@ import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.featureprofile.presentation.viewmodel.UserVideoFeedViewModel
 
 @Composable
-fun UserVideoFeedScreen(
+fun UserFeedScreen(
     navHostController: NavHostController,
 ) {
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
     val viewModel = hiltViewModel<UserVideoFeedViewModel>()
 
-    UserVideoFeedScreen(
+    UserFeedScreen(
         viewModel = viewModel,
         onAuthorClicked = { router.back() },
         onCloseScreen = { router.back() }
@@ -24,7 +24,7 @@ fun UserVideoFeedScreen(
 }
 
 @Composable
-private fun UserVideoFeedScreen(
+private fun UserFeedScreen(
     viewModel: UserVideoFeedViewModel,
     onAuthorClicked: (Uuid) -> Unit,
     onCloseScreen: () -> Unit,

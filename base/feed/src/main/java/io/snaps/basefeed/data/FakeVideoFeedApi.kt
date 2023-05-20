@@ -15,6 +15,7 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
 import okhttp3.MultipartBody
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 class FakeVideoFeedApi : VideoFeedApi {
@@ -83,7 +84,7 @@ class FakeVideoFeedApi : VideoFeedApi {
         ).also { popularGeneration++ }
     }
 
-    override suspend fun subscriptionsFeed(
+    override suspend fun subscriptionFeed(
         from: Uuid?,
         count: Int
     ): BaseResponse<List<VideoFeedItemResponseDto>> {
@@ -92,7 +93,7 @@ class FakeVideoFeedApi : VideoFeedApi {
         ).also { generation++ }
     }
 
-    override suspend fun likedVideos(
+    override suspend fun myLikedFeed(
         @Query(value = "from") from: Uuid?,
         @Query(value = "count") count: Int,
     ): BaseResponse<List<UserLikedVideoResponseDto>> {
@@ -122,8 +123,36 @@ class FakeVideoFeedApi : VideoFeedApi {
         )
     }
 
-    override suspend fun videos(
-        searchString: String?,
+    override suspend fun likedFeed(
+        @Path(value = "userId") userId: Uuid?,
+        @Query(value = "from") from: Uuid?,
+        @Query(value = "count") count: Int
+    ): BaseResponse<List<UserLikedVideoItem>> {
+        log("Requesting liked videos: $count videos with offset $from")
+        delay(mockDelay)
+        return BaseResponse(
+            data = List(count) {
+                UserLikedVideoItem(
+                    url = rVideos.random(),
+                    internalId = "${generation}video$it",
+                    entityId = "${generation}video$it",
+                    createdDate = "",
+                    viewsCount = rInt,
+                    commentsCount = rInt,
+                    likesCount = rInt,
+                    title = "title $it",
+                    description = "description $it",
+                    authorId = "authorUserId$it",
+                    thumbnailUrl = "https://picsum.photos/177/222",
+                    isDeleted = false,
+                    urlWithResolution = null,
+                )
+            }
+        )
+    }
+
+    override suspend fun searchFeed(
+        query: String?,
         from: Uuid?,
         count: Int
     ): BaseResponse<List<VideoFeedItemResponseDto>> {

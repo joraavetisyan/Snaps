@@ -180,7 +180,7 @@ object AppRoute {
         )
     }
 
-    object UserVideoFeed : RouteWithArg("UserVideoFeed") {
+    object UserFeed : RouteWithArg("UserFeed") {
 
         @Serializable
         data class Args(
@@ -189,10 +189,11 @@ object AppRoute {
         )
     }
 
-    object UserLikedVideoFeed : RouteWithArg("UserLikedVideoFeed") {
+    object LikedFeed : RouteWithArg("LikedFeed") {
 
         @Serializable
         data class Args(
+            val userId: Uuid?,
             val position: Int,
         )
     }

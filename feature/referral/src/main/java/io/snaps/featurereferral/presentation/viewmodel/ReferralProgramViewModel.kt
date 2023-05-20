@@ -50,7 +50,9 @@ class ReferralProgramViewModel @Inject constructor(
     OnboardingHandler by onboardingHandler,
     BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandler {
 
-    private val _uiState = MutableStateFlow(UiState())
+    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(
+        UiState(referralsTileState = ReferralsTileState.Shimmer(::onShowReferralQrClicked))
+    )
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
@@ -77,6 +79,8 @@ class ReferralProgramViewModel @Inject constructor(
                         referralQr = barcodeManager.getQrCodeBitmap(text = inviteCode, size = 600f),
                         firstLevelReferral = state.requireData.firstLevelReferralMultiplier.toPercentageFormat(),
                         secondLevelReferral = state.requireData.secondLevelReferralMultiplier.toPercentageFormat(),
+                        invitedByCode = state.requireData.inviteCodeRegisteredBy.orEmpty(),
+                        isInviteAvailable = state.requireData.inviteCodeRegisteredBy.isNullOrBlank(),
                     )
                 }
             }
@@ -188,22 +192,25 @@ class ReferralProgramViewModel @Inject constructor(
         fileManager.createFileFromBitmap(bitmap)?.let {
             _command publish Command.OpenShareDialog(
                 uri = fileManager.getUriForFile(it),
+                // todo localize
                 text = "Download Snaps and use my referral code - ${uiState.value.referralCode}"
             )
         }
     }
 
     data class UiState(
+        val referralsTileState: ReferralsTileState,
         val isLoading: Boolean = false,
         val referralCode: String = "",
         val referralLink: String = "",
         val inviteCodeValue: String = "",
+        val invitedByCode: String = "",
         val bottomDialog: BottomDialog = BottomDialog.ReferralCode,
-        val referralsTileState: ReferralsTileState = ReferralsTileState.Shimmer,
         val isInviteUserDialogVisible: Boolean = false,
         val referralQr: Bitmap? = null,
         val firstLevelReferral: String = "",
         val secondLevelReferral: String = "",
+        val isInviteAvailable: Boolean = false,
     ) {
 
         val isReferralCodeValid get() = inviteCodeValue.isNotBlank()

@@ -10,13 +10,12 @@ import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
 import io.snaps.corecommon.model.Uuid
+import io.snaps.coredata.network.BaseResponse
 import java.time.ZonedDateTime
 
 fun List<VideoFeedItemResponseDto>.toVideoClipModelList(
     likedVideos: List<UserLikedVideoResponseDto>,
-) = map { dto ->
-    dto.toModel(likedVideos.firstOrNull { it.video.entityId == dto.entityId } != null)
-}
+) = map { dto -> dto.toModel(likedVideos.find { it.video.entityId == dto.entityId } != null) }
 
 fun VideoFeedItemResponseDto.toModel(isLiked: Boolean) = VideoClipModel(
     id = entityId,
@@ -32,7 +31,19 @@ fun VideoFeedItemResponseDto.toModel(isLiked: Boolean) = VideoClipModel(
     isLiked = isLiked,
 )
 
-fun UserLikedVideoItem.toModel() = VideoClipModel(
+fun BaseResponse<List<UserLikedVideoItem>>.toLikedFeedBaseResponse() = BaseResponse(
+    data = data?.map { UserLikedVideoResponseDto("", it) },
+    isSuccess = isSuccess,
+)
+
+fun List<UserLikedVideoResponseDto>.likedFeedToVideoClipModelList(
+    isExplicitlyLiked: Boolean,
+    likedVideos: List<UserLikedVideoResponseDto>,
+) = map { dto ->
+    dto.video.toModel(isLiked = isExplicitlyLiked || likedVideos.find { it.video.entityId == dto.entityId } != null)
+}
+
+fun UserLikedVideoItem.toModel(isLiked: Boolean) = VideoClipModel(
     id = entityId,
     createdDate = createdDate,
     viewCount = viewsCount,
@@ -43,7 +54,7 @@ fun UserLikedVideoItem.toModel() = VideoClipModel(
     description = description,
     authorId = authorId,
     thumbnail = thumbnailUrl,
-    isLiked = true,
+    isLiked = isLiked,
 )
 
 suspend fun List<CommentResponseDto>.toCommentModelList(

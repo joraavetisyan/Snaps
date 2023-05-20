@@ -12,14 +12,21 @@ fun State<List<UserInfoModel>>.toReferralsUiState(
     onReloadClick: () -> Unit,
 ): ReferralsTileState {
     return when (this) {
-        is Loading -> ReferralsTileState.Shimmer
+        is Loading -> ReferralsTileState.Shimmer(
+            onShowQrClick = onShowQrClick,
+        )
         is Effect -> if (isSuccess) {
-            if (requireData.isEmpty()) ReferralsTileState.Empty
+            if (requireData.isEmpty()) ReferralsTileState.Empty(
+                onShowQrClick = onShowQrClick,
+            )
             else ReferralsTileState.Data(
                 values = requireData,
                 onReferralClick = onReferralClick,
                 onShowQrClick = onShowQrClick,
             )
-        } else ReferralsTileState.Error(onReloadClick = onReloadClick)
+        } else ReferralsTileState.Error(
+            onReloadClick = onReloadClick,
+            onShowQrClick = onShowQrClick,
+        )
     }
 }

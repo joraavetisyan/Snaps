@@ -25,8 +25,8 @@ class UserVideoFeedViewModel @Inject constructor(
     @Bridged subsRepository: SubsRepository,
     bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
 ) : VideoFeedViewModel(
-    videoFeedType = VideoFeedType.User(savedStateHandle.requireArgs<AppRoute.UserVideoFeed.Args>().userId),
-    startPosition = savedStateHandle.requireArgs<AppRoute.UserVideoFeed.Args>().position,
+    videoFeedType = VideoFeedType.User(savedStateHandle.requireArgs<AppRoute.UserFeed.Args>().userId),
+    startPosition = savedStateHandle.requireArgs<AppRoute.UserFeed.Args>().position,
     action = action,
     videoFeedRepository = videoFeedRepository,
     profileRepository = profileRepository,

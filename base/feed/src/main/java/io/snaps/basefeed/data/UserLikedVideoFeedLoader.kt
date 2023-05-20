@@ -4,6 +4,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import io.snaps.basefeed.data.model.UserLikedVideoResponseDto
+import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseplayer.domain.VideoClipModel
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
@@ -27,8 +28,7 @@ class UseLikedVideoFeedLoader @AssistedInject constructor(
 )
 
 @AssistedFactory
-abstract class UserLikedVideoFeedLoaderFactory :
-    PagedLoaderFactory<Unit, UseLikedVideoFeedLoader, UserLikedVideoResponseDto, VideoClipModel>() {
+abstract class UserLikedVideoFeedLoaderFactory : PagedLoaderFactory<VideoFeedType.Liked, UseLikedVideoFeedLoader, UserLikedVideoResponseDto, VideoClipModel>() {
 
     override fun provide(params: PagedLoaderParams<UserLikedVideoResponseDto, VideoClipModel>) = create(params)
 

@@ -50,17 +50,18 @@ class ProfileViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     init {
-        if (args.userId != null) {
+        val userId = args.userId
+        if (userId != null) {
             viewModelScope.launch {
                 action.execute {
                     profileRepository.updateData()
                 }.doOnSuccess {
-                    if (!profileRepository.isCurrentUser(requireNotNull(args.userId))) {
+                    if (!profileRepository.isCurrentUser(userId)) {
                         _uiState.update {
                             it.copy(
                                 userType = UserType.Other,
                                 shareLink = AppDeeplink.generateSharingLink(
-                                    deeplink = AppDeeplink.Profile(id = requireNotNull(args.userId))
+                                    deeplink = AppDeeplink.Profile(id = requireNotNull(args.userId)),
                                 )
                             )
                         }
@@ -92,7 +93,8 @@ class ProfileViewModel @Inject constructor(
                     name = state.dataOrCache?.name.orEmpty(),
                     shareLink = state.dataOrCache?.userId?.let { userId ->
                         AppDeeplink.generateSharingLink(AppDeeplink.Profile(userId))
-                    }
+                    },
+                    userType = UserType.Current,
                 )
             }
         }.launchIn(viewModelScope)
@@ -171,7 +173,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun subscribeOnUserLikedFeed() {
-        videoFeedRepository.getFeedState(VideoFeedType.UserLiked).map {
+        videoFeedRepository.getFeedState(VideoFeedType.Liked(args.userId)).map {
             it.toVideoFeedUiState(
                 shimmerListSize = 12,
                 onClipClicked = {},
@@ -186,14 +188,14 @@ class ProfileViewModel @Inject constructor(
     private fun onUserLikedListEndReaching() {
         viewModelScope.launch {
             action.execute {
-                videoFeedRepository.loadNextFeedPage(VideoFeedType.UserLiked)
+                videoFeedRepository.loadNextFeedPage(VideoFeedType.Liked(args.userId))
             }
         }
     }
 
     private fun onUserLikedFeedReloadClicked() = viewModelScope.launch {
         action.execute {
-            videoFeedRepository.refreshFeed(VideoFeedType.UserLiked)
+            videoFeedRepository.refreshFeed(VideoFeedType.Liked(args.userId))
         }
     }
 
@@ -202,7 +204,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onSubscribeClicked() = viewModelScope.launch {
-        if (uiState.value.isSubscribed!!) {
+        if (uiState.value.isSubscribed) {
             val userInfo = uiState.value.userInfoTileState
             if (userInfo is UserInfoTileState.Data) {
                 _uiState.update {
@@ -219,7 +221,7 @@ class ProfileViewModel @Inject constructor(
             }
         } else {
             _uiState.update {
-                it.copy(isSubscribed = !it.isSubscribed!!)
+                it.copy(isSubscribed = !it.isSubscribed)
             }
             action.execute {
                 subsRepository.subscribe(requireNotNull(args.userId))
@@ -231,7 +233,7 @@ class ProfileViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 dialog = null,
-                isSubscribed = !it.isSubscribed!!,
+                isSubscribed = !it.isSubscribed,
             )
         }
         action.execute {
@@ -247,18 +249,13 @@ class ProfileViewModel @Inject constructor(
 
     fun onVideoClipClicked(position: Int) {
         viewModelScope.launch {
-            _command publish Command.OpenUserVideoFeedScreen(
-                userId = args.userId,
-                position = position,
-            )
+            _command publish Command.OpenUserFeedScreen(userId = args.userId, position = position)
         }
     }
 
     fun onUserLikedVideoClipClicked(position: Int) {
         viewModelScope.launch {
-            _command publish Command.OpenUserLikedVideoFeedScreen(
-                position = position,
-            )
+            _command publish Command.OpenLikedFeedScreen(userId = args.userId, position = position)
         }
     }
 
@@ -278,9 +275,9 @@ class ProfileViewModel @Inject constructor(
         val isLoading: Boolean = true,
         val userInfoTileState: UserInfoTileState = UserInfoTileState.Shimmer,
         val name: String = "",
-        // if current authed user is subscribed to this user, null if this user is the current authed one
-        val isSubscribed: Boolean? = null,
-        val userType: UserType = UserType.Current,
+        // if current authed user is subscribed to this user
+        val isSubscribed: Boolean = false,
+        val userType: UserType = UserType.None,
         val videoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
         val userLikedVideoFeedUiState: VideoFeedUiState = VideoFeedUiState(),
         val dialog: Dialog? = null,
@@ -291,8 +288,8 @@ class ProfileViewModel @Inject constructor(
     sealed class Command {
         object OpenSettingsScreen : Command()
         data class OpenSubsScreen(val args: AppRoute.Subs.Args) : Command()
-        data class OpenUserVideoFeedScreen(val userId: Uuid?, val position: Int) : Command()
-        data class OpenUserLikedVideoFeedScreen(val position: Int) : Command()
+        data class OpenUserFeedScreen(val userId: Uuid?, val position: Int) : Command()
+        data class OpenLikedFeedScreen(val userId: Uuid?, val position: Int) : Command()
     }
 
     sealed class Dialog {
@@ -300,6 +297,8 @@ class ProfileViewModel @Inject constructor(
     }
 
     enum class UserType {
-        Current, Other
+        None,
+        Current,
+        Other,
     }
 }

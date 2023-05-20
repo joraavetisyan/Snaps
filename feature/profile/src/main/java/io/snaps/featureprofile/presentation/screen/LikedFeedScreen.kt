@@ -10,20 +10,20 @@ import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.featureprofile.presentation.viewmodel.UserLikedVideoFeedViewModel
 
 @Composable
-fun UserLikedVideoFeedScreen(
+fun LikedFeedScreen(
     navHostController: NavHostController,
 ) {
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
     val viewModel = hiltViewModel<UserLikedVideoFeedViewModel>()
 
-    UserLikedVideoFeedScreen(
+    LikedFeedScreen(
         viewModel = viewModel,
-        onAuthorClicked = { router.toProfileScreen(it) },
+        onAuthorClicked = router::toProfileScreen,
     )
 }
 
 @Composable
-private fun UserLikedVideoFeedScreen(
+private fun LikedFeedScreen(
     viewModel: UserLikedVideoFeedViewModel,
     onAuthorClicked: (Uuid) -> Unit,
 ) {

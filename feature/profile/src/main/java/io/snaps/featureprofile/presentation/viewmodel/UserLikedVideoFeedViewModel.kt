@@ -15,6 +15,8 @@ import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import javax.inject.Inject
 
+private fun args(savedStateHandle: SavedStateHandle) = savedStateHandle.requireArgs<AppRoute.LikedFeed.Args>()
+
 @HiltViewModel
 class UserLikedVideoFeedViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -25,8 +27,8 @@ class UserLikedVideoFeedViewModel @Inject constructor(
     @Bridged subsRepository: SubsRepository,
     bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
 ) : VideoFeedViewModel(
-    videoFeedType = VideoFeedType.UserLiked,
-    startPosition = savedStateHandle.requireArgs<AppRoute.UserLikedVideoFeed.Args>().position,
+    videoFeedType = VideoFeedType.Liked(args(savedStateHandle).userId),
+    startPosition = args(savedStateHandle).position,
     action = action,
     videoFeedRepository = videoFeedRepository,
     profileRepository = profileRepository,

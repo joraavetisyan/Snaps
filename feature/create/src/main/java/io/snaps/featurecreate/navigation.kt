@@ -27,11 +27,12 @@ internal class ScreenNavigator(navHostController: NavHostController) :
         AppRoute.UploadVideo.Args(uri),
     )
 
-    fun toProfileScreen() {
-        navHostController.navigate(AppRoute.Profile) {
-            tryPopBackStack(AppRoute.CreateVideo.path())
-            launchSingleTop = true // если уже в стеке есть экран Профиля
-        }
+    fun toProfileScreen() = navHostController navigate FeatureNavDirection(
+        route = AppRoute.Profile,
+        arg = AppRoute.Profile.Args(userId = null),
+    ) {
+        tryPopBackStack(AppRoute.CreateVideo.path())
+        launchSingleTop = true // if we already have the Profile screen in the stack
     }
 }
 

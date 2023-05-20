@@ -1,6 +1,8 @@
 package io.snaps.featureprofile.presentation.screen
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +22,6 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -52,6 +53,7 @@ import io.snaps.coreuicompose.uikit.duplicate.ActionIconData
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
+import io.snaps.coreuitheme.compose.colors
 import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.featureprofile.presentation.viewmodel.ProfileViewModel
 
@@ -68,13 +70,12 @@ fun ProfileScreen(
         when (it) {
             ProfileViewModel.Command.OpenSettingsScreen -> router.toSettingsScreen()
             is ProfileViewModel.Command.OpenSubsScreen -> router.toSubsScreen(it.args)
-            is ProfileViewModel.Command.OpenUserVideoFeedScreen -> {
-                router.toUserVideoFeedScreen(userId = it.userId, position = it.position)
-            }
-
-            is ProfileViewModel.Command.OpenUserLikedVideoFeedScreen -> {
-                router.toUserLikedVideoFeedScreen(position = it.position)
-            }
+            is ProfileViewModel.Command.OpenUserFeedScreen -> router.toUserFeedScreen(
+                userId = it.userId, position = it.position
+            )
+            is ProfileViewModel.Command.OpenLikedFeedScreen -> router.toLikedFeedScreen(
+                userId = it.userId, position = it.position,
+            )
         }
     }
 
@@ -108,19 +109,17 @@ private fun ProfileScreen(
     onLikeIconClicked: () -> Unit,
     onGalleryIconClicked: () -> Unit,
 ) {
-    val title = when (uiState.userType) {
-        ProfileViewModel.UserType.Other -> "@${uiState.name}"
-        ProfileViewModel.UserType.Current -> LocalStringHolder.current(StringKey.ProfileTitle)
-    }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val context = LocalContext.current
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SimpleTopAppBar(
-                title = {
-                    Text(text = title)
-                },
+                title = when (uiState.userType) {
+                    ProfileViewModel.UserType.Other -> "@${uiState.name}"
+                    ProfileViewModel.UserType.Current -> LocalStringHolder.current(StringKey.ProfileTitle)
+                    ProfileViewModel.UserType.None -> ""
+                }.textValue(),
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 scrollBehavior = scrollBehavior,
                 actions = listOfNotNull(
@@ -157,8 +156,8 @@ private fun ProfileScreen(
                 .inset(insetAllExcludeTop()),
         ) {
             uiState.userInfoTileState.Content(modifier = Modifier)
-            Spacer(modifier = Modifier.height(12.dp))
-            if (uiState.isSubscribed != null) {
+            if (uiState.userType == ProfileViewModel.UserType.Other) {
+                Spacer(modifier = Modifier.height(12.dp))
                 SimpleChip(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -169,13 +168,13 @@ private fun ProfileScreen(
                     contentPadding = PaddingValues(10.dp),
                     onClick = onSubscribeClicked,
                 )
-            } else {
-                Actions(
-                    selectedItemIndex = uiState.selectedItemIndex,
-                    onGalleryIconClicked = onGalleryIconClicked,
-                    onLikeIconClicked = onLikeIconClicked,
-                )
             }
+            Spacer(modifier = Modifier.height(12.dp))
+            Actions(
+                selectedItemIndex = uiState.selectedItemIndex,
+                onGalleryIconClicked = onGalleryIconClicked,
+                onLikeIconClicked = onLikeIconClicked,
+            )
             Spacer(modifier = Modifier.height(12.dp))
             AnimatedContent(
                 targetState = uiState.selectedItemIndex,
@@ -230,9 +229,7 @@ private fun Actions(
             Icon(
                 painter = AppTheme.specificIcons.gallery.get(),
                 contentDescription = null,
-                tint = if (selectedItemIndex == 0) {
-                    AppTheme.specificColorScheme.uiAccent
-                } else AppTheme.specificColorScheme.darkGrey,
+                tint = colors { if (selectedItemIndex == 0) uiAccent else darkGrey },
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .size(28.dp),
@@ -252,9 +249,7 @@ private fun Actions(
             Icon(
                 painter = AppTheme.specificIcons.like.get(),
                 contentDescription = null,
-                tint = if (selectedItemIndex == 1) {
-                    AppTheme.specificColorScheme.uiAccent
-                } else AppTheme.specificColorScheme.darkGrey,
+                tint = colors { if (selectedItemIndex == 1) uiAccent else darkGrey },
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .size(28.dp),

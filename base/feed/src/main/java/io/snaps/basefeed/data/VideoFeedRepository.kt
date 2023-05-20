@@ -26,6 +26,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import javax.inject.Inject
+import io.snaps.basefeed.data.likedFeedToVideoClipModelList as myLikedFeedToVideoClipModelList1
 
 interface VideoFeedRepository {
 
@@ -61,7 +62,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
     private val tokenStorage: TokenStorage,
     private val videoFeedApi: VideoFeedApi,
     private val loaderFactory: VideoFeedLoaderFactory,
-    private val userLikedVideoFeedLoaderFactory: UserLikedVideoFeedLoaderFactory,
+    private val likedFeedLoaderFactory: UserLikedVideoFeedLoaderFactory,
     private val fileManager: FileManager,
 ) : VideoFeedRepository {
 
@@ -69,13 +70,33 @@ class VideoFeedRepositoryImpl @Inject constructor(
 
     private fun getLoader(videoFeedType: VideoFeedType): PagedLoader<*, VideoClipModel> {
         return when (videoFeedType) {
-            is VideoFeedType.UserLiked -> userLikedVideoFeedLoaderFactory.get(Unit) {
-                PagedLoaderParams(
-                    action = { from, count -> videoFeedApi.likedVideos(from, count) },
-                    pageSize = 50,
-                    nextPageIdFactory = { it.entityId },
-                    mapper = { videoFeed -> videoFeed.map { it.video.toModel() } },
-                )
+            is VideoFeedType.Liked -> when (videoFeedType.userId) {
+                null -> likedFeedLoaderFactory.get(videoFeedType) {
+                    PagedLoaderParams(
+                        action = { from, count -> videoFeedApi.myLikedFeed(from = from, count = count) },
+                        pageSize = 50,
+                        nextPageIdFactory = { it.entityId },
+                        mapper = {
+                            it.myLikedFeedToVideoClipModelList1(isExplicitlyLiked = true, likedVideos = emptyList())
+                        },
+                    )
+                }
+                else -> likedFeedLoaderFactory.get(videoFeedType) {
+                    PagedLoaderParams(
+                        action = { from, count ->
+                            videoFeedApi
+                                .likedFeed(userId = videoFeedType.userId, from = from, count = count)
+                                .toLikedFeedBaseResponse()
+                        },
+                        pageSize = 50,
+                        nextPageIdFactory = { it.entityId },
+                        mapper = {
+                            it.myLikedFeedToVideoClipModelList1(
+                                isExplicitlyLiked = false, likedVideos = getLikedVideos()
+                            )
+                        },
+                    )
+                }
             }
             else -> loaderFactory.get(videoFeedType) { type ->
                 when (type) {
@@ -86,7 +107,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
                     VideoFeedType.Subscriptions -> PagedLoaderParams(
-                        action = { from, count -> videoFeedApi.subscriptionsFeed(from, count) },
+                        action = { from, count -> videoFeedApi.subscriptionFeed(from, count) },
                         pageSize = 5,
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
@@ -115,13 +136,19 @@ class VideoFeedRepositoryImpl @Inject constructor(
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
-                    is VideoFeedType.All -> PagedLoaderParams(
-                        action = { from, count -> videoFeedApi.videos(query = type.query, from = from, count = count) },
+                    is VideoFeedType.Search -> PagedLoaderParams(
+                        action = { from, count ->
+                            videoFeedApi.searchFeed(
+                                query = type.query,
+                                from = from,
+                                count = count
+                            )
+                        },
                         pageSize = 50,
                         nextPageIdFactory = { it.entityId },
                         mapper = { it.toVideoClipModelList(getLikedVideos()) },
                     )
-                    is VideoFeedType.UserLiked -> throw IllegalStateException("Unknown video type")
+                    is VideoFeedType.Liked -> throw IllegalStateException("Wrong handle place!")
                 }
             }
         }
@@ -130,7 +157,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
     private suspend fun getLikedVideos(): List<UserLikedVideoResponseDto> {
         return likedVideos ?: apiCall(ioDispatcher) {
             // todo better way once back supports
-            videoFeedApi.likedVideos(null, 1000)
+            videoFeedApi.myLikedFeed(null, 1000)
         }.doOnSuccess {
             likedVideos = it
         }.dataOrCache ?: emptyList()

@@ -86,7 +86,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun subscribeOnAllVideo(query: String) {
-        subscribePopularFeedJob = videoFeedRepository.getFeedState(VideoFeedType.All(query)).map {
+        subscribePopularFeedJob = videoFeedRepository.getFeedState(VideoFeedType.Search(query)).map {
             it.toVideoFeedUiState(
                 shimmerListSize = 6,
                 emptyMessage = StringKey.MessageNothingFound.textValue(),
@@ -148,14 +148,14 @@ class SearchViewModel @Inject constructor(
 
     private fun onReloadClicked() = viewModelScope.launch {
         action.execute {
-            videoFeedRepository.refreshFeed(VideoFeedType.All(uiState.value.query))
+            videoFeedRepository.refreshFeed(VideoFeedType.Search(uiState.value.query))
         }
     }
 
     private fun onListEndReaching() {
         viewModelScope.launch {
             action.execute {
-                videoFeedRepository.loadNextFeedPage(VideoFeedType.All(uiState.value.query))
+                videoFeedRepository.loadNextFeedPage(VideoFeedType.Search(uiState.value.query))
             }
         }
     }

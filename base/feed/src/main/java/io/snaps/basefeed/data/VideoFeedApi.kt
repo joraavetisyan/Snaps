@@ -2,6 +2,7 @@ package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.AddVideoResponseDto
+import io.snaps.basefeed.data.model.UserLikedVideoItem
 import io.snaps.basefeed.data.model.UserLikedVideoResponseDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.corecommon.model.Completable
@@ -25,15 +26,15 @@ interface VideoFeedApi {
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
 
-    @GET("user/{userId}/video")
-    suspend fun userFeed(
-        @Path("userId") userId: Uuid,
+    @GET("user/video")
+    suspend fun myFeed(
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
 
-    @GET("user/video")
-    suspend fun myFeed(
+    @GET("user/{userId}/video")
+    suspend fun userFeed(
+        @Path("userId") userId: Uuid,
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
@@ -45,24 +46,30 @@ interface VideoFeedApi {
     ): BaseResponse<List<VideoFeedItemResponseDto>>
 
     @GET("video/subscriptions")
-    suspend fun subscriptionsFeed(
+    suspend fun subscriptionFeed(
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
 
-    // todo there must not be from and count, fix once api supports
-    @GET("user/likes")
-    suspend fun likedVideos(
-        @Query("from") from: Uuid?,
-        @Query("count") count: Int,
-    ): BaseResponse<List<UserLikedVideoResponseDto>>
-
     @GET("video")
-    suspend fun videos(
+    suspend fun searchFeed(
         @Query("searchString") query: String?,
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
+
+    @GET("user/likes")
+    suspend fun myLikedFeed(
+        @Query("from") from: Uuid?,
+        @Query("count") count: Int,
+    ): BaseResponse<List<UserLikedVideoResponseDto>>
+
+    @GET("user/{userId}/likes")
+    suspend fun likedFeed(
+        @Path("userId") userId: Uuid?,
+        @Query("from") from: Uuid?,
+        @Query("count") count: Int,
+    ): BaseResponse<List<UserLikedVideoItem>>
 
     @POST("video/{videoId}/like")
     suspend fun like(

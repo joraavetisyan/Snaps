@@ -98,6 +98,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonOutlineL
+import io.snaps.coreuicompose.uikit.button.SimpleButtonOutlineM
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
@@ -215,7 +216,7 @@ fun WalletScreen(
             onSellSnapsClicked = viewModel::onSellSnapsClicked,
             onTopUpClicked = viewModel::onTopUpClicked,
             onWithdrawClicked = viewModel::onWithdrawClicked,
-            onRewardsWithdrawClicked = viewModel::onRewardsClaimClicked,
+            onClaimClicked = viewModel::onRewardsClaimClicked,
             onExchangeClicked = viewModel::onExchangeClicked,
             onRewardsOpened = viewModel::onRewardsOpened,
             onRewardsFootnoteClick = viewModel::onRewardsFootnoteClick,
@@ -240,7 +241,7 @@ private fun WalletScreen(
     onSellSnapsClicked: () -> Unit,
     onTopUpClicked: () -> Unit,
     onWithdrawClicked: () -> Unit,
-    onRewardsWithdrawClicked: () -> Unit,
+    onClaimClicked: () -> Unit,
     onExchangeClicked: () -> Unit,
     onRewardsOpened: () -> Unit,
     onRewardsFootnoteClick: () -> Unit,
@@ -303,7 +304,7 @@ private fun WalletScreen(
                         transactions = uiState.transactions,
                         filter = uiState.filter,
                         rewards = uiState.rewards,
-                        onWithdrawClicked = onRewardsWithdrawClicked,
+                        onClaimClicked = onClaimClicked,
                         onOpened = onRewardsOpened,
                         onRewardsFootnoteClick = onRewardsFootnoteClick,
                         onDropdownMenuItemClicked = onDropdownMenuItemClicked,
@@ -409,7 +410,7 @@ private fun Rewards(
     transactions: TransactionsUiState,
     filter: WalletViewModel.Filter,
     rewards: List<RewardsTileState>,
-    onWithdrawClicked: () -> Unit,
+    onClaimClicked: () -> Unit,
     onOpened: () -> Unit,
     onRewardsFootnoteClick: () -> Unit,
     onDropdownMenuItemClicked: (WalletViewModel.Filter) -> Unit,
@@ -437,27 +438,15 @@ private fun Rewards(
             it.Content(modifier = Modifier.padding(bottom = 12.dp))
         }
         item {
-            SimpleButtonOutlineL(
-                onClick = onWithdrawClicked,
+            SimpleButtonOutlineM(
+                onClick = onClaimClicked,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 20.dp),
             ) {
                 SimpleButtonContent(
                     text = StringKey.RewardsActionClaim.textValue(),
-                    contentLeft = {
-                        Icon(
-                            painter = AppTheme.specificIcons.withdraw.get(),
-                            tint = AppTheme.specificColorScheme.white,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .background(
-                                    color = AppTheme.specificColorScheme.uiAccent,
-                                    shape = CircleShape,
-                                )
-                                .padding(4.dp),
-                        )
-                    },
+                    iconLeft = AppTheme.specificIcons.sendCircled,
                 )
             }
             Row(

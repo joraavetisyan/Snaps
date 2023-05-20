@@ -357,11 +357,10 @@ private fun Main(
 ) {
     Column(
         modifier = Modifier
-            .padding(vertical = 12.dp)
             .verticalScroll(rememberScrollState())
-            .padding(bottom = LocalBottomNavigationHeight.current),
+            .padding(bottom = 12.dp + LocalBottomNavigationHeight.current),
     ) {
-        ReferralCodeCard(onEnterCodeClicked = onEnterCodeClicked)
+        ReferralCodeCard(uiState = uiState, onEnterCodeClicked = onEnterCodeClicked)
         Spacer(modifier = Modifier.height(16.dp))
         CopyButton(
             hint = StringKey.ReferralProgramHintCode.textValue().get().text,
@@ -389,19 +388,22 @@ private fun Main(
                 message = StringKey.ReferralProgramMessageDirectReferral.textValue(uiState.secondLevelReferral),
             )
         }
-        SimpleButtonActionM(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp),
-            onClick = onInviteUserButtonClicked,
-        ) {
-            SimpleButtonContent(text = StringKey.ReferralProgramActionInviteUser.textValue())
+        if (uiState.isInviteAvailable) {
+            SimpleButtonActionM(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+                onClick = onInviteUserButtonClicked,
+            ) {
+                SimpleButtonContent(text = StringKey.ReferralProgramActionInviteUser.textValue())
+            }
         }
     }
 }
 
 @Composable
 private fun ReferralCodeCard(
+    uiState: ReferralProgramViewModel.UiState,
     onEnterCodeClicked: () -> Unit,
 ) {
     Box(
@@ -438,9 +440,13 @@ private fun ReferralCodeCard(
                 modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
             )
             SimpleButtonGreyS(
-                onClick = onEnterCodeClicked,
+                onClick = { if (uiState.isInviteAvailable) onEnterCodeClicked() },
             ) {
-                SimpleButtonContent(text = StringKey.ReferralProgramActionEnterCode.textValue())
+                SimpleButtonContent(
+                    text = uiState.invitedByCode.takeUnless {
+                        it.isBlank()
+                    }?.textValue() ?: StringKey.ReferralProgramActionEnterCode.textValue(),
+                )
             }
         }
     }
