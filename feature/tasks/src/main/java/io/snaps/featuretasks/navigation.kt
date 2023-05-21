@@ -51,6 +51,11 @@ internal class ScreenNavigator(navHostController: NavHostController) :
         route = AppRoute.UserNftDetails,
         arg = args,
     )
+
+    fun backToTasksScreen() = navHostController.popBackStack(
+        route = AppRoute.TaskDetails.pattern,
+        inclusive = true
+    )
 }
 
 class TasksFeatureProviderImpl @Inject constructor() : TasksFeatureProvider {
