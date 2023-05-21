@@ -97,6 +97,15 @@ class SubsRepositoryImpl @Inject constructor(
             subsApi.subscribe(
                 SubscribeRequestDto(toSubscribeUserId = toSubscribeUserId)
             )
+        }.doOnSuccess {
+            mySubscriptions = mySubscriptions?.plus(
+                SubsItemResponseDto(
+                    userId = toSubscribeUserId,
+                    entityId = toSubscribeUserId,
+                    avatar = null,
+                    name = null,
+                )
+            )
         }
     }
 
@@ -105,6 +114,8 @@ class SubsRepositoryImpl @Inject constructor(
             subsApi.unsubscribe(
                 UnsubscribeRequestDto(subscriptionId = subscriptionId)
             )
+        }.doOnSuccess {
+            mySubscriptions = mySubscriptions?.filter { it.userId != subscriptionId }
         }
     }
 

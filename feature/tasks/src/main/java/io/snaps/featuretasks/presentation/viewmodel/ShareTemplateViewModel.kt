@@ -143,6 +143,7 @@ class ShareTemplateViewModel @Inject constructor(
                 tasksRepository.postToInstagram()
             }.doOnSuccess {
                 notificationsSource.sendMessage(StringKey.TaskShareMessagePostInstagram.textValue())
+                _command publish Command.BackToTasksScreen
             }
         } else {
             onConnectClicked()
@@ -175,5 +176,6 @@ class ShareTemplateViewModel @Inject constructor(
     sealed class Command {
         object OpenWebView : Command()
         data class OpenShareDialog(val uri: Uri) : Command()
+        object BackToTasksScreen : Command()
     }
 }

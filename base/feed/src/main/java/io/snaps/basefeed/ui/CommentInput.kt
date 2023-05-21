@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -32,6 +34,7 @@ import io.snaps.corecommon.strings.emojis
 import io.snaps.coreuicompose.tools.addIf
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuitheme.compose.AppTheme
 
@@ -46,9 +49,11 @@ fun CommentInput(
     onInputClick: () -> Unit,
     onSendClick: () -> Unit,
     focusRequester: FocusRequester? = null,
+    windowInsets: WindowInsets = insetAllExcludeTop(),
 ) {
     Column(
         modifier = Modifier
+            .windowInsetsPadding(windowInsets)
             .fillMaxWidth()
             .padding(vertical = 16.dp, horizontal = 16.dp)
             .imePadding(),

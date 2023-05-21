@@ -72,6 +72,7 @@ fun ShareTemplateScreen(
         when (it) {
             is ShareTemplateViewModel.Command.OpenWebView -> router.toConnectInstagramScreen()
             is ShareTemplateViewModel.Command.OpenShareDialog -> context.startSharePhotoIntent(it.uri)
+            is ShareTemplateViewModel.Command.BackToTasksScreen -> router.backToTasksScreen()
         }
     }
 

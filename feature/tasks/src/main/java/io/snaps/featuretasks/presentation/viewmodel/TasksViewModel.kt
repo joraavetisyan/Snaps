@@ -106,9 +106,7 @@ class TasksViewModel @Inject constructor(
                         onItemClicked = ::onCurrentTaskItemClicked,
                     ),
                     totalEnergy = state.dataOrCache?.totalEnergy ?: 0,
-                    totalEnergyProgress = state.dataOrCache?.quests?.sumOf { quest ->
-                        quest.energyProgress()
-                    } ?: 0,
+                    totalEnergyProgress = state.dataOrCache?.totalEnergyProgress ?: 0,
                 )
             }
             state.startRoundTimer()

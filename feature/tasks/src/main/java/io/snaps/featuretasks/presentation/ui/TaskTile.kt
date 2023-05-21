@@ -14,12 +14,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.snaps.baseprofile.ui.EnergyWidget
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
+import io.snaps.coreuicompose.tools.addIf
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
@@ -77,7 +80,16 @@ private fun Data(
     data: TaskTileState.Data,
 ) {
     Container(
-        modifier = modifier.defaultTileRipple(onClick = data.clickListener),
+        modifier = modifier
+            .defaultTileRipple(onClick = data.clickListener)
+            .addIf(data.status == TaskStatus.Credited) {
+                drawWithCache {
+                    onDrawWithContent {
+                        drawContent()
+                        drawRect(color = Color.White.copy(alpha = 0.5f))
+                    }
+                }
+            },
     ) {
         Row(
             modifier = modifier

@@ -7,7 +7,7 @@ import io.snaps.corecommon.container.imageValue
 fun List<SubsItemResponseDto>.toModelList(mySubscriptions: List<SubsItemResponseDto>?) = map { sub ->
     sub.toSubModel(
         mySubscriptions?.let { list ->
-            list.firstOrNull { it.entityId == sub.entityId } != null
+            list.firstOrNull { it.userId == sub.userId } != null
         }
     )
 }
