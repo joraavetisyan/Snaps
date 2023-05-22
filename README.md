@@ -24,55 +24,55 @@ Project with functional modules on the next stack:
 
 There is a single AppActivity, which contains navigation graph with nested feature graph from
 feature modules.
-BottomBarFragment from feature-bottom-bar is responsible for working with one or more stacks of
+[BottomBarScreen] from feature-bottom-bar is responsible for working with one or more stacks of
 fragments,
-it can be launched by BottomBarFeatureProvider.
+it can be launched by [BottomBarFeatureProvider].
 
 #### 2. Custom views and screens and resources for light/night mode
 
-The project contains custom elements and screen templates (OnBoardingScreen, BottomBarScreen).
+The project contains custom elements and ui building blocks.
 
 #### 3. Feature Toggle
 
 Based on FirebaseRemoteConfig
 
-+ FeatureToggleUpdater for receiving flags at application startup
-+ Feature stores available flags with default values
-+ FeatureToggle check flag status
++ [FeatureToggleUpdater] for receiving flags at application startup
++ [Feature] stores available flags with default values
++ [FeatureToggle] check flag status
 
 #### 4. Billing
 
-Based on Billing 4.0. SimpleBilling encapsulates the interaction with the library and is responsible
+Based on Billing 4.0. [SimpleBilling] encapsulates the interaction with the library and is responsible
 for working with purchases.
 
 #### 5. Analytics
 
 Tracker implementation can work with one system for analytics, or with a group of systems.
 The project has an example wrapper for FirebaseAnalytics (FirebaseTracker).
-Access to the Tracker object is through AnalyticsTrackerHolder.
+Access to the Tracker object is through [AnalyticsTrackerHolder].
 
 #### 6. A few more tools
 
-+ AppUpdateProvider
-+ LocationProvider
-+ NetworkStateProvider
-+ PreferencesProvider
-+ FirebaseNotificationsService
-+ BuildInfo (contains info of current build)
-+ Resources containers (ColorValue, ImageValue, TextValue)
-+ Effect (like Result in Kotlin for results of operations)
-+ CacheProvider (with two implementations)
-+ ApiConfig (for build retrofit instances)
-+ apiCall(...) and cachedApiCall(...) (for network requests)
-+ NotificationHelper
++ [AppUpdateProvider]
++ [LocationProvider]
++ [NetworkStateProvider]
++ [PreferencesProvider]
++ [FirebaseNotificationsService]
++ [BuildInfo] (contains info of current build)
++ Resources containers ([ColorValue], [ImageValue], [TextValue])
++ [Effect] (like Result in Kotlin for results of operations)
++ [CacheProvider] (with two implementations)
++ [ApiConfig] (for build retrofit instances)
++ [apiCall](...) and [cachedApiCall](...) (for network requests)
++ [NotificationHelper]
 + Navigation extensions (in nav_ext.kt)
 + and many other extensions for some routine
 
 #### Dependency injection
 
-UserSessionScope and UserSessionComponent are used to inject user session related
+[UserSessionScope] and [UserSessionComponent] are used to inject user session related
 classes (eg repos), so that the user data gets cleared when a new user logs in. 
-Those classes provided with @Bridged qualifier to avoid boilerplate code
+Those classes provided with [@Bridged] qualifier to avoid boilerplate code
 
 #### Naming conventions
 
@@ -80,8 +80,12 @@ Those classes provided with @Bridged qualifier to avoid boilerplate code
 
 #### Hiding bottom navigation bar on bottom sheet dialog shown
 
-- Use ModalBottomSheetTargetStateListener in the screen, BottomDialogBarVisibilityHandler in the
+- Use [ModalBottomSheetTargetStateListener] in the screen, [BottomDialogBarVisibilityHandler] in the
   view model
+
+#### Error handling // todo
+
+- Custom errors [AppError.Custom] are not shown automatically
 
 #### Strings naming
 
