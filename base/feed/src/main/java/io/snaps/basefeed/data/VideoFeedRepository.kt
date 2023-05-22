@@ -6,7 +6,7 @@ import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.UserLikedVideoResponseDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
-import io.snaps.baseplayer.domain.VideoClipModel
+import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.Completable
@@ -26,7 +26,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import javax.inject.Inject
-import io.snaps.basefeed.data.likedFeedToVideoClipModelList as myLikedFeedToVideoClipModelList1
+import io.snaps.basefeed.data.likedFeedToVideoClipModelList
 
 interface VideoFeedRepository {
 
@@ -75,9 +75,9 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     PagedLoaderParams(
                         action = { from, count -> videoFeedApi.myLikedFeed(from = from, count = count) },
                         pageSize = 50,
-                        nextPageIdFactory = { it.entityId },
+                        nextPageIdFactory = { it.video.entityId },
                         mapper = {
-                            it.myLikedFeedToVideoClipModelList1(isExplicitlyLiked = true, likedVideos = emptyList())
+                            it.likedFeedToVideoClipModelList(isExplicitlyLiked = true, likedVideos = emptyList())
                         },
                     )
                 }
@@ -89,9 +89,9 @@ class VideoFeedRepositoryImpl @Inject constructor(
                                 .toLikedFeedBaseResponse()
                         },
                         pageSize = 50,
-                        nextPageIdFactory = { it.entityId },
+                        nextPageIdFactory = { it.video.entityId },
                         mapper = {
-                            it.myLikedFeedToVideoClipModelList1(
+                            it.likedFeedToVideoClipModelList(
                                 isExplicitlyLiked = false, likedVideos = getLikedVideos()
                             )
                         },

@@ -7,7 +7,7 @@ import io.snaps.basefeed.data.CommentRepository
 import io.snaps.basefeed.data.VideoFeedRepository
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
-import io.snaps.baseplayer.domain.VideoClipModel
+import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesubs.data.SubsRepository
@@ -107,7 +107,7 @@ abstract class VideoFeedViewModel(
         val videoClip = current?.clip ?: return
         currentVideo = videoClip
         loadComments(videoClip.id)
-        loadAuthor(videoClip.authorId)
+        loadAuthor(videoClip)
         checkIfSubscribed(videoClip.authorId)
     }
 
@@ -125,12 +125,19 @@ abstract class VideoFeedViewModel(
         }.launchIn(viewModelScope)
     }
 
-    private fun loadAuthor(authorId: Uuid) {
-        _uiState.update { it.copy(authorProfileAvatar = null, authorName = "") }
+    private fun loadAuthor(videoClipModel: VideoClipModel) {
         authorLoadJob?.cancel()
+        if (videoClipModel.author != null) {
+            _uiState.update {
+                it.copy(authorProfileAvatar = videoClipModel.author.avatar, authorName = videoClipModel.author.name)
+            }
+            return
+        }
+
+        _uiState.update { it.copy(authorProfileAvatar = null, authorName = "") }
         authorLoadJob = viewModelScope.launch {
             action.execute {
-                profileRepository.getUserInfoById(authorId)
+                profileRepository.getUserInfoById(videoClipModel.authorId)
             }.doOnSuccess { profileModel ->
                 if (!isActive) return@doOnSuccess
                 _uiState.update {

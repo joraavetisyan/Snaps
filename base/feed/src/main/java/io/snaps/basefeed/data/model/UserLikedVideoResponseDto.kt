@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserLikedVideoResponseDto(
-    @SerialName("entityId") val entityId: Uuid,
+    /*@SerialName("entityId") val entityId: Uuid,*/
     @SerialName("video") val video: UserLikedVideoItem,
 )
 

@@ -102,7 +102,6 @@ class FakeVideoFeedApi : VideoFeedApi {
         return BaseResponse(
             data = List(count) {
                 UserLikedVideoResponseDto(
-                    entityId = "${generation}video$it",
                     video = UserLikedVideoItem(
                         url = rVideos.random(),
                         internalId = "${generation}video$it",
