@@ -2668,11 +2668,11 @@ internal val strings = mapOf(
         SupportedLanguageKey.Es to "Condición",
     ),
     key(StringKey.NftDetailsDescriptionCondition) to mapOf(
-        SupportedLanguageKey.En to "Make sure that your NFT glasses are always in excellent condition. If you do not repair NFT glasses for more than 3 days, they will break.",
-        SupportedLanguageKey.Ru to "Следите за тем, чтобы ваши NFT  очки всегда оставались в отличном состоянии. Если вы не будете ремонтировать NFT очки больше 3 дней, они сломаются.",
-        SupportedLanguageKey.Tr to "NFT gözlüklerinizin her zaman mükemmel durumda kalmasını sağlayın. NFT gözlüklerini 3 günden fazla tamir etmezseniz, kırılacaklar.",
-        SupportedLanguageKey.Ua to "Слідкуйте за тим, щоб ваші NFT окуляри завжди залишалися у відмінному стані. Якщо ви не будете ремонтувати NFT окуляри більше 3 днів, вони зламаються.",
-        SupportedLanguageKey.Es to "Asegúrese de que sus gafas NFT siempre permanezcan en excelentes condiciones. Si no repara las gafas NFT durante más de 3 días, se romperán.",
+        SupportedLanguageKey.En to "Make sure that your NFT glasses are always in excellent condition. If you do not repair NFT glasses every day, they will break.",
+        SupportedLanguageKey.Ru to "Следите за тем, чтобы ваши NFT  очки всегда оставались в отличном состоянии. Если вы не будете ремонтировать NFT очки, они сломаются.",
+        SupportedLanguageKey.Tr to "NFT gözlüklerinizin her zaman mükemmel durumda kalmasını sağlayın. NFT gözlüklerini tamir etmezseniz, kırılacaklar.",
+        SupportedLanguageKey.Ua to "Слідкуйте за тим, щоб ваші NFT окуляри завжди залишалися у відмінному стані. Якщо ви не будете ремонтувати NFT окуляри, вони зламаються.",
+        SupportedLanguageKey.Es to "Asegúrese de que sus gafas NFT siempre permanezcan en excelentes condiciones. Si no repara las gafas NFT durante, se romperán.",
     ),
     key(StringKey.NftDetailsTitleLevel) to mapOf(
         SupportedLanguageKey.En to "Level and XP",
@@ -2682,11 +2682,11 @@ internal val strings = mapOf(
         SupportedLanguageKey.Es to "Nivel y XP",
     ),
     key(StringKey.NftDetailsDescriptionLevel) to mapOf(
-        SupportedLanguageKey.En to "Earn XP for completing tasks. For each task you get 25 XP. With each level, your NFT points will bring more income. And at level 10, you can go to the next rank.",
-        SupportedLanguageKey.Ru to "Зарабатывайте XP за выполнение заданий. За каждое задание вы получаете 25 XP. С каждым уровнем ваши очки NFT очки будут приносить больше дохода. А на 10-м уровне вы сможете перейти на следующий ранг.",
-        SupportedLanguageKey.Tr to "Görevleri tamamlamak için XP kazanın. Her görev için 25 XP kazanırsınız. Her seviyede, NFT puanlarınız puanlarınız daha fazla gelir elde edecektir. Ve 10. seviyede bir sonraki sıraya geçebileceksiniz.",
-        SupportedLanguageKey.Ua to "Заробляйте XP за виконання завдань. За кожне завдання Ви отримуєте 25 XP. З кожним рівнем ваші окуляри NFT окуляри будуть приносити більше доходу. А на 10-му рівні ви зможете перейти на наступний ранг.",
-        SupportedLanguageKey.Es to "Gana XP por completar tareas. Por cada tarea, obtienes 25 XP. Con cada nivel, tus puntos NFT generarán más ingresos. Y en el nivel 10 podrás pasar al siguiente rango.",
+        SupportedLanguageKey.En to "Earn XP for completing tasks. For each task you get 5 XP. With each level, your NFT points will bring more income. And at level 10, you can go to the next rank.",
+        SupportedLanguageKey.Ru to "Зарабатывайте XP за выполнение заданий. За каждое задание вы получаете 5 XP. С каждым уровнем ваши очки NFT очки будут приносить больше дохода. А на 10-м уровне вы сможете перейти на следующий ранг.",
+        SupportedLanguageKey.Tr to "Görevleri tamamlamak için XP kazanın. Her görev için 5 XP kazanırsınız. Her seviyede, NFT puanlarınız puanlarınız daha fazla gelir elde edecektir. Ve 10. seviyede bir sonraki sıraya geçebileceksiniz.",
+        SupportedLanguageKey.Ua to "Заробляйте XP за виконання завдань. За кожне завдання Ви отримуєте 5 XP. З кожним рівнем ваші окуляри NFT окуляри будуть приносити більше доходу. А на 10-му рівні ви зможете перейти на наступний ранг.",
+        SupportedLanguageKey.Es to "Gana XP por completar tareas. Por cada tarea, obtienes 5 XP. Con cada nivel, tus puntos NFT generarán más ingresos. Y en el nivel 10 podrás pasar al siguiente rango.",
     ),
     key(StringKey.MainVideoFeedTitleForYou) to mapOf(
         SupportedLanguageKey.En to "For You",
