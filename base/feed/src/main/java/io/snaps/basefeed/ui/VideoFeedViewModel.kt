@@ -113,10 +113,15 @@ abstract class VideoFeedViewModel(
 
     private fun loadComments(videoId: Uuid) {
         commentsLoadJob?.cancel()
-        commentsLoadJob = commentRepository.getCommentsState(videoId).map {
-            it.toCommentsUiState(
+        commentsLoadJob = commentRepository.getCommentsState(videoId).map { commentPageModel ->
+            commentPageModel.toCommentsUiState(
                 shimmerListSize = 10,
                 onCommentClicked = {},
+                onAvatarClicked = {
+                    it.owner?.let {
+                        viewModelScope.launch { _command publish Command.OpenProfileScreen(it.userId) }
+                    }
+                },
                 onReloadClicked = {},
                 onListEndReaching = { onCommentListEndReaching(videoId) },
             )
@@ -148,6 +153,9 @@ abstract class VideoFeedViewModel(
     }
 
     private fun checkIfSubscribed(authorId: Uuid) {
+        _uiState.update { it.copy(isSubscribeButtonVisible = false) }
+        if (videoFeedType != VideoFeedType.Main) return
+        if (profileRepository.isCurrentUser(authorId)) return
         viewModelScope.launch {
             action.execute {
                 subsRepository.isSubscribed(authorId)
@@ -155,7 +163,7 @@ abstract class VideoFeedViewModel(
                 _uiState.update {
                     it.copy(
                         isSubscribed = isSubscribed,
-                        isSubscribeButtonVisible = videoFeedType == VideoFeedType.Main,
+                        isSubscribeButtonVisible = true,
                     )
                 }
             }
@@ -229,7 +237,7 @@ abstract class VideoFeedViewModel(
     fun onShareClicked(clipModel: VideoClipModel) {
         viewModelScope.launch {
             _command publish Command.ShareVideoClipLink(
-                AppDeeplink.generateSharingLink(AppDeeplink.VideoClip(clipModel.id))
+                AppDeeplink.generateSharingLink(deeplink = AppDeeplink.VideoClip(id = clipModel.id))
             )
         }
     }

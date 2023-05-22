@@ -22,6 +22,7 @@ import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.ext.unapplyDecimal
 import io.snaps.corecommon.model.CoinType
+import io.snaps.corecommon.model.TxSign
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.core.IAccountManager
 import io.snaps.corecrypto.core.ISendEthereumAdapter
@@ -58,11 +59,11 @@ interface BlockchainTxRepository {
         data: ByteArray = byteArrayOf(),
     ): Effect<TxHash>
 
-    suspend fun repairNft(repairCost: Double): Effect<TxHash>
+    suspend fun getRepairNftSign(repairCost: Double): Effect<TxSign>
 
     suspend fun getNftMintSummary(nftType: NftType, amount: Double): Effect<NftMintSummary>
 
-    suspend fun mintNft(nftType: NftType, summary: NftMintSummary): Effect<TxHash>
+    suspend fun getMintNftSign(nftType: NftType, summary: NftMintSummary): Effect<TxSign>
 }
 
 class BlockchainTxRepositoryImpl @Inject constructor(
@@ -202,7 +203,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
         "Eip20Adapter is null for $wallet"
     }
 
-    override suspend fun repairNft(repairCost: Double): Effect<TxHash> {
+    override suspend fun getRepairNftSign(repairCost: Double): Effect<TxSign> {
         val nonceRaw = getNonceRaw()
 
         return apiCall(ioDispatcher) {
@@ -260,11 +261,11 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                     value = BigInteger.ZERO,
                     input = encodedAbi,
                 )
-                adapter.evmKitWrapper.sendSingle(
+                adapter.evmKitWrapper.signSingle(
                     transactionData = repairTD,
                     gasPrice = defaultGasPrice,
                     gasLimit = repairGasLimit,
-                ).blockingGet().transaction.hash.toHexString()
+                ).blockingGet().toHexString()
             }
         }
     }
@@ -334,22 +335,13 @@ class BlockchainTxRepositoryImpl @Inject constructor(
 
     private fun getNonceRaw() = System.currentTimeMillis()
 
-    override suspend fun mintNft(nftType: NftType, summary: NftMintSummary): Effect<TxHash> {
+    override suspend fun getMintNftSign(nftType: NftType, summary: NftMintSummary): Effect<TxSign> {
         return blockchainCall(ioDispatcher) {
-            val adapter = requireEip20Adapter(requireSnapsWallet())
-            val hash = adapter.evmKitWrapper.sendSingle(
+            requireEip20Adapter(requireSnapsWallet()).evmKitWrapper.signSingle(
                 transactionData = summary.transactionData as TransactionData,
                 gasPrice = defaultGasPrice,
                 gasLimit = summary.gasLimit,
-            ).blockingGet().transaction.hash
-            var receipt: RpcTransactionReceipt? = null
-            // todo possible inf loop
-            while (receipt == null) {
-                delay(1000L)
-                // todo catch only rpc errors
-                receipt = kotlin.runCatching { adapter.evmKit.getTransactionReceipt(hash).blockingGet() }.getOrNull()
-            }
-            hash.toHexString()
+            ).blockingGet().toHexString()
         }
     }
 

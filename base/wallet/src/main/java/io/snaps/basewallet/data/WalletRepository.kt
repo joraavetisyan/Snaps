@@ -113,6 +113,8 @@ interface WalletRepository {
 
     suspend fun claim(amount: Double): Effect<Completable>
 
+    suspend fun claimMax(): Effect<Completable>
+
     suspend fun confirmPayout(amount: Double, cardNumber: CardNumber): Effect<Completable>
 
     suspend fun refillGas(amount: Double): Effect<Completable>
@@ -353,7 +355,13 @@ class WalletRepositoryImpl @Inject constructor(
     override suspend fun claim(amount: Double): Effect<Completable> {
         return apiCall(ioDispatcher) {
             walletApi.claim(ClaimRequestDto(amount))
-        }
+        }.toCompletable()
+    }
+
+    override suspend fun claimMax(): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            walletApi.claimMax()
+        }.toCompletable()
     }
 
     override suspend fun confirmPayout(amount: Double, cardNumber: CardNumber): Effect<Completable> {

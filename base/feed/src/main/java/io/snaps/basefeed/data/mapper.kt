@@ -74,8 +74,7 @@ fun CommentResponseDto.toModel(
     createdDate = requireNotNull(ZonedDateTime.parse(createdDate)).toOffsetLocalDateTime(),
     videoId = videoId,
     text = text,
-    ownerImage = owner?.avatarUrl?.imageValue(),
-    ownerName = owner?.name.orEmpty(),
+    owner = owner?.toModel(),
 
     isOwnerVerified = null,
     ownerTitle = null,

@@ -5,6 +5,7 @@ package io.snaps.featuretasks.presentation.screen
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -17,10 +18,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -31,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,7 +70,7 @@ import io.snaps.featuretasks.presentation.ui.TaskProgress
 import io.snaps.featuretasks.presentation.viewmodel.TasksViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun TasksScreen(
     navHostController: NavHostController,
@@ -73,6 +80,8 @@ fun TasksScreen(
 
     val uiState by viewModel.uiState.collectAsState()
     val mainHeaderState by viewModel.headerUiState.collectAsState()
+    val pagerState = rememberPagerState()
+    val pullRefreshState = rememberPullRefreshState(uiState.isRefreshing, { viewModel.onRefreshPulled(pagerState.currentPage) })
 
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
@@ -131,17 +140,21 @@ fun TasksScreen(
         TasksScreen(
             uiState = uiState,
             headerState = mainHeaderState.value,
+            pagerState = pagerState,
+            pullRefreshState = pullRefreshState,
             onCurrentTasksFootnoteClick = viewModel::onCurrentTasksFootnoteClick,
             onHistoryTasksFootnoteClick = viewModel::onHistoryTasksFootnoteClick,
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 private fun TasksScreen(
     uiState: TasksViewModel.UiState,
     headerState: MainHeaderState,
+    pagerState: PagerState,
+    pullRefreshState: PullRefreshState,
     onCurrentTasksFootnoteClick: () -> Unit,
     onHistoryTasksFootnoteClick: () -> Unit,
 ) {
@@ -158,7 +171,6 @@ private fun TasksScreen(
 
             MainHeader(state = headerState)
 
-            val pagerState = rememberPagerState()
             val coroutineScope = rememberCoroutineScope()
 
             val current = StringKey.TasksTitleSlideCurrent.textValue()
@@ -174,63 +186,73 @@ private fun TasksScreen(
                     }
                 },
             )
-            HorizontalPager(
-                pageCount = 2,
-                state = pagerState,
-            ) { page ->
-                val contentPadding = PaddingValues(
-                    top = 12.dp,
-                    start = 12.dp,
-                    end = 12.dp,
-                    bottom = 100.dp,
-                )
-                when (page) {
-                    0 -> LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = contentPadding,
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        item {
-                            FootnoteUi(
-                                title = StringKey.TasksTitleFootnoteCurrent.textValue(),
-                                description = StringKey.TasksMessageFootnoteCurrent.textValue(),
-                                action = StringKey.ActionHowItWorks.textValue(),
-                                onClick = onCurrentTasksFootnoteClick,
-                                padding = 0.dp,
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            NftBlock(
-                                userNtfCollection = uiState.userNftCollection,
-                                remainingTime = uiState.remainingTime,
-                                energy = uiState.totalEnergy,
-                                energyProgress = uiState.totalEnergyProgress,
+            Box(
+                modifier = Modifier.pullRefresh(pullRefreshState),
+            ) {
+                HorizontalPager(
+                    pageCount = 2,
+                    state = pagerState,
+                ) { page ->
+                    val contentPadding = PaddingValues(
+                        top = 12.dp,
+                        start = 12.dp,
+                        end = 12.dp,
+                        bottom = 100.dp,
+                    )
+                    when (page) {
+                        0 -> LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = contentPadding,
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                        ) {
+                            item {
+                                FootnoteUi(
+                                    title = StringKey.TasksTitleFootnoteCurrent.textValue(),
+                                    description = StringKey.TasksMessageFootnoteCurrent.textValue(),
+                                    action = StringKey.ActionHowItWorks.textValue(),
+                                    onClick = onCurrentTasksFootnoteClick,
+                                    padding = 0.dp,
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                NftBlock(
+                                    userNtfCollection = uiState.userNftCollection,
+                                    remainingTime = uiState.remainingTime,
+                                    energy = uiState.totalEnergy,
+                                    energyProgress = uiState.totalEnergyProgress,
+                                )
+                            }
+                            items(uiState.current) {
+                                it.Content(modifier = Modifier)
+                            }
+                        }
+
+                        1 -> ScrollEndDetectLazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = contentPadding,
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            onScrollEndDetected = uiState.history.onListEndReaching,
+                        ) {
+                            item {
+                                FootnoteUi(
+                                    title = StringKey.TasksTitleFootnoteHistory.textValue(),
+                                    description = StringKey.TasksMessageFootnoteHistory.textValue(),
+                                    action = StringKey.ActionHowItWorks.textValue(),
+                                    onClick = onHistoryTasksFootnoteClick,
+                                    padding = 0.dp,
+                                )
+                            }
+                            historyTasksItems(
+                                uiState = uiState.history,
+                                modifier = Modifier,
                             )
                         }
-                        items(uiState.current) {
-                            it.Content(modifier = Modifier)
-                        }
-                    }
-                    1 -> ScrollEndDetectLazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = contentPadding,
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        onScrollEndDetected = uiState.history.onListEndReaching,
-                    ) {
-                        item {
-                            FootnoteUi(
-                                title = StringKey.TasksTitleFootnoteHistory.textValue(),
-                                description = StringKey.TasksMessageFootnoteHistory.textValue(),
-                                action = StringKey.ActionHowItWorks.textValue(),
-                                onClick = onHistoryTasksFootnoteClick,
-                                padding = 0.dp,
-                            )
-                        }
-                        historyTasksItems(
-                            uiState = uiState.history,
-                            modifier = Modifier,
-                        )
                     }
                 }
+                PullRefreshIndicator(
+                    refreshing = uiState.isRefreshing,
+                    state = pullRefreshState,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                )
             }
         }
     }

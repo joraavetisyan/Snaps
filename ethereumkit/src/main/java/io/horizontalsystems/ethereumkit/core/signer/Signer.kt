@@ -24,6 +24,11 @@ class Signer(
         return transactionSigner.signatureLegacy(rawTransaction)
     }
 
+    fun encode(rawTransaction: RawTransaction): ByteArray {
+        val signature = transactionSigner.signatureLegacy(rawTransaction)
+        return transactionBuilder.encode(rawTransaction, signature)
+    }
+
     fun signedTransaction(
         address: Address,
         value: BigInteger,

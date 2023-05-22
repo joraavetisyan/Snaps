@@ -13,6 +13,7 @@ sealed interface CommentUiState {
         override val id: Any,
         val item: CommentModel,
         val onClicked: () -> Unit = {},
+        val onAvatarClicked: () -> Unit = {},
     ) : CommentUiState
 
     data class Shimmer(override val id: Any) : CommentUiState
@@ -33,6 +34,7 @@ data class CommentsUiState(
 fun CommentPageModel.toCommentsUiState(
     shimmerListSize: Int,
     onCommentClicked: (CommentModel) -> Unit,
+    onAvatarClicked: (CommentModel) -> Unit,
     onReloadClicked: () -> Unit,
     onListEndReaching: () -> Unit,
 ): CommentsUiState {
@@ -49,11 +51,12 @@ fun CommentPageModel.toCommentsUiState(
             emptyState = EmptyListTileState.defaultState(),
         )
         else -> CommentsUiState(
-            items = loadedPageItems.map {
+            items = loadedPageItems.map { commentModel ->
                 CommentUiState.Data(
-                    id = it.id,
-                    item = it,
-                    onClicked = { onCommentClicked(it) },
+                    id = commentModel.id,
+                    item = commentModel,
+                    onClicked = { onCommentClicked(commentModel) },
+                    onAvatarClicked = { onAvatarClicked(commentModel) }
                 )
             }.run {
                 if (nextPageId == null) this

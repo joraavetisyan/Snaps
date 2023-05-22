@@ -39,7 +39,7 @@ interface ProfileRepository {
 
     val state: StateFlow<State<UserInfoModel>>
 
-    val currentQuestsState: StateFlow<State<QuestInfoModel>>
+    val currentTasksState: StateFlow<State<QuestInfoModel>>
 
     val referralsState: StateFlow<State<List<UserInfoModel>>>
 
@@ -96,7 +96,7 @@ class ProfileRepositoryImpl @Inject constructor(
     private val _referralsState = MutableStateFlow<State<List<UserInfoModel>>>(Loading())
     override val referralsState = _referralsState.asStateFlow()
 
-    override val currentQuestsState = state.map {
+    override val currentTasksState = state.map {
         when (it) {
             is Loading -> Loading()
             is Effect -> when {

@@ -5,6 +5,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MintNftResponseDto(
-    @SerialName("transactionId") val txHash: TxHash?,
+data class RepairGlassesResponseDto(
+    @SerialName("transactionId") val transactionId: TxHash?,
 )

@@ -2,6 +2,7 @@ package io.snaps.basewallet.data
 
 import io.snaps.basewallet.data.model.SnpsAccountResponseDto
 import io.snaps.basewallet.data.model.ClaimRequestDto
+import io.snaps.basewallet.data.model.ClaimResponseDto
 import io.snaps.basewallet.data.model.PayoutOrderRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
 import io.snaps.basewallet.data.model.RefillGasRequestDto
@@ -32,8 +33,12 @@ class FakeWalletApi : WalletApi {
         return BaseResponse(Completable)
     }
 
-    override suspend fun claim(body: ClaimRequestDto): BaseResponse<Completable> {
-        return BaseResponse(Completable)
+    override suspend fun claim(body: ClaimRequestDto): BaseResponse<ClaimResponseDto> {
+        return BaseResponse(ClaimResponseDto(0.1))
+    }
+
+    override suspend fun claimMax(): BaseResponse<ClaimResponseDto> {
+        return BaseResponse(ClaimResponseDto(0.1))
     }
 
     override suspend fun payoutStatus(): BaseResponse<List<PayoutOrderResponseDto>> {

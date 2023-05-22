@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -151,10 +152,13 @@ private fun UploadScreen(
                     drawBitmap(bitmap)
                 }
             }
+            val height by remember(selectedBitmap) {
+                mutableStateOf(selectedBitmap?.let { it.height * frameSize / it.width }?.dp ?: frameSize.dp)
+            }
             Box {
                 HorizontalPager(
                     modifier = Modifier
-                        .height(frameSize.dp)
+                        .height(height)
                         .width((visibleFrameCount * frameSize).dp),
                     state = pagerState,
                     pageCount = frameCount + visibleFrameCount - 1, // to leave one visible
@@ -178,7 +182,8 @@ private fun UploadScreen(
                 }
                 Box(
                     modifier = Modifier
-                        .size(frameSize.dp)
+                        .height(height)
+                        .width(frameSize.dp)
                         .border(2.dp, Color.Red)
                         .align(Alignment.CenterStart),
                 )

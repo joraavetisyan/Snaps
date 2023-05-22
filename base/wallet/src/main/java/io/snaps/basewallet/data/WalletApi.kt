@@ -2,6 +2,7 @@ package io.snaps.basewallet.data
 
 import io.snaps.basewallet.data.model.SnpsAccountResponseDto
 import io.snaps.basewallet.data.model.ClaimRequestDto
+import io.snaps.basewallet.data.model.ClaimResponseDto
 import io.snaps.basewallet.data.model.PayoutOrderRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
 import io.snaps.basewallet.data.model.RefillGasRequestDto
@@ -27,7 +28,10 @@ interface WalletApi {
     @POST("wallet/claim")
     suspend fun claim(
         @Body body: ClaimRequestDto,
-    ): BaseResponse<Completable>
+    ): BaseResponse<ClaimResponseDto>
+
+    @POST("wallet/max")
+    suspend fun claimMax(): BaseResponse<ClaimResponseDto>
 
     @POST("payout-order")
     suspend fun payoutOrder(

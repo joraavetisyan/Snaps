@@ -329,7 +329,7 @@ class WalletViewModel @Inject constructor(
         copyToClipboard(text = address, message = StringKey.WalletMessageAddressCopied.textValue())
     }
 
-    fun refresh() {
+    fun onRefreshPulled() {
         when (uiState.value.screen) {
             Screen.Wallet -> refreshWallet()
             Screen.Rewards -> refreshRewards()

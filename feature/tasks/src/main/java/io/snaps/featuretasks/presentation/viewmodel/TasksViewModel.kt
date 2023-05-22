@@ -70,10 +70,12 @@ class TasksViewModel @Inject constructor(
 
     init {
         subscribeOnMenuRouteState()
-        subscribeToCurrentQuests()
-        subscribeToHistoryQuests()
+        subscribeToCurrentTasks()
+        subscribeToHistoryTasks()
         subscribeToUserNftCollection()
-        loadUserNftCollection()
+
+        refreshNfts()
+
         checkOnboarding(OnboardingType.Tasks)
     }
 
@@ -82,7 +84,7 @@ class TasksViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     userNftCollection = state.toNftCollectionItemState(
-                        onReloadClicked = ::onUserNftReloadClicked,
+                        onReloadClicked = ::refreshNfts,
                         onItemClicked = ::onItemClicked,
                     )
                 )
@@ -90,19 +92,37 @@ class TasksViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    private fun refreshNfts() {
+        viewModelScope.launch {
+            action.execute { nftRepository.updateNftCollection() }.doOnComplete {
+                _uiState.update { it.copy(isRefreshing = false) }
+            }
+        }
+    }
+
     private fun subscribeOnMenuRouteState() {
         appRouteProvider.menuRouteState
             .filter { it == AppRoute.MainBottomBar.MainTab3Start.pattern }
-            .onEach { loadCurrentTasks() }
+            .onEach { refreshCurrentTasks() }
             .launchIn(viewModelScope)
     }
 
-    private fun subscribeToCurrentQuests() {
-        profileRepository.currentQuestsState.onEach { state ->
+    private fun refreshCurrentTasks() {
+        viewModelScope.launch {
+            action.execute {
+                profileRepository.updateData()
+            }.doOnComplete {
+                _uiState.update { it.copy(isRefreshing = false) }
+            }
+        }
+    }
+
+    private fun subscribeToCurrentTasks() {
+        profileRepository.currentTasksState.onEach { state ->
             _uiState.update {
                 it.copy(
                     current = state.toTaskTileState(
-                        onReloadClicked = ::onCurrentReloadClicked,
+                        onReloadClicked = ::refreshCurrentTasks,
                         onItemClicked = ::onCurrentTaskItemClicked,
                     ),
                     totalEnergy = state.dataOrCache?.totalEnergy ?: 0,
@@ -113,13 +133,13 @@ class TasksViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun subscribeToHistoryQuests() {
+    private fun subscribeToHistoryTasks() {
         tasksRepository.getHistoryTasksState().map { state ->
             _uiState.update {
                 it.copy(
                     history = state.toHistoryTasksUiState(
                         shimmerListSize = 6,
-                        onReloadClicked = ::onHistoryReloadClicked,
+                        onReloadClicked = ::refreshHistory,
                         onListEndReaching = ::onListEndReaching,
                         onItemClicked = ::onHistoryTaskItemClicked,
                     )
@@ -128,36 +148,16 @@ class TasksViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun onHistoryReloadClicked() = viewModelScope.launch {
-        action.execute {
-            tasksRepository.refreshHistoryTasks()
+    private fun refreshHistory() {
+        viewModelScope.launch {
+            action.execute { tasksRepository.refreshHistoryTasks() }.doOnComplete {
+                _uiState.update { it.copy(isRefreshing = false) }
+            }
         }
-    }
-
-    private fun loadCurrentTasks() = viewModelScope.launch {
-        action.execute {
-            profileRepository.updateData()
-        }
-    }
-
-    private fun loadUserNftCollection() = viewModelScope.launch {
-        action.execute {
-            nftRepository.updateNftCollection()
-        }
-    }
-
-    private fun onCurrentReloadClicked() {
-        loadCurrentTasks()
-    }
-
-    private fun onUserNftReloadClicked() {
-        loadUserNftCollection()
     }
 
     private fun onListEndReaching() = viewModelScope.launch {
-        action.execute {
-            tasksRepository.loadNextHistoryTaskPage()
-        }
+        action.execute { tasksRepository.loadNextHistoryTaskPage() }
     }
 
     private fun onCurrentTaskItemClicked(quest: QuestModel) = viewModelScope.launch {
@@ -201,8 +201,8 @@ class TasksViewModel @Inject constructor(
 
     private fun onRoundTimerFinished() = viewModelScope.launch {
         delay(10.seconds) // to restart the round
-        loadCurrentTasks()
-        loadUserNftCollection()
+        refreshCurrentTasks()
+        refreshNfts()
     }
 
     private fun onItemClicked(nftModel: NftModel) {
@@ -233,7 +233,19 @@ class TasksViewModel @Inject constructor(
         }
     }
 
+    fun onRefreshPulled(currentPage: Int) {
+        _uiState.update { it.copy(isRefreshing = true) }
+        when (currentPage) {
+            0 -> {
+                refreshCurrentTasks()
+                refreshNfts()
+            }
+            1 -> refreshHistory()
+        }
+    }
+
     data class UiState(
+        val isRefreshing: Boolean = false,
         val current: List<TaskTileState> = List(6) { TaskTileState.Shimmer },
         val history: HistoryTasksUiState = HistoryTasksUiState(),
         val remainingTime: RemainingTimeTileState = RemainingTimeTileState.Shimmer,

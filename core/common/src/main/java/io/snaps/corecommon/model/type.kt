@@ -18,7 +18,8 @@ typealias Uuid = String
 typealias CardNumber = String
 typealias MoneySymbol = String
 typealias CryptoAddress = String
-typealias TxHash = String // blockchain transaction hash
+typealias TxHash = String // blockchain transaction hash in hex format
+typealias TxSign = String // blockchain transaction signature in hex format
 typealias NftTypeInt = Int
 
 fun generateCurrentDateTime() = ZonedDateTime.now().toString()

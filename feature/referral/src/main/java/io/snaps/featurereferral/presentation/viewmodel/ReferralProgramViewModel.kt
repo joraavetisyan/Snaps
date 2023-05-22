@@ -19,6 +19,8 @@ import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.addPrefix
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
+import io.snaps.corenavigation.AppDeeplink
+import io.snaps.corenavigation.Deeplink
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.barcode.BarcodeManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -75,7 +77,7 @@ class ReferralProgramViewModel @Inject constructor(
                     val inviteCode = state.requireData.ownInviteCode!!
                     it.copy(
                         referralCode = inviteCode.addPrefix("#"),
-                        referralLink = inviteCode.addPrefix("https://snaps.io/"),
+                        referralLink = AppDeeplink.generateSharingLink(deeplink = AppDeeplink.Invite(code = inviteCode)),
                         referralQr = barcodeManager.getQrCodeBitmap(text = inviteCode, size = 600f),
                         firstLevelReferral = state.requireData.firstLevelReferralMultiplier.toPercentageFormat(),
                         secondLevelReferral = state.requireData.secondLevelReferralMultiplier.toPercentageFormat(),

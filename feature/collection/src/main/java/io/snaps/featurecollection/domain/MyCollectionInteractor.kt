@@ -16,6 +16,8 @@ import io.snaps.corecommon.model.TxHash
 import io.snaps.coredata.di.Bridged
 import javax.inject.Inject
 
+private const val minBnb = 0.0017
+
 interface MyCollectionInteractor {
 
     suspend fun repair(nftModel: NftModel): Effect<TxHash>
@@ -42,14 +44,11 @@ class MyCollectionInteractorImpl @Inject constructor(
             if (userInfoModel.paymentsState == PaymentsState.Blockchain) {
                 if ((walletRepository.snps.value?.coinValue?.value ?: 0.0) < nftModel.repairCost.value) {
                     Effect.error(AppError.Custom(cause = NoEnoughSnpToRepair))
-                } else blockchainTxRepository.repairNft(repairCost = nftModel.repairCost.value).flatMap { hash ->
-                    nftRepository.repairNft(nftModel = nftModel, transactionHash = hash).map { hash }
+                } else blockchainTxRepository.getRepairNftSign(repairCost = nftModel.repairCost.value).flatMap { sign ->
+                    nftRepository.repairNft(nftModel = nftModel, txSign = sign)
                 }
             } else {
-                nftRepository.repairNft(
-                    nftModel = nftModel,
-                    offChainAmount = nftModel.repairCost.value.toLong(),
-                ).map { "" }
+                nftRepository.repairNft(nftModel = nftModel)
             }
         }
     }
@@ -59,9 +58,27 @@ class MyCollectionInteractorImpl @Inject constructor(
             nftType == NftType.Free || (nftType.storeId != null && purchaseToken != null)
         )
         return if (nftType == NftType.Free) {
-            nftRepository.mintNft(NftType.Free)
+            nftRepository.mintNft(NftType.Free).toCompletable()
         } else {
-            nftRepository.mintNftStore(nftType.storeId!!, purchaseToken!!)
+            val bnb = walletRepository.bnb.value?.coinValue?.value
+            if (bnb == null) Effect.error(AppError.Custom(cause = NoEnoughBnbToMint))
+            else {
+                if (bnb < minBnb) {
+                    walletRepository.refillGas(minBnb - bnb)
+                } else {
+                    Effect.completable
+                }.flatMap {
+                    blockchainTxRepository.getNftMintSummary(nftType = nftType, amount = 0.0)
+                }.flatMap {
+                    blockchainTxRepository.getMintNftSign(nftType = nftType, summary = it)
+                }.flatMap {
+                    nftRepository.mintNftStore(
+                        productId = nftType.storeId!!,
+                        purchaseToken = purchaseToken!!,
+                        txSign = it,
+                    )
+                }
+            }
         }
     }
 
@@ -76,10 +93,8 @@ class MyCollectionInteractorImpl @Inject constructor(
     override suspend fun mintOnBlockchain(
         nftType: NftType,
         summary: NftMintSummary,
-    ): Effect<TxHash> = blockchainTxRepository.mintNft(nftType = nftType, summary = summary).flatMap { hash ->
-        nftRepository.mintNft(type = nftType, transactionHash = hash)
-            .flatMap { nftRepository.saveProcessingNft(nftType) }
-            .flatMap { nftRepository.updateNftCollection() }
-            .map { hash }
-    }
+    ): Effect<TxHash> = blockchainTxRepository.getMintNftSign(nftType = nftType, summary = summary)
+        .flatMap { sign -> nftRepository.mintNft(type = nftType, txSign = sign) }
+        .flatMap { hash -> nftRepository.saveProcessingNft(nftType).map { hash } }
+        .doOnSuccess { nftRepository.updateNftCollection() }
 }

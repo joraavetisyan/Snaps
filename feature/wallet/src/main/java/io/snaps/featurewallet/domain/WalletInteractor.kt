@@ -19,10 +19,10 @@ class WalletInteractorImpl @Inject constructor(
     override suspend fun claim(amount: Double): Effect<Completable> {
         return walletRepository.updateSnpsAccount().flatMap {
             requireNotNull(walletRepository.snpsAccountState.value.dataOrCache).let {
-                if (it.unlocked.value > 0) {
-                    walletRepository.claim(amount)
-                } else {
-                    Effect.error(AppError.Custom(cause = InsufficientBalanceError))
+                when {
+                    amount == it.unlocked.value -> walletRepository.claimMax()
+                    amount < it.unlocked.value -> walletRepository.claim(amount)
+                    else -> Effect.error(AppError.Custom(cause = InsufficientBalanceError))
                 }
             }
         }

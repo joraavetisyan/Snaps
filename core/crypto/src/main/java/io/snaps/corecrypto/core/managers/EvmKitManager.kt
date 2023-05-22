@@ -10,6 +10,7 @@ import io.horizontalsystems.ethereumkit.models.Chain
 import io.horizontalsystems.ethereumkit.models.FullTransaction
 import io.horizontalsystems.ethereumkit.models.GasPrice
 import io.horizontalsystems.ethereumkit.models.RpcSource
+import io.horizontalsystems.ethereumkit.models.Signature
 import io.horizontalsystems.ethereumkit.models.TransactionData
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.reactivex.Observable
@@ -196,4 +197,19 @@ class EvmKitWrapper(
         }
     }
 
+    fun signSingle(
+        transactionData: TransactionData,
+        gasPrice: GasPrice,
+        gasLimit: Long,
+        nonce: Long? = null
+    ): Single<ByteArray> {
+        return if (signer != null) {
+            evmKit.rawTransaction(transactionData, gasPrice, gasLimit, nonce)
+                .map { rawTransaction ->
+                    signer.encode(rawTransaction)
+                }
+        } else {
+            Single.error(Exception())
+        }
+    }
 }

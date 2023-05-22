@@ -51,6 +51,10 @@
                 <data
                     android:host="snapsapp.io"
                     android:scheme="https" />
+                <data android:pathPrefix="/app" />
+                <data android:pathPrefix="/video" />
+                <data android:pathPrefix="/blogger" />
+                <data android:pathPrefix="/invite" />
             </intent-filter>
         </activity>
 

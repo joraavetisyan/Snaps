@@ -63,6 +63,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -528,12 +529,15 @@ private fun CopyButton(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            MiddleEllipsisText(
+            // todo MiddleEllipsisText, but it clears on recompose
+            Text(
                 text = value,
                 style = AppTheme.specificTypography.bodyLarge,
                 modifier = Modifier
                     .weight(1f, fill = false)
                     .padding(horizontal = 8.dp),
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
             )
             Icon(
                 painter = AppTheme.specificIcons.copy.get(),

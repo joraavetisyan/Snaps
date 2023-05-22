@@ -29,9 +29,11 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.date.toStringValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
@@ -136,8 +138,9 @@ private fun Item(data: CommentUiState.Data, onReplyClicked: () -> Unit) {
     ) {
         Card(
             shape = CircleShape,
+            modifier = Modifier.defaultTileRipple(onClick = data.onAvatarClicked),
         ) {
-            item.ownerImage?.let {
+            item.owner?.avatarUrl?.imageValue()?.let {
                 Image(
                     painter = it.get(),
                     contentDescription = null,
@@ -154,7 +157,7 @@ private fun Item(data: CommentUiState.Data, onReplyClicked: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = item.ownerName,
+                    text = item.owner?.name.orEmpty(),
                     style = AppTheme.specificTypography.bodySmall,
                     color = AppTheme.specificColorScheme.textSecondary,
                 )

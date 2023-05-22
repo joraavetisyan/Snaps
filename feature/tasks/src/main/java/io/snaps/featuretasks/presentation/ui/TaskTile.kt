@@ -86,7 +86,7 @@ private fun Data(
                 drawWithCache {
                     onDrawWithContent {
                         drawContent()
-                        drawRect(color = Color.White.copy(alpha = 0.5f))
+//                        drawRect(color = Color.White.copy(alpha = 0.1f))
                     }
                 }
             },
@@ -139,7 +139,7 @@ private fun TaskStatusMessage(
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
             .background(
-                color = color.copy(alpha = 0.2f),
+                color = color.copy(alpha = 0.1f),
                 shape = AppTheme.shapes.medium,
             )
             .padding(horizontal = 12.dp, vertical = 8.dp),

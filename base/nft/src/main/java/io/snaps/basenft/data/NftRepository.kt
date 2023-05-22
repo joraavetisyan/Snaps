@@ -6,7 +6,6 @@ import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.basenft.ui.getSunglassesImage
-import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
@@ -16,11 +15,11 @@ import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Token
 import io.snaps.corecommon.model.TxHash
+import io.snaps.corecommon.model.TxSign
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.UserDataStorage
-import io.snaps.coredata.json.KotlinxSerializationJsonProvider
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreui.viewmodel.tryPublish
@@ -30,9 +29,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlin.math.max
@@ -49,15 +45,11 @@ interface NftRepository {
 
     suspend fun updateNftCollection(): Effect<List<NftModel>>
 
-    suspend fun mintNftStore(productId: Uuid, purchaseToken: Token): Effect<Completable>
+    suspend fun mintNftStore(productId: Uuid, purchaseToken: Token, txSign: TxSign): Effect<Completable>
 
-    suspend fun mintNft(type: NftType, transactionHash: TxHash? = null): Effect<Completable>
+    suspend fun mintNft(type: NftType, txSign: TxSign? = null): Effect<TxHash>
 
-    suspend fun repairNft(
-        nftModel: NftModel,
-        transactionHash: TxHash? = null,
-        offChainAmount: Long = 0L,
-    ): Effect<Completable>
+    suspend fun repairNft(nftModel: NftModel, txSign: TxSign? = null): Effect<TxHash>
 
     suspend fun saveProcessingNft(nftType: NftType): Effect<Completable>
 }
@@ -87,29 +79,6 @@ class NftRepositoryImpl @Inject constructor(
             }
         }
     }.likeStateFlow(scope, Loading())
-
-    init {
-        scope.launch {
-            repairPreviouslyFailedNfts()
-            mintPreviouslyFailedNfts()
-        }
-    }
-
-    private suspend fun repairPreviouslyFailedNfts() {
-        userDataStorage.getNonRepairedNfts().forEach {
-            val decoded = KotlinxSerializationJsonProvider().get().decodeFromString<RepairGlassesRequestDto>(it)
-            log("Repairing previously failed nft $decoded")
-            repairNft(decoded)
-        }
-    }
-
-    private suspend fun mintPreviouslyFailedNfts() {
-        userDataStorage.getNonMintedNfts().forEach {
-            val decoded = KotlinxSerializationJsonProvider().get().decodeFromString<MintNftRequestDto>(it)
-            log("Minting previously failed nft $decoded")
-            mintNft(decoded)
-        }
-    }
 
     override suspend fun updateRanks(): Effect<Completable> {
         return apiCall(ioDispatcher) {
@@ -171,37 +140,27 @@ class NftRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun mintNft(type: NftType, transactionHash: TxHash?): Effect<Completable> {
-        return mintNft(
-            body = MintNftRequestDto(
-                nftType = type,
-                transactionHash = transactionHash,
-            ),
-        )
-    }
-
-    private suspend fun mintNft(body: MintNftRequestDto): Effect<Completable> {
-        val encoded = KotlinxSerializationJsonProvider().get().encodeToString(body)
+    override suspend fun mintNft(type: NftType, txSign: TxHash?): Effect<TxHash> {
         return apiCall(ioDispatcher) {
-            nftApi.mintNft(body)
+            nftApi.mintNft(MintNftRequestDto(nftType = type, transactionHash = txSign))
         }.doOnSuccess {
-            userDataStorage.removeNonMintedNft(encoded)
             updateNftCollection()
             updateRanks()
-        }.doOnError { _, _ ->
-            userDataStorage.setNonMintedNft(encoded)
-        }.toCompletable()
+        }.map {
+            it.txHash.orEmpty()
+        }
     }
 
     /**
      * For purchases through Google Play
      */
-    override suspend fun mintNftStore(productId: Uuid, purchaseToken: Token): Effect<Completable> {
+    override suspend fun mintNftStore(productId: Uuid, purchaseToken: Token, txSign: TxSign): Effect<Completable> {
         return apiCall(ioDispatcher) {
             nftApi.mintNftStore(
                 body = MintNftStoreRequestDto(
                     productId = productId,
                     purchaseToken = purchaseToken,
+                    txSign = txSign,
                 ),
             )
         }.doOnSuccess {
@@ -210,29 +169,13 @@ class NftRepositoryImpl @Inject constructor(
         }.toCompletable()
     }
 
-    override suspend fun repairNft(
-        nftModel: NftModel,
-        transactionHash: TxHash?,
-        offChainAmount: Long,
-    ): Effect<Completable> {
-        return repairNft(
-            body = RepairGlassesRequestDto(
-                glassesId = nftModel.id,
-                offChainAmount = offChainAmount,
-                transactionHash = transactionHash,
-            ),
-        )
-    }
-
-    private suspend fun repairNft(body: RepairGlassesRequestDto): Effect<Completable> {
-        val encoded = KotlinxSerializationJsonProvider().get().encodeToString(body)
+    override suspend fun repairNft(nftModel: NftModel, txSign: TxSign?): Effect<TxHash> {
         return apiCall(ioDispatcher) {
-            nftApi.repairGlasses(body = body)
+            nftApi.repairGlasses(body = RepairGlassesRequestDto(glassesId = nftModel.id, txSign = txSign))
         }.doOnSuccess {
-            userDataStorage.removeNonRepairedNft(encoded)
             updateNftCollection()
-        }.doOnError { _, _ ->
-            userDataStorage.setNonRepairedNft(encoded)
+        }.map {
+            it.transactionId.orEmpty()
         }
     }
 

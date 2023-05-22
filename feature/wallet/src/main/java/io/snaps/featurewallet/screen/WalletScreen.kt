@@ -127,7 +127,7 @@ fun WalletScreen(
 
     val uiState by viewModel.uiState.collectAsState()
     val transferTokensState by viewModel.transferTokensState.collectAsState()
-    val pullRefreshState = rememberPullRefreshState(uiState.isRefreshing, { viewModel.refresh() })
+    val pullRefreshState = rememberPullRefreshState(uiState.isRefreshing, { viewModel.onRefreshPulled() })
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,

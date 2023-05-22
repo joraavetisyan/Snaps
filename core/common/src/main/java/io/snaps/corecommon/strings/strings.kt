@@ -73,9 +73,9 @@ internal val strings = mapOf(
     ),
     key(StringKey.ActionHowItWorks) to mapOf(
         SupportedLanguageKey.En to "How it works?",
-        SupportedLanguageKey.Ru to " Как это работает?",
+        SupportedLanguageKey.Ru to "Как это работает?",
         SupportedLanguageKey.Tr to "Nasıl çalışır?",
-        SupportedLanguageKey.Ua to " Як це працює?",
+        SupportedLanguageKey.Ua to "Як це працює?",
         SupportedLanguageKey.Es to "Cómo funciona?",
     ),
     key(StringKey.ActionOk) to mapOf(
@@ -227,16 +227,11 @@ internal val strings = mapOf(
         SupportedLanguageKey.Es to "Tareas",
     ),
     key(StringKey.OnboardingTasksMessage) to mapOf(
-        SupportedLanguageKey.En to "In order to receive rewards in Snaps, you need to successfully complete these tasks.\n" +
-            "But before you start, learn more about each task!",
-        SupportedLanguageKey.Ru to "Для того, чтобы получать награды в Snaps Вам необходимо успешно завершать эти задания.\n" +
-            "Но перед началом, узнайте подробнее о каждом задании!",
-        SupportedLanguageKey.Tr to "Enstantanelerde ödül almak için bu görevleri başarıyla tamamlamanız gerekir.\n" +
-            "Ancak başlamadan önce her görev hakkında daha fazla bilgi edinin!",
-        SupportedLanguageKey.Ua to "Щоб отримати нагороди в Snaps, вам потрібно успішно виконати ці завдання.\n" +
-            "Але перш ніж почати, дізнайтеся більше про кожне завдання!",
-        SupportedLanguageKey.Es to " Para recibir recompensas en Snaps, debes completar con éxito estas tareas.\n" +
-            "Pero antes de comenzar, ¡aprenda más sobre cada tarea!",
+        SupportedLanguageKey.En to "In order to receive rewards in Snaps, you need to successfully complete these tasks.\nBut before you start, learn more about each task!",
+        SupportedLanguageKey.Ru to "Для того, чтобы получать награды в Snaps Вам необходимо успешно завершать эти задания.\nНо перед началом, узнайте подробнее о каждом задании!",
+        SupportedLanguageKey.Tr to "Enstantanelerde ödül almak için bu görevleri başarıyla tamamlamanız gerekir.\nAncak başlamadan önce her görev hakkında daha fazla bilgi edinin!",
+        SupportedLanguageKey.Ua to "Щоб отримати нагороди в Snaps, вам потрібно успішно виконати ці завдання.\nАле перш ніж почати, дізнайтеся більше про кожне завдання!",
+        SupportedLanguageKey.Es to " Para recibir recompensas en Snaps, debes completar con éxito estas tareas.\nPero antes de comenzar, ¡aprenda más sobre cada tarea!",
     ),
     key(StringKey.OnboardingTasksAction) to mapOf(
         SupportedLanguageKey.En to "Learn about tasks",
@@ -1884,11 +1879,11 @@ internal val strings = mapOf(
         SupportedLanguageKey.Es to "Claim",
     ),
     key(StringKey.RewardsErrorInsufficientBalance) to mapOf(
-        SupportedLanguageKey.En to "Token balance is zero",
-        SupportedLanguageKey.Ru to "Баланс токенов равен нулю",
-        SupportedLanguageKey.Tr to "Jeton bakiyesi sıfırdır",
-        SupportedLanguageKey.Ua to "Баланс токенів дорівнює нулю",
-        SupportedLanguageKey.Es to "El saldo de tokens es cero",
+        SupportedLanguageKey.En to "Token balance is not enough",
+        SupportedLanguageKey.Ru to "Баланса токенов недостаточно",
+        SupportedLanguageKey.Tr to "Jeton bakiyesi yeterli değil",
+        SupportedLanguageKey.Ua to "Токен балансу недостатньо",
+        SupportedLanguageKey.Es to "El saldo de tokens no es suficiente",
     ),
     key(StringKey.RewardsErrorRepairGlasses) to mapOf(
         SupportedLanguageKey.En to "To claim the tokens please fix all the glasses",

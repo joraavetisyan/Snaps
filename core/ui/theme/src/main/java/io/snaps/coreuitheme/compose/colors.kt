@@ -13,7 +13,7 @@ internal val LightSpecificColorScheme = SpecificColorScheme(
     uiContentBg = Color(0xFFFAFAFA),
 
     uiSystemRed = Color(0xFFE95252),
-    uiSystemGreen = Color(0xFFBFFBC5),
+    uiSystemGreen = Color(0xFF28D039),
     uiSystemYellow = Color(0xFFEEBE14),
     uiSystemOrange = Color(0xFFED9356),
     uiSystemBlue = Color(0xFF71A5D3),

@@ -57,7 +57,7 @@ class MyCollectionViewModel @Inject constructor(
     init {
         subscribeOnNft()
 
-        updateNft()
+        refreshNfts()
 
         checkOnboarding(OnboardingType.Nft)
     }
@@ -66,7 +66,7 @@ class MyCollectionViewModel @Inject constructor(
         nftRepository.nftCollectionState.map {
             it.toNftCollectionItemState(
                 onAddItemClicked = ::onAddItemClicked,
-                onReloadClicked = ::onNftReloadClicked,
+                onReloadClicked = ::refreshNfts,
                 onRepairClicked = ::onRepairClicked,
                 onItemClicked = ::onItemClicked,
                 onProcessingClicked = ::onProcessingClicked,
@@ -77,14 +77,12 @@ class MyCollectionViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun updateNft() = viewModelScope.launch {
+    private fun refreshNfts() = viewModelScope.launch {
         action.execute {
             nftRepository.updateNftCollection()
+        }.doOnComplete {
+            _uiState.update { it.copy(isRefreshing = false) }
         }
-    }
-
-    private fun onNftReloadClicked() {
-        updateNft()
     }
 
     private fun onAddItemClicked() = viewModelScope.launch {
@@ -127,7 +125,13 @@ class MyCollectionViewModel @Inject constructor(
         }
     }
 
+    fun onRefreshPulled() {
+        _uiState.update { it.copy(isRefreshing = true) }
+        refreshNfts()
+    }
+
     data class UiState(
+        val isRefreshing: Boolean = false,
         val isLoading: Boolean = false,
         val nft: List<CollectionItemState> = List(6) { CollectionItemState.Shimmer },
     )

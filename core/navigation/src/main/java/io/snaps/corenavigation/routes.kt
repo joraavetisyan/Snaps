@@ -231,16 +231,16 @@ object AppDeeplink {
 
     private val BaseUri = "https://snapsapp.io".toUri()
 
-    private fun pathProfile() = "$BaseUri/blogger?id="
-    private fun pathVideoClip() = "$BaseUri/video?id="
-    private fun pathInvite() = "$BaseUri/invite"
+    private val pathProfile = "$BaseUri/blogger?id="
+    private val pathVideoClip = "$BaseUri/video?id="
+    private val pathInvite = "$BaseUri/invite?code="
 
     fun parse(deeplink: String?): Deeplink? {
         val result = when {
             deeplink == null -> null
-            deeplink.startsWith(pathProfile()) -> deeplink.removePrefix(pathProfile()).let(::Profile)
-            deeplink.startsWith(pathVideoClip()) -> deeplink.removePrefix(pathVideoClip()).let(::VideoClip)
-            deeplink.startsWith(pathInvite()) -> Invite
+            deeplink.startsWith(pathProfile) -> deeplink.removePrefix(pathProfile).let(::Profile)
+            deeplink.startsWith(pathVideoClip) -> deeplink.removePrefix(pathVideoClip).let(::VideoClip)
+            deeplink.startsWith(pathInvite) -> deeplink.removePrefix(pathInvite).let(::Invite)
             else -> null
         }
         log("Deep link parsed: $deeplink into $result")
@@ -248,7 +248,7 @@ object AppDeeplink {
     }
 
     fun generateSharingLink(deeplink: Deeplink): String {
-        // When firebase dynamic links support is added, use this instead of the custom intent handle
+        // When firebase dynamic links support is added, use this
         /*val dynamicLink = Firebase.dynamicLinks.dynamicLink {
             link = Uri.parse(deeplink.path())
             domainUriPrefix = BaseUri.toString()
@@ -259,18 +259,18 @@ object AppDeeplink {
         return deeplink.path()
     }
 
-    data class Profile(val id: Uuid) : Deeplink(pathProfile()) {
+    data class Profile(val id: Uuid) : Deeplink(pathProfile) {
 
         override fun path() = "$value%s".format(id)
     }
 
-    data class VideoClip(val id: Uuid) : Deeplink(pathVideoClip()) {
+    data class VideoClip(val id: Uuid) : Deeplink(pathVideoClip) {
 
         override fun path() = "$value%s".format(id)
     }
 
-    object Invite : Deeplink(pathInvite()) {
+    data class  Invite(val code: String) : Deeplink(pathInvite) {
 
-        override fun path() = value
+        override fun path() = "$value%s".format(code)
     }
 }

@@ -6,6 +6,7 @@ import io.snaps.basenft.data.model.MintNftResponseDto
 import io.snaps.basenft.data.model.MintNftStoreRequestDto
 import io.snaps.basenft.data.model.NftItemResponseDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
+import io.snaps.basenft.data.model.RepairGlassesResponseDto
 import io.snaps.basenft.data.model.UserNftItemResponseDto
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.mock.mockDelay
@@ -13,7 +14,6 @@ import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.mock.rDouble
 import io.snaps.corecommon.mock.rImage
 import io.snaps.corecommon.mock.rInt
-import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.NftType
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
@@ -45,7 +45,7 @@ class FakeNftApi : NftApi {
         delay(mockDelay)
         return BaseResponse(
             data = MintNftResponseDto(
-                tokenId = rInt,
+                txHash = "",
             ),
         )
     }
@@ -55,16 +55,16 @@ class FakeNftApi : NftApi {
         delay(mockDelay)
         return BaseResponse(
             data = MintNftResponseDto(
-                tokenId = rInt,
+                txHash = "",
             ),
         )
     }
 
-    override suspend fun repairGlasses(body: RepairGlassesRequestDto): BaseResponse<Completable> {
+    override suspend fun repairGlasses(body: RepairGlassesRequestDto): BaseResponse<RepairGlassesResponseDto> {
         log("Requesting repair Glasses")
         delay(mockDelay)
         return BaseResponse(
-            data = Completable,
+            data = RepairGlassesResponseDto(""),
         )
     }
 
