@@ -44,7 +44,6 @@ fun State<List<NftModel>>.toNftCollectionItemState(
     onAddItemClicked: () -> Unit,
     onReloadClicked: () -> Unit,
     onRepairClicked: (NftModel) -> Unit,
-    onProcessingClicked: (NftModel) -> Unit,
     onHelpIconClicked: () -> Unit,
 ) = when (this) {
     is Loading -> List(6) { CollectionItemState.Shimmer }
@@ -55,7 +54,6 @@ fun State<List<NftModel>>.toNftCollectionItemState(
                     it.toNftCollectionItemState(
                         onRepairClicked = onRepairClicked,
                         onItemClicked = onItemClicked,
-                        onProcessingClicked = onProcessingClicked,
                         onHelpIconClicked = onHelpIconClicked,
                     )
                 )
@@ -69,7 +67,6 @@ fun State<List<NftModel>>.toNftCollectionItemState(
 private fun NftModel.toNftCollectionItemState(
     onItemClicked: (NftModel) -> Unit,
     onRepairClicked: (NftModel) -> Unit,
-    onProcessingClicked: (NftModel) -> Unit,
     onHelpIconClicked: () -> Unit,
 ) = CollectionItemState.Nft(
     type = type,
@@ -78,8 +75,6 @@ private fun NftModel.toNftCollectionItemState(
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthy = isHealthy,
-    isProcessing = isProcessed,
-    isLevelInfoVisible = !isProcessed,
     level = level,
     upperThreshold = upperThreshold,
     lowerThreshold = lowerThreshold,
@@ -87,6 +82,5 @@ private fun NftModel.toNftCollectionItemState(
     bonus = bonus,
     onRepairClicked = { onRepairClicked(this) },
     onItemClicked = { onItemClicked(this) },
-    onProcessingClicked = { onProcessingClicked(this) },
     onHelpIconClicked = onHelpIconClicked,
 )

@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.imageValue
+import io.snaps.corecommon.container.textValue
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.other.Progress
 
@@ -37,6 +38,6 @@ fun TaskProgress(
             modifier = Modifier.weight(1f),
             progress = (progress / maxValue.toFloat()).takeUnless { it.isNaN() } ?: 0f,
         )
-        ValueWidget(null to "$progress/$maxValue")
+        ValueWidget(null to "$progress/$maxValue".textValue())
     }
 }

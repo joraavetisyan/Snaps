@@ -14,6 +14,7 @@ import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.mock.rDouble
 import io.snaps.corecommon.mock.rImage
 import io.snaps.corecommon.mock.rInt
+import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.NftType
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
@@ -22,7 +23,7 @@ class FakeNftApi : NftApi {
 
     private var generation = 0
 
-    override suspend fun userNftCollection(): BaseResponse<List<UserNftItemResponseDto>> {
+    override suspend fun getUserNftCollection(): BaseResponse<List<UserNftItemResponseDto>> {
         log("Requesting nft")
         delay(mockDelay)
         return BaseResponse(
@@ -32,7 +33,7 @@ class FakeNftApi : NftApi {
         }
     }
 
-    override suspend fun nft(): BaseResponse<List<NftItemResponseDto>> {
+    override suspend fun getNfts(): BaseResponse<List<NftItemResponseDto>> {
         log("Requesting ranks")
         delay(mockDelay)
         return BaseResponse(
@@ -60,12 +61,18 @@ class FakeNftApi : NftApi {
         )
     }
 
-    override suspend fun repairGlasses(body: RepairGlassesRequestDto): BaseResponse<RepairGlassesResponseDto> {
+    override suspend fun repairGlasses(body: RepairGlassesRequestDto): BaseResponse<Completable> {
         log("Requesting repair Glasses")
         delay(mockDelay)
         return BaseResponse(
-            data = RepairGlassesResponseDto(""),
+            data = Completable,
         )
+    }
+
+    override suspend fun repairGlassesBlockchain(body: RepairGlassesRequestDto): RepairGlassesResponseDto {
+        log("Requesting repair Glasses on blockchain")
+        delay(mockDelay)
+        return RepairGlassesResponseDto("")
     }
 
     private fun getRanks() = buildList {

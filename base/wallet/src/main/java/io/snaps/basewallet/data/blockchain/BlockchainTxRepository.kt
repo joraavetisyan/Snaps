@@ -240,11 +240,21 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                     spenderAddress = address,
                     amount = repairCost.applyDecimal(wallet.decimal),
                 )
-                adapter.evmKitWrapper.sendSingle(
+                val approveHash = adapter.evmKitWrapper.sendSingle(
                     transactionData = approveTD,
                     gasPrice = defaultGasPrice,
                     gasLimit = approveGasLimit,
-                ).blockingGet()
+                ).blockingGet().transaction.hash
+
+                var receipt: RpcTransactionReceipt? = null
+                // todo possible inf loop
+                while (receipt == null) {
+                    delay(1000L)
+                    // todo catch only rpc errors
+                    receipt = kotlin.runCatching {
+                        adapter.evmKit.getTransactionReceipt(approveHash).blockingGet()
+                    }.getOrNull()
+                }
 
                 val repairGasLimitTD = TransactionData(
                     to = address,

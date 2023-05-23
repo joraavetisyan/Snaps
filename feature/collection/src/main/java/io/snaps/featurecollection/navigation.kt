@@ -2,6 +2,7 @@ package io.snaps.featurecollection
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import io.snaps.basewallet.ui.TransferTokensSuccessData
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corenavigation.AppRoute
@@ -10,6 +11,7 @@ import io.snaps.corenavigation.base.FeatureNavDirection
 import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
+import io.snaps.corenavigation.base.popBackStackWithResult
 import io.snaps.featurecollection.presentation.screen.MyCollectionScreen
 import io.snaps.featurecollection.presentation.screen.PurchaseScreen
 import io.snaps.featurecollection.presentation.screen.RankSelectionScreen
@@ -47,6 +49,11 @@ internal class ScreenNavigator(navHostController: NavHostController) :
     fun backToMyCollectionScreen() = navHostController.popBackStack(
         route = AppRoute.RankSelection.path(),
         inclusive = true
+    )
+
+    fun backToMyCollectionScreenWithResult(data: TransferTokensSuccessData) = navHostController.popBackStackWithResult(
+        result = data,
+        route = AppRoute.MainBottomBar.MainTab4Start.path(),
     )
 
     fun toWebView(

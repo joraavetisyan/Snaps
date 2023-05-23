@@ -7,13 +7,16 @@ import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.basesession.data.OnboardingHandler
+import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesources.NotificationsSource
+import io.snaps.basewallet.data.WalletRepository
 import io.snaps.featurecollection.domain.NoEnoughSnpToRepair
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensSuccessData
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -39,14 +42,17 @@ class MyCollectionViewModel @Inject constructor(
     @Bridged mainHeaderHandler: MainHeaderHandler,
     onboardingHandler: OnboardingHandler,
     transferTokensDialogHandler: TransferTokensDialogHandler,
+    bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
     @Bridged private val nftRepository: NftRepository,
+    @Bridged private val walletRepository: WalletRepository,
     private val interactor: MyCollectionInteractor,
 ) : SimpleViewModel(),
     MainHeaderHandler by mainHeaderHandler,
     OnboardingHandler by onboardingHandler,
-    TransferTokensDialogHandler by transferTokensDialogHandler {
+    TransferTokensDialogHandler by transferTokensDialogHandler,
+    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandler {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -69,7 +75,6 @@ class MyCollectionViewModel @Inject constructor(
                 onReloadClicked = ::refreshNfts,
                 onRepairClicked = ::onRepairClicked,
                 onItemClicked = ::onItemClicked,
-                onProcessingClicked = ::onProcessingClicked,
                 onHelpIconClicked = ::onHelpIconClicked,
             )
         }.onEach { state ->
@@ -96,6 +101,8 @@ class MyCollectionViewModel @Inject constructor(
         }.doOnSuccess {
             if (it.isNotEmpty()) {
                 onSuccessfulTransfer(scope = viewModelScope, data = TransferTokensSuccessData(txHash = it))
+            } else {
+                notificationsSource.sendMessage(StringKey.MessageSuccess.textValue())
             }
         }.doOnError { error, _ ->
             if (error.cause is NoEnoughSnpToRepair) {
@@ -106,12 +113,7 @@ class MyCollectionViewModel @Inject constructor(
         }
     }
 
-    private fun onProcessingClicked(nftModel: NftModel) {
-        // do nothing
-    }
-
     private fun onItemClicked(nftModel: NftModel) {
-        if (nftModel.isProcessed) return
         viewModelScope.launch {
             _command publish Command.OpenNftDetailsScreen(
                 args = AppRoute.UserNftDetails.Args(nftId = nftModel.id)
@@ -128,6 +130,22 @@ class MyCollectionViewModel @Inject constructor(
     fun onRefreshPulled() {
         _uiState.update { it.copy(isRefreshing = true) }
         refreshNfts()
+    }
+
+    fun onTransactionResultReceived(result: TransferTokensSuccessData?) {
+        when (result?.type) {
+            TransferTokensSuccessData.Type.Purchase -> {
+                updateTotalBalance()
+                onSuccessfulPurchase(scope = viewModelScope, data = result)
+            }
+            TransferTokensSuccessData.Type.Sell,
+            TransferTokensSuccessData.Type.Send,
+            null -> Unit
+        }
+    }
+
+    private fun updateTotalBalance() {
+        viewModelScope.launch { action.execute { walletRepository.updateTotalBalance() } }
     }
 
     data class UiState(

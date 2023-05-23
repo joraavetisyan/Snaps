@@ -80,8 +80,8 @@ private fun Data(
         EnergyWidget(state.energy)
         Spacer(Modifier.width(4.dp))
         ValueWidget(
-            R.drawable.ic_bnb_token.imageValue() to state.bnb,
-            R.drawable.ic_snp_token.imageValue() to state.snp,
+            R.drawable.ic_bnb_token.imageValue() to state.bnb.textValue(),
+            R.drawable.ic_snp_token.imageValue() to state.snp.textValue(),
             modifier = Modifier.defaultTileRipple(onClick = state.onWalletClicked),
         )
     }
@@ -113,10 +113,10 @@ private fun Error(
             imageValue = R.drawable.img_avatar.imageValue(),
         )
         Spacer(Modifier.weight(1f))
-        ValueWidget(null to StringKey.Error.textValue().get().text)
+        ValueWidget(null to StringKey.Error.textValue())
         Spacer(Modifier.width(4.dp))
         ValueWidget(
-            null to StringKey.Error.textValue().get().text,
+            null to StringKey.Error.textValue(),
             modifier = Modifier.defaultTileRipple(onClick = state.onWalletClicked),
         )
     }

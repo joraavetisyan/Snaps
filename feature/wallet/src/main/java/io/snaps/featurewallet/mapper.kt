@@ -14,6 +14,7 @@ import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
 import io.snaps.basewallet.domain.WalletModel
+import io.snaps.corecommon.model.CoinType
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
@@ -27,7 +28,7 @@ import java.time.format.DateTimeFormatter
 
 fun List<WalletModel>.toCellTileStateList(
     onClick: ((WalletModel) -> Unit)? = null,
-): List<CellTileState> = map { it.toCellTileState(onClick = onClick) }
+): List<CellTileState> = sortedBy { it.coinType.ordinal }.map { it.toCellTileState(onClick = onClick) }
 
 fun WalletModel.toCellTileState(
     onClick: ((WalletModel) -> Unit)?,

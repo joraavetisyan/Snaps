@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -42,7 +41,6 @@ import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.approximated
 import io.snaps.coreuicompose.tools.TileState
-import io.snaps.coreuicompose.tools.addIf
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
@@ -62,15 +60,12 @@ sealed class CollectionItemState : TileState {
         val dailyUnlock: String,
         val dailyConsumption: String,
         val isHealthy: Boolean,
-        val isProcessing: Boolean,
-        val isLevelInfoVisible: Boolean,
         val level: Int,
         val experience: Int,
         val bonus: Int,
         val upperThreshold: Int,
         val lowerThreshold: Int,
         val onRepairClicked: () -> Unit,
-        val onProcessingClicked: () -> Unit,
         val onItemClicked: () -> Unit,
         val onHelpIconClicked: () -> Unit,
     ) : CollectionItemState()
@@ -114,21 +109,7 @@ private fun Nft(
 ) {
     Column(modifier) {
         Container(
-            Modifier
-                .defaultTileRipple(
-                    onClick = data.onItemClicked,
-                    padding = 0.dp,
-                )
-                .addIf(data.isProcessing) {
-                    drawWithCache {
-                        onDrawWithContent {
-                            drawContent()
-                            drawRect(
-                                color = Color.White.copy(alpha = 0.5f),
-                            )
-                        }
-                    }
-                },
+            modifier = Modifier.defaultTileRipple(onClick = data.onItemClicked, padding = 0.dp),
         ) {
             Box(
                 modifier = Modifier
@@ -170,28 +151,19 @@ private fun Nft(
                 value = data.dailyConsumption,
             )
         }
-        if (data.isLevelInfoVisible) {
-            LevelInfoBlock(
-                experience = data.experience,
-                upperThreshold = data.upperThreshold,
-                level = data.level,
-                lowerThreshold = data.lowerThreshold,
-                bonus = data.bonus,
-                onHelpIconClicked = data.onHelpIconClicked,
-            )
-        }
+        LevelInfoBlock(
+            experience = data.experience,
+            upperThreshold = data.upperThreshold,
+            level = data.level,
+            lowerThreshold = data.lowerThreshold,
+            bonus = data.bonus,
+            onHelpIconClicked = data.onHelpIconClicked,
+        )
         if (!data.isHealthy) {
             Button(
                 text = StringKey.MyCollectionActionRepairGlasses.textValue(),
                 textColor = AppTheme.specificColorScheme.pink,
                 onClick = data.onRepairClicked,
-            )
-        }
-        if (data.isProcessing) {
-            Button(
-                text = StringKey.MyCollectionActionProcessing.textValue(),
-                textColor = AppTheme.specificColorScheme.uiAccent,
-                onClick = data.onProcessingClicked,
             )
         }
     }

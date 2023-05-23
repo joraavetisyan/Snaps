@@ -45,10 +45,10 @@ class MyCollectionInteractorImpl @Inject constructor(
                 if ((walletRepository.snps.value?.coinValue?.value ?: 0.0) < nftModel.repairCost.value) {
                     Effect.error(AppError.Custom(cause = NoEnoughSnpToRepair))
                 } else blockchainTxRepository.getRepairNftSign(repairCost = nftModel.repairCost.value).flatMap { sign ->
-                    nftRepository.repairNft(nftModel = nftModel, txSign = sign)
+                    nftRepository.repairNftBlockchain(nftModel = nftModel, txSign = sign)
                 }
             } else {
-                nftRepository.repairNft(nftModel = nftModel)
+                nftRepository.repairNft(nftModel = nftModel).map { "" }
             }
         }
     }
@@ -90,11 +90,9 @@ class MyCollectionInteractorImpl @Inject constructor(
         return blockchainTxRepository.getNftMintSummary(nftType = nftType, amount = amount)
     }
 
-    override suspend fun mintOnBlockchain(
-        nftType: NftType,
-        summary: NftMintSummary,
-    ): Effect<TxHash> = blockchainTxRepository.getMintNftSign(nftType = nftType, summary = summary)
-        .flatMap { sign -> nftRepository.mintNft(type = nftType, txSign = sign) }
-        .flatMap { hash -> nftRepository.saveProcessingNft(nftType).map { hash } }
-        .doOnSuccess { nftRepository.updateNftCollection() }
+    override suspend fun mintOnBlockchain(nftType: NftType, summary: NftMintSummary): Effect<TxHash> {
+        return blockchainTxRepository.getMintNftSign(nftType = nftType, summary = summary).flatMap {
+            nftRepository.mintNft(type = nftType, txSign = it)
+        }
+    }
 }

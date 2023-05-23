@@ -252,6 +252,7 @@ fun WalletScreen(
                     },
                 )
                 TransferTokensDialogHandler.BottomDialog.TokensTransfer,
+                is TransferTokensDialogHandler.BottomDialog.NftRepairSuccess,
                 null -> Unit
             }
         },

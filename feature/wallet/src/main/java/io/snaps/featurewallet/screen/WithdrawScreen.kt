@@ -120,6 +120,7 @@ fun WithdrawScreen(
                 )
                 is TransferTokensDialogHandler.BottomDialog.TokensSellSuccess,
                 is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess,
+                is TransferTokensDialogHandler.BottomDialog.NftRepairSuccess,
                 null -> Unit
             }
             when (val dialog = limitedGasState.bottomDialog) {

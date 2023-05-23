@@ -18,33 +18,32 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
+import io.snaps.corecommon.container.textValue
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.MainHeaderElementShape
+import io.snaps.coreuitheme.compose.colors
 
 @Composable
 fun EnergyWidget(value: String, isFull: Boolean = false) {
     ValueWidget(
-        R.drawable.img_energy.imageValue() to value,
-        backgroundColor = if (isFull) {
-            AppTheme.specificColorScheme.uiSystemGreen.copy(alpha = 0.1f)
-        } else {
-            AppTheme.specificColorScheme.uiContentBg
-        },
+        R.drawable.img_energy.imageValue() to value.textValue(),
+        backgroundColor = colors { if (isFull) uiSystemGreen.copy(alpha = 0.1f) else uiContentBg },
     )
 }
 
 @Composable
 fun ValueWidget(
-    vararg items: Pair<ImageValue?, String>,
+    vararg items: Pair<ImageValue?, TextValue>,
     modifier: Modifier = Modifier,
     backgroundColor: Color = AppTheme.specificColorScheme.uiContentBg,
 ) {
     @Composable
     fun Element(
         image: ImageValue?,
-        value: String,
+        value: TextValue,
         modifier: Modifier = Modifier,
     ) {
         Row(
@@ -60,7 +59,7 @@ fun ValueWidget(
                 contentScale = ContentScale.Crop,
             )
             Text(
-                text = value,
+                text = value.get(),
                 style = AppTheme.specificTypography.bodySmall,
             )
         }

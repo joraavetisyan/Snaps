@@ -1,6 +1,7 @@
 package io.snaps.coreuicompose.uikit.listtile
 
 import android.content.res.Configuration
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,13 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,7 +29,7 @@ import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.PreviewAppTheme
 
 data class MessageBannerState(
-    val icon: ImageValue? = null,
+    val image: ImageValue? = null,
     val title: TextValue? = null,
     val description: TextValue? = null,
     val button: TextValue? = null,
@@ -48,7 +47,7 @@ data class MessageBannerState(
         fun defaultState(onClick: () -> Unit) = MessageBannerState(
             description = StringKey.ErrorLoadFail.textValue(),
             button = StringKey.ActionReload.textValue(),
-            icon = AppTheme.specificIcons.reload.toImageValue(),
+            image = AppTheme.specificIcons.reload.toImageValue(),
             onClick = onClick,
         )
     }
@@ -81,50 +80,45 @@ fun MessageBannerTile(
             modifier = Modifier.padding(top = 24.dp, bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val iconPainter = data.icon?.get()
+            val image = data.image
 
-            iconPainter?.let {
+            image?.let {
                 Spacer(modifier = Modifier.height(8.dp))
-                Icon(it)
+                Image(
+                    painter = it.get(),
+                    contentDescription = "Message banner image",
+                    modifier = Modifier.size(52.dp),
+                )
                 Spacer(modifier = Modifier.height(8.dp))
             }
             if (data.title != null) {
-                if (iconPainter != null) {
+                if (image != null) {
                     Spacer(modifier = Modifier.height(8.dp))
                 }
                 Title(data.title)
-                if (iconPainter != null && data.description == null && data.button == null) {
+                if (image != null && data.description == null && data.button == null) {
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
             if (data.description != null) {
                 when {
                     data.title != null -> Spacer(modifier = Modifier.height(4.dp))
-                    iconPainter != null -> Spacer(modifier = Modifier.height(8.dp))
+                    image != null -> Spacer(modifier = Modifier.height(8.dp))
                 }
                 Description(data.description)
                 when {
-                    iconPainter != null && data.button == null -> Spacer(modifier = Modifier.height(8.dp))
+                    image != null && data.button == null -> Spacer(modifier = Modifier.height(8.dp))
                 }
             }
             if (data.button != null) {
                 when {
                     data.title != null || data.description != null -> Spacer(modifier = Modifier.height(16.dp))
-                    iconPainter != null -> Spacer(modifier = Modifier.height(8.dp))
+                    image != null -> Spacer(modifier = Modifier.height(8.dp))
                 }
                 Button(data.button, data.onClick ?: {})
             }
         }
     }
-}
-
-@Composable
-private fun Icon(icon: Painter) {
-    Icon(
-        painter = icon,
-        contentDescription = "Message banner icon",
-        modifier = Modifier.size(52.dp),
-    )
 }
 
 @Composable
@@ -166,7 +160,7 @@ private fun Button(button: TextValue, onClick: () -> Unit) {
 private fun Preview() {
     PreviewAppTheme {
         MessageBannerState(
-            icon = AppTheme.specificIcons.error.toImageValue(),
+            image = AppTheme.specificIcons.error.toImageValue(),
             title = "Message title text".textValue(),
             description = "Message description text".textValue(),
             button = "Button".textValue(),

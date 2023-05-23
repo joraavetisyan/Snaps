@@ -5,11 +5,8 @@ import io.snaps.basenft.data.model.MintNftStoreRequestDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
-import io.snaps.basenft.ui.getSunglassesImage
-import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
-import io.snaps.corecommon.model.FiatUSD
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.State
@@ -20,6 +17,7 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.UserDataStorage
+import io.snaps.coredata.network.BaseResponse
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreui.viewmodel.tryPublish
@@ -29,9 +27,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
-import java.time.LocalDateTime
 import javax.inject.Inject
-import kotlin.math.max
 
 interface NftRepository {
 
@@ -47,11 +43,14 @@ interface NftRepository {
 
     suspend fun mintNftStore(productId: Uuid, purchaseToken: Token, txSign: TxSign): Effect<Completable>
 
+    /**
+     * [txSign]=null for [NftType.Free]
+     */
     suspend fun mintNft(type: NftType, txSign: TxSign? = null): Effect<TxHash>
 
-    suspend fun repairNft(nftModel: NftModel, txSign: TxSign? = null): Effect<TxHash>
+    suspend fun repairNftBlockchain(nftModel: NftModel, txSign: TxSign): Effect<TxHash>
 
-    suspend fun saveProcessingNft(nftType: NftType): Effect<Completable>
+    suspend fun repairNft(nftModel: NftModel): Effect<Completable>
 }
 
 class NftRepositoryImpl @Inject constructor(
@@ -82,7 +81,7 @@ class NftRepositoryImpl @Inject constructor(
 
     override suspend fun updateRanks(): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            nftApi.nft()
+            nftApi.getNfts()
         }.map {
             it.toRankModelList()
         }.also {
@@ -92,49 +91,9 @@ class NftRepositoryImpl @Inject constructor(
 
     override suspend fun updateNftCollection(): Effect<List<NftModel>> {
         return apiCall(ioDispatcher) {
-            nftApi.userNftCollection()
-        }.map { dtoList ->
-            dtoList.toNftModelList()
-                .groupBy(NftModel::type)
-                .let { map ->
-                    val nonAdded = NftType.values().filter {
-                        !map.keys.contains(it)
-                    }
-                    map.toMutableMap().apply {
-                        putAll(nonAdded.associateWith { emptyList() })
-                    }
-                }
-                .mapValues { (type, list) ->
-                    val processingCount = userDataStorage.getProcessingNftCount(type)
-                    val overCount = (userDataStorage.getProcessingNftCount(type) - list.size).coerceAtLeast(0)
-                    userDataStorage.setProcessingNftCount(type, max(processingCount, list.size))
-                    list + List(overCount) { i ->
-                        list.firstOrNull()?.let {
-                            it.copy(id = it.id + "processing$i", isProcessed = true)
-                        } ?: NftModel(
-                            id = "${type.name}processing$i",
-                            tokenId = "",
-                            userId = "",
-                            type = type,
-                            image = type.getSunglassesImage(),
-                            dailyReward = CoinSNPS(0.0),
-                            dailyUnlock = 0.0,
-                            dailyConsumption = 0.0,
-                            isPurchasable = false,
-                            fiatCost = FiatUSD(0.0),
-                            mintDate = LocalDateTime.now(),
-                            isHealthy = true,
-                            repairCost = CoinSNPS(0.0),
-                            isProcessed = true,
-                            level = 0,
-                            experience = 0,
-                            lowerThreshold = 0,
-                            upperThreshold = 0,
-                            bonus = 0,
-                        )
-                    }
-                }
-                .flatMap(Map.Entry<NftType, List<NftModel>>::value)
+            nftApi.getUserNftCollection()
+        }.map {
+            it.toNftModelList()
         }.also {
             _nftCollectionState tryPublish it
         }
@@ -142,7 +101,7 @@ class NftRepositoryImpl @Inject constructor(
 
     override suspend fun mintNft(type: NftType, txSign: TxHash?): Effect<TxHash> {
         return apiCall(ioDispatcher) {
-            nftApi.mintNft(MintNftRequestDto(nftType = type, transactionHash = txSign))
+            nftApi.mintNft(MintNftRequestDto(nftType = type, txSign = txSign))
         }.doOnSuccess {
             updateNftCollection()
             updateRanks()
@@ -169,21 +128,23 @@ class NftRepositoryImpl @Inject constructor(
         }.toCompletable()
     }
 
-    override suspend fun repairNft(nftModel: NftModel, txSign: TxSign?): Effect<TxHash> {
+    override suspend fun repairNftBlockchain(nftModel: NftModel, txSign: TxSign): Effect<TxHash> {
         return apiCall(ioDispatcher) {
-            nftApi.repairGlasses(body = RepairGlassesRequestDto(glassesId = nftModel.id, txSign = txSign))
+            // todo tmp, remove BaseResponse once api conforms
+            BaseResponse(
+                data = nftApi.repairGlassesBlockchain(body = RepairGlassesRequestDto(glassesId = nftModel.id, txSign = txSign)),
+                isSuccess = true,
+            )
         }.doOnSuccess {
             updateNftCollection()
         }.map {
-            it.transactionId.orEmpty()
+            it.txHash.orEmpty()
         }
     }
 
-    override suspend fun saveProcessingNft(nftType: NftType): Effect<Completable> {
-        userDataStorage.setProcessingNftCount(
-            type = nftType,
-            totalCount = userDataStorage.getProcessingNftCount(nftType) + 1,
-        )
-        return Effect.completable
+    override suspend fun repairNft(nftModel: NftModel): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            nftApi.repairGlasses(RepairGlassesRequestDto(glassesId = nftModel.id))
+        }
     }
 }

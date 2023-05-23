@@ -61,13 +61,11 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
-import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonDefaultM
@@ -111,7 +109,11 @@ fun PurchaseScreen(
 
     viewModel.command.collectAsCommand {
         when (it) {
-            PurchaseViewModel.Command.BackToMyCollectionScreen -> router.backToMyCollectionScreen()
+            is PurchaseViewModel.Command.BackToMyCollectionScreen -> if (it.data != null) {
+                router.backToMyCollectionScreenWithResult(it.data)
+            } else {
+                router.backToMyCollectionScreen()
+            }
         }
     }
     viewModel.transferTokensCommand.collectAsCommand {
@@ -130,21 +132,13 @@ fun PurchaseScreen(
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-            when (val dialog = transferTokensState.bottomDialog) {
+            when (transferTokensState.bottomDialog) {
                 TransferTokensDialogHandler.BottomDialog.TokensTransfer -> TransferTokensUi(
                     data = transferTokensState.state,
                 )
-                is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess -> SimpleBottomDialog(
-                    image = R.drawable.img_guy_hands_up.imageValue(),
-                    title = StringKey.PurchaseDialogWithBnbSuccessTitle.textValue(),
-                    text = StringKey.PurchaseDialogWithBnbSuccessMessage.textValue(),
-                    buttonText = StringKey.PurchaseDialogWithBnbSuccessAction.textValue(),
-                    onClick = {
-                        coroutineScope.launch { sheetState.hide() }
-                        context.openUrl(dialog.bscScanLink)
-                    },
-                )
+                is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess,
                 is TransferTokensDialogHandler.BottomDialog.TokensSellSuccess,
+                is TransferTokensDialogHandler.BottomDialog.NftRepairSuccess,
                 null -> Unit
             }
             when (val dialog = limitedGasState.bottomDialog) {
@@ -365,7 +359,7 @@ private fun NftInfoBlock(
                     style = AppTheme.specificTypography.bodyMedium,
                     color = AppTheme.specificColorScheme.textSecondary,
                 )
-                ValueWidget(R.drawable.img_coin_silver.imageValue() to cost)
+                ValueWidget(R.drawable.img_coin_silver.imageValue() to cost.textValue())
             }
         }
     }

@@ -28,7 +28,6 @@ data class NftModel(
     val bonus: Int,
     val isPurchasable: Boolean,
     val isHealthy: Boolean,
-    val isProcessed: Boolean,
 ) {
 
     val displayName: TextValue get() = type.name.textValue()

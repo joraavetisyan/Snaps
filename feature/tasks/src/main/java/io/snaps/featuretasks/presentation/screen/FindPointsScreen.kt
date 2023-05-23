@@ -157,7 +157,7 @@ private fun FindPointsScreen(
                             )
                         }
                     }
-                    ValueWidget(null to "LVL 1")
+                    ValueWidget(null to "LVL 1".textValue())
                 }
             }
 

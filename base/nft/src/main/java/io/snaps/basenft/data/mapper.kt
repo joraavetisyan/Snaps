@@ -38,7 +38,6 @@ private fun UserNftItemResponseDto.toModel() = NftModel(
     dailyConsumption = data.dailyMaintenanceCostMultiplier ?: 0.0,
     isPurchasable = data.isAvailableToPurchase,
     repairCost = CoinSNPS(data.repairCost),
-    isProcessed = false,
     level = levelInfo.level,
     lowerThreshold = levelInfo.lowerThreshold,
     upperThreshold = levelInfo.upperThreshold,

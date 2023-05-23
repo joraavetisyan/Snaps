@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RepairGlassesResponseDto(
-    @SerialName("transactionId") val transactionId: TxHash?,
+    @SerialName("transactionId") val txHash: TxHash?,
 )

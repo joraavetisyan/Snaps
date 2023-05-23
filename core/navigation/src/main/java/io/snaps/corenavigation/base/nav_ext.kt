@@ -84,21 +84,31 @@ fun NavOptionsBuilder.tryPopBackStack(route: String) {
     popUpTo(route) { inclusive = true }
 }
 
-inline fun <reified T> NavController.popBackStackWithResult(result: T) {
+inline fun <reified T> NavController.popBackStackWithResult(
+    result: T,
+) {
     previousBackStackEntry?.savedStateHandle?.set(RESULT_KEY, Json.encodeToString(result))
     popBackStack()
 }
 
-inline infix fun <reified ARG> NavController.navigate(direction: FeatureNavDirection<ARG>) = navigate(
-    route = direction.route.path(direction.arg.toDefaultFormat()),
-    builder = direction.optionsBuilder,
-)
+inline fun <reified T> NavController.popBackStackWithResult(
+    result: T,
+    route: String,
+) {
+    getBackStackEntry(route).savedStateHandle[RESULT_KEY] = Json.encodeToString(result)
+    popBackStack(route = route, inclusive = false, saveState = true)
+}
 
 inline fun <reified T> NavController.resultFlow(): Flow<T>? {
     return currentBackStackEntry?.savedStateHandle?.getLiveData<String>(RESULT_KEY)?.asFlow()?.onEach {
         currentBackStackEntry?.savedStateHandle?.remove<T>(RESULT_KEY)
     }?.map { Json.decodeFromString(it) }
 }
+
+inline infix fun <reified ARG> NavController.navigate(direction: FeatureNavDirection<ARG>) = navigate(
+    route = direction.route.path(direction.arg.toDefaultFormat()),
+    builder = direction.optionsBuilder,
+)
 
 @OptIn(DelicateCoroutinesApi::class)
 fun <T> LiveData<T>.asFlow(): Flow<T> = callbackFlow {

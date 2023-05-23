@@ -39,14 +39,17 @@ import androidx.navigation.NavHostController
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
+import io.snaps.basewallet.ui.TransferTokensSuccessData
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corenavigation.base.openUrl
+import io.snaps.corenavigation.base.resultFlow
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
@@ -68,12 +71,19 @@ fun MyCollectionScreen(
     val transferTokensState by viewModel.transferTokensState.collectAsState()
     val pullRefreshState = rememberPullRefreshState(uiState.isRefreshing, viewModel::onRefreshPulled)
 
+    navHostController.resultFlow<TransferTokensSuccessData?>()?.collectAsCommand(action = viewModel::onTransactionResultReceived)
+
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true,
     )
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    ModalBottomSheetTargetStateListener(
+        sheetState = sheetState,
+        onStateToChange = viewModel::onBottomDialogStateChange,
+    )
 
     viewModel.headerCommand.collectAsCommand {
         when (it) {
@@ -106,6 +116,17 @@ fun MyCollectionScreen(
                     image = R.drawable.img_guy_hands_up.imageValue(),
                     title = StringKey.MyCollectionDialogRepairSuccessTitle.textValue(),
                     buttonText = StringKey.MyCollectionDialogRepairSuccessAction.textValue(),
+                    onClick = {
+                        coroutineScope.launch { sheetState.hide() }
+                        context.openUrl(dialog.bscScanLink)
+                    },
+                )
+                is TransferTokensDialogHandler.BottomDialog.NftRepairSuccess -> SimpleBottomDialog(
+                    image = R.drawable.img_guy_hands_up.imageValue(),
+                    // todo localize rename string keys to MyCollectionDialog_
+                    title = StringKey.PurchaseDialogWithBnbSuccessTitle.textValue(),
+                    text = StringKey.PurchaseDialogWithBnbSuccessMessage.textValue(),
+                    buttonText = StringKey.PurchaseDialogWithBnbSuccessAction.textValue(),
                     onClick = {
                         coroutineScope.launch { sheetState.hide() }
                         context.openUrl(dialog.bscScanLink)

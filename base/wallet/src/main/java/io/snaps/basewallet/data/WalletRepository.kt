@@ -283,7 +283,10 @@ class WalletRepositoryImpl @Inject constructor(
             }
         )
         // todo construct tokens yourself
-        val tokenQueries = CoinType.values().filter { it != CoinType.SNPS }.map {
+        val tokenQueries = CoinType.values().filterNot {
+            it == CoinType.SNPS // constructed previously
+                || it == CoinType.BNB // added as TokenType.Native
+        }.map {
             TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Eip20(it.address))
         } + listOf(
             TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Native)

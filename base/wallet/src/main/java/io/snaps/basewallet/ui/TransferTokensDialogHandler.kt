@@ -29,10 +29,11 @@ data class TransferTokensSuccessData(
 
     @Serializable
     enum class Type {
-        Send, Sell
+        Send, Sell, Purchase
     }
 }
 
+// todo different handlers for different [TransferTokensSuccessData.Type], handle in place if possible
 interface TransferTokensDialogHandler {
 
     val transferTokensState: StateFlow<UiState>
@@ -46,6 +47,11 @@ interface TransferTokensDialogHandler {
     fun hideTransferTokensBottomDialog(scope: CoroutineScope)
 
     fun onSuccessfulTransfer(
+        scope: CoroutineScope,
+        data: TransferTokensSuccessData,
+    )
+
+    fun onSuccessfulPurchase(
         scope: CoroutineScope,
         data: TransferTokensSuccessData,
     )
@@ -65,6 +71,9 @@ interface TransferTokensDialogHandler {
     sealed class BottomDialog {
         object TokensTransfer : BottomDialog()
         data class TokensSellSuccess(
+            val bscScanLink: FullUrl,
+        ) : BottomDialog()
+        data class NftRepairSuccess(
             val bscScanLink: FullUrl,
         ) : BottomDialog()
         data class TokensTransferSuccess(
@@ -123,6 +132,19 @@ class TransferTokensDialogHandlerImplDelegate @Inject constructor() : TransferTo
 
     // todo release mainnet scan
     private fun TxHash.scanLink() = "https://testnet.bscscan.com/tx/$this"
+
+    override fun onSuccessfulPurchase(scope: CoroutineScope, data: TransferTokensSuccessData) {
+        _uiState.update {
+            it.copy(
+                bottomDialog = TransferTokensDialogHandler.BottomDialog.NftRepairSuccess(
+                    bscScanLink = data.txHash.scanLink(),
+                ),
+            )
+        }
+        scope.launch {
+            _command publish TransferTokensDialogHandler.Command.ShowBottomDialog
+        }
+    }
 
     override fun onSuccessfulSell(scope: CoroutineScope, data: TransferTokensSuccessData) {
         _uiState.update {

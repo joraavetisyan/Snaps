@@ -407,6 +407,7 @@ class WalletViewModel @Inject constructor(
                 updatePayouts(isSilently = false)
                 onSuccessfulSell(scope = viewModelScope, data = result)
             }
+            TransferTokensSuccessData.Type.Purchase,
             null -> Unit
         }
     }

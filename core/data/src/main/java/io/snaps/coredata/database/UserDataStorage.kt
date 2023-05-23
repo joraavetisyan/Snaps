@@ -27,32 +27,19 @@ class UserDataStorage @Inject constructor(
 
     var isStartOnBoardingFinished: Boolean
         get() = provider.prefs.getBoolean("isStartOnBoardingFinished", false)
-        set(value) = provider.prefs.edit {
-            putBoolean("isStartOnBoardingFinished", value)
-        }
+        set(value) = provider.prefs.edit { putBoolean("isStartOnBoardingFinished", value) }
 
     fun isOnboardingShown(type: OnboardingType): Boolean {
         return provider.prefs.getBoolean("onboarding${type.name}", false)
     }
 
     fun setIsOnboardingShown(type: OnboardingType, value: Boolean) {
-        provider.prefs.edit {
-            putBoolean("onboarding${type.name}", value)
-        }
+        provider.prefs.edit { putBoolean("onboarding${type.name}", value) }
     }
 
     var lastCheckedAvailableVersionCode: Int
         get() = provider.prefs.getInt("lastCheckedAvailableVersionCode", 0)
-        set(value) = provider.prefs.edit {
-            putInt("lastCheckedAvailableVersionCode", value)
-        }
-
-    fun getProcessingNftCount(type: NftType): Int = provider.prefs.getInt("ProcessingNft${type.name}", 0)
-
-    // Saves processed + processing nfts count
-    fun setProcessingNftCount(type: NftType, totalCount: Int) = provider.prefs.edit {
-        putInt("ProcessingNft${type.name}", totalCount)
-    }
+        set(value) = provider.prefs.edit { putInt("lastCheckedAvailableVersionCode", value) }
 
     fun reset(reason: LogOutReason? = null) {
         // todo do not clear onboarding related stuff

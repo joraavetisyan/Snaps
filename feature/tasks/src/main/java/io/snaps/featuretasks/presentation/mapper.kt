@@ -116,8 +116,6 @@ private fun NftModel.toNftCollectionItemState(
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthy = true,
-    isProcessing = false,
-    isLevelInfoVisible = false,
     level = level,
     experience = experience,
     bonus = bonus,
@@ -125,6 +123,5 @@ private fun NftModel.toNftCollectionItemState(
     lowerThreshold = lowerThreshold,
     onRepairClicked = {},
     onItemClicked = { onItemClicked(this) },
-    onProcessingClicked = {},
     onHelpIconClicked = {},
 )

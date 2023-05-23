@@ -25,6 +25,7 @@ import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.imageValue
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FiatValue
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
@@ -112,7 +113,7 @@ private fun Data(
                     style = AppTheme.specificTypography.labelMedium,
                 )
                 if (data.cost != null) {
-                    ValueWidget(R.drawable.img_coin_silver.imageValue() to data.cost.getFormatted())
+                    ValueWidget(R.drawable.img_coin_silver.imageValue() to data.cost.getFormatted().textValue())
                 }
             }
             Spacer(Modifier.height(4.dp))
