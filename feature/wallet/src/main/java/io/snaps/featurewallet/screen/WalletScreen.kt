@@ -577,21 +577,12 @@ private fun Balance(
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = uiState.totalBalance.coin.getFormatted(),
+                text = uiState.totalBalance.fiat.getFormatted(),
                 style = AppTheme.specificTypography.titleLarge,
                 color = AppTheme.specificColorScheme.textPrimary,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp),
-                textAlign = TextAlign.Center,
-            )
-            Text(
-                text = uiState.totalBalance.fiat.getFormatted(),
-                style = AppTheme.specificTypography.bodySmall,
-                color = AppTheme.specificColorScheme.textSecondary,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp),
                 textAlign = TextAlign.Center,
             )
             SimpleButtonGreyM(

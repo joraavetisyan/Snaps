@@ -53,8 +53,6 @@ class SnapsApp : Application(), ApplicationCoroutineScopeHolder, ImageLoaderFact
     override fun onCreate() {
         super.onCreate()
 
-        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!buildInfo.isDebug)
-
         AnalyticsTrackerHolder.init(tracker)
 
         CryptoInitializer.initKit(this)
