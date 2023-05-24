@@ -80,6 +80,7 @@ private fun NftModel.toNftCollectionItemState(
     lowerThreshold = lowerThreshold,
     experience = experience,
     bonus = bonus,
+    isLevelVisible = true,
     onRepairClicked = { onRepairClicked(this) },
     onItemClicked = { onItemClicked(this) },
     onHelpIconClicked = onHelpIconClicked,

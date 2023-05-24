@@ -324,6 +324,18 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "ОК",
         SupportedLanguageKey.Es to "ОК",
     ),
+    key(StringKey.AppUpdateTitle) to mapOf(
+        SupportedLanguageKey.En to "Update available",
+        SupportedLanguageKey.Ru to "Доступно обновление",
+    ),
+    key(StringKey.AppUpdateMessage) to mapOf(
+        SupportedLanguageKey.En to "A new driver version is available. Please update the app to the latest version",
+        SupportedLanguageKey.Ru to "Доступна новая версия драйвера. Пожалуйста обновите приложение до последней версии",
+    ),
+    key(StringKey.AppUpdateAction) to mapOf(
+        SupportedLanguageKey.En to "Update",
+        SupportedLanguageKey.Ru to "Обновить",
+    ),
     key(StringKey.BottomBarTitleFeed) to mapOf(
         SupportedLanguageKey.En to "Feed",
         SupportedLanguageKey.Ru to "Лента",

@@ -42,6 +42,7 @@ import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.approximated
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.defaultTileRipple
+import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
@@ -65,6 +66,7 @@ sealed class CollectionItemState : TileState {
         val bonus: Int,
         val upperThreshold: Int,
         val lowerThreshold: Int,
+        val isLevelVisible: Boolean,
         val onRepairClicked: () -> Unit,
         val onItemClicked: () -> Unit,
         val onHelpIconClicked: () -> Unit,
@@ -108,9 +110,7 @@ private fun Nft(
     data: CollectionItemState.Nft,
 ) {
     Column(modifier) {
-        Container(
-            modifier = Modifier.defaultTileRipple(onClick = data.onItemClicked, padding = 0.dp),
-        ) {
+        Container(clickListener = data.onItemClicked) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -151,14 +151,16 @@ private fun Nft(
                 value = data.dailyConsumption,
             )
         }
-        LevelInfoBlock(
-            experience = data.experience,
-            upperThreshold = data.upperThreshold,
-            level = data.level,
-            lowerThreshold = data.lowerThreshold,
-            bonus = data.bonus,
-            onHelpIconClicked = data.onHelpIconClicked,
-        )
+        if (data.isLevelVisible) {
+            LevelInfoBlock(
+                experience = data.experience,
+                upperThreshold = data.upperThreshold,
+                level = data.level,
+                lowerThreshold = data.lowerThreshold,
+                bonus = data.bonus,
+                onHelpIconClicked = data.onHelpIconClicked,
+            )
+        }
         if (!data.isHealthy) {
             Button(
                 text = StringKey.MyCollectionActionRepairGlasses.textValue(),
@@ -407,6 +409,7 @@ private fun Line(name: String, value: String) {
 @Composable
 private fun Container(
     modifier: Modifier = Modifier,
+    clickListener: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
@@ -417,6 +420,7 @@ private fun Container(
                 color = AppTheme.specificColorScheme.white,
                 shape = AppTheme.shapes.medium,
             )
+            .doOnClick(enable = clickListener != null, onClick = clickListener)
             .padding(12.dp),
         content = content,
     )
