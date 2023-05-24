@@ -269,7 +269,7 @@ object AppDeeplink {
         override fun path() = "$value%s".format(id)
     }
 
-    data class  Invite(val code: String) : Deeplink(pathInvite) {
+    data class Invite(val code: String) : Deeplink(pathInvite) {
 
         override fun path() = "$value%s".format(code)
     }

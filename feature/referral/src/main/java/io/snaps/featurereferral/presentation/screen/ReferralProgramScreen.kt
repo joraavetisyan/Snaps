@@ -101,7 +101,6 @@ import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.other.TitleSlider
 import io.snaps.coreuicompose.uikit.status.FootnoteUi
 import io.snaps.coreuicompose.uikit.status.InfoBlock
-import io.snaps.coreuicompose.uikit.text.MiddleEllipsisText
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurereferral.ScreenNavigator

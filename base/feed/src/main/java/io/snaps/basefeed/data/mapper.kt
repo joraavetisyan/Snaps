@@ -8,7 +8,6 @@ import io.snaps.basefeed.domain.CommentModel
 import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.baseprofile.data.toModel
-import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse

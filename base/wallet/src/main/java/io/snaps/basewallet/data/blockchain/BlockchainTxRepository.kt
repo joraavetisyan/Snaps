@@ -181,7 +181,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
             }
         }
     }
-    
+
     private fun requireEthereumAdapter(coinUid: String) = requireNotNull(ethereumAdapter(coinUid)) {
         "ISendEthereumAdapter is null for $coinUid"
     }

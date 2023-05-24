@@ -1,7 +1,6 @@
 package io.snaps.basefeed.domain
 
 import io.snaps.baseprofile.domain.UserInfoModel
-import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.model.Uuid
 import java.time.LocalDateTime
 

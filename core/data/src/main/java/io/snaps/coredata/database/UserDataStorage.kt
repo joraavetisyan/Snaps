@@ -2,7 +2,6 @@ package io.snaps.coredata.database
 
 import androidx.core.content.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.OnboardingType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

@@ -20,7 +20,6 @@ import io.snaps.corecommon.strings.addPrefix
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppDeeplink
-import io.snaps.corenavigation.Deeplink
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.barcode.BarcodeManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
