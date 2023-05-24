@@ -22,6 +22,8 @@ import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.corecommon.R
+import io.snaps.corecommon.container.imageValue
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
@@ -47,7 +49,7 @@ data class MessageBannerState(
         fun defaultState(onClick: () -> Unit) = MessageBannerState(
             description = StringKey.ErrorLoadFail.textValue(),
             button = StringKey.ActionReload.textValue(),
-            image = AppTheme.specificIcons.reload.toImageValue(),
+            image = R.drawable.img_guy_sad.imageValue(),
             onClick = onClick,
         )
     }

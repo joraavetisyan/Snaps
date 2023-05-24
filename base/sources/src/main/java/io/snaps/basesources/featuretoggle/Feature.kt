@@ -20,4 +20,5 @@ enum class Feature(
     // Remote
     PurchaseNftWithBnb("nft_bnb_enabled", false, true),
     SellSnaps("snaps_cell_enabled", false, true),
+    Captcha("captcha_enabled", false, true),
 }

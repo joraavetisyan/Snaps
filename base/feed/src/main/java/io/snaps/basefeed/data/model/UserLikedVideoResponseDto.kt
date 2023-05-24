@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UserLikedVideoResponseDto(
     /*@SerialName("entityId") val entityId: Uuid,*/
-    @SerialName("video") val video: UserLikedVideoItem,
+    @SerialName("videoDocument") val video: UserLikedVideoItem,
 )
 
 @Serializable
@@ -21,7 +21,7 @@ data class UserLikedVideoItem(
     @SerialName("commentsCount") val commentsCount: Int,
     @SerialName("likesCount") val likesCount: Int,
     @SerialName("url") val url: FullUrl,
-    @SerialName("urlWithResolution") val urlWithResolution: FullUrl?,
+    @SerialName("urlWithQuality") val urlWithResolution: FullUrl?,
     @SerialName("thumbnailUrl") val thumbnailUrl: FullUrl?,
     @SerialName("title") val title: String,
     @SerialName("description") val description: String?,

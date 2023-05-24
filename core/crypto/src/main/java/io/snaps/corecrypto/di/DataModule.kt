@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.core.IAccountFactory
 import io.snaps.corecrypto.core.IAccountManager
+import io.snaps.corecrypto.core.IAdapterManager
 import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.IWordsManager
 import io.snaps.corecrypto.core.managers.PassphraseValidator
@@ -37,6 +38,9 @@ class DataModule {
 
     @Provides
     fun accountManager(): IAccountManager = CryptoKit.accountManager
+
+    @Provides
+    fun adapterManager(): IAdapterManager = CryptoKit.adapterManager
 
     @Provides
     fun walletActivator(): WalletActivator = CryptoKit.walletActivator

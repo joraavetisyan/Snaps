@@ -1,5 +1,6 @@
 package io.snaps.basewallet.data.blockchain
 
+import io.horizontalsystems.ethereumkit.api.jsonrpc.JsonRpc
 import io.horizontalsystems.ethereumkit.api.jsonrpc.models.RpcTransactionReceipt
 import io.horizontalsystems.ethereumkit.core.LegacyGasPriceProvider
 import io.horizontalsystems.ethereumkit.core.hexStringToByteArray
@@ -23,8 +24,8 @@ import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.ext.unapplyDecimal
 import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.model.TxSign
-import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.core.IAccountManager
+import io.snaps.corecrypto.core.IAdapterManager
 import io.snaps.corecrypto.core.ISendEthereumAdapter
 import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.adapters.Eip20Adapter
@@ -71,6 +72,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
 
     private val walletManager: IWalletManager,
     private val accountManager: IAccountManager,
+    private val adapterManager: IAdapterManager,
 
     private val walletApi: WalletApi,
 ) : BlockchainTxRepository {
@@ -179,10 +181,14 @@ class BlockchainTxRepositoryImpl @Inject constructor(
             }
         }
     }
+    
+    private fun requireEthereumAdapter(coinUid: String) = requireNotNull(ethereumAdapter(coinUid)) {
+        "ISendEthereumAdapter is null for $coinUid"
+    }
 
     private fun ethereumAdapter(coinUid: String): ISendEthereumAdapter? {
         return getWallet(coinUid)?.let {
-            CryptoKit.adapterManager.getAdapterForWallet(it) as ISendEthereumAdapter
+            adapterManager.getAdapterForToken(it.token) as ISendEthereumAdapter
         }
     }
 
@@ -192,12 +198,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
         "Wallet is null for $coinUid"
     }
 
-    private fun requireEthereumAdapter(coinUid: String) = requireNotNull(ethereumAdapter(coinUid)) {
-        "ISendEthereumAdapter is null for $coinUid"
-    }
-
-    private fun eip20Adapter(wallet: Wallet) =
-        CryptoKit.adapterManager.getAdapterForWallet(wallet) as Eip20Adapter?
+    private fun eip20Adapter(wallet: Wallet) = adapterManager.getAdapterForToken(wallet.token) as Eip20Adapter?
 
     private fun requireEip20Adapter(wallet: Wallet) = requireNotNull(eip20Adapter(wallet)) {
         "Eip20Adapter is null for $wallet"
@@ -227,62 +228,98 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                 )
                 val encodedAbi: ByteArray = method.encodedABI()
 
-                val approveGasLimitTD: TransactionData = adapter.eip20Kit.buildTransferTransactionData(
-                    to = address,
-                    value = repairCost.applyDecimal(wallet.decimal),
-                )
-                val approveGasLimit = adapter.evmKit.estimateGas(
-                    transactionData = approveGasLimitTD,
-                    gasPrice = defaultGasPrice,
-                ).blockingGet()
-
-                val approveTD = adapter.eip20Kit.buildApproveTransactionData(
-                    spenderAddress = address,
-                    amount = repairCost.applyDecimal(wallet.decimal),
-                )
-                val approveHash = adapter.evmKitWrapper.sendSingle(
-                    transactionData = approveTD,
-                    gasPrice = defaultGasPrice,
-                    gasLimit = approveGasLimit,
-                ).blockingGet().transaction.hash
-
-                var receipt: RpcTransactionReceipt? = null
-                // todo possible inf loop
-                while (receipt == null) {
-                    delay(1000L)
-                    // todo catch only rpc errors
-                    receipt = kotlin.runCatching {
-                        adapter.evmKit.getTransactionReceipt(approveHash).blockingGet()
-                    }.getOrNull()
+                try {
+                    getRepairNftSign(
+                        adapter = adapter,
+                        address = address,
+                        repairCost = repairCost,
+                        wallet = wallet,
+                        encodedAbi = encodedAbi,
+                        needsApprove = false,
+                    )
+                } catch (throwable: Throwable) {
+                    val message = (throwable.cause as? JsonRpc.ResponseError.RpcError)?.error?.message
+                    if (message?.contains("insufficient allowance") == true) {
+                        getRepairNftSign(
+                            adapter = adapter,
+                            address = address,
+                            repairCost = repairCost,
+                            wallet = wallet,
+                            encodedAbi = encodedAbi,
+                            needsApprove = true,
+                        )
+                    } else throw throwable
                 }
-
-                val repairGasLimitTD = TransactionData(
-                    to = address,
-                    value = BigInteger.ZERO,
-                    input = encodedAbi,
-                )
-                val repairGasLimit = adapter.evmKit.estimateGas(
-                    transactionData = repairGasLimitTD,
-                    gasPrice = defaultGasPrice,
-                ).blockingGet()
-
-                val repairTD = TransactionData(
-                    to = address,
-                    value = BigInteger.ZERO,
-                    input = encodedAbi,
-                )
-                adapter.evmKitWrapper.signSingle(
-                    transactionData = repairTD,
-                    gasPrice = defaultGasPrice,
-                    gasLimit = repairGasLimit,
-                ).blockingGet().toHexString()
             }
         }
     }
 
+    private suspend fun getRepairNftSign(
+        adapter: Eip20Adapter,
+        address: Address,
+        repairCost: Double,
+        wallet: Wallet,
+        encodedAbi: ByteArray,
+        needsApprove: Boolean,
+    ): String {
+        if (needsApprove) {
+            val approveGasLimitTD: TransactionData = adapter.eip20Kit.buildTransferTransactionData(
+                to = address,
+                value = repairCost.applyDecimal(wallet.decimal),
+            )
+            val approveGasLimit = adapter.evmKit.estimateGas(
+                transactionData = approveGasLimitTD,
+                gasPrice = defaultGasPrice,
+            ).blockingGet()
+
+            val approveTD = adapter.eip20Kit.buildApproveTransactionData(
+                spenderAddress = address,
+                amount = repairCost.applyDecimal(wallet.decimal),
+            )
+            val approveHash = adapter.evmKitWrapper.sendSingle(
+                transactionData = approveTD,
+                gasPrice = defaultGasPrice,
+                gasLimit = approveGasLimit,
+            ).blockingGet().transaction.hash
+
+            var receipt: Result<RpcTransactionReceipt>? = null
+            var iteration = 0
+            while (receipt == null || receipt.isFailure) {
+                if (iteration++ > 10) {
+                    throw receipt?.exceptionOrNull() ?: Exception("Couldn't get approve receipt!")
+                }
+                delay(1000L)
+                receipt = kotlin.runCatching {
+                    adapter.evmKit.getTransactionReceipt(approveHash).blockingGet()
+                }
+            }
+        }
+
+        val repairGasLimitTD = TransactionData(
+            to = address,
+            value = BigInteger.ZERO,
+            input = encodedAbi,
+        )
+        val repairGasLimit = adapter.evmKit.estimateGas(
+            transactionData = repairGasLimitTD,
+            gasPrice = defaultGasPrice,
+        ).blockingGet()
+
+        val repairTD = TransactionData(
+            to = address,
+            value = BigInteger.ZERO,
+            input = encodedAbi,
+        )
+        return adapter.evmKitWrapper.signSingle(
+            transactionData = repairTD,
+            gasPrice = defaultGasPrice,
+            gasLimit = repairGasLimit,
+        ).blockingGet().toHexString()
+    }
+
     private fun getActiveWalletReceiveAddress(): CryptoAddress? {
         return getWallets().firstNotNullOfOrNull { wallet ->
-            CryptoKit.adapterManager.getReceiveAdapterForWallet(wallet)?.receiveAddress.also {
+            adapterManager.getReceiveAdapterForWallet(wallet)?.receiveAddress.also {
                 if (it == null) logE("No receive adapter for wallet $wallet!")
             }
         }
@@ -327,8 +364,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                     transactionData = transactionData,
                     gasPrice = defaultGasPrice,
                 ).blockingGet()
-                val gasPriceDecimal = defaultGasPrice.max.unapplyDecimal(wallet.decimal)
-                    .times(gasLimit.toBigDecimal())
+                val gasPriceDecimal = defaultGasPrice.max.unapplyDecimal(wallet.decimal).times(gasLimit.toBigDecimal())
 
                 NftMintSummary(
                     from = fromAddress,

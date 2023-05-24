@@ -8,6 +8,7 @@ import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.ui.VideoFeedViewModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
+import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basesubs.data.SubsRepository
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
@@ -26,6 +27,7 @@ class UserLikedVideoFeedViewModel @Inject constructor(
     @Bridged commentRepository: CommentRepository,
     @Bridged subsRepository: SubsRepository,
     bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
+    featureToggle: FeatureToggle,
 ) : VideoFeedViewModel(
     videoFeedType = VideoFeedType.Liked(args(savedStateHandle).userId),
     startPosition = args(savedStateHandle).position,
@@ -35,4 +37,5 @@ class UserLikedVideoFeedViewModel @Inject constructor(
     commentRepository = commentRepository,
     subsRepository = subsRepository,
     bottomDialogBarVisibilityHandler = bottomDialogBarVisibilityHandler,
+    featureToggle = featureToggle,
 )

@@ -32,8 +32,10 @@ import io.snaps.corecrypto.core.AdapterState
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.core.IAccountFactory
 import io.snaps.corecrypto.core.IAccountManager
+import io.snaps.corecrypto.core.IAdapterManager
 import io.snaps.corecrypto.core.IWalletManager
 import io.snaps.corecrypto.core.IWordsManager
+import io.snaps.corecrypto.core.customCoinUid
 import io.snaps.corecrypto.core.managers.WalletActivator
 import io.snaps.corecrypto.core.providers.BalanceItem
 import io.snaps.corecrypto.core.providers.BalanceService
@@ -101,10 +103,6 @@ interface WalletRepository {
 
     fun setAccountActive(userId: Uuid)
 
-    fun setAccountInactive()
-
-    fun deleteAccount(id: Uuid)
-
     fun getMnemonics(): List<String>
 
     fun requireActiveWalletReceiveAddress(): CryptoAddress
@@ -118,6 +116,8 @@ interface WalletRepository {
     suspend fun confirmPayout(amount: Double, cardNumber: CardNumber): Effect<Completable>
 
     suspend fun refillGas(amount: Double): Effect<Completable>
+
+    fun clear(userId: Uuid)
 }
 
 class WalletRepositoryImpl @Inject constructor(
@@ -126,6 +126,7 @@ class WalletRepositoryImpl @Inject constructor(
 
     private val accountFactory: IAccountFactory,
     private val walletManager: IWalletManager,
+    private val adapterManager: IAdapterManager,
     private val wordsManager: IWordsManager,
     private val accountManager: IAccountManager,
     private val walletActivator: WalletActivator,
@@ -258,19 +259,22 @@ class WalletRepositoryImpl @Inject constructor(
         }
         activateDefaultTokens(account)
         // fixme better way
-        while (getActiveWalletReceiveAddress() == null) {
+        var address: CryptoAddress? = getActiveWalletReceiveAddress()
+        while (address == null) {
             delay(200)
+            address = getActiveWalletReceiveAddress()
         }
         return apiCall(ioDispatcher) {
-            walletApi.save(WalletSaveRequestDto(address = requireActiveWalletReceiveAddress()))
+            walletApi.save(WalletSaveRequestDto(address = address))
         }.toCompletable()
     }
 
     private fun activateDefaultTokens(account: Account) {
         val tokens = listOf(
             CoinType.SNPS.let {
+                val uid = TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Eip20(it.address)).customCoinUid
                 Token(
-                    coin = Coin(uid = "snapsCoinUid", name = it.coinName, code = it.code),
+                    coin = Coin(uid = uid, name = it.coinName, code = it.code),
                     // todo release mainnet
                     blockchain = Blockchain(
                         type = BlockchainType.BinanceSmartChain,
@@ -302,7 +306,7 @@ class WalletRepositoryImpl @Inject constructor(
 
     private fun getActiveWalletReceiveAddress(): CryptoAddress? {
         return getWallets().firstNotNullOfOrNull { wallet ->
-            CryptoKit.adapterManager.getReceiveAdapterForWallet(wallet)?.receiveAddress.also {
+            adapterManager.getReceiveAdapterForWallet(wallet)?.receiveAddress.also {
                 if (it == null) logE("No receive adapter for wallet $wallet!")
             }
         }
@@ -327,10 +331,6 @@ class WalletRepositoryImpl @Inject constructor(
         accountManager.setActiveAccountId(userId)
     }
 
-    override fun setAccountInactive() {
-        accountManager.setActiveAccountId(null)
-    }
-
     override fun getMnemonics(): List<String> {
         return getActiveAccount()?.let { (it.type as AccountType.Mnemonic).words } ?: emptyList()
     }
@@ -339,10 +339,6 @@ class WalletRepositoryImpl @Inject constructor(
         return accountManager.activeAccount.also {
             if (it == null) logE("No active account!")
         }
-    }
-
-    override fun deleteAccount(id: Uuid) {
-        accountManager.delete(id)
     }
 
     override fun isAddressValid(value: CryptoAddress): Boolean {
@@ -400,5 +396,10 @@ class WalletRepositoryImpl @Inject constructor(
         } else {
             Effect.error((updateTotalBalance.errorOrNull ?: updatePayouts.errorOrNull)!!)
         }
+    }
+
+    override fun clear(userId: Uuid) {
+        walletManager.delete(getWallets())
+        accountManager.delete(userId)
     }
 }

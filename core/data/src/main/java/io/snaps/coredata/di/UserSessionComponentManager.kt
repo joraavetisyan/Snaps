@@ -6,16 +6,16 @@ import javax.inject.Singleton
 
 @Singleton
 class UserSessionComponentManager @Inject constructor(
-    private val userComponentProvider: UserSessionComponentBuilder
+    private val userComponentProvider: UserSessionComponentBuilder,
 ) : GeneratedComponentManager<UserSessionComponent> {
 
     var userSessionComponent: UserSessionComponent = userComponentProvider.build()
 
+    fun onUserLoggedOut() = rebuildComponent()
+
     private fun rebuildComponent() {
         userSessionComponent = userComponentProvider.build()
     }
-
-    fun onUserLoggedOut() = rebuildComponent()
 
     override fun generatedComponent(): UserSessionComponent = userSessionComponent
 }

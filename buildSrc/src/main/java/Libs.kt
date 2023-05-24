@@ -41,7 +41,8 @@ object Libs {
     private const val crashlyticsGradleVersion = "2.5.2"
     private const val firebaseBomVersion = "32.0.0"
 
-    private const val playServicesVersion = "20.4.1"
+    private const val playServicesAuthVersion = "20.4.1"
+    private const val playServicesSafetynetVersion = "18.0.1"
 
     private const val datastoreVersion = "1.0.0-rc01"
     private const val securityVersion = "1.1.0-alpha01" // Downgrading to 1.1.0-alpha01 solve issue InvalidProtocolBufferException
@@ -130,7 +131,8 @@ object Libs {
         const val hiltKapt = "com.google.dagger:hilt-android-compiler:$hiltVersion"
         const val hiltKaptViewModel = "androidx.hilt:hilt-compiler:$hiltJetpackVersion"
 
-        const val playServices = "com.google.android.gms:play-services-auth:$playServicesVersion"
+        const val playServicesAuth = "com.google.android.gms:play-services-auth:$playServicesAuthVersion"
+        const val playServicesSafetynet = "com.google.android.gms:play-services-safetynet:$playServicesSafetynetVersion"
 
         val firebaseBom = "com.google.firebase:firebase-bom:$firebaseBomVersion"
         val firebase = arrayOf(

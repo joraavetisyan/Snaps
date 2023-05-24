@@ -126,6 +126,6 @@ dependencies {
     implementation(*Libs.bundle.splashscreen)
     implementation(*Libs.bundle.appUpdater)
     implementation(*Libs.bundle.biometric)
-    implementation(Libs.bundle.playServices)
+    implementation(Libs.bundle.playServicesAuth)
     implementation(*Libs.bundle.uploadService)
 }

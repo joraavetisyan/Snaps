@@ -142,7 +142,7 @@ class SessionRepositoryImpl @Inject constructor(
 
     private fun clearData(reason: LogOutReason?) {
         auth.currentUser?.uid?.let {
-            walletRepository.deleteAccount(it)
+            walletRepository.clear(it)
         }
         auth.signOut()
         scope.launch {

@@ -26,7 +26,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import javax.inject.Inject
-import io.snaps.basefeed.data.likedFeedToVideoClipModelList
 
 interface VideoFeedRepository {
 
@@ -37,6 +36,8 @@ interface VideoFeedRepository {
     suspend fun loadNextFeedPage(feedType: VideoFeedType): Effect<Completable>
 
     suspend fun markWatched(videoId: Uuid): Effect<Completable>
+
+    suspend fun markWatchedWithValidation(validationResult: String, videoId: Uuid): Effect<Completable>
 
     suspend fun like(videoId: Uuid): Effect<Completable>
 
@@ -175,6 +176,12 @@ class VideoFeedRepositoryImpl @Inject constructor(
     override suspend fun markWatched(videoId: Uuid): Effect<Completable> {
         return apiCall(ioDispatcher) {
             videoFeedApi.view(videoId)
+        }
+    }
+
+    override suspend fun markWatchedWithValidation(validationResult: String, videoId: Uuid): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            videoFeedApi.viewWithValidation(validationResult = validationResult, videoId = videoId)
         }
     }
 

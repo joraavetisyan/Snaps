@@ -23,6 +23,6 @@ dependencies {
     implementation(projects.baseAuth)
     implementation(projects.baseProfile)
 
-    implementation(Libs.bundle.playServices)
+    implementation(Libs.bundle.playServicesAuth)
     implementation(*Libs.bundle.facebook)
 }
