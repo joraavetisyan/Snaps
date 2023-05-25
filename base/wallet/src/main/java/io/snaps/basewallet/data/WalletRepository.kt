@@ -19,6 +19,7 @@ import io.snaps.basewallet.domain.WalletModel
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.model.AppError
+import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.CardNumber
 import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.model.Completable
@@ -134,6 +135,7 @@ class WalletRepositoryImpl @Inject constructor(
     private val balanceViewItemFactory: BalanceViewItemFactory,
 
     private val walletApi: WalletApi,
+    private val buildInfo: BuildInfo,
 ) : WalletRepository {
 
     private val _snpsAccountState = MutableStateFlow<State<SnpsAccountModel>>(Loading())
@@ -274,11 +276,10 @@ class WalletRepositoryImpl @Inject constructor(
                 val uid = TokenQuery(BlockchainType.BinanceSmartChain, TokenType.Eip20(it.address)).customCoinUid
                 Token(
                     coin = Coin(uid = uid, name = it.coinName, code = it.code),
-                    // todo release mainnet
                     blockchain = Blockchain(
                         type = BlockchainType.BinanceSmartChain,
-                        name = "Testnet",
-                        explorerUrl = "https://testnet.bscscan.com",
+                        name = BlockchainType.BinanceSmartChain.toString(),
+                        explorerUrl = null,
                     ),
                     type = TokenType.Eip20(it.address),
                     decimals = it.decimal,
