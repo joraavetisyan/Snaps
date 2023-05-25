@@ -12,6 +12,7 @@ import io.snaps.basenft.ui.getSunglassesImage
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
+import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.NftMintSummary
 import io.snaps.basewallet.ui.LimitedGasDialogHandler
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
@@ -37,6 +38,8 @@ import io.snaps.corecommon.R
 import io.snaps.corecommon.container.imageValue
 import io.snaps.featurecollection.domain.MyCollectionInteractor
 import io.snaps.featurecollection.domain.NoEnoughBnbToMint
+import io.snaps.featurecollection.domain.minBnb
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -54,6 +57,7 @@ class PurchaseViewModel @Inject constructor(
     limitedGasDialogHandler: LimitedGasDialogHandler,
     private val featureToggle: FeatureToggle,
     @Bridged private val nftRepository: NftRepository,
+    @Bridged private val walletRepository: WalletRepository,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
     private val purchaseStateProvider: PurchaseStateProvider,
@@ -108,20 +112,45 @@ class PurchaseViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private suspend fun mint(purchaseToken: Token? = null) {
+    private fun mint(purchaseToken: Token? = null) {
         _uiState.update { it.copy(isLoading = true) }
-        action.execute {
-            interactor.mint(
-                nftType = args.type,
-                purchaseToken = purchaseToken,
-            )
-        }.doOnSuccess {
-            notificationsSource.sendMessage(StringKey.PurchaseMessageSuccess.textValue())
-            _command publish Command.BackToMyCollectionScreen()
-        }.doOnError { error, _ ->
-            notificationsSource.sendError(error)
-        }.doOnComplete {
-            _uiState.update { it.copy(isLoading = false) }
+        viewModelScope.launch {
+            action.execute {
+                interactor.mint(
+                    nftType = args.type,
+                    purchaseToken = purchaseToken,
+                )
+            }.doOnSuccess {
+                _uiState.update { it.copy(isLoading = false) }
+                notificationsSource.sendMessage(StringKey.PurchaseMessageSuccess.textValue())
+                _command publish Command.BackToMyCollectionScreen()
+            }.doOnError { error, _ ->
+                if (error.cause is NoEnoughBnbToMint) {
+                    refillGas(purchaseToken)
+                } else {
+                    _uiState.update { it.copy(isLoading = false) }
+                }
+            }
+        }
+    }
+
+    // todo better way
+    private fun refillGas(purchaseToken: Token?) {
+        viewModelScope.launch {
+            action.execute {
+                walletRepository.refillGas(minBnb - (walletRepository.bnb.value?.coinValue?.value ?: 0.0))
+            }.flatMap {
+                var job: Job? = null
+                job = walletRepository.bnb.onEach {
+                    if (it?.coinValue?.value != null && it.coinValue.value >= minBnb) {
+                        mint(purchaseToken)
+                        job?.cancel()
+                    }
+                }.launchIn(viewModelScope)
+                walletRepository.updateTotalBalance()
+            }.doOnError { _, _ ->
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 
@@ -197,7 +226,7 @@ class PurchaseViewModel @Inject constructor(
         }
     }
 
-    fun onFreeClicked() = viewModelScope.launch { mint() }
+    fun onFreeClicked() = mint()
 
     data class UiState(
         val isLoading: Boolean = false,

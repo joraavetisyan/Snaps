@@ -17,5 +17,5 @@ class RpcTransactionReceipt(
     val logs: List<TransactionLog>,
     val logsBloom: ByteArray,
     val root: ByteArray?,
-    val status: Int?,
+    val status: String?,
 )

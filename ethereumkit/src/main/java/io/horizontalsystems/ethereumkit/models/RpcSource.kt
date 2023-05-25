@@ -35,26 +35,28 @@ sealed class RpcSource() {
             return Http(listOf(URL("https://bscrpc.com")), null)
         }
 
-        fun binanceSmartChainHttp(): Http {
+        fun binanceSmartChainHttp(isTestMode: Boolean): Http {
             return Http(
+                urls = if (isTestMode) {
+                    listOf(URL("https://data-seed-prebsc-1-s1.binance.org:8545/"))
+                } else {
                     listOf(
-                            /*URL("https://bsc-dataseed.binance.org/"),
-                            URL("https://bsc-dataseed1.defibit.io/"),
-                            URL("https://bsc-dataseed1.ninicoin.io/"),
-                            URL("https://bsc-dataseed2.defibit.io/"),
-                            URL("https://bsc-dataseed3.defibit.io/"),
-                            URL("https://bsc-dataseed4.defibit.io/"),
-                            URL("https://bsc-dataseed2.ninicoin.io/"),
-                            URL("https://bsc-dataseed3.ninicoin.io/"),
-                            URL("https://bsc-dataseed4.ninicoin.io/"),
-                            URL("https://bsc-dataseed1.binance.org/"),
-                            URL("https://bsc-dataseed2.binance.org/"),
-                            URL("https://bsc-dataseed3.binance.org/"),
-                            URL("https://bsc-dataseed4.binance.org/")*/
-                        // todo new
-                            URL("https://data-seed-prebsc-1-s1.binance.org:8545/")
-                    ),
-                    null
+                        URL("https://bsc-dataseed.binance.org/"),
+                        URL("https://bsc-dataseed1.defibit.io/"),
+                        URL("https://bsc-dataseed1.ninicoin.io/"),
+                        URL("https://bsc-dataseed2.defibit.io/"),
+                        URL("https://bsc-dataseed3.defibit.io/"),
+                        URL("https://bsc-dataseed4.defibit.io/"),
+                        URL("https://bsc-dataseed2.ninicoin.io/"),
+                        URL("https://bsc-dataseed3.ninicoin.io/"),
+                        URL("https://bsc-dataseed4.ninicoin.io/"),
+                        URL("https://bsc-dataseed1.binance.org/"),
+                        URL("https://bsc-dataseed2.binance.org/"),
+                        URL("https://bsc-dataseed3.binance.org/"),
+                        URL("https://bsc-dataseed4.binance.org/")
+                    )
+                },
+                auth = null,
             )
         }
 

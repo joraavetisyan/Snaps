@@ -51,7 +51,7 @@ enum class CoinType(
     val address: CryptoAddress,
     val decimal: Int,
 ) : Money {
-
+ // todo release
     SNPS("SNPS", "Snaps", "SNAPS", "0x92677918569A2BEA213Af66b54e0C9B9811d021c", 18),
     BNB("BNB", "BNB", "BNB", "0x242a1ff6ee06f2131b7924cacb74c7f9e3a5edc9", 18),
     // WBNB("WBNB","WBNB", "WBNB", "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", 18),
@@ -145,6 +145,7 @@ fun CoinBNB(value: Double) = CoinValue(CoinType.BNB, value)
 
 @Serializable
 enum class Nft(val address: CryptoAddress) {
+    // todo release
     SNAPS("0x5F0cF62ad1DD5A267427DC161ff365b75142E3b3")
 }
 

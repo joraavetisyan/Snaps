@@ -217,7 +217,7 @@ abstract class VideoFeedViewModel(
             }
         }
         if (featureToggle.isEnabled(Feature.Captcha)) {
-            SafetyNet.getClient(context).verifyWithRecaptcha("6LeZrB0mAAAAAB6LnmfKA8xJwhatEXHqab6w4Qi_")
+            SafetyNet.getClient(context).verifyWithRecaptcha("6Ld5QDgmAAAAAC5wrvEUzPRRE1FWuDc5BUzjH_dB")
                 .addOnSuccessListener {
                     markWatched(clipModel, it.tokenResult)
                 }.addOnFailureListener {

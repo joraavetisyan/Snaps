@@ -1,7 +1,7 @@
 package io.horizontalsystems.ethereumkit.models
 
 // workaround
-const val IS_CRYPTO_IN_TEST_MODE = true
+const val IS_CRYPTO_IN_TEST_MODE = true // todo release BuildConfig.Debug
 
 enum class Chain(
     val id: Int,

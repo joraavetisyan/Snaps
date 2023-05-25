@@ -6,6 +6,7 @@ import io.horizontalsystems.ethereumkit.models.TransactionSource
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.core.providers.AppConfigProvider
 import io.snaps.corecrypto.core.storage.BlockchainSettingsStorage
 import io.snaps.corecrypto.core.storage.EvmSyncSourceStorage
@@ -88,7 +89,7 @@ class EvmSyncSourceManager(
                 evmSyncSource(
                     type,
                     "Binance",
-                    RpcSource.binanceSmartChainHttp(),
+                    RpcSource.binanceSmartChainHttp(CryptoKit.testMode),
                     defaultTransactionSource(type)
                 ),
                 evmSyncSource(

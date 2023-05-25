@@ -27,17 +27,22 @@ class FeatureToggleUpdater @Inject constructor(
     }
 
     private fun saveRemoteValues() {
-        firebaseRemoteConfig.activate()
         firebaseRemoteConfig.fetch(
             when {
                 BuildConfig.DEBUG -> FETCH_TIME_DURATION_DEBUG
                 else -> FETCH_TIME_DURATION_RELEASE
             }.inWholeSeconds
         ).addOnSuccessListener {
+            firebaseRemoteConfig.activate()
             log("Fetched Firebase remote configs")
             featureToggle.clearRemoteValues()
-            Feature.values().filter(Feature::isRemote).forEach {
-                featureToggle.setRemoteValue(it, firebaseRemoteConfig.getBoolean(it.key))
+            Feature.values().filter(Feature::isRemote).forEach { feature ->
+                featureToggle.setRemoteValue(
+                    feature = feature,
+                    value = firebaseRemoteConfig.getBoolean(feature.key).also {
+                        log("Fetched config $feature: $it")
+                    },
+                )
             }
         }.addOnFailureListener {
             log(it)

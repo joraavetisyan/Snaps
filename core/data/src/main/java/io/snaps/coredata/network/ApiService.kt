@@ -8,7 +8,10 @@ enum class ApiService(
     val test: String = prod,
 ) {
 
-    General("http://51.250.36.197:5100/api/v1/");
+    General(
+//        "http://51.250.42.53:5100/api/v1/", // todo release
+        "http://51.250.36.197:5100/api/v1/",
+    );
 
     fun getBaseUrl(buildInfo: BuildInfo) = when {
         buildInfo.isDebug || buildInfo.isAlpha -> test

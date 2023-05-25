@@ -16,7 +16,7 @@ import io.snaps.corecommon.model.TxHash
 import io.snaps.coredata.di.Bridged
 import javax.inject.Inject
 
-private const val minBnb = 0.0017
+const val minBnb = 0.0017
 
 interface MyCollectionInteractor {
 
@@ -61,23 +61,18 @@ class MyCollectionInteractorImpl @Inject constructor(
             nftRepository.mintNft(NftType.Free).toCompletable()
         } else {
             val bnb = walletRepository.bnb.value?.coinValue?.value
-            if (bnb == null) Effect.error(AppError.Custom(cause = NoEnoughBnbToMint))
+            if (bnb == null || bnb < minBnb) Effect.error(AppError.Custom(cause = NoEnoughBnbToMint))
             else {
-                if (bnb < minBnb) {
-                    walletRepository.refillGas(minBnb - bnb)
-                } else {
-                    Effect.completable
-                }.flatMap {
-                    blockchainTxRepository.getNftMintSummary(nftType = nftType, amount = 0.0)
-                }.flatMap {
-                    blockchainTxRepository.getMintNftSign(nftType = nftType, summary = it)
-                }.flatMap {
-                    nftRepository.mintNftStore(
-                        productId = nftType.storeId!!,
-                        purchaseToken = purchaseToken!!,
-                        txSign = it,
-                    )
-                }
+                blockchainTxRepository.getNftMintSummary(nftType = nftType, amount = 0.0)
+                    .flatMap {
+                        blockchainTxRepository.getMintNftSign(nftType = nftType, summary = it)
+                    }.flatMap {
+                        nftRepository.mintNftStore(
+                            productId = nftType.storeId!!,
+                            purchaseToken = purchaseToken!!,
+                            txSign = it,
+                        )
+                    }
             }
         }
     }

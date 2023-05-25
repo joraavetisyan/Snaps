@@ -15,7 +15,7 @@ data class FullRpcTransaction(
         when {
             rpcReceipt == null -> false
             rpcReceipt.status == null -> rpcTransaction.gasLimit == rpcReceipt.cumulativeGasUsed
-            else -> rpcReceipt.status == 0
+            else -> rpcReceipt.status == "0x0"
         }
 
     fun transaction(timestamp: Long) =

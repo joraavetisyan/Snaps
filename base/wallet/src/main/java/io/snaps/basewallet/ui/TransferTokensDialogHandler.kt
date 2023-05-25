@@ -1,6 +1,7 @@
 package io.snaps.basewallet.ui
 
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.CoinValue
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.model.FullUrl
@@ -73,9 +74,11 @@ interface TransferTokensDialogHandler {
         data class TokensSellSuccess(
             val bscScanLink: FullUrl,
         ) : BottomDialog()
+
         data class NftRepairSuccess(
             val bscScanLink: FullUrl,
         ) : BottomDialog()
+
         data class TokensTransferSuccess(
             val bscScanLink: FullUrl,
             val sent: CoinValue?,
@@ -89,7 +92,9 @@ interface TransferTokensDialogHandler {
     }
 }
 
-class TransferTokensDialogHandlerImplDelegate @Inject constructor() : TransferTokensDialogHandler {
+class TransferTokensDialogHandlerImplDelegate @Inject constructor(
+    private val buildInfo: BuildInfo,
+) : TransferTokensDialogHandler {
 
     private val _uiState = MutableStateFlow(TransferTokensDialogHandler.UiState())
     override val transferTokensState = _uiState.asStateFlow()
@@ -130,8 +135,13 @@ class TransferTokensDialogHandlerImplDelegate @Inject constructor() : TransferTo
         }
     }
 
-    // todo release mainnet scan
-    private fun TxHash.scanLink() = "https://testnet.bscscan.com/tx/$this"
+    // todo release
+    private fun TxHash.scanLink() = if (buildInfo.isRelease) {
+        "https://testnet.bscscan.com/tx/$this"
+    } else {
+        "https://testnet.bscscan.com/tx/$this"
+//        "https://bscscan.com/tx/$this"
+    }
 
     override fun onSuccessfulPurchase(scope: CoroutineScope, data: TransferTokensSuccessData) {
         _uiState.update {
