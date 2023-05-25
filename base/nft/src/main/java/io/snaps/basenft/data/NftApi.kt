@@ -32,12 +32,7 @@ interface NftApi {
     ): BaseResponse<MintNftResponseDto>
 
     @POST("user/nft/repair")
-    suspend fun repairGlassesBlockchain(
-        @Body body: RepairGlassesRequestDto,
-    ): RepairGlassesResponseDto // todo tmp, do BaseResponse once api conforms
-
-    @POST("user/nft/repair")
     suspend fun repairGlasses(
         @Body body: RepairGlassesRequestDto,
-    ): BaseResponse<Completable>
+    ): BaseResponse<RepairGlassesResponseDto>
 }

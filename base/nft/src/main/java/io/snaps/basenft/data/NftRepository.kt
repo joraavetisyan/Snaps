@@ -16,8 +16,6 @@ import io.snaps.corecommon.model.TxSign
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
-import io.snaps.coredata.database.UserDataStorage
-import io.snaps.coredata.network.BaseResponse
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreui.viewmodel.tryPublish
@@ -57,7 +55,6 @@ class NftRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val nftApi: NftApi,
-    private val userDataStorage: UserDataStorage,
 ) : NftRepository {
 
     private val _nftCollectionState = MutableStateFlow<State<List<NftModel>>>(Loading())
@@ -130,21 +127,17 @@ class NftRepositoryImpl @Inject constructor(
 
     override suspend fun repairNftBlockchain(nftModel: NftModel, txSign: TxSign): Effect<TxHash> {
         return apiCall(ioDispatcher) {
-            // todo tmp, remove BaseResponse once api conforms
-            BaseResponse(
-                data = nftApi.repairGlassesBlockchain(body = RepairGlassesRequestDto(glassesId = nftModel.id, txSign = txSign)),
-                isSuccess = true,
-            )
+            nftApi.repairGlasses(RepairGlassesRequestDto(glassesId = nftModel.id, txSign = txSign))
         }.doOnSuccess {
             updateNftCollection()
-        }.map {
-            it.txHash.orEmpty()
-        }
+        }.map { it.txHash.orEmpty() }
     }
 
     override suspend fun repairNft(nftModel: NftModel): Effect<Completable> {
         return apiCall(ioDispatcher) {
             nftApi.repairGlasses(RepairGlassesRequestDto(glassesId = nftModel.id))
-        }
+        }.doOnSuccess {
+            updateNftCollection()
+        }.toCompletable()
     }
 }

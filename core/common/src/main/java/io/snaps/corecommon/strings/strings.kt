@@ -122,6 +122,10 @@ internal val strings = mapOf(
     ),
     key(StringKey.MessageNoData) to mapOf(
         SupportedLanguageKey.En to "No data",
+        SupportedLanguageKey.Ru to "Нет данных",
+        SupportedLanguageKey.Tr to "Veri yok",
+        SupportedLanguageKey.Ua to "Немає даних",
+        SupportedLanguageKey.Es to "Sin datos",
     ),
     key(StringKey.FieldMinutes) to mapOf(
         SupportedLanguageKey.En to "%s min",
@@ -234,7 +238,7 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ru to "Для того, чтобы получать награды в Snaps Вам необходимо успешно завершать эти задания.\nНо перед началом, узнайте подробнее о каждом задании!",
         SupportedLanguageKey.Tr to "Enstantanelerde ödül almak için bu görevleri başarıyla tamamlamanız gerekir.\nAncak başlamadan önce her görev hakkında daha fazla bilgi edinin!",
         SupportedLanguageKey.Ua to "Щоб отримати нагороди в Snaps, вам потрібно успішно виконати ці завдання.\nАле перш ніж почати, дізнайтеся більше про кожне завдання!",
-        SupportedLanguageKey.Es to " Para recibir recompensas en Snaps, debes completar con éxito estas tareas.\nPero antes de comenzar, ¡aprenda más sobre cada tarea!",
+        SupportedLanguageKey.Es to "Para recibir recompensas en Snaps, debes completar con éxito estas tareas.\nPero antes de comenzar, ¡aprenda más sobre cada tarea!",
     ),
     key(StringKey.OnboardingTasksAction) to mapOf(
         SupportedLanguageKey.En to "Learn about tasks",
@@ -330,14 +334,23 @@ internal val strings = mapOf(
     key(StringKey.AppUpdateTitle) to mapOf(
         SupportedLanguageKey.En to "Update available",
         SupportedLanguageKey.Ru to "Доступно обновление",
+        SupportedLanguageKey.Tr to "Güncelleme mevcut",
+        SupportedLanguageKey.Ua to "Доступне оновлення",
+        SupportedLanguageKey.Es to "Actualización disponible",
     ),
     key(StringKey.AppUpdateMessage) to mapOf(
-        SupportedLanguageKey.En to "A new driver version is available. Please update the app to the latest version",
-        SupportedLanguageKey.Ru to "Доступна новая версия драйвера. Пожалуйста обновите приложение до последней версии",
+        SupportedLanguageKey.En to "A new version is available. Please update the app to the latest version",
+        SupportedLanguageKey.Ru to "Доступна новая версия. Пожалуйста обновите приложение до последней версии",
+        SupportedLanguageKey.Tr to "Yeni bir sürüm mevcut. Lütfen uygulamayı en son sürüme güncelleyin",
+        SupportedLanguageKey.Ua to "Доступна нова версія. Будь ласка поновіть додаток до останньої версії",
+        SupportedLanguageKey.Es to "Una nueva versión está disponible. Por favor, actualice la aplicación a la Última versión",
     ),
     key(StringKey.AppUpdateAction) to mapOf(
         SupportedLanguageKey.En to "Update",
         SupportedLanguageKey.Ru to "Обновить",
+        SupportedLanguageKey.Tr to "Yenileme",
+        SupportedLanguageKey.Ua to "Оновити",
+        SupportedLanguageKey.Es to "Renovar",
     ),
     key(StringKey.BottomBarTitleFeed) to mapOf(
         SupportedLanguageKey.En to "Feed",
@@ -1027,6 +1040,10 @@ internal val strings = mapOf(
     ),
     key(StringKey.ReferralProgramActionReferralProgram) to mapOf(
         SupportedLanguageKey.En to "Referral program",
+        SupportedLanguageKey.Ru to "Реферальная программа",
+        SupportedLanguageKey.Tr to "Yönlendirme programı",
+        SupportedLanguageKey.Ua to "Реферальна програма",
+        SupportedLanguageKey.Es to "Programa de referencia",
     ),
     key(StringKey.ReferralProgramDialogTitleFootnoteMain1) to mapOf(
         SupportedLanguageKey.En to "Share your referral code/link",
@@ -1128,6 +1145,10 @@ internal val strings = mapOf(
     ),
     key(StringKey.ReferralProgramMessageShare) to mapOf(
         SupportedLanguageKey.En to "Download Snaps and use my referral code - %s",
+        SupportedLanguageKey.Ru to "Скачайте Snaps и используйте мой реферальный код - %s",
+        SupportedLanguageKey.Tr to "Snaps'ı indirin ve yönlendirme kodumu kullanın - %s",
+        SupportedLanguageKey.Ua to "Завантажте Snaps і використовуйте мій реферальний код - %s",
+        SupportedLanguageKey.Es to "Descargar Snaps y usar mi código de referencia - %s",
     ),
     key(StringKey.SettingsTitle) to mapOf(
         SupportedLanguageKey.En to "Settings",
@@ -1571,28 +1592,46 @@ internal val strings = mapOf(
         SupportedLanguageKey.Es to "Tarea de verificación",
     ),
     key(StringKey.TaskShareTitleShareImage) to mapOf(
-        SupportedLanguageKey.En to "",
+        SupportedLanguageKey.En to "I watch short videos in SNAPS and \nI get paid for it!",
         SupportedLanguageKey.Ru to "Я смотрю короткие видео в SNAPS и \nмне за это платят!",
+        SupportedLanguageKey.Tr to "SNAPS'TA kısa videolar izliyorum ve \nbunun için para alıyorum!",
+        SupportedLanguageKey.Ua to "Я дивлюся Короткі відео в SNAPS і \nмені за це платять!",
+        SupportedLanguageKey.Es to "¡Veo videos cortos en SNAPS y \nme pagan por eso!",
     ),
     key(StringKey.TaskShareMessageShareImageWrite) to mapOf(
         SupportedLanguageKey.En to "Write",
         SupportedLanguageKey.Ru to "Пиши",
+        SupportedLanguageKey.Tr to "Yaz",
+        SupportedLanguageKey.Ua to "Писати",
+        SupportedLanguageKey.Es to "Escribe",
     ),
     key(StringKey.TaskShareMessageShareImageMe) to mapOf(
         SupportedLanguageKey.En to "to me!",
         SupportedLanguageKey.Ru to "мне!",
+        SupportedLanguageKey.Tr to "bana!",
+        SupportedLanguageKey.Ua to "мені!",
+        SupportedLanguageKey.Es to "mí!",
     ),
     key(StringKey.TaskShareMessageShareImageAndWillTell) to mapOf(
-        SupportedLanguageKey.En to "And I will tell!",
+        SupportedLanguageKey.En to "And I'll tell you!",
         SupportedLanguageKey.Ru to "И я расскажу!",
+        SupportedLanguageKey.Tr to "Ben de anlatacağım!",
+        SupportedLanguageKey.Ua to "І я розповім!",
+        SupportedLanguageKey.Es to "¡Y te lo contaré!",
     ),
     key(StringKey.TaskShareMessageShareImageEarned) to mapOf(
-        SupportedLanguageKey.En to "Today I earned",
+        SupportedLanguageKey.En to "I earned today",
         SupportedLanguageKey.Ru to "Я сегодня заработал (-а)",
+        SupportedLanguageKey.Tr to "Bugün kazandım",
+        SupportedLanguageKey.Ua to "Я сьогодні заробив (запрацювала)",
+        SupportedLanguageKey.Es to "He ganado hoy",
     ),
     key(StringKey.TaskShareFieldShareImageCurrency) to mapOf(
         SupportedLanguageKey.En to "%s dollars",
         SupportedLanguageKey.Ru to "%s долларов",
+        SupportedLanguageKey.Tr to "%s dolarların",
+        SupportedLanguageKey.Ua to "%s доларів",
+        SupportedLanguageKey.Es to "%s dólares",
     ),
     key(StringKey.TaskFindPointsTitle) to mapOf(
         SupportedLanguageKey.En to "Find points",
@@ -2113,6 +2152,10 @@ internal val strings = mapOf(
     ),
     key(StringKey.WithdrawDialogWithdrawTitle) to mapOf(
         SupportedLanguageKey.En to "Withdraw %s",
+        SupportedLanguageKey.Ru to "Вывести %s",
+        SupportedLanguageKey.Tr to "Çıkarmak %s",
+        SupportedLanguageKey.Ua to "Вивести %s",
+        SupportedLanguageKey.Es to "Salidas %s",
     ),
     key(StringKey.WithdrawDialogWithdrawSuccessTitle) to mapOf(
         SupportedLanguageKey.En to "Transaction succeeded",
@@ -2140,31 +2183,66 @@ internal val strings = mapOf(
     ),
     key(StringKey.WithdrawSnapsTitle) to mapOf(
         SupportedLanguageKey.En to "Sell %s",
+        SupportedLanguageKey.Ru to "Продать %s",
+        SupportedLanguageKey.Tr to "Satmak %s",
+        SupportedLanguageKey.Ua to "Продати %s",
+        SupportedLanguageKey.Es to "Vender %s",
     ),
     key(StringKey.WithdrawSnapsMessageAssurance) to mapOf(
         SupportedLanguageKey.En to "All data is encrypted and never shared with third parties",
+        SupportedLanguageKey.Ru to "Все данные зашифрованы и никогда не передаются третьим лицам",
+        SupportedLanguageKey.Tr to "Tüm veriler şifrelenir ve hiçbir zaman üçüncü taraflarla paylaşılmaz",
+        SupportedLanguageKey.Ua to "Всі дані зашифровані і ніколи не передаються третім особам",
+        SupportedLanguageKey.Es to "Todos los datos están encriptados y nunca se comparten con terceros",
     ),
     key(StringKey.WithdrawSnapsHintAmount) to mapOf(
         SupportedLanguageKey.En to "Transfer amount",
+        SupportedLanguageKey.Ru to "Сумма перевода",
+        SupportedLanguageKey.Tr to "Transfer tutarı",
+        SupportedLanguageKey.Ua to "Сума переказу",
+        SupportedLanguageKey.Es to "Importe de la transferencia",
     ),
     key(StringKey.WithdrawSnapsActionMax) to mapOf(
         SupportedLanguageKey.En to "Max",
+        SupportedLanguageKey.Ru to "Макс",
+        SupportedLanguageKey.Tr to "En fazla",
+        SupportedLanguageKey.Ua to "Макс",
+        SupportedLanguageKey.Es to "Máx",
     ),
     key(StringKey.WithdrawSnapsHintCardNumber) to mapOf(
         SupportedLanguageKey.En to "Enter card number",
+        SupportedLanguageKey.Ru to "Введите номер карты",
+        SupportedLanguageKey.Tr to "Kart numarasını girin",
+        SupportedLanguageKey.Ua to "Введіть номер картки",
+        SupportedLanguageKey.Es to "Introduzca el número de tarjeta",
     ),
     key(StringKey.WithdrawSnapsHintRepeatCardNumber) to mapOf(
         SupportedLanguageKey.En to "Repeat card number",
+        SupportedLanguageKey.Ru to "Повторить номер карты",
+        SupportedLanguageKey.Tr to "Kart numarasını tekrarla",
+        SupportedLanguageKey.Ua to "Повторіть номер картки",
+        SupportedLanguageKey.Es to "Repetir número de tarjeta",
     ),
     key(StringKey.WithdrawSnapsTitleBalance) to mapOf(
-        SupportedLanguageKey.En to "Balance: %s",
-        SupportedLanguageKey.Ru to "Текущий баланс: %s",
+        SupportedLanguageKey.En to "Текущий баланс: %s",
+        SupportedLanguageKey.Ru to "Current balance: %s",
+        SupportedLanguageKey.Tr to "Mevcut denge: %s",
+        SupportedLanguageKey.Ua to "Поточний баланс: %s",
+        SupportedLanguageKey.Es to "Saldo corriente: %s",
     ),
     key(StringKey.WithdrawSnapsTitleComission) to mapOf(
         SupportedLanguageKey.En to "Commission",
+        SupportedLanguageKey.Ru to "Комиссия",
+        SupportedLanguageKey.Tr to "Komisyon",
+        SupportedLanguageKey.Ua to "Комісія",
+        SupportedLanguageKey.Es to "Comisión",
     ),
     key(StringKey.WithdrawSnapsTitleTotal) to mapOf(
         SupportedLanguageKey.En to "Total",
+        SupportedLanguageKey.Ru to "Всего",
+        SupportedLanguageKey.Tr to "Sadece",
+        SupportedLanguageKey.Ua to "Всього",
+        SupportedLanguageKey.Es to "Por todo",
     ),
     key(StringKey.ExchangeTitle) to mapOf(
         SupportedLanguageKey.En to "Trade",
@@ -2301,6 +2379,10 @@ internal val strings = mapOf(
     ),
     key(StringKey.MyCollectionErrorNoEnoughSnp) to mapOf(
         SupportedLanguageKey.En to "No enough SNP to repair",
+        SupportedLanguageKey.Ru to "Недостаточно SNP для ремонта",
+        SupportedLanguageKey.Tr to "Onarmak için yeterli SNP yok",
+        SupportedLanguageKey.Ua to "Недостатньо SNP для ремонту",
+        SupportedLanguageKey.Es to "No hay suficiente SNP para reparar",
     ),
     key(StringKey.MyCollectionFieldBonus) to mapOf(
         SupportedLanguageKey.En to "+ %s to rewards",
@@ -2649,6 +2731,9 @@ internal val strings = mapOf(
     key(StringKey.PurchaseMessageDailyUnlock1) to mapOf(
         SupportedLanguageKey.En to "You can transfer %s of the available SNP rewards to the main wallet. After receiving the tokens, they can be exchanged or withdrawn",
         SupportedLanguageKey.Ru to "Вы можете перевести %s доступных вознагрождений SNP на основной кошелек. После получения токенов их можно обменять или вывести",
+        SupportedLanguageKey.Tr to "Mevcut SNP ödüllerinin %s birincil cüzdanınıza aktarabilirsiniz. Jetonları aldıktan sonra bunları değiştirebilir veya geri çekebilirsiniz",
+        SupportedLanguageKey.Ua to "Ви можете перевести %s доступних винагород SNP на основний гаманець. Після отримання токенов їх можна обміняти або вивести",
+        SupportedLanguageKey.Es to "Puede transferir %s de las recompensas SNP disponibles a la billetera principal. Después de recibir los tokens, se pueden intercambiar o retirar",
     ),
     key(StringKey.PurchaseMessageDailyUnlock2) to mapOf(
         SupportedLanguageKey.En to "The rest of the SNAPS tokens are frozen and stored in a locked wallet",
@@ -2799,11 +2884,23 @@ internal val strings = mapOf(
     ),
     key(StringKey.DialogSummaryTitle) to mapOf(
         SupportedLanguageKey.En to "Summary",
+        SupportedLanguageKey.Ru to "Итог",
+        SupportedLanguageKey.Tr to "Sonuç",
+        SupportedLanguageKey.Ua to "Підсумок",
+        SupportedLanguageKey.Es to "Resultado",
     ),
     key(StringKey.DialogSummaryTitleGasPrice) to mapOf(
         SupportedLanguageKey.En to "Gas price:",
+        SupportedLanguageKey.Ru to "Плата за газ",
+        SupportedLanguageKey.Tr to "Gaz fiyatı",
+        SupportedLanguageKey.Ua to "Ціна на газ",
+        SupportedLanguageKey.Es to "Precio del gas",
     ),
     key(StringKey.DialogSummaryTitleTotal) to mapOf(
         SupportedLanguageKey.En to "Total:",
+        SupportedLanguageKey.Ru to "Всего",
+        SupportedLanguageKey.Tr to "Sadece",
+        SupportedLanguageKey.Ua to "Всього",
+        SupportedLanguageKey.Es to "Por todo",
     ),
 )
