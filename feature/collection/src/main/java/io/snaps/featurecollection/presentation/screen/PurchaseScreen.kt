@@ -222,18 +222,18 @@ private fun PurchaseScreen(
             }
             CardBlock(
                 title = StringKey.PurchaseTitleDailyReward.textValue(uiState.dailyReward.getFormatted()),
-                description = StringKey.PurchaseDescriptionDailyReward.textValue(),
-                message = StringKey.PurchaseMessageDailyReward.textValue(),
+                description = StringKey.PurchaseMessageDailyReward1.textValue(),
+                message = StringKey.PurchaseMessageDailyReward2.textValue(),
             )
             Spacer(modifier = Modifier.height(12.dp))
             CardBlock(
                 title = StringKey.PurchaseTitleDailyUnlock.textValue(
                     uiState.dailyUnlock.toPercentageFormat()
                 ),
-                description = StringKey.PurchaseDescriptionDailyUnlock.textValue(
+                description = StringKey.PurchaseMessageDailyUnlock1.textValue(
                     uiState.dailyUnlock.toPercentageFormat()
                 ),
-                message = StringKey.PurchaseMessageDailyUnlock.textValue(),
+                message = StringKey.PurchaseMessageDailyUnlock2.textValue(),
             )
             Spacer(modifier = Modifier.height(12.dp))
             CardBlock(
@@ -329,7 +329,7 @@ private fun ActionButtons(
 private fun NftInfoBlock(
     nftType: NftType,
     nftImage: ImageValue,
-    cost: String,
+    cost: TextValue,
 ) {
     Row(
         modifier = Modifier
@@ -359,7 +359,7 @@ private fun NftInfoBlock(
                     style = AppTheme.specificTypography.bodyMedium,
                     color = AppTheme.specificColorScheme.textSecondary,
                 )
-                ValueWidget(R.drawable.img_coin_silver.imageValue() to cost.textValue())
+                ValueWidget(R.drawable.img_coin_silver.imageValue() to cost)
             }
         }
     }

@@ -106,7 +106,7 @@ class MyCollectionViewModel @Inject constructor(
             }
         }.doOnError { error, _ ->
             if (error.cause is NoEnoughSnpToRepair) {
-                notificationsSource.sendError("No enough SNP to repair".textValue()) // todo localize
+                notificationsSource.sendError(StringKey.MyCollectionErrorNoEnoughSnp.textValue())
             }
         }.doOnComplete {
             _uiState.update { it.copy(isLoading = false) }

@@ -107,7 +107,7 @@ private fun Content(
             .fillMaxWidth()
             .padding(horizontal = 4.dp, vertical = 8.dp),
     )
-    Text(text = "Summary".textValue().get())
+    Text(text = StringKey.DialogSummaryTitle.textValue().get())
     Spacer(modifier = Modifier.height(8.dp))
     if (summary != null) {
         Text(
@@ -127,10 +127,9 @@ private fun Content(
             )
             .padding(8.dp),
     ) {
-        // todo localize
-        PriceLine(title = "Gas price:".textValue(), value = gas?.getFormatted()?.textValue())
+        PriceLine(title = StringKey.DialogSummaryTitleGasPrice.textValue(), value = gas?.getFormatted()?.textValue())
         Spacer(modifier = Modifier.height(12.dp))
-        PriceLine(title = "Total:".textValue(), value = total?.getFormatted()?.textValue())
+        PriceLine(title = StringKey.DialogSummaryTitleTotal.textValue(), value = total?.getFormatted()?.textValue())
     }
     Spacer(modifier = Modifier.height(24.dp))
     SimpleButtonActionM(

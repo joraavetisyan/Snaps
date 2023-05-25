@@ -243,8 +243,7 @@ fun WalletScreen(
                 is TransferTokensDialogHandler.BottomDialog.TokensSellSuccess -> SimpleBottomDialog(
                     image = R.drawable.img_guy_hands_up.imageValue(),
                     title = StringKey.MessageSuccess.textValue(),
-                    // todo localize
-                    text = "Your funds have been withdrawn to your bank card and you will receive them within a few minutes. Check the status of your payment.".textValue(),
+                    text = StringKey.WalletDialogSellSnapsMessage.textValue(),
                     buttonText = StringKey.WithdrawDialogWithdrawSuccessAction.textValue(),
                     onClick = {
                         coroutineScope.launch { sheetState.hide() }

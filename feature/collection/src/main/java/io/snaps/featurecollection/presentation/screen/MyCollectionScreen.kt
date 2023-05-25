@@ -123,10 +123,9 @@ fun MyCollectionScreen(
                 )
                 is TransferTokensDialogHandler.BottomDialog.NftRepairSuccess -> SimpleBottomDialog(
                     image = R.drawable.img_guy_hands_up.imageValue(),
-                    // todo localize rename string keys to MyCollectionDialog_
-                    title = StringKey.PurchaseDialogWithBnbSuccessTitle.textValue(),
-                    text = StringKey.PurchaseDialogWithBnbSuccessMessage.textValue(),
-                    buttonText = StringKey.PurchaseDialogWithBnbSuccessAction.textValue(),
+                    title = StringKey.MyCollectionDialogWithBnbSuccessTitle.textValue(),
+                    text = StringKey.MyCollectionDialogWithBnbSuccessMessage.textValue(),
+                    buttonText = StringKey.MyCollectionDialogWithBnbSuccessAction.textValue(),
                     onClick = {
                         coroutineScope.launch { sheetState.hide() }
                         context.openUrl(dialog.bscScanLink)

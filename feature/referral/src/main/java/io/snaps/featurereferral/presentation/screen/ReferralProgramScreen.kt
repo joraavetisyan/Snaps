@@ -135,6 +135,8 @@ fun ReferralProgramScreen(
 
     val context = LocalContext.current
 
+    val stringHolder = LocalStringHolder.current
+
     viewModel.command.collectAsCommand {
         when (it) {
             ReferralProgramViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
@@ -142,7 +144,7 @@ fun ReferralProgramScreen(
             is ReferralProgramViewModel.Command.OpenUserInfoScreen -> router.toProfileScreen(it.userId)
             is ReferralProgramViewModel.Command.OpenShareDialog -> context.startSharePhotoIntent(
                 uri = it.uri,
-                text = it.text,
+                text = stringHolder(StringKey.ReferralProgramMessageShare).format(it.code),
             )
         }
     }

@@ -193,8 +193,7 @@ class ReferralProgramViewModel @Inject constructor(
         fileManager.createFileFromBitmap(bitmap)?.let {
             _command publish Command.OpenShareDialog(
                 uri = fileManager.getUriForFile(it),
-                // todo localize
-                text = "Download Snaps and use my referral code - ${uiState.value.referralCode}"
+                code = uiState.value.referralCode,
             )
         }
     }
@@ -228,6 +227,6 @@ class ReferralProgramViewModel @Inject constructor(
         object ShowBottomDialog : Command()
         object HideBottomDialog : Command()
         data class OpenUserInfoScreen(val userId: Uuid) : Command()
-        data class OpenShareDialog(val uri: Uri, val text: String) : Command()
+        data class OpenShareDialog(val uri: Uri, val code: String) : Command()
     }
 }

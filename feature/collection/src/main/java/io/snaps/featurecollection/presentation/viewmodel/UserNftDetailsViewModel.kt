@@ -42,7 +42,7 @@ class UserNftDetailsViewModel @Inject constructor(
         CellTileState.Data(
             middlePart = MiddlePart.Data(
                 valueBold = model.displayName,
-                description = StringKey.NftDetailsDescriptionDailyReward.textValue(),
+                description = StringKey.NftDetailsMessageDailyReward.textValue(),
             ),
         ),
         CellTileState.Data(
@@ -59,7 +59,7 @@ class UserNftDetailsViewModel @Inject constructor(
         CellTileState.Data(
             middlePart = MiddlePart.Data(
                 valueBold = StringKey.NftDetailsTitleCondition.textValue(),
-                description = StringKey.NftDetailsDescriptionCondition.textValue(model.repairCost.getFormatted()),
+                description = StringKey.NftDetailsMessageCondition.textValue(model.repairCost.getFormatted()),
             ),
             rightPart = RightPart.ActionIcon(
                 source = R.drawable.img_repair.imageValue(),
@@ -70,7 +70,7 @@ class UserNftDetailsViewModel @Inject constructor(
         CellTileState.Data(
             middlePart = MiddlePart.Data(
                 valueBold = StringKey.NftDetailsTitleLevel.textValue(),
-                description = StringKey.NftDetailsDescriptionLevel.textValue(),
+                description = StringKey.NftDetailsMessageLevel.textValue(),
             ),
             rightPart = RightPart.ActionIcon(
                 source = R.drawable.img_unlock.imageValue(),

@@ -100,7 +100,7 @@ private fun Content(
                 .padding(16.dp)
                 .padding(bottom = LocalBottomNavigationHeight.current),
         ) {
-            SimpleButtonContent(text = "Referral program".textValue()) // todo localize
+            SimpleButtonContent(text = StringKey.ReferralProgramActionReferralProgram.textValue())
         }
     }
 }

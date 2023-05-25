@@ -41,6 +41,7 @@ import io.snaps.corecommon.ext.startSharePhotoIntent
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corenavigation.base.resultFlow
 import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.tools.toPx
@@ -135,13 +136,13 @@ private fun ShareTemplateScreen(
                     .weight(1f),
             )
             uiState.instagramConnectTileState.Content(
-                    modifier = Modifier
-                        .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
-                        .background(
-                            color = AppTheme.specificColorScheme.white,
-                            shape = AppTheme.shapes.medium,
-                        )
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                modifier = Modifier
+                    .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
+                    .background(
+                        color = AppTheme.specificColorScheme.white,
+                        shape = AppTheme.shapes.medium,
+                    )
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             )
             SimpleButtonActionM(
                 onClick = onPostToInstagramButtonClicked,
@@ -171,7 +172,7 @@ private fun generateTemplatePhoto(
             val topPadding = 300.dp.toPx()
             val radius = 24.dp.toPx()
             val staticLayout = getStaticLayout(
-                text = "Я смотрю короткие видео в SNAPS и \nмне за это платят!", // todo localization
+                text = StringKey.TaskShareTitleShareImage.textValue().get().text,
                 paint = getTextPaint(
                     size = 100.sp.toPx(),
                     typeface = AppTheme.specificTypography.headlineLarge.toTypeface(),
@@ -183,25 +184,25 @@ private fun generateTemplatePhoto(
                 typeface = AppTheme.specificTypography.labelLarge.toTypeface(),
                 textColor = AppTheme.specificColorScheme.textPrimary.toArgb(),
             )
-            val text1 = "Пиши" // todo localization
+            val text1 = StringKey.TaskShareMessageShareImageWrite.textValue().get().text
             val text1Bounds = getTextBounds(textPaint, text1)
 
-            val text2 = "мне!" // todo localization
+            val text2 = StringKey.TaskShareMessageShareImageMe.textValue().get().text
             val text2Bounds = getTextBounds(textPaint, text2)
 
             val paddingBetweenTexts = 92.dp.toPx()
             val textsWidth = text2Bounds.width() + text1Bounds.width() + paddingBetweenTexts
-            val text_yOffset = topPadding + staticLayout.height + 64.dp.toPx()
+            val textYOffset = topPadding + staticLayout.height + 64.dp.toPx()
             val textPadding = 40.dp.toPx()
 
-            val text3 = "И я расскажу!" // todo localization
+            val text3 = StringKey.TaskShareMessageShareImageAndWillTell.textValue().get().text
             val text3Bounds = getTextBounds(textPaint, text3)
-            val text3_yOffset = text_yOffset + text1Bounds.height() + 64.dp.toPx()
+            val text3YOffset = textYOffset + text1Bounds.height() + 64.dp.toPx()
 
             drawBitmap(bitmap, 0f, 0f, null)
             DrawRoundedCornerText(
                 text = text3,
-                yOffset = text3_yOffset,
+                yOffset = text3YOffset,
                 xOffset = (bitmap.width - text3Bounds.width()) / 2f,
                 padding = textPadding,
                 radius = radius,
@@ -210,7 +211,7 @@ private fun generateTemplatePhoto(
             )
             DrawRoundedCornerText(
                 text = text1,
-                yOffset = text_yOffset,
+                yOffset = textYOffset,
                 xOffset = (bitmap.width - textsWidth) / 2f,
                 padding = textPadding,
                 radius = radius,
@@ -219,7 +220,7 @@ private fun generateTemplatePhoto(
             )
             DrawRoundedCornerText(
                 text = text2,
-                yOffset = text_yOffset,
+                yOffset = textYOffset,
                 xOffset = (bitmap.width - textsWidth) / 2f + text1Bounds.width() + paddingBetweenTexts,
                 padding = textPadding,
                 radius = radius,
@@ -227,10 +228,10 @@ private fun generateTemplatePhoto(
                 degrees = 8f,
             )
             DrawPaymentsInfo(
-                title = "Я сегодня заработал (-а)", // todo localization
-                text = "$payments долларов", // todo localization
+                title = StringKey.TaskShareMessageShareImageEarned.textValue().get().text,
+                text = StringKey.TaskShareFieldShareImageCurrency.textValue(payments).get().text,
                 radius = 48.dp.toPx(),
-                yOffset = text3_yOffset + text3Bounds.height() + textPadding * 2 + 128.dp.toPx(),
+                yOffset = text3YOffset + text3Bounds.height() + textPadding * 2 + 128.dp.toPx(),
                 xOffset = 100.dp.toPx(),
                 padding = 64.dp.toPx(),
                 width = bitmap.width - 100.dp.toPx() * 2f,

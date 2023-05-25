@@ -129,9 +129,8 @@ private fun WithdrawSnapsScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            // todo localize
             SimpleTopAppBar(
-                title = "Sell ${CoinType.SNPS.symbol}".textValue(),
+                title = StringKey.WithdrawSnapsTitle.textValue(CoinType.SNPS.symbol),
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 scrollBehavior = scrollBehavior,
             )
@@ -143,8 +142,7 @@ private fun WithdrawSnapsScreen(
                 .inset(insetAllExcludeTop()),
         ) {
             Text(
-                // todo localize
-                text = "All data is encrypted and never shared with third parties",
+                text = StringKey.WithdrawSnapsMessageAssurance.textValue().get(),
                 style = AppTheme.specificTypography.bodySmall,
                 color = AppTheme.specificColorScheme.textSecondary,
                 modifier = Modifier
@@ -163,8 +161,7 @@ private fun WithdrawSnapsScreen(
                 ),
                 placeholder = {
                     Text(
-                        // todo localize
-                        text = "Transfer amount",
+                        text = StringKey.WithdrawSnapsHintAmount.textValue().get(),
                         style = AppTheme.specificTypography.titleSmall,
                     )
                 },
@@ -173,8 +170,7 @@ private fun WithdrawSnapsScreen(
                         modifier = Modifier.padding(horizontal = 12.dp),
                         onClick = onMaxButtonClicked,
                     ) {
-                        // todo localize
-                        SimpleButtonContent(text = "Max".textValue())
+                        SimpleButtonContent(text = StringKey.WithdrawSnapsActionMax.textValue())
                     }
                 },
             )
@@ -190,8 +186,7 @@ private fun WithdrawSnapsScreen(
                 ),
                 placeholder = {
                     Text(
-                        // todo localize
-                        text = "Enter card number",
+                        text = StringKey.WithdrawSnapsHintCardNumber.textValue().get(),
                         style = AppTheme.specificTypography.titleSmall,
                     )
                 },
@@ -212,8 +207,7 @@ private fun WithdrawSnapsScreen(
                 ),
                 placeholder = {
                     Text(
-                        // todo localize
-                        text = "Repeat card number",
+                        text = StringKey.WithdrawSnapsHintRepeatCardNumber.textValue().get(),
                         style = AppTheme.specificTypography.titleSmall,
                     )
                 },
@@ -223,8 +217,9 @@ private fun WithdrawSnapsScreen(
                     ),*/
             )
             Text(
-                // todo localize
-                text = "Текущий баланс: ${uiState.snpWalletModel?.coinValue?.getFormatted().orEmpty()}".textValue().get(),
+                text = StringKey.WithdrawSnapsTitleBalance.textValue(
+                    uiState.snpWalletModel?.coinValue?.getFormatted().orEmpty()
+                ).get(),
                 style = AppTheme.specificTypography.bodySmall,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -256,10 +251,8 @@ private fun WithdrawSnapsScreen(
                     modifier = Modifier.padding(horizontal = 12.dp),
                 )
             }
-            // todo localize
-            Line("Commission".textValue(), "${uiState.commission}%".textValue())
-            // todo localize
-            Line("Total".textValue(), uiState.total.getFormatted().textValue())
+            Line(StringKey.WithdrawSnapsTitleComission.textValue(), "${uiState.commission}%".textValue())
+            Line(StringKey.WithdrawSnapsTitleTotal.textValue(), uiState.total.getFormatted().textValue())
             SimpleButtonActionM(
                 modifier = Modifier
                     .fillMaxWidth()

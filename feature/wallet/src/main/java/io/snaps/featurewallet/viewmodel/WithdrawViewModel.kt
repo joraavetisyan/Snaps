@@ -19,6 +19,7 @@ import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.basewallet.domain.WalletModel
 import io.snaps.basewallet.ui.TransferTokensSuccessData
 import io.snaps.corecommon.ext.stripTrailingZeros
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -155,7 +156,7 @@ class WithdrawViewModel @Inject constructor(
         showTransferTokensBottomDialog(
             scope = viewModelScope,
             state = TransferTokensState.Data(
-                title = "Withdraw ${wallet.coinType.symbol}".textValue(), // todo localize
+                title = StringKey.WithdrawDialogWithdrawTitle.textValue(wallet.coinType.symbol),
                 from = wallet.receiveAddress,
                 to = _uiState.value.addressValue,
                 summary = CoinValue(wallet.coinType, _uiState.value.amountValue.stringAmountToDouble()),
@@ -171,7 +172,7 @@ class WithdrawViewModel @Inject constructor(
     private fun onSendTransactionClicked() {
         hideTransferTokensBottomDialog(scope = viewModelScope)
         val amount = getValueDecimalApplied() ?: kotlin.run {
-            viewModelScope.launch { notificationsSource.sendError("Invalid amount".textValue()) } // todo localize
+            viewModelScope.launch { notificationsSource.sendError(StringKey.WithdrawErrorInvalidAmount.textValue()) }
             return
         }
 
