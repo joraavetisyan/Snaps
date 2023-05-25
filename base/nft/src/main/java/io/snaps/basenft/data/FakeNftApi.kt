@@ -61,18 +61,12 @@ class FakeNftApi : NftApi {
         )
     }
 
-    override suspend fun repairGlasses(body: RepairGlassesRequestDto): BaseResponse<Completable> {
+    override suspend fun repairGlasses(body: RepairGlassesRequestDto): BaseResponse<RepairGlassesResponseDto> {
         log("Requesting repair Glasses")
         delay(mockDelay)
         return BaseResponse(
-            data = Completable,
+            data = RepairGlassesResponseDto(null),
         )
-    }
-
-    override suspend fun repairGlassesBlockchain(body: RepairGlassesRequestDto): RepairGlassesResponseDto {
-        log("Requesting repair Glasses on blockchain")
-        delay(mockDelay)
-        return RepairGlassesResponseDto("")
     }
 
     private fun getRanks() = buildList {
