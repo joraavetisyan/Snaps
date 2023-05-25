@@ -9,7 +9,6 @@ import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FullUrl
-import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.json.KotlinxSerializationJsonProvider
 import javax.inject.Inject
 import kotlinx.serialization.SerialName
@@ -24,7 +23,6 @@ interface AppUpdateProvider {
 
 class AppUpdateProviderImpl @Inject constructor(
     private val buildInfo: BuildInfo,
-    private val userDataStorage: UserDataStorage,
 ) : AppUpdateProvider {
 
     override fun getAvailableUpdateInfo(): Effect<UpdateAvailableState> {
@@ -38,7 +36,6 @@ class AppUpdateProviderImpl @Inject constructor(
             null
         }
         val updateAvailableState = appUpdateInfo?.let {
-            userDataStorage.lastCheckedAvailableVersionCode = it.versionCode
             if (it.versionCode > buildInfo.versionCode) {
                 UpdateAvailableState.Available(it)
             } else {
