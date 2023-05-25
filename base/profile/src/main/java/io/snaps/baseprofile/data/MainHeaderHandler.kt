@@ -1,5 +1,6 @@
 package io.snaps.baseprofile.data
 
+import io.snaps.basenft.data.NftRepository
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.ext.log
@@ -41,6 +42,7 @@ class MainHeaderHandlerImplDelegate @Inject constructor(
     private val action: Action,
     @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val walletRepository: WalletRepository,
+    @Bridged private val ntfRepository: NftRepository,
 ) : MainHeaderHandler {
 
     private val _uiState = MutableStateFlow(MainHeaderHandler.UiState())
@@ -56,9 +58,15 @@ class MainHeaderHandlerImplDelegate @Inject constructor(
     }
 
     private fun subscribeToData() {
-        combine(profileRepository.state, walletRepository.bnb, walletRepository.snps) { profile, bnb, snps ->
+        combine(
+            profileRepository.state,
+            walletRepository.bnb,
+            walletRepository.snps,
+            ntfRepository.countBrokenGlassesState,
+        ) { profile, bnb, snps, brokenGlasses ->
             mainHeaderState(
                 profile = profile,
+                brokenGlasses = brokenGlasses,
                 snp = snps?.coinValue,
                 bnb = bnb?.coinValue,
                 onProfileClicked = ::onProfileClicked,

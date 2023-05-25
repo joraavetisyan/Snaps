@@ -20,4 +20,5 @@ dependencies {
 
     implementation(projects.baseSources)
     implementation(projects.baseWallet)
+    implementation(projects.baseNft)
 }

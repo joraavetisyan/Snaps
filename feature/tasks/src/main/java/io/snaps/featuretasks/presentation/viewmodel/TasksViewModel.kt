@@ -34,6 +34,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -73,6 +74,7 @@ class TasksViewModel @Inject constructor(
         subscribeToCurrentTasks()
         subscribeToHistoryTasks()
         subscribeToUserNftCollection()
+        subscribeToBrokenGlasses()
 
         refreshNfts()
 
@@ -126,10 +128,25 @@ class TasksViewModel @Inject constructor(
                         onItemClicked = ::onCurrentTaskItemClicked,
                     ),
                     totalEnergy = state.dataOrCache?.totalEnergy ?: 0,
-                    totalEnergyProgress = state.dataOrCache?.totalEnergyProgress ?: 0,
                 )
             }
             state.startRoundTimer()
+        }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeToBrokenGlasses() {
+        nftRepository.countBrokenGlassesState.combine(flow = profileRepository.currentTasksState) { brokenGlasses, currentTasks ->
+            brokenGlasses.dataOrCache?.let {
+                if (it == 0) {
+                    currentTasks.dataOrCache?.totalEnergyProgress ?: 0
+                } else {
+                    0
+                }
+            } ?: 0
+        }.onEach { state ->
+            _uiState.update {
+                it.copy(totalEnergyProgress = state)
+            }
         }.launchIn(viewModelScope)
     }
 

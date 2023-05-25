@@ -74,15 +74,18 @@ private fun QuestItemDto.energyProgress(): Int {
 
 fun mainHeaderState(
     profile: State<UserInfoModel>,
+    brokenGlasses: State<Int>,
     snp: CoinValue?,
     bnb: CoinValue?,
     onProfileClicked: () -> Unit,
     onWalletClicked: () -> Unit,
-) = if (profile is Effect) {
-    if (profile.isSuccess) {
+) = if (profile is Effect && brokenGlasses is Effect) {
+    if (profile.isSuccess && brokenGlasses.isSuccess) {
         MainHeaderState.Data(
             profileImage = profile.requireData.avatar,
-            energy = profile.requireData.questInfo?.totalEnergyProgress.toString(),
+            energy = if (brokenGlasses.requireData == 0) {
+                profile.requireData.questInfo?.totalEnergyProgress.toString()
+            } else "0",
             bnb = bnb?.value?.toCompactDecimalFormat() ?: "-",
             snp = snp?.value?.toCompactDecimalFormat() ?: "-",
             onProfileClicked = onProfileClicked,
