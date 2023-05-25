@@ -202,7 +202,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
             try {
                 val uploadId = MultipartUploadRequest(
                     context = applicationContext,
-                    serverUrl = ApiService.General.getBaseUrl(buildInfo) + "${it.entityId}/upload",
+                    serverUrl = "${ApiService.General.getBaseUrl(buildInfo)}${it.entityId}/upload",
                 ).apply {
                     setMethod("POST")
                     addHeader("Authorization", "${tokenStorage.authToken}")
