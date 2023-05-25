@@ -1,5 +1,6 @@
 package io.snaps.featurebottombar.screen
 
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
@@ -26,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,6 +45,7 @@ import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.ext.startViewActionActivity
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corenavigation.AppRoute
@@ -68,12 +71,6 @@ fun BottomBarScreen(
     val viewModel = hiltViewModel<BottomBarViewModel>()
     val uiState by viewModel.uiState.collectAsState()
 
-    viewModel.command.collectAsCommand {
-        when (it) {
-            BottomBarViewModel.Command.OpenNftPurchaseScreen -> navController.navigate(AppRoute.RankSelection)
-        }
-    }
-
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStackEntry?.destination
     val firstDestRoutes = items.map { it.startDestination.path() }
@@ -85,11 +82,19 @@ fun BottomBarScreen(
     viewModel.updateMenuRoute(currentBackStackEntry?.destination?.route)
 
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
     val onboardingState by viewModel.onboardingUiState.collectAsState()
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true,
+        confirmValueChange = { uiState.appUpdateInfo == null } // app update dialog cannot be hidden
     )
+    viewModel.command.collectAsCommand {
+        when (it) {
+            BottomBarViewModel.Command.OpenNftPurchaseScreen -> navController.navigate(AppRoute.RankSelection)
+            BottomBarViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
+        }
+    }
     viewModel.onboardingCommand.collectAsCommand {
         when (it) {
             is OnboardingHandler.Command.OpenDialog -> coroutineScope.launch { sheetState.show() }
@@ -100,10 +105,24 @@ fun BottomBarScreen(
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-            OnboardingDialog(
-                onboardingState = onboardingState,
-                onClicked = viewModel::onOnboardingDialogActionClicked,
-            )
+            if (uiState.appUpdateInfo != null) {
+                SimpleBottomDialog(
+                    image = R.drawable.img_guy_glad.imageValue(),
+                    title = StringKey.AppUpdateTitle.textValue(),
+                    text = StringKey.AppUpdateMessage.textValue(),
+                    buttonText = StringKey.AppUpdateAction.textValue(),
+                    onClick = {
+                        uiState.appUpdateInfo?.let {
+                            context.startViewActionActivity(Uri.parse(it.link))
+                        }
+                    },
+                )
+            } else {
+                OnboardingDialog(
+                    onboardingState = onboardingState,
+                    onClicked = viewModel::onOnboardingDialogActionClicked,
+                )
+            }
         }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {

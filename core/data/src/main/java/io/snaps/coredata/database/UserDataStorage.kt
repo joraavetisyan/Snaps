@@ -36,14 +36,7 @@ class UserDataStorage @Inject constructor(
         provider.prefs.edit { putBoolean("onboarding${type.name}", value) }
     }
 
-    var lastCheckedAvailableVersionCode: Int
-        get() = provider.prefs.getInt("lastCheckedAvailableVersionCode", 0)
-        set(value) = provider.prefs.edit { putInt("lastCheckedAvailableVersionCode", value) }
-
-    fun reset(reason: LogOutReason? = null) {
-        // todo do not clear onboarding related stuff
-        provider.prefs.edit { clear() }
-    }
+    fun reset(reason: LogOutReason? = null) {}
 }
 
 enum class ThemeMode { Light, Dark, System }

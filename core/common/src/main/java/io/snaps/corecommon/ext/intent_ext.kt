@@ -23,3 +23,11 @@ fun Context.startSharePhotoIntent(uri: Uri, text: String? = null) {
     val shareIntent = Intent.createChooser(intent, null)
     startActivity(shareIntent)
 }
+
+fun Context.startViewActionActivity(uri: Uri) {
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        data = uri
+    }
+    startActivity(intent)
+}

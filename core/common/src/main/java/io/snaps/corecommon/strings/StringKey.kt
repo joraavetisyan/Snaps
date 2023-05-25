@@ -53,6 +53,10 @@ enum class StringKey {
     OnboardingRewardsMessage,
     OnboardingRewardsAction,
 
+    AppUpdateTitle,
+    AppUpdateMessage,
+    AppUpdateAction,
+
     BottomBarTitleFeed,
     BottomBarTitleSearch,
     BottomBarTitleTasks,

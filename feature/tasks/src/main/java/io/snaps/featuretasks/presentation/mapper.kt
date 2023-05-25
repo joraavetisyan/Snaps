@@ -115,12 +115,13 @@ private fun NftModel.toNftCollectionItemState(
     dailyReward = dailyReward.toFiat(rate = 0.001),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
-    isHealthy = true,
+    isHealthy = true, // repair is not displayed on the tasks screen
     level = level,
     experience = experience,
     bonus = bonus,
     upperThreshold = upperThreshold,
     lowerThreshold = lowerThreshold,
+    isLevelVisible = false, // level is not displayed on the tasks screen
     onRepairClicked = {},
     onItemClicked = { onItemClicked(this) },
     onHelpIconClicked = {},

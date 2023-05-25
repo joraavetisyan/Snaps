@@ -5,7 +5,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
+import io.snaps.basesources.AppUpdateInfo
+import io.snaps.basesources.AppUpdateProvider
 import io.snaps.basesources.BottomBarVisibilitySource
+import io.snaps.basesources.UpdateAvailableState
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
@@ -25,10 +28,11 @@ import javax.inject.Inject
 @HiltViewModel
 class BottomBarViewModel @Inject constructor(
     onboardingHandler: OnboardingHandler,
+    bottomBarVisibilitySource: BottomBarVisibilitySource,
     private val appRouteProvider: AppRouteProvider,
+    private val appUpdateProvider: AppUpdateProvider,
     @Bridged private val nftRepository: NftRepository,
     private val action: Action,
-    bottomBarVisibilitySource: BottomBarVisibilitySource,
 ) : SimpleViewModel(), OnboardingHandler by onboardingHandler {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -45,6 +49,7 @@ class BottomBarViewModel @Inject constructor(
         }.launchIn(viewModelScope)
 
         loadUserNft()
+        loadAppUpdateInfo()
     }
 
     private fun subscribeOnCountBrokenGlasses() = viewModelScope.launch {
@@ -86,12 +91,23 @@ class BottomBarViewModel @Inject constructor(
         }
     }
 
+    private fun loadAppUpdateInfo() = viewModelScope.launch {
+        appUpdateProvider.getAvailableUpdateInfo().doOnSuccess { state ->
+            if (state is UpdateAvailableState.Available) {
+                _uiState.update { it.copy(appUpdateInfo = state.info) }
+                _command publish Command.ShowBottomDialog
+            }
+        }
+    }
+
     data class UiState(
         val isBottomBarVisible: Boolean = true,
         val badgeText: String = "",
+        val appUpdateInfo: AppUpdateInfo? = null,
     )
 
     sealed interface Command {
         object OpenNftPurchaseScreen : Command
+        object ShowBottomDialog: Command
     }
 }
