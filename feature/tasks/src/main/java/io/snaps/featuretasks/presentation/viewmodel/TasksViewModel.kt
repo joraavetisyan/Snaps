@@ -74,7 +74,7 @@ class TasksViewModel @Inject constructor(
         subscribeToCurrentTasks()
         subscribeToHistoryTasks()
         subscribeToUserNftCollection()
-        subscribeToBrokenGlasses()
+        subscribeToEnergyProgress()
 
         refreshNfts()
 
@@ -134,14 +134,10 @@ class TasksViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun subscribeToBrokenGlasses() {
-        nftRepository.countBrokenGlassesState.combine(flow = profileRepository.currentTasksState) { brokenGlasses, currentTasks ->
-            brokenGlasses.dataOrCache?.let {
-                if (it == 0) {
-                    currentTasks.dataOrCache?.totalEnergyProgress ?: 0
-                } else {
-                    0
-                }
+    private fun subscribeToEnergyProgress() {
+        profileRepository.currentTasksState.combine(flow = nftRepository.countBrokenGlassesState) { currentTasks, brokenGlasses ->
+            brokenGlasses.dataOrCache?.let { glasses ->
+                currentTasks.dataOrCache?.totalEnergyProgress.takeIf { glasses == 0 }
             } ?: 0
         }.onEach { state ->
             _uiState.update {
