@@ -5,11 +5,11 @@ import java.lang.IllegalStateException
 
 enum class ApiService(
     val prod: String,
-    val test: String = prod,
+    val test: String,
 ) {
 
     General(
-//        "http://51.250.42.53:5100/api/v1/", // todo release
+        "http://51.250.42.53:5100/api/v1/",
         "http://51.250.36.197:5100/api/v1/",
     );
 
