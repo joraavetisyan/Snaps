@@ -75,7 +75,7 @@ private fun NftModel.toNftCollectionItemState(
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthBadgeVisible = !isHealthy,
-    isRepairVisible = !isHealthy,
+    isRepairable = !isHealthy,
     level = level,
     upperThreshold = upperThreshold,
     lowerThreshold = lowerThreshold,
