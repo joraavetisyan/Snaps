@@ -10,6 +10,7 @@ import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.domain.UsersPageModel
 import io.snaps.corecommon.ext.log
+import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FullUrl
@@ -20,6 +21,7 @@ import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.json.KotlinxSerializationJsonProvider
+import io.snaps.coredata.network.ApiService
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
@@ -86,6 +88,7 @@ interface ProfileRepository {
 class ProfileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
+    private val buildInfo: BuildInfo,
     private val api: ProfileApi,
     private val loaderFactory: UsersLoaderFactory,
 ) : ProfileRepository {
@@ -173,7 +176,7 @@ class ProfileRepositoryImpl @Inject constructor(
             api.createUser(
                 UserCreateRequestDto(
                     name = userName,
-                    avatarUrl = "http://51.250.36.197:5100/api/v1/file?fileId=$fileId", // todo
+                    avatarUrl = "${ApiService.General.getBaseUrl(buildInfo)}file?fileId=$fileId",
                     wallet = address,
                 )
             )

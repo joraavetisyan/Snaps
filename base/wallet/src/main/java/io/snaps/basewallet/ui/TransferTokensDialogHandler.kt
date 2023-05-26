@@ -139,8 +139,7 @@ class TransferTokensDialogHandlerImplDelegate @Inject constructor(
     private fun TxHash.scanLink() = if (buildInfo.isRelease) {
         "https://testnet.bscscan.com/tx/$this"
     } else {
-        "https://testnet.bscscan.com/tx/$this"
-//        "https://bscscan.com/tx/$this"
+        "https://bscscan.com/tx/$this"
     }
 
     override fun onSuccessfulPurchase(scope: CoroutineScope, data: TransferTokensSuccessData) {
