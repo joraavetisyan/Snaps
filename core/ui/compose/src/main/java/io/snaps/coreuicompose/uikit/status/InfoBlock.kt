@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.TextValue
 import io.snaps.coreuicompose.tools.get
@@ -19,13 +20,15 @@ import io.snaps.coreuitheme.compose.AppTheme
 @Composable
 fun InfoBlock(
     modifier: Modifier = Modifier,
-    message: TextValue
+    message: TextValue,
+    textColor: Color = AppTheme.specificColorScheme.uiSystemOrange,
+    backgroundColor: Color = AppTheme.specificColorScheme.uiSystemYellow.copy(alpha = 0.3f),
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = AppTheme.specificColorScheme.uiSystemYellow.copy(alpha = 0.3f),
+                color = backgroundColor,
                 shape = AppTheme.shapes.medium,
             )
             .padding(16.dp),
@@ -35,13 +38,13 @@ fun InfoBlock(
         Icon(
             painter = AppTheme.specificIcons.info.get(),
             contentDescription = null,
-            tint = AppTheme.specificColorScheme.uiSystemOrange,
+            tint = textColor,
             modifier = Modifier.size(24.dp),
         )
         Text(
             text = message.get(),
             style = AppTheme.specificTypography.labelSmall,
-            color = AppTheme.specificColorScheme.uiSystemOrange,
+            color = textColor,
         )
     }
 }

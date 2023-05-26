@@ -115,7 +115,8 @@ private fun NftModel.toNftCollectionItemState(
     dailyReward = dailyReward.toFiat(rate = 0.001),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
-    isHealthy = true, // repair is not displayed on the tasks screen
+    isHealthBadgeVisible = !isHealthy,
+    isRepairVisible = false, // repair is not displayed on the tasks screen
     level = level,
     experience = experience,
     bonus = bonus,

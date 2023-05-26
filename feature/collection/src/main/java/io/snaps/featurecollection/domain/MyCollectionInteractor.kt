@@ -49,6 +49,8 @@ class MyCollectionInteractorImpl @Inject constructor(
                 }
             } else {
                 nftRepository.repairNft(nftModel = nftModel).map { "" }
+            }.flatMap { hash ->
+                walletRepository.updateTotalBalance().map { hash }
             }
         }
     }
@@ -61,7 +63,8 @@ class MyCollectionInteractorImpl @Inject constructor(
             nftRepository.mintNft(NftType.Free).toCompletable()
         } else {
             val bnb = walletRepository.bnb.value?.coinValue?.value
-            if (bnb == null || bnb < minBnb) Effect.error(AppError.Custom(cause = NoEnoughBnbToMint))
+            if (bnb == null) Effect.error(AppError.Unknown())
+            else if (bnb < minBnb) Effect.error(AppError.Custom(cause = NoEnoughBnbToMint))
             else {
                 blockchainTxRepository.getNftMintSummary(nftType = nftType, amount = 0.0)
                     .flatMap {
@@ -74,11 +77,16 @@ class MyCollectionInteractorImpl @Inject constructor(
                         )
                     }
             }
+        }.flatMap {
+            profileRepository.updateData(isSilently = true)
+        }.flatMap {
+            walletRepository.updateTotalBalance()
         }
     }
 
     override suspend fun getNftMintSummary(nftType: NftType): Effect<NftMintSummary> {
-        val amount = 0.005
+        val amount = 0.005 // todo release
+        // todo specific error when bnb null - wallet in synchronisation
         if ((walletRepository.bnb.value?.coinValue?.value ?: 0.0) < amount) {
             return Effect.error(AppError.Custom(cause = NoEnoughBnbToMint))
         }
@@ -88,6 +96,10 @@ class MyCollectionInteractorImpl @Inject constructor(
     override suspend fun mintOnBlockchain(nftType: NftType, summary: NftMintSummary): Effect<TxHash> {
         return blockchainTxRepository.getMintNftSign(nftType = nftType, summary = summary).flatMap {
             nftRepository.mintNft(type = nftType, txSign = it)
+        }.flatMap { hash ->
+            profileRepository.updateData(isSilently = true).map { hash }
+        }.flatMap { hash ->
+            walletRepository.updateTotalBalance().map { hash }
         }
     }
 }

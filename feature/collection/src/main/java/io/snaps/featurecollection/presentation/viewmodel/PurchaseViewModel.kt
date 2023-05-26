@@ -1,6 +1,7 @@
 package io.snaps.featurecollection.presentation.viewmodel
 
 import android.app.Activity
+import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,6 +37,9 @@ import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.imageValue
+import io.snaps.corecommon.model.CryptoAddress
+import io.snaps.coreui.barcode.BarcodeManager
+import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.featurecollection.domain.MyCollectionInteractor
 import io.snaps.featurecollection.domain.NoEnoughBnbToMint
 import io.snaps.featurecollection.domain.minBnb
@@ -63,6 +67,7 @@ class PurchaseViewModel @Inject constructor(
     private val purchaseStateProvider: PurchaseStateProvider,
     private val billingRouter: BillingRouter,
     private val interactor: MyCollectionInteractor,
+    private val barcodeManager: BarcodeManager,
 ) : SimpleViewModel(),
     TransferTokensDialogHandler by transferTokensDialogHandler,
     LimitedGasDialogHandler by limitedGasDialogHandler {
@@ -193,18 +198,27 @@ class PurchaseViewModel @Inject constructor(
                 )
             )
         }.doOnError { error, _ ->
-            updateTransferTokensState(
-                state = TransferTokensState.Error(
-                    title = purchaseWithBnbDialogTitle,
-                    message = MessageBannerState(
-                        image = R.drawable.img_guy_sad.imageValue(),
-                        description = StringKey.PurchaseErrorNotEnoughBnb.textValue(),
-                        button = StringKey.ActionClose.textValue(),
-                        onClick = { hideTransferTokensBottomDialog(viewModelScope) },
-                    ).takeIf { error.cause is NoEnoughBnbToMint },
-                    onClick = ::onBuyWithBNBClicked,
+            if (error.cause is NoEnoughBnbToMint) {
+                onTransferTokensDialogHidden()
+                val walletModel = walletRepository.bnb.value ?: return@doOnError
+                _uiState.update {
+                    val qr = barcodeManager.getQrCodeBitmap(walletModel.receiveAddress)
+                    it.copy(
+                        bottomDialog = BottomDialog.TopUp(
+                            title = walletModel.coinType.symbol,
+                            address = walletModel.receiveAddress,
+                            qr = qr,
+                        )
+                    )
+                }
+            } else {
+                updateTransferTokensState(
+                    state = TransferTokensState.Error(
+                        title = purchaseWithBnbDialogTitle,
+                        onClick = ::onBuyWithBNBClicked,
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -228,6 +242,18 @@ class PurchaseViewModel @Inject constructor(
 
     fun onFreeClicked() = mint()
 
+    fun onBottomDialogHidden() {
+        _uiState.update { it.copy(bottomDialog = null) }
+    }
+
+    // todo copy handler as delegate
+    fun onAddressCopyClicked(address: CryptoAddress) {
+        viewModelScope.launch {
+            _command publish Command.CopyText(address)
+            notificationsSource.sendMessage(StringKey.WalletMessageAddressCopied.textValue())
+        }
+    }
+
     data class UiState(
         val isLoading: Boolean = false,
         val nftType: NftType,
@@ -239,9 +265,22 @@ class PurchaseViewModel @Inject constructor(
         val isPurchasable: Boolean,
         val isPurchasableWithBnb: Boolean,
         val isPurchasableForFree: Boolean,
+        val bottomDialog: BottomDialog? = null,
     )
+
+    sealed class BottomDialog {
+
+        data class TopUp(
+            val title: String,
+            val address: CryptoAddress,
+            val qr: Bitmap?,
+        ) : BottomDialog()
+    }
 
     sealed class Command {
         data class BackToMyCollectionScreen(val data: TransferTokensSuccessData? = null) : Command()
+        object ShowBottomDialog : Command()
+        object HideBottomDialog : Command()
+        data class CopyText(val text: String) : Command()
     }
 }

@@ -4,12 +4,14 @@ import android.app.Application
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.decode.SvgDecoder
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.HiltAndroidApp
 import io.snaps.basesources.NetworkStateSource
 import io.snaps.basesources.featuretoggle.FeatureToggleUpdater
 import io.snaps.basewallet.data.blockchain.CryptoInitializer
 import io.snaps.corecommon.analytics.AnalyticsTracker
 import io.snaps.corecommon.analytics.AnalyticsTrackerHolder
+import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.BuildInfo
 import io.snaps.coredata.coroutine.ApplicationCoroutineScopeHolder
 import io.snaps.coredata.network.ApiConfig

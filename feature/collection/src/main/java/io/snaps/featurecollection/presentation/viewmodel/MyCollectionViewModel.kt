@@ -6,10 +6,13 @@ import io.snaps.basenft.data.NftRepository
 import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
+import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.baseprofile.data.model.PaymentsState
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
+import io.snaps.basewallet.ui.LimitedGasDialogHandler
 import io.snaps.featurecollection.domain.NoEnoughSnpToRepair
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensSuccessData
@@ -23,6 +26,7 @@ import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.featurecollection.domain.MyCollectionInteractor
+import io.snaps.featurecollection.domain.minBnb
 import io.snaps.featurecollection.presentation.toNftCollectionItemState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,16 +47,19 @@ class MyCollectionViewModel @Inject constructor(
     onboardingHandler: OnboardingHandler,
     transferTokensDialogHandler: TransferTokensDialogHandler,
     bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
+    limitedGasDialogHandler: LimitedGasDialogHandler,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
     @Bridged private val nftRepository: NftRepository,
     @Bridged private val walletRepository: WalletRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     private val interactor: MyCollectionInteractor,
 ) : SimpleViewModel(),
     MainHeaderHandler by mainHeaderHandler,
     OnboardingHandler by onboardingHandler,
     TransferTokensDialogHandler by transferTokensDialogHandler,
-    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandler {
+    BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandler,
+    LimitedGasDialogHandler by limitedGasDialogHandler {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -95,6 +102,15 @@ class MyCollectionViewModel @Inject constructor(
     }
 
     private fun onRepairClicked(nftModel: NftModel) = viewModelScope.launch {
+        when (profileRepository.state.value.dataOrCache?.paymentsState) {
+            PaymentsState.Blockchain -> checkGas(scope = viewModelScope, minValue = 0.0012) { repair(nftModel) }
+            PaymentsState.No,
+            PaymentsState.InApp -> repair(nftModel)
+            null -> notificationsSource.sendError(StringKey.Error.textValue())
+        }
+    }
+
+    private suspend fun repair(nftModel: NftModel) {
         _uiState.update { it.copy(isLoading = true) }
         action.execute {
             interactor.repair(nftModel)

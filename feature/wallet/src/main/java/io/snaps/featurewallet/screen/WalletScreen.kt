@@ -1,10 +1,8 @@
 package io.snaps.featurewallet.screen
 
-import android.graphics.Bitmap
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -59,9 +56,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -72,11 +67,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.basewallet.ui.TopUpDialog
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensSuccessData
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.IconValue
-import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.CoinValue
@@ -92,6 +87,7 @@ import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialogItem
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetCurrentStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
@@ -148,15 +144,14 @@ fun WalletScreen(
         }
     }
 
-    ModalBottomSheetTargetStateListener(
+    ModalBottomSheetCurrentStateListener(
         sheetState = sheetState,
-        onStateToChange = {
-            if (it) {
-                viewModel.onBottomDialogHidden()
-                viewModel.onTransferTokensDialogHidden()
-            }
-        },
-    )
+    ) {
+        if (it) {
+            viewModel.onBottomDialogHidden()
+            viewModel.onTransferTokensDialogHidden()
+        }
+    }
 
     viewModel.command.collectAsCommand {
         when (it) {
@@ -643,10 +638,11 @@ private fun RowScope.OperationType(
             )
             Text(
                 text = title,
-                style = AppTheme.specificTypography.titleSmall,
+                style = AppTheme.specificTypography.bodyMedium,
                 color = AppTheme.specificColorScheme.textPrimary,
                 modifier = Modifier.padding(top = 8.dp),
                 textAlign = TextAlign.Center,
+                maxLines = 1,
             )
         }
     }
@@ -674,47 +670,6 @@ private fun SelectWalletDialog(
                         shape = AppTheme.shapes.medium,
                     )
                     .padding(horizontal = 12.dp),
-            )
-        }
-    }
-}
-
-@Composable
-private fun TopUpDialog(
-    title: TextValue,
-    qr: Bitmap?,
-    address: CryptoAddress,
-    onAddressCopyClicked: () -> Unit,
-) {
-    SimpleBottomDialogUI(header = title) {
-        item {
-            qr?.let {
-                Image(
-                    modifier = Modifier.size(164.dp),
-                    bitmap = it.asImageBitmap(),
-                    contentScale = ContentScale.FillWidth,
-                    contentDescription = null,
-                )
-            }
-            SimpleButtonGreyM(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-                onClick = onAddressCopyClicked,
-            ) {
-                SimpleButtonContent(
-                    text = address.addressEllipsized.textValue(),
-                    iconRight = AppTheme.specificIcons.copy,
-                )
-            }
-            Text(
-                text = StringKey.WalletMessageTopUp.textValue().get().text,
-                style = AppTheme.specificTypography.bodySmall,
-                color = AppTheme.specificColorScheme.textSecondary,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp, horizontal = 24.dp),
-                textAlign = TextAlign.Center,
             )
         }
     }

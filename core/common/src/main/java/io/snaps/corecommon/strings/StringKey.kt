@@ -223,6 +223,7 @@ enum class StringKey {
     TasksMessageSocialPostNotSendToVerify,
     TasksMessageSocialPostReview,
     TasksMessageSocialPostRejected,
+    TasksErrorRepairGlasses,
     TasksDialogTitleFootnote1,
     TasksDialogMessageFootnote1,
     TasksDialogTitleFootnote2,

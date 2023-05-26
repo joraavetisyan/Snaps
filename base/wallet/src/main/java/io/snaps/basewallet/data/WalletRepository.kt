@@ -100,8 +100,6 @@ interface WalletRepository {
 
     fun hasAccount(userId: Uuid): Boolean
 
-    fun setAccountActive(userId: Uuid)
-
     fun getMnemonics(): List<String>
 
     fun requireActiveWalletReceiveAddress(): CryptoAddress
@@ -324,10 +322,6 @@ class WalletRepositoryImpl @Inject constructor(
 
     override fun hasAccount(userId: Uuid): Boolean {
         return accountManager.account(userId) != null
-    }
-
-    override fun setAccountActive(userId: Uuid) {
-        accountManager.setActiveAccountId(userId)
     }
 
     override fun getMnemonics(): List<String> {

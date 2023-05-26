@@ -45,7 +45,7 @@ internal val strings = mapOf(
     ),
     key(StringKey.ActionConfirm) to mapOf(
         SupportedLanguageKey.En to "Confirm",
-        SupportedLanguageKey.Ru to "подтвердить",
+        SupportedLanguageKey.Ru to "Подтвердить",
         SupportedLanguageKey.Tr to "Onaylamak",
         SupportedLanguageKey.Ua to "Підтверджувати",
         SupportedLanguageKey.Es to "Confirmar",
@@ -739,10 +739,10 @@ internal val strings = mapOf(
     ),
     key(StringKey.SubsActionSubscriptions) to mapOf(
         SupportedLanguageKey.En to "%s Subscriptions",
-        SupportedLanguageKey.Ru to "Подписки",
-        SupportedLanguageKey.Tr to "Abonelikler",
-        SupportedLanguageKey.Ua to "Підписка",
-        SupportedLanguageKey.Es to "Suscripciones",
+        SupportedLanguageKey.Ru to "%s Подписки",
+        SupportedLanguageKey.Tr to "%s Abonelikler",
+        SupportedLanguageKey.Ua to "%s Підписка",
+        SupportedLanguageKey.Es to "%s Suscripciones",
     ),
     key(StringKey.SubsActionSubscribers) to mapOf(
         SupportedLanguageKey.En to "%s Subscribers",
@@ -1401,6 +1401,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Tr to "Görev reddedildi",
         SupportedLanguageKey.Ua to "Завдання відхилено",
         SupportedLanguageKey.Es to "Trabajo rechazado",
+    ),
+    key(StringKey.TasksErrorRepairGlasses) to mapOf(
+        SupportedLanguageKey.En to "Fix your glasses to keep gaining energy",
+        SupportedLanguageKey.Ru to "Почините очки, чтобы продолжать набирать энергию",
+        SupportedLanguageKey.Tr to "Enerji kazanmaya devam etmek için gözlüklerinizi düzeltin",
+        SupportedLanguageKey.Ua to "Полагодьте окуляри, щоб продовжувати набирати енергію",
+        SupportedLanguageKey.Es to "Arregla tus lentes para seguir ganando energía",
     ),
     key(StringKey.TasksDialogTitleFootnote1) to mapOf(
         SupportedLanguageKey.En to "Energy",
@@ -2267,10 +2274,10 @@ internal val strings = mapOf(
     ),
     key(StringKey.ProfileTitleSubscribers) to mapOf(
         SupportedLanguageKey.En to "Subscribers",
-        SupportedLanguageKey.Ru to "%s Подписчики",
-        SupportedLanguageKey.Tr to "%s Aboneler",
-        SupportedLanguageKey.Ua to "%s Підписники",
-        SupportedLanguageKey.Es to "%s Abonados",
+        SupportedLanguageKey.Ru to "Подписчики",
+        SupportedLanguageKey.Tr to "Aboneler",
+        SupportedLanguageKey.Ua to "Підписники",
+        SupportedLanguageKey.Es to "Abonados",
     ),
     key(StringKey.ProfileTitleSubscriptions) to mapOf(
         SupportedLanguageKey.En to "Subscriptions",

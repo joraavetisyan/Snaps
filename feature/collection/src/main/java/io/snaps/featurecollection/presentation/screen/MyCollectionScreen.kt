@@ -38,6 +38,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
+import io.snaps.basewallet.ui.LimitedGasDialog
+import io.snaps.basewallet.ui.LimitedGasDialogHandler
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensSuccessData
 import io.snaps.corecommon.R
@@ -49,6 +51,7 @@ import io.snaps.corenavigation.base.resultFlow
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetCurrentStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
@@ -69,6 +72,7 @@ fun MyCollectionScreen(
     val uiState by viewModel.uiState.collectAsState()
     val headerState by viewModel.headerUiState.collectAsState()
     val transferTokensState by viewModel.transferTokensState.collectAsState()
+    val limitedGasState by viewModel.limitedGasState.collectAsState()
     val pullRefreshState = rememberPullRefreshState(uiState.isRefreshing, viewModel::onRefreshPulled)
 
     navHostController.resultFlow<TransferTokensSuccessData?>()?.collectAsCommand(action = viewModel::onTransactionResultReceived)
@@ -80,10 +84,15 @@ fun MyCollectionScreen(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    ModalBottomSheetTargetStateListener(
+    ModalBottomSheetCurrentStateListener(
         sheetState = sheetState,
-        onStateToChange = viewModel::onBottomDialogStateChange,
-    )
+    ) {
+        viewModel.onBottomDialogStateChange(it)
+        if (it) {
+            viewModel.onLimitedGasDialogHidden()
+            viewModel.onTransferTokensDialogHidden()
+        }
+    }
 
     viewModel.headerCommand.collectAsCommand {
         when (it) {
@@ -104,6 +113,13 @@ fun MyCollectionScreen(
         when (it) {
             TransferTokensDialogHandler.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             TransferTokensDialogHandler.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
+        }
+    }
+
+    viewModel.limitedGasCommand.collectAsCommand {
+        when (it) {
+            LimitedGasDialogHandler.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
+            LimitedGasDialogHandler.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
         }
     }
 
@@ -134,6 +150,12 @@ fun MyCollectionScreen(
                 is TransferTokensDialogHandler.BottomDialog.TokensSellSuccess,
                 null -> Unit
             }
+            when (val dialog = limitedGasState.bottomDialog) {
+                is LimitedGasDialogHandler.BottomDialog.Refill -> LimitedGasDialog(
+                    onRefillClick = dialog.onRefillClicked,
+                )
+                null -> Unit
+            }
         }
     ) {
         MyCollectionScreen(
@@ -143,7 +165,7 @@ fun MyCollectionScreen(
         )
     }
 
-    FullScreenLoaderUi(isLoading = uiState.isLoading)
+    FullScreenLoaderUi(isLoading = uiState.isLoading || limitedGasState.isLoading)
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)

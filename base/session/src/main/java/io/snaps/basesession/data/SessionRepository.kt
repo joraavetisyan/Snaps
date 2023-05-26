@@ -117,7 +117,7 @@ class SessionRepositoryImpl @Inject constructor(
     override suspend fun onLogin(): Effect<Completable> {
         auth.currentUser?.uid?.let {
             if (walletRepository.hasAccount(it)) {
-                walletRepository.setAccountActive(it)
+                walletRepository.clear(it)
             }
             return checkStatus(it)
         }

@@ -197,9 +197,7 @@ private fun Error(
     Container(
         state = data,
     ) {
-        (data.message ?: MessageBannerState.defaultState(onClick = data.onClick)).Content(
-            modifier = Modifier,
-        )
+        (data.message ?: MessageBannerState.defaultState(onClick = data.onClick)).Content(modifier = Modifier)
     }
 }
 

@@ -98,7 +98,7 @@ fun CommentsScreen(
             }
             Spacer(modifier = Modifier.height(16.dp))
             ScrollEndDetectLazyColumn(onScrollEndDetected = uiState.commentsUiState.onListEndReaching) {
-                items(uiState.commentsUiState.items, key = { it.id }) {
+                items(uiState.commentsUiState.items, key = { it.key }) {
                     when (it) {
                         is CommentUiState.Data -> Item(it, onReplyClicked)
                         is CommentUiState.Shimmer -> CellTile(

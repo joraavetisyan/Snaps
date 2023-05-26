@@ -7,18 +7,18 @@ import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 
 sealed interface CommentUiState {
 
-    val id: Any
+    val key: Any
 
     data class Data(
-        override val id: Any,
+        override val key: Any,
         val item: CommentModel,
         val onClicked: () -> Unit = {},
         val onAvatarClicked: () -> Unit = {},
     ) : CommentUiState
 
-    data class Shimmer(override val id: Any) : CommentUiState
+    data class Shimmer(override val key: Any) : CommentUiState
 
-    data class Progress(override val id: Any = -1000) : CommentUiState
+    data class Progress(override val key: Any = -1000) : CommentUiState
 }
 
 data class CommentsUiState(
@@ -53,7 +53,7 @@ fun CommentPageModel.toCommentsUiState(
         else -> CommentsUiState(
             items = loadedPageItems.map { commentModel ->
                 CommentUiState.Data(
-                    id = commentModel.id,
+                    key = commentModel.id,
                     item = commentModel,
                     onClicked = { onCommentClicked(commentModel) },
                     onAvatarClicked = { onAvatarClicked(commentModel) }

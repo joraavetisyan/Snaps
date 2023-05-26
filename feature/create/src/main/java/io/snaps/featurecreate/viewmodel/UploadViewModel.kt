@@ -142,17 +142,17 @@ class UploadViewModel @Inject constructor(
                     _uiState.update { it.copy(uploadingProgress = null) }
                     notificationsSource.sendError(state.error)
                 }
-
                 is UploadStatusSource.State.Progress -> {
                     _uiState.update { it.copy(uploadingProgress = state.progress / 100f) }
                 }
-
                 is UploadStatusSource.State.Success -> {
-                    videoFeedRepository.refreshFeed(VideoFeedType.User(null))
-                    notificationsSource.sendMessage(StringKey.PreviewVideoMessageSuccess.textValue())
-                    _command publish Command.CloseScreen
+                    action.execute {
+                        videoFeedRepository.refreshFeed(VideoFeedType.User(null))
+                    }.doOnComplete {
+                        notificationsSource.sendMessage(StringKey.PreviewVideoMessageSuccess.textValue())
+                        _command publish Command.CloseScreen
+                    }
                 }
-
                 null -> Unit
             }
         }.launchIn(viewModelScope)

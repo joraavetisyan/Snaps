@@ -41,8 +41,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,6 +53,7 @@ import io.snaps.basenft.ui.rankCostToString
 import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.basewallet.ui.LimitedGasDialog
 import io.snaps.basewallet.ui.LimitedGasDialogHandler
+import io.snaps.basewallet.ui.TopUpDialog
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensUi
 import io.snaps.corecommon.R
@@ -65,6 +68,7 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetCurrentStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
@@ -86,10 +90,14 @@ fun PurchaseScreen(
 ) {
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
     val viewModel = hiltViewModel<PurchaseViewModel>()
+
     val uiState by viewModel.uiState.collectAsState()
     val transferTokensState by viewModel.transferTokensState.collectAsState()
     val limitedGasState by viewModel.limitedGasState.collectAsState()
+
     val context = LocalContext.current
+
+    val clipboardManager = LocalClipboardManager.current
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -97,15 +105,15 @@ fun PurchaseScreen(
     )
     val coroutineScope = rememberCoroutineScope()
 
-    ModalBottomSheetTargetStateListener(
+    ModalBottomSheetCurrentStateListener(
         sheetState = sheetState,
-        onStateToChange = {
-            if (it) {
-                viewModel.onLimitedGasDialogHidden()
-                viewModel.onTransferTokensDialogHidden()
-            }
-        },
-    )
+    ) {
+        if (it) {
+            viewModel.onBottomDialogHidden()
+            viewModel.onLimitedGasDialogHidden()
+            viewModel.onTransferTokensDialogHidden()
+        }
+    }
 
     viewModel.command.collectAsCommand {
         when (it) {
@@ -114,6 +122,9 @@ fun PurchaseScreen(
             } else {
                 router.backToMyCollectionScreen()
             }
+            PurchaseViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
+            PurchaseViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
+            is PurchaseViewModel.Command.CopyText -> clipboardManager.setText(AnnotatedString(it.text))
         }
     }
     viewModel.transferTokensCommand.collectAsCommand {
@@ -132,6 +143,17 @@ fun PurchaseScreen(
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
+            when (val dialog = uiState.bottomDialog) {
+                // todo localize own strings
+                is PurchaseViewModel.BottomDialog.TopUp -> TopUpDialog(
+                    title = StringKey.WalletDialogTitleTopUp.textValue(dialog.title),
+                    address = dialog.address,
+                    qr = dialog.qr,
+                    message = StringKey.PurchaseErrorNotEnoughBnb.textValue(),
+                    onAddressCopyClicked = { viewModel.onAddressCopyClicked(dialog.address) },
+                )
+                null -> Unit
+            }
             when (transferTokensState.bottomDialog) {
                 TransferTokensDialogHandler.BottomDialog.TokensTransfer -> TransferTokensUi(
                     data = transferTokensState.state,

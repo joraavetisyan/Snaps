@@ -10,15 +10,15 @@ import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 
 sealed interface VideoClipUiState {
 
-    val id: Any
+    val key: Any
 
     data class Data(
-        override val id: Any,
+        override val key: Any,
         val clip: VideoClipModel,
         val onClicked: () -> Unit,
     ) : VideoClipUiState
 
-    data class Shimmer(override val id: Any) : VideoClipUiState
+    data class Shimmer(override val key: Any) : VideoClipUiState
 }
 
 data class VideoFeedUiState(
@@ -55,7 +55,7 @@ fun VideoFeedPageModel.toVideoFeedUiState(
         else -> VideoFeedUiState(
             items = loadedPageItems.map {
                 VideoClipUiState.Data(
-                    id = it.id,
+                    key = it.id,
                     clip = it,
                     onClicked = { onClipClicked(it) },
                 )

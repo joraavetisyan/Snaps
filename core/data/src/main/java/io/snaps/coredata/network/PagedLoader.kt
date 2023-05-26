@@ -26,7 +26,7 @@ data class PagedLoaderParams<T, R>(
 data class PageModel<T>(
     val pageSize: Int,
     val loadedPageItems: List<T> = emptyList(),
-    val nextPageId: String? = "", // empty string for the first page
+    val nextPageId: String? = "", // empty string for the first page, null - no next page
     val isLoading: Boolean = false,
     val error: AppError? = null,
 )

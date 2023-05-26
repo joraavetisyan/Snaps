@@ -257,8 +257,8 @@ class WalletViewModel @Inject constructor(
             } else if (uiState.value.availableTokens.value == 0.0) {
                 notificationsSource.sendError(StringKey.RewardsErrorInsufficientBalance.textValue())
             } else {
-                _command publish Command.ShowBottomDialog
                 _uiState.update { it.copy(claimAmountValue = "", bottomDialog = BottomDialog.RewardsWithdraw) }
+                _command publish Command.ShowBottomDialog
             }
         }
     }
@@ -325,6 +325,7 @@ class WalletViewModel @Inject constructor(
             _command publish Command.ShowBottomDialog
         }
 
+    // todo copy handler as delegate
     fun onAddressCopyClicked(address: CryptoAddress) {
         copyToClipboard(text = address, message = StringKey.WalletMessageAddressCopied.textValue())
     }

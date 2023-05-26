@@ -185,8 +185,7 @@ private fun ProfileScreen(
                         uiState = uiState.videoFeedUiState,
                         onClick = onVideoClipClicked,
                     )
-
-                    else -> VideoFeedGrid(
+                    1 -> VideoFeedGrid(
                         columnCount = 3,
                         uiState = uiState.userLikedVideoFeedUiState,
                         onClick = onUserLikedVideoClipClicked,

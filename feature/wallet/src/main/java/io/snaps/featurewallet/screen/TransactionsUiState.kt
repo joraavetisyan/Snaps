@@ -50,9 +50,7 @@ fun LazyListScope.transactionsItems(
         }
     }
     uiState.errorState?.let { state ->
-        item {
-            state.Content(modifier = modifier)
-        }
+        item { state.Content(modifier = modifier) }
     }
     uiState.emptyState?.let { state ->
         item {

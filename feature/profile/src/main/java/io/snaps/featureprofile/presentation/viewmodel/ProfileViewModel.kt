@@ -61,11 +61,11 @@ class ProfileViewModel @Inject constructor(
                             it.copy(
                                 userType = UserType.Other,
                                 shareLink = AppDeeplink.generateSharingLink(
-                                    deeplink = AppDeeplink.Profile(id = requireNotNull(args.userId)),
+                                    deeplink = AppDeeplink.Profile(id = userId),
                                 )
                             )
                         }
-                        loadUserById(requireNotNull(args.userId))
+                        loadUserById(userId)
                         checkIfSubscribed()
                     } else {
                         subscribeOnCurrentUser()

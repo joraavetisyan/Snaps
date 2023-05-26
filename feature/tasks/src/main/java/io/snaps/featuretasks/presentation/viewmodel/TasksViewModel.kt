@@ -75,6 +75,7 @@ class TasksViewModel @Inject constructor(
         subscribeToHistoryTasks()
         subscribeToUserNftCollection()
         subscribeToEnergyProgress()
+        subscribeToBrokenGlassesCount()
 
         refreshNfts()
 
@@ -134,15 +135,17 @@ class TasksViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    private fun subscribeToBrokenGlassesCount() {
+        nftRepository.countBrokenGlassesState.onEach {  state ->
+            _uiState.update { it.copy(countBrokenGlasses = state.dataOrCache ?: -1) }
+        }.launchIn(viewModelScope)
+    }
+
     private fun subscribeToEnergyProgress() {
-        profileRepository.currentTasksState.combine(flow = nftRepository.countBrokenGlassesState) { currentTasks, brokenGlasses ->
-            brokenGlasses.dataOrCache?.let { glasses ->
-                currentTasks.dataOrCache?.totalEnergyProgress.takeIf { glasses == 0 }
-            } ?: 0
+        profileRepository.currentTasksState.combine(flow = nftRepository.countBrokenGlassesState) { tasks, count ->
+            tasks.dataOrCache?.totalEnergyProgress.takeIf { count.dataOrCache == 0 } ?: 0
         }.onEach { state ->
-            _uiState.update {
-                it.copy(totalEnergyProgress = state)
-            }
+            _uiState.update { it.copy(totalEnergyProgress = state) }
         }.launchIn(viewModelScope)
     }
 
@@ -265,6 +268,7 @@ class TasksViewModel @Inject constructor(
         val userNftCollection: List<CollectionItemState> = List(6) { CollectionItemState.Shimmer },
         val totalEnergy: Int = 0,
         val totalEnergyProgress: Int = 0,
+        val countBrokenGlasses: Int = 0,
         val bottomDialog: BottomDialog = BottomDialog.CurrentTasksFootnote,
     )
 

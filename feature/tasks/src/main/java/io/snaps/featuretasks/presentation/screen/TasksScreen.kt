@@ -62,6 +62,7 @@ import io.snaps.coreuicompose.uikit.other.SimpleCard
 import io.snaps.coreuicompose.uikit.other.TitleSlider
 import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
 import io.snaps.coreuicompose.uikit.status.FootnoteUi
+import io.snaps.coreuicompose.uikit.status.InfoBlock
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.featuretasks.presentation.historyTasksItems
@@ -220,6 +221,14 @@ private fun TasksScreen(
                                     energy = uiState.totalEnergy,
                                     energyProgress = uiState.totalEnergyProgress,
                                 )
+                                if (uiState.countBrokenGlasses > 0) {
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    InfoBlock(
+                                        message = StringKey.TasksErrorRepairGlasses.textValue(),
+                                        textColor = AppTheme.specificColorScheme.uiSystemRed,
+                                        backgroundColor = AppTheme.specificColorScheme.uiSystemRed.copy(alpha = 0.3f),
+                                    )
+                                }
                             }
                             items(uiState.current) {
                                 it.Content(modifier = Modifier)

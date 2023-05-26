@@ -15,6 +15,7 @@ class FirebaseNotificationsService : FirebaseMessagingService() {
     @Inject lateinit var notificationHelper: NotificationHelper
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        log("New message: $remoteMessage")
         sendNotification(remoteMessage)
     }
 

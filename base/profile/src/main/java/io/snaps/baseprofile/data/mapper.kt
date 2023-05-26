@@ -80,10 +80,10 @@ fun mainHeaderState(
     onProfileClicked: () -> Unit,
     onWalletClicked: () -> Unit,
 ) = if (profile is Effect && brokenGlasses is Effect) {
-    if (profile.isSuccess && brokenGlasses.isSuccess) {
+    if (profile.isSuccess) {
         MainHeaderState.Data(
             profileImage = profile.requireData.avatar,
-            energy = if (brokenGlasses.requireData == 0) {
+            energy = if (brokenGlasses.data == 0) {
                 profile.requireData.questInfo?.totalEnergyProgress.toString()
             } else "0",
             bnb = bnb?.value?.toCompactDecimalFormat() ?: "-",

@@ -60,7 +60,8 @@ sealed class CollectionItemState : TileState {
         val dailyReward: FiatValue,
         val dailyUnlock: String,
         val dailyConsumption: String,
-        val isHealthy: Boolean,
+        val isHealthBadgeVisible: Boolean,
+        val isRepairVisible: Boolean,
         val level: Int,
         val experience: Int,
         val bonus: Int,
@@ -128,7 +129,7 @@ private fun Nft(
                         .padding(20.dp),
                     contentScale = ContentScale.Crop,
                 )
-                if (!data.isHealthy) NeedToRepairMessage()
+                if (data.isHealthBadgeVisible) NeedToRepairMessage()
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -161,7 +162,7 @@ private fun Nft(
                 onHelpIconClicked = data.onHelpIconClicked,
             )
         }
-        if (!data.isHealthy) {
+        if (data.isRepairVisible) {
             Button(
                 text = StringKey.MyCollectionActionRepairGlasses.textValue(),
                 textColor = AppTheme.specificColorScheme.pink,

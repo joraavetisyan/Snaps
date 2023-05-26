@@ -89,7 +89,7 @@ fun MessageBannerTile(
                 Image(
                     painter = it.get(),
                     contentDescription = "Message banner image",
-                    modifier = Modifier.size(52.dp),
+                    modifier = Modifier.size(124.dp),
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }

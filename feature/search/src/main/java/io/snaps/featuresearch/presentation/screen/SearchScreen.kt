@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -176,10 +177,10 @@ private fun Users(
         onScrollEndDetected = uiState.onListEndReaching,
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        itemsIndexed(
+        items(
             items = uiState.items,
-            key = { _, item -> item.key }
-        ) { _, it ->
+            key = { item -> item.key }
+        ) {
             when (it) {
                 is UserUiState.Data -> CellTile(
                     data = CellTileState.Data(

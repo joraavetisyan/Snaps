@@ -19,8 +19,9 @@ interface NotificationHelper {
         val id: Int = 1,
         val channelId: Channels = Channels.Default,
         val title: String? = null,
-        val smallIcon: Int = CoreUiThemeR.drawable.ic_launcher_foreground,
+        val smallIcon: Int = CoreUiThemeR.drawable.ic_notification_small,
         val largeIcon: Int = CoreUiThemeR.mipmap.ic_launcher,
+        val color: Int = CoreUiThemeR.color.uiAccent,
         val text: String? = null,
         val intent: Intent,
     )
@@ -72,6 +73,7 @@ class NotificationHelperImpl @Inject constructor(
         return NotificationCompat.Builder(context, channelId.getId(context))
             .setStyle(style)
             .setSmallIcon(smallIcon)
+            .setColor(context.getColor(color))
             .setLargeIcon(BitmapFactory.decodeResource(context.resources, largeIcon))
             .setContentTitle(title)
             .setContentText(text)
