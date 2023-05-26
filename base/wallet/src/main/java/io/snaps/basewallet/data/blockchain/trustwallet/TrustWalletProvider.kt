@@ -30,7 +30,7 @@ object TrustWalletProvider {
             else "https://bsc-dataseed2.binance.org"
         }"
                 },
-                isDebug: true
+                isDebug: ${CryptoKit.testMode}
             };
             trustwallet.ethereum = new trustwallet.Provider(config);
             trustwallet.postMessage = (json) => {
