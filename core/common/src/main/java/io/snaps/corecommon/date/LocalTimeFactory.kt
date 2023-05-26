@@ -10,7 +10,7 @@ object LocalTimeFactory {
      * {@link java.time.format.DateTimeFormatter#ISO_LOCAL_TIME}.
      *
      * @param date  the text to parse such as "10:15:30", not null
-     * @return the parsed local time, not null
+     * @return the parsed local time
      */
     fun from(date: String) = runCatching {
         LocalTime.parse(date)
@@ -21,7 +21,7 @@ object LocalTimeFactory {
      *
      * @param date  the text to parse, not null
      * @param format  the format to use, not null
-     * @return the parsed local time, not null
+     * @return the parsed local time
      */
     fun from(date: String, format: DateTimeFormat) = from(date, format.code)
 

@@ -17,8 +17,8 @@ object LocalDateTimeFactory {
      * The string must represent a valid date-time and is parsed using
      * {@link java.time.format.DateTimeFormatter#ISO_LOCAL_DATE_TIME}.
      *
-     * @param date  the text to parse such as "2007-12-03T10:15:30", not null
-     * @return the parsed local date-time, not null
+     * @param date  the text to parse such as "2007-12-03T10:15:30"
+     * @return the parsed local date-time
      */
     fun from(date: String) = runCatching {
         LocalDateTime.parse(date)
@@ -29,7 +29,7 @@ object LocalDateTimeFactory {
      *
      * @param date  the text to parse, not null
      * @param format  the format to use, not null
-     * @return the parsed local date-time, not null
+     * @return the parsed local date-time
      */
     fun from(date: String, format: DateTimeFormat) = from(date, format.code)
 
@@ -40,4 +40,4 @@ object LocalDateTimeFactory {
 
 fun LocalDateTime.toLong(
     zoneId: ZoneId = ZoneId.systemDefault(),
-) = ZonedDateTime.of(this, ZoneId.systemDefault()).toInstant().toEpochMilli()
+) = ZonedDateTime.of(this, zoneId).toInstant().toEpochMilli()

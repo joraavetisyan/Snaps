@@ -13,7 +13,7 @@ object LocalDateFactory {
      * {@link java.time.format.DateTimeFormatter#ISO_LOCAL_DATE}.
      *
      * @param date  the text to parse such as "2007-12-03", not null
-     * @return the parsed local date, not null
+     * @return the parsed local date
      */
     fun from(date: String) = runCatching {
         LocalDate.parse(date)
@@ -24,7 +24,7 @@ object LocalDateFactory {
      *
      * @param date the text to parse, not null
      * @param format  the format of date, not null
-     * @return the parsed local date, not null
+     * @return the parsed local date
      */
     fun from(date: String, format: DateTimeFormat) = from(date, format.code)
 

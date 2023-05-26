@@ -79,7 +79,7 @@ class ShareTemplateViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun instagramTileState(instagramUserId: Uuid?): CellTileState {
+    private fun instagramTileState(instagramUserId: Uuid?): CellTileState? {
         return if (instagramUserId != null) {
             CellTileState.Data(
                 leftPart = LeftPart.Logo(
@@ -93,7 +93,8 @@ class ShareTemplateViewModel @Inject constructor(
                 ),
             )
         } else {
-            CellTileState.Data(
+            null
+            /*CellTileState.Data(
                 leftPart = LeftPart.Logo(
                     R.drawable.ic_instagram.imageValue(),
                 ),
@@ -104,12 +105,8 @@ class ShareTemplateViewModel @Inject constructor(
                     text = StringKey.TaskShareActionConnect.textValue(),
                     onClick = ::onConnectClicked,
                 ),
-            )
+            )*/
         }
-    }
-
-    private fun onConnectClicked() = viewModelScope.launch {
-        _command publish Command.OpenWebView
     }
 
     private fun onDeleteIconClicked() = viewModelScope.launch {
@@ -146,7 +143,20 @@ class ShareTemplateViewModel @Inject constructor(
                 _command publish Command.BackToTasksScreen
             }
         } else {
-            onConnectClicked()
+            notificationsSource.sendError(StringKey.TaskShareErrorNoInstagramConnected.textValue())
+        }
+    }
+
+    fun onInstagramUsernameChanged(value: String) {
+        _uiState.update { it.copy(instagramUsernameValue = value) }
+    }
+
+    fun onInstagramConnectClicked() = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true) }
+        action.execute {
+            connectInstagramInteractor.connectInstagramWithUsername(_uiState.value.instagramUsernameValue)
+        }.doOnComplete {
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
@@ -155,7 +165,7 @@ class ShareTemplateViewModel @Inject constructor(
             it.copy(isLoading = true)
         }
         action.execute {
-            connectInstagramInteractor.connectInstagram(code)
+            connectInstagramInteractor.connectInstagramWithAuthCode(code)
         }.doOnComplete {
             _uiState.update {
                 it.copy(isLoading = false)
@@ -165,13 +175,17 @@ class ShareTemplateViewModel @Inject constructor(
 
     data class UiState(
         val isLoading: Boolean = false,
-        val instagramConnectTileState: CellTileState = CellTileState.Shimmer(
+        val instagramUsernameValue: String = "",
+        val instagramConnectTileState: CellTileState? = CellTileState.Shimmer(
             leftPart = LeftPart.Shimmer,
             middlePart = MiddlePart.Shimmer(needValueLine = true),
             rightPart = RightPart.Shimmer(needLine = true),
         ),
         val payments: String = "0",
-    )
+    ) {
+
+        val instagramConnectAvailable get() = instagramUsernameValue.isNotEmpty()
+    }
 
     sealed class Command {
         object OpenWebView : Command()

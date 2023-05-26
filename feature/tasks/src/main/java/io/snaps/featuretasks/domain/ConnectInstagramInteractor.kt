@@ -11,7 +11,9 @@ import javax.inject.Inject
 
 interface ConnectInstagramInteractor {
 
-    suspend fun connectInstagram(authCode: String): Effect<Completable>
+    suspend fun connectInstagramWithAuthCode(authCode: String): Effect<Completable>
+
+    suspend fun connectInstagramWithUsername(username: String): Effect<Completable>
 
     suspend fun disconnectInstagram(): Effect<Completable>
 }
@@ -22,7 +24,7 @@ class ConnectInstagramInteractorImpl @Inject constructor(
     private val instagramService: InstagramService,
 ) : ConnectInstagramInteractor {
 
-    override suspend fun connectInstagram(authCode: String): Effect<Completable> {
+    override suspend fun connectInstagramWithAuthCode(authCode: String): Effect<Completable> {
         return instagramService.getAccessToken(authCode).flatMap {
             instagramService.getUserInfo(it)
         }.flatMap {
@@ -35,6 +37,17 @@ class ConnectInstagramInteractorImpl @Inject constructor(
                 )
             } ?: Effect.error(AppError.Unknown())
         }
+    }
+
+    override suspend fun connectInstagramWithUsername(username: String): Effect<Completable> {
+        return profileRepository.state.value.dataOrCache?.let { user ->
+            profileRepository.connectInstagram(
+                instagramUsername = username,
+                name = user.name,
+                address = walletRepository.requireActiveWalletReceiveAddress(),
+                avatar = user.avatarUrl,
+            )
+        } ?: Effect.error(AppError.Unknown())
     }
 
     override suspend fun disconnectInstagram(): Effect<Completable> {

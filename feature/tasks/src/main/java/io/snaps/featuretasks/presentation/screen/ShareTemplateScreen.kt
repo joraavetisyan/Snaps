@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -46,12 +47,15 @@ import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.tools.toPx
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonInlineM
 import io.snaps.coreuicompose.uikit.duplicate.ActionIconData
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
+import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
+import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.featuretasks.presentation.viewmodel.ShareTemplateViewModel
 import toTypeface
@@ -83,6 +87,8 @@ fun ShareTemplateScreen(
         onSaveButtonClicked = viewModel::onSavePhotoButtonClicked,
         onShareIconClicked = viewModel::onShareIconClicked,
         onPostToInstagramButtonClicked = viewModel::onPostToInstagramButtonClicked,
+        onInstagramUsernameChanged = viewModel::onInstagramUsernameChanged,
+        onInstagramConnectClicked = viewModel::onInstagramConnectClicked,
     )
 
     FullScreenLoaderUi(isLoading = uiState.isLoading)
@@ -93,6 +99,8 @@ fun ShareTemplateScreen(
 private fun ShareTemplateScreen(
     uiState: ShareTemplateViewModel.UiState,
     onBackClicked: () -> Boolean,
+    onInstagramUsernameChanged: (String) -> Unit,
+    onInstagramConnectClicked: () -> Unit,
     onShareIconClicked: (Bitmap) -> Unit,
     onSaveButtonClicked: (Bitmap) -> Unit,
     onPostToInstagramButtonClicked: () -> Unit,
@@ -135,15 +143,40 @@ private fun ShareTemplateScreen(
                     .fillMaxWidth()
                     .weight(1f),
             )
-            uiState.instagramConnectTileState.Content(
-                modifier = Modifier
-                    .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
-                    .background(
-                        color = AppTheme.specificColorScheme.white,
-                        shape = AppTheme.shapes.medium,
-                    )
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-            )
+            if (uiState.instagramConnectTileState != null) {
+                uiState.instagramConnectTileState.Content(
+                    modifier = Modifier
+                        .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
+                        .background(
+                            color = AppTheme.specificColorScheme.white,
+                            shape = AppTheme.shapes.medium,
+                        )
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+            } else {
+                SimpleTextField(
+                    value = uiState.instagramUsernameValue,
+                    onValueChange = onInstagramUsernameChanged,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    placeholder = {
+                        Text(
+                            text = LocalStringHolder.current(StringKey.TaskShareTitleConnectInstagram),
+                            style = AppTheme.specificTypography.titleSmall,
+                        )
+                    },
+                    trailingIcon = {
+                        SimpleButtonActionS(
+                            modifier = Modifier.padding(horizontal = 12.dp),
+                            onClick = onInstagramConnectClicked,
+                            enabled = uiState.instagramConnectAvailable,
+                        ) {
+                            SimpleButtonContent(text = StringKey.TaskShareActionConnect.textValue())
+                        }
+                    },
+                )
+            }
             SimpleButtonActionM(
                 onClick = onPostToInstagramButtonClicked,
                 modifier = Modifier.fillMaxWidth(),

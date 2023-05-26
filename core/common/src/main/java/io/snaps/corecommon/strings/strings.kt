@@ -1538,9 +1538,9 @@ internal val strings = mapOf(
     key(StringKey.TaskShareTitle) to mapOf(
         SupportedLanguageKey.En to "Share SNAPS",
         SupportedLanguageKey.Ru to "Поделиться SNAPS",
-        SupportedLanguageKey.Tr to "Şablonu Paylaş",
+        SupportedLanguageKey.Tr to "SNAPS Paylaş",
         SupportedLanguageKey.Ua to "Поділитися SNAPS",
-        SupportedLanguageKey.Es to "Compartir Plantilla",
+        SupportedLanguageKey.Es to "Compartir SNAPS",
     ),
     key(StringKey.TaskShareTitleConnectInstagram) to mapOf(
         SupportedLanguageKey.En to "Connect Instagram",
@@ -1552,9 +1552,16 @@ internal val strings = mapOf(
     key(StringKey.TaskShareActionConnect) to mapOf(
         SupportedLanguageKey.En to "Connect",
         SupportedLanguageKey.Ru to "Подключить",
-        SupportedLanguageKey.Tr to "İnstagram'ı",
+        SupportedLanguageKey.Tr to "Bağla",
         SupportedLanguageKey.Ua to "Підключити",
         SupportedLanguageKey.Es to "Conectar",
+    ),
+    key(StringKey.TaskShareErrorNoInstagramConnected) to mapOf(
+        SupportedLanguageKey.En to "Instagram is not connected",
+        SupportedLanguageKey.Ru to "Instagram не подключен",
+        SupportedLanguageKey.Tr to "Instagram bağlı değil",
+        SupportedLanguageKey.Ua to "Instagram не підключений",
+        SupportedLanguageKey.Es to "Instagram no está conectado",
     ),
     key(StringKey.TaskShareActionSavePhoto) to mapOf(
         SupportedLanguageKey.En to "Save photo to camera roll",

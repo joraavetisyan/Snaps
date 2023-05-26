@@ -259,6 +259,7 @@ enum class StringKey {
     TaskShareFieldEarnCryptocurrencies,
     TaskShareMessagePostInstagram,
     TaskShareTitleShareImage,
+    TaskShareErrorNoInstagramConnected,
     TaskShareMessageShareImageWrite,
     TaskShareMessageShareImageMe,
     TaskShareMessageShareImageAndWillTell,
