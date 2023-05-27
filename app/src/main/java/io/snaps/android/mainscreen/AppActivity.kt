@@ -24,10 +24,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import io.snaps.android.di.AppViewModelFactory
-import io.snaps.corecommon.ext.log
 import io.snaps.corenavigation.base.navigate
 import io.snaps.coreuicompose.tools.SystemBarsIconsColor
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
@@ -96,12 +94,6 @@ class AppActivity : FragmentActivity() {
                         )
                         LaunchedEffect(currentFlow.isReady) {
                             if (currentFlow.isReady) {
-
-                                FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-                                    task.result?.let {
-                                        log("FCM $it")
-                                    }
-                                }
                                 navController.navigate(currentFlow.deeplink)
                             }
                         }

@@ -137,7 +137,7 @@ class TasksViewModel @Inject constructor(
     }
 
     private fun subscribeToBrokenGlassesCount() {
-        nftRepository.allGlassesBrokenState.onEach {  state ->
+        nftRepository.allGlassesBrokenState.onEach { state ->
             _uiState.update { it.copy(isAllGlassesBroken = state.dataOrCache ?: false) }
         }.launchIn(viewModelScope)
     }

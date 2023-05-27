@@ -11,7 +11,6 @@ import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basesubs.data.SubsRepository
-import io.snaps.corecommon.model.OnboardingType
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute

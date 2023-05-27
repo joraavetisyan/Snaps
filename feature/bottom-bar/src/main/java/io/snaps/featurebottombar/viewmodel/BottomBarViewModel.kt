@@ -108,6 +108,6 @@ class BottomBarViewModel @Inject constructor(
 
     sealed interface Command {
         object OpenNftPurchaseScreen : Command
-        object ShowBottomDialog: Command
+        object ShowBottomDialog : Command
     }
 }

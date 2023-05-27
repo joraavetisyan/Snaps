@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.basenft.domain.RankModel
-import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
