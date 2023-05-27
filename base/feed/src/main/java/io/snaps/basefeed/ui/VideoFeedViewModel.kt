@@ -101,7 +101,7 @@ abstract class VideoFeedViewModel(
 
     private fun onClipClicked(clip: VideoClipModel) {}
 
-    private fun onReloadClicked() {
+    protected fun onReloadClicked() {
         viewModelScope.launch { action.execute { videoFeedRepository.refreshFeed(videoFeedType) } }
     }
 
@@ -391,6 +391,8 @@ abstract class VideoFeedViewModel(
                     subsRepository.unsubscribe(video.authorId)
                 } else {
                     subsRepository.subscribe(video.authorId)
+                }.flatMap {
+                    profileRepository.updateData(isSilently = true)
                 }
             }
             _uiState.update {

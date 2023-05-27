@@ -64,7 +64,8 @@ class SimpleBillingImpl @Inject constructor(
 
     override val isPaidVersionFlow = MutableStateFlow(false)
 
-    override val newPurchasesFlow = MutableSharedFlow<List<Purchase>>(replay = 1)
+    // todo DROP_OLDEST?
+    override val newPurchasesFlow = MutableSharedFlow<List<Purchase>>(extraBufferCapacity = 1)
 
     private val purchasesUpdatedListener = PurchasesUpdatedListener { billingResult, purchases ->
         if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {

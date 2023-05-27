@@ -221,7 +221,7 @@ private fun TasksScreen(
                                     energy = uiState.totalEnergy,
                                     energyProgress = uiState.totalEnergyProgress,
                                 )
-                                if (uiState.countBrokenGlasses > 0) {
+                                if (uiState.isAllGlassesBroken) {
                                     Spacer(modifier = Modifier.height(8.dp))
                                     InfoBlock(
                                         message = StringKey.TasksErrorRepairGlasses.textValue(),

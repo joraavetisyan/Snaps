@@ -171,37 +171,43 @@ class WithdrawViewModel @Inject constructor(
 
     private fun onSendTransactionClicked() {
         hideTransferTokensBottomDialog(scope = viewModelScope)
+        onTransferTokensDialogHidden()
         val amount = getValueDecimalApplied() ?: kotlin.run {
             viewModelScope.launch { notificationsSource.sendError(StringKey.WithdrawErrorInvalidAmount.textValue()) }
             return
         }
 
-        checkGas(scope = viewModelScope, minValue = minGasValue) {
-            _uiState.update { it.copy(isLoading = true) }
-            action.execute {
-                blockchainTxRepository.send(
-                    wallet = _uiState.value.walletModel,
-                    address = _uiState.value.addressValue,
-                    amount = amount,
-                    gasPrice = _uiState.value.gasPrice,
-                    gasLimit = _uiState.value.gasLimit,
-                )
-            }.doOnComplete {
-                _uiState.update { it.copy(isLoading = false) }
-            }.doOnSuccess {
-                _command publish Command.CloseScreenOnSuccess(
-                    TransferTokensSuccessData(
-                        txHash = it,
-                        sent = CoinValue(
-                            _uiState.value.walletModel.coinType,
-                            _uiState.value.amountValue.stringAmountToDouble(),
-                        ),
-                        to = _uiState.value.addressValue,
-                        type = TransferTokensSuccessData.Type.Send,
+        checkGas(
+            scope = viewModelScope,
+            minValue = minGasValue,
+            onGasEnough = {
+                _uiState.update { it.copy(isLoading = true) }
+                action.execute {
+                    blockchainTxRepository.send(
+                        wallet = _uiState.value.walletModel,
+                        address = _uiState.value.addressValue,
+                        amount = amount,
+                        gasPrice = _uiState.value.gasPrice,
+                        gasLimit = _uiState.value.gasLimit,
                     )
-                )
-            }
-        }
+                }.doOnComplete {
+                    _uiState.update { it.copy(isLoading = false) }
+                }.doOnSuccess {
+                    _command publish Command.CloseScreenOnSuccess(
+                        TransferTokensSuccessData(
+                            txHash = it,
+                            sent = CoinValue(
+                                _uiState.value.walletModel.coinType,
+                                _uiState.value.amountValue.stringAmountToDouble(),
+                            ),
+                            to = _uiState.value.addressValue,
+                            type = TransferTokensSuccessData.Type.Send,
+                        )
+                    )
+                }
+            },
+            onSync = { notificationsSource.sendError(StringKey.ErrorBalanceInSync.textValue()) },
+        )
     }
 
     data class UiState(

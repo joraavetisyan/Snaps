@@ -7,7 +7,6 @@ import io.snaps.basenft.data.model.NftItemResponseDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.data.model.RepairGlassesResponseDto
 import io.snaps.basenft.data.model.UserNftItemResponseDto
-import io.snaps.corecommon.model.Completable
 import io.snaps.coredata.network.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.GET

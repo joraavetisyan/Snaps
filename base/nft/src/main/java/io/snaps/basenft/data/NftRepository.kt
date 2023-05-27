@@ -35,11 +35,13 @@ interface NftRepository {
 
     val countBrokenGlassesState: StateFlow<State<Int>>
 
+    val allGlassesBrokenState: StateFlow<State<Boolean>>
+
     suspend fun updateRanks(): Effect<Completable>
 
     suspend fun updateNftCollection(): Effect<List<NftModel>>
 
-    suspend fun mintNftStore(productId: Uuid, purchaseToken: Token, txSign: TxSign): Effect<Completable>
+    suspend fun mintNftStore(productId: Uuid, purchaseToken: Token, txSign: TxSign): Effect<TxHash>
 
     /**
      * [txSign]=null for [NftType.Free]
@@ -63,15 +65,22 @@ class NftRepositoryImpl @Inject constructor(
     private val _ranksState = MutableStateFlow<State<List<RankModel>>>(Loading())
     override val ranksState = _ranksState.asStateFlow()
 
-    override val countBrokenGlassesState = nftCollectionState.map {
-        when (it) {
+    override val countBrokenGlassesState = nftCollectionState.map { state ->
+        when (state) {
             is Loading -> Loading()
             is Effect -> when {
-                it.isSuccess -> Effect.success(
-                    it.requireData.count { nft -> !nft.isHealthy }
-                )
+                state.isSuccess -> Effect.success(state.requireData.count { !it.isHealthy })
+                else -> Effect.error(requireNotNull(state.errorOrNull))
+            }
+        }
+    }.likeStateFlow(scope, Loading())
 
-                else -> Effect.error(requireNotNull(it.errorOrNull))
+    override val allGlassesBrokenState = nftCollectionState.map { state ->
+        when (state) {
+            is Loading -> Loading()
+            is Effect -> when {
+                state.isSuccess -> Effect.success(state.requireData.all { !it.isHealthy })
+                else -> Effect.error(requireNotNull(state.errorOrNull))
             }
         }
     }.likeStateFlow(scope, Loading())
@@ -110,7 +119,7 @@ class NftRepositoryImpl @Inject constructor(
     /**
      * For purchases through Google Play
      */
-    override suspend fun mintNftStore(productId: Uuid, purchaseToken: Token, txSign: TxSign): Effect<Completable> {
+    override suspend fun mintNftStore(productId: Uuid, purchaseToken: Token, txSign: TxSign): Effect<TxHash> {
         return apiCall(ioDispatcher) {
             nftApi.mintNftStore(
                 body = MintNftStoreRequestDto(
@@ -122,7 +131,7 @@ class NftRepositoryImpl @Inject constructor(
         }.doOnSuccess {
             updateNftCollection()
             updateRanks()
-        }.toCompletable()
+        }.map { it.txHash.orEmpty() }
     }
 
     override suspend fun repairNftBlockchain(nftModel: NftModel, txSign: TxSign): Effect<TxHash> {

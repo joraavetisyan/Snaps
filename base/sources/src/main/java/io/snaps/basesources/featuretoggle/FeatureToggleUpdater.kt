@@ -33,6 +33,7 @@ class FeatureToggleUpdater @Inject constructor(
                 else -> FETCH_TIME_DURATION_RELEASE
             }.inWholeSeconds
         ).addOnSuccessListener {
+            // todo there is an error that values are available on the next launch only
             firebaseRemoteConfig.activate()
             log("Fetched Firebase remote configs")
             featureToggle.clearRemoteValues()

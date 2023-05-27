@@ -382,7 +382,7 @@ private fun Main(
             DirectReferralCard(
                 image = R.drawable.img_guys_surprised_eating.imageValue(),
                 title = StringKey.ReferralProgramTitleDirectReferral.textValue(uiState.firstLevelReferral),
-                message = StringKey.ReferralProgramMessageDirectReferral.textValue(uiState.secondLevelReferral),
+                message = StringKey.ReferralProgramMessageDirectReferral.textValue(uiState.firstLevelReferral),
             )
             DirectReferralCard(
                 image = R.drawable.img_guys_surprised_shadowed_eating.imageValue(),

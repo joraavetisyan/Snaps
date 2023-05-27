@@ -14,7 +14,6 @@ import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.mock.rDouble
 import io.snaps.corecommon.mock.rImage
 import io.snaps.corecommon.mock.rInt
-import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.NftType
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay

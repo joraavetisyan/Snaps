@@ -69,7 +69,6 @@ import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetCurrentStateListener
-import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonDefaultM
@@ -143,6 +142,7 @@ fun PurchaseScreen(
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
+            // todo use one source for dialogs, here and in app
             when (val dialog = uiState.bottomDialog) {
                 // todo localize own strings
                 is PurchaseViewModel.BottomDialog.TopUp -> TopUpDialog(
@@ -233,7 +233,7 @@ private fun PurchaseScreen(
                 NftInfoBlock(
                     nftType = uiState.nftType,
                     nftImage = uiState.nftImage,
-                    cost = uiState.cost.rankCostToString(),
+                    cost = uiState.costInFiat.rankCostToString(),
                 )
             } else {
                 UnavailableNftInfoBlock(
@@ -340,7 +340,7 @@ private fun ActionButtons(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onBuyWithBNBClicked,
                     text = StringKey.PurchaseActionBuyWithBNB.textValue(),
-                    additionalText = StringKey.PurchaseFieldOff.textValue(),
+                    additionalText = StringKey.PurchaseFieldOff.textValue(uiState.costInCoin?.getFormatted().orEmpty()),
                 )
             }
         }

@@ -93,26 +93,29 @@ fun QuestModel.status(): TaskStatus? = when (status) {
 }
 
 fun State<List<NftModel>>.toNftCollectionItemState(
+    snpsUsdExchangeRate: Double,
     onReloadClicked: () -> Unit,
     onItemClicked: (NftModel) -> Unit,
 ) = when (this) {
     is Loading -> List(6) { CollectionItemState.Shimmer }
     is Effect -> when {
-        isSuccess -> buildList<CollectionItemState> {
-            requireData.forEach {
-                add(it.toNftCollectionItemState(onItemClicked))
-            }
+        isSuccess -> requireData.map {
+            it.toNftCollectionItemState(
+                snpsUsdExchangeRate = snpsUsdExchangeRate,
+                onItemClicked = onItemClicked
+            )
         }
         else -> listOf(CollectionItemState.Error(onClick = onReloadClicked))
     }
 }
 
 private fun NftModel.toNftCollectionItemState(
+    snpsUsdExchangeRate: Double,
     onItemClicked: (NftModel) -> Unit,
 ) = CollectionItemState.Nft(
     type = type,
     image = image,
-    dailyReward = dailyReward.toFiat(rate = 0.001),
+    dailyReward = dailyReward.toFiat(rate = snpsUsdExchangeRate),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthBadgeVisible = !isHealthy,

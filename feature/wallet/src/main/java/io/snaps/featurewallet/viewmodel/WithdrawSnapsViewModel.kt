@@ -4,12 +4,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.data.model.PaymentsState
+import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
 import io.snaps.basewallet.domain.WalletModel
 import io.snaps.basewallet.ui.LimitedGasDialogHandler
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensSuccessData
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.applyDecimal
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.stringAmountToDouble
@@ -20,6 +22,7 @@ import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.model.FiatUSD
 import io.snaps.corecommon.model.FiatValue
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.digitsOnly
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
@@ -51,6 +54,7 @@ class WithdrawSnapsViewModel @Inject constructor(
     limitedGasDialogHandler: LimitedGasDialogHandler,
     transferTokensDialogHandler: TransferTokensDialogHandler,
     private val action: Action,
+    private val notificationsSource: NotificationsSource,
     @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val walletRepository: WalletRepository,
     @Bridged private val blockchainTxRepository: BlockchainTxRepository,
@@ -143,9 +147,12 @@ class WithdrawSnapsViewModel @Inject constructor(
         when (profileRepository.state.value.dataOrCache?.paymentsState) {
             null,
             PaymentsState.No,
-            PaymentsState.InApp -> checkGas(viewModelScope, minGasValue) {
-                send(snpWalletModel = snpWalletModel, amount = amount)
-            }
+            PaymentsState.InApp -> checkGas(
+                scope = viewModelScope,
+                minValue = minGasValue,
+                onGasEnough = { send(snpWalletModel = snpWalletModel, amount = amount) },
+                onSync = { notificationsSource.sendError(StringKey.ErrorBalanceInSync.textValue()) },
+            )
             PaymentsState.Blockchain -> viewModelScope.launch {
                 send(snpWalletModel = snpWalletModel, amount = amount)
             }

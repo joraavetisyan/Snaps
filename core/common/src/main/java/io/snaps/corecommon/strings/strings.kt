@@ -184,6 +184,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Сталася помилка. Спробуйте ще раз пізніше",
         SupportedLanguageKey.Es to "Se ha producido un error. Inténtalo de nuevo más tarde",
     ),
+    key(StringKey.ErrorBalanceInSync) to mapOf(
+        SupportedLanguageKey.En to "Balance update. Try again later",
+        SupportedLanguageKey.Ru to "Обновление баланса. Попробуйте повторить позднее",
+        SupportedLanguageKey.Tr to "Bakiye güncellemesi. Daha sonra tekrar deneyin",
+        SupportedLanguageKey.Ua to "Відновлення балансу. Спробуйте повторити пізніше",
+        SupportedLanguageKey.Es to "Actualización de saldo. Vuelva a intentarlo más tarde",
+    ),
     key(StringKey.OnboardingRankTitle) to mapOf(
         SupportedLanguageKey.En to "Welcome to Snaps!",
         SupportedLanguageKey.Ru to "Добро пожаловать в Snaps!",
@@ -1460,10 +1467,10 @@ internal val strings = mapOf(
     ),
     key(StringKey.TaskWatchVideoMessage) to mapOf(
         SupportedLanguageKey.En to "View at least 20 videos of the most popular videos. Attention retention must be at least 70 percent. If the video is 1 minute long, you must watch it for at least 42 seconds to successfully complete the task.",
-        SupportedLanguageKey.Ru to "Просмотреть минимум %@ видео из вашей ленты коротких видео. Удержание внимания должно быть минимум 70 процентов. Если ролик длится 1 минуту, то для успешного выполнения задания, вы должны просмотреть его минимум 42 секунды.",
-        SupportedLanguageKey.Tr to "Kısa video akışınızdaki en az%@ videoyu görüntüleyin. Dikkatin tutulması en az yüzde 70 olmalıdır. Eğer film 1 dakika sürerse, görevi başarıyla tamamlamak için filmi en az 42 saniye gözden geçirmelisiniz",
-        SupportedLanguageKey.Ua to "Переглянути мінімум % @ відео з вашої стрічки коротких відео. Утримання уваги має бути мінімум 70 відсотків. Якщо ролик триває 1 хвилину, то для успішного виконання завдання, ви повинні переглянути його мінімум 42 секунди",
-        SupportedLanguageKey.Es to "Ver mínimo % @ videos de su feed de videos cortos. La retención de la atención debe ser un mínimo del 70 por ciento. Si el video dura 1 minuto, entonces para completar con éxito la tarea, debe verlo durante al menos 42 segundos",
+        SupportedLanguageKey.Ru to "Просмотреть минимум 20 видео из вашей ленты коротких видео. Удержание внимания должно быть минимум 70 процентов. Если ролик длится 1 минуту, то для успешного выполнения задания, вы должны просмотреть его минимум 42 секунды.",
+        SupportedLanguageKey.Tr to "Kısa video akışınızdaki en az 20 videoyu görüntüleyin. Dikkatin tutulması en az yüzde 70 olmalıdır. Eğer film 1 dakika sürerse, görevi başarıyla tamamlamak için filmi en az 42 saniye gözden geçirmelisiniz",
+        SupportedLanguageKey.Ua to "Переглянути мінімум 20 відео з вашої стрічки коротких відео. Утримання уваги має бути мінімум 70 відсотків. Якщо ролик триває 1 хвилину, то для успішного виконання завдання, ви повинні переглянути його мінімум 42 секунди",
+        SupportedLanguageKey.Es to "Ver mínimo 20 videos de su feed de videos cortos. La retención de la atención debe ser un mínimo del 70 por ciento. Si el video dura 1 minuto, entonces para completar con éxito la tarea, debe verlo durante al menos 42 segundos",
     ),
     key(StringKey.TaskLikeTitle) to mapOf(
         SupportedLanguageKey.En to "Like",
@@ -2680,11 +2687,11 @@ internal val strings = mapOf(
         SupportedLanguageKey.Es to "Gratis",
     ),
     key(StringKey.PurchaseFieldOff) to mapOf(
-        SupportedLanguageKey.En to "30%% off",
-        SupportedLanguageKey.Ru to "30%% скидка",
-        SupportedLanguageKey.Tr to "30%% indirim",
-        SupportedLanguageKey.Ua to "30%% знижка",
-        SupportedLanguageKey.Es to "30%% descuento",
+        SupportedLanguageKey.En to "30%% off (%s)",
+        SupportedLanguageKey.Ru to "30%% скидка (%s)",
+        SupportedLanguageKey.Tr to "30%% indirim (%s)",
+        SupportedLanguageKey.Ua to "30%% знижка (%s)",
+        SupportedLanguageKey.Es to "30%% descuento (%s)",
     ),
     key(StringKey.PurchaseTitlePrice) to mapOf(
         SupportedLanguageKey.En to "Price:",

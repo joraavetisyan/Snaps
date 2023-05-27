@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesubs.data.SubsRepository
 import io.snaps.basesubs.domain.SubModel
 import io.snaps.basesubs.domain.SubPageModel
+import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.di.Bridged
 import io.snaps.corenavigation.AppRoute
@@ -16,6 +18,8 @@ import io.snaps.coreui.viewmodel.publish
 import io.snaps.featureprofile.presentation.screen.ConfirmUnsubscribeData
 import io.snaps.featureprofile.presentation.screen.SubsUiState
 import io.snaps.featureprofile.presentation.screen.toSubsUiState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,6 +36,7 @@ class SubsViewModel @Inject constructor(
     stateHandle: SavedStateHandle,
     private val action: Action,
     @Bridged private val subsRepository: SubsRepository,
+    @Bridged private val profileRepository: ProfileRepository,
 ) : SimpleViewModel() {
 
     private val args = stateHandle.requireArgs<AppRoute.Subs.Args>()
@@ -39,8 +44,6 @@ class SubsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(
         UiState(
             nickname = args.userName,
-            totalSubscribers = args.totalSubscribers,
-            totalSubscriptions = args.totalSubscriptions,
             initialPage = args.subsType.ordinal,
         )
     )
@@ -68,7 +71,12 @@ class SubsViewModel @Inject constructor(
                 onSubscribeClicked = ::onSubscribeClicked,
             )
         }.onEach { state ->
-            _uiState.update { it.copy(subscribersUiState = state) }
+            _uiState.update {
+                it.copy(
+                    subscribersUiState = state,
+                    totalSubscribers = state.count,
+                )
+            }
         }.launchIn(viewModelScope)
     }
 
@@ -83,7 +91,12 @@ class SubsViewModel @Inject constructor(
                 onSubscribeClicked = ::onSubscribeClicked,
             )
         }.onEach { state ->
-            _uiState.update { it.copy(subscriptionsUiState = state) }
+            _uiState.update {
+                it.copy(
+                    subscriptionsUiState = state,
+                    totalSubscriptions = state.count,
+                )
+            }
         }.launchIn(viewModelScope)
     }
 
@@ -101,44 +114,18 @@ class SubsViewModel @Inject constructor(
                 )
             }
         } else {
-            subscribe(item.userId, true)
+            _uiState.update { it.copy(isLoading = true) }
             action.execute {
                 subsRepository.subscribe(item.userId)
+            }.doOnSuccess {
+                profileRepository.updateData(isSilently = true)
+                // todo refresh only subed
+                subsRepository.refreshSubscriptions(args.userId)
+            }.doOnComplete {
+                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }
-
-    private fun subscribe(userId: Uuid, isSubscribe: Boolean) {
-        val subscribers = subscribersPageModel?.loadedPageItems?.map {
-            when (it.userId) {
-                userId -> it.copy(isSubscribed = isSubscribe)
-                else -> it
-            }
-        } ?: emptyList()
-        val subscriptions = subscriptionsPageModel?.loadedPageItems?.map {
-            when (it.userId) {
-                userId -> it.copy(isSubscribed = isSubscribe)
-                else -> it
-            }
-        } ?: emptyList()
-
-        subscribersPageModel = subscribersPageModel?.copy(loadedPageItems = subscribers)
-        subscriptionsPageModel = subscriptionsPageModel?.copy(loadedPageItems = subscriptions)
-        _uiState.update {
-            it.copy(
-                subscribersUiState = subscribersPageModel.applySubToState(),
-                subscriptionsUiState = subscriptionsPageModel.applySubToState(),
-            )
-        }
-    }
-
-    private fun SubPageModel?.applySubToState() = this?.toSubsUiState(
-        shimmerListSize = 5,
-        onItemClicked = ::onItemClicked,
-        onReloadClicked = ::onSubscriptionsReloadClicked,
-        onListEndReaching = ::onSubscriptionListEndReaching,
-        onSubscribeClicked = ::onSubscribeClicked,
-    ) ?: SubsUiState()
 
     private fun onSubscribersReloadClicked() = viewModelScope.launch {
         action.execute {
@@ -165,25 +152,27 @@ class SubsViewModel @Inject constructor(
     }
 
     fun onUnsubscribeClicked(userId: Uuid) = viewModelScope.launch {
-        _uiState.update {
-            it.copy(dialog = null)
-        }
-        subscribe(userId = userId, isSubscribe = false)
+        _uiState.update { it.copy(dialog = null, isLoading = true) }
         action.execute {
             subsRepository.unsubscribe(userId)
+        }.doOnSuccess {
+            profileRepository.updateData(isSilently = true)
+            // todo refresh only subed
+            subsRepository.refreshSubscriptions(args.userId)
+        }.doOnComplete {
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
     fun onDismissRequest() = viewModelScope.launch {
-        _uiState.update {
-            it.copy(dialog = null)
-        }
+        _uiState.update { it.copy(dialog = null) }
     }
 
     data class UiState(
+        val isLoading: Boolean = false,
         val initialPage: Int = 0,
-        val totalSubscriptions: String = "",
-        val totalSubscribers: String = "",
+        val totalSubscriptions: Int = 0,
+        val totalSubscribers: Int = 0,
         val nickname: String = "",
         val subscribersUiState: SubsUiState = SubsUiState(),
         val subscriptionsUiState: SubsUiState = SubsUiState(),
@@ -197,4 +186,10 @@ class SubsViewModel @Inject constructor(
     sealed class Command {
         data class OpenProfileScreen(val userId: Uuid) : Command()
     }
+}
+
+// todo test and use on subsequent Effect methods
+fun CoroutineScope.async(vararg blocks: suspend () -> Effect<*>) {
+    val asyncs = blocks.map { async { it() } }
+    launch { asyncs.forEach { it.await() } }
 }

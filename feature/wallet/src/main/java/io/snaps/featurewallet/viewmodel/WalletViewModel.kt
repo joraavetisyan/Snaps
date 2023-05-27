@@ -277,8 +277,8 @@ class WalletViewModel @Inject constructor(
             walletInteractor.claim(amount = uiState.value.claimAmountValue.toDouble())
                 .doOnSuccess {
                     notificationsSource.sendMessage(StringKey.MessageSuccess.textValue())
-                }.flatMap {
                     walletRepository.updateSnpsAccount()
+                    walletRepository.updateTotalBalance()
                 }
         }.doOnError { error, _ ->
             when (error.cause) {

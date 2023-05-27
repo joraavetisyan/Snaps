@@ -12,6 +12,7 @@ import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
+import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.date.toLong
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.State
@@ -56,6 +57,7 @@ class TasksViewModel @Inject constructor(
     @Bridged private val profileRepository: ProfileRepository,
     private val tasksRepository: TasksRepository,
     @Bridged private val nftRepository: NftRepository,
+    @Bridged private val walletRepository: WalletRepository,
 ) : SimpleViewModel(),
     MainHeaderHandler by mainHeaderHandler,
     OnboardingHandler by onboardingHandler,
@@ -83,15 +85,14 @@ class TasksViewModel @Inject constructor(
     }
 
     private fun subscribeToUserNftCollection() {
-        nftRepository.nftCollectionState.onEach { state ->
-            _uiState.update {
-                it.copy(
-                    userNftCollection = state.toNftCollectionItemState(
-                        onReloadClicked = ::refreshNfts,
-                        onItemClicked = ::onItemClicked,
-                    )
-                )
-            }
+        nftRepository.nftCollectionState.combine(walletRepository.snpsAccountState) { collection, account ->
+            collection.toNftCollectionItemState(
+                snpsUsdExchangeRate = account.dataOrCache?.snpsUsdExchangeRate ?: 0.0,
+                onReloadClicked = ::refreshNfts,
+                onItemClicked = ::onItemClicked,
+            )
+        }.onEach { state ->
+            _uiState.update { it.copy(userNftCollection = state) }
         }.launchIn(viewModelScope)
     }
 
@@ -113,7 +114,7 @@ class TasksViewModel @Inject constructor(
     private fun refreshCurrentTasks() {
         viewModelScope.launch {
             action.execute {
-                profileRepository.updateData()
+                profileRepository.updateData(isSilently = true)
             }.doOnComplete {
                 _uiState.update { it.copy(isRefreshing = false) }
             }
@@ -136,14 +137,14 @@ class TasksViewModel @Inject constructor(
     }
 
     private fun subscribeToBrokenGlassesCount() {
-        nftRepository.countBrokenGlassesState.onEach {  state ->
-            _uiState.update { it.copy(countBrokenGlasses = state.dataOrCache ?: -1) }
+        nftRepository.allGlassesBrokenState.onEach {  state ->
+            _uiState.update { it.copy(isAllGlassesBroken = state.dataOrCache ?: false) }
         }.launchIn(viewModelScope)
     }
 
     private fun subscribeToEnergyProgress() {
-        profileRepository.currentTasksState.combine(flow = nftRepository.countBrokenGlassesState) { tasks, count ->
-            tasks.dataOrCache?.totalEnergyProgress.takeIf { count.dataOrCache == 0 } ?: 0
+        profileRepository.currentTasksState.combine(flow = nftRepository.allGlassesBrokenState) { tasks, allBroken ->
+            tasks.dataOrCache?.totalEnergyProgress.takeIf { allBroken.dataOrCache != true } ?: 0
         }.onEach { state ->
             _uiState.update { it.copy(totalEnergyProgress = state) }
         }.launchIn(viewModelScope)
@@ -268,7 +269,7 @@ class TasksViewModel @Inject constructor(
         val userNftCollection: List<CollectionItemState> = List(6) { CollectionItemState.Shimmer },
         val totalEnergy: Int = 0,
         val totalEnergyProgress: Int = 0,
-        val countBrokenGlasses: Int = 0,
+        val isAllGlassesBroken: Boolean = false,
         val bottomDialog: BottomDialog = BottomDialog.CurrentTasksFootnote,
     )
 

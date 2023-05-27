@@ -1,6 +1,7 @@
 package io.snaps.featurefeed.presentation.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basefeed.data.CommentRepository
 import io.snaps.basefeed.data.VideoFeedRepository
@@ -8,6 +9,7 @@ import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.ui.VideoFeedViewModel
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesources.featuretoggle.FeatureToggle
@@ -22,6 +24,9 @@ import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.getArg
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
@@ -37,6 +42,7 @@ class MainVideoFeedViewModel @Inject constructor(
     @Bridged commentRepository: CommentRepository,
     @Bridged subsRepository: SubsRepository,
     featureToggle: FeatureToggle,
+    private val appRouteProvider: AppRouteProvider,
 ) : VideoFeedViewModel(
     videoFeedType = savedStateHandle.getArg<AppRoute.SingleVideo.Args>()?.videoClipId?.let {
         VideoFeedType.Single(it)
@@ -58,7 +64,15 @@ class MainVideoFeedViewModel @Inject constructor(
     val screenState = _screenState.asStateFlow()
 
     init {
+        subscribeOnMenuRouteState()
         checkOnboarding(OnboardingType.Rank)
+    }
+
+    private fun subscribeOnMenuRouteState() {
+        appRouteProvider.menuRouteState
+            .filter { it == AppRoute.MainBottomBar.MainTab1Start.pattern }
+            .onEach { onReloadClicked() }
+            .launchIn(viewModelScope)
     }
 
     fun onTabRowClicked(tab: Tab) {

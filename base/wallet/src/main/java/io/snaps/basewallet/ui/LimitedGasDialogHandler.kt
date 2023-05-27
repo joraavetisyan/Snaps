@@ -25,7 +25,7 @@ interface LimitedGasDialogHandler {
 
     val limitedGasCommand: Flow<Command>
 
-    fun checkGas(scope: CoroutineScope, minValue: Double, onGasEnough: suspend () -> Unit)
+    fun checkGas(scope: CoroutineScope, minValue: Double, onGasEnough: suspend () -> Unit, onSync: suspend () -> Unit)
 
     fun onLimitedGasDialogHidden()
 
@@ -60,25 +60,32 @@ class LimitedGasDialogHandlerImplDelegate @Inject constructor(
         _uiState.update { it.copy(bottomDialog = null) }
     }
 
-    override fun checkGas(scope: CoroutineScope, minValue: Double, onGasEnough: suspend () -> Unit) {
+    override fun checkGas(
+        scope: CoroutineScope,
+        minValue: Double,
+        onGasEnough: suspend () -> Unit,
+        onSync: suspend () -> Unit,
+    ) {
         scope.launch {
-            if (isGasEnough(minValue = minValue)) {
-                onGasEnough()
-            } else {
-                _uiState.update {
-                    it.copy(
-                        bottomDialog = LimitedGasDialogHandler.BottomDialog.Refill(
-                            onRefillClicked = { onRefillClicked(scope = scope, amount = minValue) },
+            when (isGasEnough(minValue = minValue)) {
+                true -> onGasEnough()
+                false -> {
+                    _uiState.update {
+                        it.copy(
+                            bottomDialog = LimitedGasDialogHandler.BottomDialog.Refill(
+                                onRefillClicked = { onRefillClicked(scope = scope, amount = minValue) },
+                            )
                         )
-                    )
+                    }
+                    _command publish LimitedGasDialogHandler.Command.ShowBottomDialog
                 }
-                _command publish LimitedGasDialogHandler.Command.ShowBottomDialog
+                null -> onSync() // todo send error to notif source, remove callback
             }
         }
     }
 
-    private fun isGasEnough(minValue: Double): Boolean {
-        return walletRepository.bnb.value?.coinValue?.value?.let { it >= minValue } ?: false
+    private fun isGasEnough(minValue: Double): Boolean? {
+        return walletRepository.bnb.value?.coinValue?.value?.let { it >= minValue }
     }
 
     private fun onRefillClicked(scope: CoroutineScope, amount: Double) {
@@ -89,7 +96,7 @@ class LimitedGasDialogHandlerImplDelegate @Inject constructor(
                 walletRepository.refillGas(amount)
             }.doOnSuccess {
                 // todo possible inf loop
-                while (!isGasEnough(minValue = amount)) {
+                while (isGasEnough(minValue = amount) != true) {
                     walletRepository.updateTotalBalance()
                     delay(1000L)
                 }

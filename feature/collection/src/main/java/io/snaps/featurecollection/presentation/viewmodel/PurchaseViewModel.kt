@@ -34,12 +34,9 @@ import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
-import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
-import io.snaps.corecommon.R
-import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.coreui.barcode.BarcodeManager
-import io.snaps.coreuicompose.uikit.listtile.CellTileState
+import io.snaps.featurecollection.domain.BalanceInSync
 import io.snaps.featurecollection.domain.MyCollectionInteractor
 import io.snaps.featurecollection.domain.NoEnoughBnbToMint
 import io.snaps.featurecollection.domain.minBnb
@@ -48,6 +45,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
@@ -73,10 +71,9 @@ class PurchaseViewModel @Inject constructor(
     LimitedGasDialogHandler by limitedGasDialogHandler {
 
     private val args = savedStateHandle.requireArgs<AppRoute.Purchase.Args>()
+    private val nft = requireNotNull(nftRepository.ranksState.value.dataOrCache?.first { it.type == args.type })
 
-    private val _uiState = MutableStateFlow(
-        initialUiState(requireNotNull(nftRepository.ranksState.value.dataOrCache?.first { it.type == args.type }))
-    )
+    private val _uiState = MutableStateFlow(initialUiState(nft))
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
@@ -88,6 +85,7 @@ class PurchaseViewModel @Inject constructor(
 
     init {
         subscribeOnNewPurchases()
+        subscribeToBnbRate()
     }
 
     private fun initialUiState(model: RankModel): UiState {
@@ -101,7 +99,7 @@ class PurchaseViewModel @Inject constructor(
         return UiState(
             nftType = model.type,
             nftImage = model.image,
-            cost = model.cost,
+            costInFiat = model.cost,
             dailyUnlock = model.dailyUnlock,
             dailyReward = model.dailyReward,
             isPurchasable = model.isPurchasable,
@@ -111,9 +109,17 @@ class PurchaseViewModel @Inject constructor(
         )
     }
 
-    private fun subscribeOnNewPurchases() = viewModelScope.launch {
+    private fun subscribeOnNewPurchases() {
         purchaseStateProvider.newPurchasesFlow.onEach {
             mint(purchaseToken = it.first().purchaseToken)
+        }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeToBnbRate() {
+        walletRepository.snpsAccountState.map {
+            nft.cost?.toCoin(it.dataOrCache?.usdBnbExchangeRate ?: 0.0)
+        }.onEach { coin ->
+            _uiState.update { it.copy(costInCoin = coin) }
         }.launchIn(viewModelScope)
     }
 
@@ -126,14 +132,20 @@ class PurchaseViewModel @Inject constructor(
                     purchaseToken = purchaseToken,
                 )
             }.doOnSuccess {
-                _uiState.update { it.copy(isLoading = false) }
-                notificationsSource.sendMessage(StringKey.PurchaseMessageSuccess.textValue())
-                _command publish Command.BackToMyCollectionScreen()
-            }.doOnError { error, _ ->
-                if (error.cause is NoEnoughBnbToMint) {
-                    refillGas(purchaseToken)
+                _uiState.update { state -> state.copy(isLoading = false) }
+                if (it.isEmpty()) {
+                    notificationsSource.sendMessage(StringKey.PurchaseMessageSuccess.textValue())
+                    _command publish Command.BackToMyCollectionScreen()
                 } else {
-                    _uiState.update { it.copy(isLoading = false) }
+                    _command publish Command.BackToMyCollectionScreen(
+                        data = TransferTokensSuccessData(txHash = it, type = TransferTokensSuccessData.Type.Purchase)
+                    )
+                }
+            }.doOnError { error, _ ->
+                when (error.cause) {
+                    is NoEnoughBnbToMint -> refillGas(purchaseToken)
+                    is BalanceInSync -> notificationsSource.sendMessage(StringKey.ErrorBalanceInSync.textValue())
+                    else -> _uiState.update { it.copy(isLoading = false) }
                 }
             }
         }
@@ -141,18 +153,24 @@ class PurchaseViewModel @Inject constructor(
 
     // todo better way
     private fun refillGas(purchaseToken: Token?) {
+        val current = walletRepository.bnb.value?.coinValue?.value ?: 0.0
         viewModelScope.launch {
             action.execute {
-                walletRepository.refillGas(minBnb - (walletRepository.bnb.value?.coinValue?.value ?: 0.0))
-            }.flatMap {
+                walletRepository.refillGas(minBnb - current)
+            }.doOnSuccess {
+                walletRepository.updateTotalBalance()
                 var job: Job? = null
+                var iteration = 0
                 job = walletRepository.bnb.onEach {
-                    if (it?.coinValue?.value != null && it.coinValue.value >= minBnb) {
+                    if ((it?.coinValue?.value ?: 0.0) >= minBnb) {
                         mint(purchaseToken)
+                        job?.cancel()
+                    } else if (it?.coinValue?.value != current || iteration++ > 2) {
+                        notificationsSource.sendMessage(StringKey.Error.textValue())
+                        _uiState.update { state -> state.copy(isLoading = false) }
                         job?.cancel()
                     }
                 }.launchIn(viewModelScope)
-                walletRepository.updateTotalBalance()
             }.doOnError { _, _ ->
                 _uiState.update { it.copy(isLoading = false) }
             }
@@ -182,8 +200,9 @@ class PurchaseViewModel @Inject constructor(
     }
 
     private suspend fun getPurchaseNftWithBnbSummary() {
+        val cost = _uiState.value.costInCoin?.value ?: return
         action.execute {
-            interactor.getNftMintSummary(args.type)
+            interactor.getNftMintSummary(nftType = args.type, cost = cost)
         }.doOnSuccess { summary ->
             updateTransferTokensState(
                 state = TransferTokensState.Data(
@@ -198,21 +217,27 @@ class PurchaseViewModel @Inject constructor(
                 )
             )
         }.doOnError { error, _ ->
-            if (error.cause is NoEnoughBnbToMint) {
-                onTransferTokensDialogHidden()
-                val walletModel = walletRepository.bnb.value ?: return@doOnError
-                _uiState.update {
-                    val qr = barcodeManager.getQrCodeBitmap(walletModel.receiveAddress)
-                    it.copy(
-                        bottomDialog = BottomDialog.TopUp(
-                            title = walletModel.coinType.symbol,
-                            address = walletModel.receiveAddress,
-                            qr = qr,
+            when (error.cause) {
+                is NoEnoughBnbToMint -> {
+                    onTransferTokensDialogHidden()
+                    val walletModel = walletRepository.bnb.value ?: return@doOnError
+                    _uiState.update {
+                        val qr = barcodeManager.getQrCodeBitmap(walletModel.receiveAddress)
+                        it.copy(
+                            bottomDialog = BottomDialog.TopUp(
+                                title = walletModel.coinType.symbol,
+                                address = walletModel.receiveAddress,
+                                qr = qr,
+                            )
                         )
-                    )
+                    }
                 }
-            } else {
-                updateTransferTokensState(
+                is BalanceInSync -> {
+                    onTransferTokensDialogHidden()
+                    hideTransferTokensBottomDialog(viewModelScope)
+                    notificationsSource.sendMessage(StringKey.ErrorBalanceInSync.textValue())
+                }
+                else -> updateTransferTokensState(
                     state = TransferTokensState.Error(
                         title = purchaseWithBnbDialogTitle,
                         onClick = ::onBuyWithBNBClicked,
@@ -259,7 +284,8 @@ class PurchaseViewModel @Inject constructor(
         val nftType: NftType,
         val prevNftImage: ImageValue,
         val nftImage: ImageValue,
-        val cost: FiatValue?,
+        val costInFiat: FiatValue?,
+        val costInCoin: CoinValue? = null,
         val dailyReward: CoinValue,
         val dailyUnlock: Double,
         val isPurchasable: Boolean,

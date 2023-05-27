@@ -151,8 +151,6 @@ object AppRoute {
             val userId: Uuid? = null,
             val subsType: SubsType = SubsType.Subscriptions,
             val userName: String,
-            val totalSubscriptions: String,
-            val totalSubscribers: String,
         )
     }
 

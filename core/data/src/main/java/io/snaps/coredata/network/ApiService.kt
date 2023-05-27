@@ -9,7 +9,7 @@ enum class ApiService(
 ) {
 
     General(
-        "http://51.250.42.53:5100/api/v1/",
+        "http://51.250.42.53:5100/api/v1/", // todo release https once back supports
         "http://51.250.36.197:5100/api/v1/",
     );
 

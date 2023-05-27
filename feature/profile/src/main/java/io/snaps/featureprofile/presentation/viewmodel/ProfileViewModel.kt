@@ -138,8 +138,6 @@ class ProfileViewModel @Inject constructor(
                     userId = args.userId,
                     subsType = subsType,
                     userName = uiState.value.name,
-                    totalSubscriptions = userInfo.subscriptions,
-                    totalSubscribers = userInfo.subscribers,
                 )
             )
         }
@@ -225,6 +223,8 @@ class ProfileViewModel @Inject constructor(
             }
             action.execute {
                 subsRepository.subscribe(requireNotNull(args.userId))
+            }.doOnSuccess {
+                profileRepository.updateData(isSilently = true)
             }
         }
     }
@@ -238,6 +238,8 @@ class ProfileViewModel @Inject constructor(
         }
         action.execute {
             subsRepository.unsubscribe(userId)
+        }.doOnSuccess {
+            profileRepository.updateData(isSilently = true)
         }
     }
 

@@ -5,8 +5,10 @@ package io.snaps.corecommon.model
 import io.snaps.corecommon.BuildConfig
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.toMoneyFormat
+import io.snaps.corecommon.serialization.BigDecimalSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.math.BigDecimal
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -17,7 +19,6 @@ typealias FullUrl = String
 typealias DeviceId = String
 typealias Uuid = String
 typealias CardNumber = String
-typealias MoneySymbol = String
 typealias CryptoAddress = String
 typealias TxHash = String // blockchain transaction hash in hex format
 typealias TxSign = String // blockchain transaction signature in hex format
@@ -31,9 +32,14 @@ interface Money {
     val symbol: String
 }
 
+// todo use it instead of Double
+@Serializable
+@JvmInline
+value class Value(@Serializable(with = BigDecimalSerializer::class) val value: BigDecimal)
+
 @Serializable
 enum class FiatCurrency(
-    override val symbol: MoneySymbol,
+    override val symbol: String,
 ) : Money {
     @SerialName("643") RUB("₽"),
     @SerialName("840") USD("$"),
@@ -92,9 +98,14 @@ data class FiatValue(
         else format(getFormattedValue(), currency.symbol)
     }
 
+    fun toCoin(rate: Double, type: CoinType = CoinValue.native): CoinValue {
+        log("$currency to $type with rate $rate")
+        return CoinValue(type, (value.toBigDecimal() * rate.toBigDecimal()).toDouble())
+    }
+
     operator fun plus(other: FiatValue): FiatValue {
         require(this.currency == other.currency)
-        return copy(value = this.value + other.value)
+        return copy(value = (this.value.toBigDecimal() + other.value.toBigDecimal()).toDouble())
     }
 }
 
@@ -131,17 +142,17 @@ data class CoinValue(
 
     fun toFiat(rate: Double, currency: FiatCurrency = FiatValue.default): FiatValue {
         log("$type to $currency with rate $rate")
-        return FiatValue(currency, value * rate)
+        return FiatValue(currency, (value.toBigDecimal() * rate.toBigDecimal()).toDouble())
     }
 
     fun toCoin(rate: Double, type: CoinType = native): CoinValue {
         log("${this.type} to $type with rate $rate")
-        return CoinValue(type, value * rate)
+        return CoinValue(type, (value.toBigDecimal() * rate.toBigDecimal()).toDouble())
     }
 
     operator fun plus(other: CoinValue): CoinValue {
         require(this.type == other.type)
-        return copy(value = this.value + other.value)
+        return copy(value = (this.value.toBigDecimal() + other.value.toBigDecimal()).toDouble())
     }
 }
 

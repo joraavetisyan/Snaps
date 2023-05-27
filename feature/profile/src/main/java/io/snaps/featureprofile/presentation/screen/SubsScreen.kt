@@ -45,6 +45,7 @@ import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyColumn
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.corecommon.model.Uuid
+import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.featureprofile.presentation.viewmodel.SubsViewModel
 import kotlinx.coroutines.launch
 
@@ -69,6 +70,7 @@ fun SubsScreen(
         onDismissRequest = viewModel::onDismissRequest,
         onUnsubscribeClicked = viewModel::onUnsubscribeClicked,
     )
+    FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -97,8 +99,8 @@ private fun SubsScreen(
                 .inset(insetAllExcludeTop()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val subscriptions = StringKey.SubsActionSubscriptions.textValue(uiState.totalSubscriptions)
-            val subscribers = StringKey.SubsActionSubscribers.textValue(uiState.totalSubscribers)
+            val subscriptions = StringKey.SubsActionSubscriptions.textValue(uiState.totalSubscriptions.toString())
+            val subscribers = StringKey.SubsActionSubscribers.textValue(uiState.totalSubscribers.toString())
 
             val pages = listOf(uiState.subscriptionsUiState, uiState.subscribersUiState)
             val pagerState = rememberPagerState(uiState.initialPage)

@@ -31,6 +31,7 @@ enum class StringKey {
     ErrorLoadFail,
     ErrorConnection,
     ErrorUnknown,
+    ErrorBalanceInSync,
 
     OnboardingRankTitle,
     OnboardingRankMessage,

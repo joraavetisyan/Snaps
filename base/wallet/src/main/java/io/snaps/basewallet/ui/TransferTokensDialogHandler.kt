@@ -137,9 +137,9 @@ class TransferTokensDialogHandlerImplDelegate @Inject constructor(
 
     // todo release
     private fun TxHash.scanLink() = if (buildInfo.isRelease) {
-        "https://testnet.bscscan.com/tx/$this"
-    } else {
         "https://bscscan.com/tx/$this"
+    } else {
+        "https://testnet.bscscan.com/tx/$this"
     }
 
     override fun onSuccessfulPurchase(scope: CoroutineScope, data: TransferTokensSuccessData) {

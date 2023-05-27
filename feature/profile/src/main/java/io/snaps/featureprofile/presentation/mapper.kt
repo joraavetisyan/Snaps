@@ -32,8 +32,8 @@ fun UserInfoModel.toUserInfoTileState(
 ) = UserInfoTileState.Data(
     profileImage = avatar,
     likes = totalLikes.toCompactDecimalFormat(),
-    subscriptions = totalSubscriptions.toCompactDecimalFormat(),
-    subscribers = totalSubscribers.toCompactDecimalFormat(),
+    subscriptions = totalSubscriptions,
+    subscribers = totalSubscribers,
     publication = totalPublication?.toCompactDecimalFormat(),
     onSubscribersClick = onSubscribersClick,
     onSubscriptionsClick = onSubscriptionsClick,

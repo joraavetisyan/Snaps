@@ -10,6 +10,7 @@ import io.snaps.corecommon.model.State
 import io.snaps.featurecollection.presentation.screen.RankTileState
 
 fun State<List<RankModel>>.toRankTileState(
+    snpsUsdExchangeRate: Double,
     onItemClicked: (RankModel) -> Unit,
     onReloadClicked: () -> Unit,
 ) = when (this) {
@@ -17,9 +18,10 @@ fun State<List<RankModel>>.toRankTileState(
     is Effect -> when {
         isSuccess -> {
             requireData.map { rank ->
-                rank.copy(
-                    isPurchasable = rank.isPurchasable
-                ).toRankTileState(onItemClicked = onItemClicked)
+                rank.copy(isPurchasable = rank.isPurchasable).toRankTileState(
+                    snpsUsdExchangeRate = snpsUsdExchangeRate,
+                    onItemClicked = onItemClicked,
+                )
             }
         }
         else -> listOf(RankTileState.Error(onClick = onReloadClicked))
@@ -27,12 +29,13 @@ fun State<List<RankModel>>.toRankTileState(
 }
 
 private fun RankModel.toRankTileState(
+    snpsUsdExchangeRate: Double,
     onItemClicked: (RankModel) -> Unit,
 ) = RankTileState.Data(
     type = type,
     cost = cost,
     image = image,
-    dailyReward = dailyReward.toFiat(rate = 0.001),
+    dailyReward = dailyReward.toFiat(rate = snpsUsdExchangeRate),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isPurchasable = isPurchasable,
@@ -40,6 +43,7 @@ private fun RankModel.toRankTileState(
 )
 
 fun State<List<NftModel>>.toNftCollectionItemState(
+    snpsUsdExchangeRate: Double,
     onItemClicked: (NftModel) -> Unit,
     onAddItemClicked: () -> Unit,
     onReloadClicked: () -> Unit,
@@ -52,6 +56,7 @@ fun State<List<NftModel>>.toNftCollectionItemState(
             requireData.forEach {
                 add(
                     it.toNftCollectionItemState(
+                        snpsUsdExchangeRate = snpsUsdExchangeRate,
                         onRepairClicked = onRepairClicked,
                         onItemClicked = onItemClicked,
                         onHelpIconClicked = onHelpIconClicked,
@@ -65,13 +70,14 @@ fun State<List<NftModel>>.toNftCollectionItemState(
 }
 
 private fun NftModel.toNftCollectionItemState(
+    snpsUsdExchangeRate: Double,
     onItemClicked: (NftModel) -> Unit,
     onRepairClicked: (NftModel) -> Unit,
     onHelpIconClicked: () -> Unit,
 ) = CollectionItemState.Nft(
     type = type,
     image = image,
-    dailyReward = dailyReward.toFiat(rate = 0.001),
+    dailyReward = dailyReward.toFiat(rate = snpsUsdExchangeRate),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
     isHealthBadgeVisible = !isHealthy,

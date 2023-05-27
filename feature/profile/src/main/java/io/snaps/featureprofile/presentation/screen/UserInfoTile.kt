@@ -39,8 +39,8 @@ sealed class UserInfoTileState : TileState {
     data class Data(
         val profileImage: ImageValue?,
         val likes: String,
-        val subscribers: String,
-        val subscriptions: String,
+        val subscribers: Int,
+        val subscriptions: Int,
         val publication: String?,
         val onSubscribersClick: () -> Unit,
         val onSubscriptionsClick: () -> Unit,
@@ -75,13 +75,13 @@ private fun Data(
             StatsLine(data.likes, LocalStringHolder.current(StringKey.ProfileTitleLikes))
             VerticalDivider()
             StatsLine(
-                value = data.subscriptions,
+                value = data.subscriptions.toString(),
                 name = LocalStringHolder.current(StringKey.ProfileTitleSubscriptions),
                 onClick = data.onSubscriptionsClick
             )
             VerticalDivider()
             StatsLine(
-                value = data.subscribers,
+                value = data.subscribers.toString(),
                 name = LocalStringHolder.current(StringKey.ProfileTitleSubscribers),
                 onClick = data.onSubscribersClick
             )

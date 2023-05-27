@@ -62,11 +62,11 @@ class MainHeaderHandlerImplDelegate @Inject constructor(
             profileRepository.state,
             walletRepository.bnb,
             walletRepository.snps,
-            ntfRepository.countBrokenGlassesState,
+            ntfRepository.allGlassesBrokenState,
         ) { profile, bnb, snps, brokenGlasses ->
             mainHeaderState(
                 profile = profile,
-                brokenGlasses = brokenGlasses,
+                isAllGlassesBroken = brokenGlasses.dataOrCache ?: false,
                 snp = snps?.coinValue,
                 bnb = bnb?.coinValue,
                 onProfileClicked = ::onProfileClicked,

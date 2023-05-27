@@ -565,9 +565,10 @@ private fun RegistrationWithEmailDialog(
                 onValueChange = onConfirmPasswordValueChanged,
                 value = uiState.confirmPasswordValue,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
+                    keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done,
                 ),
+                visualTransformation = PasswordVisualTransformation(),
                 placeholder = {
                     Text(
                         text = LocalStringHolder.current(StringKey.RegistrationDialogSignUpHintConfirmPassword),

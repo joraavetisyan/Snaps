@@ -41,6 +41,7 @@ class SubsRepositoryImpl @Inject constructor(
     private val loaderFactory: SubsLoaderFactory,
 ) : SubsRepository {
 
+    // todo source of bugs, better way once back supports
     private var mySubscriptions: List<SubsItemResponseDto>? = null
 
     private fun getLoader(subType: SubType): SubsLoader {
@@ -101,11 +102,14 @@ class SubsRepositoryImpl @Inject constructor(
             mySubscriptions = mySubscriptions?.plus(
                 SubsItemResponseDto(
                     userId = toSubscribeUserId,
-                    entityId = toSubscribeUserId,
+                    entityId = "dummy",
                     avatar = null,
                     name = null,
                 )
             )
+            loaderFactory.getOrNull(SubType.Subscriber(toSubscribeUserId))?.refresh()
+            refreshSubscribers(null)
+            refreshSubscriptions(null)
         }
     }
 
@@ -116,6 +120,9 @@ class SubsRepositoryImpl @Inject constructor(
             )
         }.doOnSuccess {
             mySubscriptions = mySubscriptions?.filter { it.userId != subscriptionId }
+            loaderFactory.getOrNull(SubType.Subscriber(subscriptionId))?.refresh()
+            refreshSubscribers(null)
+            refreshSubscriptions(null)
         }
     }
 

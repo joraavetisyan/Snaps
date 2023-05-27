@@ -229,7 +229,9 @@ fun VideoClipScreen(
                     .nestedScroll(scrollBehavior.nestedScrollConnection)
                     .inset(insetBottom()),
             ) { paddingValues ->
-                Box {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
                     ScrollDetector(
                         pageCount = uiState.videoFeedUiState.dataSize,
                         pagerState = pagerState,
@@ -269,6 +271,9 @@ fun VideoClipScreen(
                             )
                         }
                     }
+
+                    uiState.videoFeedUiState.emptyState?.Content(Modifier.align(Alignment.Center))
+                    uiState.videoFeedUiState.errorState?.Content(Modifier.align(Alignment.Center))
 
                     content?.invoke(this, paddingValues)
                 }

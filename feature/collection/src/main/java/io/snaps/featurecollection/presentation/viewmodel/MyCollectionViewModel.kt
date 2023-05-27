@@ -26,13 +26,12 @@ import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.featurecollection.domain.MyCollectionInteractor
-import io.snaps.featurecollection.domain.minBnb
 import io.snaps.featurecollection.presentation.toNftCollectionItemState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
@@ -76,8 +75,9 @@ class MyCollectionViewModel @Inject constructor(
     }
 
     private fun subscribeOnNft() {
-        nftRepository.nftCollectionState.map {
-            it.toNftCollectionItemState(
+        nftRepository.nftCollectionState.combine(walletRepository.snpsAccountState) { collection, account ->
+            collection.toNftCollectionItemState(
+                snpsUsdExchangeRate = account.dataOrCache?.snpsUsdExchangeRate ?: 0.0,
                 onAddItemClicked = ::onAddItemClicked,
                 onReloadClicked = ::refreshNfts,
                 onRepairClicked = ::onRepairClicked,
@@ -103,7 +103,12 @@ class MyCollectionViewModel @Inject constructor(
 
     private fun onRepairClicked(nftModel: NftModel) = viewModelScope.launch {
         when (profileRepository.state.value.dataOrCache?.paymentsState) {
-            PaymentsState.Blockchain -> checkGas(scope = viewModelScope, minValue = 0.0012) { repair(nftModel) }
+            PaymentsState.Blockchain -> checkGas(
+                scope = viewModelScope,
+                minValue = 0.0012,
+                onGasEnough = { repair(nftModel) },
+                onSync = { notificationsSource.sendError(StringKey.ErrorBalanceInSync.textValue()) },
+            )
             PaymentsState.No,
             PaymentsState.InApp -> repair(nftModel)
             null -> notificationsSource.sendError(StringKey.Error.textValue())

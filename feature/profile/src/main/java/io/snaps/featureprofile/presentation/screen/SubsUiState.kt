@@ -26,7 +26,10 @@ data class SubsUiState(
     val errorState: MessageBannerState? = null,
     val emptyState: EmptyListTileState? = null,
     val onListEndReaching: (() -> Unit)? = null,
-)
+) {
+
+    val count get() = items.count { it is SubUiState.Data }
+}
 
 fun SubPageModel.toSubsUiState(
     shimmerListSize: Int,
