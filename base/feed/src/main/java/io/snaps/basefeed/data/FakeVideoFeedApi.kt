@@ -214,4 +214,12 @@ class FakeVideoFeedApi : VideoFeedApi {
             data = Completable,
         )
     }
+
+    override suspend fun showed(videoId: Uuid): BaseResponse<Completable> {
+        log("Requesting show video $videoId")
+        delay(mockDelay)
+        return BaseResponse(
+            data = Completable,
+        )
+    }
 }

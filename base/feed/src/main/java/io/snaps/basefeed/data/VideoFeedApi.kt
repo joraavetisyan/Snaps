@@ -104,4 +104,9 @@ interface VideoFeedApi {
     suspend fun deleteVideo(
         @Path("videoId") videoId: Uuid,
     ): BaseResponse<Completable> // delete user video
+
+    @POST("video/{videoId}/showed")
+    suspend fun showed(
+        @Path("videoId") videoId: Uuid,
+    ): BaseResponse<Completable>
 }

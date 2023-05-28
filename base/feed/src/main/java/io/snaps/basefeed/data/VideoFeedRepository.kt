@@ -54,6 +54,8 @@ interface VideoFeedRepository {
     ): Effect<Completable>
 
     suspend fun deleteVideo(videoId: Uuid): Effect<Completable>
+
+    suspend fun markShowed(videoId: Uuid): Effect<Completable>
 }
 
 class VideoFeedRepositoryImpl @Inject constructor(
@@ -237,6 +239,12 @@ class VideoFeedRepositoryImpl @Inject constructor(
     override suspend fun deleteVideo(videoId: Uuid): Effect<Completable> {
         return apiCall(ioDispatcher) {
             videoFeedApi.deleteVideo(videoId)
+        }
+    }
+
+    override suspend fun markShowed(videoId: Uuid): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            videoFeedApi.showed(videoId)
         }
     }
 }

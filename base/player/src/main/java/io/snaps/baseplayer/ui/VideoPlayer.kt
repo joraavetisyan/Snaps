@@ -63,6 +63,7 @@ fun VideoPlayer(
     isRepeat: Boolean = true,
     performAtPosition: (() -> Unit)? = null,
     performPosition: Float = 0f, /*[0f,1f]*/
+    onStarted: (() -> Unit)? = null,
 ) {
     require(networkUrl == null || localUri == null) {
         "Don't provide both local and network sources!"
@@ -78,6 +79,7 @@ fun VideoPlayer(
         isRepeat = isRepeat,
         performAtPosition = performAtPosition,
         performPosition = performPosition,
+        onStarted = onStarted,
     )
     val playerView = rememberPlayerView(exoPlayer)
 
@@ -186,6 +188,7 @@ private fun rememberExoPlayerWithLifecycle(
     isRepeat: Boolean,
     performAtPosition: (() -> Unit)?,
     performPosition: Float,
+    onStarted: (() -> Unit)?,
 ): ExoPlayer {
     val context = LocalContext.current
     val performAtPositionRemembered by rememberUpdatedState(newValue = performAtPosition)
@@ -211,6 +214,7 @@ private fun rememberExoPlayerWithLifecycle(
                     object : Player.Listener {
                         override fun onPlaybackStateChanged(playbackState: Int) {
                             if (playbackState == ExoPlayer.STATE_READY) {
+                                onStarted?.invoke()
                                 createMessage { _, _ -> performAtPositionRemembered?.invoke() }
                                     .setLooper(Looper.getMainLooper())
                                     .setPosition((performPosition * duration).toLong())

@@ -263,6 +263,7 @@ fun VideoClipScreen(
                                     onMoreClicked = viewModel::onMoreClicked,
                                     onCreateVideoClicked = onCreateVideoClicked,
                                     onSubscribeClicked = viewModel::onSubscribeClicked,
+                                    onVideoClipStartedPlaying = viewModel::onVideoClipStartedPlaying,
                                 )
                             }
                             is VideoClipUiState.Shimmer -> FullScreenLoaderUi(
@@ -331,6 +332,7 @@ private fun VideoClip(
     onMoreClicked: () -> Unit,
     onCreateVideoClicked: (() -> Unit)?,
     onSubscribeClicked: () -> Unit,
+    onVideoClipStartedPlaying: (VideoClipModel) -> Unit,
 ) {
     val shouldPlay by remember(pagerState) {
         derivedStateOf {
@@ -356,6 +358,7 @@ private fun VideoClip(
         progressPollFrequencyInMillis = 10L,
         performAtPosition = { onProgressChanged(item.clip) },
         performPosition = 0.7f,
+        onStarted = { onVideoClipStartedPlaying(item.clip) }
     )
 
     VideoClipItems(

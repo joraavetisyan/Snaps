@@ -229,6 +229,12 @@ abstract class VideoFeedViewModel(
         }
     }
 
+    fun onVideoClipStartedPlaying(clipModel: VideoClipModel) = viewModelScope.launch {
+        action.execute(needsErrorProcessing = false) {
+            videoFeedRepository.markShowed(clipModel.id)
+        }
+    }
+
     fun onLikeClicked(clipModel: VideoClipModel) = viewModelScope.launch {
         likeVideoClip(clipModel)
         action.execute {
