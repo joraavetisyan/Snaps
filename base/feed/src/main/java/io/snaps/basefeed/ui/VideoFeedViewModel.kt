@@ -65,7 +65,8 @@ abstract class VideoFeedViewModel(
 
     private var commentsLoadJob: Job? = null
     private var authorLoadJob: Job? = null
-    private var loaded: Boolean = false // to track load for the first item
+    private var isLoaded: Boolean = false // to track load for the first item
+    private var isRefreshed: Boolean = false
     private var currentVideo: VideoClipModel? = null
     private var videoFeedPageModel: VideoFeedPageModel? = null
     private val videoClipsBeingMarkedAsWatched = hashSetOf<Uuid>()
@@ -92,9 +93,14 @@ abstract class VideoFeedViewModel(
             )
         }.onEach { state ->
             _uiState.update { it.copy(videoFeedUiState = state) }
-            if (state.isData && startPosition == 0 && !loaded) {
-                loaded = true
-                onScrolledToPosition(0)
+            if (state.isData) {
+                if (startPosition == 0 && !isLoaded) {
+                    isLoaded = true
+                    onScrolledToPosition(0)
+                } else if (!isRefreshed) {
+                    isRefreshed = true
+                    onScrolledToPosition(0)
+                }
             }
         }.launchIn(viewModelScope)
     }
@@ -102,7 +108,12 @@ abstract class VideoFeedViewModel(
     private fun onClipClicked(clip: VideoClipModel) {}
 
     protected fun onReloadClicked() {
-        viewModelScope.launch { action.execute { videoFeedRepository.refreshFeed(videoFeedType) } }
+        viewModelScope.launch {
+            action.execute {
+                isRefreshed = false
+                videoFeedRepository.refreshFeed(videoFeedType)
+            }
+        }
     }
 
     private fun onListEndReaching() {
