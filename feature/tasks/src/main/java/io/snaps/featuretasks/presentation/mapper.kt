@@ -34,11 +34,20 @@ private fun QuestModel.toTaskTileState(
 ) = TaskTileState.Data(
     energy = energy,
     energyProgress = this.energyProgress(),
-    title = type.toTaskTitle(),
-    description = type.toTaskDescription(),
+    title = type.toTaskTitle(count),
+    description = type.toTaskDescription(count),
     status = status(),
     clickListener = { onItemClicked(this) },
 )
+
+fun taskDefaultCount(type: TaskType) = when (type) {
+    TaskType.Like -> 10
+    TaskType.PublishVideo -> -1
+    TaskType.Subscribe -> 5
+    TaskType.Watch -> 20
+    TaskType.SocialShare -> -1
+    TaskType.SocialPost -> -1
+}
 
 fun State<QuestInfoModel>.toRemainingTimeTileState(
     remainingTime: Long,
@@ -52,10 +61,11 @@ fun State<QuestInfoModel>.toRemainingTimeTileState(
     }
 }
 
+// todo must be on back
 fun QuestModel.energyProgress(): Int {
     return if (madeCount != null && count != null) {
-        val madeByOne = madeCount!!.toDouble() / count!!.toDouble() * 20
-        Integer.min(madeByOne.toInt(), energy)
+        val madeByOne = madeCount!!.toDouble() / count!!.toDouble() * energy
+        madeByOne.toInt()
     } else {
         if (completed) {
             energy
@@ -63,19 +73,19 @@ fun QuestModel.energyProgress(): Int {
     }
 }
 
-fun TaskType.toTaskTitle() = when (this) {
+fun TaskType.toTaskTitle(count: Int?) = when (this) {
     TaskType.Like -> StringKey.TasksTitleLike.textValue()
     TaskType.PublishVideo -> StringKey.TasksTitlePublishVideo.textValue()
     TaskType.Subscribe -> StringKey.TasksTitleSubscribe.textValue()
-    TaskType.Watch -> StringKey.TasksTitleWatchVideo.textValue()
+    TaskType.Watch -> StringKey.TasksTitleWatchVideo.textValue((count ?: taskDefaultCount(this)).toString())
     else -> StringKey.TasksTitleSocialPost.textValue()
 }
 
-fun TaskType.toTaskDescription() = when (this) {
+fun TaskType.toTaskDescription(count: Int?) = when (this) {
     TaskType.Like -> StringKey.TasksMessageLike.textValue()
     TaskType.PublishVideo -> StringKey.TasksMessagePublishVideo.textValue()
     TaskType.Subscribe -> StringKey.TasksMessageSubscribe.textValue()
-    TaskType.Watch -> StringKey.TasksMessageWatchVideo.textValue()
+    TaskType.Watch -> StringKey.TasksMessageWatchVideo.textValue((count ?: taskDefaultCount(this)).toString())
     else -> StringKey.TasksMessageSocialPost.textValue()
 }
 

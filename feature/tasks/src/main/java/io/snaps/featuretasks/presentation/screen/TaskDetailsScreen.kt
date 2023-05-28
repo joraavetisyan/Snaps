@@ -77,13 +77,13 @@ private fun TaskDetailsScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val title = when (uiState.type) {
-        TaskType.Like -> StringKey.TaskLikeTitle
-        TaskType.PublishVideo -> StringKey.TaskPublishVideoTitle
-        TaskType.SocialPost -> StringKey.TaskSocialPostTitle
-        TaskType.SocialShare -> StringKey.TaskSocialShareTitle
-        TaskType.Subscribe -> StringKey.TaskSubscribeTitle
-        TaskType.Watch -> StringKey.TaskWatchVideoTitle
-    }.textValue()
+        TaskType.Like -> StringKey.TaskLikeTitle.textValue()
+        TaskType.PublishVideo -> StringKey.TaskPublishVideoTitle.textValue()
+        TaskType.SocialPost -> StringKey.TaskSocialPostTitle.textValue()
+        TaskType.SocialShare -> StringKey.TaskSocialShareTitle.textValue()
+        TaskType.Subscribe -> StringKey.TaskSubscribeTitle.textValue()
+        TaskType.Watch -> StringKey.TaskWatchVideoTitle.textValue(uiState.count)
+    }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -108,7 +108,6 @@ private fun TaskDetailsScreen(
             Content(
                 uiState = uiState,
                 onStartButtonClicked = onStartButtonClicked,
-
             )
             uiState.messageBannerState?.Content(modifier = Modifier)
             if (uiState.isLoading) {
@@ -124,13 +123,13 @@ private fun Content(
     onStartButtonClicked: () -> Unit,
 ) {
     val description = when (uiState.type) {
-        TaskType.Like -> StringKey.TaskLikeMessage
-        TaskType.PublishVideo -> StringKey.TaskPublishVideoMessage
-        TaskType.SocialPost -> StringKey.TaskSocialPostMessage
-        TaskType.SocialShare -> StringKey.TaskSocialShareMessage
-        TaskType.Subscribe -> StringKey.TaskSubscribeMessage
-        TaskType.Watch -> StringKey.TaskWatchVideoMessage
-    }.textValue()
+        TaskType.Like -> StringKey.TaskLikeMessage.textValue(uiState.count)
+        TaskType.PublishVideo -> StringKey.TaskPublishVideoMessage.textValue()
+        TaskType.SocialPost -> StringKey.TaskSocialPostMessage.textValue()
+        TaskType.SocialShare -> StringKey.TaskSocialShareMessage.textValue()
+        TaskType.Subscribe -> StringKey.TaskSubscribeMessage.textValue(uiState.count)
+        TaskType.Watch -> StringKey.TaskWatchVideoMessage.textValue(uiState.count)
+    }
     SimpleCard {
         TaskProgress(
             modifier = Modifier

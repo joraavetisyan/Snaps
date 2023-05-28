@@ -182,6 +182,7 @@ class TasksViewModel @Inject constructor(
             AppRoute.TaskDetails.Args(
                 type = quest.type,
                 energy = quest.energy,
+                count = quest.count,
                 energyProgress = quest.energyProgress(),
                 completed = quest.energyProgress() == quest.energy,
             )

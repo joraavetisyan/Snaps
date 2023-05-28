@@ -67,6 +67,7 @@ interface BlockchainTxRepository {
     suspend fun getMintNftSign(nftType: NftType, summary: NftMintSummary): Effect<TxSign>
 }
 
+// todo doc for incorrect adapter use
 class BlockchainTxRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 

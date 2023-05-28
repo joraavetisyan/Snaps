@@ -61,10 +61,11 @@ fun QuestItemDto.toQuestModel() = QuestModel(
     madeCount = madeCount,
 )
 
+// todo must be on back
 private fun QuestItemDto.energyProgress(): Int {
     return if (madeCount != null && quest.count != null) {
-        val madeByOne = madeCount.toDouble() / quest.count.toDouble() * 20
-        min(madeByOne.toInt(), quest.energy)
+        val madeByOne = madeCount.toDouble() / quest.count.toDouble() * quest.energy
+        madeByOne.toInt()
     } else {
         if (completed) {
             quest.energy

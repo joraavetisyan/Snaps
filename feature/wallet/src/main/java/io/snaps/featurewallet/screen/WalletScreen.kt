@@ -504,10 +504,10 @@ private fun Rewards(
                 Box {
                     SimpleButtonGreyS(
                         modifier = Modifier.padding(vertical = 4.dp),
-                        onClick = { isMenuExpanded = true }
+                        onClick = { isMenuExpanded = true },
                     ) {
                         SimpleButtonContent(
-                            text = filter.name.textValue(),
+                            text = filter.label,
                             iconRight = AppTheme.specificIcons.arrowDropDown,
                             iconTint = AppTheme.specificColorScheme.black_80,
                             textColor = AppTheme.specificColorScheme.black_80,

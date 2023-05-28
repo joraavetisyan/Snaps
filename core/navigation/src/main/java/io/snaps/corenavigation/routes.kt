@@ -164,6 +164,7 @@ object AppRoute {
         data class Args(
             val type: TaskType,
             val energy: Int,
+            val count: Int?,
             val energyProgress: Int,
             val completed: Boolean,
         )

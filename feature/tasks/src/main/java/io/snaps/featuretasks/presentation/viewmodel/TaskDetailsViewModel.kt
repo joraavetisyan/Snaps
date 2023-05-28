@@ -11,6 +11,7 @@ import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 import io.snaps.featuretasks.data.TasksRepository
+import io.snaps.featuretasks.presentation.taskDefaultCount
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,10 +33,12 @@ class TaskDetailsViewModel @Inject constructor(
         UiState(
             type = args.type,
             energy = args.energy,
+            count = (args.count ?: taskDefaultCount(args.type)).toString(),
             energyProgress = args.energyProgress,
-            completed = args.completed
+            completed = args.completed,
         )
     )
+
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
@@ -72,6 +75,7 @@ class TaskDetailsViewModel @Inject constructor(
     data class UiState(
         val type: TaskType,
         val energy: Int,
+        val count: String,
         val energyProgress: Int,
         val completed: Boolean,
         val isLoading: Boolean = false,

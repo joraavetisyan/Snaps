@@ -99,9 +99,9 @@ private fun Content(
     onConfirmClick: (() -> Unit)? = null,
     onCancelClick: (() -> Unit)? = null,
 ) {
-    AddressLine(title = "From:".textValue(), value = from)
+    AddressLine(title = "From:".textValue(), value = from) // todo localize
     Spacer(modifier = Modifier.height(12.dp))
-    AddressLine(title = "To:".textValue(), value = to)
+    AddressLine(title = "To:".textValue(), value = to) // todo localize
     Divider(
         modifier = Modifier
             .fillMaxWidth()

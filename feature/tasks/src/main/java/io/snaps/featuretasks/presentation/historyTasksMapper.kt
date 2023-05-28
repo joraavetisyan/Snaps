@@ -85,7 +85,7 @@ fun LazyListScope.historyTasksItems(
     items(uiState.items) {
         when (it) {
             is HistoryTaskUiState.Data -> TaskTileState.Data(
-                title = it.item.type.toTaskTitle(),
+                title = it.item.type.toTaskTitle(it.item.count),
                 description = it.date.toStringValue().textValue(),
                 energy = it.item.energy,
                 energyProgress = it.item.energyProgress(),

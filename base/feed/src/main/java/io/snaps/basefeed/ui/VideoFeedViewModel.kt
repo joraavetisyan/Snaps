@@ -386,6 +386,7 @@ abstract class VideoFeedViewModel(
                     it.copy(dialog = null)
                 }
                 videoFeedRepository.refreshFeed(videoFeedType).doOnSuccess {
+                    // todo it's not right place to check for emptiness
                      if (uiState.value.videoFeedUiState.items.isEmpty()) {
                          _command publish Command.CloseScreen
                      }
@@ -403,17 +404,22 @@ abstract class VideoFeedViewModel(
     fun onSubscribeClicked() {
         val video = currentVideo ?: return
         viewModelScope.launch {
+            val isSubscribedInitially = _uiState.value.isSubscribed
+            _uiState.update {
+                it.copy(isSubscribed = !isSubscribedInitially)
+            }
             action.execute {
-                if (uiState.value.isSubscribed) {
+                if (isSubscribedInitially) {
                     subsRepository.unsubscribe(video.authorId)
                 } else {
                     subsRepository.subscribe(video.authorId)
                 }.flatMap {
                     profileRepository.updateData(isSilently = true)
+                }.doOnError { _, _ ->
+                    _uiState.update {
+                        it.copy(isSubscribed = isSubscribedInitially)
+                    }
                 }
-            }
-            _uiState.update {
-                it.copy(isSubscribed = !it.isSubscribed)
             }
         }
     }
