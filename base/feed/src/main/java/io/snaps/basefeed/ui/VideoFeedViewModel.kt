@@ -66,7 +66,7 @@ abstract class VideoFeedViewModel(
     private var commentsLoadJob: Job? = null
     private var authorLoadJob: Job? = null
     private var isLoaded: Boolean = false // to track load for the first item
-    private var isRefreshed: Boolean = false
+    private var isRefreshed: Boolean = true
     private var currentVideo: VideoClipModel? = null
     private var videoFeedPageModel: VideoFeedPageModel? = null
     private val videoClipsBeingMarkedAsWatched = hashSetOf<Uuid>()
