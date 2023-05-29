@@ -242,7 +242,14 @@ fun VideoClipScreen(
                         pageCount = uiState.videoFeedUiState.items.size,
                         state = pagerState,
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        key = { uiState.videoFeedUiState.items[it].key },
+                        key = {
+                            // todo
+                            try {
+                                uiState.videoFeedUiState.items[it].key
+                            } catch (e: IndexOutOfBoundsException) {
+                                e
+                            }
+                        },
                     ) { index ->
                         when (val item = uiState.videoFeedUiState.items[index]) {
                             is VideoClipUiState.Data -> {

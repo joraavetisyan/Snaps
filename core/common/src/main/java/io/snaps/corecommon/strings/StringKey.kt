@@ -402,6 +402,8 @@ enum class StringKey {
     DialogLimitedGasAction,
 
     DialogSummaryTitle,
+    DialogSummaryTitleFrom,
+    DialogSummaryTitleTo,
     DialogSummaryTitleGasPrice,
     DialogSummaryTitleTotal,
 

@@ -1061,10 +1061,10 @@ internal val strings = mapOf(
     ),
     key(StringKey.ReferralProgramDialogMessageFootnoteMain1) to mapOf(
         SupportedLanguageKey.En to "Use your referral code or referral link to invite friends to Snaps. The more referrals you have, the more you earn every day! For a direct referral, you get 5%% of the level of his rewards every day! For an indirect referral, you get 3%% of the level of his rewards every day!",
-        SupportedLanguageKey.Ru to "Используйте свой реферальный код или реферальную ссылку для приглашения друзей в Snaps. Чем больше у вас рефералов, тем больше ваш заработок каждый день! За прямого реферала вы получаете 5% от уровня его наград каждый день! За косвенного реферала вы получаете 3% от уровня его наград каждый день!",
-        SupportedLanguageKey.Tr to "Arkadaşlarınızı Snaps'a davet etmek için yönlendirme kodunuzu veya yönlendirme bağlantınızı kullanın. Ne kadar çok tavsiyeniz varsa, her gün kazancınız o kadar artar! Doğrudan başvuru için her gün ödül seviyesinin% 5'ini alırsınız! Dolaylı bir başvuru için, her gün ödül seviyesinin% 3'ünü alırsınız!",
-        SupportedLanguageKey.Ua to "Використовуйте свій реферальний код або реферальне посилання, щоб запросити друзів до Snaps. Чим більше у вас рефералів, тим більше ваш заробіток кожен день! За прямого реферала Ви отримуєте 5% від рівня його нагород кожен день! За непрямого реферала Ви отримуєте 3% від рівня його нагород кожен день!",
-        SupportedLanguageKey.Es to "Use su código de referencia o enlace de referencia para invitar a amigos a Snaps. ¡Cuantas más referencias tenga, mayores serán sus ganancias cada día! ¡Para una referencia directa, obtienes un 5% de su nivel de recompensa todos los días! ¡Para una referencia indirecta, obtienes un 3% de su nivel de recompensa todos los días!",
+        SupportedLanguageKey.Ru to "Используйте свой реферальный код или реферальную ссылку для приглашения друзей в Snaps. Чем больше у вас рефералов, тем больше ваш заработок каждый день! За прямого реферала вы получаете 5%% от уровня его наград каждый день! За косвенного реферала вы получаете 3%% от уровня его наград каждый день!",
+        SupportedLanguageKey.Tr to "Arkadaşlarınızı Snaps'a davet etmek için yönlendirme kodunuzu veya yönlendirme bağlantınızı kullanın. Ne kadar çok tavsiyeniz varsa, her gün kazancınız o kadar artar! Doğrudan başvuru için her gün ödül seviyesinin%% 5'ini alırsınız! Dolaylı bir başvuru için, her gün ödül seviyesinin%% 3'ünü alırsınız!",
+        SupportedLanguageKey.Ua to "Використовуйте свій реферальний код або реферальне посилання, щоб запросити друзів до Snaps. Чим більше у вас рефералів, тим більше ваш заробіток кожен день! За прямого реферала Ви отримуєте 5%% від рівня його нагород кожен день! За непрямого реферала Ви отримуєте 3%% від рівня його нагород кожен день!",
+        SupportedLanguageKey.Es to "Use su código de referencia o enlace de referencia para invitar a amigos a Snaps. ¡Cuantas más referencias tenga, mayores serán sus ganancias cada día! ¡Para una referencia directa, obtienes un 5%% de su nivel de recompensa todos los días! ¡Para una referencia indirecta, obtienes un 3%% de su nivel de recompensa todos los días!",
     ),
     key(StringKey.ReferralProgramDialogTitleFootnoteMain2) to mapOf(
         SupportedLanguageKey.En to "Get an increase in daily earnings",
@@ -1887,6 +1887,10 @@ internal val strings = mapOf(
     ),
     key(StringKey.WalletDialogSellSnapsMessage) to mapOf(
         SupportedLanguageKey.En to "Your funds have been withdrawn to your bank card and you will receive them within a few minutes. Check the status of your payment.",
+        SupportedLanguageKey.Ru to "Ваши средства были выведены на вашу банковскую карту и вы получите их в течение нескольких минут. Проверьте статус вашего платежа.",
+        SupportedLanguageKey.Tr to "Paranız banka kartınıza çekildi ve birkaç dakika içinde alacaksınız. Ödemenizin durumunu kontrol edin.",
+        SupportedLanguageKey.Ua to "Ваші кошти виведено на вашу банківську картку і ви отримаєте їх протягом кількох хвилин. Перевірте статус свого платежу.",
+        SupportedLanguageKey.Es to "Tus fondos han sido retirados a tu tarjeta bancaria y los recibirás en unos minutos. Consulta el estado de tu pago.",
     ),
     key(StringKey.WalletTitleTransactionsEmpty) to mapOf(
         SupportedLanguageKey.En to "No transactions yet",
@@ -2037,10 +2041,10 @@ internal val strings = mapOf(
     ),
     key(StringKey.RewardsDialogMessageFootnote2) to mapOf(
         SupportedLanguageKey.En to "According to the rank of your NFT points, you will receive rewards with a smooth and gradual unlocking. Every day, the rewards from your blocked account will go to the unlocked one and you can pick them up. Every day the unlock gets bigger and after a few days in Snaps you will start getting 100%% reward every day on your unlocked wallet.",
-        SupportedLanguageKey.Ru to "В соответствии с рангом ваших NFT очков, вы получаете награды с плавной и постепенной разблокировкой. Каждый день награды с вашего заблокированного счета будут поступать в разблокированный и вы сможете их забрать. С каждым днем разблокировка становится больше и после нескольких дней в Snaps вы начнете получать 100% награды каждый день на свой разблокированный кошелек.",
-        SupportedLanguageKey.Tr to "NFT puanlarınızın sıralamasına göre, pürüzsüz ve kademeli olarak kilidini açarak ödüller kazanırsınız. Her gün engellenen hesabınızdaki ödüller kilidi açılmış hesabınıza girecek ve bunları alabileceksiniz. Kilidin açılması her geçen gün daha da büyüyor ve Snaps'ta birkaç gün geçtikten sonra, kilidi açılmış cüzdanınızda her gün% 100 ödül almaya başlayacaksınız.",
-        SupportedLanguageKey.Ua to "Відповідно до рангом ваших NFT очок, ви отримуєте нагороди з плавною і поступової розблокуванням. Кожен день нагороди з вашого заблокованого рахунку будуть надходити в розблокований і ви зможете їх забрати. З кожним днем розблокування стає більше і після декількох днів в Snaps ви почнете отримувати 100% нагороди кожен день на свій розблокований гаманець.",
-        SupportedLanguageKey.Es to "De acuerdo con el rango de tus puntos NFT, obtienes recompensas con un desbloqueo suave y gradual. Todos los días, las recompensas de tu cuenta bloqueada Irán a la cuenta desbloqueada y podrás recogerlas. Con cada día que pasa, el desbloqueo se hace más grande y después de unos días en Snaps, comenzará a recibir recompensas del 100% todos los días en su billetera desbloqueada.",
+        SupportedLanguageKey.Ru to "В соответствии с рангом ваших NFT очков, вы получаете награды с плавной и постепенной разблокировкой. Каждый день награды с вашего заблокированного счета будут поступать в разблокированный и вы сможете их забрать. С каждым днем разблокировка становится больше и после нескольких дней в Snaps вы начнете получать 100%% награды каждый день на свой разблокированный кошелек.",
+        SupportedLanguageKey.Tr to "NFT puanlarınızın sıralamasına göre, pürüzsüz ve kademeli olarak kilidini açarak ödüller kazanırsınız. Her gün engellenen hesabınızdaki ödüller kilidi açılmış hesabınıza girecek ve bunları alabileceksiniz. Kilidin açılması her geçen gün daha da büyüyor ve Snaps'ta birkaç gün geçtikten sonra, kilidi açılmış cüzdanınızda her gün%% 100 ödül almaya başlayacaksınız.",
+        SupportedLanguageKey.Ua to "Відповідно до рангом ваших NFT очок, ви отримуєте нагороди з плавною і поступової розблокуванням. Кожен день нагороди з вашого заблокованого рахунку будуть надходити в розблокований і ви зможете їх забрати. З кожним днем розблокування стає більше і після декількох днів в Snaps ви почнете отримувати 100%% нагороди кожен день на свій розблокований гаманець.",
+        SupportedLanguageKey.Es to "De acuerdo con el rango de tus puntos NFT, obtienes recompensas con un desbloqueo suave y gradual. Todos los días, las recompensas de tu cuenta bloqueada Irán a la cuenta desbloqueada y podrás recogerlas. Con cada día que pasa, el desbloqueo se hace más grande y después de unos días en Snaps, comenzará a recibir recompensas del 100%% todos los días en su billetera desbloqueada.",
     ),
     key(StringKey.RewardsDialogTitleClaim) to mapOf(
         SupportedLanguageKey.En to "Claim tokens",
@@ -2170,6 +2174,10 @@ internal val strings = mapOf(
     ),
     key(StringKey.WithdrawErrorInvalidAmount) to mapOf(
         SupportedLanguageKey.En to "Invalid amount",
+        SupportedLanguageKey.Ru to "Недопустимая сумма",
+        SupportedLanguageKey.Tr to "Geçersiz miktar",
+        SupportedLanguageKey.Ua to "Недійсна сума",
+        SupportedLanguageKey.Es to "Monto invalido",
     ),
     key(StringKey.WithdrawDialogWithdrawTitle) to mapOf(
         SupportedLanguageKey.En to "Withdraw %s",
@@ -2198,9 +2206,6 @@ internal val strings = mapOf(
         SupportedLanguageKey.Tr to "Bscscan'da görüntüle",
         SupportedLanguageKey.Ua to "Перегляд на Bscscan",
         SupportedLanguageKey.Es to "Ver en Bscscan",
-    ),
-    key(StringKey.WithdrawDialogWithdrawSuccessAction) to mapOf(
-        SupportedLanguageKey.En to "View on Bscscan",
     ),
     key(StringKey.WithdrawSnapsTitle) to mapOf(
         SupportedLanguageKey.En to "Sell %s",
@@ -2912,16 +2917,30 @@ internal val strings = mapOf(
     ),
     key(StringKey.DialogSummaryTitleGasPrice) to mapOf(
         SupportedLanguageKey.En to "Gas price:",
-        SupportedLanguageKey.Ru to "Плата за газ",
-        SupportedLanguageKey.Tr to "Gaz fiyatı",
-        SupportedLanguageKey.Ua to "Ціна на газ",
-        SupportedLanguageKey.Es to "Precio del gas",
+        SupportedLanguageKey.Ru to "Плата за газ:",
+        SupportedLanguageKey.Tr to "Gaz fiyatı:",
+        SupportedLanguageKey.Ua to "Ціна на газ:",
+        SupportedLanguageKey.Es to "Precio del gas:",
+    ),
+    key(StringKey.DialogSummaryTitleFrom) to mapOf(
+        SupportedLanguageKey.En to "From:",
+        SupportedLanguageKey.Ru to "От:",
+        SupportedLanguageKey.Tr to "İtibaren:",
+        SupportedLanguageKey.Ua to "Від:",
+        SupportedLanguageKey.Es to "De:",
+    ),
+    key(StringKey.DialogSummaryTitleTo) to mapOf(
+        SupportedLanguageKey.En to "To:",
+        SupportedLanguageKey.Ru to "На:",
+        SupportedLanguageKey.Tr to "İle:",
+        SupportedLanguageKey.Ua to "До:",
+        SupportedLanguageKey.Es to "А:",
     ),
     key(StringKey.DialogSummaryTitleTotal) to mapOf(
         SupportedLanguageKey.En to "Total:",
-        SupportedLanguageKey.Ru to "Всего",
-        SupportedLanguageKey.Tr to "Sadece",
-        SupportedLanguageKey.Ua to "Всього",
-        SupportedLanguageKey.Es to "Por todo",
+        SupportedLanguageKey.Ru to "Всего:",
+        SupportedLanguageKey.Tr to "Sadece:",
+        SupportedLanguageKey.Ua to "Всього:",
+        SupportedLanguageKey.Es to "Por todo:",
     ),
 )
