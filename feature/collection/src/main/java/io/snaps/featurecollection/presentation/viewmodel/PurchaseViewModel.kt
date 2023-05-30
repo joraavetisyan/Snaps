@@ -129,8 +129,9 @@ class PurchaseViewModel @Inject constructor(
                     nftType = args.type,
                     purchaseToken = purchaseToken,
                 )
+            }.doOnComplete {
+                _uiState.update { it.copy(isLoading = false) }
             }.doOnSuccess {
-                _uiState.update { state -> state.copy(isLoading = false) }
                 if (it.isEmpty()) {
                     notificationsSource.sendMessage(StringKey.PurchaseMessageSuccess.textValue())
                     _command publish Command.BackToMyCollectionScreen()
@@ -140,9 +141,8 @@ class PurchaseViewModel @Inject constructor(
                     )
                 }
             }.doOnError { error, _ ->
-                when (error.cause) {
-                    is BalanceInSync -> notificationsSource.sendMessage(StringKey.ErrorBalanceInSync.textValue())
-                    else -> _uiState.update { it.copy(isLoading = false) }
+                if (error.cause is BalanceInSync) {
+                    notificationsSource.sendMessage(StringKey.ErrorBalanceInSync.textValue())
                 }
             }
         }
