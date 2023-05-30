@@ -32,6 +32,7 @@ enum class StringKey {
     ErrorConnection,
     ErrorUnknown,
     ErrorBalanceInSync,
+    ErrorRefillGasLimit,
 
     OnboardingRankTitle,
     OnboardingRankMessage,

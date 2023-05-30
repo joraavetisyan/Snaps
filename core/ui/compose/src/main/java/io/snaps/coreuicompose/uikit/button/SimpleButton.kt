@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalMinimumTouchTargetEnforcement
+import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Surface
@@ -606,7 +606,7 @@ internal fun SimpleButton(
     val tonalElevation = /*elevation?.tonalElevation(enabled, interactionSource)?.value ?: */0.dp
 
     MaterialTheme(typography = MaterialTheme.typography.copy(labelLarge = size.textStyle)) {
-        CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+        CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
             Surface(
                 modifier = modifier
                     .then(size.heightModifier)

@@ -5,6 +5,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.snaps.basesession.data.AntiFraudHandler
+import io.snaps.basesession.data.AntiFraudHandlerSafetyNetImpl
 import io.snaps.basesession.data.LogoutApi
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesession.data.OnboardingHandlerImplDelegate
@@ -38,4 +40,8 @@ interface DataBindModule {
     @Binds
     @Singleton
     fun onboardingHandler(bind: OnboardingHandlerImplDelegate): OnboardingHandler
+
+    @Binds
+    @Singleton
+    fun antiFraud(bind: AntiFraudHandlerSafetyNetImpl): AntiFraudHandler
 }

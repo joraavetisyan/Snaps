@@ -78,7 +78,6 @@ fun SelectorTile(
             text = data.text.get(),
             color = textColor,
             style = AppTheme.specificTypography.titleSmall,
-            maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
         )

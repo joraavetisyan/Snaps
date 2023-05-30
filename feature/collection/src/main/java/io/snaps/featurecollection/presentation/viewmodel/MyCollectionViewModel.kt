@@ -6,8 +6,6 @@ import io.snaps.basenft.data.NftRepository
 import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
-import io.snaps.baseprofile.data.ProfileRepository
-import io.snaps.baseprofile.data.model.PaymentsState
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesources.NotificationsSource
@@ -51,7 +49,6 @@ class MyCollectionViewModel @Inject constructor(
     private val notificationsSource: NotificationsSource,
     @Bridged private val nftRepository: NftRepository,
     @Bridged private val walletRepository: WalletRepository,
-    @Bridged private val profileRepository: ProfileRepository,
     private val interactor: MyCollectionInteractor,
 ) : SimpleViewModel(),
     MainHeaderHandler by mainHeaderHandler,
@@ -102,20 +99,6 @@ class MyCollectionViewModel @Inject constructor(
     }
 
     private fun onRepairClicked(nftModel: NftModel) = viewModelScope.launch {
-        when (profileRepository.state.value.dataOrCache?.paymentsState) {
-            PaymentsState.Blockchain -> checkGas(
-                scope = viewModelScope,
-                minValue = 0.0012,
-                onGasEnough = { repair(nftModel) },
-                onSync = { notificationsSource.sendError(StringKey.ErrorBalanceInSync.textValue()) },
-            )
-            PaymentsState.No,
-            PaymentsState.InApp -> repair(nftModel)
-            null -> notificationsSource.sendError(StringKey.Error.textValue())
-        }
-    }
-
-    private suspend fun repair(nftModel: NftModel) {
         _uiState.update { it.copy(isLoading = true) }
         action.execute {
             interactor.repair(nftModel)

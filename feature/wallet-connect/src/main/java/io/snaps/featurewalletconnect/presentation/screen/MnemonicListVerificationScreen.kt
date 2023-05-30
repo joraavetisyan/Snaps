@@ -96,8 +96,7 @@ private fun MnemonicListVerificationScreen(
         Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(horizontal = 12.dp)
-                .inset(insetAllExcludeTop()),
+                .padding(horizontal = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -127,7 +126,7 @@ private fun MnemonicListVerificationScreen(
             SimpleButtonActionM(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 24.dp),
+                    .padding(vertical = 12.dp),
                 onClick = onContinueButtonClicked,
                 enabled = uiState.isContinueButtonEnabled,
             ) {

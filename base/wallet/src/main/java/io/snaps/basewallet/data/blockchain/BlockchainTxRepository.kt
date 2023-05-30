@@ -62,7 +62,7 @@ interface BlockchainTxRepository {
 
     suspend fun getRepairNftSign(repairCost: Double): Effect<TxSign>
 
-    suspend fun getNftMintSummary(nftType: NftType, amount: Double): Effect<NftMintSummary>
+    suspend fun getNftMintSummary(nftType: NftType, amount: Double, gasLimit: Long? = null): Effect<NftMintSummary>
 
     suspend fun getMintNftSign(nftType: NftType, summary: NftMintSummary): Effect<TxSign>
 }
@@ -330,7 +330,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
         return requireNotNull(getActiveWalletReceiveAddress())
     }
 
-    override suspend fun getNftMintSummary(nftType: NftType, amount: Double): Effect<NftMintSummary> {
+    override suspend fun getNftMintSummary(nftType: NftType, amount: Double, gasLimit: Long?): Effect<NftMintSummary> {
         val nonceRaw = getNonceRaw()
 
         return apiCall(ioDispatcher) {
@@ -361,11 +361,11 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                     value = valueApplied,
                     input = encodedAbi,
                 )
-                val gasLimit = adapter.evmKit.estimateGas(
+                val gasLimitEstimate: Long = gasLimit ?: adapter.evmKit.estimateGas(
                     transactionData = transactionData,
                     gasPrice = defaultGasPrice,
                 ).blockingGet()
-                val gasPriceDecimal = defaultGasPrice.max.unapplyDecimal(wallet.decimal).times(gasLimit.toBigDecimal())
+                val gasPriceDecimal = defaultGasPrice.max.unapplyDecimal(wallet.decimal).times(gasLimitEstimate.toBigDecimal())
 
                 NftMintSummary(
                     from = fromAddress,
@@ -373,7 +373,7 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                     summary = amount.toBigDecimal(),
                     gas = gasPriceDecimal,
                     total = amount.toBigDecimal() + gasPriceDecimal,
-                    gasLimit = gasLimit,
+                    gasLimit = gasLimitEstimate,
                     transactionData = transactionData,
                 )
             }

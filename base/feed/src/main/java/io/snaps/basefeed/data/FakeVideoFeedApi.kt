@@ -170,14 +170,6 @@ class FakeVideoFeedApi : VideoFeedApi {
         )
     }
 
-    override suspend fun viewWithValidation(validationResult: String, videoId: Uuid): BaseResponse<Completable> {
-        log("Requesting view video w/ validation $videoId")
-        delay(mockDelay)
-        return BaseResponse(
-            data = Completable,
-        )
-    }
-
     override suspend fun like(videoId: Uuid): BaseResponse<Completable> {
         log("Requesting like video $videoId")
         delay(mockDelay)

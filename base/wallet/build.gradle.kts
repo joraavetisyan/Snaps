@@ -21,6 +21,7 @@ dependencies {
     implementation(projects.coreCrypto)
 
     implementation(projects.baseSources)
+    implementation(projects.baseNft)
 
     implementation(*Libs.bundle.crypto)
     implementation(*Libs.bundle.trustWallet)

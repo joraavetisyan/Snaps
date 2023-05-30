@@ -14,38 +14,38 @@ import retrofit2.http.Query
 
 interface SubsApi {
 
-    @GET("user/{userId}/subscribers")
+    @GET("v1/user/{userId}/subscribers")
     suspend fun subscribers(
         @Path("userId") userId: Uuid,
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<SubsItemResponseDto>>
 
-    @GET("user/{userId}/subscriptions")
+    @GET("v1/user/{userId}/subscriptions")
     suspend fun subscriptions(
         @Path("userId") userId: Uuid,
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<SubsItemResponseDto>>
 
-    @GET("subscribers")
+    @GET("v1/subscribers")
     suspend fun mySubscribers(
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<SubsItemResponseDto>>
 
-    @GET("subscriptions")
+    @GET("v1/subscriptions")
     suspend fun mySubscriptions(
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<SubsItemResponseDto>>
 
-    @POST("subscribe")
+    @POST("v1/subscribe")
     suspend fun subscribe(
         @Body body: SubscribeRequestDto
     ): BaseResponse<Completable>
 
-    @POST("unsubscribe")
+    @POST("v1/unsubscribe")
     suspend fun unsubscribe(
         @Body body: UnsubscribeRequestDto
     ): BaseResponse<Completable>

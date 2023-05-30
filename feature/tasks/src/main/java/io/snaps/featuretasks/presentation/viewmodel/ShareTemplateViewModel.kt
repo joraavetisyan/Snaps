@@ -6,12 +6,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.baseprofile.data.model.SocialPostStatus
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toCompactDecimalFormat
+import io.snaps.corecommon.model.TaskType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.di.Bridged
@@ -25,6 +27,7 @@ import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
 import io.snaps.featuretasks.data.TasksRepository
 import io.snaps.featuretasks.domain.ConnectInstagramInteractor
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -134,16 +137,24 @@ class ShareTemplateViewModel @Inject constructor(
         }
     }
 
-    fun onPostToInstagramButtonClicked() = viewModelScope.launch {
-        if (profileRepository.state.value.dataOrCache?.instagramId != null) {
+    fun onPostToInstagramButtonClicked() {
+        viewModelScope.launch {
+            val user = profileRepository.state.value.dataOrCache
+            if (user?.instagramId == null) {
+                notificationsSource.sendError(StringKey.TaskShareErrorNoInstagramConnected.textValue())
+                return@launch
+            }
+            val socialShareTask = user.questInfo?.quests?.find { it.type == TaskType.SocialPost }
+            if (socialShareTask?.status == SocialPostStatus.WaitForVerification) {
+                notificationsSource.sendMessage(StringKey.TaskShareMessagePostInstagram.textValue())
+                return@launch
+            }
             action.execute {
                 tasksRepository.postToInstagram()
             }.doOnSuccess {
                 notificationsSource.sendMessage(StringKey.TaskShareMessagePostInstagram.textValue())
                 _command publish Command.BackToTasksScreen
             }
-        } else {
-            notificationsSource.sendError(StringKey.TaskShareErrorNoInstagramConnected.textValue())
         }
     }
 

@@ -86,9 +86,7 @@ private fun BackupWalletKeyScreen(
         },
     ) {
         Column(
-            modifier = Modifier
-                .padding(it)
-                .inset(insetAllExcludeTop()),
+            modifier = Modifier.padding(it),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -105,7 +103,7 @@ private fun BackupWalletKeyScreen(
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.weight(1f),
             ) {
                 items(uiState.phrase) { item ->
                     Item(phrase = item, isPressed = isPressed)
@@ -115,7 +113,7 @@ private fun BackupWalletKeyScreen(
                 interactionSource = interactionSource,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 24.dp),
+                    .padding(horizontal = 12.dp, vertical = 12.dp),
                 onClick = {},
             ) {
                 SimpleButtonContent(text = StringKey.BackupWalletKeyActionHold.textValue())

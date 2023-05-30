@@ -262,7 +262,7 @@ fun VideoClipScreen(
                                     uiState = uiState,
                                     onMuteClicked = viewModel::onMuteClicked,
                                     onProgressChanged = {
-                                        viewModel.onVideoClipWatchProgressed(context = context, clipModel = it)
+                                        viewModel.onVideoClipWatchProgressed(clipModel = it)
                                     },
                                     onAuthorClicked = viewModel::onAuthorClicked,
                                     onLikeClicked = viewModel::onLikeClicked,

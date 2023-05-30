@@ -31,6 +31,7 @@ import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.Try
 import androidx.compose.material.icons.rounded.Videocam
+import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VolumeMute
 import androidx.compose.material.icons.rounded.VolumeUp
 import io.snaps.corecommon.R
@@ -43,6 +44,7 @@ object SpecificIcons {
     val account = Icons.Rounded.AccountCircle.iconValue()
     val navigateNext = Icons.Rounded.NavigateNext.iconValue()
     val heart = Icons.Rounded.HeartBroken.iconValue()
+    val eye = Icons.Rounded.Visibility.iconValue()
     val error = Icons.Rounded.Error.iconValue()
     val favoriteBorder = Icons.Rounded.FavoriteBorder.iconValue()
     val favorite = Icons.Filled.Favorite.iconValue()

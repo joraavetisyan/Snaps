@@ -15,8 +15,6 @@ import io.snaps.corecommon.model.TxHash
 import io.snaps.coredata.di.Bridged
 import javax.inject.Inject
 
-const val minBnb = 0.0017
-
 interface MyCollectionInteractor {
 
     suspend fun repair(nftModel: NftModel): Effect<TxHash>
@@ -63,9 +61,8 @@ class MyCollectionInteractorImpl @Inject constructor(
         } else {
             val bnb = walletRepository.bnb.value?.coinValue?.value
             if (bnb == null) Effect.error(AppError.Custom(cause = BalanceInSync))
-            else if (bnb < minBnb) Effect.error(AppError.Custom(cause = NoEnoughBnbToMint))
             else {
-                blockchainTxRepository.getNftMintSummary(nftType = nftType, amount = 0.0)
+                blockchainTxRepository.getNftMintSummary(nftType = nftType, amount = 0.0, gasLimit = 170_000L)
                     .flatMap {
                         blockchainTxRepository.getMintNftSign(nftType = nftType, summary = it)
                     }.flatMap {

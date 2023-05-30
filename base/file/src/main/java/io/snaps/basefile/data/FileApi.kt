@@ -15,13 +15,13 @@ import retrofit2.http.Streaming
 interface FileApi {
 
     @Multipart
-    @POST("file")
+    @POST("v1/file")
     suspend fun upload(
         @Part files: MultipartBody.Part,
     ): BaseResponse<List<UploadFileResponseDto>>
 
     @Streaming
-    @GET("file")
+    @GET("v1/file")
     suspend fun download(
         @Query("fileId") fileId: Uuid,
     ): BaseResponse<ResponseBody>

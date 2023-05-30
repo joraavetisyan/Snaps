@@ -2,13 +2,18 @@ package io.snaps.basefeed.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -21,6 +26,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import io.snaps.basefeed.domain.VideoClipModel
+import io.snaps.corecommon.container.IconValue
+import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.coreuicompose.tools.addIf
 import io.snaps.coreuicompose.tools.defaultTileRipple
@@ -77,22 +84,36 @@ private fun Item(
                 contentDescription = null,
             )
         }
+        @Composable
+        fun Column(icon: IconValue, value: String) {
+            Column(
+                modifier = Modifier,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Icon(
+                    painter = icon.get(),
+                    contentDescription = null,
+                    tint = AppTheme.specificColorScheme.white,
+                    modifier = Modifier.size(12.dp),
+                )
+                Text(
+                    text = value,
+                    color = AppTheme.specificColorScheme.white,
+                    style = AppTheme.specificTypography.bodySmall,
+                )
+            }
+        }
         Row(
             modifier = Modifier
-                .align(Alignment.BottomEnd)
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
                 .padding(horizontal = 4.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
         ) {
-            Icon(
-                painter = AppTheme.specificIcons.play.get(),
-                contentDescription = null,
-                tint = AppTheme.specificColorScheme.white,
-            )
-            Text(
-                text = item.likeCount.toString(),
-                color = AppTheme.specificColorScheme.white,
-                style = AppTheme.specificTypography.bodySmall,
-            )
+            Column(icon = AppTheme.specificIcons.favorite, value = item.likeCount.toString())
+            Spacer(modifier = Modifier.width(20.dp))
+            Column(icon = AppTheme.specificIcons.eye, value = item.viewCount.toString())
         }
     }
 }

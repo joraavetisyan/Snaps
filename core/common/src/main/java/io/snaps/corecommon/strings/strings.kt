@@ -191,6 +191,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Відновлення балансу. Спробуйте повторити пізніше",
         SupportedLanguageKey.Es to "Actualización de saldo. Vuelva a intentarlo más tarde",
     ),
+    key(StringKey.ErrorRefillGasLimit) to mapOf(
+        SupportedLanguageKey.En to "You can only request gas %s times",
+        SupportedLanguageKey.Ru to "Вы можете запрашивать газ только %s раз",
+        SupportedLanguageKey.Tr to "Yalnızca %s kez gaz talep edebilirsiniz",
+        SupportedLanguageKey.Ua to "Ви можете запитувати газ тільки %s раз",
+        SupportedLanguageKey.Es to "Solo puedes pedir gas %s veces",
+    ),
     key(StringKey.OnboardingRankTitle) to mapOf(
         SupportedLanguageKey.En to "Welcome to Snaps!",
         SupportedLanguageKey.Ru to "Добро пожаловать в Snaps!",

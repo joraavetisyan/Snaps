@@ -30,7 +30,7 @@ object Libs {
     private const val lifecycleVersion = "2.4.0"
     private const val navigationVersion = "2.6.0-rc02"
     private const val appUpdaterVersion = "1.8.1"
-    private const val billingVersion = "4.0.0"
+    private const val billingVersion = "4.0.0" // todo support "From 1 November 2023, all app updates must use Billing Library version 5 or newer."
     private const val browserVersion = "1.4.0"
     private const val biometricVersion = "1.2.0-alpha04"
     private const val windowVersion = "1.0.0"
@@ -42,7 +42,7 @@ object Libs {
     private const val firebaseBomVersion = "32.0.0"
 
     private const val playServicesAuthVersion = "20.4.1"
-    private const val playServicesSafetynetVersion = "18.0.1"
+    private const val recaptchaVersion = "18.1.1"
 
     private const val datastoreVersion = "1.0.0-rc01"
     private const val securityVersion = "1.1.0-alpha01" // Downgrading to 1.1.0-alpha01 solve issue InvalidProtocolBufferException
@@ -132,7 +132,7 @@ object Libs {
         const val hiltKaptViewModel = "androidx.hilt:hilt-compiler:$hiltJetpackVersion"
 
         const val playServicesAuth = "com.google.android.gms:play-services-auth:$playServicesAuthVersion"
-        const val playServicesSafetynet = "com.google.android.gms:play-services-safetynet:$playServicesSafetynetVersion"
+        const val recaptcha = "com.google.android.recaptcha:recaptcha:$recaptchaVersion"
 
         val firebaseBom = "com.google.firebase:firebase-bom:$firebaseBomVersion"
         val firebase = arrayOf(

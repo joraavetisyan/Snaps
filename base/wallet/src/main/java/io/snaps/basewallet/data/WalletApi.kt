@@ -17,41 +17,41 @@ import retrofit2.http.POST
 
 interface WalletApi {
 
-    @GET("user/balance")
+    @GET("v1/user/balance")
     suspend fun getSnpsAccount(): BaseResponse<SnpsAccountResponseDto>
 
-    @POST("wallet")
+    @POST("v1/wallet")
     suspend fun save(
         @Body body: WalletSaveRequestDto,
     ): BaseResponse<Completable>
 
-    @POST("wallet/claim")
+    @POST("v1/wallet/claim")
     suspend fun claim(
         @Body body: ClaimRequestDto,
     ): BaseResponse<ClaimResponseDto>
 
-    @POST("wallet/max")
+    @POST("v1/wallet/max")
     suspend fun claimMax(): BaseResponse<ClaimResponseDto>
 
-    @POST("payout-order")
+    @POST("v1/payout-order")
     suspend fun payoutOrder(
         @Body body: PayoutOrderRequestDto,
     ): BaseResponse<Completable>
 
-    @GET("payout-order")
+    @GET("v1/payout-order")
     suspend fun payoutStatus(): BaseResponse<List<PayoutOrderResponseDto>>
 
-    @POST("user/nft/sign-repair")
+    @POST("v1/user/nft/sign-repair")
     suspend fun getRepairSignature(
         @Body body: SignatureRequestDto,
     ): BaseResponse<SignatureResponseDto>
 
-    @POST("user/nft/sign-mint")
+    @POST("v1/user/nft/sign-mint")
     suspend fun getMintSignature(
         @Body body: SignatureRequestDto,
     ): BaseResponse<SignatureResponseDto>
 
-    @POST("base-token")
+    @POST("v2/base-token")
     suspend fun refillGas(
         @Body body: RefillGasRequestDto,
     ): BaseResponse<Completable>

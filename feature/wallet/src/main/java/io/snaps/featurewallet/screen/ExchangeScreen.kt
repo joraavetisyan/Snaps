@@ -3,6 +3,7 @@ package io.snaps.featurewallet.screen
 import android.app.Activity
 import android.graphics.Bitmap
 import android.net.http.SslError
+import android.view.ViewGroup
 import android.webkit.SslErrorHandler
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -81,15 +82,19 @@ private fun ExchangeScreen(
             modifier = Modifier.padding(paddingValues),
             factory = { context ->
                 val address = uiState.walletModel.receiveAddress
-                WebView.setWebContentsDebuggingEnabled(true)
-                val webView = WebView(context)
+                /*WebView.setWebContentsDebuggingEnabled(true)*/
+                val webView = WebView(context).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                }
                 val webAppInterface = TrustWalletWebAppInterface(
                     address = address,
                     webView = webView,
                     sendTransaction = onTransactionSendClicked,
                 )
                 webView.addJavascriptInterface(webAppInterface, TrustWalletWebAppInterface.name)
-                webView.settings.run {
+                webView.settings.apply {
                     javaScriptEnabled = true
                     domStorageEnabled = true
                 }

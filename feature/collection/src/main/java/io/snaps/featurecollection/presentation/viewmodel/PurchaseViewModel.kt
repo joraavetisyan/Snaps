@@ -39,8 +39,6 @@ import io.snaps.coreui.barcode.BarcodeManager
 import io.snaps.featurecollection.domain.BalanceInSync
 import io.snaps.featurecollection.domain.MyCollectionInteractor
 import io.snaps.featurecollection.domain.NoEnoughBnbToMint
-import io.snaps.featurecollection.domain.minBnb
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -143,36 +141,9 @@ class PurchaseViewModel @Inject constructor(
                 }
             }.doOnError { error, _ ->
                 when (error.cause) {
-                    is NoEnoughBnbToMint -> refillGas(purchaseToken)
                     is BalanceInSync -> notificationsSource.sendMessage(StringKey.ErrorBalanceInSync.textValue())
                     else -> _uiState.update { it.copy(isLoading = false) }
                 }
-            }
-        }
-    }
-
-    // todo better way
-    private fun refillGas(purchaseToken: Token?) {
-        val current = walletRepository.bnb.value?.coinValue?.value ?: 0.0
-        viewModelScope.launch {
-            action.execute {
-                walletRepository.refillGas(minBnb - current)
-            }.doOnSuccess {
-                walletRepository.updateTotalBalance()
-                var job: Job? = null
-                var iteration = 0
-                job = walletRepository.bnb.onEach {
-                    if ((it?.coinValue?.value ?: 0.0) >= minBnb) {
-                        mint(purchaseToken)
-                        job?.cancel()
-                    } else if (it?.coinValue?.value != current || iteration++ > 2) {
-                        notificationsSource.sendMessage(StringKey.Error.textValue())
-                        _uiState.update { state -> state.copy(isLoading = false) }
-                        job?.cancel()
-                    }
-                }.launchIn(viewModelScope)
-            }.doOnError { _, _ ->
-                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }

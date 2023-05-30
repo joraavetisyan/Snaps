@@ -24,18 +24,24 @@ class ActionImpl @Inject constructor(
     private val chuckerCollector: ChuckerCollector,
     private val notificationsSource: NotificationsSource,
     private val sessionRepository: SessionRepository,
+    private val antiFraudHandler: AntiFraudHandler,
 ) : Action {
 
     override suspend fun <T : Any> execute(
         needsErrorProcessing: Boolean,
         needsTokenExpireProcessing: Boolean,
+        needsFraudProcessing: Boolean,
         block: suspend CoroutineScope.() -> Effect<T>
     ): Effect<T> {
         val effect = try {
             coroutineScope {
                 var effect = block()
-                if (effect.errorOrNull?.code == HttpURLConnection.HTTP_UNAUTHORIZED && needsTokenExpireProcessing) {
+                val code = effect.errorOrNull?.code
+                if (code == HttpURLConnection.HTTP_UNAUTHORIZED && needsTokenExpireProcessing) {
                     sessionRepository.refresh()
+                    effect = block()
+                } else if (code == 429 && needsFraudProcessing) {
+                    antiFraudHandler.setCaptcha()
                     effect = block()
                 }
                 effect
@@ -60,6 +66,7 @@ class ActionImpl @Inject constructor(
         }
     }
 
+    // todo en
     // тут обрабатывем общие ошибки (простые с плашкой),
     // остальные случаи обрабатываются на уровне view model
     private suspend fun handle(error: AppError) {
@@ -78,6 +85,7 @@ class ActionImpl @Inject constructor(
     }
 }
 
+// todo to di file
 @Module
 @InstallIn(SingletonComponent::class)
 interface ActionModule {

@@ -34,6 +34,7 @@ import androidx.navigation.NavHostController
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.add
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
@@ -92,7 +93,7 @@ private fun MnemonicsScreen(
             SimpleButtonActionM(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 24.dp),
+                    .padding(horizontal = 12.dp),
                 onClick = onContinueButtonClicked,
                 enabled = uiState.isContinueButtonEnabled,
             ) {
@@ -116,10 +117,10 @@ private fun MnemonicsScreen(
             )
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(12.dp),
+                contentPadding = PaddingValues(12.dp).add(padding = PaddingValues(bottom = 64.dp)),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.weight(1f),
             ) {
                 itemsIndexed(uiState.words) { i, it -> Item(i, it) }
             }

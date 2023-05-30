@@ -26,4 +26,5 @@ dependencies {
 
     implementation(*Libs.bundle.preference)
     implementation(*Libs.bundle.datastore)
+    implementation(Libs.bundle.recaptcha)
 }

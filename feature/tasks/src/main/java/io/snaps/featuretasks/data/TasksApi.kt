@@ -10,12 +10,12 @@ import retrofit2.http.Query
 
 interface TasksApi {
 
-    @GET("quest-history")
+    @GET("v1/quest-history")
     suspend fun historyTasks(
         @Query("from") from: DateTime?,
         @Query("count") count: Int,
     ): BaseResponse<List<HistoryTaskItemResponseDto>>
 
-    @POST("quests/instagram-post")
+    @POST("v1/quests/instagram-post")
     suspend fun instagramPost(): BaseResponse<Completable>
 }

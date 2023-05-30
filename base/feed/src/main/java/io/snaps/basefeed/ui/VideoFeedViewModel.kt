@@ -1,10 +1,8 @@
 package io.snaps.basefeed.ui
 
-import android.content.Context
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.safetynet.SafetyNet
 import io.snaps.basefeed.data.CommentRepository
 import io.snaps.basefeed.data.VideoFeedRepository
 import io.snaps.basefeed.domain.VideoFeedPageModel
@@ -12,12 +10,10 @@ import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
-import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basesubs.data.SubsRepository
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
@@ -204,39 +200,18 @@ abstract class VideoFeedViewModel(
         viewModelScope.launch { _command publish Command.OpenProfileScreen(clipModel.authorId) }
     }
 
-    fun onVideoClipWatchProgressed(context: Context, clipModel: VideoClipModel) {
+    fun onVideoClipWatchProgressed(clipModel: VideoClipModel) {
         if (videoClipsBeingMarkedAsWatched.contains(clipModel.id)) return
         if (profileRepository.state.value.dataOrCache?.userId == clipModel.authorId) return
 
         videoClipsBeingMarkedAsWatched.add(clipModel.id)
 
-        fun markWatched(clipModel: VideoClipModel, validationResult: String? = null) {
-            viewModelScope.launch {
-                if (!isActive) return@launch
-                action.execute(needsErrorProcessing = false) {
-                    if (validationResult != null) {
-                        videoFeedRepository.markWatchedWithValidation(
-                            validationResult = validationResult,
-                            videoId = clipModel.id,
-                        )
-                    } else {
-                        videoFeedRepository.markWatched(clipModel.id)
-                    }
-                }.doOnError { _, _ ->
-                    videoClipsBeingMarkedAsWatched.remove(clipModel.id)
-                }
+        viewModelScope.launch {
+            action.execute(needsErrorProcessing = false) {
+                videoFeedRepository.markWatched(clipModel.id)
+            }.doOnError { _, _ ->
+                videoClipsBeingMarkedAsWatched.remove(clipModel.id)
             }
-        }
-        if (featureToggle.isEnabled(Feature.Captcha)) {
-            SafetyNet.getClient(context).verifyWithRecaptcha("6Ld5QDgmAAAAAC5wrvEUzPRRE1FWuDc5BUzjH_dB")
-                .addOnSuccessListener {
-                    markWatched(clipModel, it.tokenResult)
-                }.addOnFailureListener {
-                    log(it)
-                    markWatched(clipModel)
-                }
-        } else {
-            markWatched(clipModel)
         }
     }
 

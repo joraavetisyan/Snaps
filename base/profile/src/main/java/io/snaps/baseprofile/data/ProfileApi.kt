@@ -14,39 +14,39 @@ import retrofit2.http.Query
 
 interface ProfileApi {
 
-    @GET("user-info")
+    @GET("v1/user-info")
     suspend fun userInfo(
         @Query("userId") userId: String? = null,
     ): BaseResponse<UserInfoResponseDto>
 
-    @POST("user")
+    @POST("v1/user")
     suspend fun createUser(
         @Body body: UserCreateRequestDto,
     ): BaseResponse<UserInfoResponseDto>
 
-    @POST("invite-code")
+    @POST("v1/invite-code")
     suspend fun setInviteCode(
         @Body body: SetInviteCodeRequestDto,
     ): BaseResponse<Completable>
 
-    @GET("user/balance/unlocked/history")
+    @GET("v1/user/balance/unlocked/history")
     suspend fun unlockedTransactions(
         @Query("from") from: String?,
         @Query("count") count: Int,
     ): BaseResponse<List<TransactionItemResponseDto>>
 
-    @GET("user/balance/locked/history")
+    @GET("v1/user/balance/locked/history")
     suspend fun lockedTransactions(
         @Query("from") from: String?,
         @Query("count") count: Int,
     ): BaseResponse<List<TransactionItemResponseDto>>
 
-    @POST("user")
+    @POST("v1/user")
     suspend fun connectInstagram(
         @Body body: ConnectInstagramRequestDto,
     ): BaseResponse<UserInfoResponseDto>
 
-    @GET("user")
+    @GET("v1/user")
     suspend fun users(
         @Query("searchString") query: String?,
         @Query("from") from: String?,

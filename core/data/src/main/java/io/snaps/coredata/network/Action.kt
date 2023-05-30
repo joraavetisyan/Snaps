@@ -8,6 +8,7 @@ interface Action {
     suspend fun <T : Any> execute(
         needsErrorProcessing: Boolean = true,
         needsTokenExpireProcessing: Boolean = true,
+        needsFraudProcessing: Boolean = true,
         block: suspend CoroutineScope.() -> Effect<T>,
     ): Effect<T>
 }

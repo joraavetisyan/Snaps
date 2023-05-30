@@ -1,5 +1,6 @@
 package io.snaps.basewallet.ui
 
+import io.snaps.basenft.data.NftRepository
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.container.textValue
@@ -48,6 +49,7 @@ class LimitedGasDialogHandlerImplDelegate @Inject constructor(
     private val action: Action,
     private val notificationsSource: NotificationsSource,
     @Bridged private val walletRepository: WalletRepository,
+    @Bridged private val nftRepository: NftRepository,
 ) : LimitedGasDialogHandler {
 
     private val _uiState = MutableStateFlow(LimitedGasDialogHandler.UiState())
@@ -101,6 +103,11 @@ class LimitedGasDialogHandlerImplDelegate @Inject constructor(
                     delay(1000L)
                 }
                 notificationsSource.sendMessage(StringKey.MessageSuccess.textValue())
+            }.doOnError { error, _ ->
+                if (error.code == 400) {
+                    val count = (nftRepository.nftCollectionState.value.dataOrCache?.count() ?: 0) + 2
+                    notificationsSource.sendError(StringKey.ErrorRefillGasLimit.textValue(count.toString()))
+                }
             }.doOnComplete {
                 _uiState.update { it.copy(isLoading = false) }
             }

@@ -13,14 +13,14 @@ import retrofit2.http.Query
 
 interface CommentApi {
 
-    @GET("video/{videoId}/comments")
+    @GET("v1/video/{videoId}/comments")
     suspend fun comments(
         @Path("videoId") videoId: Uuid,
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<CommentResponseDto>>
 
-    @POST("video/{videoId}/comment")
+    @POST("v1/video/{videoId}/comment")
     suspend fun createComment(
         @Path("videoId") videoId: Uuid,
         @Body body: CreateCommentRequestDto,

@@ -315,6 +315,7 @@ class WalletViewModel @Inject constructor(
                     bottomDialog = BottomDialog.SelectWallet(
                         wallets = wallets.toCellTileStateList(
                             onClick = {
+                                onBottomDialogHidden()
                                 viewModelScope.launch { _command publish Command.HideBottomDialog }
                                 onSelected(it)
                             },

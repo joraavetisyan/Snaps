@@ -23,8 +23,6 @@ import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.coreuicompose.tools.get
-import io.snaps.coreuicompose.tools.inset
-import io.snaps.coreuicompose.tools.insetAll
 import io.snaps.coreuicompose.tools.mockClick
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
@@ -70,45 +68,42 @@ fun FullScreenMessageUi(
             .mockClick()
             .background(AppTheme.specificColorScheme.uiContentBg)
             .fillMaxSize()
-            .inset(insetAll())
-            .padding(24.dp),
+            .padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Image(
             painter = data.icon.get(),
             contentDescription = null,
             modifier = Modifier.weight(1f),
         )
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             data.title.get(),
             style = AppTheme.specificTypography.titleLarge,
             color = AppTheme.specificColorScheme.textPrimary,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
         )
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             data.message.get(),
             style = AppTheme.specificTypography.titleSmall,
             color = AppTheme.specificColorScheme.textSecondary,
             textAlign = TextAlign.Center,
         )
-        Spacer(modifier = Modifier.height(24.dp))
         data.primaryButton?.let { button ->
+            Spacer(modifier = Modifier.height(16.dp))
             SimpleButtonActionM(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
+                modifier = Modifier.fillMaxWidth(),
                 onClick = button.onClick,
             ) {
                 SimpleButtonContent(button.text)
             }
         }
         data.secondaryButton?.let { button ->
+            Spacer(modifier = Modifier.height(16.dp))
             SimpleButtonGreyM(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 onClick = button.onClick,
             ) {
                 SimpleButtonContent(button.text)

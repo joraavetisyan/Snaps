@@ -183,7 +183,7 @@ class ProfileRepositoryImpl @Inject constructor(
             api.createUser(
                 UserCreateRequestDto(
                     name = userName,
-                    avatarUrl = "${ApiService.General.getBaseUrl(buildInfo)}file?fileId=$fileId",
+                    avatarUrl = "${ApiService.General.getBaseUrl(buildInfo)}v1/file?fileId=$fileId",
                     wallet = address,
                 )
             )

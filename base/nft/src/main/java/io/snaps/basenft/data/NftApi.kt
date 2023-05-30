@@ -14,23 +14,23 @@ import retrofit2.http.POST
 
 interface NftApi {
 
-    @GET("user/nft")
+    @GET("v1/user/nft")
     suspend fun getUserNftCollection(): BaseResponse<List<UserNftItemResponseDto>>
 
-    @GET("nft")
+    @GET("v1/nft")
     suspend fun getNfts(): BaseResponse<List<NftItemResponseDto>>
 
-    @POST("user/nft/mint/android")
+    @POST("v2/user/nft/mint/android")
     suspend fun mintNftStore(
         @Body body: MintNftStoreRequestDto,
     ): BaseResponse<MintNftResponseDto>
 
-    @POST("user/nft/mint")
+    @POST("v1/user/nft/mint")
     suspend fun mintNft(
         @Body body: MintNftRequestDto,
     ): BaseResponse<MintNftResponseDto>
 
-    @POST("user/nft/repair")
+    @POST("v1/user/nft/repair")
     suspend fun repairGlasses(
         @Body body: RepairGlassesRequestDto,
     ): BaseResponse<RepairGlassesResponseDto>

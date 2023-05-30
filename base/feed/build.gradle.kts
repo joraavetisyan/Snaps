@@ -24,5 +24,5 @@ dependencies {
 
     implementation(*Libs.bundle.media)
     implementation(*Libs.bundle.uploadService)
-    implementation(Libs.bundle.playServicesSafetynet)
+    implementation(*Libs.bundle.firebase)
 }

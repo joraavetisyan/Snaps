@@ -24,6 +24,10 @@ import kotlinx.coroutines.flow.StateFlow
 import net.gotev.uploadservice.protocols.multipart.MultipartUploadRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
+import retrofit2.HttpException
+import retrofit2.Response
 import java.io.File
 import javax.inject.Inject
 
@@ -36,8 +40,6 @@ interface VideoFeedRepository {
     suspend fun loadNextFeedPage(feedType: VideoFeedType): Effect<Completable>
 
     suspend fun markWatched(videoId: Uuid): Effect<Completable>
-
-    suspend fun markWatchedWithValidation(validationResult: String, videoId: Uuid): Effect<Completable>
 
     suspend fun like(videoId: Uuid): Effect<Completable>
 
@@ -181,12 +183,6 @@ class VideoFeedRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun markWatchedWithValidation(validationResult: String, videoId: Uuid): Effect<Completable> {
-        return apiCall(ioDispatcher) {
-            videoFeedApi.viewWithValidation(validationResult = validationResult, videoId = videoId)
-        }
-    }
-
     override suspend fun like(videoId: Uuid): Effect<Completable> {
         return apiCall(ioDispatcher) {
             videoFeedApi.like(videoId)
@@ -204,7 +200,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
             try {
                 val uploadId = MultipartUploadRequest(
                     context = applicationContext,
-                    serverUrl = "${ApiService.General.getBaseUrl(buildInfo)}${it.entityId}/upload",
+                    serverUrl = "${ApiService.General.getBaseUrl(buildInfo)}v1/${it.entityId}/upload",
                 ).apply {
                     setMethod("POST")
                     addHeader("Authorization", "${tokenStorage.authToken}")
