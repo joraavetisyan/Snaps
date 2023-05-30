@@ -93,6 +93,7 @@ import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.colors
 import io.snaps.coreuitheme.compose.icons
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -142,7 +143,8 @@ fun VideoClipScreen(
     )
 
     LaunchedEffect(Unit) {
-        snapshotFlow { commentInputSheetState.currentValue }.collect {
+        // drop initial value as FocusRequester may not been initialized at this time and freeFocus could throw
+        snapshotFlow { commentInputSheetState.currentValue }.drop(1).collect {
             if (it == ModalBottomSheetValue.Hidden) {
                 hideKeyboard()
                 viewModel.onCommentInputBottomSheetHidden()

@@ -157,7 +157,7 @@ fun ReferralProgramScreen(
     }
 
     val templatePhoto = generateTemplatePhoto(
-        bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.img_referral_code_template),
+        bitmap = uiState.template,
         qr = uiState.referralQr,
         code = uiState.referralCode,
     )
@@ -416,7 +416,7 @@ private fun ReferralCodeCard(
             .heightIn(min = 172.dp, max = 188.dp),
     ) {
         Image(
-            painter = R.drawable.img_referral_program_card_background.imageValue().get(),
+            painter = R.drawable.img_background_referral_program_card.imageValue().get(),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
         )
@@ -708,9 +708,10 @@ private fun ReferralLevelBlock(
 
 @Composable
 fun ReferralQrBottomDialog(
-    bitmap: Bitmap,
+    bitmap: Bitmap?,
     onClick: (Bitmap) -> Unit,
 ) {
+    bitmap ?: return
     SimpleBottomDialogUI {
         item {
             Spacer(modifier = Modifier.height(16.dp))
@@ -729,7 +730,7 @@ fun ReferralQrBottomDialog(
                     .padding(horizontal = 16.dp),
             ) {
                 SimpleButtonContent(
-                    text = "Share template".textValue(),
+                    text = "Share template".textValue(), // todo localize
                     iconLeft = AppTheme.specificIcons.share,
                 )
             }
@@ -740,26 +741,27 @@ fun ReferralQrBottomDialog(
 
 @Composable
 private fun generateTemplatePhoto(
-    bitmap: Bitmap,
+    bitmap: Bitmap?,
     qr: Bitmap?,
     code: String,
-): Bitmap {
+): Bitmap? {
+    bitmap ?: return null
     val templateBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
     Canvas(templateBitmap.asImageBitmap()).apply {
         with(this.nativeCanvas) {
-            val padding = 64.dp.toPx()
+            val padding = bitmap.width / 20f
             val staticLayout = getStaticLayout(
                 text = code,
                 paint = getTextPaint(
-                    size = 130.sp.toPx(),
+                    size = bitmap.height / 12f,
                     typeface = AppTheme.specificTypography.headlineLarge.toTypeface(),
                 ),
                 width = bitmap.width - padding.toInt() * 2,
             )
             val staticLayout2 = getStaticLayout(
-                text = "Download the SNAPS app and get a referral code".textValue().get().text,
+                text = "Download the SNAPS app and get a referral code".textValue().get().text, // todo localize
                 paint = getTextPaint(
-                    size = 60.sp.toPx(),
+                    size = bitmap.height / 24f,
                     typeface = AppTheme.specificTypography.bodyLarge.toTypeface(),
                 ),
                 width = bitmap.width - padding.toInt() * 2,

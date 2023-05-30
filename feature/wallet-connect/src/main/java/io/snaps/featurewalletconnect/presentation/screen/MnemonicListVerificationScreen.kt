@@ -9,8 +9,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -29,6 +30,8 @@ import androidx.navigation.NavHostController
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.inset
+import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
@@ -89,23 +92,12 @@ private fun MnemonicListVerificationScreen(
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
             )
         },
-        floatingActionButton = {
-            SimpleButtonActionM(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 24.dp),
-                onClick = onContinueButtonClicked,
-                enabled = uiState.isContinueButtonEnabled,
-            ) {
-                SimpleButtonContent(text = StringKey.ActionContinue.textValue())
-            }
-        },
-        floatingActionButtonPosition = FabPosition.Center,
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = 12.dp)
+                .inset(insetAllExcludeTop()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -118,14 +110,28 @@ private fun MnemonicListVerificationScreen(
                 textAlign = TextAlign.Center,
                 color = AppTheme.specificColorScheme.textSecondary,
             )
-
-            uiState.selections.forEach {
-                SelectionBlock(
-                    selection = it,
-                    onWordItemClicked = onWordItemClicked,
-                    onAnimationFinished = onAnimationFinished,
-                )
-                Spacer(modifier = Modifier.height(12.dp))
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+            ) {
+                uiState.selections.forEach {
+                    SelectionBlock(
+                        selection = it,
+                        onWordItemClicked = onWordItemClicked,
+                        onAnimationFinished = onAnimationFinished,
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+            }
+            SimpleButtonActionM(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 24.dp),
+                onClick = onContinueButtonClicked,
+                enabled = uiState.isContinueButtonEnabled,
+            ) {
+                SimpleButtonContent(text = StringKey.ActionContinue.textValue())
             }
         }
     }

@@ -2,6 +2,7 @@ package io.snaps.featurecreate.viewmodel
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -20,6 +21,7 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -27,6 +29,7 @@ import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,6 +44,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UploadViewModel @Inject constructor(
+    @IoDispatcher ioDispatcher: CoroutineDispatcher,
     savedStateHandle: SavedStateHandle,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
@@ -52,13 +56,39 @@ class UploadViewModel @Inject constructor(
 
     private val args = savedStateHandle.requireArgs<AppRoute.PreviewVideo.Args>()
 
-    private val _uiState = MutableStateFlow(UiState(args.uri))
+    private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
+    private val retriever = MediaMetadataRetriever().apply { setDataSource(args.uri) }
     private var progressListenJob: Job? = null
+
+    init {
+        viewModelScope.launch(ioDispatcher) {
+            val durationMillis = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0L
+            val visibleFrameCount = 6 // visible on screen
+            val frameDuration = durationMillis / (3 * visibleFrameCount)
+            val frameCount = (durationMillis / frameDuration).toInt().coerceAtLeast(1)
+            val bitmaps = List(frameCount) { frame ->
+                retriever.getFrameAtTime(
+                    frame * frameDuration * 1000L, // micros
+                    MediaMetadataRetriever.OPTION_CLOSEST_SYNC,
+                )
+            }
+            _uiState.update {
+                it.copy(
+                    isRetrievingBitmaps = false,
+                    durationMillis = durationMillis,
+                    visibleFrameCount = visibleFrameCount,
+                    frameDuration = frameDuration,
+                    frameCount = frameCount,
+                    bitmaps = bitmaps,
+                )
+            }
+        }
+    }
 
     fun onPublishClicked(context: Context, thumbnail: Bitmap?) {
         thumbnail ?: return
@@ -68,6 +98,7 @@ class UploadViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = false) }
             return
         }
+
         fun load(videoPath: String) = viewModelScope.launch {
             action.execute {
                 fileRepository.uploadFile(thumbnailFile)
@@ -77,7 +108,8 @@ class UploadViewModel @Inject constructor(
                 _uiState.update { it.copy(isLoading = false) }
             }
         }
-        val sizeInMb = File(uiState.value.uri).length() / 1024 / 1024
+
+        val sizeInMb = File(args.uri).length() / 1024 / 1024
         if (sizeInMb > 10) {
             fun onCompressFailure() = viewModelScope.launch {
                 notificationsSource.sendError(StringKey.ErrorUnknown.textValue())
@@ -85,7 +117,7 @@ class UploadViewModel @Inject constructor(
             }
             VideoCompressor.start(
                 context = context,
-                uris = listOf(Uri.fromFile(File(uiState.value.uri))),
+                uris = listOf(Uri.fromFile(File(args.uri))),
                 configureWith = Configuration(
                     isMinBitrateCheckEnabled = false,
                 ),
@@ -116,7 +148,7 @@ class UploadViewModel @Inject constructor(
                 },
             )
         } else {
-            load(uiState.value.uri)
+            load(args.uri)
         }
     }
 
@@ -142,9 +174,11 @@ class UploadViewModel @Inject constructor(
                     _uiState.update { it.copy(uploadingProgress = null) }
                     notificationsSource.sendError(state.error)
                 }
+
                 is UploadStatusSource.State.Progress -> {
                     _uiState.update { it.copy(uploadingProgress = state.progress / 100f) }
                 }
+
                 is UploadStatusSource.State.Success -> {
                     action.execute {
                         videoFeedRepository.refreshFeed(VideoFeedType.User(null))
@@ -153,6 +187,7 @@ class UploadViewModel @Inject constructor(
                         _command publish Command.CloseScreen
                     }
                 }
+
                 null -> Unit
             }
         }.launchIn(viewModelScope)
@@ -171,7 +206,12 @@ class UploadViewModel @Inject constructor(
     }
 
     data class UiState(
-        val uri: String,
+        val isRetrievingBitmaps: Boolean = true,
+        val durationMillis: Long = 0L,
+        val visibleFrameCount: Int = 0,
+        val frameDuration: Long = 0L,
+        val frameCount: Int = 0,
+        val bitmaps: List<Bitmap?> = emptyList(),
         val isLoading: Boolean = false,
         val uploadingProgress: Float? = null,
         val titleValue: String = "",
@@ -179,6 +219,10 @@ class UploadViewModel @Inject constructor(
     ) {
 
         val isPublishEnabled = titleValue.isNotBlank() && uploadingProgress == null
+
+        fun getBitmap(frame: Int): Bitmap? {
+            return bitmaps[frame] ?: bitmaps[frameCount - 1]
+        }
     }
 
     sealed class Command {

@@ -108,7 +108,7 @@ private fun ShareTemplateScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val context = LocalContext.current
     val templatePhoto = generateTemplatePhoto(
-        bitmap = BitmapFactory.decodeResource(context.resources, commonR.drawable.img_template),
+        bitmap = BitmapFactory.decodeResource(context.resources, commonR.drawable.img_template_share),
         payments = uiState.payments,
     )
     Scaffold(
@@ -201,19 +201,19 @@ private fun generateTemplatePhoto(
     val templateBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
     Canvas(templateBitmap.asImageBitmap()).apply {
         with(this.nativeCanvas) {
-            val horizontalPadding = 128.dp.toPx()
-            val topPadding = 300.dp.toPx()
-            val radius = 24.dp.toPx()
+            val horizontalPadding = bitmap.width / 12f
+            val topPadding = bitmap.height / 6f
+            val radius = bitmap.height / 60f
             val staticLayout = getStaticLayout(
                 text = StringKey.TaskShareTitleShareImage.textValue().get().text,
                 paint = getTextPaint(
-                    size = 100.sp.toPx(),
+                    size = bitmap.height / 20f,
                     typeface = AppTheme.specificTypography.headlineLarge.toTypeface(),
                 ),
                 width = bitmap.width - horizontalPadding.toInt() * 2,
             )
             val textPaint = getTextPaint(
-                size = 64.dp.toPx(),
+                size = bitmap.height / 36f,
                 typeface = AppTheme.specificTypography.labelLarge.toTypeface(),
                 textColor = AppTheme.specificColorScheme.textPrimary.toArgb(),
             )
@@ -223,14 +223,14 @@ private fun generateTemplatePhoto(
             val text2 = StringKey.TaskShareMessageShareImageMe.textValue().get().text
             val text2Bounds = getTextBounds(textPaint, text2)
 
-            val paddingBetweenTexts = 92.dp.toPx()
+            val paddingBetweenTexts = bitmap.height / 22f
             val textsWidth = text2Bounds.width() + text1Bounds.width() + paddingBetweenTexts
-            val textYOffset = topPadding + staticLayout.height + 64.dp.toPx()
-            val textPadding = 40.dp.toPx()
+            val textYOffset = topPadding + staticLayout.height + bitmap.height / 28f
+            val textPadding = bitmap.height / 48f
 
             val text3 = StringKey.TaskShareMessageShareImageAndWillTell.textValue().get().text
             val text3Bounds = getTextBounds(textPaint, text3)
-            val text3YOffset = textYOffset + text1Bounds.height() + 64.dp.toPx()
+            val text3YOffset = textYOffset + text1Bounds.height() + bitmap.height / 24f
 
             drawBitmap(bitmap, 0f, 0f, null)
             DrawRoundedCornerText(
@@ -263,11 +263,12 @@ private fun generateTemplatePhoto(
             DrawPaymentsInfo(
                 title = StringKey.TaskShareMessageShareImageEarned.textValue().get().text,
                 text = StringKey.TaskShareFieldShareImageCurrency.textValue(payments).get().text,
-                radius = 48.dp.toPx(),
-                yOffset = text3YOffset + text3Bounds.height() + textPadding * 2 + 128.dp.toPx(),
-                xOffset = 100.dp.toPx(),
-                padding = 64.dp.toPx(),
-                width = bitmap.width - 100.dp.toPx() * 2f,
+                radius = bitmap.height / 32f,
+                size = bitmap.height / 38f,
+                yOffset = text3YOffset + text3Bounds.height() + textPadding * 2 + bitmap.height / 12f,
+                xOffset = bitmap.height / 12f,
+                padding = bitmap.height / 24f,
+                width = bitmap.width - bitmap.height / 6f,
             )
             translate(horizontalPadding, topPadding)
             staticLayout.draw(this)
@@ -352,6 +353,7 @@ private fun android.graphics.Canvas.DrawRoundedCornerText(
 private fun android.graphics.Canvas.DrawPaymentsInfo(
     title: String,
     text: String,
+    size: Float,
     radius: Float,
     yOffset: Float,
     xOffset: Float,
@@ -361,7 +363,7 @@ private fun android.graphics.Canvas.DrawPaymentsInfo(
     val context = LocalContext.current
     val bitmap = BitmapFactory.decodeResource(context.resources, commonR.drawable.img_snaps_logo)
     val textPaint = getTextPaint(
-        size = 56.dp.toPx(),
+        size = size,
         typeface = AppTheme.specificTypography.labelLarge.toTypeface(),
         textColor = AppTheme.specificColorScheme.textPrimary.toArgb(),
     )

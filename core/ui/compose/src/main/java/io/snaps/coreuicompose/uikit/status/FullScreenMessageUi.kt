@@ -5,11 +5,11 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -74,10 +74,11 @@ fun FullScreenMessageUi(
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.weight(1f))
-        Visuals(
-            icon = data.icon,
-            statusIcon = data.statusIcon,
+        Spacer(modifier = Modifier.height(24.dp))
+        Image(
+            painter = data.icon.get(),
+            contentDescription = null,
+            modifier = Modifier.weight(1f),
         )
         Text(
             data.title.get(),
@@ -92,7 +93,7 @@ fun FullScreenMessageUi(
             color = AppTheme.specificColorScheme.textSecondary,
             textAlign = TextAlign.Center,
         )
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(24.dp))
         data.primaryButton?.let { button ->
             SimpleButtonActionM(
                 modifier = Modifier
@@ -113,23 +114,6 @@ fun FullScreenMessageUi(
                 SimpleButtonContent(button.text)
             }
         }
-    }
-}
-
-@Composable
-private fun Visuals(
-    icon: ImageValue,
-    statusIcon: ImageValue?,
-) {
-    Box(
-        modifier = Modifier
-            .background(color = AppTheme.specificColorScheme.uiContentBg),
-        contentAlignment = Alignment.Center,
-    ) {
-        Image(
-            painter = icon.get(),
-            contentDescription = null,
-        )
     }
 }
 

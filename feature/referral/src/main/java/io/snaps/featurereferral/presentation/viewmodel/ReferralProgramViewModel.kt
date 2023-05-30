@@ -1,15 +1,19 @@
 package io.snaps.featurereferral.presentation.viewmodel
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesources.NotificationsSource
+import io.snaps.corecommon.R
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.Effect
@@ -17,6 +21,7 @@ import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.strings.addPrefix
+import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppDeeplink
@@ -26,6 +31,8 @@ import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.featurereferral.presentation.screen.ReferralsTileState
 import io.snaps.featurereferral.presentation.toReferralsUiState
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,6 +45,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReferralProgramViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @Bridged mainHeaderHandler: MainHeaderHandler,
     onboardingHandler: OnboardingHandler,
     bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
@@ -74,10 +83,10 @@ class ReferralProgramViewModel @Inject constructor(
                 _uiState.update {
                     // It's not null for the authed user
                     val inviteCode = state.requireData.ownInviteCode!!
+                    generateReferralCode(inviteCode)
                     it.copy(
                         referralCode = inviteCode.addPrefix("#"),
                         referralLink = AppDeeplink.generateSharingLink(deeplink = AppDeeplink.Invite(code = inviteCode)),
-                        referralQr = barcodeManager.getQrCodeBitmap(text = inviteCode, size = 600f),
                         firstLevelReferral = state.requireData.firstLevelReferralMultiplier.toPercentageFormat(),
                         secondLevelReferral = state.requireData.secondLevelReferralMultiplier.toPercentageFormat(),
                         invitedByCode = state.requireData.inviteCodeRegisteredBy.orEmpty(),
@@ -86,6 +95,18 @@ class ReferralProgramViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    private fun generateReferralCode(inviteCode: String) {
+        viewModelScope.launch(ioDispatcher) {
+            val template = _uiState.value.template ?: BitmapFactory.decodeResource(
+                context.resources, R.drawable.img_template_referral
+            )
+            val referralQr = barcodeManager.getQrCodeBitmap(text = inviteCode, size = template.width / 6f)
+            _uiState.update {
+                it.copy(template = template, referralQr = referralQr)
+            }
+        }
     }
 
     private fun subscribeOnReferrals() {
@@ -184,9 +205,12 @@ class ReferralProgramViewModel @Inject constructor(
         }
     }
 
-    fun onShowReferralQrClicked() = viewModelScope.launch {
-        _uiState.update { it.copy(bottomDialog = BottomDialog.ReferralQr) }
-        _command publish Command.ShowBottomDialog
+    fun onShowReferralQrClicked() {
+        if (_uiState.value.template == null || _uiState.value.referralQr == null) return
+        viewModelScope.launch {
+            _uiState.update { it.copy(bottomDialog = BottomDialog.ReferralQr) }
+            _command publish Command.ShowBottomDialog
+        }
     }
 
     fun onShareQrClicked(bitmap: Bitmap) = viewModelScope.launch {
@@ -207,6 +231,7 @@ class ReferralProgramViewModel @Inject constructor(
         val invitedByCode: String = "",
         val bottomDialog: BottomDialog = BottomDialog.ReferralCode,
         val isInviteUserDialogVisible: Boolean = false,
+        val template: Bitmap? = null,
         val referralQr: Bitmap? = null,
         val firstLevelReferral: String = "",
         val secondLevelReferral: String = "",

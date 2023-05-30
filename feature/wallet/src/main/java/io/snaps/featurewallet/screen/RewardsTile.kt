@@ -65,7 +65,7 @@ fun RewardsTile(
             description = StringKey.RewardsMessageAvailableRewards.textValue(),
             balance = data.balance,
             fiatValue = data.fiatValue,
-            imageValue = R.drawable.img_available_rewards_background.imageValue()
+            imageValue = R.drawable.img_background_rewards_unlocked.imageValue()
         )
         is RewardsTileState.Locked -> RewardsCard(
             modifier = modifier,
@@ -73,7 +73,7 @@ fun RewardsTile(
             description = StringKey.RewardsMessageLockedRewards.textValue(),
             balance = data.balance,
             fiatValue = data.fiatValue,
-            imageValue = R.drawable.img_locked_rewards_background.imageValue()
+            imageValue = R.drawable.img_background_rewards_locked.imageValue()
         )
         is RewardsTileState.Shimmer -> Shimmer(modifier = modifier)
         is RewardsTileState.Error -> MessageBannerState

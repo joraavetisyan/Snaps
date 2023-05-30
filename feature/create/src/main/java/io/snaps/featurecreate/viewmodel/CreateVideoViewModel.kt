@@ -8,6 +8,7 @@ import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.FileManager
+import io.snaps.coreui.FileType
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.Job
@@ -110,7 +111,9 @@ class CreateVideoViewModel @Inject constructor(
     }
 
     fun onVideoSelected(uri: Uri) {
-        val videoUri = fileManager.createFileFromUri(uri)?.toUri() ?: return
+        val videoUri = fileManager.createFileFromUri(
+            uri = uri, name = fileManager.generateName(FileType.Videos)
+        )?.toUri() ?: return
         val duration = fileManager.getMediaDuration(videoUri)?.inWholeSeconds?.toInt()
         viewModelScope.launch {
             if (duration != null && duration > RecordTiming._120.seconds) {

@@ -1,7 +1,6 @@
 package io.snaps.featurecreate.screen
 
 import android.graphics.Bitmap
-import android.media.MediaMetadataRetriever
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
@@ -112,23 +110,7 @@ private fun UploadScreen(
     ) { paddingValues ->
         val padding = 16
         val config = LocalConfiguration.current
-        val previewWidth = config.screenWidthDp.minus(padding * 2)
 
-        val retriever = remember { MediaMetadataRetriever().apply { setDataSource(uiState.uri) } }
-        val durationMillis = remember {
-            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0L
-        }
-        val visibleFrameCount = 6
-        val frameDuration = durationMillis / (2 * visibleFrameCount)
-        val frameCount = (durationMillis / frameDuration).toInt().coerceAtLeast(1)
-        val bitmaps = remember { mutableMapOf<Int, Bitmap?>() }
-        val frameSize = previewWidth / visibleFrameCount
-        val pagerState = rememberPagerState()
-        val selectedBitmap by remember(bitmaps) {
-            derivedStateOf {
-                bitmaps[pagerState.currentPage] ?: bitmaps[frameCount - 1]
-            }
-        }
         Column(
             modifier = Modifier
                 .padding(paddingValues)
@@ -143,67 +125,70 @@ private fun UploadScreen(
                 text = LocalStringHolder.current(StringKey.UploadVideoTitlePreview),
                 style = typography { titleSmall },
             )
-            selectedBitmap?.let { bitmap ->
-                Canvas(
-                    modifier = Modifier
-                        .weight(1f)
-                        .aspectRatio(bitmap.width.toFloat() / bitmap.height),
-                ) {
-                    drawBitmap(bitmap)
+            if (!uiState.isRetrievingBitmaps) {
+                val previewWidth = config.screenWidthDp.minus(padding * 2)
+                val frameSize = previewWidth / uiState.visibleFrameCount
+                val pagerState = rememberPagerState()
+                val selectedBitmap by remember(uiState.bitmaps) {
+                    derivedStateOf { uiState.getBitmap(pagerState.currentPage) }
                 }
-            }
-            val height by remember(selectedBitmap) {
-                mutableStateOf(selectedBitmap?.let { it.height * frameSize / it.width }?.dp ?: frameSize.dp)
-            }
-            Box {
-                HorizontalPager(
-                    modifier = Modifier
-                        .height(height)
-                        .width((visibleFrameCount * frameSize).dp),
-                    state = pagerState,
-                    pageCount = frameCount + visibleFrameCount - 1, // to leave one visible
-                    pageSize = PageSize.Fixed(frameSize.dp),
-                    beyondBoundsPageCount = visibleFrameCount,
-                ) { page ->
-                    if (page < frameCount) {
-                        bitmaps.getOrPut(page) {
-                            retriever.getFrameAtTime(
-                                page * frameDuration * 1000L, // micros
-                                MediaMetadataRetriever.OPTION_CLOSEST,
-                            )
-                        }?.let { bitmap ->
-                            Canvas(
-                                modifier = Modifier.fillMaxSize(),
-                            ) {
-                                drawBitmap(bitmap)
+                selectedBitmap?.let { bitmap ->
+                    Canvas(
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(bitmap.width.toFloat() / bitmap.height),
+                    ) {
+                        drawBitmap(bitmap)
+                    }
+                }
+                val height by remember(selectedBitmap) {
+                    mutableStateOf(selectedBitmap?.let { it.height * frameSize / it.width }?.dp ?: frameSize.dp)
+                }
+                Box {
+                    HorizontalPager(
+                        modifier = Modifier
+                            .height(height)
+                            .width((uiState.visibleFrameCount * frameSize).dp),
+                        state = pagerState,
+                        pageCount = uiState.frameCount + (uiState.visibleFrameCount - 1), // for white space when all scrolled to left; -1 -> to leave one visible
+                        pageSize = PageSize.Fixed(frameSize.dp),
+                        beyondBoundsPageCount = uiState.visibleFrameCount,
+                    ) { page ->
+                        if (page < uiState.frameCount) {
+                            uiState.bitmaps[page]?.let { bitmap ->
+                                Canvas(
+                                    modifier = Modifier.fillMaxSize(),
+                                ) {
+                                    drawBitmap(bitmap)
+                                }
                             }
                         }
                     }
-                }
-                Box(
-                    modifier = Modifier
-                        .height(height)
-                        .width(frameSize.dp)
-                        .border(2.dp, Color.Red)
-                        .align(Alignment.CenterStart),
-                )
-            }
-            if (uiState.uploadingProgress != null) {
-                Progress(uploadingProgress = uiState.uploadingProgress)
-            } else {
-                SimpleButtonActionL(
-                    onClick = { onPublishClicked(selectedBitmap) },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = uiState.isPublishEnabled,
-                ) {
-                    SimpleButtonContent(
-                        text = StringKey.UploadVideoActionPublish.textValue(),
+                    Box(
+                        modifier = Modifier
+                            .height(height)
+                            .width(frameSize.dp)
+                            .border(2.dp, Color.Red)
+                            .align(Alignment.CenterStart),
                     )
+                }
+                if (uiState.uploadingProgress != null) {
+                    Progress(uploadingProgress = uiState.uploadingProgress)
+                } else {
+                    SimpleButtonActionL(
+                        onClick = { onPublishClicked(selectedBitmap) },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = uiState.isPublishEnabled,
+                    ) {
+                        SimpleButtonContent(
+                            text = StringKey.UploadVideoActionPublish.textValue(),
+                        )
+                    }
                 }
             }
         }
     }
-    FullScreenLoaderUi(isLoading = uiState.isLoading)
+    FullScreenLoaderUi(isLoading = uiState.isLoading || uiState.isRetrievingBitmaps)
 }
 
 private fun DrawScope.drawBitmap(bitmap: Bitmap) {

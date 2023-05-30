@@ -32,14 +32,12 @@ class EtherscanService(
     private val gson: Gson
 
     init {
-        val loggingInterceptor = HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-            override fun log(message: String) {
-                logger.info(message)
-            }
-        }).setLevel(HttpLoggingInterceptor.Level.BASIC)
+        val loggingInterceptor = HttpLoggingInterceptor { message ->
+            logger.info(message)
+        }.setLevel(HttpLoggingInterceptor.Level.BASIC)
 
         val httpClient = OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
+//            .addInterceptor(loggingInterceptor)
             .addInterceptor(Interceptor { chain ->
                 val originalRequest: Request = chain.request()
                 val requestWithUserAgent: Request = originalRequest.newBuilder()

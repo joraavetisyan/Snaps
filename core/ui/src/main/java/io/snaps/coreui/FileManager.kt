@@ -43,8 +43,8 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
             .toMediaTypeOrNull()
     }
 
-    fun createFileFromUri(uri: Uri): File? {
-        return getNameFromUri(uri)?.let {
+    fun createFileFromUri(uri: Uri, name: String? = null): File? {
+        return (name ?: getNameFromUri(uri))?.let {
             val tempFile = File(context.cacheDir, it)
             var inputStream: InputStream? = null
             var outputStream: FileOutputStream? = null
@@ -201,7 +201,7 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
     private fun createTempFile(prefix: String, suffix: String?, dir: File?) = File.createTempFile(prefix, suffix, dir)
 
     private fun getRandomId() = Calendar.getInstance().timeInMillis
-    private fun generateName(type: FileType) = generatePrefix(type) + generateSuffix(type)
+    fun generateName(type: FileType) = generatePrefix(type) + generateSuffix(type)
     private fun generatePrefix(type: FileType) = when (type) {
         FileType.Pictures -> "image_" + getRandomId()
         FileType.Videos -> "video_" + getRandomId()

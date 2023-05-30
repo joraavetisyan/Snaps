@@ -74,7 +74,7 @@ private fun UserNftDetailsScreen(
                         contentAlignment = Alignment.Center,
                     ) {
                         Image(
-                            painter = R.drawable.img_background.imageValue().get(),
+                            painter = R.drawable.img_background_nft_details.imageValue().get(),
                             contentDescription = null,
                             contentScale = ContentScale.FillWidth,
                             modifier = Modifier.fillMaxSize(),
