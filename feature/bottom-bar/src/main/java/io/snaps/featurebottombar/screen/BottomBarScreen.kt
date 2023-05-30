@@ -2,10 +2,14 @@ package io.snaps.featurebottombar.screen
 
 import android.net.Uri
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -21,13 +25,17 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,20 +49,29 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import io.snaps.baseprofile.data.model.Banner
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startViewActionActivity
 import io.snaps.corecommon.model.OnboardingType
+import io.snaps.corecommon.strings.DEFAULT_LOCALE
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.corecommon.strings.SupportedLanguageKey
+import io.snaps.corecommon.strings.toSupportedLanguageKey
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.BottomBarFeatureProvider
 import io.snaps.corenavigation.base.navigate
+import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.LocalBottomNavigationHeight
 import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.tools.inset
+import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
+import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.coreuitheme.compose.colors
@@ -89,16 +106,30 @@ fun BottomBarScreen(
         skipHalfExpanded = true,
         confirmValueChange = { uiState.appUpdateInfo == null } // app update dialog cannot be hidden
     )
+    fun showSheet() = coroutineScope.launch { sheetState.show() }
+    fun hideSheet() = coroutineScope.launch { sheetState.hide() }
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { sheetState.currentValue }.collect {
+            if (!sheetState.isVisible && !uiState.isBannerShown &&
+                onboardingState.onboardingType == OnboardingType.Rank
+            ) {
+                showSheet() // show remote banner
+                viewModel.setIsBannerShown()
+            }
+        }
+    }
+
     viewModel.command.collectAsCommand {
         when (it) {
             BottomBarViewModel.Command.OpenNftPurchaseScreen -> navController.navigate(AppRoute.RankSelection)
-            BottomBarViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
+            BottomBarViewModel.Command.ShowBottomDialog -> showSheet()
         }
     }
     viewModel.onboardingCommand.collectAsCommand {
         when (it) {
-            is OnboardingHandler.Command.OpenDialog -> coroutineScope.launch { sheetState.show() }
-            OnboardingHandler.Command.HideDialog -> coroutineScope.launch { sheetState.hide() }
+            is OnboardingHandler.Command.OpenDialog -> showSheet()
+            OnboardingHandler.Command.HideDialog -> hideSheet()
         }
     }
 
@@ -118,10 +149,22 @@ fun BottomBarScreen(
                     },
                 )
             } else {
-                OnboardingDialog(
-                    onboardingState = onboardingState,
-                    onClicked = viewModel::onOnboardingDialogActionClicked,
-                )
+                if (uiState.needShowBanner) {
+                    uiState.banner?.let {
+                        Banner(
+                            banner = it,
+                            onClicked = {
+                                hideSheet()
+                                context.openUrl(it.action)
+                            },
+                        )
+                    }
+                } else {
+                    OnboardingDialog(
+                        onboardingState = onboardingState,
+                        onClicked = viewModel::onOnboardingDialogActionClicked,
+                    )
+                }
             }
         }
     ) {
@@ -301,6 +344,64 @@ private fun OnboardingDialog(
             },
         )
         null -> Box(modifier = Modifier.size(1.dp))
+    }
+}
+
+@Composable
+private fun Banner(
+    banner: Banner,
+    onClicked: () -> Unit,
+) {
+    val language = DEFAULT_LOCALE.toSupportedLanguageKey()
+    val title = when (language) {
+        SupportedLanguageKey.En -> banner.title.en
+        SupportedLanguageKey.Ru -> banner.title.ru
+        SupportedLanguageKey.Es -> banner.title.es
+        SupportedLanguageKey.Tr -> banner.title.tr
+        SupportedLanguageKey.Ua -> banner.title.uk
+    }
+    val actionTitle = when (language) {
+        SupportedLanguageKey.En -> banner.actionTitle.en
+        SupportedLanguageKey.Ru -> banner.actionTitle.ru
+        SupportedLanguageKey.Es -> banner.actionTitle.es
+        SupportedLanguageKey.Tr -> banner.actionTitle.tr
+        SupportedLanguageKey.Ua -> banner.actionTitle.uk
+    }
+    Box(
+        modifier = Modifier
+            .background(AppTheme.specificColorScheme.white)
+            .inset(insetAllExcludeTop()),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Image(
+                painter = banner.image.imageValue().get(),
+                contentDescription = null,
+                modifier = Modifier.fillMaxWidth(),
+                contentScale = ContentScale.Crop,
+            )
+            Text(
+                text = title,
+                color = AppTheme.specificColorScheme.textPrimary,
+                style = AppTheme.specificTypography.headlineSmall,
+                textAlign = TextAlign.Start,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+            )
+            SimpleButtonActionL(
+                onClick = onClicked,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+            ) {
+                SimpleButtonContent(text = actionTitle.textValue())
+            }
+        }
     }
 }
 

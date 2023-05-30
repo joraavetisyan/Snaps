@@ -28,6 +28,14 @@ class UserDataStorage @Inject constructor(
         get() = provider.prefs.getBoolean("isStartOnBoardingFinished", false)
         set(value) = provider.prefs.edit { putBoolean("isStartOnBoardingFinished", value) }
 
+    var countBannerViews: Int
+        get() = provider.prefs.getInt("countBannerViews", 0)
+        set(value) = provider.prefs.edit { putInt("countBannerViews", value) }
+
+    var bannerVersion: Int
+        get() = provider.prefs.getInt("bannerVersion", 1)
+        set(value) = provider.prefs.edit { putInt("bannerVersion", value) }
+
     fun isOnboardingShown(type: OnboardingType): Boolean {
         return provider.prefs.getBoolean("onboarding${type.name}", false)
     }

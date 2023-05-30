@@ -87,8 +87,9 @@ class ProfileViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     userInfoTileState = state.toUserInfoTileState(
+                        isCurrentUser = true,
                         onSubscribersClick = { onSubscribersClicked(SubsType.Subscribers) },
-                        onSubscriptionsClick = { onSubscribersClicked(SubsType.Subscriptions) }
+                        onSubscriptionsClick = { onSubscribersClicked(SubsType.Subscriptions) },
                     ),
                     name = state.dataOrCache?.name.orEmpty(),
                     shareLink = state.dataOrCache?.userId?.let { userId ->
@@ -121,6 +122,7 @@ class ProfileViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     userInfoTileState = user.toUserInfoTileState(
+                        isCurrentUser = false,
                         onSubscribersClick = { onSubscribersClicked(SubsType.Subscribers) },
                         onSubscriptionsClick = { onSubscribersClicked(SubsType.Subscriptions) }
                     ),

@@ -3,6 +3,9 @@ package io.snaps.featurebottombar.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
+import io.snaps.basenft.domain.NftModel
+import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.baseprofile.data.model.Banner
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.AppUpdateInfo
@@ -10,8 +13,10 @@ import io.snaps.basesources.AppUpdateProvider
 import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.basesources.UpdateAvailableState
 import io.snaps.corecommon.model.OnboardingType
+import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
+import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.ROUTE_ARGS_SEPARATOR
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
@@ -32,6 +37,8 @@ class BottomBarViewModel @Inject constructor(
     private val appRouteProvider: AppRouteProvider,
     private val appUpdateProvider: AppUpdateProvider,
     @Bridged private val nftRepository: NftRepository,
+    @Bridged private val profileRepository: ProfileRepository,
+    private val userDataStorage: UserDataStorage,
     private val action: Action,
 ) : SimpleViewModel(), OnboardingHandler by onboardingHandler {
 
@@ -65,6 +72,8 @@ class BottomBarViewModel @Inject constructor(
     private fun loadUserNft() = viewModelScope.launch {
         action.execute {
             nftRepository.updateNftCollection()
+        }.doOnSuccess {
+            loadBanner(it)
         }
     }
 
@@ -91,6 +100,15 @@ class BottomBarViewModel @Inject constructor(
         }
     }
 
+    fun setIsBannerShown() {
+        _uiState.update {
+            it.copy(
+                isBannerShown = true,
+                needShowBanner = true,
+            )
+        }
+    }
+
     private fun loadAppUpdateInfo() = viewModelScope.launch {
         appUpdateProvider.getAvailableUpdateInfo().doOnSuccess { state ->
             if (state is UpdateAvailableState.Available) {
@@ -100,10 +118,28 @@ class BottomBarViewModel @Inject constructor(
         }
     }
 
+    private fun loadBanner(nft: List<NftModel>) = viewModelScope.launch {
+        profileRepository.getBanner().doOnSuccess { banner ->
+            if (banner.isShown && userDataStorage.countBannerViews < 3
+                && appRouteProvider.menuRouteState.value == AppRoute.MainBottomBar.MainTab1Start.path()
+            ) {
+                userDataStorage.countBannerViews += 1
+                _uiState.update { it.copy(banner = banner) }
+                if (nft.isNotEmpty()) {
+                    _uiState.update { it.copy(needShowBanner = true) }
+                    _command publish Command.ShowBottomDialog
+                }
+            }
+        }
+    }
+
     data class UiState(
         val isBottomBarVisible: Boolean = true,
         val badgeText: String = "",
         val appUpdateInfo: AppUpdateInfo? = null,
+        val banner: Banner? = null,
+        val isBannerShown: Boolean = false,
+        val needShowBanner: Boolean = false,
     )
 
     sealed interface Command {

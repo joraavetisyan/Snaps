@@ -1,6 +1,7 @@
 package io.snaps.baseprofile.data
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import io.snaps.baseprofile.data.model.Banner
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.SocialPage
@@ -10,6 +11,7 @@ import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.domain.UsersPageModel
 import io.snaps.corecommon.ext.log
+import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
@@ -20,6 +22,7 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.json.KotlinxSerializationJsonProvider
 import io.snaps.coredata.network.ApiService
 import io.snaps.coredata.network.PagedLoaderParams
@@ -34,6 +37,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.decodeFromStream
 import javax.inject.Inject
 
@@ -83,6 +87,8 @@ interface ProfileRepository {
     ): Effect<Completable>
 
     suspend fun getSocialPages(): Effect<List<SocialPage>>
+
+    suspend fun getBanner(): Effect<Banner>
 }
 
 class ProfileRepositoryImpl @Inject constructor(
@@ -91,6 +97,7 @@ class ProfileRepositoryImpl @Inject constructor(
     private val buildInfo: BuildInfo,
     private val api: ProfileApi,
     private val loaderFactory: UsersLoaderFactory,
+    private val userDataStorage: UserDataStorage,
 ) : ProfileRepository {
 
     private val _state = MutableStateFlow<State<UserInfoModel>>(Loading())
@@ -270,5 +277,21 @@ class ProfileRepositoryImpl @Inject constructor(
             emptyList()
         }
         return Effect.success(pages)
+    }
+
+    override suspend fun getBanner(): Effect<Banner> {
+        return try {
+            val banner = FirebaseRemoteConfig.getInstance().getValue("mobile_banner").let {
+                KotlinxSerializationJsonProvider().get().decodeFromString<Banner>(it.asString())
+            }
+            if (userDataStorage.bannerVersion < banner.version) {
+                userDataStorage.bannerVersion = banner.version
+                userDataStorage.countBannerViews = 0
+            }
+            Effect.success(banner)
+        } catch (e: Exception) {
+            log(e)
+            Effect.error(AppError.Unknown(cause = e))
+        }
     }
 }
