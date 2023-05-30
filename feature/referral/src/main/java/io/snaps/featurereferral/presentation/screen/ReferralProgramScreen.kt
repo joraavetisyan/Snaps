@@ -1,7 +1,6 @@
 package io.snaps.featurereferral.presentation.screen
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Typeface
 import android.text.Layout
 import android.text.StaticLayout
@@ -17,11 +16,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -65,7 +62,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.baseprofile.data.MainHeaderHandler
@@ -85,7 +81,6 @@ import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.gradientBackground
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
-import io.snaps.coreuicompose.tools.toPx
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialogItem
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
@@ -363,7 +358,7 @@ private fun Main(
             .padding(bottom = 12.dp + LocalBottomNavigationHeight.current),
     ) {
         ReferralCodeCard(uiState = uiState, onEnterCodeClicked = onEnterCodeClicked)
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         CopyButton(
             hint = StringKey.ReferralProgramHintCode.textValue().get().text,
             value = uiState.referralCode,
@@ -413,19 +408,11 @@ private fun ReferralCodeCard(
             .padding(horizontal = 16.dp)
             .clip(AppTheme.shapes.medium)
             .fillMaxWidth()
-            .heightIn(min = 172.dp, max = 188.dp),
     ) {
         Image(
             painter = R.drawable.img_background_referral_program_card.imageValue().get(),
             contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-        )
-        Image(
-            painter = R.drawable.img_diamonds.imageValue().get(),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxHeight()
-                .align(Alignment.CenterEnd),
+            modifier = Modifier.matchParentSize(),
         )
         Column(
             modifier = Modifier.padding(24.dp)

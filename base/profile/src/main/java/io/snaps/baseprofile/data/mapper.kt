@@ -14,7 +14,6 @@ import io.snaps.corecommon.ext.toCompactDecimalFormat
 import io.snaps.corecommon.model.CoinValue
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.State
-import java.lang.Integer.min
 import java.time.ZonedDateTime
 
 fun List<UserInfoResponseDto>.toModelList() = map(UserInfoResponseDto::toModel)

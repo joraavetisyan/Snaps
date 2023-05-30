@@ -122,8 +122,7 @@ private fun RewardsCard(
     Box(
         modifier = modifier
             .clip(AppTheme.shapes.medium)
-            .fillMaxWidth()
-            .height(200.dp),
+            .fillMaxWidth(),
     ) {
         Image(
             painter = imageValue.get(),
@@ -149,12 +148,12 @@ private fun RewardsCard(
                 style = AppTheme.specificTypography.bodySmall,
                 color = AppTheme.specificColorScheme.white,
             )
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = description.get(),
                 style = AppTheme.specificTypography.titleMedium,
                 color = AppTheme.specificColorScheme.white,
-                modifier = Modifier.width(220.dp),
+                modifier = Modifier.padding(end = 60.dp),
             )
         }
     }

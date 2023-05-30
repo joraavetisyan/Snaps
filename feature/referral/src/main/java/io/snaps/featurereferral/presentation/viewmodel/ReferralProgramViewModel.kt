@@ -32,7 +32,6 @@ import io.snaps.coreui.viewmodel.publish
 import io.snaps.featurereferral.presentation.screen.ReferralsTileState
 import io.snaps.featurereferral.presentation.toReferralsUiState
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
