@@ -71,7 +71,7 @@ class SessionRepositoryImpl @Inject constructor(
      * Check if user has wallet connected
      */
     private suspend fun checkStatus(userId: Uuid): Effect<Completable> {
-        return if (!walletRepository.hasAccount(userId)) {
+        suspend fun check() = if (!walletRepository.hasAccount(userId)) {
             profileRepository.updateData().flatMap {
                 userSessionTracker.onLogin(
                     if (it.wallet == null) {
@@ -91,18 +91,25 @@ class SessionRepositoryImpl @Inject constructor(
                 } else {
                     userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsInitialization)
                 }
-            }.doOnError { error, _ ->
-                if (error.code == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                    refresh().doOnSuccess {
-                        if (it) checkStatus(userId)
-                    }
-                } else {
-                    userSessionTracker.onLogin(UserSessionTracker.State.Active.Error)
-                }
             }.toCompletable()
         }
+
+        var check = check()
+
+        if (check.isError) {
+            if (check.errorOrNull?.code == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                if (refresh().data == true) {
+                    check = check()
+                }
+            } else {
+                userSessionTracker.onLogin(UserSessionTracker.State.Active.Error)
+            }
+        }
+
+        return check
     }
 
+    // todo move side-effect of logging out from here
     override suspend fun refresh(): Effect<Boolean> {
         val token = auth.currentUser?.getIdToken(false)?.await()?.token
         return if (token != null) {

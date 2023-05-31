@@ -219,7 +219,7 @@ class RegistrationViewModel @Inject constructor(
                 email = uiState.value.emailAddressValue,
                 password = uiState.value.confirmPasswordValue,
             )
-        }.doOnSuccess {
+        }.doOnSuccess { // todo flatmap in execute
             authRepository.sendEmailVerification()
         }.doOnError { error, data ->
             if (error.cause is FirebaseAuthException) {

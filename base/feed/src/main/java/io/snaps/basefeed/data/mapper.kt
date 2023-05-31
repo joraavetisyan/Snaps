@@ -1,6 +1,5 @@
 package io.snaps.basefeed.data
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.snaps.basefeed.data.model.CommentResponseDto
 import io.snaps.basefeed.data.model.UserLikedVideoResponseDto
 import io.snaps.basefeed.data.model.UserLikedVideoItem
@@ -10,19 +9,13 @@ import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.baseprofile.data.toModel
 import io.snaps.corecommon.date.toOffsetLocalDateTime
-import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import java.time.ZonedDateTime
 
 fun List<VideoFeedItemResponseDto>.toVideoClipModelList(
     likedVideos: List<UserLikedVideoResponseDto>,
-) = map { dto -> dto.toModel(likedVideos.find { it.video.entityId == dto.entityId } != null) }.also {
-    if (it.groupBy(VideoClipModel::id).any { it.value.size > 1 }) {
-        log("Duplicate key in videos!!!")
-        FirebaseCrashlytics.getInstance().log("Duplicate key in videos!!!")
-    }
-}
+) = map { dto -> dto.toModel(likedVideos.find { it.video.entityId == dto.entityId } != null) }
 
 fun VideoFeedItemResponseDto.toModel(isLiked: Boolean) = VideoClipModel(
     id = entityId,
@@ -52,11 +45,6 @@ fun List<UserLikedVideoResponseDto>.likedFeedToVideoClipModelList(
     dto.video.toModel(
         isLiked = isExplicitlyLiked || likedVideos.find { it.video.entityId == dto.video.entityId } != null
     )
-}.also {
-    if (it.groupBy(VideoClipModel::id).any { it.value.size > 1 }) {
-        log("Duplicate key in liked!!!")
-        FirebaseCrashlytics.getInstance().log("Duplicate key in liked!!!")
-    }
 }
 
 fun UserLikedVideoItem.toModel(isLiked: Boolean) = VideoClipModel(

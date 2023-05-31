@@ -38,8 +38,9 @@ class ActionImpl @Inject constructor(
                 var effect = block()
                 val code = effect.errorOrNull?.code
                 if (code == HttpURLConnection.HTTP_UNAUTHORIZED && needsTokenExpireProcessing) {
-                    sessionRepository.refresh()
-                    effect = block()
+                    if (sessionRepository.refresh().data == true) {
+                        effect = block()
+                    }
                 } else if (code == 429 && needsFraudProcessing) {
                     antiFraudHandler.setCaptcha()
                     effect = block()

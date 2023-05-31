@@ -64,6 +64,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun sendEmailVerification() {
+        // todo check task status
         getCurrentUser()?.sendEmailVerification()
     }
 
