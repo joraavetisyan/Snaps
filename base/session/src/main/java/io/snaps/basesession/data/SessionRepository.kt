@@ -59,6 +59,9 @@ class SessionRepositoryImpl @Inject constructor(
     }
 
     override suspend fun checkStatus(): Effect<Completable> {
+        if (tokenStorage.authToken == null) {
+            auth.signOut()
+        }
         val userId: String? = auth.currentUser?.uid
         if (tokenStorage.authToken != null && userId != null) {
             return checkStatus(userId)

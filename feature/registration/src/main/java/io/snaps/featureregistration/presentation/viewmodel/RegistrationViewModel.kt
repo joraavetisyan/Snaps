@@ -51,7 +51,12 @@ class RegistrationViewModel @Inject constructor(
     }
 
     fun onLoginWithEmailClicked() = viewModelScope.launch {
-        if (authRepository.isEmailVerified()) {
+        if (authRepository.getCurrentUser() != null && !authRepository.isEmailVerified()) {
+            _uiState.update {
+                it.copy(dialog = Dialog.EmailVerification)
+            }
+        }
+        else {
             _uiState.update {
                 it.copy(
                     bottomDialog = BottomDialog.SignIn,
@@ -61,10 +66,6 @@ class RegistrationViewModel @Inject constructor(
                 )
             }
             _command publish Command.ShowBottomDialog
-        } else {
-            _uiState.update {
-                it.copy(dialog = Dialog.EmailVerification)
-            }
         }
     }
 
@@ -228,7 +229,7 @@ class RegistrationViewModel @Inject constructor(
         }.doOnComplete {
             _uiState.update { it.copy(isLoading = false) }
         }
-        if (!authRepository.isEmailVerified()) {
+        if (authRepository.getCurrentUser() != null && !authRepository.isEmailVerified()) {
             _command publish Command.HideBottomDialog
             _uiState.update {
                 it.copy(dialog = Dialog.EmailVerification)

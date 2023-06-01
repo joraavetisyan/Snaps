@@ -5,6 +5,7 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
+import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
@@ -16,7 +17,7 @@ interface AuthRepository {
 
     fun getCurrentUser(): FirebaseUser?
 
-    fun isEmailVerified(): Boolean
+    suspend fun isEmailVerified(): Boolean
 
     suspend fun signInWithCredential(authCredential: AuthCredential): Effect<Completable>
 
@@ -36,9 +37,14 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun getCurrentUser() = auth.currentUser
 
-    override fun isEmailVerified(): Boolean {
-        getCurrentUser()?.reload()
-        return getCurrentUser()?.isEmailVerified ?: true
+    override suspend fun isEmailVerified(): Boolean {
+        return try {
+            getCurrentUser()?.reload()?.await()
+            getCurrentUser()?.isEmailVerified ?: false
+        } catch (e: Exception) {
+            log(e)
+            false
+        }
     }
 
     override suspend fun signInWithCredential(authCredential: AuthCredential): Effect<Completable> {
