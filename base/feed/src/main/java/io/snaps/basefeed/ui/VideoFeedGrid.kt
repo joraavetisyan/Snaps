@@ -53,7 +53,7 @@ fun VideoFeedGrid(
     ) {
         itemsIndexed(
             items = uiState.items,
-            key = { _, item -> item.key },
+            /*key = { _, item -> item.key },*/
         ) { index, it ->
             when (it) {
                 is VideoClipUiState.Data -> Item(

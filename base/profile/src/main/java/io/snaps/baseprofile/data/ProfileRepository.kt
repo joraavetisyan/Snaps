@@ -142,6 +142,8 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun loadNextUsersPage(query: String): Effect<Completable> =
         getLoader(query).loadNext()
 
+    // todo if fast switched between screens which update this state, we end up with Loading on other screens,
+    // as the request gets cancelled, use cache?
     override suspend fun updateData(isSilently: Boolean): Effect<UserInfoModel> {
         if (!isSilently) {
             _state tryPublish Loading()
