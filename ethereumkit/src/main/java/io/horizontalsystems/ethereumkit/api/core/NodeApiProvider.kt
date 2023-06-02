@@ -31,8 +31,8 @@ class NodeApiProvider(
     private var currentRpcId = AtomicInteger(0)
 
     init {
-        val loggingInterceptor = HttpLoggingInterceptor { message -> logger.info(message) }
-                .setLevel(HttpLoggingInterceptor.Level.BASIC)
+        /*val loggingInterceptor = HttpLoggingInterceptor { message -> logger.info(message) }
+                .setLevel(HttpLoggingInterceptor.Level.BASIC)*/
 
         val headersInterceptor = Interceptor { chain ->
             val requestBuilder = chain.request().newBuilder()
@@ -43,7 +43,7 @@ class NodeApiProvider(
         }
 
         val httpClient = OkHttpClient.Builder()
-                .addInterceptor(loggingInterceptor)
+                /*.addInterceptor(loggingInterceptor)*/
                 .addInterceptor(headersInterceptor)
 
         val retrofit = Retrofit.Builder()

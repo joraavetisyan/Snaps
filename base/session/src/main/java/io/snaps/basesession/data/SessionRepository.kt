@@ -59,6 +59,7 @@ class SessionRepositoryImpl @Inject constructor(
     }
 
     override suspend fun checkStatus(): Effect<Completable> {
+        // todo refactor clarify
         if (tokenStorage.authToken == null) {
             auth.signOut()
         }
@@ -70,9 +71,6 @@ class SessionRepositoryImpl @Inject constructor(
         return Effect.completable
     }
 
-    /**
-     * Check if user has wallet connected
-     */
     private suspend fun checkStatus(userId: Uuid): Effect<Completable> {
         suspend fun check() = if (!walletRepository.hasAccount(userId)) {
             profileRepository.updateData().flatMap {

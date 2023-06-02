@@ -183,7 +183,7 @@ class FakeVideoFeedApi : VideoFeedApi {
         delay(mockDelay)
         return BaseResponse(
             data = AddVideoResponseDto(
-                entityId = "${popularGeneration}video",
+                internalId = "${popularGeneration}video",
             ),
         )
     }

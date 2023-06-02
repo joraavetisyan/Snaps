@@ -283,6 +283,7 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun getBanner(): Effect<Banner> {
         return try {
+            // todo central source for fb remotes
             val banner = FirebaseRemoteConfig.getInstance().getValue("mobile_banner").let {
                 KotlinxSerializationJsonProvider().get().decodeFromString<Banner>(it.asString())
             }

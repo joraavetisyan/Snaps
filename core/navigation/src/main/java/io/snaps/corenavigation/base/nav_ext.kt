@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
+import io.snaps.corecommon.ext.asFlow
 import io.snaps.corenavigation.AppDeeplink
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.Deeplink
@@ -109,18 +110,3 @@ inline infix fun <reified ARG> NavController.navigate(direction: FeatureNavDirec
     route = direction.route.path(direction.arg.toDefaultFormat()),
     builder = direction.optionsBuilder,
 )
-
-@OptIn(DelicateCoroutinesApi::class)
-fun <T> LiveData<T>.asFlow(): Flow<T> = callbackFlow {
-    val observer = Observer<T> {
-        trySend(it)
-    }
-    withContext(Dispatchers.Main.immediate) {
-        observeForever(observer)
-    }
-    awaitClose {
-        GlobalScope.launch(Dispatchers.Main.immediate) {
-            removeObserver(observer)
-        }
-    }
-}.conflate()

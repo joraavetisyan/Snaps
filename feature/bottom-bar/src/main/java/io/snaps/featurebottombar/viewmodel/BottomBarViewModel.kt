@@ -8,7 +8,7 @@ import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.data.model.Banner
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
-import io.snaps.basesources.AppUpdateInfo
+import io.snaps.basesources.AppUpdateInfoDto
 import io.snaps.basesources.AppUpdateProvider
 import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.basesources.UpdateAvailableState
@@ -136,7 +136,7 @@ class BottomBarViewModel @Inject constructor(
     data class UiState(
         val isBottomBarVisible: Boolean = true,
         val badgeText: String = "",
-        val appUpdateInfo: AppUpdateInfo? = null,
+        val appUpdateInfo: AppUpdateInfoDto? = null,
         val banner: Banner? = null,
         val isBannerShown: Boolean = false,
         val needShowBanner: Boolean = false,

@@ -16,7 +16,7 @@ import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefile.data.FileRepository
 import io.snaps.basefile.domain.FileModel
 import io.snaps.basesources.NotificationsSource
-import io.snaps.basesources.UploadStatusSource
+import io.snaps.basefeed.data.UploadStatusSource
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.Uuid
@@ -115,6 +115,7 @@ class UploadViewModel @Inject constructor(
                 notificationsSource.sendError(StringKey.ErrorUnknown.textValue())
                 _uiState.update { it.copy(isLoading = false) }
             }
+            // todo behind interface
             VideoCompressor.start(
                 context = context,
                 uris = listOf(Uri.fromFile(File(args.uri))),
@@ -157,7 +158,7 @@ class UploadViewModel @Inject constructor(
             videoFeedRepository.uploadVideo(
                 title = _uiState.value.titleValue.trim(),
                 fileId = fileModel.id,
-                file = filePath, /*File(filePath),*/
+                file = filePath,
             )
         }.doOnSuccess {
             startProgressListen(it)
