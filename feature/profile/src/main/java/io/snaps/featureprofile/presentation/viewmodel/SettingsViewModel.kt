@@ -70,7 +70,7 @@ class SettingsViewModel @Inject constructor(
     private fun getItems() = listOf(
         CellTileState(
             middlePart = MiddlePart.Data(
-                value = "Edit Profile".textValue(), // todo localization
+                value = StringKey.EditProfileTitle.textValue(), // todo localization
             ),
             rightPart = RightPart.NavigateNextIcon(),
             clickListener = { onEditProfileClicked() },

@@ -3,16 +3,15 @@ package io.snaps.baseprofile.data
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.snaps.baseprofile.data.model.Banner
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
+import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.SocialPage
-import io.snaps.baseprofile.data.model.UserCreateRequestDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.domain.UsersPageModel
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.AppError
-import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FullUrl
@@ -24,7 +23,6 @@ import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.json.KotlinxSerializationJsonProvider
-import io.snaps.coredata.network.ApiService
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
@@ -63,8 +61,8 @@ interface ProfileRepository {
 
     suspend fun getUserInfoById(userId: String): Effect<UserInfoModel>
 
-    suspend fun createUser(
-        fileId: Uuid,
+    suspend fun editUser(
+        avatar: FullUrl?,
         userName: String,
         address: CryptoAddress,
     ): Effect<Completable>
@@ -89,18 +87,11 @@ interface ProfileRepository {
     suspend fun getSocialPages(): Effect<List<SocialPage>>
 
     suspend fun getBanner(): Effect<Banner>
-
-    suspend fun editProfile(
-        userName: String,
-        avatarUrl: FullUrl?,
-        address: CryptoAddress,
-    ): Effect<Completable>
 }
 
 class ProfileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
-    private val buildInfo: BuildInfo,
     private val api: ProfileApi,
     private val loaderFactory: UsersLoaderFactory,
     private val userDataStorage: UserDataStorage,
@@ -182,21 +173,21 @@ class ProfileRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createUser(
-        fileId: Uuid,
+    override suspend fun editUser(
+        avatar: FullUrl?,
         userName: String,
-        address: CryptoAddress,
+        address: CryptoAddress
     ): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            api.createUser(
-                UserCreateRequestDto(
+            api.editUser(
+                EditUserRequestDto(
                     name = userName,
-                    avatarUrl = "${ApiService.General.getBaseUrl(buildInfo)}v1/file?fileId=$fileId",
+                    avatarUrl = avatar,
                     wallet = address,
                 )
             )
         }.map {
-            it.toModel()
+            it.toModel().copy(questInfo = state.value.dataOrCache?.questInfo) // user model without questInfo is returned
         }.also {
             _state tryPublish it
         }.toCompletable()
@@ -302,25 +293,5 @@ class ProfileRepositoryImpl @Inject constructor(
             log(e)
             Effect.error(AppError.Unknown(cause = e))
         }
-    }
-
-    override suspend fun editProfile(
-        userName: String,
-        avatarUrl: FullUrl?,
-        address: CryptoAddress
-    ): Effect<Completable> {
-        return apiCall(ioDispatcher) {
-            api.createUser(
-                UserCreateRequestDto(
-                    name = userName,
-                    avatarUrl = avatarUrl,
-                    wallet = address,
-                )
-            )
-        }.map {
-            it.toModel()
-        }.also {
-            _state tryPublish it
-        }.toCompletable()
     }
 }

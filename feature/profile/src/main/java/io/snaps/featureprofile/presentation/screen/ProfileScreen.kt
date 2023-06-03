@@ -7,27 +7,28 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BackdropScaffold
+import androidx.compose.material.BackdropValue
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material3.Divider
+import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -39,10 +40,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -55,7 +54,6 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startShareLinkIntent
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
-import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeBottom
@@ -65,6 +63,7 @@ import io.snaps.coreuicompose.tools.toPx
 import io.snaps.coreuicompose.uikit.button.SimpleChip
 import io.snaps.coreuicompose.uikit.duplicate.ActionIconData
 import io.snaps.coreuicompose.uikit.duplicate.OnBackIconClick
+import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBarConfig
 import io.snaps.coreuicompose.uikit.duplicate.TopAppBarActionIcon
 import io.snaps.coreuicompose.uikit.duplicate.TopAppBarLayout
@@ -103,12 +102,11 @@ fun ProfileScreen(
         onSubscribeClicked = viewModel::onSubscribeClicked,
         onVideoClipClicked = viewModel::onVideoClipClicked,
         onUserLikedVideoClipClicked = viewModel::onUserLikedVideoClipClicked,
-        onLikeIconClicked = viewModel::onLikeIconClicked,
-        onGalleryIconClicked = viewModel::onGalleryIconClicked,
+        onTabClicked = viewModel::onTabClicked,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 private fun ProfileScreen(
     uiState: ProfileViewModel.UiState,
@@ -118,144 +116,144 @@ private fun ProfileScreen(
     onSubscribeClicked: () -> Unit,
     onVideoClipClicked: (Int) -> Unit,
     onUserLikedVideoClipClicked: (Int) -> Unit,
-    onLikeIconClicked: () -> Unit,
-    onGalleryIconClicked: () -> Unit,
+    onTabClicked: (Int) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val scaffoldState = rememberBackdropScaffoldState(initialValue = BackdropValue.Revealed)
     val context = LocalContext.current
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            AppBar(
-                title = when (uiState.userType) {
-                    ProfileViewModel.UserType.Other,
-                    ProfileViewModel.UserType.Current -> "@${uiState.name}"
-                    ProfileViewModel.UserType.None -> ""
-                },
-                navigationIcon = AppTheme.specificIcons.back to onBackClicked,
-                actions = listOfNotNull(
-                    ActionIconData(
-                        icon = AppTheme.specificIcons.settings,
-                        color = AppTheme.specificColorScheme.white,
-                        onClick = onSettingsClicked,
-                    ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
-                    ActionIconData(
-                        icon = AppTheme.specificIcons.share,
-                        color = AppTheme.specificColorScheme.white,
-                        onClick = { context.startShareLinkIntent(uiState.shareLink!!) },
-                    ).takeIf { uiState.shareLink != null },
-                ),
-                userInfoTileState = uiState.userInfoTileState,
-                userType = uiState.userType,
-                isSubscribed = uiState.isSubscribed,
-                onSubscribeClicked = onSubscribeClicked,
-            )
-        },
-        floatingActionButton = {
-            if (uiState.userType == ProfileViewModel.UserType.Current) {
-                IconButton(onClick = { onCreateVideoClicked() }) {
-                    Icon(
-                        painter = R.drawable.img_create.imageValue().get(),
-                        contentDescription = null,
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(64.dp),
-                    )
-                }
-            }
-        },
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .inset(insetAllExcludeTop()),
-        ) {
-            Spacer(modifier = Modifier.height(12.dp))
-            Actions(
-                selectedItemIndex = uiState.selectedItemIndex,
-                onGalleryIconClicked = onGalleryIconClicked,
-                onLikeIconClicked = onLikeIconClicked,
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            AnimatedContent(
-                targetState = uiState.selectedItemIndex,
-                modifier = Modifier.fillMaxSize(),
-                label = "",
-            ) {
-                when (it) {
-                    0 -> VideoFeedGrid(
-                        columnCount = 3,
-                        uiState = uiState.videoFeedUiState,
-                        onClick = onVideoClipClicked,
-                    )
-                    1 -> VideoFeedGrid(
-                        columnCount = 3,
-                        uiState = uiState.userLikedVideoFeedUiState,
-                        onClick = onUserLikedVideoClipClicked,
-                    )
-                }
-            }
-        }
-    }
-}
 
-@Composable
-private fun Actions(
-    selectedItemIndex: Int,
-    onGalleryIconClicked: () -> Unit,
-    onLikeIconClicked: () -> Unit,
-) {
-    Divider()
-    Row(
-        modifier = Modifier
-            .height(IntrinsicSize.Min)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-    ) {
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .doOnClick(onClick = onGalleryIconClicked),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "Shorts",
-                style = AppTheme.specificTypography.titleSmall,
-                color = colors { if (selectedItemIndex == 0) textPrimary else darkGrey },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                textAlign = TextAlign.Center,
-            )
-        }
-        Divider(
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(1.dp)
+    val title = when (uiState.userType) {
+        ProfileViewModel.UserType.Other,
+        ProfileViewModel.UserType.Current -> "@${uiState.name}"
+        ProfileViewModel.UserType.None -> ""
+    }
+    val navigationIcon = AppTheme.specificIcons.back to onBackClicked
+    val actions = listOfNotNull(
+        ActionIconData(
+            icon = AppTheme.specificIcons.settings,
+            color = AppTheme.specificColorScheme.white,
+            onClick = onSettingsClicked,
+        ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
+        ActionIconData(
+            icon = AppTheme.specificIcons.share,
+            color = AppTheme.specificColorScheme.white,
+            onClick = { context.startShareLinkIntent(uiState.shareLink!!) },
+        ).takeIf { uiState.shareLink != null },
+    )
+    Box {
+        BackdropScaffold(
+            scaffoldState = scaffoldState,
+            appBar = {
+                SimpleTopAppBar(
+                    title = title.textValue(),
+                    navigationIcon = navigationIcon,
+                    actions = actions,
+                    scrollBehavior = scrollBehavior,
+                    colors = SimpleTopAppBarConfig.transparentColors(
+                        containerColor = AppTheme.specificColorScheme.white,
+                        scrolledContainerColor = AppTheme.specificColorScheme.white,
+                    ),
+                )
+            },
+            backLayerContent = {
+                AppBar(
+                    title = title,
+                    navigationIcon = navigationIcon,
+                    actions = actions,
+                    userInfoTileState = uiState.userInfoTileState,
+                    userType = uiState.userType,
+                    isSubscribed = uiState.isSubscribed,
+                    onSubscribeClicked = onSubscribeClicked,
+                )
+            },
+            frontLayerContent = {
+                val tabs = listOf(
+                    StringKey.ProfileTitleShorts.textValue(),
+                    StringKey.ProfileTitleLiked.textValue(),
+                )
+                Box {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .inset(insetAllExcludeTop()),
+                    ) {
+                        TabRow(
+                            selectedTabIndex = uiState.selectedItemIndex,
+                            modifier = Modifier.fillMaxWidth(),
+                            containerColor = AppTheme.specificColorScheme.white,
+                            contentColor = AppTheme.specificColorScheme.white,
+                            tabs = {
+                                tabs.forEachIndexed { index, title ->
+                                    Tab(
+                                        text = {
+                                            Text(
+                                                text = title.get(),
+                                                style = AppTheme.specificTypography.titleSmall,
+                                                color = colors { if (uiState.selectedItemIndex == index) textPrimary else textSecondary }
+                                            )
+                                        },
+                                        selected = uiState.selectedItemIndex == index,
+                                        onClick = { onTabClicked(index) },
+                                    )
+                                }
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        AnimatedContent(
+                            targetState = uiState.selectedItemIndex,
+                            modifier = Modifier.fillMaxSize(),
+                            label = "",
+                        ) {
+                            when (it) {
+                                0 -> VideoFeedGrid(
+                                    columnCount = 3,
+                                    uiState = uiState.videoFeedUiState,
+                                    onClick = onVideoClipClicked,
+                                )
+                                1 -> VideoFeedGrid(
+                                    columnCount = 3,
+                                    uiState = uiState.userLikedVideoFeedUiState,
+                                    onClick = onUserLikedVideoClipClicked,
+                                )
+                            }
+                        }
+                    }
+                }
+            },
+            frontLayerShape = RoundedCornerShape(0.dp),
+            backLayerBackgroundColor = Color.White,
+            backLayerContentColor = AppTheme.specificColorScheme.textPrimary,
+            frontLayerBackgroundColor = AppTheme.specificColorScheme.uiContentBg,
+            frontLayerContentColor = AppTheme.specificColorScheme.textPrimary,
+            frontLayerScrimColor = Color.Unspecified,
+            frontLayerElevation = 0.dp,
+            peekHeight = SimpleTopAppBarConfig.ContainerHeight + insetTop().asPaddingValues().calculateTopPadding(),
+            stickyFrontLayer = true,
+            persistentAppBar = false,
+            gesturesEnabled = true,
         )
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .doOnClick(onClick = onLikeIconClicked),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "Liked",
-                style = AppTheme.specificTypography.titleSmall,
-                color = colors { if (selectedItemIndex == 1) textPrimary else darkGrey },
+        if (uiState.userType == ProfileViewModel.UserType.Current) {
+            IconButton(
+                onClick = { onCreateVideoClicked() },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                textAlign = TextAlign.Center,
-            )
+                    .align(Alignment.BottomEnd)
+                    .padding(20.dp),
+            ) {
+                Icon(
+                    painter = R.drawable.img_create.imageValue().get(),
+                    contentDescription = null,
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(64.dp),
+                )
+            }
         }
     }
-    Divider()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppBar(
+    modifier: Modifier = Modifier,
     title: String,
     navigationIcon: Pair<IconValue, OnBackIconClick>,
     actions: List<ActionIconData>,
@@ -268,7 +266,7 @@ private fun AppBar(
     val imageHeight = 64.dp + insetTop().asPaddingValues().calculateTopPadding() + 16.dp + 76.dp
 
     Box(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Image(
             painter = R.drawable.img_profile_background.imageValue().get(),
@@ -327,15 +325,7 @@ private fun AppBar(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            color = AppTheme.specificColorScheme.white,
-                            shape = RoundedCornerShape(
-                                topEnd = 0.dp,
-                                topStart = 0.dp,
-                                bottomStart = 12.dp,
-                                bottomEnd = 12.dp,
-                            )
-                        )
+                        .background(color = AppTheme.specificColorScheme.white)
                         .padding(bottom = 16.dp),
                 ) {
                     SimpleChip(

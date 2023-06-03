@@ -6,21 +6,17 @@ import android.net.Uri
 import android.os.Environment
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -54,25 +49,18 @@ import com.google.accompanist.permissions.rememberPermissionState
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.date.getLocaleDateByPhotoDateFormat
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
-import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
-import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
-import io.snaps.coreuicompose.uikit.button.SimpleButtonRedInlineM
 import io.snaps.coreuicompose.uikit.dialog.PhotoAlertDialog
-import io.snaps.coreuicompose.uikit.dialog.SimpleConfirmDialogUi
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.featureprofile.presentation.viewmodel.EditProfileViewModel
-import io.snaps.featureprofile.presentation.viewmodel.SettingsViewModel
 import java.io.File
 
 private const val AUTHORITY_SUFFIX = ".fileprovider"
@@ -111,7 +99,7 @@ private fun EditProfileScreen(
     onPickPhotoClicked: (Uri?) -> Unit,
     onTakePhotoClicked: (Uri?) -> Unit,
     onUploadPhotoClicked: () -> Unit,
-    ) {
+) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
@@ -141,7 +129,7 @@ private fun EditProfileScreen(
         topBar = {
             SimpleTopAppBar(
                 title = {
-                    Text(text = "Edit Profile") // todo localization
+                    Text(text = StringKey.EditProfileTitle.textValue().get())
                 },
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 scrollBehavior = scrollBehavior,
@@ -179,7 +167,7 @@ private fun EditProfileScreen(
                 }
             }
             Text(
-                text = "Edit photo",
+                text = StringKey.EditProfileFieldPhoto.textValue().get(),
                 style = AppTheme.specificTypography.titleSmall,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
@@ -229,7 +217,7 @@ private fun EditButton(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "Your name",
+            text = StringKey.EditProfileHintName.textValue().get(),
             style = AppTheme.specificTypography.titleSmall,
             color = AppTheme.specificColorScheme.textSecondary,
         )

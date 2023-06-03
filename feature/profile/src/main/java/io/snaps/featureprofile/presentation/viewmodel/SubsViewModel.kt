@@ -45,6 +45,8 @@ class SubsViewModel @Inject constructor(
         UiState(
             nickname = args.userName,
             initialPage = args.subsType.ordinal,
+            totalSubscriptions = args.totalSubscriptions,
+            totalSubscribers = args.totalSubscribers,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -71,12 +73,7 @@ class SubsViewModel @Inject constructor(
                 onSubscribeClicked = ::onSubscribeClicked,
             )
         }.onEach { state ->
-            _uiState.update {
-                it.copy(
-                    subscribersUiState = state,
-                    totalSubscribers = state.count,
-                )
-            }
+            _uiState.update { it.copy(subscribersUiState = state) }
         }.launchIn(viewModelScope)
     }
 
@@ -91,12 +88,7 @@ class SubsViewModel @Inject constructor(
                 onSubscribeClicked = ::onSubscribeClicked,
             )
         }.onEach { state ->
-            _uiState.update {
-                it.copy(
-                    subscriptionsUiState = state,
-                    totalSubscriptions = state.count,
-                )
-            }
+            _uiState.update { it.copy(subscriptionsUiState = state) }
         }.launchIn(viewModelScope)
     }
 

@@ -1,9 +1,9 @@
 package io.snaps.baseprofile.data
 
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
+import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.TransactionItemResponseDto
-import io.snaps.baseprofile.data.model.UserCreateRequestDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.model.Completable
 import io.snaps.coredata.network.BaseResponse
@@ -20,8 +20,8 @@ interface ProfileApi {
     ): BaseResponse<UserInfoResponseDto>
 
     @POST("v1/user")
-    suspend fun createUser(
-        @Body body: UserCreateRequestDto,
+    suspend fun editUser(
+        @Body body: EditUserRequestDto,
     ): BaseResponse<UserInfoResponseDto>
 
     @POST("v1/invite-code")

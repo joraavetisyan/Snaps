@@ -5,7 +5,6 @@ import androidx.work.WorkManager
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.snaps.corecommon.ext.log
-import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.Effect

@@ -56,7 +56,7 @@ class SubsRepositoryImpl @Inject constructor(
                         }
                     },
                     pageSize = 100,
-                    nextPageIdFactory = { it.userId },
+                    nextPageIdFactory = { it.entityId },
                     mapper = { it.toModelList(mySubscriptions = mySubscriptions().data) },
                 )
                 is SubType.Subscriber -> PagedLoaderParams(
@@ -68,7 +68,7 @@ class SubsRepositoryImpl @Inject constructor(
                         }
                     },
                     pageSize = 100,
-                    nextPageIdFactory = { it.userId },
+                    nextPageIdFactory = { it.entityId },
                     mapper = { it.toModelList(mySubscriptions = mySubscriptions().data) },
                 )
             }

@@ -21,6 +21,7 @@ import io.snaps.coreuitheme.compose.AppTheme
 object SimpleTopAppBarConfig {
 
     private const val ContainerColorAlpha = .9f
+    val ContainerHeight = 64.dp
     val ActionSize = 44.dp
 
     @Composable
@@ -62,9 +63,11 @@ object SimpleTopAppBarConfig {
     @Composable
     fun transparentColors(
         navigationIconContentColor: Color = AppTheme.specificColorScheme.textPrimary,
+        containerColor: Color = AppTheme.specificColorScheme.transparent,
+        scrolledContainerColor: Color = AppTheme.specificColorScheme.transparent,
     ) = SimpleTopAppBarColors(
-        containerColor = AppTheme.specificColorScheme.transparent,
-        scrolledContainerColor = AppTheme.specificColorScheme.transparent,
+        containerColor = containerColor,
+        scrolledContainerColor = scrolledContainerColor,
         navigationIconContentColor = navigationIconContentColor,
         titleContentColor = AppTheme.specificColorScheme.textPrimary,
         actionIconContentColor = AppTheme.specificColorScheme.darkGrey,

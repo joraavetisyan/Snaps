@@ -144,6 +144,8 @@ class ProfileViewModel @Inject constructor(
                     userId = args.userId,
                     subsType = subsType,
                     userName = uiState.value.name,
+                    totalSubscribers = userInfo.subscribers,
+                    totalSubscriptions = userInfo.subscriptions,
                 )
             )
         }
@@ -210,8 +212,9 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onSubscribeClicked() = viewModelScope.launch {
+        val isSubscribed = uiState.value.isSubscribed
         _uiState.update { it.copy(isSubscribed = !it.isSubscribed) }
-        if (uiState.value.isSubscribed) {
+        if (isSubscribed) {
             action.execute {
                 subsRepository.unsubscribe(requireNotNull(args.userId))
             }.doOnSuccess {
@@ -238,16 +241,8 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun onGalleryIconClicked() {
-        _uiState.update {
-            it.copy(selectedItemIndex = 0)
-        }
-    }
-
-    fun onLikeIconClicked() {
-        _uiState.update {
-            it.copy(selectedItemIndex = 1)
-        }
+    fun onTabClicked(selectedItemIndex: Int) {
+        _uiState.update { it.copy(selectedItemIndex = selectedItemIndex) }
     }
 
     data class UiState(

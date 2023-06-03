@@ -4,7 +4,6 @@ import io.snaps.corecommon.model.generateUuid
 import io.snaps.coredata.database.UserDataStorage
 import okhttp3.Interceptor
 import okhttp3.Response
-import retrofit2.http.Header
 import java.io.IOException
 
 class CommonHeaderInterceptor(

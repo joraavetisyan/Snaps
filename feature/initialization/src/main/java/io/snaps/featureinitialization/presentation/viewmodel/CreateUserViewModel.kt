@@ -4,13 +4,13 @@ import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.baseprofile.domain.EditUserInteractor
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
-import io.snaps.featureinitialization.domain.CreateUserInteractor
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateUserViewModel @Inject constructor(
     private val fileManager: FileManager,
-    private val interactor: CreateUserInteractor,
+    @Bridged private val interactor: EditUserInteractor,
     private val action: Action,
     @Bridged private val profileRepository: ProfileRepository,
     private val sessionRepository: SessionRepository,
@@ -86,7 +86,7 @@ class CreateUserViewModel @Inject constructor(
         uiState.value.imageUri?.let { fileManager.createFileFromUri(it) }?.let {
             action.execute {
                 _uiState.update { it.copy(isLoading = true) }
-                interactor.createUser(avatarFile = it, userName = uiState.value.nicknameValue)
+                interactor.editUser(avatarFile = it, userName = uiState.value.nicknameValue)
             }.doOnError { _, _ ->
                 _uiState.update { it.copy(isLoading = false) }
             }.doOnSuccess {

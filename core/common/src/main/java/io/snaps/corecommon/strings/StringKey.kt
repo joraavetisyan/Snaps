@@ -372,6 +372,16 @@ enum class StringKey {
     ProfileTitleSubscriptions,
     ProfileTitlePublication,
     ProfileMessageEmptyVideos,
+    ProfileTitleLiked,
+    ProfileTitleShorts,
+
+    EditProfileTitle,
+    EditProfileFieldPhoto,
+    EditProfileHintName,
+
+    EditNameTitle,
+    EditNameAction,
+    EditNameMessage,
 
     CommentsTitle,
     CommentsHint,

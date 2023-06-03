@@ -4,14 +4,21 @@ import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.baseprofile.domain.EditUserInteractor
+import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.model.Effect
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
-import io.snaps.featureprofile.domain.EditProfileInteractor
+import io.snaps.coreui.viewmodel.publish
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,18 +26,30 @@ import javax.inject.Inject
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
     @Bridged profileRepository: ProfileRepository,
-    private val editProfileInteractor: EditProfileInteractor,
+    @Bridged private val interactor: EditUserInteractor,
     private val fileManager: FileManager,
     private val action: Action,
 ) : SimpleViewModel() {
 
-    private val _uiState = MutableStateFlow(
-        UiState(
-            name = profileRepository.state.value.dataOrCache?.name.orEmpty(),
-            avatar = profileRepository.state.value.dataOrCache?.avatar
-        )
-    )
+    private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _command = Channel<Command>()
+    val command = _command.receiveAsFlow()
+
+    init {
+        profileRepository.state.onEach { state ->
+            if (state is Effect<UserInfoModel>) {
+                _uiState.update {
+                    it.copy(
+                        name = profileRepository.state.value.dataOrCache?.name.orEmpty(),
+                        editNameValue = profileRepository.state.value.dataOrCache?.name.orEmpty(),
+                        avatar = profileRepository.state.value.dataOrCache?.avatar
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
 
     fun onUploadPhotoClicked() {
         _uiState.update { it.copy(isDialogVisible = true) }
@@ -41,7 +60,7 @@ class EditProfileViewModel @Inject constructor(
     }
 
     fun onNameValueChanged(name: String) {
-        _uiState.update { it.copy(name = name) }
+        _uiState.update { it.copy(editNameValue = name) }
     }
 
     fun onTakePhotoClicked(imageUri: Uri?) = viewModelScope.launch {
@@ -70,7 +89,7 @@ class EditProfileViewModel @Inject constructor(
         uiState.value.imageUri?.let { fileManager.createFileFromUri(it) }?.let {
             action.execute {
                 _uiState.update { it.copy(isLoading = true) }
-                editProfileInteractor.editAvatar(avatarFile = it)
+                interactor.editUser(avatarFile = it)
             }.doOnComplete {
                 _uiState.update { it.copy(isLoading = false) }
             }
@@ -78,11 +97,17 @@ class EditProfileViewModel @Inject constructor(
     }
 
     fun editName() = viewModelScope.launch {
-        action.execute {
-            _uiState.update { it.copy(isLoading = true) }
-            editProfileInteractor.editName(userName = uiState.value.name)
-        }.doOnComplete {
-            _uiState.update { it.copy(isLoading = false) }
+        if (uiState.value.name != uiState.value.editNameValue) {
+            action.execute {
+                _uiState.update { it.copy(isLoading = true) }
+                interactor.editUser(userName = uiState.value.editNameValue)
+            }.doOnComplete {
+                _uiState.update { it.copy(isLoading = false) }
+            }.doOnSuccess {
+                _command publish Command.CloseScreen
+            }
+        } else {
+            _command publish Command.CloseScreen
         }
     }
 
@@ -92,8 +117,16 @@ class EditProfileViewModel @Inject constructor(
         val name: String = "",
         val avatar: ImageValue? = null,
         val imageUri: Uri? = null,
+        val editNameValue: String = "",
     ) {
-
-        val isNameValid get() = Regex("^[a-zA-Z0-9_.]+$").matches(name)
+        val isNameValid get() = isNameValid(editNameValue)
     }
+
+    sealed class Command {
+        object CloseScreen : Command()
+    }
+}
+
+private fun isNameValid(name: String): Boolean {
+    return Regex("^\\p{L}+[\\p{L}\\p{Nd}_.]*$").matches(name)
 }

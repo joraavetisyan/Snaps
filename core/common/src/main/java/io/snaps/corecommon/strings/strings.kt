@@ -2323,6 +2323,16 @@ internal val strings = mapOf(
         SupportedLanguageKey.En to "Здесь появятся видео, которые опубликует %s", // todo localization
         SupportedLanguageKey.Ru to "Здесь появятся видео, которые опубликует %s",
     ),
+    // todo localization
+    key(StringKey.ProfileTitleLiked) to mapOf(
+        SupportedLanguageKey.En to "Liked",
+        SupportedLanguageKey.Ru to "Понравившиеся",
+    ),
+    // todo localization
+    key(StringKey.ProfileTitleShorts) to mapOf(
+        SupportedLanguageKey.En to "Shorts",
+        SupportedLanguageKey.Ru to "Видео",
+    ),
     key(StringKey.CommentsTitle) to mapOf(
         SupportedLanguageKey.En to "%s comments",
         SupportedLanguageKey.Ru to "%s комментарии",
@@ -2953,5 +2963,35 @@ internal val strings = mapOf(
         SupportedLanguageKey.Tr to "Sadece:",
         SupportedLanguageKey.Ua to "Всього:",
         SupportedLanguageKey.Es to "Por todo:",
+    ),
+    // todo localization
+    key(StringKey.EditProfileTitle) to mapOf(
+        SupportedLanguageKey.En to "Edit Profile",
+        SupportedLanguageKey.Ru to "Редактировать профиль",
+    ),
+    // todo localization
+    key(StringKey.EditProfileFieldPhoto) to mapOf(
+        SupportedLanguageKey.En to "Edit photo",
+        SupportedLanguageKey.Ru to "Изменить фото",
+    ),
+    // todo localization
+    key(StringKey.EditProfileHintName) to mapOf(
+        SupportedLanguageKey.En to "Your name",
+        SupportedLanguageKey.Ru to "Ваше имя",
+    ),
+    // todo localization
+    key(StringKey.EditNameTitle) to mapOf(
+        SupportedLanguageKey.En to "Your name",
+        SupportedLanguageKey.Ru to "Ваше имя",
+    ),
+    // todo localization
+    key(StringKey.EditNameAction) to mapOf(
+        SupportedLanguageKey.En to "Save",
+        SupportedLanguageKey.Ru to "Сохранить",
+    ),
+    // todo localization
+    key(StringKey.EditNameMessage) to mapOf(
+        SupportedLanguageKey.En to "Only letters, numbers, underscores, and dots can be used in the user name. When you change the name, the link to the profile will also change. Your name should be universal.",
+        SupportedLanguageKey.Ru to "В имени пользователя можно использовать только буквы, цифры, нижнее подчеркивание и точки. При изменении имени изменится и ссылка на профиль. Ваше имя должно быть универсальное.",
     ),
 )

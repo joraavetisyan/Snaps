@@ -28,6 +28,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreuicompose.tools.RoundedCornerShape
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
@@ -164,7 +165,7 @@ private fun BoxScope.InfoContainer(
     content: @Composable RowScope.() -> Unit,
 ) {
     Card(
-        shape = AppTheme.shapes.medium,
+        shape = RoundedCornerShape(top = 12.dp),
         modifier = Modifier.align(Alignment.BottomCenter),
         colors = CardDefaults.cardColors(containerColor = AppTheme.specificColorScheme.white)
     ) {

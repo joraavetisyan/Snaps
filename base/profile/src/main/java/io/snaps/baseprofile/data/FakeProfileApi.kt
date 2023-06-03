@@ -1,6 +1,7 @@
 package io.snaps.baseprofile.data
 
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
+import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.PaymentsState
 import io.snaps.baseprofile.data.model.QuestDto
 import io.snaps.baseprofile.data.model.QuestInfoResponseDto
@@ -8,7 +9,6 @@ import io.snaps.baseprofile.data.model.QuestItemDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.TransactionItemResponseDto
 import io.snaps.baseprofile.data.model.TransactionType
-import io.snaps.baseprofile.data.model.UserCreateRequestDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rDouble
@@ -28,7 +28,7 @@ class FakeProfileApi : ProfileApi {
         )
     }
 
-    override suspend fun createUser(@Body body: UserCreateRequestDto): BaseResponse<UserInfoResponseDto> {
+    override suspend fun editUser(@Body body: EditUserRequestDto): BaseResponse<UserInfoResponseDto> {
         return BaseResponse(
             data = getUserInfo(null),
         )

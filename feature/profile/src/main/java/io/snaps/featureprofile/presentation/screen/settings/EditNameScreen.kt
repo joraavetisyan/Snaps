@@ -3,6 +3,7 @@ package io.snaps.featureprofile.presentation.screen.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,6 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
@@ -42,6 +46,12 @@ fun EditNameScreen(
     val viewModel = hiltViewModel<EditProfileViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
+
+    viewModel.command.collectAsCommand {
+        when (it) {
+            EditProfileViewModel.Command.CloseScreen -> router.back()
+        }
+    }
 
     EditNameScreen(
         uiState = uiState,
@@ -67,7 +77,7 @@ private fun EditNameScreen(
         topBar = {
             SimpleTopAppBar(
                 title = {
-                    Text(text = "Your name") // todo localization
+                    Text(text = StringKey.EditNameTitle.textValue().get())
                 },
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 scrollBehavior = scrollBehavior,
@@ -77,11 +87,12 @@ private fun EditNameScreen(
             SimpleButtonActionM(
                 enabled = uiState.isNameValid,
                 modifier = Modifier
+                    .imePadding()
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = onSavedClicked,
             ) {
-                SimpleButtonContent(text = "Saved".textValue())
+                SimpleButtonContent(text = StringKey.EditNameAction.textValue())
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
@@ -96,7 +107,7 @@ private fun EditNameScreen(
             SimpleTextField(
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = onNameValueChanged,
-                value = uiState.name,
+                value = uiState.editNameValue,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done,
@@ -104,7 +115,7 @@ private fun EditNameScreen(
                 maxLines = 1,
             )
             Text(
-                text = "В имени пользователя можно использовать только буквы, цифры, нижнее подчеркивание и точки. При изменении имени изменится и ссылка на профиль. Ваше имя должно быть универсальное.",
+                text = StringKey.EditNameMessage.textValue().get(),
                 style = AppTheme.specificTypography.bodySmall,
                 modifier = Modifier,
                 color = AppTheme.specificColorScheme.textSecondary,

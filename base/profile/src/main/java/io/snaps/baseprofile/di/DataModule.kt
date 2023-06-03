@@ -13,6 +13,8 @@ import io.snaps.baseprofile.data.MainHeaderHandlerImplDelegate
 import io.snaps.baseprofile.data.ProfileApi
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.data.ProfileRepositoryImpl
+import io.snaps.baseprofile.domain.EditUserInteractor
+import io.snaps.baseprofile.domain.EditUserInteractorImpl
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.coredata.di.Bridged
@@ -50,6 +52,10 @@ interface DataBindModule {
     @Binds
     @UserSessionScope
     fun profileRepository(bind: ProfileRepositoryImpl): ProfileRepository
+
+    @Binds
+    @UserSessionScope
+    fun editUserInteractor(bind: EditUserInteractorImpl): EditUserInteractor
 }
 
 @EntryPoint
@@ -59,6 +65,8 @@ internal interface DataBindEntryPoint {
     fun mainHeaderHandler(): MainHeaderHandler
 
     fun profileRepository(): ProfileRepository
+
+    fun editUserInteractor(): EditUserInteractor
 }
 
 @Module
@@ -83,5 +91,15 @@ internal object DataBindEntryPointBridge {
         return EntryPoints
             .get(componentManager, DataBindEntryPoint::class.java)
             .profileRepository()
+    }
+
+    @Bridged
+    @Provides
+    fun editUserInteractor(
+        componentManager: UserSessionComponentManager,
+    ): EditUserInteractor {
+        return EntryPoints
+            .get(componentManager, DataBindEntryPoint::class.java)
+            .editUserInteractor()
     }
 }
