@@ -108,7 +108,7 @@ internal val strings = mapOf(
     ),
     key(StringKey.MessageEmptyVideoFeed) to mapOf(
         SupportedLanguageKey.En to "No videos yet",
-        SupportedLanguageKey.Ru to "Eще нет видео",
+        SupportedLanguageKey.Ru to "Пока нет видео",
         SupportedLanguageKey.Tr to "Henüz video yok",
         SupportedLanguageKey.Ua to "Відео поки немає",
         SupportedLanguageKey.Es to "Aún no hay videos",
@@ -2318,6 +2318,10 @@ internal val strings = mapOf(
         SupportedLanguageKey.Tr to "Yayınlamak",
         SupportedLanguageKey.Ua to "Опублікувавши",
         SupportedLanguageKey.Es to "Publicar",
+    ),
+    key(StringKey.ProfileMessageEmptyVideos) to mapOf(
+        SupportedLanguageKey.En to "Здесь появятся видео, которые опубликует %s", // todo localization
+        SupportedLanguageKey.Ru to "Здесь появятся видео, которые опубликует %s",
     ),
     key(StringKey.CommentsTitle) to mapOf(
         SupportedLanguageKey.En to "%s comments",

@@ -115,7 +115,7 @@ fun BottomBarScreen(
                 onboardingState.onboardingType == OnboardingType.Rank
             ) {
                 showSheet() // show remote banner
-                viewModel.setIsBannerShown()
+                viewModel.setNeedShowBanner()
             }
         }
     }
@@ -149,7 +149,7 @@ fun BottomBarScreen(
                     },
                 )
             } else {
-                if (uiState.needShowBanner) {
+                if (uiState.needShowBanner && !uiState.isBannerShown) {
                     uiState.banner?.let {
                         Banner(
                             banner = it,
@@ -159,6 +159,7 @@ fun BottomBarScreen(
                             },
                         )
                     }
+                    viewModel.setIsBannerShown()
                 } else {
                     OnboardingDialog(
                         onboardingState = onboardingState,

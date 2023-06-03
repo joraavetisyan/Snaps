@@ -11,7 +11,6 @@ import io.snaps.featureprofile.presentation.viewmodel.Phrase
 fun List<String>.toPhrases() = mapIndexed { i, s -> Phrase(orderNumber = i + 1, text = s) }
 
 fun State<UserInfoModel>.toUserInfoTileState(
-    isCurrentUser: Boolean,
     onSubscribersClick: () -> Unit,
     onSubscriptionsClick: () -> Unit,
 ) = when (this) {
@@ -19,7 +18,6 @@ fun State<UserInfoModel>.toUserInfoTileState(
     is Effect -> when {
         isSuccess -> {
             requireData.toUserInfoTileState(
-                isCurrentUser = isCurrentUser,
                 onSubscribersClick = onSubscribersClick,
                 onSubscriptionsClick = onSubscriptionsClick,
             )
@@ -29,7 +27,6 @@ fun State<UserInfoModel>.toUserInfoTileState(
 }
 
 fun UserInfoModel.toUserInfoTileState(
-    isCurrentUser: Boolean,
     onSubscribersClick: () -> Unit,
     onSubscriptionsClick: () -> Unit,
 ) = UserInfoTileState.Data(
@@ -38,8 +35,6 @@ fun UserInfoModel.toUserInfoTileState(
     subscriptions = totalSubscriptions,
     subscribers = totalSubscribers,
     publication = totalPublication?.toCompactDecimalFormat(),
-    name = name,
-    isCurrentUser = isCurrentUser,
     onSubscribersClick = onSubscribersClick,
     onSubscriptionsClick = onSubscriptionsClick,
 )

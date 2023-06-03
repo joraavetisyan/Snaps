@@ -224,6 +224,10 @@ object AppRoute {
     }
 
     object ConnectInstagram : Route("ConnectInstagram")
+
+    object EditProfile : Route("EditProfile")
+
+    object EditName : Route("EditName")
 }
 
 object AppDeeplink {

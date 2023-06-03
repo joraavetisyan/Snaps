@@ -8,6 +8,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 class UserCreateRequestDto(
     @SerialName("name") val name: String,
-    @SerialName("avatar") val avatarUrl: FullUrl,
+    @SerialName("avatar") val avatarUrl: FullUrl?,
     @SerialName("wallet") val wallet: CryptoAddress,
 )

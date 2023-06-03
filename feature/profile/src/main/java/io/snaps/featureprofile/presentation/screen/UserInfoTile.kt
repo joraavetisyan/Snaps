@@ -1,10 +1,11 @@
 package io.snaps.featureprofile.presentation.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -18,16 +19,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.ImageValue
-import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.defaultTileRipple
@@ -41,12 +40,10 @@ sealed class UserInfoTileState : TileState {
 
     data class Data(
         val profileImage: ImageValue?,
-        val name: String,
         val likes: String,
         val subscribers: Int,
         val subscriptions: Int,
         val publication: String?,
-        val isCurrentUser: Boolean,
         val onSubscribersClick: () -> Unit,
         val onSubscriptionsClick: () -> Unit,
     ) : UserInfoTileState()
@@ -70,44 +67,13 @@ fun UserInfoTile(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Data(
     modifier: Modifier = Modifier,
     data: UserInfoTileState.Data,
 ) {
     Container(modifier) {
-        if (data.profileImage != null) {
-            Image(
-                painter = data.profileImage.get(),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(76.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop,
-            )
-        } else {
-            ShimmerTileCircle(size = 76.dp)
-        }
-        if (data.isCurrentUser) {
-            Text(
-                text = data.name,
-                style = AppTheme.specificTypography.titleSmall,
-                color = AppTheme.specificColorScheme.textPrimary,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
-            )
-            Text(
-                text = StringKey.OnboardingRankTitle.textValue().get(),
-                style = AppTheme.specificTypography.titleSmall,
-                color = AppTheme.specificColorScheme.textSecondary,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 4.dp),
-            )
-        }
         InfoContainer {
             StatsLine(data.likes, LocalStringHolder.current(StringKey.ProfileTitleLikes))
             VerticalDivider()
@@ -127,6 +93,24 @@ private fun Data(
                 StatsLine(it, LocalStringHolder.current(StringKey.ProfileTitlePublication))
             }
         }
+        Card(
+            shape = CircleShape,
+            border = BorderStroke(width = 2.dp, color = AppTheme.specificColorScheme.white),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(bottom = 76.dp),
+        ) {
+            if (data.profileImage != null) {
+                Image(
+                    painter = data.profileImage.get(),
+                    contentDescription = null,
+                    modifier = Modifier.size(76.dp),
+                    contentScale = ContentScale.Crop,
+                )
+            } else {
+                ShimmerTileCircle(size = 76.dp)
+            }
+        }
     }
 }
 
@@ -135,10 +119,6 @@ private fun Shimmer(
     modifier: Modifier = Modifier,
 ) {
     Container(modifier) {
-        ShimmerTileCircle(
-            size = 76.dp,
-            modifier = Modifier.padding(bottom = 16.dp),
-        )
         InfoContainer {
             repeat(4) { index ->
                 Column(
@@ -159,36 +139,40 @@ private fun Shimmer(
                 }
             }
         }
+        ShimmerTileCircle(
+            size = 76.dp,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(bottom = 72.dp),
+        )
     }
 }
 
 @Composable
 private fun Container(
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit,
+    content: @Composable BoxScope.() -> Unit,
 ) {
-    Column(
-        modifier
-            .background(color = AppTheme.specificColorScheme.white, shape = AppTheme.shapes.medium)
-            .padding(horizontal = 12.dp, vertical = 8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
+        modifier,
         content = content,
     )
 }
 
 @Composable
-private fun InfoContainer(
+private fun BoxScope.InfoContainer(
     content: @Composable RowScope.() -> Unit,
 ) {
     Card(
         shape = AppTheme.shapes.medium,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.align(Alignment.BottomCenter),
         colors = CardDefaults.cardColors(containerColor = AppTheme.specificColorScheme.white)
     ) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 12.dp)
-                .padding(vertical = 16.dp)
+                .padding(bottom = 16.dp)
+                .padding(top = 32.dp)
                 .height(IntrinsicSize.Min)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,

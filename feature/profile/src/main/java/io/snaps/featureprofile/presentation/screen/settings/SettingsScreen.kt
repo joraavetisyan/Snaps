@@ -55,6 +55,7 @@ fun SettingsScreen(
             SettingsViewModel.Command.OpenWalletSettingsScreen -> router.toWalletSettingsScreen()
             SettingsViewModel.Command.OpenSocialNetworksScreen -> router.toSocialNetworksScreen()
             SettingsViewModel.Command.OpenReferralProgramScreen -> router.toReferralProgramScreen()
+            SettingsViewModel.Command.OpenEditProfileScreen -> router.toEditProfileScreen()
         }
     }
 

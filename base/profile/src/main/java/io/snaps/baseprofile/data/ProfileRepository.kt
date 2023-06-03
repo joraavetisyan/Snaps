@@ -89,6 +89,12 @@ interface ProfileRepository {
     suspend fun getSocialPages(): Effect<List<SocialPage>>
 
     suspend fun getBanner(): Effect<Banner>
+
+    suspend fun editProfile(
+        userName: String,
+        avatarUrl: FullUrl?,
+        address: CryptoAddress,
+    ): Effect<Completable>
 }
 
 class ProfileRepositoryImpl @Inject constructor(
@@ -295,5 +301,25 @@ class ProfileRepositoryImpl @Inject constructor(
             log(e)
             Effect.error(AppError.Unknown(cause = e))
         }
+    }
+
+    override suspend fun editProfile(
+        userName: String,
+        avatarUrl: FullUrl?,
+        address: CryptoAddress
+    ): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            api.createUser(
+                UserCreateRequestDto(
+                    name = userName,
+                    avatarUrl = avatarUrl,
+                    wallet = address,
+                )
+            )
+        }.map {
+            it.toModel()
+        }.also {
+            _state tryPublish it
+        }.toCompletable()
     }
 }

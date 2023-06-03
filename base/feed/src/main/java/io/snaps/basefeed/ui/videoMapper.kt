@@ -2,7 +2,10 @@ package io.snaps.basefeed.ui
 
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoClipModel
+import io.snaps.corecommon.R
+import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.uikit.listtile.EmptyListTileState
@@ -35,7 +38,9 @@ data class VideoFeedUiState(
 
 fun VideoFeedPageModel.toVideoFeedUiState(
     shimmerListSize: Int,
-    emptyMessage: TextValue = StringKey.MessageEmptyVideoFeed.textValue(),
+    emptyMessage: TextValue? = null,
+    emptyTitle: TextValue = StringKey.MessageEmptyVideoFeed.textValue(),
+    emptyImage: ImageValue = R.drawable.img_guy_confused.imageValue(),
     onClipClicked: (VideoClipModel) -> Unit,
     onReloadClicked: () -> Unit,
     onListEndReaching: () -> Unit,
@@ -50,7 +55,11 @@ fun VideoFeedPageModel.toVideoFeedUiState(
             errorState = MessageBannerState.defaultState(onReloadClicked)
         )
         loadedPageItems.isEmpty() -> VideoFeedUiState(
-            emptyState = EmptyListTileState.defaultState(title = emptyMessage)
+            emptyState = EmptyListTileState.defaultState(
+                title = emptyTitle,
+                message = emptyMessage,
+                image = emptyImage,
+            )
         )
         else -> VideoFeedUiState(
             items = loadedPageItems.map {

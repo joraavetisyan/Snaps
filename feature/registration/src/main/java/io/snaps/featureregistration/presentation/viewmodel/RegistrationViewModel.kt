@@ -55,8 +55,7 @@ class RegistrationViewModel @Inject constructor(
             _uiState.update {
                 it.copy(dialog = Dialog.EmailVerification)
             }
-        }
-        else {
+        } else {
             _uiState.update {
                 it.copy(
                     bottomDialog = BottomDialog.SignIn,

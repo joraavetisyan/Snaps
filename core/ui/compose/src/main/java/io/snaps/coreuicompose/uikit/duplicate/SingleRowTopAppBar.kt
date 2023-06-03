@@ -133,7 +133,7 @@ private suspend fun snapTopAppBar(state: TopAppBarState) {
 }
 
 @Composable
-private fun TopAppBarLayout(
+fun TopAppBarLayout(
     modifier: Modifier,
     heightPx: Float,
     navigationIconContentColor: Color,

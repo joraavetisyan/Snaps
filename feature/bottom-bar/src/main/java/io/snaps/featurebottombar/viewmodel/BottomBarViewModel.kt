@@ -101,12 +101,11 @@ class BottomBarViewModel @Inject constructor(
     }
 
     fun setIsBannerShown() {
-        _uiState.update {
-            it.copy(
-                isBannerShown = true,
-                needShowBanner = true,
-            )
-        }
+        _uiState.update { it.copy(isBannerShown = true) }
+    }
+
+    fun setNeedShowBanner() {
+        _uiState.update { it.copy(needShowBanner = true) }
     }
 
     private fun loadAppUpdateInfo() = viewModelScope.launch {

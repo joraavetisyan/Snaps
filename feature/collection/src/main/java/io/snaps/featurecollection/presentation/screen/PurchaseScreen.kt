@@ -325,15 +325,17 @@ private fun ActionButtons(
                 }
             }
         } else {
-            SimpleButtonDefaultM(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .shadow(elevation = 16.dp, shape = CircleShape),
-                onClick = onBuyWithGooglePlayClicked,
-            ) {
-                SimpleButtonContent(
-                    text = StringKey.PurchaseActionBuyInStore.textValue(),
-                )
+            if (uiState.isPurchasableWithGooglePlay) {
+                SimpleButtonDefaultM(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .shadow(elevation = 16.dp, shape = CircleShape),
+                    onClick = onBuyWithGooglePlayClicked,
+                ) {
+                    SimpleButtonContent(
+                        text = StringKey.PurchaseActionBuyInStore.textValue(),
+                    )
+                }
             }
             if (uiState.isPurchasableWithBnb) {
                 SimpleTwoLineButtonActionL(

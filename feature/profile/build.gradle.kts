@@ -24,4 +24,5 @@ dependencies {
     implementation(projects.baseSources)
     implementation(projects.baseWallet)
     implementation(projects.baseSubs)
+    implementation(projects.baseFile)
 }

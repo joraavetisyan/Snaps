@@ -51,6 +51,10 @@ class SettingsViewModel @Inject constructor(
         _command publish Command.OpenWalletSettingsScreen
     }
 
+    private fun onEditProfileClicked() = viewModelScope.launch {
+        _command publish Command.OpenEditProfileScreen
+    }
+
     private fun onReferralProgramItemClicked() = viewModelScope.launch {
         _command publish Command.OpenReferralProgramScreen
     }
@@ -64,6 +68,13 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun getItems() = listOf(
+        CellTileState(
+            middlePart = MiddlePart.Data(
+                value = "Edit Profile".textValue(), // todo localization
+            ),
+            rightPart = RightPart.NavigateNextIcon(),
+            clickListener = { onEditProfileClicked() },
+        ),
         CellTileState(
             middlePart = MiddlePart.Data(
                 value = StringKey.SettingsTitleWallet.textValue(),
@@ -109,5 +120,6 @@ class SettingsViewModel @Inject constructor(
         object OpenReferralProgramScreen : Command()
         object OpenSocialNetworksScreen : Command()
         object OpenAboutProjectScreen : Command()
+        object OpenEditProfileScreen : Command()
     }
 }

@@ -20,6 +20,7 @@ enum class Feature(
 
     // Remote
     PurchaseNftWithBnb("nft_bnb_enabled", false, true, true),
+    PurchaseNftWithGooglePlay("android_buy_button", false, true, true),
     SellSnaps("snaps_cell_enabled", false, true, true),
     Captcha("captcha_enabled", false, true, false),
 }
