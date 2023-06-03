@@ -22,7 +22,9 @@ dependencies {
     implementation(projects.baseProfile)
     implementation(projects.baseSubs)
 
+    implementation(*Libs.bundle.work)
     implementation(*Libs.bundle.media)
     implementation(*Libs.bundle.uploadService)
+    implementation(*Libs.bundle.apivideo)
     implementation(*Libs.bundle.firebase)
 }

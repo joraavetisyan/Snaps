@@ -53,6 +53,8 @@ object Libs {
     private const val okHttpVersion = "4.9.0"
     private const val chuckVersion = "3.5.2"
 
+    private const val workVersion = "2.8.1"
+
     private const val mockitoVersion = "2.7.22"
     private const val truthVersion = "0.34"
     private const val junitVersion = "4.12"
@@ -71,6 +73,8 @@ object Libs {
     private const val uploadServiceVersion = "4.7.0"
 
     private const val videoCompressorVersion = "1.2.3"
+
+    private const val apivideoVersion = "1.3.2"
 
     private const val trustWeb3Version = "2.0.8"
     private const val trustWalletCoreVersion = "3.1.20"
@@ -213,6 +217,10 @@ object Libs {
             "com.github.chuckerteam.chucker:library:$chuckVersion",
         )
 
+        val work = arrayOf(
+            "androidx.work:work-runtime-ktx:$workVersion",
+        )
+
         val media = arrayOf(
             "androidx.media3:media3-exoplayer:$mediaVersion",
             "androidx.media3:media3-ui:$mediaVersion",
@@ -265,6 +273,10 @@ object Libs {
 
         val videoCompressor = arrayOf(
             "com.github.AbedElazizShe:LightCompressor:$videoCompressorVersion",
+        )
+
+        val apivideo = arrayOf(
+            "video.api:android-api-client:$apivideoVersion",
         )
 
         val facebook = arrayOf(

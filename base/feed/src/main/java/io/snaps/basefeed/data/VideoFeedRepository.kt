@@ -1,34 +1,19 @@
 package io.snaps.basefeed.data
 
-import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.UserLikedVideoResponseDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.domain.VideoClipModel
-import io.snaps.corecommon.model.AppError
-import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.IoDispatcher
-import io.snaps.coredata.database.TokenStorage
-import io.snaps.coredata.network.ApiService
 import io.snaps.coredata.network.PagedLoader
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
-import io.snaps.coreui.FileManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.StateFlow
-import net.gotev.uploadservice.protocols.multipart.MultipartUploadRequest
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.HttpException
-import retrofit2.Response
-import java.io.File
 import javax.inject.Inject
 
 interface VideoFeedRepository {
@@ -49,26 +34,17 @@ interface VideoFeedRepository {
         file: String,
     ): Effect<Uuid>
 
-    suspend fun uploadVideo(
-        title: String,
-        fileId: Uuid,
-        file: File,
-    ): Effect<Completable>
-
     suspend fun deleteVideo(videoId: Uuid): Effect<Completable>
 
     suspend fun markShowed(videoId: Uuid): Effect<Completable>
 }
 
 class VideoFeedRepositoryImpl @Inject constructor(
-    @ApplicationContext private val applicationContext: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val buildInfo: BuildInfo,
-    private val tokenStorage: TokenStorage,
     private val videoFeedApi: VideoFeedApi,
     private val loaderFactory: VideoFeedLoaderFactory,
     private val likedFeedLoaderFactory: UserLikedVideoFeedLoaderFactory,
-    private val fileManager: FileManager,
+    private val videFeedUploader: VideFeedUploader,
 ) : VideoFeedRepository {
 
     private var likedVideos: List<UserLikedVideoResponseDto>? = null
@@ -189,46 +165,11 @@ class VideoFeedRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun uploadVideo(
-        title: String,
-        fileId: Uuid,
-        file: String,
-    ): Effect<Uuid> {
+    override suspend fun uploadVideo(title: String, fileId: Uuid, file: String): Effect<Uuid> {
         return apiCall(ioDispatcher) {
-            videoFeedApi.addVideo(AddVideoRequestDto(title = title, thumbnailFileId = fileId))
+            videoFeedApi.addVideo(AddVideoRequestDto(title = title, description = title, thumbnailFileId = fileId))
         }.flatMap {
-            try {
-                val uploadId = MultipartUploadRequest(
-                    context = applicationContext,
-                    serverUrl = "${ApiService.General.getBaseUrl(buildInfo)}v1/${it.entityId}/upload",
-                ).apply {
-                    setMethod("POST")
-                    addHeader("Authorization", "${tokenStorage.authToken}")
-                    addFileToUpload(
-                        filePath = file,
-                        parameterName = "videoFile",
-                    )
-                }.startUpload()
-                Effect.success(uploadId)
-            } catch (e: Exception) {
-                Effect.error(AppError.Unknown(cause = e))
-            }
-        }
-    }
-
-    override suspend fun uploadVideo(title: String, fileId: Uuid, file: File): Effect<Completable> {
-        return apiCall(ioDispatcher) {
-            videoFeedApi.addVideo(AddVideoRequestDto(title = title, thumbnailFileId = fileId))
-        }.flatMap {
-            val mediaType = fileManager.getMimeType(file.path) ?: MultipartBody.FORM
-            val multipartBody = MultipartBody.Part.createFormData(
-                name = "videoFile",
-                filename = file.name,
-                body = file.asRequestBody(mediaType),
-            )
-            apiCall(ioDispatcher) {
-                videoFeedApi.uploadVideo(file = multipartBody, videoId = it.entityId)
-            }.toCompletable()
+            videFeedUploader.upload(videoId = it.internalId, filePath = file)
         }
     }
 

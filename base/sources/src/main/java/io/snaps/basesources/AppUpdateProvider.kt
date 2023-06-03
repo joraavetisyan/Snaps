@@ -27,9 +27,10 @@ class AppUpdateProviderImpl @Inject constructor(
 
     override fun getAvailableUpdateInfo(): Effect<UpdateAvailableState> {
         val appUpdateInfo = try {
+            // todo central source for fb remotes
             FirebaseRemoteConfig.getInstance().getValue("android_version").let {
                 KotlinxSerializationJsonProvider().get()
-                    .decodeFromString<AppUpdateInfo>(it.asString())
+                    .decodeFromString<AppUpdateInfoDto>(it.asString())
             }
         } catch (e: Exception) {
             log(e)
@@ -47,13 +48,13 @@ class AppUpdateProviderImpl @Inject constructor(
 }
 
 sealed class UpdateAvailableState {
-    data class Available(val info: AppUpdateInfo) : UpdateAvailableState()
+    data class Available(val info: AppUpdateInfoDto) : UpdateAvailableState()
     object NotAvailable : UpdateAvailableState()
     object Downloaded : UpdateAvailableState()
 }
 
 @Serializable
-data class AppUpdateInfo(
+data class AppUpdateInfoDto(
     @SerialName("version") val versionCode: Int,
     @SerialName("link") val link: FullUrl,
 )

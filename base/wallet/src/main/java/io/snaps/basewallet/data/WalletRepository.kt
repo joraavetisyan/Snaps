@@ -12,9 +12,12 @@ import io.snaps.basewallet.data.model.PayoutOrderRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
 import io.snaps.basewallet.data.model.RefillGasRequestDto
 import io.snaps.basewallet.data.model.WalletSaveRequestDto
+import io.snaps.basewallet.domain.ActivationException
 import io.snaps.basewallet.domain.SnpsAccountModel
 import io.snaps.basewallet.domain.DeviceNotSecuredException
+import io.snaps.basewallet.domain.DeviceSecurityException
 import io.snaps.basewallet.domain.TotalBalanceModel
+import io.snaps.basewallet.domain.WalletAcquireException
 import io.snaps.basewallet.domain.WalletModel
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.logE
@@ -254,14 +257,24 @@ class WalletRepositoryImpl @Inject constructor(
             if (e.message == messageNotSecured) {
                 return Effect.error(AppError.Custom(cause = DeviceNotSecuredException))
             }
-            return Effect.error(AppError.Unknown(cause = e))
+            return Effect.error(AppError.Custom(cause = DeviceSecurityException))
         }
-        activateDefaultTokens(account)
+        // todo tmp try/catches to understand the origin of account save error, to be removed once fixed
+        try {
+            activateDefaultTokens(account)
+        } catch (e: Exception) {
+            return Effect.error(AppError.Custom(cause = ActivationException))
+        }
         // fixme better way
-        var address: CryptoAddress? = getActiveWalletReceiveAddress()
-        while (address == null) {
-            delay(200)
+        var address: CryptoAddress?
+        try {
             address = getActiveWalletReceiveAddress()
+            while (address == null) {
+                delay(200)
+                address = getActiveWalletReceiveAddress()
+            }
+        } catch (e: Exception) {
+            return Effect.error(AppError.Custom(cause = WalletAcquireException))
         }
         return apiCall(ioDispatcher) {
             walletApi.save(WalletSaveRequestDto(address = address))

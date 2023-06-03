@@ -3,8 +3,13 @@ package io.snaps.featurewalletconnect.presentation.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
+import io.snaps.basewallet.domain.ActivationException
 import io.snaps.basewallet.domain.DeviceNotSecuredException
+import io.snaps.basewallet.domain.DeviceSecurityException
+import io.snaps.basewallet.domain.WalletAcquireException
+import io.snaps.corecommon.container.textValue
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -23,8 +28,9 @@ import javax.inject.Inject
 @HiltViewModel
 class MnemonicsVerificationViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    @Bridged private val walletRepository: WalletRepository,
     private val action: Action,
+    private val notificationSource: NotificationsSource,
+    @Bridged private val walletRepository: WalletRepository,
 ) : SimpleViewModel() {
 
     private val args = savedStateHandle.requireArgs<AppRoute.MnemonicsVerification.Args>()
@@ -78,8 +84,11 @@ class MnemonicsVerificationViewModel @Inject constructor(
         }.doOnSuccess {
             _command publish Command.OpenCreatedWalletScreen
         }.doOnError { error, _ ->
-            if (error.cause is DeviceNotSecuredException) {
-                _uiState.update { it.copy(dialog = Dialog.DeviceNotSecured) }
+            when (error.cause) {
+                is DeviceNotSecuredException -> _uiState.update { it.copy(dialog = Dialog.DeviceNotSecured) }
+                DeviceSecurityException -> notificationSource.sendError("Device security error".textValue())
+                ActivationException -> notificationSource.sendError("Token activation error".textValue())
+                WalletAcquireException -> notificationSource.sendError("Couldn't get wallet".textValue())
             }
         }
     }

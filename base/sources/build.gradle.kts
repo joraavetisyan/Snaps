@@ -16,5 +16,4 @@ dependencies {
     implementation(projects.coreData)
 
     implementation(*Libs.bundle.preference)
-    implementation(*Libs.bundle.uploadService)
 }

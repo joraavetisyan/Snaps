@@ -12,6 +12,10 @@ import io.snaps.basefeed.data.CommentRepository
 import io.snaps.basefeed.data.CommentRepositoryImpl
 import io.snaps.basefeed.data.FakeCommentApi
 import io.snaps.basefeed.data.FakeVideoFeedApi
+import io.snaps.basefeed.data.UploadStatusSource
+import io.snaps.basefeed.data.UploadStatusSourceApivideoWorkManagerImpl
+import io.snaps.basefeed.data.VideFeedUploader
+import io.snaps.basefeed.data.VideFeedUploaderApivideoWorkManagerImpl
 import io.snaps.basefeed.data.VideoFeedApi
 import io.snaps.basefeed.data.VideoFeedRepository
 import io.snaps.basefeed.data.VideoFeedRepositoryImpl
@@ -50,6 +54,19 @@ internal class DataModule {
             .interceptor(config.commonHeaderInterceptor)
             .interceptor(config.authenticationInterceptor)
             .build()
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+internal interface SingletonDataBindModule {
+
+    @Binds
+    @Singleton
+    fun VideFeedUploader(bind: VideFeedUploaderApivideoWorkManagerImpl): VideFeedUploader
+
+    @Binds
+    @Singleton
+    fun UploadStatusSource(source: UploadStatusSourceApivideoWorkManagerImpl): UploadStatusSource
 }
 
 @Module
