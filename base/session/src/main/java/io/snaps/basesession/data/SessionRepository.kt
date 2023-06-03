@@ -25,11 +25,11 @@ interface SessionRepository {
 
     fun isOnboardingShown(type: OnboardingType): Boolean
 
-    suspend fun refresh(): Effect<Boolean>
+    suspend fun tryStatusCheck(): Effect<Completable>
 
-    suspend fun checkStatus(): Effect<Completable>
+    suspend fun tryLogin(): Effect<Completable>
 
-    suspend fun onLogin(): Effect<Completable>
+    suspend fun tryRefresh(): Effect<Completable>
 
     suspend fun onWalletConnected(): Effect<Completable>
 
@@ -58,82 +58,70 @@ class SessionRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun checkStatus(): Effect<Completable> {
-        // todo refactor clarify
-        if (tokenStorage.authToken == null) {
-            auth.signOut()
-        }
-        val userId: String? = auth.currentUser?.uid
+    override suspend fun tryStatusCheck(): Effect<Completable> {
+        val userId = auth.currentUser?.uid
         if (tokenStorage.authToken != null && userId != null) {
             return checkStatus(userId)
         }
-        userSessionTracker.onLogin(UserSessionTracker.State.NotActive)
-        return Effect.completable
+
+        logout()
+        return Effect.error(AppError.Unknown())
     }
 
     private suspend fun checkStatus(userId: Uuid): Effect<Completable> {
-        suspend fun check() = if (!walletRepository.hasAccount(userId)) {
-            profileRepository.updateData().flatMap {
-                userSessionTracker.onLogin(
-                    if (it.wallet == null) {
-                        UserSessionTracker.State.Active.NeedsWalletConnect
-                    } else {
-                        UserSessionTracker.State.Active.NeedsWalletImport
-                    }
-                )
-                Effect.completable
-            }
-        } else {
-            profileRepository.updateData().flatMap {
-                Effect.success(!(it.name.isBlank() || it.avatarUrl == null))
-            }.doOnSuccess { ready ->
-                if (ready) {
+        suspend fun check() = profileRepository.updateData().doOnSuccess { user ->
+            when {
+                walletRepository.hasAccount(userId) -> if (!(user.name.isBlank() || user.avatarUrl == null)) {
                     userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
                 } else {
                     userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsInitialization)
                 }
-            }.toCompletable()
+                else -> userSessionTracker.onLogin(
+                    if (user.wallet == null) UserSessionTracker.State.Active.NeedsWalletConnect
+                    else UserSessionTracker.State.Active.NeedsWalletImport
+                )
+            }
         }
 
         var check = check()
 
+        if (check.errorOrNull?.code == HttpURLConnection.HTTP_UNAUTHORIZED && tryRefresh().isSuccess) {
+            check = check()
+        }
+
         if (check.isError) {
-            if (check.errorOrNull?.code == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                if (refresh().data == true) {
-                    check = check()
-                }
-            } else {
-                userSessionTracker.onLogin(UserSessionTracker.State.Active.Error)
-            }
+            userSessionTracker.onLogin(UserSessionTracker.State.Active.Error)
         }
 
-        return check
+        return check.toCompletable()
     }
 
-    // todo move side-effect of logging out from here
-    override suspend fun refresh(): Effect<Boolean> {
+    override suspend fun tryLogin(): Effect<Completable> {
+        val userId = auth.currentUser?.uid
+        if (userId != null) {
+            if (walletRepository.hasAccount(userId)) {
+                walletRepository.clear(userId)
+            }
+            return checkStatus(userId)
+        }
+
+        logout()
+        return Effect.error(AppError.Unknown())
+    }
+
+    override suspend fun tryRefresh(): Effect<Completable> {
         val token = auth.currentUser?.getIdToken(false)?.await()?.token
-        return if (token != null) {
+        if (token != null) {
             tokenStorage.authToken = token
-            Effect.success(true)
-        } else {
-            logout()
-            Effect.success(false)
+            return Effect.completable
         }
-    }
 
-    override suspend fun onLogin(): Effect<Completable> {
-        auth.currentUser?.uid?.let {
-            if (walletRepository.hasAccount(it)) {
-                walletRepository.clear(it)
-            }
-            return checkStatus(it)
-        }
+        logout()
         return Effect.error(AppError.Unknown())
     }
 
     override suspend fun onWalletConnected(): Effect<Completable> {
-        return checkStatus()
+        return tryStatusCheck()
     }
 
     override fun onInitialized() {

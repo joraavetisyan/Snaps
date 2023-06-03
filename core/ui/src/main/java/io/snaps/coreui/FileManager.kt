@@ -67,7 +67,7 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
     fun createFileFromBitmap(bitmap: Bitmap): File? {
         val tempFile = createTempFile(
             prefix = generatePrefix(FileType.Pictures),
-            suffix = generateSuffix(FileType.Pictures),
+            suffix = getSuffix(FileType.Pictures),
             dir = getCacheDir(FileType.Pictures),
         )
         var outputStream: FileOutputStream? = null
@@ -93,6 +93,9 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
     }
 
     fun createPublicFile(type: FileType): Uri {
+        /**
+         * Request android.permission.WRITE_EXTERNAL_STORAGE for SDK<Build.VERSION_CODES.Q
+         */
         fun createPublicFileViaFileProvider(type: FileType): Uri {
             val file = createFile(generateName(type), getPublicDir(type))
             return FileProvider.getUriForFile(context, getFileProviderAuthority(), file)
@@ -126,7 +129,7 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
     }
 
     fun createInternalCacheFile(type: FileType): Uri {
-        val file = createTempFile(generatePrefix(type), generateSuffix(type), getCacheDir(type))
+        val file = createTempFile(generatePrefix(type), getSuffix(type), getCacheDir(type))
         return FileProvider.getUriForFile(context, getFileProviderAuthority(), file)
     }
 
@@ -200,13 +203,13 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
     // Note that null suffix will result in .tmp extension
     private fun createTempFile(prefix: String, suffix: String?, dir: File?) = File.createTempFile(prefix, suffix, dir)
 
-    private fun getRandomId() = Calendar.getInstance().timeInMillis
-    fun generateName(type: FileType) = generatePrefix(type) + generateSuffix(type)
+    fun generateName(type: FileType) = generatePrefix(type) + getSuffix(type)
     private fun generatePrefix(type: FileType) = when (type) {
         FileType.Pictures -> "image_" + getRandomId()
         FileType.Videos -> "video_" + getRandomId()
     }
-    private fun generateSuffix(type: FileType) = when (type) {
+    private fun getRandomId() = Calendar.getInstance().timeInMillis
+    private fun getSuffix(type: FileType) = when (type) {
         FileType.Pictures -> ".jpeg"
         FileType.Videos -> ".mp4"
     }

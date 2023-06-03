@@ -2,8 +2,7 @@ package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.AddVideoResponseDto
-import io.snaps.basefeed.data.model.UserLikedVideoResponseDto
-import io.snaps.basefeed.data.model.UserLikedVideoItem
+import io.snaps.basefeed.data.model.LikedVideoFeedItemResponseDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.baseprofile.data.FakeProfileApi
 import io.snaps.corecommon.ext.log
@@ -47,6 +46,7 @@ class FakeVideoFeedApi : VideoFeedApi {
         title = "title $it",
         description = "description $it",
         author = FakeProfileApi.getUserInfo("authorUserId$it"),
+        authorId = null,
         thumbnailUrl = "https://picsum.photos/177/222",
     )
 
@@ -96,13 +96,13 @@ class FakeVideoFeedApi : VideoFeedApi {
     override suspend fun myLikedFeed(
         @Query(value = "from") from: Uuid?,
         @Query(value = "count") count: Int,
-    ): BaseResponse<List<UserLikedVideoResponseDto>> {
+    ): BaseResponse<List<LikedVideoFeedItemResponseDto>> {
         log("Requesting liked videos: $count videos with offset $from")
         delay(mockDelay)
         return BaseResponse(
             data = List(count) {
-                UserLikedVideoResponseDto(
-                    video = UserLikedVideoItem(
+                LikedVideoFeedItemResponseDto(
+                    video = VideoFeedItemResponseDto(
                         url = rVideos.random(),
                         internalId = "${generation}video$it",
                         entityId = "${generation}video$it",
@@ -113,9 +113,8 @@ class FakeVideoFeedApi : VideoFeedApi {
                         title = "title $it",
                         description = "description $it",
                         authorId = "authorUserId$it",
+                        author = null,
                         thumbnailUrl = "https://picsum.photos/177/222",
-                        isDeleted = false,
-                        urlWithResolution = null,
                     )
                 )
             }
@@ -126,12 +125,12 @@ class FakeVideoFeedApi : VideoFeedApi {
         @Path(value = "userId") userId: Uuid?,
         @Query(value = "from") from: Uuid?,
         @Query(value = "count") count: Int
-    ): BaseResponse<List<UserLikedVideoItem>> {
+    ): BaseResponse<List<VideoFeedItemResponseDto>> {
         log("Requesting liked videos: $count videos with offset $from")
         delay(mockDelay)
         return BaseResponse(
             data = List(count) {
-                UserLikedVideoItem(
+                VideoFeedItemResponseDto(
                     url = rVideos.random(),
                     internalId = "${generation}video$it",
                     entityId = "${generation}video$it",
@@ -141,10 +140,9 @@ class FakeVideoFeedApi : VideoFeedApi {
                     likesCount = rInt,
                     title = "title $it",
                     description = "description $it",
+                    author = null,
                     authorId = "authorUserId$it",
                     thumbnailUrl = "https://picsum.photos/177/222",
-                    isDeleted = false,
-                    urlWithResolution = null,
                 )
             }
         )
@@ -162,7 +160,7 @@ class FakeVideoFeedApi : VideoFeedApi {
         ).also { generation++ }
     }
 
-    override suspend fun view(videoId: Uuid): BaseResponse<Completable> {
+    override suspend fun markWatched(videoId: Uuid): BaseResponse<Completable> {
         log("Requesting view video $videoId")
         delay(mockDelay)
         return BaseResponse(
@@ -207,7 +205,7 @@ class FakeVideoFeedApi : VideoFeedApi {
         )
     }
 
-    override suspend fun showed(videoId: Uuid): BaseResponse<Completable> {
+    override suspend fun markShown(videoId: Uuid): BaseResponse<Completable> {
         log("Requesting show video $videoId")
         delay(mockDelay)
         return BaseResponse(

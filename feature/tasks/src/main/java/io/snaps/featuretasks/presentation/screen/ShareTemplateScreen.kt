@@ -1,5 +1,6 @@
 package io.snaps.featuretasks.presentation.screen
 
+import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -7,6 +8,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.Typeface
+import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -22,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -36,6 +39,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.rememberPermissionState
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startSharePhotoIntent
 import io.snaps.corecommon.strings.StringKey
@@ -54,11 +61,13 @@ import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
+import io.snaps.featuretasks.BuildConfig
 import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.featuretasks.presentation.viewmodel.ShareTemplateViewModel
 import toTypeface
 import io.snaps.corecommon.R as commonR
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ShareTemplateScreen(
     navHostController: NavHostController,
@@ -79,10 +88,18 @@ fun ShareTemplateScreen(
         }
     }
 
+    val permissionState = rememberPermissionState(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
     ShareTemplateScreen(
         uiState = uiState,
         onBackClicked = router::back,
-        onSaveButtonClicked = viewModel::onSavePhotoButtonClicked,
+        onSaveButtonClicked = {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && permissionState.status != PermissionStatus.Granted) {
+                permissionState.launchPermissionRequest()
+            } else {
+                viewModel.onSavePhotoButtonClicked(it)
+            }
+        },
         onShareIconClicked = viewModel::onShareIconClicked,
         onPostToInstagramButtonClicked = viewModel::onPostToInstagramButtonClicked,
         onInstagramUsernameChanged = viewModel::onInstagramUsernameChanged,

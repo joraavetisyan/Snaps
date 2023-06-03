@@ -4,10 +4,10 @@
     <!--Environment.getExternalStorageDirectory()-->
     <external-path
         name="snaps/public/pics"
-        path="Pictures/SA" />
+        path="Pictures/SNAPS" />
     <external-path
         name="snaps/public/videos"
-        path="Movies/SA" />
+        path="Movies/SNAPS" />
 
     <!--Context.getExternalFilesDir(String)-->
     <external-files-path

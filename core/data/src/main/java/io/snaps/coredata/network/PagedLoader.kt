@@ -96,7 +96,7 @@ abstract class PagedLoaderFactory<K, L, T, R> where L : PagedLoader<T, R> {
 
     fun get(key: K, params: (K) -> PagedLoaderParams<T, R>): L = loadersMap.getOrPut(key) { provide(params(key)) }
 
-    fun getOrNull(key: K): L? = loadersMap[key]
+    operator fun get(key: K): L? = loadersMap[key]
 
     abstract fun provide(params: PagedLoaderParams<T, R>): L
 

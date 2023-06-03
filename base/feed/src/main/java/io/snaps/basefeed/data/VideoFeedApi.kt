@@ -2,8 +2,7 @@ package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.AddVideoResponseDto
-import io.snaps.basefeed.data.model.UserLikedVideoItem
-import io.snaps.basefeed.data.model.UserLikedVideoResponseDto
+import io.snaps.basefeed.data.model.LikedVideoFeedItemResponseDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Uuid
@@ -62,14 +61,14 @@ interface VideoFeedApi {
     suspend fun myLikedFeed(
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
-    ): BaseResponse<List<UserLikedVideoResponseDto>>
+    ): BaseResponse<List<LikedVideoFeedItemResponseDto>>
 
     @GET("v1/user/{userId}/likes")
     suspend fun likedFeed(
         @Path("userId") userId: Uuid?,
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
-    ): BaseResponse<List<UserLikedVideoItem>>
+    ): BaseResponse<List<VideoFeedItemResponseDto>>
 
     @POST("v1/video/{videoId}/like")
     suspend fun like(
@@ -77,7 +76,12 @@ interface VideoFeedApi {
     ): BaseResponse<Completable>
 
     @POST("v1/video/{videoId}/view")
-    suspend fun view(
+    suspend fun markWatched(
+        @Path("videoId") videoId: Uuid,
+    ): BaseResponse<Completable>
+
+    @POST("v1/video/{videoId}/showed")
+    suspend fun markShown(
         @Path("videoId") videoId: Uuid,
     ): BaseResponse<Completable>
 
@@ -95,11 +99,6 @@ interface VideoFeedApi {
 
     @DELETE("v1/video/{videoId}")
     suspend fun deleteVideo(
-        @Path("videoId") videoId: Uuid,
-    ): BaseResponse<Completable>
-
-    @POST("v1/video/{videoId}/showed")
-    suspend fun showed(
         @Path("videoId") videoId: Uuid,
     ): BaseResponse<Completable>
 }

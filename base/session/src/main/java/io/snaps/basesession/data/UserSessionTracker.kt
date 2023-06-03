@@ -20,7 +20,7 @@ interface UserSessionTracker {
 
     fun init(lifecycle: Lifecycle)
 
-    fun onLogin(state: State)
+    fun onLogin(state: State.Active)
 
     fun onLogout()
 
@@ -47,7 +47,7 @@ class UserSessionTrackerImpl @Inject constructor() : UserSessionTracker, Default
     private val _state = MutableStateFlow<UserSessionTracker.State>(UserSessionTracker.State.Idle)
     override val state = _state.asStateFlow()
 
-    override fun onLogin(state: UserSessionTracker.State) {
+    override fun onLogin(state: UserSessionTracker.State.Active) {
         logState(state)
         _state tryPublish state
     }

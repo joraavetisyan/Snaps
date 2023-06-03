@@ -17,7 +17,6 @@ import io.snaps.coreui.notification.NotificationHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import net.gotev.uploadservice.UploadServiceConfig
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -55,13 +54,6 @@ class SnapsApp : Application(), ApplicationCoroutineScopeHolder, ImageLoaderFact
         AnalyticsTrackerHolder.init(tracker)
 
         CryptoInitializer.initKit(this)
-
-        // todo move to wrapper with notificationHelper
-        UploadServiceConfig.initialize(
-            context = this,
-            defaultNotificationChannel = NotificationHelper.Channels.Upload.getId(this),
-            debug = buildInfo.isDebug,
-        )
     }
 
     override fun newImageLoader() = ImageLoader.Builder(this)

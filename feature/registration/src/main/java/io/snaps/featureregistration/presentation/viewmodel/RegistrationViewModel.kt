@@ -202,13 +202,9 @@ class RegistrationViewModel @Inject constructor(
 
     private suspend fun handleAuth() {
         action.execute {
-            profileRepository.updateData().doOnSuccess {
-                sessionRepository.onLogin()
-            }.doOnError { _, _ ->
-                sessionRepository.logout()
-            }.doOnComplete {
-                _command publish Command.HideBottomDialog
-            }
+            sessionRepository.tryLogin()
+        }.doOnComplete {
+            _command publish Command.HideBottomDialog
         }
     }
 

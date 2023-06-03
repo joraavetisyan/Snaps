@@ -213,7 +213,7 @@ internal val strings = mapOf(
         SupportedLanguageKey.Es to "Para comenzar a obtener una recompensa por cada acción en la aplicación, ¡elija sus primeros puntos NFT!",
     ),
     key(StringKey.OnboardingRankAction) to mapOf(
-        SupportedLanguageKey.En to "Select NFT points",
+        SupportedLanguageKey.En to "Select NFT glasses",
         SupportedLanguageKey.Ru to "Выбрать NFT очки",
         SupportedLanguageKey.Tr to "NFT noktalarını seçin",
         SupportedLanguageKey.Ua to "Виберіть точки NFT",
@@ -702,19 +702,25 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Будь ласка, запишіть ці 12 слів на аркуші паперу. Пам'ятайте про їх порядок, коли записуєте їх. Тримайте його в надійному місці.",
         SupportedLanguageKey.Es to "Por favor, escriba estas 12 palabras en un pedazo de papel. Tenga en cuenta su orden cuando los escriba. Manténgalo en un lugar seguro.",
     ),
-    key(StringKey.DeviceNotSecuredDialogTitle) to mapOf(
+    key(StringKey.WalletSecurityDialogTitle) to mapOf(
         SupportedLanguageKey.En to "Security error",
         SupportedLanguageKey.Ru to "Ошибка безопасности",
         SupportedLanguageKey.Tr to "Güvenlik hatası",
         SupportedLanguageKey.Ua to "Помилка безпеки",
         SupportedLanguageKey.Es to "Error de seguridad",
     ),
-    key(StringKey.DeviceNotSecuredDialogMessage) to mapOf(
+    key(StringKey.WalletSecurityDialogMessage) to mapOf(
+        SupportedLanguageKey.En to "Security error occured",
+    ),
+    key(StringKey.WalletSecurityDialogMessageScreenLockNotSet) to mapOf(
         SupportedLanguageKey.En to "Please set lock screen on your device to protect your seed phrase",
         SupportedLanguageKey.Ru to "Пожалуйста, установите блокировку экрана на вашем устройстве, чтобы защитить вашу исходную фразу",
         SupportedLanguageKey.Tr to "Orijinal ifadenizi korumak için lütfen cihazınızda bir ekran kilidi kurun",
         SupportedLanguageKey.Ua to "Будь ласка, встановіть блокування екрану на вашому пристрої, щоб захистити вашу вихідну фразу",
         SupportedLanguageKey.Es to "Por favor, instale el bloqueo de pantalla en su dispositivo para proteger su frase original",
+    ),
+    key(StringKey.WalletSecurityDialogMessageUserNotAuthenticatedRecently) to mapOf(
+        SupportedLanguageKey.En to "Please authenticate using your screen lock to protect your seed phrase",
     ),
     key(StringKey.VerificationTitle) to mapOf(
         SupportedLanguageKey.En to "Verification",

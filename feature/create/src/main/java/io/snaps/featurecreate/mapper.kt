@@ -79,11 +79,12 @@ private suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspend
     }
 }
 
-@SuppressLint("MissingPermission")
+@SuppressLint("MissingPermission") // withAudioEnabled, false check error, it's requested
 fun Context.startRecordingVideo(
     videoCapture: VideoCapture<Recorder>,
     consumer: Consumer<VideoRecordEvent>,
 ): Recording {
+    // todo use file manager
     val outputDirectory: File = externalCacheDirs.firstOrNull()?.let {
         File(it, "snaps").apply { mkdirs() }
     }?.takeIf(File::exists) ?: filesDir

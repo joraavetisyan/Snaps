@@ -3,13 +3,7 @@ package io.snaps.featurewalletconnect.presentation.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
-import io.snaps.basewallet.domain.ActivationException
-import io.snaps.basewallet.domain.DeviceNotSecuredException
-import io.snaps.basewallet.domain.DeviceSecurityException
-import io.snaps.basewallet.domain.WalletAcquireException
-import io.snaps.corecommon.container.textValue
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -28,10 +22,10 @@ import javax.inject.Inject
 @HiltViewModel
 class MnemonicsVerificationViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    walletSecurityErrorHandler: WalletSecurityErrorHandler,
     private val action: Action,
-    private val notificationSource: NotificationsSource,
     @Bridged private val walletRepository: WalletRepository,
-) : SimpleViewModel() {
+) : SimpleViewModel(), WalletSecurityErrorHandler by walletSecurityErrorHandler {
 
     private val args = savedStateHandle.requireArgs<AppRoute.MnemonicsVerification.Args>()
 
@@ -83,18 +77,7 @@ class MnemonicsVerificationViewModel @Inject constructor(
             walletRepository.saveLastConnectedAccount()
         }.doOnSuccess {
             _command publish Command.OpenCreatedWalletScreen
-        }.doOnError { error, _ ->
-            when (error.cause) {
-                is DeviceNotSecuredException -> _uiState.update { it.copy(dialog = Dialog.DeviceNotSecured) }
-                DeviceSecurityException -> notificationSource.sendError("Device security error".textValue())
-                ActivationException -> notificationSource.sendError("Token activation error".textValue())
-                WalletAcquireException -> notificationSource.sendError("Couldn't get wallet".textValue())
-            }
-        }
-    }
-
-    fun onDialogDismissRequested() {
-        _uiState.update { it.copy(dialog = null) }
+        }.doOnError { error, _ -> handleWalletSecurityError(error) }
     }
 
     fun onWordItemClicked(selection: SelectionUiModel, word: WordUiModel) {
@@ -140,7 +123,6 @@ class MnemonicsVerificationViewModel @Inject constructor(
     data class UiState(
         val words: List<WordUiModel> = emptyList(),
         val selections: List<SelectionUiModel> = emptyList(),
-        val dialog: Dialog? = null,
     ) {
 
         val isContinueButtonEnabled
@@ -149,10 +131,6 @@ class MnemonicsVerificationViewModel @Inject constructor(
 
     sealed class Command {
         object OpenCreatedWalletScreen : Command()
-    }
-
-    enum class Dialog {
-        DeviceNotSecured,
     }
 }
 

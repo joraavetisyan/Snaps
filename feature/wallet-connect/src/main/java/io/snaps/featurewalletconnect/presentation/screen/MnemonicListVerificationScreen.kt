@@ -33,12 +33,12 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
-import io.snaps.coreuicompose.uikit.dialog.SimpleAlertDialogUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featurewalletconnect.ScreenNavigator
 import io.snaps.featurewalletconnect.presentation.viewmodel.MnemonicsVerificationViewModel
 import io.snaps.featurewalletconnect.presentation.viewmodel.SelectionUiModel
+import io.snaps.featurewalletconnect.presentation.viewmodel.WalletSecurityErrorHandler
 import io.snaps.featurewalletconnect.presentation.viewmodel.WordUiModel
 
 @Composable
@@ -49,6 +49,7 @@ fun MnemonicListVerificationScreen(
     val viewModel = hiltViewModel<MnemonicsVerificationViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
+    val walletSecurityState by viewModel.walletSecurityState.collectAsState()
 
     viewModel.command.collectAsCommand {
         when (it) {
@@ -58,6 +59,7 @@ fun MnemonicListVerificationScreen(
 
     MnemonicListVerificationScreen(
         uiState = uiState,
+        walletSecurityState = walletSecurityState,
         onContinueButtonClicked = viewModel::onContinueButtonClicked,
         onBackClicked = router::back,
         onWordItemClicked = viewModel::onWordItemClicked,
@@ -70,6 +72,7 @@ fun MnemonicListVerificationScreen(
 @Composable
 private fun MnemonicListVerificationScreen(
     uiState: MnemonicsVerificationViewModel.UiState,
+    walletSecurityState: WalletSecurityErrorHandler.UiState,
     onContinueButtonClicked: () -> Unit,
     onBackClicked: () -> Boolean,
     onDialogDismissRequested: () -> Unit,
@@ -132,15 +135,8 @@ private fun MnemonicListVerificationScreen(
             }
         }
     }
-    when (uiState.dialog) {
-        MnemonicsVerificationViewModel.Dialog.DeviceNotSecured -> SimpleAlertDialogUi(
-            text = StringKey.DeviceNotSecuredDialogMessage.textValue(),
-            title = StringKey.DeviceNotSecuredDialogTitle.textValue(),
-            buttonText = StringKey.ActionClose.textValue(),
-            onClickRequest = onDialogDismissRequested,
-        )
-        null -> Unit
-    }
+
+    WalletSecurityDialog(uiState = walletSecurityState, onDialogDismissRequested = onDialogDismissRequested)
 }
 
 @Composable

@@ -7,6 +7,7 @@ import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.domain.EditUserInteractor
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
@@ -37,7 +38,7 @@ class CreateUserViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             profileRepository.updateData().doOnSuccess { user ->
-                _uiState.update { it.copy(nicknameValue = user.name, avatar = user.avatar) }
+                _uiState.update { it.copy(nicknameValue = user.name, avatar = user.avatarUrl?.imageValue()) }
             }
         }
     }

@@ -30,6 +30,7 @@ internal class ScreenNavigator(navHostController: NavHostController) :
         arg = AppRoute.MnemonicsVerification.Args(words),
     )
 
+    // todo must not be able to return to the previous screen
     fun toWalletConnectedScreen() = navHostController.navigate(AppRoute.WalletConnected)
 }
 

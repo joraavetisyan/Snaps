@@ -28,7 +28,7 @@ interface NotificationHelper {
 
     enum class Channels(val channelName: String, val channelDescription: String) {
         Default("Default", "Default channel"),
-        Upload("Upload", "Upload channel"),
+        Upload("Upload", "Upload channel"), // todo use in video feed uploader
         ;
 
         fun getId(context: Context) = "${context.packageName}_$name"

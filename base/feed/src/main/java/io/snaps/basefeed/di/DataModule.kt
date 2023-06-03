@@ -14,8 +14,8 @@ import io.snaps.basefeed.data.FakeCommentApi
 import io.snaps.basefeed.data.FakeVideoFeedApi
 import io.snaps.basefeed.data.UploadStatusSource
 import io.snaps.basefeed.data.UploadStatusSourceApivideoWorkManagerImpl
-import io.snaps.basefeed.data.VideFeedUploader
-import io.snaps.basefeed.data.VideFeedUploaderApivideoWorkManagerImpl
+import io.snaps.basefeed.data.VideoFeedUploader
+import io.snaps.basefeed.data.VideoFeedUploaderApivideoWorkManagerImpl
 import io.snaps.basefeed.data.VideoFeedApi
 import io.snaps.basefeed.data.VideoFeedRepository
 import io.snaps.basefeed.data.VideoFeedRepositoryImpl
@@ -62,7 +62,7 @@ internal interface SingletonDataBindModule {
 
     @Binds
     @Singleton
-    fun VideFeedUploader(bind: VideFeedUploaderApivideoWorkManagerImpl): VideFeedUploader
+    fun VideFeedUploader(bind: VideoFeedUploaderApivideoWorkManagerImpl): VideoFeedUploader
 
     @Binds
     @Singleton

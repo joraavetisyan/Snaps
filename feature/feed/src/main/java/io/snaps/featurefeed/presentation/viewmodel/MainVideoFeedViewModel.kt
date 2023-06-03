@@ -12,7 +12,6 @@ import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
-import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basesubs.data.SubsRepository
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
@@ -41,9 +40,9 @@ class MainVideoFeedViewModel @Inject constructor(
     @Bridged profileRepository: ProfileRepository,
     @Bridged commentRepository: CommentRepository,
     @Bridged subsRepository: SubsRepository,
-    featureToggle: FeatureToggle,
     private val appRouteProvider: AppRouteProvider,
 ) : VideoFeedViewModel(
+    bottomDialogBarVisibilityHandler = bottomDialogBarVisibilityHandler,
     videoFeedType = savedStateHandle.getArg<AppRoute.SingleVideo.Args>()?.videoClipId?.let {
         VideoFeedType.Single(it)
     } ?: VideoFeedType.Main,
@@ -52,8 +51,6 @@ class MainVideoFeedViewModel @Inject constructor(
     profileRepository = profileRepository,
     commentRepository = commentRepository,
     subsRepository = subsRepository,
-    bottomDialogBarVisibilityHandler = bottomDialogBarVisibilityHandler,
-    featureToggle = featureToggle,
 ), MainHeaderHandler by mainHeaderHandler, OnboardingHandler by onboardingHandler {
 
     private val args = savedStateHandle.getArg<AppRoute.SingleVideo.Args>()

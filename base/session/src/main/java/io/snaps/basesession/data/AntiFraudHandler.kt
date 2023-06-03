@@ -46,6 +46,7 @@ class AntiFraudHandlerSafetyNetImpl @Inject constructor(
         return suspendCoroutine { continuation ->
             scope.launch(ioDispatcher) {
                 if (isVerifyInProcess.get()) {
+                    // todo
                     while (continuation.context.isActive && isVerifyInProcess.get()) {
                     }
                     continuation.resume(Effect.completable)

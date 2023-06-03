@@ -107,7 +107,7 @@ class SubsRepositoryImpl @Inject constructor(
                     name = null,
                 )
             )
-            loaderFactory.getOrNull(SubType.Subscriber(toSubscribeUserId))?.refresh()
+            loaderFactory[SubType.Subscriber(toSubscribeUserId)]?.refresh()
             refreshSubscribers(null)
             refreshSubscriptions(null)
         }
@@ -120,7 +120,7 @@ class SubsRepositoryImpl @Inject constructor(
             )
         }.doOnSuccess {
             mySubscriptions = mySubscriptions?.filter { it.userId != subscriptionId }
-            loaderFactory.getOrNull(SubType.Subscriber(subscriptionId))?.refresh()
+            loaderFactory[SubType.Subscriber(subscriptionId)]?.refresh()
             refreshSubscribers(null)
             refreshSubscriptions(null)
         }

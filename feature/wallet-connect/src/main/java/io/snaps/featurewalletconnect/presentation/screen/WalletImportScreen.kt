@@ -29,7 +29,6 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
-import io.snaps.coreuicompose.uikit.dialog.SimpleAlertDialogUi
 import io.snaps.coreuicompose.uikit.duplicate.OnBackIconClick
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
@@ -37,6 +36,7 @@ import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewalletconnect.ScreenNavigator
 import io.snaps.featurewalletconnect.presentation.viewmodel.WalletImportViewModel
+import io.snaps.featurewalletconnect.presentation.viewmodel.WalletSecurityErrorHandler
 
 @Composable
 fun WalletImportScreen(
@@ -46,11 +46,13 @@ fun WalletImportScreen(
     val viewModel = hiltViewModel<WalletImportViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
+    val walletSecurityState by viewModel.walletSecurityState.collectAsState()
 
     viewModel.command.collectAsCommand {}
 
     WalletImportScreen(
         uiState = uiState,
+        walletSecurityState = walletSecurityState,
         onContinueButtonClicked = viewModel::onContinueButtonClicked,
         onPhraseValueChanged = viewModel::onPhraseValueChanged,
         onDialogDismissRequested = viewModel::onDialogDismissRequested,
@@ -65,6 +67,7 @@ fun WalletImportScreen(
 @Composable
 private fun WalletImportScreen(
     uiState: WalletImportViewModel.UiState,
+    walletSecurityState: WalletSecurityErrorHandler.UiState,
     onContinueButtonClicked: () -> Unit,
     onPhraseValueChanged: (String) -> Unit,
     onDialogDismissRequested: () -> Unit,
@@ -137,13 +140,6 @@ private fun WalletImportScreen(
             )
         }
     }
-    when (uiState.dialog) {
-        WalletImportViewModel.Dialog.DeviceNotSecured -> SimpleAlertDialogUi(
-            text = StringKey.DeviceNotSecuredDialogMessage.textValue(),
-            title = StringKey.DeviceNotSecuredDialogTitle.textValue(),
-            buttonText = StringKey.ActionClose.textValue(),
-            onClickRequest = onDialogDismissRequested,
-        )
-        null -> Unit
-    }
+
+    WalletSecurityDialog(uiState = walletSecurityState, onDialogDismissRequested = onDialogDismissRequested)
 }

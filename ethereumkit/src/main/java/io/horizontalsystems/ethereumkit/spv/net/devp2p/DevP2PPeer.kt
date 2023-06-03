@@ -10,11 +10,13 @@ import io.horizontalsystems.ethereumkit.spv.net.devp2p.messages.PingMessage
 import io.horizontalsystems.ethereumkit.spv.net.devp2p.messages.PongMessage
 import java.util.logging.Logger
 
-class DevP2PPeer(val devP2PConnection: DevP2PConnection,
-                 val capabilityHelper: CapabilityHelper,
-                 val myCapabilities: List<Capability>,
-                 val myNodeId: ByteArray,
-                 val port: Int) : DevP2PConnection.Listener {
+class DevP2PPeer(
+    val devP2PConnection: DevP2PConnection,
+    val capabilityHelper: CapabilityHelper,
+    val myCapabilities: List<Capability>,
+    val myNodeId: ByteArray,
+    val port: Int
+) : DevP2PConnection.Listener {
 
     interface Listener {
         fun didConnect()

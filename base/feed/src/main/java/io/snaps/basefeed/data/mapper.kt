@@ -1,8 +1,7 @@
 package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.CommentResponseDto
-import io.snaps.basefeed.data.model.UserLikedVideoResponseDto
-import io.snaps.basefeed.data.model.UserLikedVideoItem
+import io.snaps.basefeed.data.model.LikedVideoFeedItemResponseDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.basefeed.domain.CommentModel
 import io.snaps.basefeed.domain.VideoClipModel
@@ -14,8 +13,9 @@ import io.snaps.coredata.network.BaseResponse
 import java.time.ZonedDateTime
 
 fun List<VideoFeedItemResponseDto>.toVideoClipModelList(
-    likedVideos: List<UserLikedVideoResponseDto>,
-) = map { dto -> dto.toModel(likedVideos.find { it.video.entityId == dto.entityId } != null) }
+    isExplicitlyLiked: Boolean = false,
+    likedVideos: List<LikedVideoFeedItemResponseDto>,
+) = map { dto -> dto.toModel(isExplicitlyLiked || likedVideos.find { it.video.entityId == dto.entityId } != null) }
 
 fun VideoFeedItemResponseDto.toModel(isLiked: Boolean) = VideoClipModel(
     id = entityId,
@@ -26,40 +26,16 @@ fun VideoFeedItemResponseDto.toModel(isLiked: Boolean) = VideoClipModel(
     url = url,
     title = title,
     description = description,
-    authorId = author.userId,
-    author = author.toModel(),
+    authorId = (author?.userId ?: authorId)!!,
+    author = author?.toModel(),
     thumbnail = thumbnailUrl,
     isLiked = isLiked,
 )
 
 // Just a dummy wrapper
-fun BaseResponse<List<UserLikedVideoItem>>.toLikedFeedBaseResponse() = BaseResponse(
-    data = data?.map { UserLikedVideoResponseDto(it) },
+fun BaseResponse<List<LikedVideoFeedItemResponseDto>>.toFeedBaseResponse() = BaseResponse(
+    data = data?.map { it.video },
     isSuccess = isSuccess,
-)
-
-fun List<UserLikedVideoResponseDto>.likedFeedToVideoClipModelList(
-    isExplicitlyLiked: Boolean,
-    likedVideos: List<UserLikedVideoResponseDto>,
-) = map { dto ->
-    dto.video.toModel(
-        isLiked = isExplicitlyLiked || likedVideos.find { it.video.entityId == dto.video.entityId } != null
-    )
-}
-
-fun UserLikedVideoItem.toModel(isLiked: Boolean) = VideoClipModel(
-    id = entityId,
-    createdDate = createdDate,
-    viewCount = viewsCount,
-    commentCount = commentsCount,
-    likeCount = likesCount,
-    url = url,
-    title = title,
-    description = description,
-    authorId = authorId,
-    author = null,
-    thumbnail = thumbnailUrl,
-    isLiked = isLiked,
 )
 
 suspend fun List<CommentResponseDto>.toCommentModelList(

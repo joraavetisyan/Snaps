@@ -10,7 +10,6 @@ import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
-import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basesubs.data.SubsRepository
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
@@ -46,7 +45,6 @@ abstract class VideoFeedViewModel(
     @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val commentRepository: CommentRepository,
     @Bridged private val subsRepository: SubsRepository,
-    private val featureToggle: FeatureToggle,
     val startPosition: Int = 0,
 ) : SimpleViewModel(),
     BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandler {
@@ -215,16 +213,20 @@ abstract class VideoFeedViewModel(
         }
     }
 
-    fun onVideoClipStartedPlaying(clipModel: VideoClipModel) = viewModelScope.launch {
-        action.execute(needsErrorProcessing = false) {
-            videoFeedRepository.markShowed(clipModel.id)
+    fun onVideoClipStartedPlaying(clipModel: VideoClipModel) {
+        viewModelScope.launch {
+            action.execute(needsErrorProcessing = false) {
+                videoFeedRepository.markShown(clipModel.id)
+            }
         }
     }
 
-    fun onLikeClicked(clipModel: VideoClipModel) = viewModelScope.launch {
-        likeVideoClip(clipModel)
-        action.execute {
-            videoFeedRepository.like(clipModel.id)
+    fun onLikeClicked(clipModel: VideoClipModel) {
+        viewModelScope.launch {
+            likeVideoClip(clipModel)
+            action.execute {
+                videoFeedRepository.like(clipModel.id)
+            }
         }
     }
 
@@ -355,7 +357,7 @@ abstract class VideoFeedViewModel(
         val video = currentVideo ?: return
         viewModelScope.launch {
             action.execute {
-                videoFeedRepository.deleteVideo(video.id)
+                videoFeedRepository.delete(video.id)
             }.doOnSuccess {
                 _uiState.update {
                     it.copy(dialog = null)

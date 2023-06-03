@@ -70,8 +70,6 @@ object Libs {
 
     private const val barcodeVersion = "4.3.0"
 
-    private const val uploadServiceVersion = "4.7.0"
-
     private const val videoCompressorVersion = "1.2.3"
 
     private const val apivideoVersion = "1.3.2"
@@ -265,11 +263,6 @@ object Libs {
         )
 
         const val barcode = "com.journeyapps:zxing-android-embedded:$barcodeVersion"
-
-        val uploadService = arrayOf(
-            "net.gotev:uploadservice:$uploadServiceVersion",
-            "net.gotev:uploadservice-okhttp:$uploadServiceVersion",
-        )
 
         val videoCompressor = arrayOf(
             "com.github.AbedElazizShe:LightCompressor:$videoCompressorVersion",

@@ -7,7 +7,6 @@ import io.horizontalsystems.ethereumkit.spv.net.IOutMessage
 import io.horizontalsystems.ethereumkit.spv.net.devp2p.Capability
 import io.horizontalsystems.ethereumkit.spv.rlp.RLP
 import io.horizontalsystems.ethereumkit.spv.rlp.RLPList
-import java.util.*
 
 class HelloMessage : IInMessage, IOutMessage {
     var nodeId: ByteArray = byteArrayOf()
@@ -60,8 +59,9 @@ class HelloMessage : IInMessage, IOutMessage {
         for (i in this.capabilities.indices) {
             val capability = this.capabilities[i]
             capabilities[i] = RLP.encodeList(
-                    RLP.encodeElement(capability.name.toByteArray()),
-                    RLP.encodeInt(capability.version.toInt()))
+                RLP.encodeElement(capability.name.toByteArray()),
+                RLP.encodeInt(capability.version.toInt())
+            )
         }
         val capabilityList = RLP.encodeList(*capabilities.mapNotNull { it }.toTypedArray())
 
@@ -73,7 +73,7 @@ class HelloMessage : IInMessage, IOutMessage {
 
     override fun toString(): String {
         return "Hello [version: $p2pVersion; clientId: $clientId; " +
-                "capabilities: ${capabilities.joinToString { "${it.name}/${it.version}" }}; " +
-                "nodeId: ${nodeId.toHexString()}; port: $port]"
+            "capabilities: ${capabilities.joinToString { "${it.name}/${it.version}" }}; " +
+            "nodeId: ${nodeId.toHexString()}; port: $port]"
     }
 }

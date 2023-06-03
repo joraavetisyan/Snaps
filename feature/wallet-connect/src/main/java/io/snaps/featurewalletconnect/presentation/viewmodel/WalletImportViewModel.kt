@@ -5,7 +5,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.basewallet.data.WalletRepository
-import io.snaps.basewallet.domain.DeviceNotSecuredException
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -19,11 +18,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WalletImportViewModel @Inject constructor(
+    walletSecurityErrorHandler: WalletSecurityErrorHandler,
     @Bridged private val walletRepository: WalletRepository,
     @Bridged private val profileRepository: ProfileRepository,
     private val sessionRepository: SessionRepository,
     private val action: Action,
-) : SimpleViewModel() {
+) : SimpleViewModel(), WalletSecurityErrorHandler by walletSecurityErrorHandler {
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -46,17 +46,11 @@ class WalletImportViewModel @Inject constructor(
                         sessionRepository.onWalletConnected()
                     }
             }.doOnError { error, _ ->
-                if (error.cause is DeviceNotSecuredException) {
-                    _uiState.update { it.copy(dialog = Dialog.DeviceNotSecured, isLoading = false) }
-                } else {
-                    _uiState.update { it.copy(isLoading = false) }
-                }
+                handleWalletSecurityError(error)
+            }.doOnComplete {
+                _uiState.update { it.copy(isLoading = false) }
             }
         }
-    }
-
-    fun onDialogDismissRequested() {
-        _uiState.update { it.copy(dialog = null) }
     }
 
     fun onPhraseValueChanged(phrase: String) {
@@ -66,14 +60,9 @@ class WalletImportViewModel @Inject constructor(
     data class UiState(
         val isLoading: Boolean = false,
         val words: String = "",
-        val dialog: Dialog? = null,
     ) {
 
         val isContinueEnabled get() = words.isNotBlank()
-    }
-
-    enum class Dialog {
-        DeviceNotSecured,
     }
 
     sealed interface Command

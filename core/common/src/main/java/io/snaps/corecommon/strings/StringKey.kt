@@ -139,8 +139,10 @@ enum class StringKey {
     MnemonicsTitle,
     MnemonicsMessage,
 
-    DeviceNotSecuredDialogTitle,
-    DeviceNotSecuredDialogMessage,
+    WalletSecurityDialogTitle,
+    WalletSecurityDialogMessage,
+    WalletSecurityDialogMessageScreenLockNotSet,
+    WalletSecurityDialogMessageUserNotAuthenticatedRecently,
 
     VerificationTitle,
     VerificationMessage,

@@ -39,7 +39,7 @@ class AppViewModel @AssistedInject constructor(
 
     private fun checkStatus() {
         viewModelScope.launch {
-            sessionRepository.checkStatus()
+            sessionRepository.tryStatusCheck()
         }
     }
 

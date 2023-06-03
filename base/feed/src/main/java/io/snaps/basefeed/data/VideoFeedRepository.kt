@@ -1,7 +1,7 @@
 package io.snaps.basefeed.data
 
 import io.snaps.basefeed.data.model.AddVideoRequestDto
-import io.snaps.basefeed.data.model.UserLikedVideoResponseDto
+import io.snaps.basefeed.data.model.LikedVideoFeedItemResponseDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.domain.VideoClipModel
@@ -24,124 +24,101 @@ interface VideoFeedRepository {
 
     suspend fun loadNextFeedPage(feedType: VideoFeedType): Effect<Completable>
 
-    suspend fun markWatched(videoId: Uuid): Effect<Completable>
+    /**
+     * returns: upload id to track the progress
+     */
+    suspend fun upload(title: String, fileId: Uuid, file: String): Effect<Uuid>
+
+    suspend fun delete(videoId: Uuid): Effect<Completable>
 
     suspend fun like(videoId: Uuid): Effect<Completable>
 
-    suspend fun uploadVideo(
-        title: String,
-        fileId: Uuid,
-        file: String,
-    ): Effect<Uuid>
+    suspend fun markShown(videoId: Uuid): Effect<Completable>
 
-    suspend fun deleteVideo(videoId: Uuid): Effect<Completable>
-
-    suspend fun markShowed(videoId: Uuid): Effect<Completable>
+    suspend fun markWatched(videoId: Uuid): Effect<Completable>
 }
 
 class VideoFeedRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val videoFeedApi: VideoFeedApi,
     private val loaderFactory: VideoFeedLoaderFactory,
-    private val likedFeedLoaderFactory: UserLikedVideoFeedLoaderFactory,
-    private val videFeedUploader: VideFeedUploader,
+    private val videoFeedUploader: VideoFeedUploader,
 ) : VideoFeedRepository {
 
-    private var likedVideos: List<UserLikedVideoResponseDto>? = null
+    private var _likedVideos: List<LikedVideoFeedItemResponseDto>? = null
 
-    private fun getLoader(videoFeedType: VideoFeedType): PagedLoader<*, VideoClipModel> {
-        return when (videoFeedType) {
-            is VideoFeedType.Liked -> when (videoFeedType.userId) {
-                null -> likedFeedLoaderFactory.get(videoFeedType) {
-                    PagedLoaderParams(
-                        action = { from, count -> videoFeedApi.myLikedFeed(from = from, count = count) },
-                        pageSize = 50,
-                        nextPageIdFactory = { it.video.entityId },
-                        mapper = {
-                            it.likedFeedToVideoClipModelList(isExplicitlyLiked = true, likedVideos = emptyList())
-                        },
-                    )
-                }
-                else -> likedFeedLoaderFactory.get(videoFeedType) {
-                    PagedLoaderParams(
-                        action = { from, count ->
-                            videoFeedApi
-                                .likedFeed(userId = videoFeedType.userId, from = from, count = count)
-                                .toLikedFeedBaseResponse()
-                        },
-                        pageSize = 50,
-                        nextPageIdFactory = { it.video.entityId },
-                        mapper = {
-                            it.likedFeedToVideoClipModelList(
-                                isExplicitlyLiked = false, likedVideos = getLikedVideos()
-                            )
-                        },
-                    )
-                }
-            }
-            else -> loaderFactory.get(videoFeedType) { type ->
-                when (type) {
-                    VideoFeedType.Main -> PagedLoaderParams(
-                        action = { from, count -> videoFeedApi.feed(from, count) },
-                        pageSize = 20,
-                        nextPageIdFactory = { it.entityId },
-                        mapper = { it.toVideoClipModelList(getLikedVideos()) },
-                    )
-                    VideoFeedType.Subscriptions -> PagedLoaderParams(
-                        action = { from, count -> videoFeedApi.subscriptionFeed(from, count) },
-                        pageSize = 5,
-                        nextPageIdFactory = { it.entityId },
-                        mapper = { it.toVideoClipModelList(getLikedVideos()) },
-                    )
-                    is VideoFeedType.Single -> PagedLoaderParams(
-                        action = { _, _ -> videoFeedApi.feed(type.videoId, 1) },
-                        pageSize = 1,
-                        nextPageIdFactory = { null },
-                        mapper = { it.toVideoClipModelList(getLikedVideos()) },
-                    )
-                    is VideoFeedType.Popular -> PagedLoaderParams(
-                        action = { from, count -> videoFeedApi.popularFeed(from, count) },
-                        pageSize = 50,
-                        nextPageIdFactory = { it.entityId },
-                        mapper = { it.toVideoClipModelList(getLikedVideos()) },
-                    )
-                    is VideoFeedType.User -> PagedLoaderParams(
-                        action = { from, count ->
-                            if (type.userId != null) {
-                                videoFeedApi.userFeed(userId = type.userId, from = from, count = count)
-                            } else {
-                                videoFeedApi.myFeed(from = from, count = count)
-                            }
-                        },
-                        pageSize = 50,
-                        nextPageIdFactory = { it.entityId },
-                        mapper = { it.toVideoClipModelList(getLikedVideos()) },
-                    )
-                    is VideoFeedType.Search -> PagedLoaderParams(
-                        action = { from, count ->
-                            videoFeedApi.searchFeed(
-                                query = type.query,
-                                from = from,
-                                count = count
-                            )
-                        },
-                        pageSize = 50,
-                        nextPageIdFactory = { it.entityId },
-                        mapper = { it.toVideoClipModelList(getLikedVideos()) },
-                    )
-                    is VideoFeedType.Liked -> throw IllegalStateException("Wrong handle place!")
-                }
-            }
-        }
-    }
-
-    private suspend fun getLikedVideos(): List<UserLikedVideoResponseDto> {
-        return likedVideos ?: apiCall(ioDispatcher) {
+    private suspend fun getLikedVideos(): List<LikedVideoFeedItemResponseDto> {
+        return _likedVideos ?: apiCall(ioDispatcher) {
             // todo better way once back supports
             videoFeedApi.myLikedFeed(null, 1000)
         }.doOnSuccess {
-            likedVideos = it
+            _likedVideos = it
         }.dataOrCache ?: emptyList()
+    }
+
+    private fun getLoader(videoFeedType: VideoFeedType): PagedLoader<*, VideoClipModel> {
+        return loaderFactory.get(videoFeedType) { type ->
+            when (type) {
+                VideoFeedType.Main -> PagedLoaderParams(
+                    action = { from, count -> videoFeedApi.feed(from = from, count = count) },
+                    pageSize = 20,
+                    nextPageIdFactory = { it.entityId },
+                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos()) },
+                )
+                VideoFeedType.Subscriptions -> PagedLoaderParams(
+                    action = { from, count -> videoFeedApi.subscriptionFeed(from = from, count = count) },
+                    pageSize = 5,
+                    nextPageIdFactory = { it.entityId },
+                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos()) },
+                )
+                is VideoFeedType.Single -> PagedLoaderParams(
+                    action = { _, _ -> videoFeedApi.feed(from = type.videoId, count = 1) },
+                    pageSize = 1,
+                    nextPageIdFactory = { null },
+                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos()) },
+                )
+                is VideoFeedType.Popular -> PagedLoaderParams(
+                    action = { from, count -> videoFeedApi.popularFeed(from = from, count = count) },
+                    pageSize = 50,
+                    nextPageIdFactory = { it.entityId },
+                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos()) },
+                )
+                is VideoFeedType.User -> PagedLoaderParams(
+                    action = { from, count ->
+                        if (type.userId != null) {
+                            videoFeedApi.userFeed(userId = type.userId, from = from, count = count)
+                        } else {
+                            videoFeedApi.myFeed(from = from, count = count)
+                        }
+                    },
+                    pageSize = 50,
+                    nextPageIdFactory = { it.entityId },
+                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos()) },
+                )
+                is VideoFeedType.Search -> PagedLoaderParams(
+                    action = { from, count ->
+                        videoFeedApi.searchFeed(query = type.query, from = from, count = count)
+                    },
+                    pageSize = 50,
+                    nextPageIdFactory = { it.entityId },
+                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos()) },
+                )
+                is VideoFeedType.Liked -> PagedLoaderParams(
+                    action = { from, count ->
+                        if (type.userId == null) {
+                            videoFeedApi.myLikedFeed(from = from, count = count).toFeedBaseResponse()
+                        } else {
+                            videoFeedApi.likedFeed(userId = type.userId, from = from, count = count)
+                        }
+                    },
+                    pageSize = 50,
+                    nextPageIdFactory = { it.entityId },
+                    mapper = {
+                        it.toVideoClipModelList(isExplicitlyLiked = type.userId == null, likedVideos = getLikedVideos())
+                    },
+                )
+            }
+        }
     }
 
     override fun getFeedState(feedType: VideoFeedType): StateFlow<VideoFeedPageModel> =
@@ -153,35 +130,27 @@ class VideoFeedRepositoryImpl @Inject constructor(
     override suspend fun loadNextFeedPage(feedType: VideoFeedType): Effect<Completable> =
         getLoader(feedType).loadNext()
 
-    override suspend fun markWatched(videoId: Uuid): Effect<Completable> {
-        return apiCall(ioDispatcher) {
-            videoFeedApi.view(videoId)
-        }
-    }
-
     override suspend fun like(videoId: Uuid): Effect<Completable> {
-        return apiCall(ioDispatcher) {
-            videoFeedApi.like(videoId)
-        }
+        return apiCall(ioDispatcher) { videoFeedApi.like(videoId = videoId) }
     }
 
-    override suspend fun uploadVideo(title: String, fileId: Uuid, file: String): Effect<Uuid> {
+    override suspend fun markWatched(videoId: Uuid): Effect<Completable> {
+        return apiCall(ioDispatcher) { videoFeedApi.markWatched(videoId = videoId) }
+    }
+
+    override suspend fun markShown(videoId: Uuid): Effect<Completable> {
+        return apiCall(ioDispatcher) { videoFeedApi.markShown(videoId = videoId) }
+    }
+
+    override suspend fun upload(title: String, fileId: Uuid, file: String): Effect<Uuid> {
         return apiCall(ioDispatcher) {
             videoFeedApi.addVideo(AddVideoRequestDto(title = title, description = title, thumbnailFileId = fileId))
         }.flatMap {
-            videFeedUploader.upload(videoId = it.internalId, filePath = file)
+            videoFeedUploader.upload(videoId = it.internalId, filePath = file)
         }
     }
 
-    override suspend fun deleteVideo(videoId: Uuid): Effect<Completable> {
-        return apiCall(ioDispatcher) {
-            videoFeedApi.deleteVideo(videoId)
-        }
-    }
-
-    override suspend fun markShowed(videoId: Uuid): Effect<Completable> {
-        return apiCall(ioDispatcher) {
-            videoFeedApi.showed(videoId)
-        }
+    override suspend fun delete(videoId: Uuid): Effect<Completable> {
+        return apiCall(ioDispatcher) { videoFeedApi.deleteVideo(videoId = videoId) }
     }
 }

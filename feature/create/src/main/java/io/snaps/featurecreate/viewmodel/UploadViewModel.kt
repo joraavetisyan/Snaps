@@ -155,7 +155,7 @@ class UploadViewModel @Inject constructor(
 
     private suspend fun uploadVideo(fileModel: FileModel, filePath: String) {
         action.execute {
-            videoFeedRepository.uploadVideo(
+            videoFeedRepository.upload(
                 title = _uiState.value.titleValue.trim(),
                 fileId = fileModel.id,
                 file = filePath,

@@ -19,5 +19,6 @@ data class VideoFeedItemResponseDto(
     @SerialName("thumbnailUrl") val thumbnailUrl: FullUrl?,
     @SerialName("title") val title: String,
     @SerialName("description") val description: String?,
-    @SerialName("author") val author: UserInfoResponseDto,
+    @SerialName("author") val author: UserInfoResponseDto?, // null for liked feed
+    @SerialName("authorUserId") val authorId: Uuid?, // null for other feeds
 )

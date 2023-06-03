@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AddVideoResponseDto(
-    @SerialName("internalId") val internalId: Uuid,
+    @SerialName("internalId") val internalId: Uuid, // using internalId instead of entityId on purpose
 )

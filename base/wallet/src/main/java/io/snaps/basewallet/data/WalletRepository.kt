@@ -1,5 +1,7 @@
 package io.snaps.basewallet.data
 
+import android.security.keystore.KeyPermanentlyInvalidatedException
+import android.security.keystore.UserNotAuthenticatedException
 import io.horizontalsystems.ethereumkit.models.Address
 import io.horizontalsystems.marketkit.models.Blockchain
 import io.horizontalsystems.marketkit.models.BlockchainType
@@ -12,12 +14,11 @@ import io.snaps.basewallet.data.model.PayoutOrderRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
 import io.snaps.basewallet.data.model.RefillGasRequestDto
 import io.snaps.basewallet.data.model.WalletSaveRequestDto
-import io.snaps.basewallet.domain.ActivationException
-import io.snaps.basewallet.domain.SnpsAccountModel
 import io.snaps.basewallet.domain.DeviceNotSecuredException
-import io.snaps.basewallet.domain.DeviceSecurityException
+import io.snaps.basewallet.domain.SnpsAccountModel
+import io.snaps.basewallet.domain.ScreenLockNotSetException
 import io.snaps.basewallet.domain.TotalBalanceModel
-import io.snaps.basewallet.domain.WalletAcquireException
+import io.snaps.basewallet.domain.UserNotAuthenticatedRecentlyException
 import io.snaps.basewallet.domain.WalletModel
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.logE
@@ -68,6 +69,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import java.security.GeneralSecurityException
 import java.security.InvalidAlgorithmParameterException
 import javax.inject.Inject
 
@@ -255,26 +257,23 @@ class WalletRepositoryImpl @Inject constructor(
             accountManager.save(account)
         } catch (e: InvalidAlgorithmParameterException) {
             if (e.message == messageNotSecured) {
-                return Effect.error(AppError.Custom(cause = DeviceNotSecuredException))
+                return Effect.error(AppError.Custom(cause = ScreenLockNotSetException(e)))
             }
-            return Effect.error(AppError.Custom(cause = DeviceSecurityException))
+            return Effect.error(AppError.Custom(cause = DeviceNotSecuredException(e)))
+        } catch (e: KeyPermanentlyInvalidatedException) {
+            return Effect.error(AppError.Custom(cause = ScreenLockNotSetException(e)))
+        } catch (e: UserNotAuthenticatedException) {
+            return Effect.error(AppError.Custom(cause = UserNotAuthenticatedRecentlyException(e)))
+        } catch (e: GeneralSecurityException) {
+            return Effect.error(AppError.Custom(cause = DeviceNotSecuredException(e)))
         }
-        // todo tmp try/catches to understand the origin of account save error, to be removed once fixed
-        try {
-            activateDefaultTokens(account)
-        } catch (e: Exception) {
-            return Effect.error(AppError.Custom(cause = ActivationException))
-        }
+        activateDefaultTokens(account)
         // fixme better way
         var address: CryptoAddress?
-        try {
+        address = getActiveWalletReceiveAddress()
+        while (address == null) {
+            delay(200)
             address = getActiveWalletReceiveAddress()
-            while (address == null) {
-                delay(200)
-                address = getActiveWalletReceiveAddress()
-            }
-        } catch (e: Exception) {
-            return Effect.error(AppError.Custom(cause = WalletAcquireException))
         }
         return apiCall(ioDispatcher) {
             walletApi.save(WalletSaveRequestDto(address = address))

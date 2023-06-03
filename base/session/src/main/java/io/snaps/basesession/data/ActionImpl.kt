@@ -38,7 +38,7 @@ class ActionImpl @Inject constructor(
                 var effect = block()
                 val code = effect.errorOrNull?.code
                 if (code == HttpURLConnection.HTTP_UNAUTHORIZED && needsTokenExpireProcessing) {
-                    if (sessionRepository.refresh().data == true) {
+                    if (sessionRepository.tryRefresh().isSuccess) {
                         effect = block()
                     }
                 } else if (code == 429 && needsFraudProcessing) {
@@ -78,6 +78,9 @@ class ActionImpl @Inject constructor(
             is AppError.Custom -> when (error.code) {
                 HttpURLConnection.HTTP_UNAUTHORIZED -> {
                     sessionRepository.logout()
+                    notificationsSource.sendError(error)
+                }
+                HttpURLConnection.HTTP_INTERNAL_ERROR -> {
                     notificationsSource.sendError(error)
                 }
                 else -> {}
