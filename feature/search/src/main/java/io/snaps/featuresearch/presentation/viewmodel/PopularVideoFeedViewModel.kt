@@ -26,7 +26,7 @@ class PopularVideoFeedViewModel @Inject constructor(
     bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
 ) : VideoFeedViewModel(
     bottomDialogBarVisibilityHandler = bottomDialogBarVisibilityHandler,
-    videoFeedType = savedStateHandle.requireArgs<AppRoute.PopularVideoFeed.Args>().query.let {
+    videoFeedType = savedStateHandle.args().query.let {
         if (it.isBlank()) VideoFeedType.Popular else VideoFeedType.Search(it)
     },
     action = action,
@@ -34,5 +34,7 @@ class PopularVideoFeedViewModel @Inject constructor(
     profileRepository = profileRepository,
     commentRepository = commentRepository,
     subsRepository = subsRepository,
-    startPosition = savedStateHandle.requireArgs<AppRoute.PopularVideoFeed.Args>().position,
+    startPosition = savedStateHandle.args().position,
 )
+
+private fun SavedStateHandle.args() = requireArgs<AppRoute.PopularVideoFeed.Args>()

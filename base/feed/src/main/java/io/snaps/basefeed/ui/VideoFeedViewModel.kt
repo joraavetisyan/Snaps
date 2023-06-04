@@ -62,7 +62,7 @@ abstract class VideoFeedViewModel(
     private var isLoaded: Boolean = false // to track load for the first item
     private var isRefreshed: Boolean = true
     private var currentVideo: VideoClipModel? = null
-    private var videoFeedPageModel: VideoFeedPageModel? = null
+    private var videoFeedPageModel: VideoFeedPageModel? = null // todo remove
     private val videoClipsBeingMarkedAsWatched = hashSetOf<Uuid>()
 
     init {

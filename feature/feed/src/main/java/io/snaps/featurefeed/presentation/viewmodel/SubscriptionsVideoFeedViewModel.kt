@@ -13,6 +13,7 @@ import io.snaps.basesubs.data.SubsRepository
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -44,6 +45,7 @@ class SubscriptionsVideoFeedViewModel @Inject constructor(
     private fun subscribeOnMenuRouteState() {
         appRouteProvider.menuRouteState
             .filter { it == AppRoute.MainBottomBar.MainTab1Start.pattern }
+            .drop(1) // it's already loaded on first open
             .onEach { onReloadClicked() }
             .launchIn(viewModelScope)
     }

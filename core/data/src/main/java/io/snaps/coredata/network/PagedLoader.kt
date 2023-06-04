@@ -50,6 +50,7 @@ abstract class PagedLoader<T, R>(
 
     suspend fun refresh(): Effect<Completable> {
         log("refresh")
+        if (_state.value.isLoading) return Effect.completable
         _state.update { initialPageModel }
         return action.execute { load() }
     }

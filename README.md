@@ -5,8 +5,8 @@
 Add two fields to local.properties:
 
 + gpr.user=your github nickname
-+ gpr.key=your authorization token (add it in github settings https://github.com/settings/tokens (
-  can be expiring) and with the `read:packages` rights) - this is necessary for the trust wallet
++ gpr.key=your authorization token (add it in github settings https://github.com/settings/tokens
+  (can be expiring) and with the `read:packages` rights) - this is necessary for the trust wallet
   core library to fetch
 
 ## About
@@ -63,10 +63,13 @@ Access to the Tracker object is through [AnalyticsTrackerHolder].
 + [Effect] (like Result in Kotlin for results of operations)
 + [CacheProvider] (with two implementations)
 + [ApiConfig] (for build retrofit instances)
-+ [apiCall](...) and [cachedApiCall](...) (for network requests)
++ [apiCall] and [cachedApiCall] (for network requests)
 + [NotificationHelper]
 + Navigation extensions (in nav_ext.kt)
 + and many other extensions for some routine
+
+#### Version Control
++ If building for a store, merge to master and create a tag vX.X.X, push the tag to remote
 
 #### Dependency injection
 
