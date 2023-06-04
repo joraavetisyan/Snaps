@@ -1,20 +1,22 @@
 package io.snaps.basesession.data
 
 import com.google.firebase.auth.FirebaseAuth
-import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.baseprofile.data.ProfileApi
 import io.snaps.basesources.DeviceInfoProvider
-import io.snaps.basewallet.data.WalletRepository
+import io.snaps.basewallet.data.WalletDataManager
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
+import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.LogOutReason
 import io.snaps.coredata.database.TokenStorage
 import io.snaps.coredata.database.UserDataStorage
-import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.di.UserSessionComponentManager
+import io.snaps.coredata.network.apiCall
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -42,14 +44,15 @@ interface SessionRepository {
 
 class SessionRepositoryImpl @Inject constructor(
     @ApplicationCoroutineScope private val scope: CoroutineScope,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val userSessionComponentManager: UserSessionComponentManager,
     private val userSessionTracker: UserSessionTracker,
     private val tokenStorage: TokenStorage,
     private val userDataStorage: UserDataStorage,
     private val deviceInfoProvider: DeviceInfoProvider,
     private val auth: FirebaseAuth,
-    @Bridged private val profileRepository: ProfileRepository,
-    @Bridged private val walletRepository: WalletRepository,
+    private val profileApi: ProfileApi,
+    private val walletDataManager: WalletDataManager,
 ) : SessionRepository {
 
     override fun isOnboardingShown(type: OnboardingType): Boolean {
@@ -69,12 +72,14 @@ class SessionRepositoryImpl @Inject constructor(
     }
 
     private suspend fun checkStatus(userId: Uuid): Effect<Completable> {
-        suspend fun check() = profileRepository.updateData().doOnSuccess { user ->
+        suspend fun check() = apiCall(ioDispatcher) {
+            profileApi.userInfo()
+        }.doOnSuccess { user ->
             when {
-                walletRepository.hasAccount(userId) -> if (!(user.name.isBlank() || user.avatarUrl == null)) {
-                    userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
-                } else {
+                walletDataManager.hasAccount(userId) -> if (user.name.isNullOrBlank() || user.avatarUrl == null) {
                     userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsInitialization)
+                } else {
+                    userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
                 }
                 else -> userSessionTracker.onLogin(
                     if (user.wallet == null) UserSessionTracker.State.Active.NeedsWalletConnect
@@ -99,9 +104,7 @@ class SessionRepositoryImpl @Inject constructor(
     override suspend fun tryLogin(): Effect<Completable> {
         val userId = auth.currentUser?.uid
         if (userId != null) {
-            if (walletRepository.hasAccount(userId)) {
-                walletRepository.clear(userId)
-            }
+            walletDataManager.clear(userId)
             return checkStatus(userId)
         }
 
@@ -138,7 +141,7 @@ class SessionRepositoryImpl @Inject constructor(
 
     private fun clearData(reason: LogOutReason?) {
         auth.currentUser?.uid?.let {
-            walletRepository.clear(it)
+            walletDataManager.clear(it)
         }
         auth.signOut()
         scope.launch {
@@ -146,7 +149,7 @@ class SessionRepositoryImpl @Inject constructor(
             tokenStorage.reset()
             userDataStorage.reset(reason)
             userSessionTracker.onLogout()
+            userSessionComponentManager.onUserLoggedOut()
         }
-        userSessionComponentManager.onUserLoggedOut()
     }
 }

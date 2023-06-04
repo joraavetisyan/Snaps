@@ -32,7 +32,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BottomBarViewModel @Inject constructor(
-    onboardingHandler: OnboardingHandler,
+    @Bridged onboardingHandler: OnboardingHandler,
     bottomBarVisibilitySource: BottomBarVisibilitySource,
     private val appRouteProvider: AppRouteProvider,
     private val appUpdateProvider: AppUpdateProvider,

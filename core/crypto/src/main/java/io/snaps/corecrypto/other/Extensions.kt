@@ -6,7 +6,8 @@ import io.horizontalsystems.marketkit.models.CoinCategory
 import io.horizontalsystems.marketkit.models.CoinInvestment
 import io.horizontalsystems.marketkit.models.CoinTreasury
 import io.horizontalsystems.marketkit.models.FullCoin
-import java.util.*
+import java.util.Locale
+import java.util.Optional
 
 val <T> Optional<T>.orNull: T?
     get() = when {

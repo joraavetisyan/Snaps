@@ -2,7 +2,7 @@ package io.snaps.corecrypto.other
 
 import android.app.Application
 import io.snaps.corecrypto.core.security.KeyStoreValidationResult
-import java.util.*
+import java.util.Date
 import javax.crypto.SecretKey
 
 interface ICoreApp {

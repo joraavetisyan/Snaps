@@ -38,7 +38,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     @Bridged mainHeaderHandler: MainHeaderHandler,
-    onboardingHandler: OnboardingHandler,
+    @Bridged onboardingHandler: OnboardingHandler,
     @Bridged private val videoFeedRepository: VideoFeedRepository,
     @Bridged private val profileRepository: ProfileRepository,
     private val action: Action,

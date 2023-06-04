@@ -3,7 +3,7 @@ package io.snaps.corecrypto.core.managers
 import io.snaps.corecrypto.core.ILocalStorage
 import io.snaps.corecrypto.entities.AppVersion
 import io.snaps.corecrypto.other.ISystemInfoManager
-import java.util.*
+import java.util.Date
 
 class AppVersionManager(
     private val systemInfoManager: ISystemInfoManager,

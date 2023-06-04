@@ -325,7 +325,7 @@ private fun ActionButtons(
                 }
             }
         } else {
-            if (uiState.isPurchasableWithGooglePlay) {
+            if (uiState.isPurchasableInStore) {
                 SimpleButtonDefaultM(
                     modifier = Modifier
                         .fillMaxWidth()

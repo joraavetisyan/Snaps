@@ -42,7 +42,7 @@ enum class TxType {
     SetAccountFlag
 }
 
-enum class MessageType private constructor(typePrefix: String?) {
+enum class MessageType(typePrefix: String?) {
 
     Send("2A2C87FA"),
     NewOrder("CE6DC043"),

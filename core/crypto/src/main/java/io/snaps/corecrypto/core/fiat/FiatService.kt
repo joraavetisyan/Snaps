@@ -16,7 +16,7 @@ import io.snaps.corecrypto.entities.CurrencyValue
 import io.snaps.corecrypto.other.SendModule
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.*
+import java.util.Optional
 
 class FiatService(
     private val switchService: AmountTypeSwitchService,

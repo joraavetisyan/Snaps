@@ -3,7 +3,7 @@ package io.snaps.corecrypto.entities
 import android.os.Parcelable
 import io.horizontalsystems.marketkit.models.Token
 import kotlinx.parcelize.Parcelize
-import java.util.*
+import java.util.Objects
 
 @Parcelize
 data class ConfiguredToken(

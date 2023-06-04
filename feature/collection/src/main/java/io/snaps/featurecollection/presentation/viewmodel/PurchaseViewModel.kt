@@ -104,7 +104,7 @@ class PurchaseViewModel @Inject constructor(
             isPurchasableWithBnb = model.type != NftType.Free && featureToggle.isEnabled(Feature.PurchaseNftWithBnb),
             prevNftImage = prevNftImage,
             isPurchasableForFree = model.type == NftType.Free && !isFreePurchased,
-            isPurchasableWithGooglePlay = model.type != NftType.Free && featureToggle.isEnabled(Feature.PurchaseNftWithGooglePlay)
+            isPurchasableInStore = model.type != NftType.Free && featureToggle.isEnabled(Feature.PurchaseNftInStore)
         )
     }
 
@@ -263,7 +263,7 @@ class PurchaseViewModel @Inject constructor(
         val isPurchasable: Boolean,
         val isPurchasableWithBnb: Boolean,
         val isPurchasableForFree: Boolean,
-        val isPurchasableWithGooglePlay: Boolean,
+        val isPurchasableInStore: Boolean,
         val bottomDialog: BottomDialog? = null,
     )
 

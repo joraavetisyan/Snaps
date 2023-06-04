@@ -8,7 +8,7 @@ import io.horizontalsystems.marketkit.models.BlockchainType
 import io.snaps.corecrypto.core.CryptoKit
 import io.snaps.corecrypto.entities.nft.NftUid
 import java.math.BigDecimal
-import java.util.*
+import java.util.Date
 
 class DatabaseConverters {
 

@@ -5,7 +5,7 @@ import io.snaps.corecrypto.entities.TransactionValue
 import io.snaps.corecrypto.entities.transactionrecords.TransactionRecord
 import io.snaps.corecrypto.other.TransactionLockInfo
 import io.snaps.corecrypto.other.TransactionSource
-import java.util.*
+import java.util.Date
 
 abstract class BitcoinTransactionRecord(
     uid: String,

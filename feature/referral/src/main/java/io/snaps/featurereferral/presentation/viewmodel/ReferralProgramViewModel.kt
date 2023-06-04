@@ -47,7 +47,7 @@ class ReferralProgramViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @Bridged mainHeaderHandler: MainHeaderHandler,
-    onboardingHandler: OnboardingHandler,
+    @Bridged onboardingHandler: OnboardingHandler,
     bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     private val fileManager: FileManager,
     private val barcodeManager: BarcodeManager,

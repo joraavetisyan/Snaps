@@ -1,10 +1,6 @@
 package io.snaps.basesession.data
 
 import com.chuckerteam.chucker.api.ChuckerCollector
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.logTag
@@ -17,7 +13,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import java.net.HttpURLConnection
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class ActionImpl @Inject constructor(
     private val buildInfo: BuildInfo,
@@ -87,14 +82,4 @@ class ActionImpl @Inject constructor(
             }
         }
     }
-}
-
-// todo to di file
-@Module
-@InstallIn(SingletonComponent::class)
-interface ActionModule {
-
-    @Binds
-    @Singleton
-    fun action(action: ActionImpl): Action
 }

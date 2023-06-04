@@ -41,7 +41,7 @@ private const val LEVEL_URL = "https://snaps-docs.gitbook.io/baza-znanii-snaps/f
 @HiltViewModel
 class MyCollectionViewModel @Inject constructor(
     @Bridged mainHeaderHandler: MainHeaderHandler,
-    onboardingHandler: OnboardingHandler,
+    @Bridged onboardingHandler: OnboardingHandler,
     transferTokensDialogHandler: TransferTokensDialogHandler,
     bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     limitedGasDialogHandler: LimitedGasDialogHandler,

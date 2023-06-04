@@ -17,7 +17,6 @@ import io.snaps.corecrypto.core.factories.EvmAccountManagerFactory
 import io.snaps.corecrypto.core.managers.AccountCleaner
 import io.snaps.corecrypto.core.managers.AccountManager
 import io.snaps.corecrypto.core.managers.AdapterManager
-import io.snaps.corecrypto.core.managers.AppVersionManager
 import io.snaps.corecrypto.core.managers.BackgroundStateChangeListener
 import io.snaps.corecrypto.core.managers.BackupManager
 import io.snaps.corecrypto.core.managers.BalanceHiddenManager

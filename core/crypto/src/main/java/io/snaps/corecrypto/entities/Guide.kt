@@ -1,6 +1,6 @@
 package io.snaps.corecrypto.entities
 
-import java.util.*
+import java.util.Date
 
 data class Guide(
         val title: String,

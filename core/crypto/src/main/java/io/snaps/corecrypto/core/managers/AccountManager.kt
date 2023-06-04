@@ -12,7 +12,7 @@ import io.snaps.corecrypto.entities.Account
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.util.*
+import java.util.Optional
 import java.util.concurrent.TimeUnit
 
 class AccountManager(

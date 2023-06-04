@@ -36,7 +36,7 @@ import io.snaps.corecrypto.other.FilterTransactionType
 import io.snaps.corecrypto.other.TransactionLockInfo
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.*
+import java.util.Date
 
 abstract class BitcoinBaseAdapter(
     open val kit: AbstractKit,

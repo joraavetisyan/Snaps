@@ -50,7 +50,7 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel
 class TasksViewModel @Inject constructor(
     @Bridged mainHeaderHandler: MainHeaderHandler,
-    onboardingHandler: OnboardingHandler,
+    @Bridged onboardingHandler: OnboardingHandler,
     bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     private val action: Action,
     private val appRouteProvider: AppRouteProvider,

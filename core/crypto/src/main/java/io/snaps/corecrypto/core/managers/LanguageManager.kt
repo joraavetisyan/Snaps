@@ -1,6 +1,6 @@
 package io.snaps.corecrypto.core.managers
 
-import java.util.*
+import java.util.Locale
 
 class LanguageManager {
 

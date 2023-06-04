@@ -19,7 +19,9 @@ import io.snaps.corecrypto.entities.nft.NftEventMetadata.EventType
 import io.snaps.corecrypto.entities.nft.NftUid
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 class OpenSeaNftProvider(
     private val marketKit: MarketKitWrapper,

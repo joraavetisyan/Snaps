@@ -23,7 +23,6 @@ import io.snaps.basewallet.domain.WalletModel
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.model.AppError
-import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.CardNumber
 import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.model.Completable
@@ -104,8 +103,6 @@ interface WalletRepository {
 
     suspend fun saveLastConnectedAccount(): Effect<Completable>
 
-    fun hasAccount(userId: Uuid): Boolean
-
     fun getMnemonics(): List<String>
 
     fun requireActiveWalletReceiveAddress(): CryptoAddress
@@ -119,8 +116,6 @@ interface WalletRepository {
     suspend fun confirmPayout(amount: Double, cardNumber: CardNumber): Effect<Completable>
 
     suspend fun refillGas(amount: Double): Effect<Completable>
-
-    fun clear(userId: Uuid)
 }
 
 class WalletRepositoryImpl @Inject constructor(
@@ -138,7 +133,6 @@ class WalletRepositoryImpl @Inject constructor(
     private val balanceViewItemFactory: BalanceViewItemFactory,
 
     private val walletApi: WalletApi,
-    private val buildInfo: BuildInfo,
 ) : WalletRepository {
 
     private val _snpsAccountState = MutableStateFlow<State<SnpsAccountModel>>(Loading())
@@ -333,10 +327,6 @@ class WalletRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun hasAccount(userId: Uuid): Boolean {
-        return accountManager.account(userId) != null
-    }
-
     override fun getMnemonics(): List<String> {
         return getActiveAccount()?.let { (it.type as AccountType.Mnemonic).words } ?: emptyList()
     }
@@ -402,10 +392,5 @@ class WalletRepositoryImpl @Inject constructor(
         } else {
             Effect.error((updateTotalBalance.errorOrNull ?: updatePayouts.errorOrNull)!!)
         }
-    }
-
-    override fun clear(userId: Uuid) {
-        walletManager.delete(getWallets())
-        accountManager.delete(userId)
     }
 }

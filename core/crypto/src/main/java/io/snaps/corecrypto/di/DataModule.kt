@@ -19,7 +19,6 @@ import io.snaps.corecrypto.core.providers.BalanceService
 import io.snaps.corecrypto.core.providers.BalanceViewItemFactory
 import io.snaps.corecrypto.core.providers.BalanceXRateRepository
 import io.snaps.corecrypto.core.providers.ITotalBalance
-import io.snaps.corecrypto.core.providers.PredefinedBlockchainSettingsProvider
 import io.snaps.corecrypto.core.providers.TotalBalance
 import io.snaps.corecrypto.core.providers.TotalService
 

@@ -14,7 +14,8 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
+import java.util.Locale
+import java.util.Optional
 
 val <T> Optional<T>.orNull: T?
     get() = when {

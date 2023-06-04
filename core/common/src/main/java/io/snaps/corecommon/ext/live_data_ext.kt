@@ -17,6 +17,7 @@ fun <T> LiveData<T>.asFlow(): Flow<T> = callbackFlow {
     val observer = Observer<T> {
         trySend(it)
     }
+    // todo Dispatchers.Main?
     withContext(Dispatchers.Main.immediate) {
         observeForever(observer)
     }

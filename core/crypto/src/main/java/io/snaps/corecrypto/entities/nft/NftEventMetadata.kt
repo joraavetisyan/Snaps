@@ -1,7 +1,7 @@
 package io.snaps.corecrypto.entities.nft
 
 import io.horizontalsystems.marketkit.models.NftPrice
-import java.util.*
+import java.util.Date
 
 data class NftEventMetadata(
     val assetMetadata: NftAssetMetadata,

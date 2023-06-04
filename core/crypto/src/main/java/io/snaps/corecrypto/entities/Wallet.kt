@@ -7,7 +7,7 @@ import io.horizontalsystems.marketkit.models.TokenType
 import io.snaps.corecrypto.core.protocolType
 import io.snaps.corecrypto.other.TransactionSource
 import kotlinx.parcelize.Parcelize
-import java.util.*
+import java.util.Objects
 
 @Parcelize
 data class Wallet(

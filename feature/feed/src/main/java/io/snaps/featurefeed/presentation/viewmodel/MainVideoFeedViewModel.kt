@@ -34,7 +34,7 @@ import javax.inject.Inject
 class MainVideoFeedViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     @Bridged mainHeaderHandler: MainHeaderHandler,
-    onboardingHandler: OnboardingHandler,
+    @Bridged onboardingHandler: OnboardingHandler,
     bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     action: Action,
     @Bridged videoFeedRepository: VideoFeedRepository,

@@ -8,7 +8,7 @@ import io.snaps.corecrypto.entities.CoinSettings
 import io.snaps.corecrypto.entities.CoinValue
 import io.snaps.corecrypto.entities.CurrencyValue
 import java.math.BigDecimal
-import java.util.*
+import java.util.Date
 
 enum class FilterTransactionType {
     All, Incoming, Outgoing, Swap, Approve;

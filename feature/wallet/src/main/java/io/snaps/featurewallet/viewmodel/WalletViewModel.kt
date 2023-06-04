@@ -61,7 +61,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WalletViewModel @Inject constructor(
-    onboardingHandler: OnboardingHandler,
+    @Bridged onboardingHandler: OnboardingHandler,
     transferTokensDialogHandler: TransferTokensDialogHandler,
     featureToggle: FeatureToggle,
     private val action: Action,

@@ -13,6 +13,8 @@ import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basewallet.data.FakeWalletApi
 import io.snaps.basewallet.data.WalletApi
+import io.snaps.basewallet.data.WalletDataManager
+import io.snaps.basewallet.data.WalletDataManagerImpl
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.data.WalletRepositoryImpl
 import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
@@ -43,6 +45,15 @@ class DataModule {
             .interceptor(config.commonHeaderInterceptor)
             .interceptor(config.authenticationInterceptor)
             .build()
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+interface DataBindSingletonModule {
+
+    @Binds
+    @Singleton
+    fun WalletDataManager(bind: WalletDataManagerImpl): WalletDataManager
 }
 
 @Module

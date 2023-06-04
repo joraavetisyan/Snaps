@@ -85,7 +85,7 @@ class Message {
         val sd = SignData()
         sd.chainId = wallet.chainId
         sd.accountNumber = wallet.accountNumber.toString()
-        sd.sequence = wallet?.sequence.toString()
+        sd.sequence = wallet.sequence.toString()
         sd.msgs = arrayOf(msg)
         sd.memo = this.memo
         sd.source = Source.BROADCAST.value.toString()

@@ -3,7 +3,7 @@ package io.snaps.corecrypto.entities.nft
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.marketkit.models.NftPrice
 import java.math.BigDecimal
-import java.util.*
+import java.util.Date
 
 data class NftCollectionMetadata(
     val blockchainType: BlockchainType,

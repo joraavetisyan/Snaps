@@ -1,7 +1,7 @@
 package io.snaps.corecrypto.core.managers
 
 import io.snaps.corecrypto.core.IRandomProvider
-import java.util.*
+import java.util.Random
 
 class RandomProvider : IRandomProvider {
 

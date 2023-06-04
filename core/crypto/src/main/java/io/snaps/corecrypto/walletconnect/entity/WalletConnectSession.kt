@@ -3,7 +3,7 @@ package io.snaps.corecrypto.walletconnect.entity
 import androidx.room.Entity
 import com.trustwallet.walletconnect.models.WCPeerMeta
 import com.trustwallet.walletconnect.models.session.WCSession
-import java.util.*
+import java.util.Date
 
 @Entity(primaryKeys = ["remotePeerId"])
 data class WalletConnectSession(

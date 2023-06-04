@@ -14,7 +14,6 @@ import io.snaps.corenavigation.AppDeeplink
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.Deeplink
 import io.snaps.corenavigation.Route
-import io.snaps.corenavigation.RouteWithArg
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach

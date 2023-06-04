@@ -3,12 +3,10 @@ package io.snaps.basefile.data
 import io.snaps.basefile.domain.FileModel
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
-import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.FileManager
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
@@ -24,7 +22,6 @@ interface FileRepository {
 
 class FileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val api: FileApi,
     private val fileManager: FileManager,
 ) : FileRepository {
