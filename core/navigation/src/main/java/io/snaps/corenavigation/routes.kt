@@ -15,7 +15,6 @@ import io.snaps.corecommon.model.Uuid
 import kotlinx.serialization.Serializable
 
 const val DefaultArgKey = "arg"
-private val encodedHash = Uri.encode("#")
 
 sealed class Route(protected val value: String) {
 
@@ -30,8 +29,7 @@ sealed class RouteWithArg(value: String) : Route(value) {
     override val pattern = "$value?$DefaultArgKey={$DefaultArgKey}"
     override val arguments = listOf(navArgument(DefaultArgKey) { type = NavType.StringType })
 
-    override fun path(vararg args: Any): String =
-        "$value?$DefaultArgKey=${args.firstOrNull()?.toString()?.replace("#", encodedHash)}"
+    override fun path(vararg args: Any): String = "$value?$DefaultArgKey=${args.firstOrNull()?.toString()?.let(Uri::encode)}"
 }
 
 sealed class Deeplink(protected val value: String) {

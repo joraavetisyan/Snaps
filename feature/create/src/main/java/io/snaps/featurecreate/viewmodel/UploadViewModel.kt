@@ -69,27 +69,27 @@ class UploadViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(ioDispatcher) {
-            MediaMetadataRetriever().apply { setDataSource(args.uri) }.use { retriever ->
-                val durationMillis = retriever.extractMetadata(METADATA_KEY_DURATION)?.toLong() ?: 0L
-                val visibleFrameCount = 6 // visible on screen
-                val frameDuration = durationMillis / (3 * visibleFrameCount)
-                val frameCount = if (frameDuration == 0L) 1 else {
-                    (durationMillis / frameDuration).toInt().coerceAtLeast(1)
-                }
-                val bitmaps = List(frameCount) { frame ->
-                    retriever.getFrameAtTime(
-                        frame * frameDuration * 1000L, // micros
-                        MediaMetadataRetriever.OPTION_CLOSEST_SYNC,
-                    )
-                }
-                _uiState.update {
-                    it.copy(
-                        isRetrievingBitmaps = false,
-                        visibleFrameCount = visibleFrameCount,
-                        frameCount = frameCount,
-                        bitmaps = bitmaps,
-                    )
-                }
+            val retriever = MediaMetadataRetriever().apply { setDataSource(args.uri) }
+            val durationMillis = retriever.extractMetadata(METADATA_KEY_DURATION)?.toLong() ?: 0L
+            val visibleFrameCount = 6 // visible on screen
+            val frameDuration = durationMillis / (3 * visibleFrameCount)
+            val frameCount = if (frameDuration == 0L) 1 else {
+                (durationMillis / frameDuration).toInt().coerceAtLeast(1)
+            }
+            val bitmaps = List(frameCount) { frame ->
+                retriever.getFrameAtTime(
+                    frame * frameDuration * 1000L, // micros
+                    MediaMetadataRetriever.OPTION_CLOSEST_SYNC,
+                )
+            }
+            retriever.release()
+            _uiState.update {
+                it.copy(
+                    isRetrievingBitmaps = false,
+                    visibleFrameCount = visibleFrameCount,
+                    frameCount = frameCount,
+                    bitmaps = bitmaps,
+                )
             }
         }
     }

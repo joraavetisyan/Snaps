@@ -47,7 +47,8 @@ class BottomBarViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
-    var isBannerShown: Boolean = false
+    private var bottomSheetShownCount: Int = 0
+    private var isBannerShown: Boolean = false
 
     init {
         subscribeOnCountBrokenGlasses()
@@ -98,8 +99,7 @@ class BottomBarViewModel @Inject constructor(
     }
 
     fun onCheckForBannerRequest() {
-        _uiState.update { it.copy(bottomSheetShownCount = it.bottomSheetShownCount + 1) }
-        if (_uiState.value.bottomSheetShownCount > 0 && !isBannerShown) {
+        if (++bottomSheetShownCount > 0 && !isBannerShown) {
             isBannerShown = true
             viewModelScope.launch {
                 action.execute(needsErrorProcessing = false) {
@@ -123,7 +123,6 @@ class BottomBarViewModel @Inject constructor(
         val isBottomBarVisible: Boolean = true,
         val badgeText: String = "",
         val appUpdateInfo: AppUpdateInfoDto? = null,
-        val bottomSheetShownCount: Int = 0,
         val banner: BannerDto? = null,
     )
 
