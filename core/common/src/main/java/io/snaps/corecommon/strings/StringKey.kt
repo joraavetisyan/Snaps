@@ -33,6 +33,7 @@ enum class StringKey {
     ErrorUnknown,
     ErrorBalanceInSync,
     ErrorRefillGasLimit,
+    ErrorCreateVideoLimit,
 
     OnboardingRankTitle,
     OnboardingRankMessage,

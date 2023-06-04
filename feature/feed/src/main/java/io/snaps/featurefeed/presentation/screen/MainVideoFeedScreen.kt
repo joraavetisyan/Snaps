@@ -55,8 +55,14 @@ fun MainVideoFeedScreen(
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
     val viewModel = hiltViewModel<MainVideoFeedViewModel>()
     val subscriptionsViewModel = hiltViewModel<SubscriptionsVideoFeedViewModel>()
+    val mainFeedState by viewModel.mainFeedState.collectAsState()
     val mainHeaderUiState by viewModel.headerUiState.collectAsState()
-    val screenState by viewModel.screenState.collectAsState()
+
+    viewModel.mainFeedCommand.collectAsCommand {
+        when (it) {
+            MainVideoFeedViewModel.Command.OpenCreateScreen -> router.toCreateVideoScreen()
+        }
+    }
 
     viewModel.headerCommand.collectAsCommand {
         when (it) {
@@ -66,11 +72,11 @@ fun MainVideoFeedScreen(
     }
 
     MainVideoFeedScreen(
-        screenState = screenState,
+        mainFeedState = mainFeedState,
         mainViewModel = viewModel,
         subscriptionsViewModel = subscriptionsViewModel,
         onAuthorClicked = router::toProfileScreen,
-        onCreateVideoClicked = router::toCreateVideoScreen,
+        onCreateVideoClicked = viewModel::onCreateVideoClicked,
         mainHeaderState = mainHeaderUiState.value,
         onTabRowClicked = viewModel::onTabRowClicked,
     )
@@ -78,7 +84,7 @@ fun MainVideoFeedScreen(
 
 @Composable
 private fun MainVideoFeedScreen(
-    screenState: MainVideoFeedViewModel.UiState,
+    mainFeedState: MainVideoFeedViewModel.UiState,
     mainViewModel: MainVideoFeedViewModel,
     subscriptionsViewModel: SubscriptionsVideoFeedViewModel,
     onAuthorClicked: (Uuid) -> Unit,
@@ -95,7 +101,7 @@ private fun MainVideoFeedScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             MainHeader(state = mainHeaderState)
-            screenState.tab?.let { screen ->
+            mainFeedState.tab?.let { screen ->
                 CustomTabRow(
                     tabs = MainVideoFeedViewModel.Tab.values(),
                     selectedTabIndex = screen.ordinal,
@@ -105,7 +111,7 @@ private fun MainVideoFeedScreen(
         }
     }
 
-    when (screenState.tab) {
+    when (mainFeedState.tab) {
         MainVideoFeedViewModel.Tab.Subscriptions -> VideoClipScreen(
             viewModel = subscriptionsViewModel,
             onAuthorClicked = onAuthorClicked,

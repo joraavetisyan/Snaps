@@ -12,6 +12,7 @@ import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
+import io.snaps.basesources.NotificationsSource
 import io.snaps.basesubs.data.SubsRepository
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
@@ -21,13 +22,17 @@ import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.getArg
+import io.snaps.coreui.viewmodel.publish
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,11 +42,12 @@ class MainVideoFeedViewModel @Inject constructor(
     @Bridged onboardingHandler: OnboardingHandler,
     bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     action: Action,
-    @Bridged videoFeedRepository: VideoFeedRepository,
-    @Bridged profileRepository: ProfileRepository,
+    private val notificationsSource: NotificationsSource,
+    private val appRouteProvider: AppRouteProvider,
+    @Bridged private val videoFeedRepository: VideoFeedRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     @Bridged commentRepository: CommentRepository,
     @Bridged subsRepository: SubsRepository,
-    private val appRouteProvider: AppRouteProvider,
 ) : VideoFeedViewModel(
     bottomDialogBarVisibilityHandler = bottomDialogBarVisibilityHandler,
     videoFeedType = savedStateHandle.getArg<AppRoute.SingleVideo.Args>()?.videoClipId?.let {
@@ -56,10 +62,13 @@ class MainVideoFeedViewModel @Inject constructor(
 
     private val args = savedStateHandle.getArg<AppRoute.SingleVideo.Args>()
 
-    private val _screenState = MutableStateFlow(
+    private val _mainFeedState = MutableStateFlow(
         UiState(tab = Tab.Main.takeIf { args?.videoClipId == null })
     )
-    val screenState = _screenState.asStateFlow()
+    val mainFeedState = _mainFeedState.asStateFlow()
+
+    private val _mainFeedCommand = Channel<Command>()
+    val mainFeedCommand = _mainFeedCommand.receiveAsFlow()
 
     init {
         subscribeOnMenuRouteState()
@@ -75,7 +84,18 @@ class MainVideoFeedViewModel @Inject constructor(
     }
 
     fun onTabRowClicked(tab: Tab) {
-        _screenState.update { it.copy(tab = tab) }
+        _mainFeedState.update { it.copy(tab = tab) }
+    }
+
+    fun onCreateVideoClicked() {
+        viewModelScope.launch {
+            val (isAllowed, maxCount) = videoFeedRepository.isAllowedToCreate(profileRepository.state.value.dataOrCache)
+            if (isAllowed) {
+                _mainFeedCommand publish Command.OpenCreateScreen
+            } else {
+                notificationsSource.sendError(StringKey.ErrorCreateVideoLimit.textValue(maxCount.toString()))
+            }
+        }
     }
 
     data class UiState(
@@ -85,5 +105,9 @@ class MainVideoFeedViewModel @Inject constructor(
     enum class Tab(val label: TextValue) {
         Main(StringKey.MainVideoFeedTitleForYou.textValue()),
         Subscriptions(StringKey.MainVideoFeedTitleSubscriptions.textValue());
+    }
+
+    sealed class Command {
+        object OpenCreateScreen : Command()
     }
 }

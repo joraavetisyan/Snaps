@@ -3,6 +3,7 @@ package io.snaps.coredata.database
 import androidx.core.content.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import io.snaps.corecommon.model.OnboardingType
+import io.snaps.corecommon.model.Uuid
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -44,6 +45,14 @@ class UserDataStorage @Inject constructor(
 
     fun setIsOnboardingShown(type: OnboardingType, value: Boolean) {
         provider.prefs.edit { putBoolean("onboarding${type.name}", value) }
+    }
+
+    fun getCreatedVideoCount(userId: Uuid, date: Long): Int {
+        return provider.prefs.getInt("getCreatedVideoCount${userId}${date}", 0)
+    }
+
+    fun setCreatedVideoCount(userId: Uuid, date: Long, count: Int) {
+        return provider.prefs.edit { putInt("getCreatedVideoCount${userId}${date}", count) }
     }
 
     fun reset(reason: LogOutReason? = null) {

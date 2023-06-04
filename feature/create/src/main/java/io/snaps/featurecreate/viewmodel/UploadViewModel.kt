@@ -3,6 +3,7 @@ package io.snaps.featurecreate.viewmodel
 import android.content.Context
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
+import android.media.MediaMetadataRetriever.METADATA_KEY_DURATION
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -17,6 +18,7 @@ import io.snaps.basefile.data.FileRepository
 import io.snaps.basefile.domain.FileModel
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basefeed.data.UploadStatusSource
+import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.Uuid
@@ -51,6 +53,7 @@ class UploadViewModel @Inject constructor(
     private val uploadStatusSource: UploadStatusSource,
     private val fileManager: FileManager,
     private val fileRepository: FileRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val videoFeedRepository: VideoFeedRepository,
 ) : SimpleViewModel() {
 
@@ -62,30 +65,31 @@ class UploadViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
-    private val retriever = MediaMetadataRetriever().apply { setDataSource(args.uri) }
     private var progressListenJob: Job? = null
 
     init {
         viewModelScope.launch(ioDispatcher) {
-            val durationMillis = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0L
-            val visibleFrameCount = 6 // visible on screen
-            val frameDuration = durationMillis / (3 * visibleFrameCount)
-            val frameCount = if (frameDuration == 0L) 1 else {
-                (durationMillis / frameDuration).toInt().coerceAtLeast(1)
-            }
-            val bitmaps = List(frameCount) { frame ->
-                retriever.getFrameAtTime(
-                    frame * frameDuration * 1000L, // micros
-                    MediaMetadataRetriever.OPTION_CLOSEST_SYNC,
-                )
-            }
-            _uiState.update {
-                it.copy(
-                    isRetrievingBitmaps = false,
-                    visibleFrameCount = visibleFrameCount,
-                    frameCount = frameCount,
-                    bitmaps = bitmaps,
-                )
+            MediaMetadataRetriever().apply { setDataSource(args.uri) }.use { retriever ->
+                val durationMillis = retriever.extractMetadata(METADATA_KEY_DURATION)?.toLong() ?: 0L
+                val visibleFrameCount = 6 // visible on screen
+                val frameDuration = durationMillis / (3 * visibleFrameCount)
+                val frameCount = if (frameDuration == 0L) 1 else {
+                    (durationMillis / frameDuration).toInt().coerceAtLeast(1)
+                }
+                val bitmaps = List(frameCount) { frame ->
+                    retriever.getFrameAtTime(
+                        frame * frameDuration * 1000L, // micros
+                        MediaMetadataRetriever.OPTION_CLOSEST_SYNC,
+                    )
+                }
+                _uiState.update {
+                    it.copy(
+                        isRetrievingBitmaps = false,
+                        visibleFrameCount = visibleFrameCount,
+                        frameCount = frameCount,
+                        bitmaps = bitmaps,
+                    )
+                }
             }
         }
     }
@@ -182,6 +186,7 @@ class UploadViewModel @Inject constructor(
 
                 is UploadStatusSource.State.Success -> {
                     action.execute {
+                        videoFeedRepository.onVideoCreated(profileRepository.state.value.dataOrCache)
                         videoFeedRepository.refreshFeed(VideoFeedType.User(null))
                     }.doOnComplete {
                         notificationsSource.sendMessage(StringKey.PreviewVideoMessageSuccess.textValue())

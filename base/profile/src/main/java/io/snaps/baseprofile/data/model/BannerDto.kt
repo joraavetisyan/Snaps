@@ -5,17 +5,17 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Banner(
-    @SerialName("isShown") val isShown: Boolean,
+data class BannerDto(
+    @SerialName("isShown") val isViewable: Boolean,
     @SerialName("version") val version: Int,
     @SerialName("image") val image: FullUrl,
     @SerialName("action") val action: FullUrl,
-    @SerialName("actionTitle") val actionTitle: Title,
-    @SerialName("title") val title: Title,
+    @SerialName("actionTitle") val actionTitle: BannerTitleDto,
+    @SerialName("title") val title: BannerTitleDto,
 )
 
 @Serializable
-data class Title(
+data class BannerTitleDto(
     @SerialName("en") val en: String,
     @SerialName("ru_RU") val ru: String,
     @SerialName("tr") val tr: String,

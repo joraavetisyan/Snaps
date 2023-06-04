@@ -33,6 +33,7 @@ interface OnboardingHandler {
     sealed interface Command {
         data class OpenDialog(val type: OnboardingType) : Command
         object HideDialog : Command
+        object CheckForBanner : Command // todo rename
     }
 }
 
@@ -54,6 +55,8 @@ class OnboardingHandlerImplDelegate @Inject constructor(
                 nftRepository.updateNftCollection().doOnSuccess {
                     if (it.isEmpty()) {
                         openDialog(type)
+                    } else {
+                        _command publish OnboardingHandler.Command.CheckForBanner
                     }
                 }
             }

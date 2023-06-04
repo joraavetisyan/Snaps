@@ -8,6 +8,7 @@ import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.ui.VideoFeedUiState
 import io.snaps.basefeed.ui.toVideoFeedUiState
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.basesources.NotificationsSource
 import io.snaps.basesubs.data.SubsRepository
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
@@ -38,10 +39,11 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val action: Action,
+    private val notificationsSource: NotificationsSource,
     @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val videoFeedRepository: VideoFeedRepository,
     @Bridged private val subsRepository: SubsRepository,
-    private val action: Action,
 ) : SimpleViewModel() {
 
     private val args = savedStateHandle.requireArgs<AppRoute.Profile.Args>()
@@ -58,31 +60,28 @@ class ProfileViewModel @Inject constructor(
             viewModelScope.launch {
                 action.execute {
                     profileRepository.updateData()
-                }.doOnSuccess {
-                    if (!profileRepository.isCurrentUser(userId)) {
-                        _uiState.update {
-                            it.copy(
-                                userType = UserType.Other,
-                                shareLink = AppDeeplink.generateSharingLink(
-                                    deeplink = AppDeeplink.Profile(id = userId),
-                                )
-                            )
-                        }
+                }.doOnComplete {
+                    if (profileRepository.isCurrentUser(userId)) {
+                        subscribeOnCurrentUser()
+                        subscribeOnFeed()
+                        subscribeOnUserLikedFeed()
+                    } else {
                         loadUserById(userId)
                         checkIfSubscribed()
-                    } else {
-                        subscribeOnCurrentUser()
-                        loadCurrentUser()
+                        subscribeOnUserLikedFeed()
                     }
                 }
             }
         } else {
             subscribeOnCurrentUser()
             loadCurrentUser()
+            subscribeOnFeed()
+            subscribeOnUserLikedFeed()
         }
     }
 
     private fun subscribeOnCurrentUser() {
+        _uiState.update { it.copy(userType = UserType.Current) }
         profileRepository.state.onEach { state ->
             _uiState.update {
                 it.copy(
@@ -94,67 +93,83 @@ class ProfileViewModel @Inject constructor(
                     shareLink = state.dataOrCache?.userId?.let { userId ->
                         AppDeeplink.generateSharingLink(AppDeeplink.Profile(userId))
                     },
-                    userType = UserType.Current,
                 )
             }
         }.launchIn(viewModelScope)
     }
 
-    private fun loadCurrentUser() = viewModelScope.launch {
-        action.execute {
-            profileRepository.updateData()
-        }.doOnComplete {
-            subscribeOnFeed()
-            subscribeOnUserLikedFeed()
-        }
-    }
-
-    private fun checkIfSubscribed() = viewModelScope.launch {
-        action.execute {
-            subsRepository.isSubscribed(args.userId!!)
-        }.doOnSuccess { isSubscribed ->
-            _uiState.update { it.copy(isSubscribed = isSubscribed) }
-        }
-    }
-
-    private fun loadUserById(userId: Uuid) = viewModelScope.launch {
-        action.execute {
-            profileRepository.getUserInfoById(userId)
-        }.doOnSuccess { user ->
-            _uiState.update {
-                it.copy(
-                    userInfoTileState = user.toUserInfoTileState(
-                        onSubscribersClick = { onSubscribersClicked(SubsType.Subscribers) },
-                        onSubscriptionsClick = { onSubscribersClicked(SubsType.Subscriptions) },
-                    ),
-                    name = user.name,
-                )
+    private fun loadCurrentUser() {
+        viewModelScope.launch {
+            action.execute {
+                profileRepository.updateData(isSilently = true)
             }
-        }.doOnComplete {
-            subscribeOnFeed()
-            subscribeOnUserLikedFeed()
         }
     }
 
-    private fun onSubscribersClicked(subsType: SubsType) = viewModelScope.launch {
-        val userInfo = uiState.value.userInfoTileState
-        if (userInfo is UserInfoTileState.Data) {
-            _command publish Command.OpenSubsScreen(
-                args = AppRoute.Subs.Args(
-                    userId = args.userId,
-                    subsType = subsType,
-                    userName = uiState.value.name,
-                    totalSubscribers = userInfo.subscribers,
-                    totalSubscriptions = userInfo.subscriptions,
+    private fun loadUserById(userId: Uuid) {
+        _uiState.update {
+            it.copy(
+                userType = UserType.Other,
+                shareLink = AppDeeplink.generateSharingLink(
+                    deeplink = AppDeeplink.Profile(id = userId),
                 )
             )
+        }
+        viewModelScope.launch {
+            action.execute {
+                profileRepository.getUserInfoById(userId)
+            }.doOnSuccess { user ->
+                _uiState.update {
+                    it.copy(
+                        userInfoTileState = user.toUserInfoTileState(
+                            onSubscribersClick = { onSubscribersClicked(SubsType.Subscribers) },
+                            onSubscriptionsClick = { onSubscribersClicked(SubsType.Subscriptions) },
+                        ),
+                        name = user.name,
+                    )
+                }
+            }.doOnComplete {
+                // Subscribing here to have the user name on empty screen
+                subscribeOnFeed()
+            }
+        }
+    }
+
+    private fun checkIfSubscribed() {
+        viewModelScope.launch {
+            action.execute {
+                subsRepository.isSubscribed(args.userId!!)
+            }.doOnSuccess { isSubscribed ->
+                _uiState.update { it.copy(isSubscribed = isSubscribed) }
+            }
+        }
+    }
+
+    private fun onSubscribersClicked(subsType: SubsType) {
+        viewModelScope.launch {
+            val userInfo = uiState.value.userInfoTileState
+            if (userInfo is UserInfoTileState.Data) {
+                _command publish Command.OpenSubsScreen(
+                    args = AppRoute.Subs.Args(
+                        userId = args.userId,
+                        subsType = subsType,
+                        userName = uiState.value.name,
+                        totalSubscribers = userInfo.subscribers,
+                        totalSubscriptions = userInfo.subscriptions,
+                    )
+                )
+            }
         }
     }
 
     private fun subscribeOnFeed() {
         videoFeedRepository.getFeedState(VideoFeedType.User(args.userId)).map {
             it.toVideoFeedUiState(
-                emptyMessage = StringKey.ProfileMessageEmptyVideos.textValue(uiState.value.name),
+                emptyMessage = when(_uiState.value.userType) {
+                    UserType.None,
+                    UserType.Other -> StringKey.ProfileMessageEmptyVideos.textValue(uiState.value.name)
+                    UserType.Current -> StringKey.MessageEmptyVideoFeed.textValue()
+                },
                 emptyImage = ImageValue.ResVector(R.drawable.ic_add_video),
                 shimmerListSize = 12,
                 onClipClicked = {},
@@ -174,9 +189,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun onFeedReloadClicked() = viewModelScope.launch {
-        action.execute {
-            videoFeedRepository.refreshFeed(VideoFeedType.User(args.userId))
+    private fun onFeedReloadClicked() {
+        viewModelScope.launch {
+            action.execute {
+                videoFeedRepository.refreshFeed(VideoFeedType.User(args.userId))
+            }
         }
     }
 
@@ -201,14 +218,29 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun onUserLikedFeedReloadClicked() = viewModelScope.launch {
-        action.execute {
-            videoFeedRepository.refreshFeed(VideoFeedType.Liked(args.userId))
+    private fun onUserLikedFeedReloadClicked() {
+        viewModelScope.launch {
+            action.execute {
+                videoFeedRepository.refreshFeed(VideoFeedType.Liked(args.userId))
+            }
         }
     }
 
-    fun onSettingsClicked() = viewModelScope.launch {
-        _command publish Command.OpenSettingsScreen
+    fun onSettingsClicked() {
+        viewModelScope.launch {
+            _command publish Command.OpenSettingsScreen
+        }
+    }
+
+    fun onCreateVideoClicked() {
+        viewModelScope.launch {
+            val (isAllowed, maxCount) = videoFeedRepository.isAllowedToCreate(profileRepository.state.value.dataOrCache)
+            if (isAllowed) {
+                _command publish Command.OpenCreateScreen
+            } else {
+                notificationsSource.sendError(StringKey.ErrorCreateVideoLimit.textValue(maxCount.toString()))
+            }
+        }
     }
 
     fun onSubscribeClicked() = viewModelScope.launch {
@@ -260,6 +292,7 @@ class ProfileViewModel @Inject constructor(
 
     sealed class Command {
         object OpenSettingsScreen : Command()
+        object OpenCreateScreen : Command()
         data class OpenSubsScreen(val args: AppRoute.Subs.Args) : Command()
         data class OpenUserFeedScreen(val userId: Uuid?, val position: Int) : Command()
         data class OpenLikedFeedScreen(val userId: Uuid?, val position: Int) : Command()

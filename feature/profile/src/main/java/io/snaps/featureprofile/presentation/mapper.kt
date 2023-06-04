@@ -22,7 +22,10 @@ fun State<UserInfoModel>.toUserInfoTileState(
                 onSubscriptionsClick = onSubscriptionsClick,
             )
         }
-        else -> UserInfoTileState.Shimmer
+        else -> dataOrCache?.toUserInfoTileState(
+            onSubscribersClick = onSubscribersClick,
+            onSubscriptionsClick = onSubscriptionsClick,
+        ) ?: UserInfoTileState.Shimmer
     }
 }
 

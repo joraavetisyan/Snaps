@@ -84,6 +84,7 @@ fun ProfileScreen(
     viewModel.command.collectAsCommand {
         when (it) {
             ProfileViewModel.Command.OpenSettingsScreen -> router.toSettingsScreen()
+            ProfileViewModel.Command.OpenCreateScreen -> router.toCreateVideoScreen()
             is ProfileViewModel.Command.OpenSubsScreen -> router.toSubsScreen(it.args)
             is ProfileViewModel.Command.OpenUserFeedScreen -> router.toUserFeedScreen(
                 userId = it.userId, position = it.position
@@ -96,7 +97,7 @@ fun ProfileScreen(
 
     ProfileScreen(
         uiState = uiState,
-        onCreateVideoClicked = router::toCreateVideoScreen,
+        onCreateVideoClicked = viewModel::onCreateVideoClicked,
         onSettingsClicked = viewModel::onSettingsClicked,
         onBackClicked = router::back,
         onSubscribeClicked = viewModel::onSubscribeClicked,

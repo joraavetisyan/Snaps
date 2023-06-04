@@ -1,7 +1,7 @@
 package io.snaps.baseprofile.data
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import io.snaps.baseprofile.data.model.Banner
+import io.snaps.baseprofile.data.model.BannerDto
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
@@ -86,7 +86,7 @@ interface ProfileRepository {
 
     suspend fun getSocialPages(): Effect<List<SocialPage>>
 
-    suspend fun getBanner(): Effect<Banner>
+    suspend fun getBanner(): Effect<BannerDto>
 }
 
 class ProfileRepositoryImpl @Inject constructor(
@@ -278,11 +278,11 @@ class ProfileRepositoryImpl @Inject constructor(
         return Effect.success(pages)
     }
 
-    override suspend fun getBanner(): Effect<Banner> {
+    override suspend fun getBanner(): Effect<BannerDto> {
         return try {
             // todo central source for fb remotes
             val banner = FirebaseRemoteConfig.getInstance().getValue("mobile_banner").let {
-                KotlinxSerializationJsonProvider().get().decodeFromString<Banner>(it.asString())
+                KotlinxSerializationJsonProvider().get().decodeFromString<BannerDto>(it.asString())
             }
             if (userDataStorage.bannerVersion < banner.version) {
                 userDataStorage.bannerVersion = banner.version

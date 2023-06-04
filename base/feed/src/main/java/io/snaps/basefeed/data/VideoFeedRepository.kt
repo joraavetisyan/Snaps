@@ -1,19 +1,23 @@
 package io.snaps.basefeed.data
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.LikedVideoFeedItemResponseDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.domain.VideoClipModel
+import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.PagedLoader
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.StateFlow
+import java.time.ZoneOffset
 import javax.inject.Inject
 
 interface VideoFeedRepository {
@@ -36,6 +40,12 @@ interface VideoFeedRepository {
     suspend fun markShown(videoId: Uuid): Effect<Completable>
 
     suspend fun markWatched(videoId: Uuid): Effect<Completable>
+
+    // todo delete once checked on backend
+    fun isAllowedToCreate(userInfoModel: UserInfoModel?): Pair<Boolean, Int>
+
+    // todo delete once checked on backend
+    fun onVideoCreated(userInfoModel: UserInfoModel?)
 }
 
 class VideoFeedRepositoryImpl @Inject constructor(
@@ -43,6 +53,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
     private val videoFeedApi: VideoFeedApi,
     private val loaderFactory: VideoFeedLoaderFactory,
     private val videoFeedUploader: VideoFeedUploader,
+    private val userDataStorage: UserDataStorage,
 ) : VideoFeedRepository {
 
     private var _likedVideos: List<LikedVideoFeedItemResponseDto>? = null
@@ -152,5 +163,20 @@ class VideoFeedRepositoryImpl @Inject constructor(
 
     override suspend fun delete(videoId: Uuid): Effect<Completable> {
         return apiCall(ioDispatcher) { videoFeedApi.deleteVideo(videoId = videoId) }
+    }
+
+    override fun isAllowedToCreate(userInfoModel: UserInfoModel?): Pair<Boolean, Int> {
+        val date = userInfoModel?.questInfo?.questDate?.toInstant(ZoneOffset.UTC)?.toEpochMilli() ?: return true to 0
+        val maxCount = kotlin.runCatching {
+            FirebaseRemoteConfig.getInstance().getLong("max_videos_count")
+        }.getOrNull() ?: return true to 0
+        val currentCount = userDataStorage.getCreatedVideoCount(userInfoModel.userId, date)
+        return (currentCount < maxCount) to maxCount.toInt()
+    }
+
+    override fun onVideoCreated(userInfoModel: UserInfoModel?) {
+        val date = userInfoModel?.questInfo?.questDate?.toInstant(ZoneOffset.UTC)?.toEpochMilli() ?: return
+        val currentCount = userDataStorage.getCreatedVideoCount(userInfoModel.userId, date)
+        userDataStorage.setCreatedVideoCount(userInfoModel.userId, date, currentCount + 1)
     }
 }

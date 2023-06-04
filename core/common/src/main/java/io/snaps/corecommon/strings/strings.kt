@@ -198,6 +198,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Ви можете запитувати газ тільки %s раз",
         SupportedLanguageKey.Es to "Solo puedes pedir gas %s veces",
     ),
+    key(StringKey.ErrorCreateVideoLimit) to mapOf(
+        SupportedLanguageKey.En to "You can upload a maximum of %s videos per round",
+        SupportedLanguageKey.Ru to "Вы можете загрузить максимум %s видео",
+        SupportedLanguageKey.Tr to "Her turda en fazla %s video yükleyebilirsiniz",
+        SupportedLanguageKey.Ua to "Ви можете завантажити максимум %s відео за раунд",
+        SupportedLanguageKey.Es to "Puedes subir un máximo de %s videos por ronda",
+    ),
     key(StringKey.OnboardingRankTitle) to mapOf(
         SupportedLanguageKey.En to "Welcome to Snaps!",
         SupportedLanguageKey.Ru to "Добро пожаловать в Snaps!",

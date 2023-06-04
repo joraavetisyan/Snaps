@@ -3,9 +3,8 @@ package io.snaps.featurebottombar.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
-import io.snaps.basenft.domain.NftModel
 import io.snaps.baseprofile.data.ProfileRepository
-import io.snaps.baseprofile.data.model.Banner
+import io.snaps.baseprofile.data.model.BannerDto
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.AppUpdateInfoDto
@@ -48,6 +47,8 @@ class BottomBarViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
+    var isBannerShown: Boolean = false
+
     init {
         subscribeOnCountBrokenGlasses()
 
@@ -55,7 +56,6 @@ class BottomBarViewModel @Inject constructor(
             _uiState.update { it.copy(isBottomBarVisible = isBottomBarVisible) }
         }.launchIn(viewModelScope)
 
-        loadUserNft()
         loadAppUpdateInfo()
     }
 
@@ -69,14 +69,6 @@ class BottomBarViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun loadUserNft() = viewModelScope.launch {
-        action.execute {
-            nftRepository.updateNftCollection()
-        }.doOnSuccess {
-            loadBanner(it)
-        }
-    }
-
     fun updateMenuRoute(path: String?) {
         val route = path?.takeWhile { it != ROUTE_ARGS_SEPARATOR } ?: return
         appRouteProvider.updateMenuRouteState(route)
@@ -86,11 +78,7 @@ class BottomBarViewModel @Inject constructor(
         closeOnboardingDialog()
         when (type) {
             OnboardingType.Rank,
-            OnboardingType.Nft -> {
-                viewModelScope.launch {
-                    _command publish Command.OpenNftPurchaseScreen
-                }
-            }
+            OnboardingType.Nft -> viewModelScope.launch { _command publish Command.OpenNftPurchaseScreen }
             OnboardingType.Popular,
             OnboardingType.Tasks,
             OnboardingType.Referral,
@@ -98,14 +86,6 @@ class BottomBarViewModel @Inject constructor(
             OnboardingType.Rewards,
             null -> Unit
         }
-    }
-
-    fun setIsBannerShown() {
-        _uiState.update { it.copy(isBannerShown = true) }
-    }
-
-    fun setNeedShowBanner() {
-        _uiState.update { it.copy(needShowBanner = true) }
     }
 
     private fun loadAppUpdateInfo() = viewModelScope.launch {
@@ -117,18 +97,25 @@ class BottomBarViewModel @Inject constructor(
         }
     }
 
-    private fun loadBanner(nft: List<NftModel>) = viewModelScope.launch {
-        profileRepository.getBanner().doOnSuccess { banner ->
-            if (banner.isShown && userDataStorage.countBannerViews < 3
-                && appRouteProvider.menuRouteState.value == AppRoute.MainBottomBar.MainTab1Start.path()
-            ) {
-                userDataStorage.countBannerViews += 1
-                _uiState.update { it.copy(banner = banner) }
-                if (nft.isNotEmpty()) {
-                    _uiState.update { it.copy(needShowBanner = true) }
-                    _command publish Command.ShowBottomDialog
+    fun onCheckForBannerRequest() {
+        _uiState.update { it.copy(bottomSheetShownCount = it.bottomSheetShownCount + 1) }
+        if (_uiState.value.bottomSheetShownCount > 0 && !isBannerShown) {
+            isBannerShown = true
+            viewModelScope.launch {
+                action.execute(needsErrorProcessing = false) {
+                    profileRepository.getBanner().doOnSuccess { banner ->
+                        if (banner.isViewable
+                            && userDataStorage.countBannerViews++ < 3
+                            && appRouteProvider.menuRouteState.value == AppRoute.MainBottomBar.MainTab1Start.path()
+                        ) {
+                            _uiState.update { it.copy(banner = banner) }
+                            _command publish Command.ShowBottomDialog
+                        }
+                    }
                 }
             }
+        } else {
+            _uiState.update { it.copy(banner = null) }
         }
     }
 
@@ -136,9 +123,8 @@ class BottomBarViewModel @Inject constructor(
         val isBottomBarVisible: Boolean = true,
         val badgeText: String = "",
         val appUpdateInfo: AppUpdateInfoDto? = null,
-        val banner: Banner? = null,
-        val isBannerShown: Boolean = false,
-        val needShowBanner: Boolean = false,
+        val bottomSheetShownCount: Int = 0,
+        val banner: BannerDto? = null,
     )
 
     sealed interface Command {

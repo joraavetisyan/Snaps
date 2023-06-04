@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.ExperimentalMaterialApi
@@ -25,11 +26,9 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,7 +48,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import io.snaps.baseprofile.data.model.Banner
+import io.snaps.baseprofile.data.model.BannerDto
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.imageValue
@@ -69,7 +68,9 @@ import io.snaps.coreuicompose.tools.LocalBottomNavigationHeight
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetCurrentStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuitheme.compose.AppTheme
@@ -109,14 +110,9 @@ fun BottomBarScreen(
     fun showSheet() = coroutineScope.launch { sheetState.show() }
     fun hideSheet() = coroutineScope.launch { sheetState.hide() }
 
-    LaunchedEffect(Unit) {
-        snapshotFlow { sheetState.currentValue }.collect {
-            if (!sheetState.isVisible && !uiState.isBannerShown &&
-                onboardingState.onboardingType == OnboardingType.Rank
-            ) {
-                showSheet() // show remote banner
-                viewModel.setNeedShowBanner()
-            }
+    ModalBottomSheetCurrentStateListener(sheetState = sheetState, drop = 1) { isHidden ->
+        if (isHidden) {
+            viewModel.onCheckForBannerRequest()
         }
     }
 
@@ -130,42 +126,38 @@ fun BottomBarScreen(
         when (it) {
             is OnboardingHandler.Command.OpenDialog -> showSheet()
             OnboardingHandler.Command.HideDialog -> hideSheet()
+            OnboardingHandler.Command.CheckForBanner -> viewModel.onCheckForBannerRequest()
         }
     }
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetContent = {
-            if (uiState.appUpdateInfo != null) {
-                SimpleBottomDialog(
-                    image = R.drawable.img_guy_glad.imageValue(),
-                    title = StringKey.AppUpdateTitle.textValue(),
-                    text = StringKey.AppUpdateMessage.textValue(),
-                    buttonText = StringKey.AppUpdateAction.textValue(),
-                    onClick = {
-                        uiState.appUpdateInfo?.let {
-                            context.startViewActionActivity(Uri.parse(it.link))
-                        }
-                    },
-                )
-            } else {
-                if (uiState.needShowBanner && !uiState.isBannerShown) {
-                    uiState.banner?.let {
-                        Banner(
-                            banner = it,
-                            onClicked = {
-                                hideSheet()
-                                context.openUrl(it.action)
-                            },
-                        )
-                    }
-                    viewModel.setIsBannerShown()
-                } else {
-                    OnboardingDialog(
-                        onboardingState = onboardingState,
-                        onClicked = viewModel::onOnboardingDialogActionClicked,
+            when {
+                uiState.appUpdateInfo != null -> {
+                    SimpleBottomDialog(
+                        image = R.drawable.img_guy_glad.imageValue(),
+                        title = StringKey.AppUpdateTitle.textValue(),
+                        text = StringKey.AppUpdateMessage.textValue(),
+                        buttonText = StringKey.AppUpdateAction.textValue(),
+                        onClick = {
+                            uiState.appUpdateInfo?.let {
+                                context.startViewActionActivity(Uri.parse(it.link))
+                            }
+                        },
                     )
                 }
+                uiState.banner != null -> Banner(
+                    banner = uiState.banner!!,
+                    onClicked = {
+                        hideSheet()
+                        context.openUrl(uiState.banner!!.action)
+                    },
+                )
+                else -> OnboardingDialog(
+                    onboardingState = onboardingState,
+                    onClicked = viewModel::onOnboardingDialogActionClicked,
+                )
             }
         }
     ) {
@@ -350,7 +342,7 @@ private fun OnboardingDialog(
 
 @Composable
 private fun Banner(
-    banner: Banner,
+    banner: BannerDto,
     onClicked: () -> Unit,
 ) {
     val language = DEFAULT_LOCALE.toSupportedLanguageKey()
@@ -380,9 +372,11 @@ private fun Banner(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Image(
-                painter = banner.image.imageValue().get(),
+                painter = banner.image.imageValue().get { crossfade(true) },
                 contentDescription = null,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .heightIn(max = 240.dp)
+                    .fillMaxWidth(),
                 contentScale = ContentScale.Crop,
             )
             Text(
