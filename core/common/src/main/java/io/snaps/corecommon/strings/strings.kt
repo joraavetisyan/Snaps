@@ -711,6 +711,10 @@ internal val strings = mapOf(
     ),
     key(StringKey.WalletSecurityDialogMessage) to mapOf(
         SupportedLanguageKey.En to "Security error occured",
+        SupportedLanguageKey.Ru to "Произошла ошибка безопасности",
+        SupportedLanguageKey.Tr to "Güvenlik hatası oluştu",
+        SupportedLanguageKey.Ua to "Сталася помилка безпеки",
+        SupportedLanguageKey.Es to "Se ha producido un error de seguridad",
     ),
     key(StringKey.WalletSecurityDialogMessageScreenLockNotSet) to mapOf(
         SupportedLanguageKey.En to "Please set lock screen on your device to protect your seed phrase",
@@ -721,6 +725,10 @@ internal val strings = mapOf(
     ),
     key(StringKey.WalletSecurityDialogMessageUserNotAuthenticatedRecently) to mapOf(
         SupportedLanguageKey.En to "Please authenticate using your screen lock to protect your seed phrase",
+        SupportedLanguageKey.Ru to "Пожалуйста, войдите в систему, используя блокировку экрана, чтобы защитить исходную фразу.",
+        SupportedLanguageKey.Tr to "Orijinal ifadeyi korumak için lütfen ekran kilidini kullanarak giriş yapın.",
+        SupportedLanguageKey.Ua to "Будь ласка, увійдіть, використовуючи блокування екрана, щоб захистити оригінальну фразу.",
+        SupportedLanguageKey.Es to "Inicie sesión usando el bloqueo de pantalla para proteger la frase original.",
     ),
     key(StringKey.VerificationTitle) to mapOf(
         SupportedLanguageKey.En to "Verification",
@@ -2326,18 +2334,25 @@ internal val strings = mapOf(
         SupportedLanguageKey.Es to "Publicar",
     ),
     key(StringKey.ProfileMessageEmptyVideos) to mapOf(
-        SupportedLanguageKey.En to "Здесь появятся видео, которые опубликует %s", // todo localization
+        SupportedLanguageKey.En to "Videos posted by %s will appear here",
         SupportedLanguageKey.Ru to "Здесь появятся видео, которые опубликует %s",
+        SupportedLanguageKey.Tr to "%s tarafından yayınlanan videolar burada görünecek",
+        SupportedLanguageKey.Ua to "Тут з'являться відео, яке опублікує %s",
+        SupportedLanguageKey.Es to "Los videos publicados por %s aparecerán aquí",
     ),
-    // todo localization
     key(StringKey.ProfileTitleLiked) to mapOf(
         SupportedLanguageKey.En to "Liked",
         SupportedLanguageKey.Ru to "Понравившиеся",
+        SupportedLanguageKey.Tr to "Beğendim",
+        SupportedLanguageKey.Ua to "Сподобалися",
+        SupportedLanguageKey.Es to "Apreciado",
     ),
-    // todo localization
     key(StringKey.ProfileTitleShorts) to mapOf(
         SupportedLanguageKey.En to "Shorts",
         SupportedLanguageKey.Ru to "Видео",
+        SupportedLanguageKey.Tr to "Video",
+        SupportedLanguageKey.Ua to "Відео",
+        SupportedLanguageKey.Es to "Video",
     ),
     key(StringKey.CommentsTitle) to mapOf(
         SupportedLanguageKey.En to "%s comments",
@@ -2970,34 +2985,46 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Всього:",
         SupportedLanguageKey.Es to "Por todo:",
     ),
-    // todo localization
     key(StringKey.EditProfileTitle) to mapOf(
         SupportedLanguageKey.En to "Edit Profile",
         SupportedLanguageKey.Ru to "Редактировать профиль",
+        SupportedLanguageKey.Tr to "Profili Düzenle",
+        SupportedLanguageKey.Ua to "Редагувати профіль",
+        SupportedLanguageKey.Es to "Editar Perfil",
     ),
-    // todo localization
     key(StringKey.EditProfileFieldPhoto) to mapOf(
         SupportedLanguageKey.En to "Edit photo",
         SupportedLanguageKey.Ru to "Изменить фото",
+        SupportedLanguageKey.Tr to "Fotoğrafı düzenle",
+        SupportedLanguageKey.Ua to "Редагувати фотографію",
+        SupportedLanguageKey.Es to "Editar foto",
     ),
-    // todo localization
     key(StringKey.EditProfileHintName) to mapOf(
         SupportedLanguageKey.En to "Your name",
         SupportedLanguageKey.Ru to "Ваше имя",
+        SupportedLanguageKey.Tr to "Adınız",
+        SupportedLanguageKey.Ua to "Ваше ім'я",
+        SupportedLanguageKey.Es to "Su nombre",
     ),
-    // todo localization
     key(StringKey.EditNameTitle) to mapOf(
         SupportedLanguageKey.En to "Your name",
         SupportedLanguageKey.Ru to "Ваше имя",
+        SupportedLanguageKey.Tr to "Adınız",
+        SupportedLanguageKey.Ua to "Ваше ім'я",
+        SupportedLanguageKey.Es to "Su nombre",
     ),
-    // todo localization
     key(StringKey.EditNameAction) to mapOf(
         SupportedLanguageKey.En to "Save",
         SupportedLanguageKey.Ru to "Сохранить",
+        SupportedLanguageKey.Tr to "Kaydetmek",
+        SupportedLanguageKey.Ua to "Зберігши",
+        SupportedLanguageKey.Es to "Guardar",
     ),
-    // todo localization
     key(StringKey.EditNameMessage) to mapOf(
         SupportedLanguageKey.En to "Only letters, numbers, underscores, and dots can be used in the user name. When you change the name, the link to the profile will also change. Your name should be universal.",
         SupportedLanguageKey.Ru to "В имени пользователя можно использовать только буквы, цифры, нижнее подчеркивание и точки. При изменении имени изменится и ссылка на профиль. Ваше имя должно быть универсальное.",
+        SupportedLanguageKey.Tr to "Kullanıcı adına yalnızca harfler, sayılar, alt çizgiler ve noktalar kullanılabilir. Ad değiştirildiğinde profil bağlantısı da değişir. Adınız evrensel olmalı.",
+        SupportedLanguageKey.Ua to "В імені користувача можна використовувати лише літери, цифри, підкреслення та крапки. При зміні імені зміниться і посилання на профіль. Ваше ім'я має бути універсальне.",
+        SupportedLanguageKey.Es to "Solo se pueden usar letras, números, guiones bajos y puntos en el nombre de usuario. Si cambia el nombre, también cambiará el enlace al perfil. Tu nombre debe ser universal.",
     ),
 )

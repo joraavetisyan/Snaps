@@ -26,13 +26,10 @@ const val RESULT_KEY = "result"
 const val ARG_KEY = "arg"
 const val ROUTE_ARGS_SEPARATOR = '?'
 
-inline fun <reified ARG> ARG.toQuery() = ARG_KEY + "=" + Json.encodeToString(this)
 inline fun <reified ARG> SavedStateHandle.getArg(): ARG? = get<String>(ARG_KEY)?.let { Json.decodeFromString(it) }
 inline fun <reified ARG> SavedStateHandle.requireArgs(): ARG = requireNotNull(getArg())
 
 fun createRoute(route: Route) = route.path()
-fun createRouteWithArg(route: RouteWithArg) = "${route.path()}?$ARG_KEY={$ARG_KEY}"
-inline fun <reified ARG> createRouteWithArg(route: RouteWithArg, arg: ARG) = "${route.path()}?${arg.toQuery()}"
 
 fun NavGraphBuilder.composable(
     route: Route,

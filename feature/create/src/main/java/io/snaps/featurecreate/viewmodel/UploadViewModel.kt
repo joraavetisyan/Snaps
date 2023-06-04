@@ -54,7 +54,7 @@ class UploadViewModel @Inject constructor(
     @Bridged private val videoFeedRepository: VideoFeedRepository,
 ) : SimpleViewModel() {
 
-    private val args = savedStateHandle.requireArgs<AppRoute.PreviewVideo.Args>()
+    private val args = savedStateHandle.requireArgs<AppRoute.UploadVideo.Args>()
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
@@ -70,7 +70,9 @@ class UploadViewModel @Inject constructor(
             val durationMillis = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0L
             val visibleFrameCount = 6 // visible on screen
             val frameDuration = durationMillis / (3 * visibleFrameCount)
-            val frameCount = (durationMillis / frameDuration).toInt().coerceAtLeast(1)
+            val frameCount = if (frameDuration == 0L) 1 else {
+                (durationMillis / frameDuration).toInt().coerceAtLeast(1)
+            }
             val bitmaps = List(frameCount) { frame ->
                 retriever.getFrameAtTime(
                     frame * frameDuration * 1000L, // micros
@@ -80,9 +82,7 @@ class UploadViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     isRetrievingBitmaps = false,
-                    durationMillis = durationMillis,
                     visibleFrameCount = visibleFrameCount,
-                    frameDuration = frameDuration,
                     frameCount = frameCount,
                     bitmaps = bitmaps,
                 )
@@ -208,9 +208,7 @@ class UploadViewModel @Inject constructor(
 
     data class UiState(
         val isRetrievingBitmaps: Boolean = true,
-        val durationMillis: Long = 0L,
         val visibleFrameCount: Int = 0,
-        val frameDuration: Long = 0L,
         val frameCount: Int = 0,
         val bitmaps: List<Bitmap?> = emptyList(),
         val isLoading: Boolean = false,

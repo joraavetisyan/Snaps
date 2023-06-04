@@ -1,5 +1,6 @@
 package io.snaps.corenavigation
 
+import android.net.Uri
 import androidx.core.net.toUri
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
@@ -8,12 +9,13 @@ import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.NftType
-import io.snaps.corecommon.model.TaskType
 import io.snaps.corecommon.model.SubsType
+import io.snaps.corecommon.model.TaskType
 import io.snaps.corecommon.model.Uuid
 import kotlinx.serialization.Serializable
 
 const val DefaultArgKey = "arg"
+private val encodedHash = Uri.encode("#")
 
 sealed class Route(protected val value: String) {
 
@@ -28,7 +30,8 @@ sealed class RouteWithArg(value: String) : Route(value) {
     override val pattern = "$value?$DefaultArgKey={$DefaultArgKey}"
     override val arguments = listOf(navArgument(DefaultArgKey) { type = NavType.StringType })
 
-    override fun path(vararg args: Any): String = "$value?$DefaultArgKey=${args.firstOrNull()}"
+    override fun path(vararg args: Any): String =
+        "$value?$DefaultArgKey=${args.firstOrNull()?.toString()?.replace("#", encodedHash)}"
 }
 
 sealed class Deeplink(protected val value: String) {
