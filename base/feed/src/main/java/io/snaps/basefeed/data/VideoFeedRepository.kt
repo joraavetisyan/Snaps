@@ -168,6 +168,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
     override fun isAllowedToCreate(userInfoModel: UserInfoModel?): Pair<Boolean, Int> {
         val date = userInfoModel?.questInfo?.questDate?.toInstant(ZoneOffset.UTC)?.toEpochMilli() ?: return true to 0
         val maxCount = kotlin.runCatching {
+            // todo central remote data source for fb
             FirebaseRemoteConfig.getInstance().getLong("max_videos_count")
         }.getOrNull() ?: return true to 0
         val currentCount = userDataStorage.getCreatedVideoCount(userInfoModel.userId, date)

@@ -4,6 +4,7 @@ import io.snaps.basewallet.domain.WalletSecurityException
 import io.snaps.basewallet.domain.DeviceNotSecuredException
 import io.snaps.basewallet.domain.ScreenLockNotSetException
 import io.snaps.basewallet.domain.UserNotAuthenticatedRecentlyException
+import io.snaps.corecommon.analytics.AnalyticsTrackerHolder
 import io.snaps.corecommon.model.AppError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,6 +37,7 @@ class WalletSecurityErrorHandlerImplDelegate @Inject constructor() : WalletSecur
     override val walletSecurityState = _walletSecurityState.asStateFlow()
 
     override fun handleWalletSecurityError(error: AppError) {
+        AnalyticsTrackerHolder.getInstance().trackError(error.cause ?: error)
         when (error.cause as? WalletSecurityException) {
             is ScreenLockNotSetException -> _walletSecurityState.update {
                 it.copy(dialog = WalletSecurityErrorHandler.Dialog.ScreenLockNotSet)

@@ -1,9 +1,11 @@
-package io.snaps.corecommon.analytics
+package io.snaps.android.di
 
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.snaps.android.analyticsimpl.AnalyticsTrackerSentryImpl
+import io.snaps.corecommon.analytics.AnalyticsTracker
 import javax.inject.Singleton
 
 @Module
@@ -12,5 +14,5 @@ interface AnalyticsTrackerModule {
 
     @Binds
     @Singleton
-    fun analyticsTracker(tracker: AnalyticsTrackerImpl): AnalyticsTracker
+    fun analyticsTracker(tracker: AnalyticsTrackerSentryImpl): AnalyticsTracker
 }

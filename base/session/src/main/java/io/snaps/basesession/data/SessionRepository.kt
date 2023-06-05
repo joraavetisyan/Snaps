@@ -76,6 +76,7 @@ class SessionRepositoryImpl @Inject constructor(
             profileApi.userInfo()
         }.doOnSuccess { user ->
             when {
+                // todo check for account AND wallets
                 walletDataManager.hasAccount(userId) -> if (user.name.isNullOrBlank() || user.avatarUrl == null) {
                     userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsInitialization)
                 } else {

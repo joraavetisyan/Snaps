@@ -47,7 +47,7 @@ class BottomBarViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
-    private var bottomSheetShownCount: Int = 0
+    private var bottomSheetShownCount: Int = 0 // todo remove, useless
     private var isBannerShown: Boolean = false
 
     init {

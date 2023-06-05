@@ -99,6 +99,7 @@ fun CreateVideoScreen(
     viewModel.command.collectAsCommand {
         when (it) {
             is CreateVideoViewModel.Command.OpenPreviewScreen -> router.toPreviewScreen(it.uri)
+            CreateVideoViewModel.Command.CloseScreen -> router.back()
         }
     }
 

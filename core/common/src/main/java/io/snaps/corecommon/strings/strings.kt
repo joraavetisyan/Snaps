@@ -731,11 +731,11 @@ internal val strings = mapOf(
         SupportedLanguageKey.Es to "Por favor, instale el bloqueo de pantalla en su dispositivo para proteger su frase original",
     ),
     key(StringKey.WalletSecurityDialogMessageUserNotAuthenticatedRecently) to mapOf(
-        SupportedLanguageKey.En to "Please authenticate using your screen lock to protect your seed phrase",
-        SupportedLanguageKey.Ru to "Пожалуйста, войдите в систему, используя блокировку экрана, чтобы защитить исходную фразу.",
-        SupportedLanguageKey.Tr to "Orijinal ifadeyi korumak için lütfen ekran kilidini kullanarak giriş yapın.",
-        SupportedLanguageKey.Ua to "Будь ласка, увійдіть, використовуючи блокування екрана, щоб захистити оригінальну фразу.",
-        SupportedLanguageKey.Es to "Inicie sesión usando el bloqueo de pantalla para proteger la frase original.",
+        SupportedLanguageKey.En to "Please unlock the screen using the passcode to save the original passphrase.",
+        SupportedLanguageKey.Ru to "Пожалуйста разблокируйте экран, используя код-пароль, чтобы защитить вашу исходную фразу.",
+        SupportedLanguageKey.Tr to "Orijinal parolayı kaydetmek için lütfen parolayı kullanarak ekranın kilidini açın.",
+        SupportedLanguageKey.Ua to "Будь ласка, розблокуйте екран, використовуючи код-пароль, щоб зберегти вихідну фразу.",
+        SupportedLanguageKey.Es to "Desbloquee la pantalla usando el código de acceso para guardar la frase de acceso original.",
     ),
     key(StringKey.VerificationTitle) to mapOf(
         SupportedLanguageKey.En to "Verification",

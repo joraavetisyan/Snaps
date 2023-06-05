@@ -4,6 +4,7 @@ plugins {
     id(Libs.plugin.crashlytics)
     id(Libs.plugin.spotify_ruler)
     id(Libs.plugin.ben_manes_versions)
+    id(Libs.plugin.sentry) version Libs.sentryVersion
 }
 
 common()

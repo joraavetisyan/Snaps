@@ -3,7 +3,13 @@ package io.snaps.featuretasks.presentation.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.basefeed.data.VideoFeedRepository
+import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.basesources.NotificationsSource
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.TaskType
+import io.snaps.corecommon.strings.StringKey
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
@@ -23,8 +29,9 @@ import javax.inject.Inject
 @HiltViewModel
 class TaskDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val action: Action,
-    private val tasksRepository: TasksRepository,
+    private val notificationsSource: NotificationsSource,
+    @Bridged private val profileRepository: ProfileRepository,
+    @Bridged private val videoFeedRepository: VideoFeedRepository,
 ) : SimpleViewModel() {
 
     private val args = savedStateHandle.requireArgs<AppRoute.TaskDetails.Args>()
@@ -45,15 +52,24 @@ class TaskDetailsViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     fun onStartButtonClicked() = viewModelScope.launch {
-        val command = when (args.type) {
+        when (args.type) {
             TaskType.Like -> Command.OpenMainVideoFeed
-            TaskType.PublishVideo -> Command.OpenCreateVideo
+            TaskType.PublishVideo -> {
+                val (isAllowed, maxCount) = videoFeedRepository.isAllowedToCreate(profileRepository.state.value.dataOrCache)
+                if (isAllowed) {
+                    Command.OpenCreateVideo
+                } else {
+                    notificationsSource.sendError(StringKey.ErrorCreateVideoLimit.textValue(maxCount.toString()))
+                    null
+                }
+            }
             TaskType.SocialPost -> Command.OpenShareTemplate
             TaskType.SocialShare -> Command.OpenMainVideoFeed
             TaskType.Subscribe -> Command.OpenMainVideoFeed
             TaskType.Watch -> Command.OpenMainVideoFeed
+        }?.let {
+            _command publish it
         }
-        _command publish command
     }
 
     fun onPointIdChanged(pointId: String) {

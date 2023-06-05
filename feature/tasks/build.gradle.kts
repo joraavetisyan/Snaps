@@ -22,6 +22,7 @@ dependencies {
     implementation(projects.baseNft)
     implementation(projects.baseSession)
     implementation(projects.baseWallet)
+    implementation(projects.baseFeed)
 
     implementation(*Libs.bundle.gson)
 }

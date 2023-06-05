@@ -244,6 +244,7 @@ class WalletRepositoryImpl @Inject constructor(
         }
     }
 
+    // todo account and wallets creation as atomic operation
     override suspend fun saveLastConnectedAccount(): Effect<Completable> {
         val account = account ?: return Effect.error(AppError.Unknown("No account was created!"))
         try {

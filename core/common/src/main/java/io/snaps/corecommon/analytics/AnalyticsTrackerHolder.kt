@@ -2,11 +2,11 @@ package io.snaps.corecommon.analytics
 
 object AnalyticsTrackerHolder {
 
-    private var tracker: AnalyticsTracker? = null
+    private lateinit var tracker: AnalyticsTracker
 
     fun init(tracker: AnalyticsTracker) {
-        AnalyticsTrackerHolder.tracker = tracker
+        this.tracker = tracker
     }
 
-    fun getInstance(): AnalyticsTracker? = tracker
+    fun getInstance(): AnalyticsTracker = tracker
 }

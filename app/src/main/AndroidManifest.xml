@@ -92,6 +92,9 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/uiAccent" />
 
+        <!-- Required: sentry.io project identifier (DSN) -->
+        <meta-data android:name="io.sentry.dsn" android:value="https://2a424bc1709a493d85887e01784e50bf@o4505306443743232.ingest.sentry.io/4505306446692352" />
+
     </application>
 
 </manifest>
