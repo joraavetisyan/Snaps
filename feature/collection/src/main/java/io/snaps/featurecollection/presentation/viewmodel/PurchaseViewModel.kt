@@ -8,8 +8,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basebilling.BillingRouter
 import io.snaps.basebilling.PurchaseStateProvider
 import io.snaps.basenft.data.NftRepository
+import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
-import io.snaps.basenft.ui.getSunglassesImage
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
@@ -69,9 +69,10 @@ class PurchaseViewModel @Inject constructor(
     LimitedGasDialogHandler by limitedGasDialogHandler {
 
     private val args = savedStateHandle.requireArgs<AppRoute.Purchase.Args>()
-    private val nft = requireNotNull(nftRepository.ranksState.value.dataOrCache?.first { it.type == args.type })
 
-    private val _uiState = MutableStateFlow(initialUiState(nft))
+    private val _uiState = MutableStateFlow(
+        initialUiState(requireNotNull(nftRepository.ranksState.value.dataOrCache?.first { it.type == args.type }))
+    )
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
@@ -90,19 +91,15 @@ class PurchaseViewModel @Inject constructor(
         val isFreePurchased = nftRepository.nftCollectionState.value.dataOrCache?.any {
             it.type == NftType.Free
         } ?: false
-        val prevNftImage = (model.type.intType - 1).let {
-            if (it != -1) NftType.byIntType(it).getSunglassesImage()
-            else NftType.Free.getSunglassesImage()
+        val prevNftImage = if (model.isPurchasable) {
+            null
+        } else nftRepository.ranksState.value.dataOrCache?.let {
+            it.getOrNull(it.indexOf(model) - 1)?.image
         }
         return UiState(
-            nftType = model.type,
-            nftImage = model.image,
-            costInFiat = model.cost,
-            dailyUnlock = model.dailyUnlock,
-            dailyReward = model.dailyReward,
-            isPurchasable = model.isPurchasable,
-            isPurchasableWithBnb = model.type != NftType.Free && featureToggle.isEnabled(Feature.PurchaseNftWithBnb),
+            nft = model,
             prevNftImage = prevNftImage,
+            isPurchasableWithBnb = model.type != NftType.Free && featureToggle.isEnabled(Feature.PurchaseNftWithBnb),
             isPurchasableForFree = model.type == NftType.Free && !isFreePurchased,
             isPurchasableInStore = model.type != NftType.Free && featureToggle.isEnabled(Feature.PurchaseNftInStore)
         )
@@ -116,7 +113,7 @@ class PurchaseViewModel @Inject constructor(
 
     private fun subscribeToBnbRate() {
         walletRepository.snpsAccountState.map {
-            nft.cost?.toCoin(it.dataOrCache?.usdBnbExchangeRate ?: 0.0)
+            _uiState.value.nft.cost?.toCoin(it.dataOrCache?.usdBnbExchangeRate ?: 0.0)
         }.onEach { coin ->
             _uiState.update { it.copy(costInCoin = coin) }
         }.launchIn(viewModelScope)
@@ -143,7 +140,7 @@ class PurchaseViewModel @Inject constructor(
                 }
             }.doOnError { error, _ ->
                 if (error.cause is BalanceInSync) {
-                    notificationsSource.sendMessage(StringKey.ErrorBalanceInSync.textValue())
+                    notificationsSource.sendError(StringKey.ErrorBalanceInSync.textValue())
                 }
             }
         }
@@ -207,7 +204,7 @@ class PurchaseViewModel @Inject constructor(
                 is BalanceInSync -> {
                     onTransferTokensDialogHidden()
                     hideTransferTokensBottomDialog(viewModelScope)
-                    notificationsSource.sendMessage(StringKey.ErrorBalanceInSync.textValue())
+                    notificationsSource.sendError(StringKey.ErrorBalanceInSync.textValue())
                 }
                 else -> updateTransferTokensState(
                     state = TransferTokensState.Error(
@@ -253,14 +250,9 @@ class PurchaseViewModel @Inject constructor(
 
     data class UiState(
         val isLoading: Boolean = false,
-        val nftType: NftType,
-        val prevNftImage: ImageValue,
-        val nftImage: ImageValue,
-        val costInFiat: FiatValue?,
+        val nft: RankModel,
+        val prevNftImage: ImageValue?,
         val costInCoin: CoinValue? = null,
-        val dailyReward: CoinValue,
-        val dailyUnlock: Double,
-        val isPurchasable: Boolean,
         val isPurchasableWithBnb: Boolean,
         val isPurchasableForFree: Boolean,
         val isPurchasableInStore: Boolean,

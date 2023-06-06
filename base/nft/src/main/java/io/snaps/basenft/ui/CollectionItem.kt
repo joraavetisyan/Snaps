@@ -124,9 +124,7 @@ private fun Nft(
                 Image(
                     painter = data.image.get(),
                     contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.Crop,
                 )
                 if (data.isHealthBadgeVisible) NeedToRepairMessage()

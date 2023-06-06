@@ -26,6 +26,7 @@ import io.snaps.corecrypto.core.providers.TotalService
 @InstallIn(SingletonComponent::class)
 class DataModule {
 
+    // todo don't use interfaces from crypto core directly, the crypto core module is likely to be removed
     @Provides
     fun accountFactory(): IAccountFactory = CryptoKit.accountFactory
 

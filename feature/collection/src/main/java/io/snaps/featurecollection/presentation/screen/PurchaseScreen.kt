@@ -49,6 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.basenft.domain.RankModel
 import io.snaps.basenft.ui.rankCostToString
 import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.basewallet.ui.LimitedGasDialog
@@ -62,6 +63,7 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toPercentageFormat
+import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
@@ -79,6 +81,7 @@ import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuicompose.uikit.status.InfoBlock
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurecollection.ScreenNavigator
+import io.snaps.featurecollection.presentation.likeValue
 import io.snaps.featurecollection.presentation.viewmodel.PurchaseViewModel
 import kotlinx.coroutines.launch
 
@@ -206,7 +209,7 @@ private fun PurchaseScreen(
             )
         },
         floatingActionButton = {
-            if (uiState.isPurchasable) {
+            if (uiState.nft.isPurchasable) {
                 ActionButtons(
                     uiState = uiState,
                     onGloballyPositioned = {
@@ -229,31 +232,35 @@ private fun PurchaseScreen(
                 .padding(horizontal = 12.dp)
                 .padding(bottom = buttonsHeight + 24.dp),
         ) {
-            if (uiState.isPurchasable) {
+            if (uiState.nft.isPurchasable) {
                 NftInfoBlock(
-                    nftType = uiState.nftType,
-                    nftImage = uiState.nftImage,
-                    cost = uiState.costInFiat.rankCostToString(),
+                    nft = uiState.nft,
                 )
             } else {
                 UnavailableNftInfoBlock(
-                    nftType = uiState.nftType,
-                    nftImage = uiState.nftImage,
+                    nft = uiState.nft,
                     prevNftImage = uiState.prevNftImage,
                 )
             }
+            if (uiState.nft.type.isLiker) {
+                CardBlock(
+                    title = StringKey.NftDetailsTitleLiker.textValue(),
+                    description = StringKey.NftDetailsMessageLiker.textValue(likeValue.getFormattedValue()),
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
             CardBlock(
-                title = StringKey.PurchaseTitleDailyReward.textValue(uiState.dailyReward.getFormatted()),
+                title = StringKey.PurchaseTitleDailyReward.textValue(uiState.nft.dailyReward.getFormatted()),
                 description = StringKey.PurchaseMessageDailyReward1.textValue(),
                 message = StringKey.PurchaseMessageDailyReward2.textValue(),
             )
             Spacer(modifier = Modifier.height(12.dp))
             CardBlock(
                 title = StringKey.PurchaseTitleDailyUnlock.textValue(
-                    uiState.dailyUnlock.toPercentageFormat()
+                    uiState.nft.dailyUnlock.toPercentageFormat()
                 ),
                 description = StringKey.PurchaseMessageDailyUnlock1.textValue(
-                    uiState.dailyUnlock.toPercentageFormat()
+                    uiState.nft.dailyUnlock.toPercentageFormat()
                 ),
                 message = StringKey.PurchaseMessageDailyUnlock2.textValue(),
             )
@@ -315,7 +322,7 @@ private fun ActionButtons(
             .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        if (uiState.nftType == NftType.Free) {
+        if (uiState.nft.type == NftType.Free) {
             if (isFreeButtonVisible) {
                 SimpleButtonActionM(
                     modifier = Modifier.fillMaxWidth(),
@@ -351,9 +358,7 @@ private fun ActionButtons(
 
 @Composable
 private fun NftInfoBlock(
-    nftType: NftType,
-    nftImage: ImageValue,
-    cost: TextValue,
+    nft: RankModel,
 ) {
     Row(
         modifier = Modifier
@@ -362,16 +367,12 @@ private fun NftInfoBlock(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        Image(
-            painter = nftImage.get(),
-            contentDescription = null,
-            modifier = Modifier.size(100.dp),
-        )
+        NftImageWithBadge(nftImage = nft.image, badgeValue = nft.additionalData.leftCopies?.toString())
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
-                text = nftType.name,
+                text = nft.type.displayName,
                 style = AppTheme.specificTypography.headlineSmall,
             )
             Row(
@@ -383,7 +384,7 @@ private fun NftInfoBlock(
                     style = AppTheme.specificTypography.bodyMedium,
                     color = AppTheme.specificColorScheme.textSecondary,
                 )
-                ValueWidget(R.drawable.img_coin_silver.imageValue() to cost)
+                ValueWidget(R.drawable.img_coin_silver.imageValue() to nft.cost.rankCostToString())
             }
         }
     }
@@ -391,9 +392,8 @@ private fun NftInfoBlock(
 
 @Composable
 private fun UnavailableNftInfoBlock(
-    nftType: NftType,
-    nftImage: ImageValue,
-    prevNftImage: ImageValue,
+    nft: RankModel,
+    prevNftImage: ImageValue?,
 ) {
     Row(
         modifier = Modifier
@@ -402,7 +402,7 @@ private fun UnavailableNftInfoBlock(
         horizontalArrangement = Arrangement.spacedBy(32.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        NftImage(image = nftImage)
+        NftImage(image = nft.image)
         Box(
             modifier = Modifier
                 .size(80.dp)
@@ -427,16 +427,24 @@ private fun UnavailableNftInfoBlock(
                 modifier = Modifier.align(Alignment.BottomCenter),
             )
         }
-        NftImage(image = prevNftImage)
+        if (prevNftImage != null) {
+            NftImage(image = prevNftImage)
+        } else {
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .weight(1f),
+            )
+        }
     }
     Text(
-        text = StringKey.PurchaseTitleRank.textValue(nftType.name).get(),
+        text = StringKey.PurchaseTitleRank.textValue(nft.type.displayName).get(),
         style = AppTheme.specificTypography.headlineSmall,
         modifier = Modifier.fillMaxWidth(),
         textAlign = TextAlign.Center,
     )
     Text(
-        text = StringKey.PurchaseTitleNotAvailable.textValue(nftType.name).get(),
+        text = StringKey.PurchaseTitleNotAvailable.textValue(nft.type.displayName).get(),
         style = AppTheme.specificTypography.bodyLarge,
         color = AppTheme.specificColorScheme.textSecondary,
         modifier = Modifier.fillMaxWidth(),

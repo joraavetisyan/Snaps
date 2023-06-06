@@ -46,6 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.basefeed.ui.CreateCheckHandler
 import io.snaps.basefeed.ui.VideoFeedGrid
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.IconValue
@@ -84,7 +85,6 @@ fun ProfileScreen(
     viewModel.command.collectAsCommand {
         when (it) {
             ProfileViewModel.Command.OpenSettingsScreen -> router.toSettingsScreen()
-            ProfileViewModel.Command.OpenCreateScreen -> router.toCreateVideoScreen()
             is ProfileViewModel.Command.OpenSubsScreen -> router.toSubsScreen(it.args)
             is ProfileViewModel.Command.OpenUserFeedScreen -> router.toUserFeedScreen(
                 userId = it.userId, position = it.position
@@ -92,6 +92,12 @@ fun ProfileScreen(
             is ProfileViewModel.Command.OpenLikedFeedScreen -> router.toLikedFeedScreen(
                 userId = it.userId, position = it.position,
             )
+        }
+    }
+
+    viewModel.createCheckCommand.collectAsCommand {
+        when (it) {
+            CreateCheckHandler.Command.OpenCreateScreen -> router.toCreateVideoScreen()
         }
     }
 
@@ -270,7 +276,7 @@ private fun AppBar(
         modifier = modifier.fillMaxWidth(),
     ) {
         Image(
-            painter = R.drawable.img_profile_background.imageValue().get(),
+            painter = R.drawable.img_background_profile.imageValue().get(),
             contentDescription = null,
             contentScale = ContentScale.FillWidth,
             modifier = Modifier

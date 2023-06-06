@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basefeed.data.VideoFeedRepository
 import io.snaps.basefeed.domain.VideoFeedType
+import io.snaps.basefeed.ui.CreateCheckHandler
 import io.snaps.basefeed.ui.VideoFeedUiState
 import io.snaps.basefeed.ui.toVideoFeedUiState
 import io.snaps.baseprofile.data.ProfileRepository
-import io.snaps.basesources.NotificationsSource
 import io.snaps.basesubs.data.SubsRepository
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
@@ -39,12 +39,12 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    createCheckHandler: CreateCheckHandler,
     private val action: Action,
-    private val notificationsSource: NotificationsSource,
     @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val videoFeedRepository: VideoFeedRepository,
     @Bridged private val subsRepository: SubsRepository,
-) : SimpleViewModel() {
+) : SimpleViewModel(), CreateCheckHandler by createCheckHandler {
 
     private val args = savedStateHandle.requireArgs<AppRoute.Profile.Args>()
 
@@ -233,14 +233,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onCreateVideoClicked() {
-        viewModelScope.launch {
-            val (isAllowed, maxCount) = videoFeedRepository.isAllowedToCreate(profileRepository.state.value.dataOrCache)
-            if (isAllowed) {
-                _command publish Command.OpenCreateScreen
-            } else {
-                notificationsSource.sendError(StringKey.ErrorCreateVideoLimit.textValue(maxCount.toString()))
-            }
-        }
+        viewModelScope.launch { tryOpenCreate() }
     }
 
     fun onSubscribeClicked() = viewModelScope.launch {
@@ -292,7 +285,6 @@ class ProfileViewModel @Inject constructor(
 
     sealed class Command {
         object OpenSettingsScreen : Command()
-        object OpenCreateScreen : Command()
         data class OpenSubsScreen(val args: AppRoute.Subs.Args) : Command()
         data class OpenUserFeedScreen(val userId: Uuid?, val position: Int) : Command()
         data class OpenLikedFeedScreen(val userId: Uuid?, val position: Int) : Command()

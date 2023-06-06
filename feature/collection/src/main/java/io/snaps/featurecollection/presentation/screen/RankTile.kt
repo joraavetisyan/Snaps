@@ -1,7 +1,6 @@
 package io.snaps.featurecollection.presentation.screen
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import io.snaps.basenft.domain.RankModel
 import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
@@ -33,7 +33,6 @@ import io.snaps.corecommon.strings.approximated
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.addIf
 import io.snaps.coreuicompose.tools.defaultTileRipple
-import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.other.ShimmerTile
@@ -46,6 +45,7 @@ sealed class RankTileState : TileState {
         val type: NftType,
         val cost: FiatValue?,
         val image: ImageValue,
+        val additionalData: RankModel.AdditionalData,
         val dailyReward: FiatValue,
         val dailyUnlock: String,
         val dailyConsumption: String,
@@ -94,11 +94,7 @@ private fun Data(
                 }
             },
     ) {
-        Image(
-            data.image.get(),
-            contentDescription = null,
-            modifier = Modifier.size(100.dp)
-        )
+        NftImageWithBadge(nftImage = data.image, badgeValue = data.additionalData.leftCopies?.toString())
         Spacer(Modifier.width(8.dp))
         Column(
             modifier = Modifier.fillMaxWidth(),

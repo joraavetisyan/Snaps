@@ -13,4 +13,10 @@ data class RankModel(
     val dailyUnlock: Double,
     val dailyConsumption: Double,
     val isPurchasable: Boolean,
-)
+    val additionalData: AdditionalData,
+) {
+
+    data class AdditionalData(
+        val leftCopies: Int?,
+    )
+}

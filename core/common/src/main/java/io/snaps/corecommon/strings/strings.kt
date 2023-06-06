@@ -2873,6 +2873,27 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Перегляд на Bscscan",
         SupportedLanguageKey.Es to "Ver en Bscscan",
     ),
+    key(StringKey.NftDetailsFieldLeftCopies) to mapOf(
+        SupportedLanguageKey.En to "Remaining %s",
+        SupportedLanguageKey.Ru to "Осталось %s",
+        SupportedLanguageKey.Tr to "Kalan %s",
+        SupportedLanguageKey.Ua to "Залишилося %s",
+        SupportedLanguageKey.Es to "%s restante",
+    ),
+    key(StringKey.NftDetailsTitleLiker) to mapOf(
+        SupportedLanguageKey.En to "Like Reward",
+        SupportedLanguageKey.Ru to "Награда за лайки",
+        SupportedLanguageKey.Tr to "Beğeni Ödülü",
+        SupportedLanguageKey.Ua to "Нагорода за лайки",
+        SupportedLanguageKey.Es to "Me gusta Recompensa",
+    ),
+    key(StringKey.NftDetailsMessageLiker) to mapOf(
+        SupportedLanguageKey.En to "Get likes for your videos from users. For every like you get Liker points when you get %s",
+        SupportedLanguageKey.Ru to "Получайте лайки на свои видео от пользователей. За каждый лайк очки Liker приносят вам по %s",
+        SupportedLanguageKey.Tr to "Kullanıcılardan videolarınız için beğeni alın. Her beğeni için %s aldığınızda Liker puanı alırsınız",
+        SupportedLanguageKey.Ua to "Отримуйте лайки на свої відео від користувачів. За кожен лайк окуляри Liker приносять вам по %s",
+        SupportedLanguageKey.Es to "Obtiene Me gusta para sus videos de los usuarios. Por cada Me gusta, obtiene puntos Me gusta cuando obtiene %s",
+    ),
     key(StringKey.VideoClipActionDelete) to mapOf(
         SupportedLanguageKey.En to "Delete video",
         SupportedLanguageKey.Ru to "Удалить видео",
@@ -2908,7 +2929,7 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Прибуток",
         SupportedLanguageKey.Es to "Ganancias",
     ),
-    key(StringKey.NftDetailsDescriptionEarnings) to mapOf(
+    key(StringKey.NftDetailsMessageEarnings) to mapOf(
         SupportedLanguageKey.En to "Daily Reward\n%s",
         SupportedLanguageKey.Ru to "Ежедневная награда\n%s",
         SupportedLanguageKey.Tr to "Günlük ödül\n%s",

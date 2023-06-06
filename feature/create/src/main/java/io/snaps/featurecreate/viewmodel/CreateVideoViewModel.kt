@@ -4,12 +4,9 @@ import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.snaps.basefeed.data.VideoFeedRepository
-import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.coredata.di.Bridged
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.FileType
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -47,8 +44,6 @@ enum class RecordDelay(val seconds: Int) {
 class CreateVideoViewModel @Inject constructor(
     private val fileManager: FileManager,
     private val notificationsSource: NotificationsSource,
-    @Bridged private val profileRepository: ProfileRepository,
-    @Bridged private val videoFeedRepository: VideoFeedRepository,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -58,16 +53,6 @@ class CreateVideoViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     private var delayTimerJob: Job? = null
-
-    init {
-        viewModelScope.launch {
-            val (isAllowed, maxCount) = videoFeedRepository.isAllowedToCreate(profileRepository.state.value.dataOrCache)
-            if (!isAllowed) {
-                notificationsSource.sendError(StringKey.ErrorCreateVideoLimit.textValue(maxCount.toString()))
-                _command publish Command.CloseScreen
-            }
-        }
-    }
 
     fun onTimingSelected(recordTiming: RecordTiming) {
         _uiState.update { it.copy(selectedRecordTiming = recordTiming) }
@@ -155,6 +140,5 @@ class CreateVideoViewModel @Inject constructor(
 
     sealed class Command {
         data class OpenPreviewScreen(val uri: String) : Command()
-        object CloseScreen : Command()
     }
 }

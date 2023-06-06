@@ -20,6 +20,11 @@ private fun NftItemResponseDto.toModel() = RankModel(
     dailyUnlock = percentGrowingPerDay,
     dailyConsumption = dailyMaintenanceCostMultiplier ?: 0.0,
     isPurchasable = isAvailableToPurchase,
+    additionalData = toAdditionalData(),
+)
+
+private fun NftItemResponseDto.toAdditionalData() = RankModel.AdditionalData(
+    leftCopies = additionalData?.leftCopies,
 )
 
 fun List<UserNftItemResponseDto>.toNftModelList() = map(UserNftItemResponseDto::toModel)

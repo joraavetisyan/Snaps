@@ -4,6 +4,7 @@ import io.snaps.basenft.data.model.LevelInfo
 import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.MintNftResponseDto
 import io.snaps.basenft.data.model.MintNftStoreRequestDto
+import io.snaps.basenft.data.model.NftItemAdditionalDataDto
 import io.snaps.basenft.data.model.NftItemResponseDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.data.model.RepairGlassesResponseDto
@@ -80,6 +81,7 @@ class FakeNftApi : NftApi {
                     costInRealTokens = rInt,
                     isAvailableToPurchase = rBool,
                     pathToImage = rImage,
+                    additionalData = NftItemAdditionalDataDto(1),
                 )
             )
         }

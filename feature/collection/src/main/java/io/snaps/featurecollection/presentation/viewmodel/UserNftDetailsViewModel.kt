@@ -11,6 +11,7 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.basenft.domain.NftModel
+import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.di.Bridged
 import io.snaps.corenavigation.AppRoute
@@ -19,6 +20,7 @@ import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
+import io.snaps.featurecollection.presentation.likeValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
@@ -38,25 +40,37 @@ class UserNftDetailsViewModel @Inject constructor(
     )
     val uiState = _uiState.asStateFlow()
 
-    private fun getItems(model: NftModel) = listOf(
-        CellTileState.Data(
+    private fun getItems(model: NftModel) = buildList {
+        this += CellTileState.Data(
             middlePart = MiddlePart.Data(
                 valueBold = model.displayName,
                 description = StringKey.NftDetailsMessageDailyReward.textValue(),
             ),
-        ),
-        CellTileState.Data(
+        )
+        if (model.type.isLiker) {
+            this += CellTileState.Data(
+                middlePart = MiddlePart.Data(
+                    valueBold = StringKey.NftDetailsTitleLiker.textValue(),
+                    description = StringKey.NftDetailsMessageLiker.textValue(likeValue.getFormattedValue()),
+                ),
+                rightPart = RightPart.LottieAnim(
+                    resId = R.raw.lottie_like_multiple,
+                    size = 68.dp,
+                )
+            )
+        }
+        this += CellTileState.Data(
             middlePart = MiddlePart.Data(
                 valueBold = StringKey.NftDetailsTitleEarnings.textValue(),
-                description = StringKey.NftDetailsDescriptionEarnings.textValue(model.dailyReward.getFormatted()),
+                description = StringKey.NftDetailsMessageEarnings.textValue(model.dailyReward.getFormatted()),
             ),
             rightPart = RightPart.ActionIcon(
                 source = R.drawable.img_snps.imageValue(),
                 tint = Color.Unspecified,
                 size = 64.dp,
             )
-        ),
-        CellTileState.Data(
+        )
+        this += CellTileState.Data(
             middlePart = MiddlePart.Data(
                 valueBold = StringKey.NftDetailsTitleCondition.textValue(),
                 description = StringKey.NftDetailsMessageCondition.textValue(model.repairCost.getFormatted()),
@@ -66,8 +80,8 @@ class UserNftDetailsViewModel @Inject constructor(
                 tint = Color.Unspecified,
                 size = 56.dp,
             )
-        ),
-        CellTileState.Data(
+        )
+        this += CellTileState.Data(
             middlePart = MiddlePart.Data(
                 valueBold = StringKey.NftDetailsTitleLevel.textValue(),
                 description = StringKey.NftDetailsMessageLevel.textValue(),
@@ -77,8 +91,8 @@ class UserNftDetailsViewModel @Inject constructor(
                 tint = Color.Unspecified,
                 size = 56.dp,
             )
-        ),
-    )
+        )
+    }
 
     data class UiState(
         val title: TextValue,

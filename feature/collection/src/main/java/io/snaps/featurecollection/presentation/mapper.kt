@@ -4,10 +4,13 @@ import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.corecommon.ext.toPercentageFormat
+import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.featurecollection.presentation.screen.RankTileState
+
+val likeValue get() = CoinSNPS(1.0)
 
 fun State<List<RankModel>>.toRankTileState(
     snpsUsdExchangeRate: Double,
@@ -17,8 +20,8 @@ fun State<List<RankModel>>.toRankTileState(
     is Loading -> List(6) { RankTileState.Shimmer }
     is Effect -> when {
         isSuccess -> {
-            requireData.map { rank ->
-                rank.copy(isPurchasable = rank.isPurchasable).toRankTileState(
+            requireData.map {
+                it.toRankTileState(
                     snpsUsdExchangeRate = snpsUsdExchangeRate,
                     onItemClicked = onItemClicked,
                 )
@@ -35,6 +38,7 @@ private fun RankModel.toRankTileState(
     type = type,
     cost = cost,
     image = image,
+    additionalData = additionalData,
     dailyReward = dailyReward.toFiat(rate = snpsUsdExchangeRate),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),

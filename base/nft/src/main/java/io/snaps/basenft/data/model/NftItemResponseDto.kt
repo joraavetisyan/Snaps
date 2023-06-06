@@ -15,6 +15,7 @@ data class NftItemResponseDto(
     @SerialName("pathToImage") val pathToImage: FullUrl,
     @SerialName("dailyMaintenanceCostMultiplier") val dailyMaintenanceCostMultiplier: Double?,
     @SerialName("percentGrowingPerDay") val percentGrowingPerDay: Double,
+    @SerialName("additionalData") val additionalData: NftItemAdditionalDataDto?,
 ) {
 
     val repairCost: Double get() {
@@ -22,3 +23,8 @@ data class NftItemResponseDto(
         return (dailyReward.toBigDecimal() * multiplier.toBigDecimal()).toDouble()
     }
 }
+
+@Serializable
+data class NftItemAdditionalDataDto(
+    @SerialName("leftCopies") val leftCopies: Int?,
+)

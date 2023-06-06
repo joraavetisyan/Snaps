@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.basefeed.ui.CreateCheckHandler
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
@@ -56,8 +57,13 @@ fun TaskDetailsScreen(
     viewModel.command.collectAsCommand {
         when (it) {
             TaskDetailsViewModel.Command.OpenShareTemplate -> router.toShareTemplateScreen()
-            TaskDetailsViewModel.Command.OpenCreateVideo -> router.toCreateVideoScreen()
             TaskDetailsViewModel.Command.OpenMainVideoFeed -> router.toMainVideoFeedScreen()
+        }
+    }
+
+    viewModel.createCheckCommand.collectAsCommand {
+        when (it) {
+            CreateCheckHandler.Command.OpenCreateScreen -> router.toCreateVideoScreen()
         }
     }
 

@@ -227,6 +227,7 @@ class WalletRepositoryImpl @Inject constructor(
         return AccountType.Mnemonic(words, "".normalizeNFKD())
     }
 
+    // todo account and wallets creation as atomic operation
     override suspend fun importAccount(userId: Uuid, words: List<String>): Effect<Completable> {
         return try {
             wordsManager.validateChecksumStrict(words)

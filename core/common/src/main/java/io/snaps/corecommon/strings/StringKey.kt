@@ -475,11 +475,14 @@ enum class StringKey {
 
     NftDetailsMessageDailyReward,
     NftDetailsTitleEarnings,
-    NftDetailsDescriptionEarnings,
+    NftDetailsMessageEarnings,
     NftDetailsTitleCondition,
     NftDetailsMessageCondition,
     NftDetailsTitleLevel,
     NftDetailsMessageLevel,
+    NftDetailsFieldLeftCopies,
+    NftDetailsTitleLiker,
+    NftDetailsMessageLiker,
 
     MainVideoFeedTitleForYou,
     MainVideoFeedTitleSubscriptions,

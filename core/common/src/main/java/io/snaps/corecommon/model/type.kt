@@ -195,25 +195,26 @@ enum class OnboardingType {
 }
 
 @Serializable
-enum class NftType(val intType: NftTypeInt, val storeId: String?) {
-    @SerialName("Free") Free(0, null),
-    @SerialName("Newbee") Newbie(1, "newbie"),
-    @SerialName("Viewer") Viewer(2, "viewer"),
-    @SerialName("Follower") Follower(3, "follower"),
-    @SerialName("Sub") Sub(4, "sub"),
-    @SerialName("Sponsor") Sponsor(5, "sponsor"),
-    @SerialName("Influencer") Influencer(6, null),
-    @SerialName("FamousGuy") FamousGuy(7, null),
-    @SerialName("Star") Star(8, null),
-    @SerialName("Rockstar") Rockstar(9, null),
-    @SerialName("SuperStar") SuperStar(10, null),
-    @SerialName("Legend") Legend(11, null),
+enum class NftType(val storeId: String?) {
+    @SerialName("Free") Free(null),
+    @SerialName("Newbee") Newbie("newbie"),
+    @SerialName("Viewer") Viewer("viewer"),
+    @SerialName("Follower") Follower("follower"),
+    @SerialName("Sub") Sub("sub"),
+    @SerialName("Sponsor") Sponsor("sponsor"),
+    @SerialName("Blogger") Blogger(null),
+    @SerialName("Liker") Liker(null),
+    @SerialName("Influencer") Influencer(null),
+    @SerialName("FamousGuy") FamousGuy(null),
+    @SerialName("Star") Star(null),
+    @SerialName("Rockstar") Rockstar(null),
+    @SerialName("SuperStar") SuperStar(null),
+    @SerialName("Legend") Legend(null),
     ;
 
     val displayName get() = name
 
-    companion object {
-
-        fun byIntType(intType: NftTypeInt) = values().first { it.intType == intType }
-    }
+    // todo we could use JsonNames to have one field only, but the name is displayed in gui, find a way
+    // to obtain the serialized name
+    val isLiker get() = this == Blogger || this == Liker
 }

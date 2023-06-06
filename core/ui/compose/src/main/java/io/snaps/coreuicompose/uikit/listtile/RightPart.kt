@@ -1,5 +1,6 @@
 package io.snaps.coreuicompose.uikit.listtile
 
+import androidx.annotation.RawRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,6 +21,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
+import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.model.CoinValue
@@ -53,6 +60,11 @@ sealed class RightPart : TileState {
     data class NavigateNextIcon(val text: TextValue? = null) : RightPart()
 
     data class Logo(val source: ImageValue) : RightPart()
+
+    data class LottieAnim(
+        @RawRes val resId: Int,
+        val size: Dp,
+    ) : RightPart()
 
     data class Switch(val isChecked: Boolean) : RightPart()
 
@@ -232,6 +244,14 @@ fun RightPartTile(modifier: Modifier, data: RightPart) {
                         }
                     )
                 }
+            }
+            is RightPart.LottieAnim -> {
+                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(data.resId))
+                LottieAnimation(
+                    composition = composition,
+                    modifier = Modifier.size(data.size),
+                    iterations = LottieConstants.IterateForever,
+                )
             }
         }
     }

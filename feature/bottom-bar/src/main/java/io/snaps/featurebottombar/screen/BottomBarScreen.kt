@@ -120,6 +120,8 @@ fun BottomBarScreen(
         when (it) {
             BottomBarViewModel.Command.OpenNftPurchaseScreen -> navController.navigate(AppRoute.RankSelection)
             BottomBarViewModel.Command.ShowBottomDialog -> showSheet()
+            BottomBarViewModel.Command.HideBottomDialog -> hideSheet()
+            is BottomBarViewModel.Command.OpenUrlScreen -> context.openUrl(it.url)
         }
     }
     viewModel.onboardingCommand.collectAsCommand {
@@ -147,13 +149,9 @@ fun BottomBarScreen(
                         },
                     )
                 }
-                uiState.banner != null -> Banner(
-                    banner = uiState.banner!!,
-                    onClicked = {
-                        hideSheet()
-                        context.openUrl(uiState.banner!!.action)
-                    },
-                )
+                uiState.banner != null -> uiState.banner?.let {
+                    Banner(banner = it, onClicked = viewModel::onBannerActionClicked)
+                }
                 else -> OnboardingDialog(
                     onboardingState = onboardingState,
                     onClicked = viewModel::onOnboardingDialogActionClicked,
@@ -343,7 +341,7 @@ private fun OnboardingDialog(
 @Composable
 private fun Banner(
     banner: BannerDto,
-    onClicked: () -> Unit,
+    onClicked: (BannerDto) -> Unit,
 ) {
     val language = DEFAULT_LOCALE.toSupportedLanguageKey()
     val title = when (language) {
@@ -389,7 +387,7 @@ private fun Banner(
                     .fillMaxWidth(),
             )
             SimpleButtonActionL(
-                onClick = onClicked,
+                onClick = { onClicked(banner) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),

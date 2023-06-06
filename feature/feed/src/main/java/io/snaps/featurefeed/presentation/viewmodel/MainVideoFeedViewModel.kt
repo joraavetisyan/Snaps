@@ -6,13 +6,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basefeed.data.CommentRepository
 import io.snaps.basefeed.data.VideoFeedRepository
 import io.snaps.basefeed.domain.VideoFeedType
+import io.snaps.basefeed.ui.CreateCheckHandler
 import io.snaps.basefeed.ui.VideoFeedViewModel
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
-import io.snaps.basesources.NotificationsSource
 import io.snaps.basesubs.data.SubsRepository
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
@@ -22,7 +22,6 @@ import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.getArg
-import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,14 +34,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private fun SavedStateHandle.args() = getArg<AppRoute.SingleVideo.Args>()
+
 @HiltViewModel
 class MainVideoFeedViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     @Bridged mainHeaderHandler: MainHeaderHandler,
     @Bridged onboardingHandler: OnboardingHandler,
     bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
+    createCheckHandler: CreateCheckHandler,
     action: Action,
-    private val notificationsSource: NotificationsSource,
     private val appRouteProvider: AppRouteProvider,
     @Bridged private val videoFeedRepository: VideoFeedRepository,
     @Bridged private val profileRepository: ProfileRepository,
@@ -50,17 +51,17 @@ class MainVideoFeedViewModel @Inject constructor(
     @Bridged subsRepository: SubsRepository,
 ) : VideoFeedViewModel(
     bottomDialogBarVisibilityHandler = bottomDialogBarVisibilityHandler,
-    videoFeedType = savedStateHandle.getArg<AppRoute.SingleVideo.Args>()?.videoClipId?.let {
-        VideoFeedType.Single(it)
-    } ?: VideoFeedType.Main,
+    videoFeedType = savedStateHandle.args()?.videoClipId?.let(VideoFeedType::Single) ?: VideoFeedType.Main,
     action = action,
     videoFeedRepository = videoFeedRepository,
     profileRepository = profileRepository,
     commentRepository = commentRepository,
     subsRepository = subsRepository,
-), MainHeaderHandler by mainHeaderHandler, OnboardingHandler by onboardingHandler {
+), MainHeaderHandler by mainHeaderHandler,
+    OnboardingHandler by onboardingHandler,
+    CreateCheckHandler by createCheckHandler {
 
-    private val args = savedStateHandle.getArg<AppRoute.SingleVideo.Args>()
+    private val args = savedStateHandle.args()
 
     private val _mainFeedState = MutableStateFlow(
         UiState(tab = Tab.Main.takeIf { args?.videoClipId == null })
@@ -88,14 +89,7 @@ class MainVideoFeedViewModel @Inject constructor(
     }
 
     fun onCreateVideoClicked() {
-        viewModelScope.launch {
-            val (isAllowed, maxCount) = videoFeedRepository.isAllowedToCreate(profileRepository.state.value.dataOrCache)
-            if (isAllowed) {
-                _mainFeedCommand publish Command.OpenCreateScreen
-            } else {
-                notificationsSource.sendError(StringKey.ErrorCreateVideoLimit.textValue(maxCount.toString()))
-            }
-        }
+        viewModelScope.launch { tryOpenCreate() }
     }
 
     data class UiState(
@@ -107,7 +101,5 @@ class MainVideoFeedViewModel @Inject constructor(
         Subscriptions(StringKey.MainVideoFeedTitleSubscriptions.textValue());
     }
 
-    sealed class Command {
-        object OpenCreateScreen : Command()
-    }
+    sealed class Command
 }

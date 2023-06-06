@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.basefeed.ui.CreateCheckHandler
 import io.snaps.basefeed.ui.VideoClipScreen
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
@@ -58,9 +59,9 @@ fun MainVideoFeedScreen(
     val mainFeedState by viewModel.mainFeedState.collectAsState()
     val mainHeaderUiState by viewModel.headerUiState.collectAsState()
 
-    viewModel.mainFeedCommand.collectAsCommand {
+    viewModel.createCheckCommand.collectAsCommand {
         when (it) {
-            MainVideoFeedViewModel.Command.OpenCreateScreen -> router.toCreateVideoScreen()
+            CreateCheckHandler.Command.OpenCreateScreen -> router.toCreateVideoScreen()
         }
     }
 

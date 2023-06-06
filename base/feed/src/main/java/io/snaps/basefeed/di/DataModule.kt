@@ -6,6 +6,8 @@ import dagger.Provides
 import dagger.hilt.EntryPoint
 import dagger.hilt.EntryPoints
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import io.snaps.basefeed.data.CommentApi
 import io.snaps.basefeed.data.CommentRepository
@@ -19,6 +21,8 @@ import io.snaps.basefeed.data.VideoFeedUploaderApivideoWorkManagerImpl
 import io.snaps.basefeed.data.VideoFeedApi
 import io.snaps.basefeed.data.VideoFeedRepository
 import io.snaps.basefeed.data.VideoFeedRepositoryImpl
+import io.snaps.basefeed.ui.CreateCheckHandler
+import io.snaps.basefeed.ui.CreateCheckHandlerImplDelegate
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.coredata.di.Bridged
@@ -114,4 +118,13 @@ internal object DataBindEntryPointBridge {
             .get(componentManager, DataBindEntryPoint::class.java)
             .commentRepository()
     }
+}
+
+@Module
+@InstallIn(ViewModelComponent::class)
+internal interface ViewModelDataBindModule {
+
+    @Binds
+    @ViewModelScoped
+    fun CreateCheckHandler(bind: CreateCheckHandlerImplDelegate): CreateCheckHandler
 }

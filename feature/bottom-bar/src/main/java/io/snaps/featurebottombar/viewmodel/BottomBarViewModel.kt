@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.baseprofile.data.model.BannerActionType
 import io.snaps.baseprofile.data.model.BannerDto
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
@@ -11,12 +12,14 @@ import io.snaps.basesources.AppUpdateInfoDto
 import io.snaps.basesources.AppUpdateProvider
 import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.basesources.UpdateAvailableState
+import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.ROUTE_ARGS_SEPARATOR
+import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.channels.Channel
@@ -119,6 +122,17 @@ class BottomBarViewModel @Inject constructor(
         }
     }
 
+    fun onBannerActionClicked(banner: BannerDto) {
+        viewModelScope.launch {
+            _command publish Command.HideBottomDialog
+            if (banner.actionType == BannerActionType.NftList) {
+                _command publish Command.OpenNftPurchaseScreen
+            } else {
+                _command publish Command.OpenUrlScreen(banner.action)
+            }
+        }
+    }
+
     data class UiState(
         val isBottomBarVisible: Boolean = true,
         val badgeText: String = "",
@@ -128,6 +142,8 @@ class BottomBarViewModel @Inject constructor(
 
     sealed interface Command {
         object OpenNftPurchaseScreen : Command
+        data class OpenUrlScreen(val url: FullUrl) : Command
         object ShowBottomDialog : Command
+        object HideBottomDialog : Command
     }
 }

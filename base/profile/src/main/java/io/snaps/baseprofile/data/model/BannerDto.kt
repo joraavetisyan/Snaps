@@ -12,7 +12,13 @@ data class BannerDto(
     @SerialName("action") val action: FullUrl,
     @SerialName("actionTitle") val actionTitle: BannerTitleDto,
     @SerialName("title") val title: BannerTitleDto,
+    @SerialName("actionType") val actionType: BannerActionType?,
 )
+
+@Serializable
+enum class BannerActionType {
+    @SerialName("nft_list") NftList,
+}
 
 @Serializable
 data class BannerTitleDto(
