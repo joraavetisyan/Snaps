@@ -1,6 +1,7 @@
 package io.snaps.featurecollection.presentation.screen
 
 import android.app.Activity
+import androidx.annotation.RawRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +50,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import io.snaps.basenft.domain.RankModel
 import io.snaps.basenft.ui.rankCostToString
 import io.snaps.baseprofile.ui.ValueWidget
@@ -63,7 +68,6 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toPercentageFormat
-import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
@@ -246,6 +250,7 @@ private fun PurchaseScreen(
                 CardBlock(
                     title = StringKey.NftDetailsTitleLiker.textValue(),
                     description = StringKey.NftDetailsMessageLiker.textValue(likeValue.getFormattedValue()),
+                    lottieAnim = R.raw.lottie_like_multiple,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
             }
@@ -253,6 +258,7 @@ private fun PurchaseScreen(
                 title = StringKey.PurchaseTitleDailyReward.textValue(uiState.nft.dailyReward.getFormatted()),
                 description = StringKey.PurchaseMessageDailyReward1.textValue(),
                 message = StringKey.PurchaseMessageDailyReward2.textValue(),
+                image = R.drawable.img_snps.imageValue(),
             )
             Spacer(modifier = Modifier.height(12.dp))
             CardBlock(
@@ -263,44 +269,69 @@ private fun PurchaseScreen(
                     uiState.nft.dailyUnlock.toPercentageFormat()
                 ),
                 message = StringKey.PurchaseMessageDailyUnlock2.textValue(),
+                image = R.drawable.img_unlock.imageValue(),
             )
             Spacer(modifier = Modifier.height(12.dp))
             CardBlock(
                 title = StringKey.PurchaseTitleDailyCosts.textValue(),
                 description = StringKey.PurchaseMessageDailyCosts.textValue(),
+                image = R.drawable.img_repair.imageValue(),
             )
         }
     }
 }
 
+// todo better handle of images, unify lottie anim with other image values
 @Composable
 fun CardBlock(
     title: TextValue,
     description: TextValue,
     message: TextValue? = null,
+    image: ImageValue? = null,
+    @RawRes lottieAnim: Int? = null,
 ) {
     SimpleCard {
-        Text(
-            text = title.get(),
-            style = AppTheme.specificTypography.titleSmall,
-            modifier = Modifier
-                .padding(horizontal = 12.dp)
-                .padding(top = 12.dp),
-        )
-        Text(
-            text = description.get(),
-            style = AppTheme.specificTypography.bodyMedium,
-            color = AppTheme.specificColorScheme.textSecondary,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp)
-                .padding(top = 4.dp, bottom = 12.dp)
-        )
+        Row(
+            modifier = Modifier.padding(all = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title.get(),
+                    style = AppTheme.specificTypography.titleSmall,
+                )
+                Text(
+                    text = description.get(),
+                    style = AppTheme.specificTypography.bodyMedium,
+                    color = AppTheme.specificColorScheme.textSecondary,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
+                )
+            }
+            image?.let {
+                Image(
+                    painter = it.get(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .padding(start = 16.dp),
+                )
+            }
+            lottieAnim?.let {
+                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(it))
+                LottieAnimation(
+                    composition = composition,
+                    modifier = Modifier
+                        .size(80.dp)
+                        .padding(start = 16.dp),
+                    iterations = LottieConstants.IterateForever,
+                )
+            }
+        }
         message?.let {
             InfoBlock(
-                modifier = Modifier
-                    .padding(horizontal = 12.dp)
-                    .padding(bottom = 12.dp),
+                modifier = Modifier.padding(12.dp),
                 message = it,
             )
         }

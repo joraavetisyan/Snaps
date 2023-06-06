@@ -10,7 +10,7 @@ import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.featurecollection.presentation.screen.RankTileState
 
-val likeValue get() = CoinSNPS(1.0)
+val likeValue get() = CoinSNPS(0.5)
 
 fun State<List<RankModel>>.toRankTileState(
     snpsUsdExchangeRate: Double,
@@ -57,17 +57,15 @@ fun State<List<NftModel>>.toNftCollectionItemState(
     is Loading -> List(6) { CollectionItemState.Shimmer }
     is Effect -> when {
         isSuccess -> buildList<CollectionItemState> {
-            requireData.forEach {
-                add(
-                    it.toNftCollectionItemState(
-                        snpsUsdExchangeRate = snpsUsdExchangeRate,
-                        onRepairClicked = onRepairClicked,
-                        onItemClicked = onItemClicked,
-                        onHelpIconClicked = onHelpIconClicked,
-                    )
+            this += requireData.map {
+                it.toNftCollectionItemState(
+                    snpsUsdExchangeRate = snpsUsdExchangeRate,
+                    onRepairClicked = onRepairClicked,
+                    onItemClicked = onItemClicked,
+                    onHelpIconClicked = onHelpIconClicked,
                 )
             }
-            add(CollectionItemState.AddItem(onAddItemClicked))
+            this += CollectionItemState.AddItem(onAddItemClicked)
         }
         else -> listOf(CollectionItemState.Error(onClick = onReloadClicked))
     }

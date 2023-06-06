@@ -5,13 +5,11 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuthException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseauth.data.AuthRepository
-import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
@@ -27,7 +25,6 @@ import javax.inject.Inject
 class RegistrationViewModel @Inject constructor(
     private val sessionRepository: SessionRepository,
     private val authRepository: AuthRepository,
-    @Bridged private val profileRepository: ProfileRepository,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel() {
@@ -214,10 +211,10 @@ class RegistrationViewModel @Inject constructor(
             authRepository.signUpWithEmail(
                 email = uiState.value.emailAddressValue,
                 password = uiState.value.confirmPasswordValue,
-            )
-        }.doOnSuccess { // todo flatmap in execute
-            authRepository.sendEmailVerification()
-        }.doOnError { error, data ->
+            ).flatMap {
+                authRepository.sendEmailVerification()
+            }
+        }.doOnError { error, _ ->
             if (error.cause is FirebaseAuthException) {
                 notificationsSource.sendError(error)
             }

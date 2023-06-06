@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -124,8 +125,10 @@ private fun Nft(
                 Image(
                     painter = data.image.get(),
                     contentDescription = null,
-                    modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(shape = AppTheme.shapes.small),
+                    contentScale = ContentScale.FillWidth,
                 )
                 if (data.isHealthBadgeVisible) NeedToRepairMessage()
             }

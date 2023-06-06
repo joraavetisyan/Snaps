@@ -102,7 +102,7 @@ class KeyStoreManager(
             KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
         )
             .setBlockModes(BLOCK_MODE)
-            .setUserAuthenticationRequired(true)
+            .setUserAuthenticationRequired(false)
             .setRandomizedEncryptionRequired(false)
             .setEncryptionPaddings(PADDING)
 
