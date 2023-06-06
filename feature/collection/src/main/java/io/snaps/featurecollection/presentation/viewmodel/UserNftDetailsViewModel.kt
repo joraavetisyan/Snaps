@@ -55,7 +55,7 @@ class UserNftDetailsViewModel @Inject constructor(
                 ),
                 rightPart = RightPart.LottieAnim(
                     resId = R.raw.lottie_like_multiple,
-                    size = 68.dp,
+                    size = 76.dp,
                 )
             )
         }

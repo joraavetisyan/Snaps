@@ -323,7 +323,7 @@ fun CardBlock(
                 LottieAnimation(
                     composition = composition,
                     modifier = Modifier
-                        .size(80.dp)
+                        .size(88.dp)
                         .padding(start = 16.dp),
                     iterations = LottieConstants.IterateForever,
                 )
