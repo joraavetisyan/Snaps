@@ -11,6 +11,7 @@ import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
+import io.snaps.basesources.remotedata.RemoteDataProvider
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.basewallet.domain.WalletModel
@@ -67,6 +68,7 @@ class WalletViewModel @Inject constructor(
     private val action: Action,
     private val barcodeManager: BarcodeManager,
     private val notificationsSource: NotificationsSource,
+    private val remoteDataProvider: RemoteDataProvider,
     private val walletInteractor: WalletInteractor,
     @Bridged private val walletRepository: WalletRepository,
     private val transactionsRepository: TransactionsRepository,
@@ -142,7 +144,7 @@ class WalletViewModel @Inject constructor(
     private fun openSupport() {
         viewModelScope.launch {
             action.execute {
-                profileRepository.getSocialPages()
+                remoteDataProvider.getSocialPages()
             }.doOnSuccess { pages ->
                 pages.find { it.type == SocialPageType.Support }?.link?.let {
                     _command publish Command.OpenLink(it)

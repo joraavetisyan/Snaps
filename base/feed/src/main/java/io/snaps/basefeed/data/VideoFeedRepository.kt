@@ -1,12 +1,12 @@
 package io.snaps.basefeed.data
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.LikedVideoFeedItemResponseDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.baseprofile.domain.UserInfoModel
+import io.snaps.basesources.remotedata.RemoteDataProvider
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
@@ -54,6 +54,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
     private val loaderFactory: VideoFeedLoaderFactory,
     private val videoFeedUploader: VideoFeedUploader,
     private val userDataStorage: UserDataStorage,
+    private val remoteDataProvider: RemoteDataProvider,
 ) : VideoFeedRepository {
 
     private var _likedVideos: List<LikedVideoFeedItemResponseDto>? = null
@@ -167,12 +168,9 @@ class VideoFeedRepositoryImpl @Inject constructor(
 
     override fun isAllowedToCreate(userInfoModel: UserInfoModel?): Pair<Boolean, Int> {
         val date = userInfoModel?.questInfo?.questDate?.toInstant(ZoneOffset.UTC)?.toEpochMilli() ?: return true to 0
-        val maxCount = kotlin.runCatching {
-            // todo central remote data source for fb
-            FirebaseRemoteConfig.getInstance().getLong("max_videos_count")
-        }.getOrNull() ?: return true to 0
+        val maxCount = remoteDataProvider.getMaxVideoCount().data ?: return true to 0
         val currentCount = userDataStorage.getCreatedVideoCount(userInfoModel.userId, date)
-        return (currentCount < maxCount) to maxCount.toInt()
+        return (currentCount < maxCount) to maxCount
     }
 
     override fun onVideoCreated(userInfoModel: UserInfoModel?) {

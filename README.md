@@ -69,7 +69,8 @@ Access to the Tracker object is through [AnalyticsTrackerHolder].
 + and many other extensions for some routine
 
 #### Version Control
-+ If building for a store, merge to master and create a tag vX.X.X, push the tag to remote
++ If building for a store, increment version in separate commit, 
+merge to master and create a tag vX.X.X, push the tag to remote
 
 #### Dependency injection
 
@@ -92,13 +93,14 @@ Those classes provided with [@Bridged] qualifier to avoid boilerplate code
 
 #### Strings naming
 
+Try to place in the order they appear in the ui (top to bottom)
 Naming scheme for string ui elements: `placeTypeName`
 
 - `place`: screen name (if common - omitted) + dialog, bottom sheet, etc. (screenName_,
   screenNameDialogName_, screenNameBottomSheetName_)
 - `type`:
     1. title - screen title, field titles, etc.
-    2. message - messages
+    2. message - other (if none of the others suit)
     3. hint - hints (in text fields, below the field)
     4. field - some specific values (for example: values in the list, names of currencies)
     5. action - button names, etc.

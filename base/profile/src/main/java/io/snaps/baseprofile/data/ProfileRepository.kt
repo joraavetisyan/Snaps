@@ -4,7 +4,6 @@ import io.snaps.basesources.remotedata.model.BannerDto
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
-import io.snaps.basesources.remotedata.model.SocialPageDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.baseprofile.domain.CommonSettingsModel
 import io.snaps.baseprofile.domain.QuestInfoModel
@@ -78,8 +77,6 @@ interface ProfileRepository {
         address: CryptoAddress,
         avatar: FullUrl?,
     ): Effect<Completable>
-
-    suspend fun getSocialPages(): Effect<List<SocialPageDto>>
 
     suspend fun getBanner(): Effect<BannerDto>
 
@@ -260,10 +257,6 @@ class ProfileRepositoryImpl @Inject constructor(
                 }
             }
         }.toCompletable()
-    }
-
-    override suspend fun getSocialPages(): Effect<List<SocialPageDto>> {
-        return remoteDataProvider.getSocialPages()
     }
 
     override suspend fun getBanner(): Effect<BannerDto> {

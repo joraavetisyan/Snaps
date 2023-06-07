@@ -1,5 +1,6 @@
 package io.snaps.basesources.remotedata
 
+import io.snaps.basesources.remotedata.model.AppUpdateInfoDto
 import io.snaps.basesources.remotedata.model.BannerActionType
 import io.snaps.basesources.remotedata.model.BannerDto
 import io.snaps.basesources.remotedata.model.BannerTitleDto
@@ -9,7 +10,7 @@ import io.snaps.corecommon.model.Effect
 
 class FakeRemoteDataProvider : RemoteDataProvider {
 
-    override suspend fun getBanner(): Effect<BannerDto> {
+    override fun getBanner(): Effect<BannerDto> {
         return Effect.success(
             BannerDto(
                 isViewable = true,
@@ -37,7 +38,19 @@ class FakeRemoteDataProvider : RemoteDataProvider {
         )
     }
 
-    override suspend fun getSocialPages(): Effect<List<SocialPageDto>> {
+    override fun getSocialPages(): Effect<List<SocialPageDto>> {
         return Effect.success(emptyList())
+    }
+
+    override fun getMaxVideoCount(): Effect<Int> {
+        return Effect.success(1)
+    }
+
+    override fun getAppCurrentVersion(): Effect<AppUpdateInfoDto> {
+        return Effect.success(AppUpdateInfoDto(27, ""))
+    }
+
+    override fun getVideoapiKey(): Effect<String> {
+        return Effect.success("")
     }
 }

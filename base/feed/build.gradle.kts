@@ -25,5 +25,4 @@ dependencies {
     implementation(*Libs.bundle.work)
     implementation(*Libs.bundle.media)
     implementation(*Libs.bundle.apivideo)
-    implementation(*Libs.bundle.firebase)
 }

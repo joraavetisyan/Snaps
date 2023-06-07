@@ -2,11 +2,10 @@ package io.snaps.featureprofile.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.basesources.remotedata.RemoteDataProvider
 import io.snaps.basesources.remotedata.model.SocialPageType
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FullUrl
-import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
@@ -26,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SocialNetworksViewModel @Inject constructor(
     private val action: Action,
-    @Bridged private val profileRepository: ProfileRepository,
+    private val remoteDataProvider: RemoteDataProvider,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -38,7 +37,7 @@ class SocialNetworksViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             action.execute {
-                profileRepository.getSocialPages()
+                remoteDataProvider.getSocialPages()
             }.map {
                 it.map { socialPage ->
                     CellTileState(

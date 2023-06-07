@@ -1,19 +1,14 @@
 package io.snaps.basesources
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.snaps.corecommon.ext.log
+import io.snaps.basesources.remotedata.RemoteDataProvider
+import io.snaps.basesources.remotedata.model.AppUpdateInfoDto
 import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.Effect
-import io.snaps.corecommon.model.FullUrl
-import io.snaps.coredata.json.KotlinxSerializationJsonProvider
 import javax.inject.Inject
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import javax.inject.Singleton
 
 interface AppUpdateProvider {
@@ -23,19 +18,11 @@ interface AppUpdateProvider {
 
 class AppUpdateProviderImpl @Inject constructor(
     private val buildInfo: BuildInfo,
+    private val remoteDataProvider: RemoteDataProvider,
 ) : AppUpdateProvider {
 
     override fun getAvailableUpdateInfo(): Effect<UpdateAvailableState> {
-        val appUpdateInfo = try {
-            // todo central source for fb remotes
-            FirebaseRemoteConfig.getInstance().getValue("android_version").let {
-                KotlinxSerializationJsonProvider().get()
-                    .decodeFromString<AppUpdateInfoDto>(it.asString())
-            }
-        } catch (e: Exception) {
-            log(e)
-            null
-        }
+        val appUpdateInfo = remoteDataProvider.getAppCurrentVersion().data
         val updateAvailableState = appUpdateInfo?.let {
             if (it.versionCode > buildInfo.versionCode) {
                 UpdateAvailableState.Available(it)
@@ -52,12 +39,6 @@ sealed class UpdateAvailableState {
     object NotAvailable : UpdateAvailableState()
     object Downloaded : UpdateAvailableState()
 }
-
-@Serializable
-data class AppUpdateInfoDto(
-    @SerialName("version") val versionCode: Int,
-    @SerialName("link") val link: FullUrl,
-)
 
 @Module
 @InstallIn(SingletonComponent::class)

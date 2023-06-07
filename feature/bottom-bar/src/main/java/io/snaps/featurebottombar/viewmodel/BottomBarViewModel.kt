@@ -8,7 +8,7 @@ import io.snaps.basesources.remotedata.model.BannerActionType
 import io.snaps.basesources.remotedata.model.BannerDto
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
-import io.snaps.basesources.AppUpdateInfoDto
+import io.snaps.basesources.remotedata.model.AppUpdateInfoDto
 import io.snaps.basesources.AppUpdateProvider
 import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.basesources.UpdateAvailableState

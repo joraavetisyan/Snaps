@@ -50,13 +50,14 @@ abstract class PagedLoader<T, R>(
 
     suspend fun refresh(): Effect<Completable> {
         log("refresh")
-        if (_state.value.isLoading) return Effect.completable
+        if (_state.value.isLoading) return Effect.completable // todo not synced with init load
         _state.update { initialPageModel }
         return action.execute { load() }
     }
 
     suspend fun loadNext(): Effect<Completable> {
         log("loadNext")
+        if (_state.value.isLoading) return Effect.completable // todo not synced with init load
         return action.execute { load() }
     }
 
