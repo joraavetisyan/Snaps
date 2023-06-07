@@ -13,7 +13,7 @@ import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basewallet.data.WalletRepository
-import io.snaps.corecommon.date.toLong
+import io.snaps.corecommon.date.CountdownTimer
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.State
 import io.snaps.coredata.di.Bridged
@@ -30,7 +30,6 @@ import io.snaps.featuretasks.presentation.toRemainingTimeTileState
 import io.snaps.featuretasks.presentation.toTaskTileState
 import io.snaps.featuretasks.presentation.ui.RemainingTimeTileState
 import io.snaps.featuretasks.presentation.ui.TaskTileState
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,7 +41,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -69,7 +67,7 @@ class TasksViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
-    private var roundTimerJob: Job? = null
+    private val roundTimer = CountdownTimer()
 
     init {
         subscribeOnMenuRouteState()
@@ -194,27 +192,23 @@ class TasksViewModel @Inject constructor(
     }
 
     private fun State<QuestInfoModel>.startRoundTimer() {
-        val endRoundTime = this.dataOrCache?.questDate?.toLong().also {
+        val roundEndTime = this.dataOrCache?.questDate.also {
             if (it == null) {
                 _uiState.update {
-                    it.copy(remainingTime = toRemainingTimeTileState(0))
+                    it.copy(remainingTime = toRemainingTimeTileState(0.seconds))
                 }
             }
         } ?: return
-        roundTimerJob?.cancel()
-        roundTimerJob = viewModelScope.launch {
-            var current = endRoundTime - System.currentTimeMillis()
-            while (isActive && current > 0) {
+        roundTimer.start(
+            scope = viewModelScope,
+            time = roundEndTime,
+            onTick = { timeLeft ->
                 _uiState.update {
-                    it.copy(remainingTime = toRemainingTimeTileState(current))
+                    it.copy(remainingTime = toRemainingTimeTileState(timeLeft))
                 }
-                delay(1000L)
-                current -= 1000L
-                if (current <= 0) {
-                    onRoundTimerFinished()
-                }
-            }
-        }
+            },
+            onFinished = ::onRoundTimerFinished,
+        )
     }
 
     private fun onRoundTimerFinished() = viewModelScope.launch {

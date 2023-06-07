@@ -1,11 +1,11 @@
-package io.snaps.baseprofile.data.model
+package io.snaps.basesources.remotedata.model
 
 import io.snaps.corecommon.model.FullUrl
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SocialPage(
+data class SocialPageDto(
     @SerialName("type") val type: SocialPageType = SocialPageType.Unknown,
     @SerialName("link") val link: FullUrl?,
 )

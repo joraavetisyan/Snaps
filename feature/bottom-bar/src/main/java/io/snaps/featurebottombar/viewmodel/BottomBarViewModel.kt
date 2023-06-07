@@ -4,14 +4,16 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.baseprofile.data.ProfileRepository
-import io.snaps.baseprofile.data.model.BannerActionType
-import io.snaps.baseprofile.data.model.BannerDto
+import io.snaps.basesources.remotedata.model.BannerActionType
+import io.snaps.basesources.remotedata.model.BannerDto
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.AppUpdateInfoDto
 import io.snaps.basesources.AppUpdateProvider
 import io.snaps.basesources.BottomBarVisibilitySource
 import io.snaps.basesources.UpdateAvailableState
+import io.snaps.corecommon.date.CountdownTimer
+import io.snaps.corecommon.date.toTimeFormat
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.coredata.database.UserDataStorage
@@ -19,7 +21,6 @@ import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.ROUTE_ARGS_SEPARATOR
-import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.channels.Channel
@@ -50,7 +51,7 @@ class BottomBarViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
-    private var bottomSheetShownCount: Int = 0 // todo remove, useless
+    private val bannerTimer = CountdownTimer()
     private var isBannerShown: Boolean = false
 
     init {
@@ -102,23 +103,46 @@ class BottomBarViewModel @Inject constructor(
     }
 
     fun onCheckForBannerRequest() {
-        if (++bottomSheetShownCount > 0 && !isBannerShown) {
+        bannerTimer.stop()
+        if (!isBannerShown) {
             isBannerShown = true
             viewModelScope.launch {
                 action.execute(needsErrorProcessing = false) {
-                    profileRepository.getBanner().doOnSuccess { banner ->
-                        if (banner.isViewable
-                            && userDataStorage.countBannerViews++ < 3
-                            && appRouteProvider.menuRouteState.value == AppRoute.MainBottomBar.MainTab1Start.path()
-                        ) {
-                            _uiState.update { it.copy(banner = banner) }
-                            _command publish Command.ShowBottomDialog
+                    profileRepository.getBanner()
+                }.doOnSuccess { banner ->
+                    if (banner.isViewable
+                        && (banner.isEndless || userDataStorage.countBannerViews++ < 3)
+                        && appRouteProvider.menuRouteState.value == AppRoute.MainBottomBar.MainTab1Start.path()
+                    ) {
+                        if (banner.isTimerShown) {
+                            launchBannerTimer()
                         }
+                        _uiState.update { it.copy(banner = banner) }
+                        _command publish Command.ShowBottomDialog
                     }
                 }
             }
         } else {
             _uiState.update { it.copy(banner = null) }
+        }
+    }
+
+    private fun launchBannerTimer() {
+        viewModelScope.launch {
+            action.execute(needsErrorProcessing = false) {
+                profileRepository.getCommonSettings()
+            }.doOnSuccess { settings ->
+                bannerTimer.start(
+                    scope = viewModelScope,
+                    time = settings.likerGlassesReleaseDate,
+                    onTick = { leftTime ->
+                        _uiState.update { it.copy(bannerTimer = leftTime.toTimeFormat()) }
+                    },
+                    onFinished = {
+                        _uiState.update { it.copy(bannerTimer = null) }
+                    },
+                )
+            }
         }
     }
 
@@ -138,6 +162,7 @@ class BottomBarViewModel @Inject constructor(
         val badgeText: String = "",
         val appUpdateInfo: AppUpdateInfoDto? = null,
         val banner: BannerDto? = null,
+        val bannerTimer: String? = null,
     )
 
     sealed interface Command {

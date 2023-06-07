@@ -38,6 +38,6 @@ object LocalDateTimeFactory {
     }.getOrNull()
 }
 
-fun LocalDateTime.toLong(
+fun LocalDateTime.toEpochMilli(
     zoneId: ZoneId = ZoneId.systemDefault(),
 ) = ZonedDateTime.of(this, zoneId).toInstant().toEpochMilli()

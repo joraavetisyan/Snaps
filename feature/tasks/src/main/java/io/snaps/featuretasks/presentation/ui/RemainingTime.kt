@@ -13,17 +13,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.date.toTimeFormat
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.other.ShimmerTile
 import io.snaps.coreuicompose.uikit.other.ShimmerTileConfig
 import io.snaps.coreuicompose.uikit.other.ShimmerTileLine
 import io.snaps.coreuitheme.compose.AppTheme
+import kotlin.time.Duration
 
 sealed class RemainingTimeTileState : TileState {
 
     data class Data(
-        val time: Long,
+        val time: Duration,
     ) : RemainingTimeTileState()
 
     object Shimmer : RemainingTimeTileState()
@@ -55,7 +57,7 @@ private fun Data(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = io.snaps.corecommon.strings.StringKey.TasksTitleRemainingTime.textValue().get(),
+            text = StringKey.TasksTitleRemainingTime.textValue().get(),
             color = AppTheme.specificColorScheme.textSecondary,
             style = AppTheme.specificTypography.labelMedium,
             textAlign = TextAlign.Center,

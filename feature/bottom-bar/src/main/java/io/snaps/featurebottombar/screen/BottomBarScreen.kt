@@ -48,7 +48,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import io.snaps.baseprofile.data.model.BannerDto
+import io.snaps.basesources.remotedata.model.BannerDto
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.imageValue
@@ -70,7 +70,6 @@ import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetCurrentStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
-import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuitheme.compose.AppTheme
@@ -150,7 +149,7 @@ fun BottomBarScreen(
                     )
                 }
                 uiState.banner != null -> uiState.banner?.let {
-                    Banner(banner = it, onClicked = viewModel::onBannerActionClicked)
+                    Banner(banner = it, timerValue = uiState.bannerTimer, onClicked = viewModel::onBannerActionClicked)
                 }
                 else -> OnboardingDialog(
                     onboardingState = onboardingState,
@@ -341,6 +340,7 @@ private fun OnboardingDialog(
 @Composable
 private fun Banner(
     banner: BannerDto,
+    timerValue: String?,
     onClicked: (BannerDto) -> Unit,
 ) {
     val language = DEFAULT_LOCALE.toSupportedLanguageKey()
@@ -386,6 +386,18 @@ private fun Banner(
                     .padding(16.dp)
                     .fillMaxWidth(),
             )
+            timerValue?.let {
+                Text(
+                    text = it,
+                    color = AppTheme.specificColorScheme.textPrimary,
+                    style = AppTheme.specificTypography.headlineLarge,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(),
+                )
+            }
             SimpleButtonActionL(
                 onClick = { onClicked(banner) },
                 modifier = Modifier

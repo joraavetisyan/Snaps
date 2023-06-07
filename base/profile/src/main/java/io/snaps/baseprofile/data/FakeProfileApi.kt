@@ -1,5 +1,6 @@
 package io.snaps.baseprofile.data
 
+import io.snaps.baseprofile.data.model.CommonSettingsResponseDto
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.PaymentsState
@@ -181,6 +182,17 @@ class FakeProfileApi : ProfileApi {
                         energy = 20,
                     )
                 ),
+            )
+        )
+    }
+
+    override suspend fun commonSettings(): BaseResponse<CommonSettingsResponseDto> {
+        return BaseResponse(
+            data = CommonSettingsResponseDto(
+                likerGlassesReleaseDate = "2023-12-07T02:46:30.3218237+00:00",
+                minimumLikerGlassesCount = 12,
+                likerSellsCount = 200,
+                showLiker = true,
             )
         )
     }

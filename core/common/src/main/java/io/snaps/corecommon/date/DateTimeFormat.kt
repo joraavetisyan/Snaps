@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
 
 enum class DateTimeFormat(val code: String) {
 
@@ -44,16 +45,18 @@ fun getLocaleDateByPhotoDateFormat(): String {
 
 fun LocalDateTime.toStringValue(): String = when {
     Period.between(this.toLocalDate(), LocalDate.now()).days <= 1 -> getRelativeTimeSpanString(
-            toLong(), System.currentTimeMillis(), SECOND_IN_MILLIS
+            toEpochMilli(), System.currentTimeMillis(), SECOND_IN_MILLIS
     ).toString()
     Period.between(this.toLocalDate(), LocalDate.now()).days <= 7 -> getRelativeTimeSpanString(
-            toLong(), System.currentTimeMillis(), DAY_IN_MILLIS
+            toEpochMilli(), System.currentTimeMillis(), DAY_IN_MILLIS
     ).toString()
     this.year == LocalDate.now().year -> toLocalDate().format("MMMM dd")
     else -> toLocalDate().format("MMMM dd, yyyy")
 }
 
-fun Long.toTimeFormat(): String {
+fun Duration.toTimeFormat() = inWholeMilliseconds.toTimeFormat()
+
+private fun Long.toTimeFormat(): String {
     val hours = TimeUnit.MILLISECONDS.toHours(this)
     val minutes = TimeUnit.MILLISECONDS.toMinutes(this) - TimeUnit.HOURS.toMinutes(hours)
     val seconds = TimeUnit.MILLISECONDS.toSeconds(this) -

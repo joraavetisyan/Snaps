@@ -1,17 +1,16 @@
 package io.snaps.baseprofile.data
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import io.snaps.baseprofile.data.model.BannerDto
+import io.snaps.basesources.remotedata.model.BannerDto
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
-import io.snaps.baseprofile.data.model.SocialPage
+import io.snaps.basesources.remotedata.model.SocialPageDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
+import io.snaps.baseprofile.domain.CommonSettingsModel
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.domain.UsersPageModel
-import io.snaps.corecommon.ext.log
-import io.snaps.corecommon.model.AppError
+import io.snaps.basesources.remotedata.RemoteDataProvider
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FullUrl
@@ -22,7 +21,6 @@ import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.UserDataStorage
-import io.snaps.coredata.json.KotlinxSerializationJsonProvider
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
@@ -34,9 +32,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.decodeFromStream
 import javax.inject.Inject
 
 interface ProfileRepository {
@@ -84,9 +79,11 @@ interface ProfileRepository {
         avatar: FullUrl?,
     ): Effect<Completable>
 
-    suspend fun getSocialPages(): Effect<List<SocialPage>>
+    suspend fun getSocialPages(): Effect<List<SocialPageDto>>
 
     suspend fun getBanner(): Effect<BannerDto>
+
+    suspend fun getCommonSettings(): Effect<CommonSettingsModel>
 }
 
 class ProfileRepositoryImpl @Inject constructor(
@@ -95,6 +92,7 @@ class ProfileRepositoryImpl @Inject constructor(
     private val api: ProfileApi,
     private val loaderFactory: UsersLoaderFactory,
     private val userDataStorage: UserDataStorage,
+    private val remoteDataProvider: RemoteDataProvider,
 ) : ProfileRepository {
 
     private val _state = MutableStateFlow<State<UserInfoModel>>(Loading())
@@ -264,34 +262,24 @@ class ProfileRepositoryImpl @Inject constructor(
         }.toCompletable()
     }
 
-    override suspend fun getSocialPages(): Effect<List<SocialPage>> {
-         // fetch called in FeatureToggleUpdater, todo to separate source with proper success/failure handle
-        val pages = try {
-            FirebaseRemoteConfig.getInstance().getValue("social").let {
-                @OptIn(ExperimentalSerializationApi::class)
-                KotlinxSerializationJsonProvider().get().decodeFromStream<List<SocialPage>>(it.asByteArray().inputStream())
-            }
-        } catch (e: Exception) {
-            log(e)
-            emptyList()
-        }
-        return Effect.success(pages)
+    override suspend fun getSocialPages(): Effect<List<SocialPageDto>> {
+        return remoteDataProvider.getSocialPages()
     }
 
     override suspend fun getBanner(): Effect<BannerDto> {
-        return try {
-            // todo central source for fb remotes
-            val banner = FirebaseRemoteConfig.getInstance().getValue("mobile_banner").let {
-                KotlinxSerializationJsonProvider().get().decodeFromString<BannerDto>(it.asString())
-            }
-            if (userDataStorage.bannerVersion < banner.version) {
-                userDataStorage.bannerVersion = banner.version
+        return remoteDataProvider.getBanner().doOnSuccess {
+            if (userDataStorage.bannerVersion < it.version) {
+                userDataStorage.bannerVersion = it.version
                 userDataStorage.countBannerViews = 0
             }
-            Effect.success(banner)
-        } catch (e: Exception) {
-            log(e)
-            Effect.error(AppError.Unknown(cause = e))
+        }
+    }
+
+    override suspend fun getCommonSettings(): Effect<CommonSettingsModel> {
+        return apiCall(ioDispatcher) {
+            api.commonSettings()
+        }.map {
+            it.toModel()
         }
     }
 }

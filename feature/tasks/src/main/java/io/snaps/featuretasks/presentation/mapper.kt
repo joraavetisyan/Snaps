@@ -15,6 +15,7 @@ import io.snaps.corecommon.strings.StringKey
 import io.snaps.featuretasks.presentation.ui.RemainingTimeTileState
 import io.snaps.featuretasks.presentation.ui.TaskStatus
 import io.snaps.featuretasks.presentation.ui.TaskTileState
+import kotlin.time.Duration
 
 fun State<QuestInfoModel>.toTaskTileState(
     onItemClicked: (QuestModel) -> Unit,
@@ -50,7 +51,7 @@ fun taskDefaultCount(type: TaskType) = when (type) {
 }
 
 fun State<QuestInfoModel>.toRemainingTimeTileState(
-    remainingTime: Long,
+    remainingTime: Duration,
 ) = when (this) {
     is Loading -> RemainingTimeTileState.Shimmer
     is Effect -> when {
