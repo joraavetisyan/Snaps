@@ -201,7 +201,7 @@ class TasksViewModel @Inject constructor(
         } ?: return
         roundTimer.start(
             scope = viewModelScope,
-            time = roundEndTime,
+            tickUntil = roundEndTime,
             onTick = { timeLeft ->
                 _uiState.update {
                     it.copy(remainingTime = toRemainingTimeTileState(timeLeft))

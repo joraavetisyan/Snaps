@@ -17,7 +17,7 @@ class RemoteDataProviderFirebaseRemoteConfigImpl(
     private val buildInfo: BuildInfo,
 ) : RemoteDataProvider {
 
-    // Fetch and activate done in FeatureToggleUpdater
+    // Fetch and activate done in FeatureToggleUpdater, todo can lead to inconsistency
     private val firebaseRemoteConfig by lazy { FirebaseRemoteConfig.getInstance() }
 
     private val serializer by lazy { KotlinxSerializationJsonProvider().get() }

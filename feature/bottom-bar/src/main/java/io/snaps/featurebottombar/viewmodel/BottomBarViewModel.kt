@@ -134,7 +134,7 @@ class BottomBarViewModel @Inject constructor(
             }.doOnSuccess { settings ->
                 bannerTimer.start(
                     scope = viewModelScope,
-                    time = settings.likerGlassesReleaseDate,
+                    tickUntil = settings.likerGlassesReleaseDate,
                     onTick = { leftTime ->
                         _uiState.update { it.copy(bannerTimer = leftTime.toTimeFormat()) }
                     },

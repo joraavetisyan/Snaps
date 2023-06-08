@@ -5,7 +5,7 @@ import io.snaps.basesources.remotedata.model.BannerDto
 import io.snaps.basesources.remotedata.model.SocialPageDto
 import io.snaps.corecommon.model.Effect
 
-// todo return domain models?
+// todo return domain models? use only in repos
 interface RemoteDataProvider {
 
     fun getBanner(): Effect<BannerDto>

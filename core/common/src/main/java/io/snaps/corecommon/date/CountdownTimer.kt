@@ -14,26 +14,26 @@ class CountdownTimer {
 
     private var timerJob: Job? = null
 
-    fun start(scope: CoroutineScope, time: Duration, onTick: (Duration) -> Unit, onFinished: () -> Unit) {
+    fun start(scope: CoroutineScope, timeToTick: Duration, onTick: (Duration) -> Unit, onFinished: () -> Unit) {
         timerJob?.cancel()
-        if (time <= 0.seconds) {
+        if (timeToTick <= 0.seconds) {
             onFinished()
             return
         }
         timerJob = scope.launch {
-            var left = time.inWholeSeconds
+            var left = timeToTick.inWholeSeconds
             while (isActive && left > 0) {
-                if (left <= 0) onFinished()
-                else onTick(left.seconds)
+                onTick(left.seconds)
                 delay(1000L)
-                left -= 1L
+                left--
+                if (left <= 0) onFinished()
             }
         }
     }
 
-    fun start(scope: CoroutineScope, time: LocalDateTime, onTick: (Duration) -> Unit, onFinished: () -> Unit) {
-        val timeToTick = (time.toEpochMilli() - System.currentTimeMillis()).milliseconds
-        start(scope = scope, time = timeToTick, onTick = onTick, onFinished = onFinished)
+    fun start(scope: CoroutineScope, tickUntil: LocalDateTime, onTick: (Duration) -> Unit, onFinished: () -> Unit) {
+        val timeToTick = (tickUntil.toEpochMilli() - System.currentTimeMillis()).milliseconds
+        start(scope = scope, timeToTick = timeToTick, onTick = onTick, onFinished = onFinished)
     }
 
     fun stop() {

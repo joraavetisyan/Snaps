@@ -22,8 +22,7 @@ class AppUpdateProviderImpl @Inject constructor(
 ) : AppUpdateProvider {
 
     override fun getAvailableUpdateInfo(): Effect<UpdateAvailableState> {
-        val appUpdateInfo = remoteDataProvider.getAppCurrentVersion().data
-        val updateAvailableState = appUpdateInfo?.let {
+        val updateAvailableState = remoteDataProvider.getAppCurrentVersion().data?.let {
             if (it.versionCode > buildInfo.versionCode) {
                 UpdateAvailableState.Available(it)
             } else {

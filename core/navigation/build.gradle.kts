@@ -5,7 +5,6 @@ plugins {
 common()
 dagger()
 compose()
-firebase()
 
 android {
     namespace = "io.snaps.corenavigation"
