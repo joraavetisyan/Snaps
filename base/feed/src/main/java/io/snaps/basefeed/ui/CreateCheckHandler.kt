@@ -2,8 +2,8 @@ package io.snaps.basefeed.ui
 
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.domain.UserInfoModel
+import io.snaps.basesettings.data.SettingsRepository
 import io.snaps.basesources.NotificationsSource
-import io.snaps.basesources.remotedata.SettingsRepository
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.database.UserDataStorage

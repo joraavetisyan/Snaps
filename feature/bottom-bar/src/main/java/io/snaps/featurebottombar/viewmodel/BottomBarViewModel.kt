@@ -3,16 +3,15 @@ package io.snaps.featurebottombar.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
-import io.snaps.baseprofile.data.ProfileRepository
-import io.snaps.basesources.remotedata.model.BannerActionType
-import io.snaps.basesources.remotedata.model.BannerDto
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
-import io.snaps.basesources.remotedata.model.AppUpdateInfoDto
-import io.snaps.basesources.AppUpdateProvider
+import io.snaps.basesettings.data.SettingsRepository
+import io.snaps.basesettings.data.AppUpdateProvider
 import io.snaps.basesources.BottomBarVisibilitySource
-import io.snaps.basesources.UpdateAvailableState
-import io.snaps.basesources.remotedata.SettingsRepository
+import io.snaps.basesettings.data.UpdateAvailableState
+import io.snaps.basesources.remotedata.model.AppUpdateInfoDto
+import io.snaps.basesources.remotedata.model.BannerActionType
+import io.snaps.basesources.remotedata.model.BannerDto
 import io.snaps.corecommon.date.CountdownTimer
 import io.snaps.corecommon.date.toTimeFormat
 import io.snaps.corecommon.model.Effect
@@ -40,7 +39,6 @@ class BottomBarViewModel @Inject constructor(
     bottomBarVisibilitySource: BottomBarVisibilitySource,
     @Bridged onboardingHandler: OnboardingHandler,
     @Bridged private val nftRepository: NftRepository,
-    @Bridged private val profileRepository: ProfileRepository,
     private val settingsRepository: SettingsRepository,
     private val appRouteProvider: AppRouteProvider,
     private val appUpdateProvider: AppUpdateProvider,
@@ -143,7 +141,7 @@ class BottomBarViewModel @Inject constructor(
     private fun launchBannerTimer() {
         viewModelScope.launch {
             action.execute(needsErrorProcessing = false) {
-                profileRepository.getCommonSettings()
+                settingsRepository.getCommonSettings()
             }.doOnSuccess { settings ->
                 bannerTimer.start(
                     scope = viewModelScope,

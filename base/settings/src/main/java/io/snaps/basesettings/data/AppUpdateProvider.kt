@@ -1,10 +1,9 @@
-package io.snaps.basesources
+package io.snaps.basesettings.data
 
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.snaps.basesources.remotedata.SettingsRepository
 import io.snaps.basesources.remotedata.model.AppUpdateInfoDto
 import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.Effect

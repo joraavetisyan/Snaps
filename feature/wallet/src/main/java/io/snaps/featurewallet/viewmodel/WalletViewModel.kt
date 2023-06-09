@@ -6,12 +6,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.data.model.PaymentsState
-import io.snaps.basesources.remotedata.model.SocialPageType
 import io.snaps.basesession.data.OnboardingHandler
+import io.snaps.basesettings.data.SettingsRepository
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
-import io.snaps.basesources.remotedata.SettingsRepository
+import io.snaps.basesources.remotedata.model.SocialPageType
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.basewallet.domain.WalletModel

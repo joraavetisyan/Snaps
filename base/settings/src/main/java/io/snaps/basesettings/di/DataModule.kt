@@ -1,27 +1,20 @@
-package io.snaps.basesources.remotedata
+package io.snaps.basesettings.di
 
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.snaps.basesources.featuretoggle.Feature
-import io.snaps.basesources.featuretoggle.FeatureToggle
-import io.snaps.corecommon.model.BuildInfo
+import io.snaps.basesettings.data.SettingsApi
+import io.snaps.basesettings.data.SettingsRepository
+import io.snaps.basesettings.data.SettingsRepositoryImpl
 import io.snaps.coredata.network.ApiConfig
 import io.snaps.coredata.network.ApiService
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class RemoteDataProviderDataModule {
-
-    @Provides
-    @Singleton
-    fun RemoteDataProvider(feature: FeatureToggle, buildInfo: BuildInfo): RemoteDataProvider =
-        if (feature.isEnabled(Feature.RemoteDataProviderMock)) FakeRemoteDataProvider()
-        else RemoteDataProviderFirebaseRemoteConfigImpl(buildInfo = buildInfo)
-
+class DataModule {
 
     @Provides
     @Singleton
@@ -35,7 +28,7 @@ class RemoteDataProviderDataModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface RemoteDataProviderBindModule {
+interface DataBindModule {
 
     @Binds
     @Singleton

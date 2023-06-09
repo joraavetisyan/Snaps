@@ -4,7 +4,6 @@ import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
-import io.snaps.baseprofile.domain.CommonSettingsModel
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.domain.UsersPageModel
@@ -74,8 +73,6 @@ interface ProfileRepository {
         address: CryptoAddress,
         avatar: FullUrl?,
     ): Effect<Completable>
-
-    suspend fun getCommonSettings(): Effect<CommonSettingsModel>
 }
 
 class ProfileRepositoryImpl @Inject constructor(
@@ -250,13 +247,5 @@ class ProfileRepositoryImpl @Inject constructor(
                 }
             }
         }.toCompletable()
-    }
-
-    override suspend fun getCommonSettings(): Effect<CommonSettingsModel> {
-        return apiCall(ioDispatcher) {
-            api.commonSettings()
-        }.map {
-            it.toModel()
-        }
     }
 }

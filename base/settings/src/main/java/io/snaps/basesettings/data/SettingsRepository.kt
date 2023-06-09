@@ -1,5 +1,6 @@
-package io.snaps.basesources.remotedata
+package io.snaps.basesettings.data
 
+import io.snaps.basesettings.domain.CommonSettingsModel
 import io.snaps.basesources.featuretoggle.EditableFeatureToggle
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.remotedata.model.BannerDto
@@ -28,11 +29,13 @@ interface SettingsRepository {
 
     val state: StateFlow<State<SettingsDto>>
 
-    val videoApiKeyState: StateFlow<State<String>>
-
     val bannerState: StateFlow<State<BannerDto>>
 
     suspend fun update(): Effect<Completable>
+
+    suspend fun getCommonSettings(): Effect<CommonSettingsModel>
+
+    suspend fun getVideoApiKey(): Effect<String>
 }
 
 // todo return domain data
@@ -48,20 +51,6 @@ class SettingsRepositoryImpl @Inject constructor(
     private val _state = MutableStateFlow<State<SettingsDto>>(Loading())
     override val state = _state.asStateFlow()
 
-    override val videoApiKeyState = state.map {
-        when (it) {
-            is Loading -> Loading()
-            is Effect -> when {
-                it.isSuccess -> Effect.success(
-                    requireNotNull(
-                        if (buildInfo.isRelease) it.requireData.videoKey else it.requireData.videoKeyDev
-                    )
-                )
-                else -> Effect.error(requireNotNull(it.errorOrNull))
-            }
-        }
-    }.likeStateFlow(scope, Loading())
-
     override val bannerState = state.map {
         when (it) {
             is Loading -> Loading()
@@ -76,13 +65,33 @@ class SettingsRepositoryImpl @Inject constructor(
 
     override suspend fun update(): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            api.getSettings()
+            api.settings()
         }.doOnSuccess {
             it.setRemotes()
             it.banner.checkBannerVersion()
         }.also {
             _state tryPublish it
         }.toCompletable()
+    }
+
+    override suspend fun getCommonSettings(): Effect<CommonSettingsModel> {
+        return apiCall(ioDispatcher) {
+            api.commonSettings()
+        }.map {
+            it.toModel()
+        }
+    }
+
+    override suspend fun getVideoApiKey(): Effect<String> {
+        return state.value.dataOrCache?.let {
+            Effect.success(it.mapToVideoApiKey())
+        } ?: apiCall(ioDispatcher) {
+            api.settings()
+        }.map { it.mapToVideoApiKey() }
+    }
+
+    private fun SettingsDto.mapToVideoApiKey(): String {
+        return if (buildInfo.isRelease) videoKey else videoKeyDev
     }
 
     private fun SettingsDto.setRemotes() {

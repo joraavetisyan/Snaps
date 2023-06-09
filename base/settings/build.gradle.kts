@@ -3,22 +3,17 @@ plugins {
 }
 
 common()
-compose()
 dagger()
 lifecycle()
 
 android {
-    namespace = "io.snaps.featurebottombar"
+    namespace = "io.snaps.basesettings"
 }
 
 dependencies {
     implementation(projects.coreCommon)
     implementation(projects.coreData)
     implementation(projects.coreUi)
-    implementation(projects.coreNavigation)
 
     implementation(projects.baseSources)
-    implementation(projects.baseSession)
-    implementation(projects.baseNft)
-    implementation(projects.baseSettings)
 }
