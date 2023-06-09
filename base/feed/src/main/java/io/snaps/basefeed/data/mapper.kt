@@ -33,6 +33,12 @@ fun VideoFeedItemResponseDto.toModel(isLiked: Boolean) = VideoClipModel(
 )
 
 // Just a dummy wrapper
+fun BaseResponse<VideoFeedItemResponseDto>.toFeedBaseResponse() = BaseResponse(
+    data = listOfNotNull(data),
+    isSuccess = isSuccess,
+)
+
+// Just a dummy wrapper
 fun BaseResponse<List<LikedVideoFeedItemResponseDto>>.toFeedBaseResponse() = BaseResponse(
     data = data?.map { it.video },
     isSuccess = isSuccess,
