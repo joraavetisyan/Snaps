@@ -85,6 +85,11 @@ interface VideoFeedApi {
         @Path("videoId") videoId: Uuid,
     ): BaseResponse<Completable>
 
+    @GET("v1/video/{videoId}")
+    suspend fun getVideo(
+        @Path("videoId") videoId: Uuid,
+    ): BaseResponse<VideoFeedItemResponseDto>
+
     @POST("v1/video")
     suspend fun addVideo(
         @Body body: AddVideoRequestDto,

@@ -6,7 +6,7 @@ sealed interface VideoFeedType {
 
     object Main : VideoFeedType
 
-    data class Single(val videoId: Uuid?) : VideoFeedType
+    data class Single(val videoId: Uuid) : VideoFeedType
 
     /** [userId]=null -> of authed user */
     data class Liked(val userId: Uuid?) : VideoFeedType
