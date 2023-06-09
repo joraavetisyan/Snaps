@@ -1,6 +1,7 @@
 package io.snaps.coredata.di
 
 import dagger.hilt.internal.GeneratedComponentManager
+import io.snaps.coredata.coroutine.UserSessionCoroutineScopeHolder
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -11,7 +12,10 @@ class UserSessionComponentManager @Inject constructor(
 
     var userSessionComponent: UserSessionComponent = userComponentProvider.build()
 
-    fun onUserLoggedOut() = rebuildComponent()
+    fun onUserLoggedOut() {
+        UserSessionCoroutineScopeHolder.cancel()
+        rebuildComponent()
+    }
 
     private fun rebuildComponent() {
         userSessionComponent = userComponentProvider.build()
