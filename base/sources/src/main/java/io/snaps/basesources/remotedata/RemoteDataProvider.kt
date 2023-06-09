@@ -6,6 +6,7 @@ import io.snaps.basesources.remotedata.model.SocialPageDto
 import io.snaps.corecommon.model.Effect
 
 // todo return domain models? use only in repos
+// todo now SettingsApi is used instead
 interface RemoteDataProvider {
 
     fun getBanner(): Effect<BannerDto>

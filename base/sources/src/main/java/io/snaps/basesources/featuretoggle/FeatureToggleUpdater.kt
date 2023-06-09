@@ -19,7 +19,7 @@ class FeatureToggleUpdater @Inject constructor(
 
     init {
         // initDefaultValues()
-        saveRemoteValues()
+        // saveRemoteValues() now SettingsApi is used instead of feature toggle
     }
 
     private fun initDefaultValues() {

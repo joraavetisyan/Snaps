@@ -13,6 +13,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.decodeFromStream
 
+// todo now SettingsApi is used
 class RemoteDataProviderFirebaseRemoteConfigImpl(
     private val buildInfo: BuildInfo,
 ) : RemoteDataProvider {

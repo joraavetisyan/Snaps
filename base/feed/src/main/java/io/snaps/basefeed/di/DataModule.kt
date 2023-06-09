@@ -66,11 +66,11 @@ internal interface SingletonDataBindModule {
 
     @Binds
     @Singleton
-    fun VideFeedUploader(bind: VideoFeedUploaderApivideoWorkManagerImpl): VideoFeedUploader
+    fun videoFeedUploader(bind: VideoFeedUploaderApivideoWorkManagerImpl): VideoFeedUploader
 
     @Binds
     @Singleton
-    fun UploadStatusSource(source: UploadStatusSourceApivideoWorkManagerImpl): UploadStatusSource
+    fun uploadStatusSource(source: UploadStatusSourceApivideoWorkManagerImpl): UploadStatusSource
 }
 
 @Module
@@ -126,5 +126,5 @@ internal interface ViewModelDataBindModule {
 
     @Binds
     @ViewModelScoped
-    fun CreateCheckHandler(bind: CreateCheckHandlerImplDelegate): CreateCheckHandler
+    fun createCheckHandler(bind: CreateCheckHandlerImplDelegate): CreateCheckHandler
 }

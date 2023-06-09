@@ -11,7 +11,6 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.basenft.domain.NftModel
-import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.di.Bridged
 import io.snaps.corenavigation.AppRoute

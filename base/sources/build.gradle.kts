@@ -14,6 +14,7 @@ android {
 dependencies {
     implementation(projects.coreCommon)
     implementation(projects.coreData)
+    implementation(projects.coreUi)
 
     implementation(*Libs.bundle.preference)
 }
