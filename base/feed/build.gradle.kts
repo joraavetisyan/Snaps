@@ -21,6 +21,7 @@ dependencies {
     implementation(projects.basePlayer)
     implementation(projects.baseProfile)
     implementation(projects.baseSubs)
+    implementation(projects.baseSettings)
 
     implementation(*Libs.bundle.work)
     implementation(*Libs.bundle.media)

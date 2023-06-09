@@ -1,6 +1,5 @@
 package io.snaps.baseprofile.data
 
-import io.snaps.baseprofile.data.model.CommonSettingsResponseDto
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
@@ -54,8 +53,4 @@ interface ProfileApi {
         @Query("count") count: Int,
         @Query("onlyInvited") onlyInvited: Boolean,
     ): BaseResponse<List<UserInfoResponseDto>>
-
-    // todo different api file
-    @GET("v1/common-settings")
-    suspend fun commonSettings(): BaseResponse<CommonSettingsResponseDto>
 }

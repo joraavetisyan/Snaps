@@ -14,7 +14,7 @@ fun List<NftItemResponseDto>.toRankModelList() = map(NftItemResponseDto::toModel
 
 private fun NftItemResponseDto.toModel() = RankModel(
     type = type,
-    cost = costInUsd?.let { FiatUSD(it.toDouble()) },
+    cost = costInUsd?.let { FiatUSD(it) },
     image = pathToImage.imageValue(),
     dailyReward = CoinSNPS(dailyReward.toDouble()),
     dailyUnlock = percentGrowingPerDay,
@@ -36,7 +36,7 @@ private fun UserNftItemResponseDto.toModel() = NftModel(
     isHealthy = isHealthy,
     mintDate = requireNotNull(ZonedDateTime.parse(mintedDate)).toOffsetLocalDateTime(),
     type = data.type,
-    fiatCost = data.costInUsd?.let { FiatUSD(it.toDouble()) },
+    fiatCost = data.costInUsd?.let { FiatUSD(it) },
     image = data.pathToImage.imageValue(),
     dailyReward = CoinSNPS(data.dailyReward.toDouble()),
     dailyUnlock = data.percentGrowingPerDay,

@@ -5,10 +5,9 @@ plugins {
 common()
 dagger()
 lifecycle()
-firebase()
 
 android {
-    namespace = "io.snaps.basesources"
+    namespace = "io.snaps.basesettings"
 }
 
 dependencies {
@@ -16,5 +15,5 @@ dependencies {
     implementation(projects.coreData)
     implementation(projects.coreUi)
 
-    implementation(*Libs.bundle.preference)
+    implementation(projects.baseSources)
 }

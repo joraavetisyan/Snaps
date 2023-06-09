@@ -165,7 +165,7 @@ class ProfileViewModel @Inject constructor(
     private fun subscribeOnFeed() {
         videoFeedRepository.getFeedState(VideoFeedType.User(args.userId)).map {
             it.toVideoFeedUiState(
-                emptyMessage = when(_uiState.value.userType) {
+                emptyMessage = when (_uiState.value.userType) {
                     UserType.None,
                     UserType.Other -> StringKey.ProfileMessageEmptyVideos.textValue(uiState.value.name)
                     UserType.Current -> StringKey.MessageEmptyVideoFeed.textValue()

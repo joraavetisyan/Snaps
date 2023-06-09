@@ -77,7 +77,7 @@ class FakeNftApi : NftApi {
                     dailyReward = rInt,
                     percentGrowingPerDay = rDouble,
                     dailyMaintenanceCostMultiplier = rDouble,
-                    costInUsd = rInt,
+                    costInUsd = rDouble,
                     costInRealTokens = rInt,
                     isAvailableToPurchase = rBool,
                     pathToImage = rImage,
