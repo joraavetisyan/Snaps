@@ -39,6 +39,7 @@ fun BaseResponse<VideoFeedItemResponseDto>.toFeedBaseResponse() = BaseResponse(
 )
 
 // Just a dummy wrapper
+@JvmName("LikedVideosToFeedBaseResponse")
 fun BaseResponse<List<LikedVideoFeedItemResponseDto>>.toFeedBaseResponse() = BaseResponse(
     data = data?.map { it.video },
     isSuccess = isSuccess,

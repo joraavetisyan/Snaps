@@ -212,4 +212,12 @@ class FakeVideoFeedApi : VideoFeedApi {
             data = Completable,
         )
     }
+
+    override suspend fun getVideo(videoId: Uuid): BaseResponse<VideoFeedItemResponseDto> {
+        log("Requesting get video $videoId")
+        delay(mockDelay)
+        return BaseResponse(
+            data = videoFeedItemResponseDto(1, generation),
+        )
+    }
 }
