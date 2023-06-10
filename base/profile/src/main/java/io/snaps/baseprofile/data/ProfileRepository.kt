@@ -191,7 +191,7 @@ class ProfileRepositoryImpl @Inject constructor(
                     it
                 }
             }
-        }
+        }.toCompletable()
     }
 
     override fun isCurrentUser(userId: Uuid): Boolean {

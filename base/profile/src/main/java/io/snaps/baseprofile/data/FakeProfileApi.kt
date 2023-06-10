@@ -13,7 +13,6 @@ import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rDouble
 import io.snaps.corecommon.mock.rInt
-import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.TaskType
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
@@ -34,10 +33,10 @@ class FakeProfileApi : ProfileApi {
         )
     }
 
-    override suspend fun setInviteCode(body: SetInviteCodeRequestDto): BaseResponse<Completable> {
+    override suspend fun setInviteCode(body: SetInviteCodeRequestDto): BaseResponse<UserInfoResponseDto> {
         delay(mockDelay)
         return BaseResponse(
-            data = Completable,
+            data = getUserInfo(null),
         )
     }
 

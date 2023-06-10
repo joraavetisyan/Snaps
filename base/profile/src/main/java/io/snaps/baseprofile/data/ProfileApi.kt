@@ -5,7 +5,6 @@ import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.TransactionItemResponseDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
-import io.snaps.corecommon.model.Completable
 import io.snaps.coredata.network.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -27,7 +26,7 @@ interface ProfileApi {
     @POST("v1/invite-code")
     suspend fun setInviteCode(
         @Body body: SetInviteCodeRequestDto,
-    ): BaseResponse<Completable>
+    ): BaseResponse<UserInfoResponseDto>
 
     @GET("v1/user/balance/unlocked/history")
     suspend fun unlockedTransactions(
