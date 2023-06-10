@@ -15,7 +15,6 @@ import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.SimpleViewModel
-import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -60,7 +59,6 @@ class ExchangeViewModel @Inject constructor(
                     _uiState.update { it.copy(isLoading = false) }
                 }.doOnSuccess {
                     notificationsSource.sendMessage(StringKey.MessageSuccess.textValue())
-                    _command publish Command.CloseScreen
                 }
             }
         }

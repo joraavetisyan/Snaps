@@ -53,6 +53,7 @@ fun SimpleBottomDialogUI(
                             textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .padding(top = 8.dp)
+                                .padding(horizontal = 8.dp)
                                 .fillMaxWidth(),
                         )
                     }

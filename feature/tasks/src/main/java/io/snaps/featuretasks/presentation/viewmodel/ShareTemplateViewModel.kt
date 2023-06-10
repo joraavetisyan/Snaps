@@ -7,6 +7,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.data.model.SocialPostStatus
+import io.snaps.baseprofile.domain.UserInfoModel
+import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.R
@@ -16,8 +18,10 @@ import io.snaps.corecommon.ext.toCompactDecimalFormat
 import io.snaps.corecommon.model.TaskType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
+import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
@@ -31,21 +35,25 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.ZoneOffset
 import javax.inject.Inject
 
 @HiltViewModel
 class ShareTemplateViewModel @Inject constructor(
     private val action: Action,
     private val tasksRepository: TasksRepository,
-    @Bridged private val profileRepository: ProfileRepository,
     private val connectInstagramInteractor: ConnectInstagramInteractor,
     private val fileManager: FileManager,
     private val notificationsSource: NotificationsSource,
+    private val userDataStorage: UserDataStorage,
+    private val appRouteProvider: AppRouteProvider,
+    @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val nftRepository: NftRepository,
     @Bridged private val walletRepository: WalletRepository,
 ) : SimpleViewModel() {
@@ -59,6 +67,7 @@ class ShareTemplateViewModel @Inject constructor(
     init {
         subscribeOnCurrentUser()
         subscribeOnUserNft()
+        subscribeOnMenuRouteState()
     }
 
     private fun subscribeOnCurrentUser() {
@@ -79,6 +88,13 @@ class ShareTemplateViewModel @Inject constructor(
         }.onEach { state ->
             _uiState.update { it.copy(payments = state.toCompactDecimalFormat()) }
         }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeOnMenuRouteState() {
+        appRouteProvider.menuRouteState
+            .filter { it == AppRoute.ShareTemplate.pattern }
+            .onEach { _command publish Command.ShowBottomDialog }
+            .launchIn(viewModelScope)
     }
 
     private fun instagramTileState(instagramUserId: Uuid?): CellTileState? {
@@ -148,13 +164,35 @@ class ShareTemplateViewModel @Inject constructor(
                 notificationsSource.sendMessage(StringKey.TaskShareMessagePostInstagram.textValue())
                 return@launch
             }
+            if (!isAllowedToPost(user)) {
+                notificationsSource.sendError(StringKey.TaskShareErrorPostToInstagramLimit.textValue())
+                return@launch
+            }
+            _uiState.update { it.copy(isPostToInstagramEnabled = false) }
             action.execute {
                 tasksRepository.postToInstagram()
             }.doOnSuccess {
                 notificationsSource.sendMessage(StringKey.TaskShareMessagePostInstagram.textValue())
+                onPosted(user)
                 _command publish Command.BackToTasksScreen
+            }.doOnError { _, _ ->
+                _uiState.update { it.copy(isPostToInstagramEnabled = true) }
             }
         }
+    }
+
+    // todo delete once checked on backend
+    private fun isAllowedToPost(userInfoModel: UserInfoModel?): Boolean {
+        val date = userInfoModel?.questInfo?.questDate?.toInstant(ZoneOffset.UTC)?.toEpochMilli() ?: return true
+        val maxCount = 3
+        val currentCount = userDataStorage.getPostedInstagramTemplateCount(userInfoModel.userId, date)
+        return (currentCount < maxCount)
+    }
+
+    private fun onPosted(userInfoModel: UserInfoModel?) {
+        val date = userInfoModel?.questInfo?.questDate?.toInstant(ZoneOffset.UTC)?.toEpochMilli() ?: return
+        val currentCount = userDataStorage.getPostedInstagramTemplateCount(userInfoModel.userId, date)
+        userDataStorage.setPostedInstagramTemplateCount(userInfoModel.userId, date, currentCount + 1)
     }
 
     fun onInstagramUsernameChanged(value: String) {
@@ -183,6 +221,12 @@ class ShareTemplateViewModel @Inject constructor(
         }
     }
 
+    fun onContinueClicked() {
+        viewModelScope.launch {
+            _command publish Command.HideBottomDialog
+        }
+    }
+
     data class UiState(
         val isLoading: Boolean = false,
         val instagramUsernameValue: String = "",
@@ -192,14 +236,22 @@ class ShareTemplateViewModel @Inject constructor(
             rightPart = RightPart.Shimmer(needLine = true),
         ),
         val payments: String = "0",
+        val bottomDialog: BottomDialog = BottomDialog.Requirements,
+        val isPostToInstagramEnabled: Boolean = true,
     ) {
 
         val instagramConnectAvailable get() = instagramUsernameValue.isNotEmpty()
+    }
+
+    enum class BottomDialog {
+        Requirements,
     }
 
     sealed class Command {
         object OpenWebView : Command()
         data class OpenShareDialog(val uri: Uri) : Command()
         object BackToTasksScreen : Command()
+        object ShowBottomDialog : Command()
+        object HideBottomDialog : Command()
     }
 }
