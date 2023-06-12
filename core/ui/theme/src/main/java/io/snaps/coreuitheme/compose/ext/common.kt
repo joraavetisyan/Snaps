@@ -62,7 +62,8 @@ fun ColorScheme.toSpecificColorScheme(isLight: Boolean) = SpecificColorScheme(
     uiSystemPurple = if (isLight) LightSpecificColorScheme.uiSystemPurple
     else DarkSpecificColorScheme.uiSystemPurple,
 
-    textPrimary = onSurface,
+    textPrimary = if (isLight) LightSpecificColorScheme.textPrimary
+    else DarkSpecificColorScheme.textPrimary,
     textSecondary = if (isLight) LightSpecificColorScheme.textSecondary
     else DarkSpecificColorScheme.textSecondary,
     textLink = primary,
