@@ -50,7 +50,6 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.date.getLocaleDateByPhotoDateFormat
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.defaultTileRipple
-import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
@@ -145,7 +144,7 @@ private fun EditProfileScreen(
             Card(
                 shape = CircleShape,
                 modifier = Modifier
-                    .doOnClick(onClick = onUploadPhotoClicked)
+                    .defaultTileRipple(onClick = onUploadPhotoClicked, shape = CircleShape)
                     .padding(top = 16.dp, bottom = 12.dp),
             ) {
                 if (uiState.avatar != null) {
