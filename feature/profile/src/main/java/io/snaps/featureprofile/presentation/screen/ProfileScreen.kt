@@ -24,6 +24,10 @@ import androidx.compose.material.BackdropValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -73,6 +77,7 @@ import io.snaps.coreuitheme.compose.colors
 import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.featureprofile.presentation.viewmodel.ProfileViewModel
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ProfileScreen(
     navHostController: NavHostController,
@@ -81,6 +86,7 @@ fun ProfileScreen(
     val viewModel = hiltViewModel<ProfileViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
+    val pullRefreshState = rememberPullRefreshState(uiState.isRefreshing, { viewModel.onRefreshPulled() })
 
     viewModel.command.collectAsCommand {
         when (it) {
@@ -103,6 +109,7 @@ fun ProfileScreen(
 
     ProfileScreen(
         uiState = uiState,
+        pullRefreshState = pullRefreshState,
         onCreateVideoClicked = viewModel::onCreateVideoClicked,
         onSettingsClicked = viewModel::onSettingsClicked,
         onBackClicked = router::back,
@@ -117,6 +124,7 @@ fun ProfileScreen(
 @Composable
 private fun ProfileScreen(
     uiState: ProfileViewModel.UiState,
+    pullRefreshState: PullRefreshState,
     onCreateVideoClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
     onBackClicked: () -> Boolean,
@@ -178,7 +186,7 @@ private fun ProfileScreen(
                     StringKey.ProfileTitleShorts.textValue(),
                     StringKey.ProfileTitleLiked.textValue(),
                 )
-                Box {
+                Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -225,6 +233,11 @@ private fun ProfileScreen(
                             }
                         }
                     }
+                    PullRefreshIndicator(
+                        refreshing = uiState.isRefreshing,
+                        state = pullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter),
+                    )
                 }
             },
             frontLayerShape = RoundedCornerShape(0.dp),

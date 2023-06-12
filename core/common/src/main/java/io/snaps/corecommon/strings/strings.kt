@@ -1311,6 +1311,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Видалити аккаунт",
         SupportedLanguageKey.Es to "Eliminar cuenta",
     ),
+    key(StringKey.SettingsDialogDeleteAccountTitle) to mapOf(
+        SupportedLanguageKey.En to "Are you sure you want to Delete account?",
+        SupportedLanguageKey.Ru to "Вы уверены, что хотите удалить учетную запись?",
+        SupportedLanguageKey.Tr to "Hesabı silmek istediğinizden emin misiniz?",
+        SupportedLanguageKey.Ua to "Ви впевнені, що хочете видалити обліковий запис?",
+        SupportedLanguageKey.Es to "¿Está seguro de que desea eliminar la cuenta?",
+    ),
     key(StringKey.SettingsActionLogout) to mapOf(
         SupportedLanguageKey.En to "Sign out",
         SupportedLanguageKey.Ru to "Выйти",

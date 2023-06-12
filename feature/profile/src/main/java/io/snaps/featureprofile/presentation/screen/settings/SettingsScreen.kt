@@ -66,6 +66,7 @@ fun SettingsScreen(
         onDeleteAccountClicked = viewModel::onDeleteAccountClicked,
         onLogoutConfirmed = viewModel::onLogoutConfirmed,
         onDialogDismissRequest = viewModel::onDialogDismissRequest,
+        onDeleteAccountConfirmed = viewModel::onDeleteAccountConfirmed,
     )
     FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
@@ -79,6 +80,7 @@ private fun SettingsScreen(
     onBackClicked: () -> Boolean,
     onLogoutConfirmed: () -> Unit,
     onDialogDismissRequest: () -> Unit,
+    onDeleteAccountConfirmed: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -147,7 +149,11 @@ private fun SettingsScreen(
             onDismissRequest = onDialogDismissRequest,
             onConfirmRequest = onLogoutConfirmed,
         )
-
+        is SettingsViewModel.Dialog.ConfirmDeleteAccount -> SimpleConfirmDialogUi(
+            title = StringKey.SettingsDialogDeleteAccountTitle.textValue(),
+            onDismissRequest = onDialogDismissRequest,
+            onConfirmRequest = onDeleteAccountConfirmed,
+        )
         null -> Unit
     }
 }

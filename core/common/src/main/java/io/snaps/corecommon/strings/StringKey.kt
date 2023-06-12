@@ -212,6 +212,7 @@ enum class StringKey {
     SettingsActionDeleteAccount,
     SettingsDialogLogoutTitle,
     SettingsDialogLogoutMessage,
+    SettingsDialogDeleteAccountTitle,
 
     SocialNetworksTitle,
     SocialNetworksTitleDiscord,
