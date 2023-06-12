@@ -172,7 +172,7 @@ enum class StringKey {
     ReferralProgramHintLink,
     ReferralProgramTitleDirectReferral,
     ReferralProgramMessageDirectReferral,
-    ReferralProgramActionInviteUser,
+    ReferralProgramActionApply,
     ReferralProgramInviteDialogTitle,
     ReferralProgramInviteDialogMessage,
     ReferralProgramDialogActionClose,

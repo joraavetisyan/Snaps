@@ -1059,12 +1059,12 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Ви будете отримувати %s від усіх нагород, зароблених друзями",
         SupportedLanguageKey.Es to "Recibirás un %s de todas las recompensas ganadas por tus amigos",
     ),
-    key(StringKey.ReferralProgramActionInviteUser) to mapOf(
-        SupportedLanguageKey.En to "Invite user",
-        SupportedLanguageKey.Ru to "Пригласить друзей",
-        SupportedLanguageKey.Tr to "Arkadaşlarını davet et",
-        SupportedLanguageKey.Ua to "Запросити друзів",
-        SupportedLanguageKey.Es to "Invitar a amigos",
+    key(StringKey.ReferralProgramActionApply) to mapOf(
+        SupportedLanguageKey.En to "Apply",
+        SupportedLanguageKey.Ru to "Применить",
+        SupportedLanguageKey.Tr to "Uygula",
+        SupportedLanguageKey.Ua to "Застосувати",
+        SupportedLanguageKey.Es to "Aplicar",
     ),
     key(StringKey.ReferralProgramInviteDialogTitle) to mapOf(
         SupportedLanguageKey.En to "Invite friends and earn!",
