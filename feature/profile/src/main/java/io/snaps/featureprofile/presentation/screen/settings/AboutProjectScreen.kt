@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -22,34 +21,33 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import io.snaps.corecommon.strings.StringKey
 import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuitheme.compose.AppTheme
-import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featureprofile.ScreenNavigator
-import io.snaps.featureprofile.presentation.viewmodel.SocialNetworksViewModel
+import io.snaps.featureprofile.presentation.viewmodel.AboutProjectViewModel
 
 @Composable
-fun SocialNetworksScreen(
+fun AboutProjectScreen(
     navHostController: NavHostController,
 ) {
     val router = remember(navHostController) { ScreenNavigator(navHostController) }
-    val viewModel = hiltViewModel<SocialNetworksViewModel>()
+    val viewModel = hiltViewModel<AboutProjectViewModel>()
+
+    val uiState by viewModel.uiState.collectAsState()
 
     val context = LocalContext.current
 
-    val uiState by viewModel.uiState.collectAsState()
     viewModel.command.collectAsCommand {
         when (it) {
-            is SocialNetworksViewModel.Command.OpenLink -> { context.openUrl(it.link) }
+            is AboutProjectViewModel.Command.OpenLink -> context.openUrl(it.link)
         }
     }
 
-    SocialNetworksScreen(
+    AboutProjectScreen(
         uiState = uiState,
         onBackClicked = router::back,
     )
@@ -57,19 +55,16 @@ fun SocialNetworksScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SocialNetworksScreen(
-    uiState: SocialNetworksViewModel.UiState,
+private fun AboutProjectScreen(
+    uiState: AboutProjectViewModel.UiState,
     onBackClicked: () -> Boolean,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        containerColor = AppTheme.specificColorScheme.uiContentBg,
         topBar = {
             SimpleTopAppBar(
-                title = {
-                    Text(text = LocalStringHolder.current(StringKey.SocialNetworksTitle))
-                },
+                title = null,
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 scrollBehavior = scrollBehavior,
             )

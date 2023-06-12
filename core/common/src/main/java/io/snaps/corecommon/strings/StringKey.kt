@@ -507,4 +507,8 @@ enum class StringKey {
 
     MainVideoFeedTitleForYou,
     MainVideoFeedTitleSubscriptions,
+
+    AboutProjectTitlePrivacyPolicy,
+    AboutProjectTitleTermsOfUse,
+    AboutProjectTitleWhitepaper,
 }

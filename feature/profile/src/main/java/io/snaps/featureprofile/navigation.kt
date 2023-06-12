@@ -13,6 +13,7 @@ import io.snaps.featureprofile.presentation.screen.ProfileScreen
 import io.snaps.featureprofile.presentation.screen.SubsScreen
 import io.snaps.featureprofile.presentation.screen.LikedFeedScreen
 import io.snaps.featureprofile.presentation.screen.UserFeedScreen
+import io.snaps.featureprofile.presentation.screen.settings.AboutProjectScreen
 import io.snaps.featureprofile.presentation.screen.settings.BackupWalletKeyScreen
 import io.snaps.featureprofile.presentation.screen.settings.EditNameScreen
 import io.snaps.featureprofile.presentation.screen.settings.EditProfileScreen
@@ -38,6 +39,8 @@ internal class ScreenNavigator(navHostController: NavHostController) : Navigator
     fun toEditProfileScreen() = navHostController.navigate(AppRoute.EditProfile)
 
     fun toEditNameScreen() = navHostController.navigate(AppRoute.EditName)
+
+    fun toAboutProjectScreen() = navHostController.navigate(AppRoute.AboutProject)
 
     fun toSubsScreen(
         args: AppRoute.Subs.Args,
@@ -77,5 +80,6 @@ class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider 
         composable(AppRoute.LikedFeed) { LikedFeedScreen(controller) }
         composable(AppRoute.EditProfile) { EditProfileScreen(controller) }
         composable(AppRoute.EditName) { EditNameScreen(controller) }
+        composable(AppRoute.AboutProject) { AboutProjectScreen(controller) }
     }
 }

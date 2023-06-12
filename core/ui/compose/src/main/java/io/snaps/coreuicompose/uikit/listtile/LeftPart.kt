@@ -42,18 +42,17 @@ sealed class LeftPart : TileState {
         val builder: ImageRequest.Builder.() -> Unit = {},
     ) : LeftPart()
 
+    data class UiAccentIcon(
+        val icon: ImageValue,
+        val builder: ImageRequest.Builder.() -> Unit = {},
+    ) : LeftPart()
+
     data class GreyColoredIcon(
         val icon: ImageValue,
         val builder: ImageRequest.Builder.() -> Unit = {},
     ) : LeftPart()
 
     data class UiAccentColoredIcon(
-        val icon: ImageValue,
-        val isEnabled: Boolean = true,
-        val builder: ImageRequest.Builder.() -> Unit = {},
-    ) : LeftPart()
-
-    data class UiBrandColoredIcon(
         val icon: ImageValue,
         val isEnabled: Boolean = true,
         val builder: ImageRequest.Builder.() -> Unit = {},
@@ -117,6 +116,12 @@ fun LeftPartTile(modifier: Modifier, data: LeftPart) {
                 AppTheme.specificColorScheme.uiSystemGreen.copy(alpha = 0.16f), CircleShape
             ),
         )
+        is LeftPart.UiAccentIcon -> Icon(
+            painter = data.icon.get(data.builder),
+            tint = AppTheme.specificColorScheme.uiAccent,
+            contentDescription = null,
+            modifier = modifier.size(CellTileConfig.IconSize)
+        )
         is LeftPart.GreyColoredIcon -> SimpleIcon(
             icon = data.icon,
             builder = data.builder,
@@ -124,19 +129,6 @@ fun LeftPartTile(modifier: Modifier, data: LeftPart) {
             modifier = modifier.background(AppTheme.specificColorScheme.grey, CircleShape),
         )
         is LeftPart.UiAccentColoredIcon -> SimpleIcon(
-            icon = data.icon,
-            builder = data.builder,
-            tint = if (data.isEnabled) {
-                AppTheme.specificColorScheme.uiAccent
-            } else LeftPartTileConfig.disabledTintColor(),
-            modifier = modifier.background(
-                color = if (data.isEnabled) {
-                    AppTheme.specificColorScheme.uiAccent.copy(alpha = 0.16f)
-                } else LeftPartTileConfig.disabledBackgroundColor(),
-                shape = CircleShape,
-            ),
-        )
-        is LeftPart.UiBrandColoredIcon -> SimpleIcon(
             icon = data.icon,
             builder = data.builder,
             tint = if (data.isEnabled) {

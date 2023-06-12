@@ -3202,4 +3202,22 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "В імені користувача можна використовувати лише літери, цифри, підкреслення та крапки. При зміні імені зміниться і посилання на профіль. Ваше ім'я має бути універсальне.",
         SupportedLanguageKey.Es to "Solo se pueden usar letras, números, guiones bajos y puntos en el nombre de usuario. Si cambia el nombre, también cambiará el enlace al perfil. Tu nombre debe ser universal.",
     ),
+    key(StringKey.AboutProjectTitlePrivacyPolicy) to mapOf(
+        SupportedLanguageKey.En to "Privacy Policy",
+        SupportedLanguageKey.Ru to "Политика конфиденциальности",
+        SupportedLanguageKey.Tr to "Gizlilik Politikası",
+        SupportedLanguageKey.Ua to "Політики конфіденційності",
+        SupportedLanguageKey.Es to "Política de Privacidad",
+    ),
+    key(StringKey.AboutProjectTitleTermsOfUse) to mapOf(
+        SupportedLanguageKey.En to "Terms of Use",
+        SupportedLanguageKey.Ru to "Условия использования",
+        SupportedLanguageKey.Tr to "Kullanım Koşullarına",
+        SupportedLanguageKey.Ua to "Умов використання",
+        SupportedLanguageKey.Es to "Términos de Uso",
+    ),
+    // todo localization
+    key(StringKey.AboutProjectTitleWhitepaper) to mapOf(
+        SupportedLanguageKey.En to "Whitepaper",
+    ),
 )

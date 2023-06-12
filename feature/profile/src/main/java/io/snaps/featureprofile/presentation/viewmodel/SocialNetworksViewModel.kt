@@ -7,13 +7,13 @@ import io.snaps.basesources.remotedata.model.SocialPageType
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FullUrl
-import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
 import io.snaps.coreuicompose.uikit.listtile.RightPart
+import io.snaps.coreuitheme.compose.SpecificIcons
 import io.snaps.coreuitheme.compose.icons
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +27,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SocialNetworksViewModel @Inject constructor(
-    private val action: Action,
     private val settingsRepository: SettingsRepository,
 ) : SimpleViewModel() {
 
@@ -39,23 +38,23 @@ class SocialNetworksViewModel @Inject constructor(
 
     init {
         settingsRepository.state.onEach {
-            // todo shimmer ?
             if (it is Effect && it.isSuccess) {
                 val items = it.requireData.socialPages.map { socialPage ->
+                    val icon = icons {
+                        when (socialPage.type) {
+                            SocialPageType.Discord -> discord
+                            SocialPageType.Twitter -> twitter
+                            SocialPageType.Telegram -> telegram
+                            SocialPageType.Instagram -> instagram
+                            else -> infoRounded
+                        }
+                    }.toImageValue()
                     CellTileState(
                         middlePart = MiddlePart.Data(value = socialPage.type.name.textValue()),
                         rightPart = RightPart.NavigateNextIcon(),
-                        leftPart = LeftPart.Logo(
-                            icons {
-                                when (socialPage.type) {
-                                    SocialPageType.Discord -> discord
-                                    SocialPageType.Twitter -> twitter
-                                    SocialPageType.Telegram -> telegram
-                                    SocialPageType.Instagram -> instagram
-                                    else -> infoRounded
-                                }
-                            }.toImageValue()
-                        ),
+                        leftPart = if (icon.value == SpecificIcons.infoRounded.toImageValue().value) {
+                            LeftPart.UiAccentIcon(icon)
+                        } else LeftPart.Logo(icon),
                         clickListener = { socialPage.link?.let(::onSocialPageItemClicked) },
                     )
                 }
