@@ -67,6 +67,19 @@ enum class StringKey {
     BottomBarTitleNft,
     BottomBarTitleReferrals,
 
+    TransactionTitleWithdrawal,
+    TransactionTitleSend,
+    TransactionTitleNftReward,
+    TransactionTitleGlassesMaintaince,
+    TransactionTitleGasFee,
+    TransactionTitleNone,
+    TransactionTitleSubscribersPromo,
+    TransactionTitleViewsPromo,
+    TransactionTitleMoveToUnlock,
+    TransactionTitleReverse,
+    TransactionTitleReferralReward,
+    TransactionTitleBloggerGlassesLikesPromo,
+
     RegistrationMessagePrivacyPolicy,
     RegistrationActionPrivacyPolicy,
     RegistrationActionTermsOfUse,
@@ -291,8 +304,7 @@ enum class StringKey {
 
     WalletSettingsTitle,
     WalletSettingsTitleBackup,
-    // todo description to message
-    WalletSettingsDescriptionBackup,
+    WalletSettingsMessageBackup,
     WalletSettingsBackupDialogTitle,
     WalletSettingsBackupDialogMessage,
     WalletSettingsBackupDialogAction,
