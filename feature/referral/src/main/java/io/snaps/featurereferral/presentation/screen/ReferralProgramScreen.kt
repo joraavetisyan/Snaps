@@ -392,7 +392,7 @@ private fun Main(
                     .padding(horizontal = 12.dp),
                 onClick = onInviteUserButtonClicked,
             ) {
-                SimpleButtonContent(text = StringKey.ReferralProgramActionApply.textValue())
+                SimpleButtonContent(text = StringKey.ReferralProgramActionInviteUser.textValue())
             }
         }
     }

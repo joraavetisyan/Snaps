@@ -1066,12 +1066,12 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Ви будете отримувати %s від усіх нагород, зароблених друзями",
         SupportedLanguageKey.Es to "Recibirás un %s de todas las recompensas ganadas por tus amigos",
     ),
-    key(StringKey.ReferralProgramActionApply) to mapOf(
-        SupportedLanguageKey.En to "Apply",
-        SupportedLanguageKey.Ru to "Применить",
-        SupportedLanguageKey.Tr to "Uygula",
-        SupportedLanguageKey.Ua to "Застосувати",
-        SupportedLanguageKey.Es to "Aplicar",
+    key(StringKey.ReferralProgramActionInviteUser) to mapOf(
+        SupportedLanguageKey.En to "Invite user",
+        SupportedLanguageKey.Ru to "Пригласить друзей",
+        SupportedLanguageKey.Tr to "Arkadaşlarını davet et",
+        SupportedLanguageKey.Ua to "Запросити друзів",
+        SupportedLanguageKey.Es to "Invitar a amigos",
     ),
     key(StringKey.ReferralProgramInviteDialogTitle) to mapOf(
         SupportedLanguageKey.En to "Invite friends and earn!",
@@ -1109,11 +1109,11 @@ internal val strings = mapOf(
         SupportedLanguageKey.Es to "Código de Referencia",
     ),
     key(StringKey.ReferralProgramCodeDialogHintEnterCode) to mapOf(
-        SupportedLanguageKey.En to "Invite user",
-        SupportedLanguageKey.Ru to "Пригласить друзей",
-        SupportedLanguageKey.Tr to "Arkadaşlarını davet et",
-        SupportedLanguageKey.Ua to "Запросити друзів",
-        SupportedLanguageKey.Es to "Invitar a amigos",
+        SupportedLanguageKey.En to "Enter referall code",
+        SupportedLanguageKey.Ru to "Введите реферальный код",
+        SupportedLanguageKey.Tr to "Sevk kodunu girin",
+        SupportedLanguageKey.Ua to "Введіть реферальний код",
+        SupportedLanguageKey.Es to "Introduzca el código de referencia",
     ),
     key(StringKey.ReferralProgramDialogActionClose) to mapOf(
         SupportedLanguageKey.En to "Close",
