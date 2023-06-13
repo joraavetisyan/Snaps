@@ -492,6 +492,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Нагорода за лайки",
         SupportedLanguageKey.Es to "Me gusta Recompensa",
     ),
+    key(StringKey.TransactionTitleReferralPurchaiseReward) to mapOf(
+        SupportedLanguageKey.En to "Purchase reward from referral",
+        SupportedLanguageKey.Ru to "Награда за покупку реферала",
+        SupportedLanguageKey.Tr to "Ödülü tavsiyeden satın al",
+        SupportedLanguageKey.Ua to "Винагорода за покупку від рефералаи",
+        SupportedLanguageKey.Es to "Comprar recompensa de referencia",
+    ),
     key(StringKey.RegistrationTitle) to mapOf(
         SupportedLanguageKey.En to "Login / Registration",
         SupportedLanguageKey.Ru to "Логин / Регистрация",

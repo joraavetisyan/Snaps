@@ -79,6 +79,7 @@ enum class StringKey {
     TransactionTitleReverse,
     TransactionTitleReferralReward,
     TransactionTitleBloggerGlassesLikesPromo,
+    TransactionTitleReferralPurchaiseReward,
 
     RegistrationMessagePrivacyPolicy,
     RegistrationActionPrivacyPolicy,

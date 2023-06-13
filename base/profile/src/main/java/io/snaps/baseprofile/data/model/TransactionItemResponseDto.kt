@@ -31,6 +31,7 @@ enum class TransactionType {
     @SerialName("Reverse") Reverse,
     @SerialName("ReferralReward") ReferralReward,
     @SerialName("BloggerGlassesLikesPromo") BloggerGlassesLikesPromo,
+    @SerialName("ReferralPurchaiseReward") ReferralPurchaiseReward,
     Unknown;
 
     val title: TextValue
@@ -47,6 +48,7 @@ enum class TransactionType {
             Reverse -> StringKey.TransactionTitleReverse.textValue()
             ReferralReward -> StringKey.TransactionTitleReferralReward.textValue()
             BloggerGlassesLikesPromo -> StringKey.TransactionTitleBloggerGlassesLikesPromo.textValue()
+            ReferralPurchaiseReward -> StringKey.TransactionTitleReferralPurchaiseReward.textValue()
             Unknown -> "Unknown".textValue()
         }
 }
