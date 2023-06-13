@@ -54,6 +54,7 @@ import io.snaps.basefeed.ui.CreateCheckHandler
 import io.snaps.basefeed.ui.VideoFeedGrid
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.IconValue
+import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startShareLinkIntent
@@ -155,7 +156,7 @@ private fun ProfileScreen(
             onClick = { context.startShareLinkIntent(uiState.shareLink!!) },
         ).takeIf { uiState.shareLink != null },
     )
-    Box {
+    Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
         BackdropScaffold(
             scaffoldState = scaffoldState,
             appBar = {
@@ -186,32 +187,16 @@ private fun ProfileScreen(
                     StringKey.ProfileTitleShorts.textValue(),
                     StringKey.ProfileTitleLiked.textValue(),
                 )
-                Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+                Box {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .inset(insetAllExcludeTop()),
                     ) {
                         TabRow(
-                            selectedTabIndex = uiState.selectedItemIndex,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = AppTheme.specificColorScheme.white,
-                            contentColor = AppTheme.specificColorScheme.white,
-                            tabs = {
-                                tabs.forEachIndexed { index, title ->
-                                    Tab(
-                                        text = {
-                                            Text(
-                                                text = title.get(),
-                                                style = AppTheme.specificTypography.titleSmall,
-                                                color = colors { if (uiState.selectedItemIndex == index) textPrimary else textSecondary }
-                                            )
-                                        },
-                                        selected = uiState.selectedItemIndex == index,
-                                        onClick = { onTabClicked(index) },
-                                    )
-                                }
-                            }
+                            selectedItemIndex = uiState.selectedItemIndex,
+                            tabs = tabs,
+                            onTabClicked = onTabClicked,
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         AnimatedContent(
@@ -233,11 +218,6 @@ private fun ProfileScreen(
                             }
                         }
                     }
-                    PullRefreshIndicator(
-                        refreshing = uiState.isRefreshing,
-                        state = pullRefreshState,
-                        modifier = Modifier.align(Alignment.TopCenter),
-                    )
                 }
             },
             frontLayerShape = RoundedCornerShape(0.dp),
@@ -267,7 +247,43 @@ private fun ProfileScreen(
                 )
             }
         }
+        PullRefreshIndicator(
+            refreshing = uiState.isRefreshing,
+            state = pullRefreshState,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .inset(insetTop()),
+        )
     }
+}
+
+@Composable
+private fun TabRow(
+    selectedItemIndex: Int,
+    tabs: List<TextValue>,
+    onTabClicked: (Int) -> Unit,
+) {
+    TabRow(
+        selectedTabIndex = selectedItemIndex,
+        modifier = Modifier.fillMaxWidth(),
+        containerColor = AppTheme.specificColorScheme.white,
+        contentColor = AppTheme.specificColorScheme.white,
+        tabs = {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    text = {
+                        Text(
+                            text = title.get(),
+                            style = AppTheme.specificTypography.titleSmall,
+                            color = colors { if (selectedItemIndex == index) textPrimary else textSecondary }
+                        )
+                    },
+                    selected = selectedItemIndex == index,
+                    onClick = { onTabClicked(index) },
+                )
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

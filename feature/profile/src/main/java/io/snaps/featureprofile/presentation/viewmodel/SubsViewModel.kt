@@ -110,6 +110,7 @@ class SubsViewModel @Inject constructor(
             action.execute {
                 subsRepository.subscribe(item.userId)
             }.doOnSuccess {
+                _uiState.update { it.copy(totalSubscriptions = it.totalSubscriptions + 1) }
                 profileRepository.updateData(isSilently = true)
                 // todo refresh only subed
                 subsRepository.refreshSubscriptions(args.userId)
@@ -148,6 +149,13 @@ class SubsViewModel @Inject constructor(
         action.execute {
             subsRepository.unsubscribe(userId)
         }.doOnSuccess {
+            _uiState.update {
+                it.copy(
+                    totalSubscriptions = if (it.totalSubscriptions > 0) {
+                        it.totalSubscriptions - 1
+                    } else 0
+                )
+            }
             profileRepository.updateData(isSilently = true)
             // todo refresh only subed
             subsRepository.refreshSubscriptions(args.userId)
