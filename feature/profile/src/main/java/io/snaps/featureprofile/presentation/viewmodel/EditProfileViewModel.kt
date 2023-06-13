@@ -63,7 +63,11 @@ class EditProfileViewModel @Inject constructor(
         _uiState.update { it.copy(editNameValue = name) }
     }
 
-    fun onTakePhotoClicked(imageUri: Uri?) {
+    fun onTakePhotoClicked(imageUri: Uri?, success: Boolean) {
+        if (!success) {
+            _uiState.update { it.copy(isDialogVisible = false) }
+            return
+        }
         onPhotoSelectFromGallery(imageUri)
     }
 
