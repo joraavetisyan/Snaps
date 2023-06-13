@@ -69,11 +69,7 @@ class TrustWalletWebAppInterface(
         val to = param.getString("to")
         val value = param.getString("value")
         val valueInt = BigInteger(value.stripHexPrefix(), 16)
-        val gasPrice = param.getString("gasPrice")
-        val gasPriceInt = BigInteger(gasPrice.stripHexPrefix(), 16).run {
-            if (this > BigInteger.ZERO) this
-            else "10_000_000_000".toBigInteger() // todo
-        }
+        val gasPriceInt = "10000000000".toBigInteger()
         val gasLimit = param.getString("gas")
         val gasLimitInt = BigInteger(gasLimit.stripHexPrefix(), 16)
         sendTransaction(
