@@ -117,7 +117,7 @@ private fun ExchangeScreen(
                     }
                 }
                 webView.webViewClient = webViewClient
-                webView.loadUrl(TrustWalletProvider.swapProvideUrl(coinType = uiState.walletModel.coinType))
+                webView.loadUrl(TrustWalletProvider.swapProvideUrl(address = address))
                 webView
             }
         )
