@@ -2,7 +2,7 @@ package io.snaps.basewallet.data.blockchain.trustwallet
 
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
-import io.horizontalsystems.ethereumkit.core.hexStringToByteArrayOrNull
+import io.horizontalsystems.ethereumkit.core.Ext
 import io.horizontalsystems.ethereumkit.core.stripHexPrefix
 import io.snaps.basewallet.domain.SwapTransactionModel
 import io.snaps.corecommon.ext.log
@@ -62,7 +62,9 @@ class TrustWalletWebAppInterface(
         } catch (e: Exception) {
             log("Error extracting data: ${e.message}")
             null
-        }?.hexStringToByteArrayOrNull() ?: kotlin.run {
+        }?.let {
+            Ext.hexStringAsByteArray(it)
+        } ?: kotlin.run {
             log("No data found!")
             return
         }
