@@ -221,18 +221,12 @@ fun WalletScreen(
                 null -> Unit
             }
             when (val dialog = transferTokensState.bottomDialog) {
-                is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess -> SimpleBottomDialog(
-                    image = R.drawable.img_guy_hands_up.imageValue(),
-                    title = StringKey.WithdrawDialogWithdrawSuccessTitle.textValue(),
-                    text = StringKey.WithdrawDialogWithdrawSuccessMessage.textValue(
-                        dialog.sent?.getFormatted().orEmpty(),
-                        dialog.to.orEmpty()
-                    ),
-                    buttonText = StringKey.WithdrawDialogWithdrawSuccessAction.textValue(),
+                is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess -> TokensTransferSuccessDialog(
+                    dialog = dialog,
                     onClick = {
                         coroutineScope.launch { sheetState.hide() }
                         context.openUrl(dialog.bscScanLink)
-                    },
+                    }
                 )
                 is TransferTokensDialogHandler.BottomDialog.TokensSellSuccess -> SimpleBottomDialog(
                     image = R.drawable.img_guy_hands_up.imageValue(),

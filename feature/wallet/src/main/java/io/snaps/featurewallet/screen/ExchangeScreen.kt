@@ -8,6 +8,10 @@ import android.webkit.SslErrorHandler
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
@@ -16,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -25,15 +30,19 @@ import androidx.navigation.NavHostController
 import io.snaps.basewallet.data.blockchain.trustwallet.TrustWalletProvider
 import io.snaps.basewallet.data.blockchain.trustwallet.TrustWalletWebAppInterface
 import io.snaps.basewallet.domain.SwapTransactionModel
+import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurewallet.ScreenNavigator
 import io.snaps.featurewallet.viewmodel.ExchangeViewModel
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ExchangeScreen(
     navHostController: NavHostController,
@@ -42,18 +51,47 @@ fun ExchangeScreen(
     val viewModel = hiltViewModel<ExchangeViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
+    val transferTokensState by viewModel.transferTokensState.collectAsState()
 
     viewModel.command.collectAsCommand {
         when (it) {
             ExchangeViewModel.Command.CloseScreen -> router.back()
         }
     }
-
-    ExchangeScreen(
-        uiState = uiState,
-        onBackClicked = router::back,
-        onTransactionSendClicked = viewModel::onTransactionSendClicked,
+    val coroutineScope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true,
     )
+    val context = LocalContext.current
+
+    viewModel.transferTokensCommand.collectAsCommand {
+        when (it) {
+            TransferTokensDialogHandler.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
+            TransferTokensDialogHandler.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
+        }
+    }
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetContent = {
+            when (val dialog = transferTokensState.bottomDialog) {
+                is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess -> TokensTransferSuccessDialog(
+                    dialog = dialog,
+                    onClick = {
+                        coroutineScope.launch { sheetState.hide() }
+                        context.openUrl(dialog.bscScanLink)
+                    }
+                )
+                else -> Unit
+            }
+        }
+    ) {
+        ExchangeScreen(
+            uiState = uiState,
+            onBackClicked = router::back,
+            onTransactionSendClicked = viewModel::onTransactionSendClicked,
+        )
+    }
 
     FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
@@ -117,7 +155,7 @@ private fun ExchangeScreen(
                     }
                 }
                 webView.webViewClient = webViewClient
-                webView.loadUrl(TrustWalletProvider.swapProvideUrl(address = address))
+                webView.loadUrl(TrustWalletProvider.swapProvideUrl(address = uiState.walletModel.coinType.address))
                 webView
             }
         )
