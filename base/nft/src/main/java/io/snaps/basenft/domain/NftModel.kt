@@ -25,7 +25,7 @@ data class NftModel(
     val experience: Int,
     val lowerThreshold: Int,
     val upperThreshold: Int,
-    val bonus: Int,
+    val bonus: Double,
     val isPurchasable: Boolean,
     val isHealthy: Boolean,
 ) {
