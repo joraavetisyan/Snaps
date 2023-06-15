@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.snaps.basenft.domain.RankModel
+import io.snaps.basenft.ui.Line
 import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
@@ -117,30 +118,17 @@ private fun Data(
                 name = LocalStringHolder.current(StringKey.RankSelectionTitleDailyReward),
                 value = data.dailyReward.getFormatted().approximated,
             )
+            Spacer(modifier = Modifier.height(4.dp))
             Line(
                 name = LocalStringHolder.current(StringKey.RankSelectionTitleDailyUnlock),
                 value = data.dailyUnlock,
             )
+            Spacer(modifier = Modifier.height(4.dp))
             Line(
                 name = LocalStringHolder.current(StringKey.RankSelectionTitleDailyConsumption),
                 value = data.dailyConsumption,
             )
         }
-    }
-}
-
-@Composable
-private fun Line(name: String, value: String) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(
-            text = name,
-            style = AppTheme.specificTypography.bodySmall,
-            color = AppTheme.specificColorScheme.textSecondary,
-        )
-        Text(text = value, style = AppTheme.specificTypography.bodySmall)
     }
 }
 

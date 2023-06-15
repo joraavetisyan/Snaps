@@ -135,7 +135,12 @@ object AppRoute {
         )
     }
 
-    object ReferralProgramScreen : Route("ReferralProgramScreen")
+    object ReferralProgram : RouteWithArg("ReferralProgram") {
+        @Serializable
+        data class Args(
+            val referralCode: String,
+        )
+    }
 
     object Settings : Route("Settings")
 

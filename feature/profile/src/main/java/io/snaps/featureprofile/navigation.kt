@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 internal class ScreenNavigator(navHostController: NavHostController) : Navigator(navHostController) {
 
-    fun toReferralProgramScreen() = navHostController.navigate(AppRoute.ReferralProgramScreen)
+    fun toReferralProgramScreen() = navHostController.navigate(AppRoute.ReferralProgram)
 
     fun toSettingsScreen() = navHostController.navigate(AppRoute.Settings)
 

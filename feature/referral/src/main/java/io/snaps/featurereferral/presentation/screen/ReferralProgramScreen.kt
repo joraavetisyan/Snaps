@@ -92,6 +92,8 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonContentWithLoader
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
 import io.snaps.coreuicompose.uikit.dialog.DiamondDialog
 import io.snaps.coreuicompose.uikit.dialog.DiamondDialogButtonData
+import io.snaps.coreuicompose.uikit.dialog.SimpleAlertDialogUi
+import io.snaps.coreuicompose.uikit.dialog.SimpleConfirmDialogUi
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.other.TitleSlider
 import io.snaps.coreuicompose.uikit.status.FootnoteUi
@@ -211,6 +213,7 @@ fun ReferralProgramScreen(
             onDialogCloseButtonClicked = viewModel::onCloseDialogClicked,
             onReferralProgramFootnoteClick = viewModel::onReferralProgramFootnoteClick,
             onReferralsInvitedFootnoteClick = viewModel::onReferralsInvitedFootnoteClick,
+            onApplyReferralCodeClicked = viewModel::onApplyReferralCodeClicked,
         )
     }
 }
@@ -228,6 +231,7 @@ private fun ReferralProgramScreen(
     onDialogCloseButtonClicked: () -> Unit,
     onReferralProgramFootnoteClick: () -> Unit,
     onReferralsInvitedFootnoteClick: () -> Unit,
+    onApplyReferralCodeClicked: (String) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -269,27 +273,40 @@ private fun ReferralProgramScreen(
             )
         }
 
-        if (uiState.isInviteUserDialogVisible) {
-            DiamondDialog(
-                title = StringKey.ReferralProgramInviteDialogTitle.textValue(),
-                message = StringKey.ReferralProgramInviteDialogMessage.textValue(),
-                onDismissRequest = onDismissRequest,
-                secondaryButton = DiamondDialogButtonData(
-                    text = StringKey.ReferralProgramDialogActionClose.textValue(),
-                    onClick = onDialogCloseButtonClicked,
-                ),
-            ) {
-                CopyButton(
-                    hint = StringKey.ReferralProgramHintCode.textValue().get().text,
-                    value = uiState.referralCode,
-                    onClick = onReferralCodeClicked,
+        uiState.dialog?.let {
+            when (it) {
+                is ReferralProgramViewModel.Dialog.ApplyReferralCode -> SimpleConfirmDialogUi(
+                    title = it.code.textValue(),
+                    text = StringKey.ReferralProgramDialogMessageApplyCode.textValue(),
+                    onDismissRequest = onDismissRequest,
+                    onConfirmRequest = { onApplyReferralCodeClicked(it.code) },
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                CopyButton(
-                    hint = StringKey.ReferralProgramHintLink.textValue().get().text,
-                    value = uiState.referralLink,
-                    onClick = onReferralLinkClicked,
+                ReferralProgramViewModel.Dialog.ReferralCodeEntered -> SimpleAlertDialogUi(
+                    text = StringKey.ReferralProgramDialogMessageCodeEntered.textValue(),
+                    buttonText = StringKey.ActionOk.textValue(),
+                    onClickRequest = onDismissRequest,
                 )
+                ReferralProgramViewModel.Dialog.InviteUser -> DiamondDialog(
+                    title = StringKey.ReferralProgramInviteDialogTitle.textValue(),
+                    message = StringKey.ReferralProgramInviteDialogMessage.textValue(),
+                    onDismissRequest = onDismissRequest,
+                    secondaryButton = DiamondDialogButtonData(
+                        text = StringKey.ReferralProgramDialogActionClose.textValue(),
+                        onClick = onDialogCloseButtonClicked,
+                    ),
+                ) {
+                    CopyButton(
+                        hint = StringKey.ReferralProgramHintCode.textValue().get().text,
+                        value = uiState.referralCode,
+                        onClick = onReferralCodeClicked,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    CopyButton(
+                        hint = StringKey.ReferralProgramHintLink.textValue().get().text,
+                        value = uiState.referralLink,
+                        onClick = onReferralLinkClicked,
+                    )
+                }
             }
         }
     }

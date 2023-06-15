@@ -203,6 +203,8 @@ enum class StringKey {
     ReferralProgramDialogTitleFootnoteMyReferralsLevel3,
     ReferralProgramDialogMessageFootnoteMyReferralsLevel3,
     ReferralProgramMessageShare,
+    ReferralProgramDialogMessageApplyCode,
+    ReferralProgramDialogMessageCodeEntered,
 
     SettingsTitle,
     SettingsTitleWallet,
