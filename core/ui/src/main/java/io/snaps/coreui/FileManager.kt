@@ -93,9 +93,6 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
     }
 
     fun createPublicFile(type: FileType): Uri {
-        /**
-         * Request android.permission.WRITE_EXTERNAL_STORAGE for SDK<Build.VERSION_CODES.Q
-         */
         fun createPublicFileViaFileProvider(type: FileType): Uri {
             val file = createFile(generateName(type), getPublicDir(type))
             return FileProvider.getUriForFile(context, getFileProviderAuthority(), file)
@@ -191,6 +188,9 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
 
     private fun getFileProviderAuthority() = "${context.packageName}.fileprovider"
 
+    /**
+     * Request android.permission.WRITE_EXTERNAL_STORAGE for SDK<Build.VERSION_CODES.Q
+     */
     private fun getPublicDir(type: FileType) = File(
         Environment.getExternalStoragePublicDirectory(type.publicDirectory),
         PublicAppDirectoryName,
@@ -200,7 +200,9 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
     private fun getCacheDir(type: FileType) = context.cacheDir
 
     private fun createFile(name: String, dir: File?) = File(dir, name)
-    // Note that null suffix will result in .tmp extension
+    /**
+     * Note that null suffix will result in .tmp extension
+     */
     private fun createTempFile(prefix: String, suffix: String?, dir: File?) = File.createTempFile(prefix, suffix, dir)
 
     fun generateName(type: FileType) = generatePrefix(type) + getSuffix(type)
