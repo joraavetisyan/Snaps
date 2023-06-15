@@ -12,12 +12,19 @@ import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Canvas
@@ -41,6 +49,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
+import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startSharePhotoIntent
 import io.snaps.corecommon.strings.StringKey
@@ -49,6 +58,7 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
@@ -61,10 +71,11 @@ import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
 import io.snaps.featuretasks.ScreenNavigator
 import io.snaps.featuretasks.presentation.viewmodel.ShareTemplateViewModel
+import kotlinx.coroutines.launch
 import toTypeface
 import io.snaps.corecommon.R as commonR
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun ShareTemplateScreen(
     navHostController: NavHostController,
@@ -77,31 +88,55 @@ fun ShareTemplateScreen(
 
     navHostController.resultFlow<String>()?.collectAsCommand(action = viewModel::onAuthCodeResultReceived)
 
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true,
+    )
+    val coroutineScope = rememberCoroutineScope()
+
     viewModel.command.collectAsCommand {
         when (it) {
             is ShareTemplateViewModel.Command.OpenWebView -> router.toConnectInstagramScreen()
             is ShareTemplateViewModel.Command.OpenShareDialog -> context.startSharePhotoIntent(it.uri)
             is ShareTemplateViewModel.Command.BackToTasksScreen -> router.backToTasksScreen()
+            is ShareTemplateViewModel.Command.ShowBottomDialog -> { coroutineScope.launch { sheetState.show() } }
+            is ShareTemplateViewModel.Command.HideBottomDialog -> { coroutineScope.launch { sheetState.hide() } }
         }
     }
 
     val permissionState = rememberPermissionState(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
-    ShareTemplateScreen(
-        uiState = uiState,
-        onBackClicked = router::back,
-        onSaveButtonClicked = {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && permissionState.status != PermissionStatus.Granted) {
-                permissionState.launchPermissionRequest()
-            } else {
-                viewModel.onSavePhotoButtonClicked(it)
+    BackHandler(enabled = sheetState.isVisible) {
+        coroutineScope.launch { sheetState.hide() }
+    }
+
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetContent = {
+            when (uiState.bottomDialog) {
+                ShareTemplateViewModel.BottomDialog.Requirements -> RequirementsDialog(
+                    onContinueClicked = viewModel::onContinueClicked,
+                )
             }
         },
-        onShareIconClicked = viewModel::onShareIconClicked,
-        onPostToInstagramButtonClicked = viewModel::onPostToInstagramButtonClicked,
-        onInstagramUsernameChanged = viewModel::onInstagramUsernameChanged,
-        onInstagramConnectClicked = viewModel::onInstagramConnectClicked,
-    )
+    ) {
+        ShareTemplateScreen(
+            uiState = uiState,
+            isPostToInstagramEnabled = uiState.isPostToInstagramEnabled,
+            onBackClicked = router::back,
+            onSaveButtonClicked = {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && permissionState.status != PermissionStatus.Granted) {
+                    permissionState.launchPermissionRequest()
+                } else {
+                    viewModel.onSavePhotoButtonClicked(it)
+                }
+            },
+            onShareIconClicked = viewModel::onShareIconClicked,
+            onPostToInstagramButtonClicked = viewModel::onPostToInstagramButtonClicked,
+            onInstagramUsernameChanged = viewModel::onInstagramUsernameChanged,
+            onInstagramConnectClicked = viewModel::onInstagramConnectClicked,
+        )
+    }
 
     FullScreenLoaderUi(isLoading = uiState.isLoading)
 }
@@ -110,6 +145,7 @@ fun ShareTemplateScreen(
 @Composable
 private fun ShareTemplateScreen(
     uiState: ShareTemplateViewModel.UiState,
+    isPostToInstagramEnabled: Boolean,
     onBackClicked: () -> Boolean,
     onInstagramUsernameChanged: (String) -> Unit,
     onInstagramConnectClicked: () -> Unit,
@@ -191,6 +227,7 @@ private fun ShareTemplateScreen(
             }
             SimpleButtonActionM(
                 onClick = onPostToInstagramButtonClicked,
+                enabled = isPostToInstagramEnabled,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 SimpleButtonContent(text = StringKey.TaskShareActionPostToInstagram.textValue())
@@ -417,4 +454,41 @@ private fun android.graphics.Canvas.DrawPaymentsInfo(
         /* y = */ yOffset + textVerticalPadding + titleBounds.height(),
         /* paint = */ textPaint,
     )
+}
+
+@Composable
+private fun RequirementsDialog(
+    onContinueClicked: () -> Unit,
+) {
+    @Composable
+    fun Requirement(text: TextValue) {
+        Text(
+            text = text.get(),
+            color = AppTheme.specificColorScheme.textPrimary,
+            style = AppTheme.specificTypography.titleSmall,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+
+    SimpleBottomDialogUI(header = StringKey.TaskShareDialogTitle.textValue()) {
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+            Requirement(text = StringKey.TaskShareDialogMessageRequirement1.textValue())
+            Requirement(text = StringKey.TaskShareDialogMessageRequirement2.textValue())
+            Requirement(text = StringKey.TaskShareDialogMessageRequirement3.textValue())
+            Requirement(text = StringKey.TaskShareDialogMessageRequirement4.textValue())
+            Requirement(text = StringKey.TaskShareDialogMessageRequirement5.textValue())
+            Requirement(text = StringKey.TaskShareDialogMessageRequirement6.textValue())
+            Requirement(text = StringKey.TaskShareDialogMessageRequirement7.textValue())
+            SimpleButtonActionM(
+                modifier = Modifier.padding(16.dp),
+                onClick = onContinueClicked,
+            ) {
+                SimpleButtonContent(text = StringKey.ActionContinue.textValue())
+            }
+        }
+    }
 }

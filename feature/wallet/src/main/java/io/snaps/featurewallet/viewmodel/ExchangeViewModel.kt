@@ -9,13 +9,16 @@ import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.SwapTransactionModel
 import io.snaps.corecommon.container.textValue
 import io.snaps.basewallet.domain.WalletModel
+import io.snaps.basewallet.ui.TransferTokensDialogHandler
+import io.snaps.basewallet.ui.TransferTokensSuccessData
+import io.snaps.corecommon.ext.unapplyDecimal
+import io.snaps.corecommon.model.CoinBNB
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.SimpleViewModel
-import io.snaps.coreui.viewmodel.publish
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,11 +30,13 @@ import javax.inject.Inject
 @HiltViewModel
 class ExchangeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    transferTokensDialogHandler: TransferTokensDialogHandler,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
     @Bridged private val walletRepository: WalletRepository,
     @Bridged private val blockchainTxRepository: BlockchainTxRepository,
-) : SimpleViewModel() {
+) : SimpleViewModel(),
+    TransferTokensDialogHandler by transferTokensDialogHandler {
 
     private val args = savedStateHandle.requireArgs<AppRoute.Exchange.Args>()
 
@@ -60,7 +65,14 @@ class ExchangeViewModel @Inject constructor(
                     _uiState.update { it.copy(isLoading = false) }
                 }.doOnSuccess {
                     notificationsSource.sendMessage(StringKey.MessageSuccess.textValue())
-                    _command publish Command.CloseScreen
+                    onSuccessfulTransfer(
+                        scope = viewModelScope,
+                        data = TransferTokensSuccessData(
+                            txHash = it,
+                            to = transactionModel.address,
+                            sent = CoinBNB(transactionModel.amount.toLong().unapplyDecimal(args.coin.decimal).toDouble()),
+                        ),
+                    )
                 }
             }
         }

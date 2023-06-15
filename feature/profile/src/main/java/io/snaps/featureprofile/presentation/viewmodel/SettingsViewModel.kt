@@ -31,7 +31,13 @@ class SettingsViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
-    fun onDeleteAccountClicked() { /*todo*/
+    fun onDeleteAccountClicked() {
+        _uiState.update { it.copy(dialog = Dialog.ConfirmDeleteAccount) }
+    }
+
+    // todo delete account api request
+    fun onDeleteAccountConfirmed() {
+        _uiState.update { it.copy(dialog = null) }
     }
 
     fun onLogoutClicked() {
@@ -70,7 +76,7 @@ class SettingsViewModel @Inject constructor(
     private fun getItems() = listOf(
         CellTileState(
             middlePart = MiddlePart.Data(
-                value = StringKey.EditProfileTitle.textValue(), // todo localization
+                value = StringKey.EditProfileTitle.textValue(),
             ),
             rightPart = RightPart.NavigateNextIcon(),
             clickListener = { onEditProfileClicked() },
@@ -113,6 +119,7 @@ class SettingsViewModel @Inject constructor(
 
     sealed class Dialog {
         object ConfirmLogout : Dialog()
+        object ConfirmDeleteAccount : Dialog()
     }
 
     sealed class Command {

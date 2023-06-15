@@ -99,9 +99,7 @@ fun SimpleChip(
         interactionSource = interactionSource,
         leadingIcon = {
             leadingIcon?.let {
-                Icon(
-                    imageValue = it
-                )
+                Icon(imageValue = it)
             }
         },
         trailingIcon = {

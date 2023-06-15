@@ -1,12 +1,10 @@
 package io.snaps.baseprofile.data
 
-import io.snaps.baseprofile.data.model.CommonSettingsResponseDto
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.TransactionItemResponseDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
-import io.snaps.corecommon.model.Completable
 import io.snaps.coredata.network.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -28,7 +26,7 @@ interface ProfileApi {
     @POST("v1/invite-code")
     suspend fun setInviteCode(
         @Body body: SetInviteCodeRequestDto,
-    ): BaseResponse<Completable>
+    ): BaseResponse<UserInfoResponseDto>
 
     @GET("v1/user/balance/unlocked/history")
     suspend fun unlockedTransactions(
@@ -54,8 +52,4 @@ interface ProfileApi {
         @Query("count") count: Int,
         @Query("onlyInvited") onlyInvited: Boolean,
     ): BaseResponse<List<UserInfoResponseDto>>
-
-    // todo different api file
-    @GET("v1/common-settings")
-    suspend fun commonSettings(): BaseResponse<CommonSettingsResponseDto>
 }

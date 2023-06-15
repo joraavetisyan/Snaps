@@ -50,7 +50,6 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.date.getLocaleDateByPhotoDateFormat
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.defaultTileRipple
-import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
@@ -97,7 +96,7 @@ private fun EditProfileScreen(
     onDismissRequest: () -> Unit,
     onEditNameClicked: () -> Unit,
     onPickPhotoClicked: (Uri?) -> Unit,
-    onTakePhotoClicked: (Uri?) -> Unit,
+    onTakePhotoClicked: (Uri?, Boolean) -> Unit,
     onUploadPhotoClicked: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -113,7 +112,7 @@ private fun EditProfileScreen(
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) {
-        onTakePhotoClicked(imageUri)
+        onTakePhotoClicked(imageUri, it)
     }
     val cameraPermissionState = rememberPermissionState(
         Manifest.permission.CAMERA,
@@ -145,8 +144,8 @@ private fun EditProfileScreen(
             Card(
                 shape = CircleShape,
                 modifier = Modifier
-                    .doOnClick(onClick = onUploadPhotoClicked)
-                    .padding(top = 16.dp, bottom = 12.dp),
+                    .padding(top = 16.dp, bottom = 12.dp)
+                    .defaultTileRipple(onClick = onUploadPhotoClicked, shape = CircleShape),
             ) {
                 if (uiState.avatar != null) {
                     Image(

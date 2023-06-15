@@ -231,6 +231,8 @@ object AppRoute {
     object EditProfile : Route("EditProfile")
 
     object EditName : Route("EditName")
+
+    object AboutProject : Route("AboutProject")
 }
 
 object AppDeeplink {

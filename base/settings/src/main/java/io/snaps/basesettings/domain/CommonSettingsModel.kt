@@ -1,4 +1,4 @@
-package io.snaps.baseprofile.domain
+package io.snaps.basesettings.domain
 
 import java.time.LocalDateTime
 

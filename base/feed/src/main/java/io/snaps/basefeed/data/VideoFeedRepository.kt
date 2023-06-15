@@ -6,16 +6,17 @@ import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.baseprofile.domain.UserInfoModel
-import io.snaps.basesources.remotedata.RemoteDataProvider
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
+import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.PagedLoader
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import java.time.ZoneOffset
 import javax.inject.Inject
@@ -42,19 +43,16 @@ interface VideoFeedRepository {
     suspend fun markWatched(videoId: Uuid): Effect<Completable>
 
     // todo delete once checked on backend
-    fun isAllowedToCreate(userInfoModel: UserInfoModel?): Pair<Boolean, Int>
-
-    // todo delete once checked on backend
     fun onVideoCreated(userInfoModel: UserInfoModel?)
 }
 
 class VideoFeedRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val videoFeedApi: VideoFeedApi,
     private val loaderFactory: VideoFeedLoaderFactory,
     private val videoFeedUploader: VideoFeedUploader,
     private val userDataStorage: UserDataStorage,
-    private val remoteDataProvider: RemoteDataProvider,
 ) : VideoFeedRepository {
 
     private var _likedVideos: List<LikedVideoFeedItemResponseDto>? = null
@@ -164,13 +162,6 @@ class VideoFeedRepositoryImpl @Inject constructor(
 
     override suspend fun delete(videoId: Uuid): Effect<Completable> {
         return apiCall(ioDispatcher) { videoFeedApi.deleteVideo(videoId = videoId) }
-    }
-
-    override fun isAllowedToCreate(userInfoModel: UserInfoModel?): Pair<Boolean, Int> {
-        val date = userInfoModel?.questInfo?.questDate?.toInstant(ZoneOffset.UTC)?.toEpochMilli() ?: return true to 0
-        val maxCount = remoteDataProvider.getMaxVideoCount().data ?: return true to 0
-        val currentCount = userDataStorage.getCreatedVideoCount(userInfoModel.userId, date)
-        return (currentCount < maxCount) to maxCount
     }
 
     override fun onVideoCreated(userInfoModel: UserInfoModel?) {

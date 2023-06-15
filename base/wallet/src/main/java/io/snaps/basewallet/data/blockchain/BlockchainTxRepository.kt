@@ -156,8 +156,9 @@ class BlockchainTxRepositoryImpl @Inject constructor(
         return blockchainCall(ioDispatcher) {
             if (wallet.coinType == CoinType.BNB) {
                 val adapter = requireEthereumAdapter(wallet.coinUid)
-                val txData = adapter.evmKitWrapper.evmKit.transferTransactionData(
-                    address = Address(address), value = amount
+                // todo
+                val txData = TransactionData(
+                    to = Address(address), value = amount, input = data,
                 )
                 adapter.evmKitWrapper.sendSingle(
                     transactionData = txData,

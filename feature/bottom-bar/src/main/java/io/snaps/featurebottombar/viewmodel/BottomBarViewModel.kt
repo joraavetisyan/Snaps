@@ -3,17 +3,18 @@ package io.snaps.featurebottombar.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
-import io.snaps.baseprofile.data.ProfileRepository
-import io.snaps.basesources.remotedata.model.BannerActionType
-import io.snaps.basesources.remotedata.model.BannerDto
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
-import io.snaps.basesources.remotedata.model.AppUpdateInfoDto
-import io.snaps.basesources.AppUpdateProvider
+import io.snaps.basesettings.data.SettingsRepository
+import io.snaps.basesettings.data.AppUpdateProvider
 import io.snaps.basesources.BottomBarVisibilitySource
-import io.snaps.basesources.UpdateAvailableState
+import io.snaps.basesettings.data.UpdateAvailableState
+import io.snaps.basesources.remotedata.model.AppUpdateInfoDto
+import io.snaps.basesources.remotedata.model.BannerActionType
+import io.snaps.basesources.remotedata.model.BannerDto
 import io.snaps.corecommon.date.CountdownTimer
 import io.snaps.corecommon.date.toTimeFormat
+import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.coredata.database.UserDataStorage
@@ -35,12 +36,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BottomBarViewModel @Inject constructor(
-    @Bridged onboardingHandler: OnboardingHandler,
     bottomBarVisibilitySource: BottomBarVisibilitySource,
+    @Bridged onboardingHandler: OnboardingHandler,
+    @Bridged private val nftRepository: NftRepository,
+    private val settingsRepository: SettingsRepository,
     private val appRouteProvider: AppRouteProvider,
     private val appUpdateProvider: AppUpdateProvider,
-    @Bridged private val nftRepository: NftRepository,
-    @Bridged private val profileRepository: ProfileRepository,
     private val userDataStorage: UserDataStorage,
     private val action: Action,
 ) : SimpleViewModel(), OnboardingHandler by onboardingHandler {
@@ -56,20 +57,48 @@ class BottomBarViewModel @Inject constructor(
 
     init {
         subscribeOnCountBrokenGlasses()
+        subscribeOnAppUpdateInfo()
 
         bottomBarVisibilitySource.state.onEach { isBottomBarVisible ->
             _uiState.update { it.copy(isBottomBarVisible = isBottomBarVisible) }
         }.launchIn(viewModelScope)
 
-        loadAppUpdateInfo()
+        loadSettings()
     }
 
-    private fun subscribeOnCountBrokenGlasses() = viewModelScope.launch {
+    private fun subscribeOnCountBrokenGlasses() {
         nftRepository.countBrokenGlassesState.onEach { count ->
             _uiState.update { state ->
                 state.copy(
                     badgeText = count.dataOrCache?.takeIf { it > 0 }?.toString().orEmpty(),
                 )
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeOnAppUpdateInfo() {
+        appUpdateProvider.state.onEach { appUpdateState ->
+            if (appUpdateState is UpdateAvailableState.Available) {
+                _uiState.update { it.copy(appUpdateInfo = appUpdateState.info) }
+                _command publish Command.ShowBottomDialog
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeOnBannerState() {
+        settingsRepository.bannerState.onEach { state ->
+            if (state is Effect && state.isSuccess) {
+                val banner = requireNotNull(state.requireData)
+                if (banner.isViewable
+                    && (banner.isEndless || userDataStorage.countBannerViews++ < 3)
+                    && appRouteProvider.menuRouteState.value == AppRoute.MainBottomBar.MainTab1Start.path()
+                ) {
+                    if (banner.isTimerShown) {
+                        launchBannerTimer()
+                    }
+                    _uiState.update { it.copy(banner = banner) }
+                    _command publish Command.ShowBottomDialog
+                }
             }
         }.launchIn(viewModelScope)
     }
@@ -93,12 +122,9 @@ class BottomBarViewModel @Inject constructor(
         }
     }
 
-    private fun loadAppUpdateInfo() = viewModelScope.launch {
-        appUpdateProvider.getAvailableUpdateInfo().doOnSuccess { state ->
-            if (state is UpdateAvailableState.Available) {
-                _uiState.update { it.copy(appUpdateInfo = state.info) }
-                _command publish Command.ShowBottomDialog
-            }
+    private fun loadSettings() {
+        viewModelScope.launch {
+            action.execute { settingsRepository.update() }
         }
     }
 
@@ -106,22 +132,7 @@ class BottomBarViewModel @Inject constructor(
         bannerTimer.stop()
         if (!isBannerShown) {
             isBannerShown = true
-            viewModelScope.launch {
-                action.execute(needsErrorProcessing = false) {
-                    profileRepository.getBanner()
-                }.doOnSuccess { banner ->
-                    if (banner.isViewable
-                        && (banner.isEndless || userDataStorage.countBannerViews++ < 3)
-                        && appRouteProvider.menuRouteState.value == AppRoute.MainBottomBar.MainTab1Start.path()
-                    ) {
-                        if (banner.isTimerShown) {
-                            launchBannerTimer()
-                        }
-                        _uiState.update { it.copy(banner = banner) }
-                        _command publish Command.ShowBottomDialog
-                    }
-                }
-            }
+            subscribeOnBannerState()
         } else {
             _uiState.update { it.copy(banner = null) }
         }
@@ -130,7 +141,7 @@ class BottomBarViewModel @Inject constructor(
     private fun launchBannerTimer() {
         viewModelScope.launch {
             action.execute(needsErrorProcessing = false) {
-                profileRepository.getCommonSettings()
+                settingsRepository.getCommonSettings()
             }.doOnSuccess { settings ->
                 bannerTimer.start(
                     scope = viewModelScope,

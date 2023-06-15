@@ -7,15 +7,20 @@ import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.baseprofile.data.model.SocialPostStatus
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
+import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.WalletRepository
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.date.CountdownTimer
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.State
+import io.snaps.corecommon.model.TaskType
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -52,8 +57,9 @@ class TasksViewModel @Inject constructor(
     bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     private val action: Action,
     private val appRouteProvider: AppRouteProvider,
-    @Bridged private val profileRepository: ProfileRepository,
     private val tasksRepository: TasksRepository,
+    private val notificationsSource: NotificationsSource,
+    @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val nftRepository: NftRepository,
     @Bridged private val walletRepository: WalletRepository,
 ) : SimpleViewModel(),
@@ -175,16 +181,22 @@ class TasksViewModel @Inject constructor(
         action.execute { tasksRepository.loadNextHistoryTaskPage() }
     }
 
-    private fun onCurrentTaskItemClicked(quest: QuestModel) = viewModelScope.launch {
-        _command publish Command.OpenTaskDetailsScreen(
-            AppRoute.TaskDetails.Args(
-                type = quest.type,
-                energy = quest.energy,
-                count = quest.count,
-                energyProgress = quest.energyProgress(),
-                completed = quest.energyProgress() == quest.energy,
+    private fun onCurrentTaskItemClicked(quest: QuestModel) {
+        viewModelScope.launch {
+            if (quest.type == TaskType.SocialPost && quest.status == SocialPostStatus.WaitForVerification) {
+                notificationsSource.sendMessage(StringKey.TaskShareMessagePostInstagram.textValue())
+                return@launch
+            }
+            _command publish Command.OpenTaskDetailsScreen(
+                AppRoute.TaskDetails.Args(
+                    type = quest.type,
+                    energy = quest.energy,
+                    count = quest.count,
+                    energyProgress = quest.energyProgress(),
+                    completed = quest.energyProgress() == quest.energy,
+                )
             )
-        )
+        }
     }
 
     private fun onHistoryTaskItemClicked(task: QuestModel) = viewModelScope.launch {

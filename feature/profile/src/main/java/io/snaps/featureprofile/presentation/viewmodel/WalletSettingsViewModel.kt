@@ -57,7 +57,7 @@ class WalletSettingsViewModel @Inject constructor() : SimpleViewModel() {
         CellTileState(
             middlePart = MiddlePart.Data(
                 value = StringKey.WalletSettingsTitleBackup.textValue(),
-                description = StringKey.WalletSettingsDescriptionBackup.textValue(),
+                description = StringKey.WalletSettingsMessageBackup.textValue(),
             ),
             rightPart = RightPart.NavigateNextIcon(),
             clickListener = { onBackupItemClicked() },

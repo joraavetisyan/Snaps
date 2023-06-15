@@ -1,4 +1,4 @@
-package io.snaps.baseprofile.data.model
+package io.snaps.basesettings.data.model
 
 import io.snaps.corecommon.model.DateTime
 import kotlinx.serialization.SerialName

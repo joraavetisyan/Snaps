@@ -22,5 +22,5 @@ data class LevelInfo(
     @SerialName("experience") val experience: Int,
     @SerialName("lowerThreshold") val lowerThreshold: Int,
     @SerialName("upperThreshold") val upperThreshold: Int,
-    @SerialName("bonus") val bonus: Int,
+    @SerialName("bonus") val bonus: Double,
 )

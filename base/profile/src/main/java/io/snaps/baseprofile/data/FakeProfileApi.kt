@@ -1,6 +1,5 @@
 package io.snaps.baseprofile.data
 
-import io.snaps.baseprofile.data.model.CommonSettingsResponseDto
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.PaymentsState
@@ -14,7 +13,6 @@ import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rDouble
 import io.snaps.corecommon.mock.rInt
-import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.TaskType
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
@@ -35,10 +33,10 @@ class FakeProfileApi : ProfileApi {
         )
     }
 
-    override suspend fun setInviteCode(body: SetInviteCodeRequestDto): BaseResponse<Completable> {
+    override suspend fun setInviteCode(body: SetInviteCodeRequestDto): BaseResponse<UserInfoResponseDto> {
         delay(mockDelay)
         return BaseResponse(
-            data = Completable,
+            data = getUserInfo(null),
         )
     }
 
@@ -182,17 +180,6 @@ class FakeProfileApi : ProfileApi {
                         energy = 20,
                     )
                 ),
-            )
-        )
-    }
-
-    override suspend fun commonSettings(): BaseResponse<CommonSettingsResponseDto> {
-        return BaseResponse(
-            data = CommonSettingsResponseDto(
-                likerGlassesReleaseDate = "2023-12-07T02:46:30.3218237+00:00",
-                minimumLikerGlassesCount = 12,
-                likerSellsCount = 200,
-                showLiker = true,
             )
         )
     }

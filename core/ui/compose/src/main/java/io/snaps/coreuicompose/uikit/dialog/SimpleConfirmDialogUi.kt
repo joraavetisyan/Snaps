@@ -15,8 +15,8 @@ import io.snaps.coreuitheme.compose.AppTheme
 
 @Composable
 fun SimpleConfirmDialogUi(
-    title: TextValue? = null,
-    text: TextValue,
+    title: TextValue,
+    text: TextValue? = null,
     confirmButtonText: TextValue = StringKey.ActionConfirm.textValue(),
     dismissButtonText: TextValue = StringKey.ActionCancel.textValue(),
     onDismissRequest: () -> Unit,
@@ -25,22 +25,22 @@ fun SimpleConfirmDialogUi(
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = {
-            title?.let {
+            Text(
+                text = title.get(),
+                modifier = Modifier.fillMaxWidth(),
+                style = AppTheme.specificTypography.titleMedium,
+                color = AppTheme.specificColorScheme.textPrimary,
+            )
+        },
+        text = {
+            text?.let {
                 Text(
                     text = it.get(),
                     modifier = Modifier.fillMaxWidth(),
-                    style = AppTheme.specificTypography.titleMedium,
+                    style = AppTheme.specificTypography.bodyMedium,
                     color = AppTheme.specificColorScheme.textPrimary,
                 )
             }
-        },
-        text = {
-            Text(
-                text = text.get(),
-                modifier = Modifier.fillMaxWidth(),
-                style = AppTheme.specificTypography.bodyMedium,
-                color = AppTheme.specificColorScheme.textPrimary,
-            )
         },
         confirmButton = {
             SimpleButtonInlineM(onClick = onConfirmRequest) {

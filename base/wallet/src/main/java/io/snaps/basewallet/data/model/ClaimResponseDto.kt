@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ClaimResponseDto(
-    @SerialName("balance") val balance: Double,
+    @SerialName("balance") val balance: Double?,
 )

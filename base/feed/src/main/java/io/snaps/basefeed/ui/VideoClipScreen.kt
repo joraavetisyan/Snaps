@@ -293,7 +293,7 @@ fun VideoClipScreen(
     uiState.dialog?.let {
         when (it) {
             VideoFeedViewModel.Dialog.ConfirmDeleteVideo -> SimpleConfirmDialogUi(
-                text = StringKey.VideoClipDialogConfirmDeleteMessage.textValue(),
+                title = StringKey.VideoClipDialogConfirmDeleteMessage.textValue(),
                 confirmButtonText = StringKey.ActionDelete.textValue(),
                 onDismissRequest = viewModel::onDeleteDismissed,
                 onConfirmRequest = viewModel::onDeleteConfirmed,

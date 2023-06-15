@@ -55,6 +55,14 @@ class UserDataStorage @Inject constructor(
         return provider.prefs.edit { putInt("getCreatedVideoCount${userId}${date}", count) }
     }
 
+    fun getPostedInstagramTemplateCount(userId: Uuid, date: Long): Int {
+        return provider.prefs.getInt("getPostedInstagramTemplateCount${userId}${date}", 0)
+    }
+
+    fun setPostedInstagramTemplateCount(userId: Uuid, date: Long, count: Int) {
+        return provider.prefs.edit { putInt("getPostedInstagramTemplateCount${userId}${date}", count) }
+    }
+
     fun reset(reason: LogOutReason? = null) {
         captchaResult = null
     }

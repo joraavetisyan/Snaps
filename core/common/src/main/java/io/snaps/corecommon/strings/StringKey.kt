@@ -67,6 +67,20 @@ enum class StringKey {
     BottomBarTitleNft,
     BottomBarTitleReferrals,
 
+    TransactionTitleWithdrawal,
+    TransactionTitleSend,
+    TransactionTitleNftReward,
+    TransactionTitleGlassesMaintaince,
+    TransactionTitleGasFee,
+    TransactionTitleNone,
+    TransactionTitleSubscribersPromo,
+    TransactionTitleViewsPromo,
+    TransactionTitleMoveToUnlock,
+    TransactionTitleReverse,
+    TransactionTitleReferralReward,
+    TransactionTitleBloggerGlassesLikesPromo,
+    TransactionTitleReferralPurchaiseReward,
+
     RegistrationMessagePrivacyPolicy,
     RegistrationActionPrivacyPolicy,
     RegistrationActionTermsOfUse,
@@ -199,6 +213,7 @@ enum class StringKey {
     SettingsActionDeleteAccount,
     SettingsDialogLogoutTitle,
     SettingsDialogLogoutMessage,
+    SettingsDialogDeleteAccountTitle,
 
     SocialNetworksTitle,
     SocialNetworksTitleDiscord,
@@ -270,6 +285,15 @@ enum class StringKey {
     TaskShareMessageShareImageAndWillTell,
     TaskShareMessageShareImageEarned,
     TaskShareFieldShareImageCurrency,
+    TaskShareErrorPostToInstagramLimit,
+    TaskShareDialogTitle,
+    TaskShareDialogMessageRequirement1,
+    TaskShareDialogMessageRequirement2,
+    TaskShareDialogMessageRequirement3,
+    TaskShareDialogMessageRequirement4,
+    TaskShareDialogMessageRequirement5,
+    TaskShareDialogMessageRequirement6,
+    TaskShareDialogMessageRequirement7,
 
     TaskFindPointsTitle,
     TaskFindPointsTitleConnectInstagram,
@@ -282,8 +306,7 @@ enum class StringKey {
 
     WalletSettingsTitle,
     WalletSettingsTitleBackup,
-    // todo description to message
-    WalletSettingsDescriptionBackup,
+    WalletSettingsMessageBackup,
     WalletSettingsBackupDialogTitle,
     WalletSettingsBackupDialogMessage,
     WalletSettingsBackupDialogAction,
@@ -486,4 +509,8 @@ enum class StringKey {
 
     MainVideoFeedTitleForYou,
     MainVideoFeedTitleSubscriptions,
+
+    AboutProjectTitlePrivacyPolicy,
+    AboutProjectTitleTermsOfUse,
+    AboutProjectTitleWhitepaper,
 }

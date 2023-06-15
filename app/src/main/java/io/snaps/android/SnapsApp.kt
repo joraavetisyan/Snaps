@@ -6,7 +6,6 @@ import coil.ImageLoaderFactory
 import coil.decode.SvgDecoder
 import dagger.hilt.android.HiltAndroidApp
 import io.snaps.basesources.NetworkStateSource
-import io.snaps.basesources.featuretoggle.FeatureToggleUpdater
 import io.snaps.basewallet.data.blockchain.CryptoInitializer
 import io.snaps.corecommon.analytics.AnalyticsTracker
 import io.snaps.corecommon.analytics.AnalyticsTrackerHolder
@@ -26,9 +25,6 @@ class SnapsApp : Application(), ApplicationCoroutineScopeHolder, ImageLoaderFact
 
     @Inject
     lateinit var tracker: AnalyticsTracker
-
-    @Inject
-    lateinit var featureToggleUpdater: FeatureToggleUpdater
 
     @Inject
     lateinit var networkStateSource: NetworkStateSource

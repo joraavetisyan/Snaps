@@ -24,6 +24,10 @@ import androidx.compose.material.BackdropValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -50,6 +54,7 @@ import io.snaps.basefeed.ui.CreateCheckHandler
 import io.snaps.basefeed.ui.VideoFeedGrid
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.IconValue
+import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startShareLinkIntent
@@ -73,6 +78,7 @@ import io.snaps.coreuitheme.compose.colors
 import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.featureprofile.presentation.viewmodel.ProfileViewModel
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ProfileScreen(
     navHostController: NavHostController,
@@ -81,6 +87,7 @@ fun ProfileScreen(
     val viewModel = hiltViewModel<ProfileViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
+    val pullRefreshState = rememberPullRefreshState(uiState.isRefreshing, { viewModel.onRefreshPulled() })
 
     viewModel.command.collectAsCommand {
         when (it) {
@@ -103,6 +110,7 @@ fun ProfileScreen(
 
     ProfileScreen(
         uiState = uiState,
+        pullRefreshState = pullRefreshState,
         onCreateVideoClicked = viewModel::onCreateVideoClicked,
         onSettingsClicked = viewModel::onSettingsClicked,
         onBackClicked = router::back,
@@ -117,6 +125,7 @@ fun ProfileScreen(
 @Composable
 private fun ProfileScreen(
     uiState: ProfileViewModel.UiState,
+    pullRefreshState: PullRefreshState,
     onCreateVideoClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
     onBackClicked: () -> Boolean,
@@ -147,7 +156,7 @@ private fun ProfileScreen(
             onClick = { context.startShareLinkIntent(uiState.shareLink!!) },
         ).takeIf { uiState.shareLink != null },
     )
-    Box {
+    Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
         BackdropScaffold(
             scaffoldState = scaffoldState,
             appBar = {
@@ -185,25 +194,9 @@ private fun ProfileScreen(
                             .inset(insetAllExcludeTop()),
                     ) {
                         TabRow(
-                            selectedTabIndex = uiState.selectedItemIndex,
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = AppTheme.specificColorScheme.white,
-                            contentColor = AppTheme.specificColorScheme.white,
-                            tabs = {
-                                tabs.forEachIndexed { index, title ->
-                                    Tab(
-                                        text = {
-                                            Text(
-                                                text = title.get(),
-                                                style = AppTheme.specificTypography.titleSmall,
-                                                color = colors { if (uiState.selectedItemIndex == index) textPrimary else textSecondary }
-                                            )
-                                        },
-                                        selected = uiState.selectedItemIndex == index,
-                                        onClick = { onTabClicked(index) },
-                                    )
-                                }
-                            }
+                            selectedItemIndex = uiState.selectedItemIndex,
+                            tabs = tabs,
+                            onTabClicked = onTabClicked,
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         AnimatedContent(
@@ -254,7 +247,43 @@ private fun ProfileScreen(
                 )
             }
         }
+        PullRefreshIndicator(
+            refreshing = uiState.isRefreshing,
+            state = pullRefreshState,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .inset(insetTop()),
+        )
     }
+}
+
+@Composable
+private fun TabRow(
+    selectedItemIndex: Int,
+    tabs: List<TextValue>,
+    onTabClicked: (Int) -> Unit,
+) {
+    TabRow(
+        selectedTabIndex = selectedItemIndex,
+        modifier = Modifier.fillMaxWidth(),
+        containerColor = AppTheme.specificColorScheme.white,
+        contentColor = AppTheme.specificColorScheme.white,
+        tabs = {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    text = {
+                        Text(
+                            text = title.get(),
+                            style = AppTheme.specificTypography.titleSmall,
+                            color = colors { if (selectedItemIndex == index) textPrimary else textSecondary }
+                        )
+                    },
+                    selected = selectedItemIndex == index,
+                    onClick = { onTabClicked(index) },
+                )
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

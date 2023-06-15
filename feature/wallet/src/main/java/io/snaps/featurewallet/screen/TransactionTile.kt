@@ -120,7 +120,7 @@ private fun Data(
                     .clip(CircleShape),
             )
             Text(
-                text = data.type.title.replaceFirst(" ", "\n"),
+                text = data.type.title.get().text.replaceFirst(" ", "\n"),
                 style = AppTheme.specificTypography.labelMedium,
                 maxLines = 2,
             )

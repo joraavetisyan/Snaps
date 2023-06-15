@@ -1,7 +1,6 @@
 package io.snaps.featureprofile.presentation.screen.settings
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -17,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -85,16 +85,15 @@ private fun SocialNetworksScreen(
             items(uiState.items) { item ->
                 item.Content(
                     modifier = Modifier
+                        .shadow(
+                            shape = AppTheme.shapes.medium,
+                            elevation = 16.dp
+                        )
                         .background(
                             color = AppTheme.specificColorScheme.white,
                             shape = AppTheme.shapes.medium,
                         )
-                        .border(
-                            width = 1.dp,
-                            color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
-                            shape = AppTheme.shapes.medium,
-                        )
-                        .padding(horizontal = 12.dp, vertical = 12.dp),
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
                 )
             }
         }

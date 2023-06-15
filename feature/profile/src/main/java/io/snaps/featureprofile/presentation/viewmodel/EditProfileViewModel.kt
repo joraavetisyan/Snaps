@@ -42,9 +42,9 @@ class EditProfileViewModel @Inject constructor(
             if (state is Effect<UserInfoModel>) {
                 _uiState.update {
                     it.copy(
-                        name = profileRepository.state.value.dataOrCache?.name.orEmpty(),
-                        editNameValue = profileRepository.state.value.dataOrCache?.name.orEmpty(),
-                        avatar = profileRepository.state.value.dataOrCache?.avatar
+                        name = state.dataOrCache?.name.orEmpty(),
+                        editNameValue = state.dataOrCache?.name.orEmpty(),
+                        avatar = state.dataOrCache?.avatar
                     )
                 }
             }
@@ -63,30 +63,37 @@ class EditProfileViewModel @Inject constructor(
         _uiState.update { it.copy(editNameValue = name) }
     }
 
-    fun onTakePhotoClicked(imageUri: Uri?) = viewModelScope.launch {
-        _uiState.update {
-            it.copy(
-                isDialogVisible = false,
-                imageUri = imageUri,
-                avatar = null,
-            )
+    fun onTakePhotoClicked(imageUri: Uri?, success: Boolean) {
+        if (!success) {
+            _uiState.update { it.copy(isDialogVisible = false) }
+            return
         }
-        editAvatar()
+        onPhotoSelectFromGallery(imageUri)
     }
 
-    fun onPickPhotoClicked(imageUri: Uri?) = viewModelScope.launch {
-        _uiState.update {
-            it.copy(
-                isDialogVisible = false,
-                imageUri = imageUri,
-                avatar = null,
-            )
-        }
-        editAvatar()
+    fun onPickPhotoClicked(imageUri: Uri?) {
+        onPhotoSelectFromGallery(imageUri)
     }
 
-    private fun editAvatar() = viewModelScope.launch {
-        uiState.value.imageUri?.let { fileManager.createFileFromUri(it) }?.let {
+    private fun onPhotoSelectFromGallery(imageUri: Uri?) {
+        viewModelScope.launch {
+            if (imageUri == null) {
+                _uiState.update { it.copy(isDialogVisible = false) }
+                return@launch
+            }
+            _uiState.update {
+                it.copy(
+                    isDialogVisible = false,
+                    imageUri = imageUri,
+                    avatar = null,
+                )
+            }
+            editAvatar(imageUri)
+        }
+    }
+
+    private fun editAvatar(imageUri: Uri) = viewModelScope.launch {
+        fileManager.createFileFromUri(imageUri)?.let {
             action.execute {
                 _uiState.update { it.copy(isLoading = true) }
                 interactor.editUser(avatarFile = it)
@@ -104,6 +111,7 @@ class EditProfileViewModel @Inject constructor(
             }.doOnComplete {
                 _uiState.update { it.copy(isLoading = false) }
             }.doOnSuccess {
+                _uiState.update { it.copy(name = uiState.value.editNameValue) }
                 _command publish Command.CloseScreen
             }
         } else {

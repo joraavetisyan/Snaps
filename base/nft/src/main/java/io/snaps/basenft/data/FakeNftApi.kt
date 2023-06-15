@@ -77,7 +77,7 @@ class FakeNftApi : NftApi {
                     dailyReward = rInt,
                     percentGrowingPerDay = rDouble,
                     dailyMaintenanceCostMultiplier = rDouble,
-                    costInUsd = rInt,
+                    costInUsd = rDouble,
                     costInRealTokens = rInt,
                     isAvailableToPurchase = rBool,
                     pathToImage = rImage,
@@ -100,7 +100,7 @@ class FakeNftApi : NftApi {
                 experience = 0,
                 lowerThreshold = 0,
                 upperThreshold = 0,
-                bonus = 0,
+                bonus = 0.0,
             ),
         ),
         UserNftItemResponseDto(
@@ -115,7 +115,7 @@ class FakeNftApi : NftApi {
                 experience = 0,
                 lowerThreshold = 0,
                 upperThreshold = 0,
-                bonus = 0,
+                bonus = 0.0,
             ),
         ),
         UserNftItemResponseDto(
@@ -130,7 +130,7 @@ class FakeNftApi : NftApi {
                 experience = 0,
                 lowerThreshold = 0,
                 upperThreshold = 0,
-                bonus = 0,
+                bonus = 0.0,
             ),
         ),
     )

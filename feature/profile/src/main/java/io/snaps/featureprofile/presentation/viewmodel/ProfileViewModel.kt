@@ -78,6 +78,8 @@ class ProfileViewModel @Inject constructor(
             subscribeOnFeed()
             subscribeOnUserLikedFeed()
         }
+        refreshFeed()
+        refreshUserLiked()
     }
 
     private fun subscribeOnCurrentUser() {
@@ -165,7 +167,7 @@ class ProfileViewModel @Inject constructor(
     private fun subscribeOnFeed() {
         videoFeedRepository.getFeedState(VideoFeedType.User(args.userId)).map {
             it.toVideoFeedUiState(
-                emptyMessage = when(_uiState.value.userType) {
+                emptyMessage = when (_uiState.value.userType) {
                     UserType.None,
                     UserType.Other -> StringKey.ProfileMessageEmptyVideos.textValue(uiState.value.name)
                     UserType.Current -> StringKey.MessageEmptyVideoFeed.textValue()
@@ -173,7 +175,7 @@ class ProfileViewModel @Inject constructor(
                 emptyImage = ImageValue.ResVector(R.drawable.ic_add_video),
                 shimmerListSize = 12,
                 onClipClicked = {},
-                onReloadClicked = ::onFeedReloadClicked,
+                onReloadClicked = ::refreshFeed,
                 onListEndReaching = ::onListEndReaching,
             )
         }.onEach { state ->
@@ -189,10 +191,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun onFeedReloadClicked() {
+    private fun refreshFeed() {
         viewModelScope.launch {
             action.execute {
                 videoFeedRepository.refreshFeed(VideoFeedType.User(args.userId))
+            }.doOnComplete {
+                _uiState.update { it.copy(isRefreshing = false) }
             }
         }
     }
@@ -202,7 +206,7 @@ class ProfileViewModel @Inject constructor(
             it.toVideoFeedUiState(
                 shimmerListSize = 12,
                 onClipClicked = {},
-                onReloadClicked = ::onUserLikedFeedReloadClicked,
+                onReloadClicked = ::refreshUserLiked,
                 onListEndReaching = ::onUserLikedListEndReaching,
             )
         }.onEach { state ->
@@ -218,10 +222,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun onUserLikedFeedReloadClicked() {
+    private fun refreshUserLiked() {
         viewModelScope.launch {
             action.execute {
                 videoFeedRepository.refreshFeed(VideoFeedType.Liked(args.userId))
+            }.doOnComplete {
+                _uiState.update { it.copy(isRefreshing = false) }
             }
         }
     }
@@ -270,7 +276,16 @@ class ProfileViewModel @Inject constructor(
         _uiState.update { it.copy(selectedItemIndex = selectedItemIndex) }
     }
 
+    fun onRefreshPulled() {
+        _uiState.update { it.copy(isRefreshing = true) }
+        when (uiState.value.selectedItemIndex) {
+            0 -> refreshFeed()
+            1 -> refreshUserLiked()
+        }
+    }
+
     data class UiState(
+        val isRefreshing: Boolean = false,
         val isLoading: Boolean = true,
         val userInfoTileState: UserInfoTileState = UserInfoTileState.Shimmer,
         val name: String = "",

@@ -8,7 +8,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basebilling.BillingRouter
 import io.snaps.basebilling.PurchaseStateProvider
 import io.snaps.basenft.data.NftRepository
-import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basesources.featuretoggle.Feature
@@ -24,7 +23,6 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.CoinBNB
 import io.snaps.corecommon.model.CoinValue
-import io.snaps.corecommon.model.FiatValue
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.Token
 import io.snaps.corecommon.strings.StringKey

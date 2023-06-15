@@ -65,7 +65,7 @@ sealed class CollectionItemState : TileState {
         val isRepairable: Boolean,
         val level: Int,
         val experience: Int,
-        val bonus: Int,
+        val bonus: Double,
         val upperThreshold: Int,
         val lowerThreshold: Int,
         val isLevelVisible: Boolean,
@@ -158,7 +158,6 @@ private fun Nft(
                 experience = data.experience,
                 upperThreshold = data.upperThreshold,
                 level = data.level,
-                lowerThreshold = data.lowerThreshold,
                 bonus = data.bonus,
                 onHelpIconClicked = data.onHelpIconClicked,
             )
@@ -220,8 +219,7 @@ private fun LevelInfoBlock(
     experience: Int,
     upperThreshold: Int,
     level: Int,
-    lowerThreshold: Int,
-    bonus: Int,
+    bonus: Double,
     onHelpIconClicked: () -> Unit,
 ) {
     val upperThresholdText = buildAnnotatedString {
