@@ -48,6 +48,7 @@ class FakeVideoFeedApi : VideoFeedApi {
         author = FakeProfileApi.getUserInfo("authorUserId$it"),
         authorId = null,
         thumbnailUrl = "https://picsum.photos/177/222",
+        status = null,
     )
 
     override suspend fun myFeed(
@@ -115,6 +116,7 @@ class FakeVideoFeedApi : VideoFeedApi {
                         authorId = "authorUserId$it",
                         author = null,
                         thumbnailUrl = "https://picsum.photos/177/222",
+                        status = null,
                     )
                 )
             }
@@ -143,6 +145,7 @@ class FakeVideoFeedApi : VideoFeedApi {
                     author = null,
                     authorId = "authorUserId$it",
                     thumbnailUrl = "https://picsum.photos/177/222",
+                    status = null,
                 )
             }
         )

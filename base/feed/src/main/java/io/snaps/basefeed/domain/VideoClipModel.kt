@@ -1,5 +1,6 @@
 package io.snaps.basefeed.domain
 
+import io.snaps.basefeed.data.model.VideoStatus
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.corecommon.model.DateTime
 import io.snaps.corecommon.model.FullUrl
@@ -18,4 +19,6 @@ data class VideoClipModel(
     val author: UserInfoModel?,
     val isLiked: Boolean,
     val thumbnail: FullUrl?,
+    val status: VideoStatus?,
+    val type: VideoFeedType,
 )

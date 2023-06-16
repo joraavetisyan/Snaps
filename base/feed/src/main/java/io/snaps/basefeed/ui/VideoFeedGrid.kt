@@ -24,14 +24,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.snaps.basefeed.data.model.VideoStatus
 import io.snaps.basefeed.domain.VideoClipModel
+import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.imageValue
+import io.snaps.corecommon.container.textValue
 import io.snaps.coreuicompose.tools.addIf
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.other.ShimmerTile
+import io.snaps.coreuicompose.uikit.other.SimpleCard
 import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyVerticalGrid
 import io.snaps.coreuitheme.compose.AppTheme
 
@@ -72,48 +77,101 @@ private fun Item(
     item: VideoClipModel,
     onClick: () -> Unit,
 ) {
-    ItemContainer(
-        onClick = onClick,
-    ) {
-        item.thumbnail?.let {
-            Image(
-                modifier = Modifier.fillMaxSize(),
-                painter = it.imageValue().get(),
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
-            )
-        }
-        @Composable
-        fun Column(icon: IconValue, value: String) {
-            Column(
-                modifier = Modifier,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Icon(
-                    painter = icon.get(),
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        ItemContainer(
+            onClick = onClick,
+        ) {
+            item.thumbnail?.let {
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = it.imageValue().get(),
+                    contentScale = ContentScale.Crop,
                     contentDescription = null,
-                    tint = AppTheme.specificColorScheme.white,
-                    modifier = Modifier.size(12.dp),
-                )
-                Text(
-                    text = value,
-                    color = AppTheme.specificColorScheme.white,
-                    style = AppTheme.specificTypography.bodySmall,
                 )
             }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(horizontal = 4.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Column(icon = AppTheme.specificIcons.favorite, value = item.likeCount.toString())
+                Spacer(modifier = Modifier.width(20.dp))
+                Column(icon = AppTheme.specificIcons.eye, value = item.viewCount.toString())
+            }
         }
-        Row(
+        if (item.type is VideoFeedType.User && item.status != null) {
+            StatusMessage(status = item.status)
+        }
+    }
+}
+
+// todo rename
+@Composable
+private fun Column(icon: IconValue, value: String) {
+    Column(
+        modifier = Modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(
+            painter = icon.get(),
+            contentDescription = null,
+            tint = AppTheme.specificColorScheme.white,
+            modifier = Modifier.size(12.dp),
+        )
+        Text(
+            text = value,
+            color = AppTheme.specificColorScheme.white,
+            style = AppTheme.specificTypography.bodySmall,
+        )
+    }
+}
+
+@Composable
+private fun StatusMessage(status: VideoStatus) {
+    if (status == VideoStatus.Approved) return
+    val color = when (status) {
+        VideoStatus.Reject -> AppTheme.specificColorScheme.uiSystemRed
+        VideoStatus.Review -> AppTheme.specificColorScheme.uiSystemYellow
+        else -> AppTheme.specificColorScheme.uiSystemGreen
+    }
+    Text(
+        text = when (status) {
+            VideoStatus.Reject -> "Rejected" // todo localization
+            VideoStatus.Review -> "Is On Review " // todo localization
+            else -> ""
+        }.textValue().get(),
+        color = color,
+        style = AppTheme.specificTypography.bodySmall,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = color.copy(alpha = 0.1f), shape = AppTheme.shapes.medium)
+            .padding(8.dp),
+    )
+}
+
+@Composable
+private fun ReloadButton(
+    onClick: () -> Unit,
+) {
+    SimpleCard(
+        color = AppTheme.specificColorScheme.uiSystemRed,
+        modifier = Modifier
+            .fillMaxWidth()
+            .defaultTileRipple(onClick = onClick),
+    ) {
+        Text(
+            text = "Повторить загрузку", // todo localization
+            color = AppTheme.specificColorScheme.white,
+            style = AppTheme.specificTypography.labelMedium,
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(horizontal = 4.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            Column(icon = AppTheme.specificIcons.favorite, value = item.likeCount.toString())
-            Spacer(modifier = Modifier.width(20.dp))
-            Column(icon = AppTheme.specificIcons.eye, value = item.viewCount.toString())
-        }
+                .padding(8.dp),
+            textAlign = TextAlign.Center,
+        )
     }
 }
 

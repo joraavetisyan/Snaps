@@ -21,4 +21,12 @@ data class VideoFeedItemResponseDto(
     @SerialName("description") val description: String?,
     @SerialName("author") val author: UserInfoResponseDto?, // null for liked feed
     @SerialName("authorUserId") val authorId: Uuid?, // null for other feeds
+    @SerialName("status") val status: VideoStatus?,
 )
+
+@Serializable
+enum class VideoStatus {
+    Approved,
+    Review,
+    Reject,
+}
