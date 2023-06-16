@@ -9,8 +9,8 @@ import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
-import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.coroutine.UserSessionCoroutineScope
 import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.PagedLoader
 import io.snaps.coredata.network.PagedLoaderParams
@@ -52,7 +52,7 @@ interface VideoFeedRepository {
 
 class VideoFeedRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @ApplicationCoroutineScope private val scope: CoroutineScope, // todo user session scope
+    @UserSessionCoroutineScope private val scope: CoroutineScope,
     private val videoFeedApi: VideoFeedApi,
     private val loaderFactory: VideoFeedLoaderFactory,
     private val uploader: VideoFeedUploader,

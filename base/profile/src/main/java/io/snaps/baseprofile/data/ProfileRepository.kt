@@ -14,8 +14,8 @@ import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.CryptoAddress
-import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.coroutine.UserSessionCoroutineScope
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
@@ -77,7 +77,7 @@ interface ProfileRepository {
 
 class ProfileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @ApplicationCoroutineScope private val scope: CoroutineScope,
+    @UserSessionCoroutineScope private val scope: CoroutineScope,
     private val api: ProfileApi,
     private val loaderFactory: UsersLoaderFactory,
 ) : ProfileRepository {

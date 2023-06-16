@@ -2,10 +2,8 @@ package io.snaps.basesession.data
 
 import io.snaps.basenft.data.NftRepository
 import io.snaps.corecommon.model.OnboardingType
-import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.di.Bridged
 import io.snaps.coreui.viewmodel.publish
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface OnboardingHandler {
@@ -22,9 +19,9 @@ interface OnboardingHandler {
 
     val onboardingCommand: Flow<Command>
 
-    fun checkOnboarding(type: OnboardingType)
+    suspend fun checkOnboarding(type: OnboardingType)
 
-    fun closeOnboardingDialog()
+    suspend fun closeOnboardingDialog()
 
     data class UiState(
         val onboardingType: OnboardingType? = null,
@@ -38,7 +35,6 @@ interface OnboardingHandler {
 }
 
 class OnboardingHandlerImplDelegate @Inject constructor(
-    @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val sessionRepository: SessionRepository,
     @Bridged private val nftRepository: NftRepository,
 ) : OnboardingHandler {
@@ -49,9 +45,9 @@ class OnboardingHandlerImplDelegate @Inject constructor(
     private val _command = Channel<OnboardingHandler.Command>()
     override val onboardingCommand = _command.receiveAsFlow()
 
-    override fun checkOnboarding(type: OnboardingType) {
+    override suspend fun checkOnboarding(type: OnboardingType) {
         when {
-            type == OnboardingType.Rank -> scope.launch {
+            type == OnboardingType.Rank -> {
                 nftRepository.updateNftCollection().doOnSuccess {
                     if (it.isEmpty()) {
                         openDialog(type)
@@ -60,7 +56,7 @@ class OnboardingHandlerImplDelegate @Inject constructor(
                     }
                 }
             }
-            !sessionRepository.isOnboardingShown(type) -> scope.launch {
+            !sessionRepository.isOnboardingShown(type) -> {
                 openDialog(type)
             }
         }
@@ -71,9 +67,7 @@ class OnboardingHandlerImplDelegate @Inject constructor(
         _command publish OnboardingHandler.Command.OpenDialog(type)
     }
 
-    override fun closeOnboardingDialog() {
-        scope.launch {
-            _command publish OnboardingHandler.Command.HideDialog
-        }
+    override suspend fun closeOnboardingDialog() {
+        _command publish OnboardingHandler.Command.HideDialog
     }
 }

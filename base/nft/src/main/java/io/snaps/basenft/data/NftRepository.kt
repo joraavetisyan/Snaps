@@ -14,8 +14,8 @@ import io.snaps.corecommon.model.Token
 import io.snaps.corecommon.model.TxHash
 import io.snaps.corecommon.model.TxSign
 import io.snaps.corecommon.model.Uuid
-import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.coroutine.UserSessionCoroutineScope
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreui.viewmodel.tryPublish
@@ -55,7 +55,7 @@ interface NftRepository {
 
 class NftRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @ApplicationCoroutineScope private val scope: CoroutineScope,
+    @UserSessionCoroutineScope private val scope: CoroutineScope,
     private val nftApi: NftApi,
 ) : NftRepository {
 

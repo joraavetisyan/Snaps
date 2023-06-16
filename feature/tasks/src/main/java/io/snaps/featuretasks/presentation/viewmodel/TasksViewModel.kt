@@ -85,7 +85,9 @@ class TasksViewModel @Inject constructor(
 
         refreshNfts()
 
-        checkOnboarding(OnboardingType.Tasks)
+        viewModelScope.launch {
+            checkOnboarding(OnboardingType.Tasks)
+        }
     }
 
     private fun subscribeToUserNftCollection() {
