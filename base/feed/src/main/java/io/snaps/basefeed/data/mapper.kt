@@ -7,9 +7,12 @@ import io.snaps.basefeed.domain.CommentModel
 import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.baseprofile.data.toModel
+import io.snaps.baseprofile.domain.UserInfoModel
+import io.snaps.basesettings.data.model.AdDto
 import io.snaps.corecommon.date.toOffsetLocalDateTime
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 
 fun List<VideoFeedItemResponseDto>.toVideoClipModelList(
@@ -19,7 +22,6 @@ fun List<VideoFeedItemResponseDto>.toVideoClipModelList(
 
 fun VideoFeedItemResponseDto.toModel(isLiked: Boolean) = VideoClipModel(
     id = entityId,
-    createdDate = createdDate,
     viewCount = viewsCount,
     commentCount = commentsCount,
     likeCount = likesCount,
@@ -30,6 +32,47 @@ fun VideoFeedItemResponseDto.toModel(isLiked: Boolean) = VideoClipModel(
     author = author?.toModel(),
     thumbnail = thumbnailUrl,
     isLiked = isLiked,
+    isSponsored = false,
+    isCommentsAvailable = true,
+    learnMoreLink = null,
+)
+
+fun AdDto.toVideoModel() = VideoClipModel(
+    id = entityId,
+    viewCount = 0,
+    commentCount = 0,
+    likeCount = 0,
+    url = videoUrl,
+    title = title,
+    description = null,
+    authorId = "",
+    author = UserInfoModel(
+        entityId = "",
+        createdDate = LocalDateTime.now(),
+        userId = "",
+        email = "",
+        wallet = "",
+        name = username,
+        totalLikes = 0,
+        totalSubscribers = 0,
+        totalSubscriptions = 0,
+        totalPublication = 0,
+        avatarUrl = avatar,
+        experience = 0,
+        level = 0,
+        questInfo = null,
+        inviteCodeRegisteredBy = null,
+        ownInviteCode = null,
+        instagramId = null,
+        paymentsState = null,
+        firstLevelReferralMultiplier = 0.0,
+        secondLevelReferralMultiplier = 0.0,
+    ),
+    isLiked = false,
+    thumbnail = null,
+    isSponsored = true,
+    isCommentsAvailable = false,
+    learnMoreLink = openUrl,
 )
 
 // Just a dummy wrapper

@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basefeed.data.CommentRepository
 import io.snaps.basefeed.data.VideoFeedRepository
+import io.snaps.basefeed.domain.VideoFeedInteractor
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.ui.VideoFeedViewModel
 import io.snaps.baseprofile.data.ProfileRepository
@@ -23,6 +24,7 @@ import javax.inject.Inject
 class SubscriptionsVideoFeedViewModel @Inject constructor(
     bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     action: Action,
+    videoFeedInteractor: VideoFeedInteractor,
     @Bridged videoFeedRepository: VideoFeedRepository,
     @Bridged profileRepository: ProfileRepository,
     @Bridged commentRepository: CommentRepository,
@@ -32,6 +34,7 @@ class SubscriptionsVideoFeedViewModel @Inject constructor(
     bottomDialogBarVisibilityHandler = bottomDialogBarVisibilityHandler,
     videoFeedType = VideoFeedType.Subscriptions,
     action = action,
+    videoFeedInteractor = videoFeedInteractor,
     videoFeedRepository = videoFeedRepository,
     profileRepository = profileRepository,
     commentRepository = commentRepository,

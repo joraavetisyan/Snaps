@@ -7,7 +7,4 @@ import java.time.ZonedDateTime
 
 fun CommonSettingsResponseDto.toModel() = CommonSettingsModel(
     likerGlassesReleaseDate = requireNotNull(ZonedDateTime.parse(likerGlassesReleaseDate)).toOffsetLocalDateTime(),
-    minimumLikerGlassesCount = minimumLikerGlassesCount,
-    likerSellsCount = likerSellsCount,
-    showLiker = showLiker,
 )

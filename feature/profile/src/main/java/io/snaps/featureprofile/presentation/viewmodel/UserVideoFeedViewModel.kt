@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basefeed.data.CommentRepository
 import io.snaps.basefeed.data.VideoFeedRepository
+import io.snaps.basefeed.domain.VideoFeedInteractor
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.ui.VideoFeedViewModel
 import io.snaps.baseprofile.data.ProfileRepository
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class UserVideoFeedViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     action: Action,
+    videoFeedInteractor: VideoFeedInteractor,
     @Bridged videoFeedRepository: VideoFeedRepository,
     @Bridged profileRepository: ProfileRepository,
     @Bridged commentRepository: CommentRepository,
@@ -28,6 +30,7 @@ class UserVideoFeedViewModel @Inject constructor(
     bottomDialogBarVisibilityHandler = bottomDialogBarVisibilityHandler,
     videoFeedType = VideoFeedType.User(savedStateHandle.args().userId),
     action = action,
+    videoFeedInteractor = videoFeedInteractor,
     videoFeedRepository = videoFeedRepository,
     profileRepository = profileRepository,
     commentRepository = commentRepository,

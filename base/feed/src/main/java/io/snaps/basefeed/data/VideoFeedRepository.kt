@@ -32,6 +32,8 @@ interface VideoFeedRepository {
      */
     suspend fun upload(title: String, fileId: Uuid, file: String): Effect<Uuid>
 
+    suspend fun get(videoId: Uuid): Effect<VideoClipModel>
+
     suspend fun delete(videoId: Uuid): Effect<Completable>
 
     suspend fun like(videoId: Uuid): Effect<Completable>
@@ -136,6 +138,10 @@ class VideoFeedRepositoryImpl @Inject constructor(
 
     override suspend fun loadNextFeedPage(feedType: VideoFeedType): Effect<Completable> =
         getLoader(feedType).loadNext()
+
+    override suspend fun get(videoId: Uuid): Effect<VideoClipModel> {
+        return apiCall(ioDispatcher) { videoFeedApi.getVideo(videoId) }.map { it.toModel(false) }
+    }
 
     override suspend fun like(videoId: Uuid): Effect<Completable> {
         return apiCall(ioDispatcher) { videoFeedApi.like(videoId = videoId) }

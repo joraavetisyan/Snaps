@@ -7,7 +7,6 @@ import io.snaps.corecommon.model.Uuid
 
 data class VideoClipModel(
     val id: Uuid,
-    val createdDate: DateTime,
     val viewCount: Int,
     val commentCount: Int,
     val likeCount: Int,
@@ -18,4 +17,7 @@ data class VideoClipModel(
     val author: UserInfoModel?,
     val isLiked: Boolean,
     val thumbnail: FullUrl?,
+    val isSponsored: Boolean,
+    val isCommentsAvailable: Boolean,
+    val learnMoreLink: FullUrl?,
 )

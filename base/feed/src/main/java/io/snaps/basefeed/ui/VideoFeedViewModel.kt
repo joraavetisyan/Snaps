@@ -8,6 +8,7 @@ import io.snaps.basefeed.data.VideoFeedRepository
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.domain.VideoClipModel
+import io.snaps.basefeed.domain.VideoFeedInteractor
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesubs.data.SubsRepository
@@ -41,6 +42,7 @@ abstract class VideoFeedViewModel(
     bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     private val videoFeedType: VideoFeedType,
     private val action: Action,
+    private val videoFeedInteractor: VideoFeedInteractor,
     @Bridged private val videoFeedRepository: VideoFeedRepository,
     @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val commentRepository: CommentRepository,

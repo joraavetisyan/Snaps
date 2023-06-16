@@ -21,6 +21,8 @@ import io.snaps.basefeed.data.VideoFeedUploaderApivideoWorkManagerImpl
 import io.snaps.basefeed.data.VideoFeedApi
 import io.snaps.basefeed.data.VideoFeedRepository
 import io.snaps.basefeed.data.VideoFeedRepositoryImpl
+import io.snaps.basefeed.domain.VideoFeedInteractor
+import io.snaps.basefeed.domain.VideoFeedInteractorImpl
 import io.snaps.basefeed.ui.CreateCheckHandler
 import io.snaps.basefeed.ui.CreateCheckHandlerImplDelegate
 import io.snaps.basesources.featuretoggle.Feature
@@ -127,4 +129,8 @@ internal interface ViewModelDataBindModule {
     @Binds
     @ViewModelScoped
     fun createCheckHandler(bind: CreateCheckHandlerImplDelegate): CreateCheckHandler
+
+    @Binds
+    @ViewModelScoped
+    fun videoFeedInteractor(bind: VideoFeedInteractorImpl): VideoFeedInteractor
 }

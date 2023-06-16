@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basefeed.data.CommentRepository
 import io.snaps.basefeed.data.VideoFeedRepository
+import io.snaps.basefeed.domain.VideoFeedInteractor
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.ui.CreateCheckHandler
 import io.snaps.basefeed.ui.VideoFeedViewModel
@@ -45,6 +46,7 @@ class MainVideoFeedViewModel @Inject constructor(
     createCheckHandler: CreateCheckHandler,
     action: Action,
     private val appRouteProvider: AppRouteProvider,
+    videoFeedInteractor: VideoFeedInteractor,
     @Bridged private val videoFeedRepository: VideoFeedRepository,
     @Bridged private val profileRepository: ProfileRepository,
     @Bridged commentRepository: CommentRepository,
@@ -53,6 +55,7 @@ class MainVideoFeedViewModel @Inject constructor(
     bottomDialogBarVisibilityHandler = bottomDialogBarVisibilityHandler,
     videoFeedType = savedStateHandle.args()?.videoClipId?.let(VideoFeedType::Single) ?: VideoFeedType.Main,
     action = action,
+    videoFeedInteractor = videoFeedInteractor,
     videoFeedRepository = videoFeedRepository,
     profileRepository = profileRepository,
     commentRepository = commentRepository,
