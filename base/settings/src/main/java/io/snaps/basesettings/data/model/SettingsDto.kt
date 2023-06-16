@@ -1,4 +1,4 @@
-package io.snaps.basesources.remotedata.model
+package io.snaps.basesettings.data.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -34,9 +34,8 @@ The project contains custom elements and ui building blocks.
 
 #### 3. Feature Toggle
 
-Based on FirebaseRemoteConfig
+Currently remotes set from api
 
-+ [FeatureToggleUpdater] for receiving flags at application startup
 + [Feature] stores available flags with default values
 + [FeatureToggle] check flag status
 
@@ -59,7 +58,7 @@ Access to the Tracker object is through [AnalyticsTrackerHolder].
 + [PreferencesProvider]
 + [FirebaseNotificationsService]
 + [BuildInfo] (contains info of current build)
-+ Resources containers ([ColorValue], [ImageValue], [TextValue])
++ Resources containers ([ColorValue], [ImageValue], [IconValue], [TextValue])
 + [Effect] (like Result in Kotlin for results of operations)
 + [CacheProvider] (with two implementations)
 + [ApiConfig] (for build retrofit instances)
@@ -69,18 +68,28 @@ Access to the Tracker object is through [AnalyticsTrackerHolder].
 + and many other extensions for some routine
 
 #### Version Control
-+ If building for a store, increment version in separate commit, 
++ Start commit message with upper case
++ If building for a store, increment version in separate commit ('Version inc X.X.X(version code)'), 
 merge to master and create a tag vX.X.X, push the tag to remote
 
 #### Dependency injection
 
+`User session related`
 [UserSessionScope] and [UserSessionComponent] are used to inject user session related
 classes (eg repos), so that the user data gets cleared when a new user logs in. 
-Those classes provided with [@Bridged] qualifier to avoid boilerplate code
+Those classes provided with [@Bridged] qualifier to avoid boilerplate code.
+Use [UserSessionCoroutineScope] if need to launch coroutines in them.
 
 #### Naming conventions
 
-+ Provider/Source - a Source provide data in a stream, a Provider through getters
++ Dto - todo
++ Model - todo
++ State - todo
+
++ Provider - provides data through getters
++ Source - provides data in a stream
++ Handler - todo
++ DelegateImpl - todo
 
 #### Hiding bottom navigation bar on bottom sheet dialog shown
 
@@ -109,7 +118,6 @@ Naming scheme for string ui elements: `placeTypeName`
   can also omit it if it's a screen title)
 
 Examples:
-
 - RegistrationMessagePrivacyPolicy
 - RegistrationActionPrivacyPolicy
 - WalletErrorInsufficientBalance

@@ -1,7 +1,7 @@
 package io.snaps.basesettings.data
 
 import io.snaps.basesettings.data.model.CommonSettingsResponseDto
-import io.snaps.basesources.remotedata.model.SettingsDto
+import io.snaps.basesettings.data.model.SettingsDto
 import io.snaps.coredata.network.BaseResponse
 import retrofit2.http.GET
 

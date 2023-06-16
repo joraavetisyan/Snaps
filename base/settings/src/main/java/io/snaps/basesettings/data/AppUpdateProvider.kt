@@ -4,7 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.snaps.basesources.remotedata.model.AppUpdateInfoDto
+import io.snaps.basesettings.data.model.AppUpdateInfoDto
 import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
