@@ -73,25 +73,25 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     action = { from, count -> videoFeedApi.feed(from = from, count = count) },
                     pageSize = 20,
                     nextPageIdFactory = { it.entityId },
-                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos()) },
+                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos(), type = type) },
                 )
                 VideoFeedType.Subscriptions -> PagedLoaderParams(
                     action = { from, count -> videoFeedApi.subscriptionFeed(from = from, count = count) },
                     pageSize = 5,
                     nextPageIdFactory = { it.entityId },
-                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos()) },
+                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos(), type = type) },
                 )
                 is VideoFeedType.Single -> PagedLoaderParams(
                     action = { _, _ -> videoFeedApi.getVideo(type.videoId).toFeedBaseResponse() },
                     pageSize = 1,
                     nextPageIdFactory = { null },
-                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos()) },
+                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos(), type = type) },
                 )
                 is VideoFeedType.Popular -> PagedLoaderParams(
                     action = { from, count -> videoFeedApi.popularFeed(from = from, count = count) },
                     pageSize = 50,
                     nextPageIdFactory = { it.entityId },
-                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos()) },
+                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos(), type = type) },
                 )
                 is VideoFeedType.User -> PagedLoaderParams(
                     action = { from, count ->
@@ -103,7 +103,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     },
                     pageSize = 50,
                     nextPageIdFactory = { it.entityId },
-                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos()) },
+                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos(), type = type) },
                 )
                 is VideoFeedType.Search -> PagedLoaderParams(
                     action = { from, count ->
@@ -111,7 +111,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     },
                     pageSize = 50,
                     nextPageIdFactory = { it.entityId },
-                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos()) },
+                    mapper = { it.toVideoClipModelList(likedVideos = getLikedVideos(), type = type) },
                 )
                 is VideoFeedType.Liked -> PagedLoaderParams(
                     action = { from, count ->
@@ -124,7 +124,11 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     pageSize = 50,
                     nextPageIdFactory = { it.entityId },
                     mapper = {
-                        it.toVideoClipModelList(isExplicitlyLiked = type.userId == null, likedVideos = getLikedVideos())
+                        it.toVideoClipModelList(
+                            isExplicitlyLiked = type.userId == null,
+                            likedVideos = getLikedVideos(),
+                            type = type,
+                        )
                     },
                 )
             }

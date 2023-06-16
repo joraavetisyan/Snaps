@@ -5,6 +5,7 @@ import io.snaps.basefeed.data.model.LikedVideoFeedItemResponseDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.basefeed.domain.CommentModel
 import io.snaps.basefeed.domain.VideoClipModel
+import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.baseprofile.data.toModel
 import io.snaps.corecommon.date.toOffsetLocalDateTime
@@ -14,10 +15,16 @@ import java.time.ZonedDateTime
 
 fun List<VideoFeedItemResponseDto>.toVideoClipModelList(
     isExplicitlyLiked: Boolean = false,
+    type: VideoFeedType,
     likedVideos: List<LikedVideoFeedItemResponseDto>,
-) = map { dto -> dto.toModel(isExplicitlyLiked || likedVideos.find { it.video.entityId == dto.entityId } != null) }
+) = map { dto ->
+    dto.toModel(
+        isLiked = isExplicitlyLiked || likedVideos.find { it.video.entityId == dto.entityId } != null,
+        type = type,
+    )
+}
 
-fun VideoFeedItemResponseDto.toModel(isLiked: Boolean) = VideoClipModel(
+fun VideoFeedItemResponseDto.toModel(isLiked: Boolean, type: VideoFeedType) = VideoClipModel(
     id = entityId,
     createdDate = createdDate,
     viewCount = viewsCount,
@@ -30,6 +37,8 @@ fun VideoFeedItemResponseDto.toModel(isLiked: Boolean) = VideoClipModel(
     author = author?.toModel(),
     thumbnail = thumbnailUrl,
     isLiked = isLiked,
+    status = status,
+    type = type,
 )
 
 // Just a dummy wrapper
