@@ -20,5 +20,5 @@ data class VideoClipModel(
     val isLiked: Boolean,
     val thumbnail: FullUrl?,
     val status: VideoStatus?,
-    val type: VideoFeedType,
+    val internalId: Uuid?,
 )

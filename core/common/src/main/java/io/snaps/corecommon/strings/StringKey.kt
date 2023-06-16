@@ -21,6 +21,7 @@ enum class StringKey {
     MessageEmptyVideoFeed,
     MessageNothingFound,
     MessageNoData,
+    MessageVideoUploadSuccess,
 
     FieldMinutes,
     FieldMinutesShort,
@@ -462,7 +463,6 @@ enum class StringKey {
 
     PreviewVideoActionDiscard,
     PreviewVideoActionProceed,
-    PreviewVideoMessageSuccess,
 
     UploadVideoTitle,
     UploadVideoTitlePreview,

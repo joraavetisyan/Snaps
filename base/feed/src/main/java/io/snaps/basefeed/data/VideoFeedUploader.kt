@@ -12,7 +12,6 @@ import video.api.client.api.models.Environment
 import video.api.client.api.work.stores.VideosApiStore
 import video.api.client.api.work.upload
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.minutes
 
 interface VideoFeedUploader {
 
@@ -25,6 +24,7 @@ interface VideoFeedUploader {
 class VideoFeedUploaderApivideoWorkManagerImpl @Inject constructor(
     @ApplicationContext private val applicationContext: Context,
     private val settingsRepository: SettingsRepository,
+    private val uploadStatusSource: UploadStatusSource,
 ) : VideoFeedUploader {
 
     private var isVideosApiStoreInitialized = false
@@ -34,7 +34,8 @@ class VideoFeedUploaderApivideoWorkManagerImpl @Inject constructor(
             init()
         }
         val workManager = WorkManager.getInstance(applicationContext)
-        val workId = workManager.upload(videoId, filePath).request.stringId
+        val workId = workManager.upload(videoId = videoId, filePath = filePath).request.stringId
+        uploadStatusSource.registerUploadId(videoId = videoId, uploadId = workId)
         return Effect.success(workId)
     }
 
@@ -44,7 +45,6 @@ class VideoFeedUploaderApivideoWorkManagerImpl @Inject constructor(
             VideosApiStore.initialize(
                 apiKey = it,
                 environment = Environment.PRODUCTION, // no differentiation on purpose
-                timeout = 5.minutes.inWholeSeconds.toInt(),
             )
             isVideosApiStoreInitialized = true
         }.doOnError { _, _ ->

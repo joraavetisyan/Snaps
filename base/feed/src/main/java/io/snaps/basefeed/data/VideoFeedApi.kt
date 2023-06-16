@@ -20,68 +20,68 @@ import retrofit2.http.Query
 interface VideoFeedApi {
 
     @GET("v1/video-feed")
-    suspend fun feed(
+    suspend fun getFeed(
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
 
     @GET("v1/user/video")
-    suspend fun myFeed(
+    suspend fun getMyFeed(
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
 
     @GET("v1/user/{userId}/video")
-    suspend fun userFeed(
+    suspend fun getUserFeed(
         @Path("userId") userId: Uuid,
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
 
     @GET("v1/popular-video-feed")
-    suspend fun popularFeed(
+    suspend fun getPopularFeed(
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
 
     @GET("v1/video/subscriptions")
-    suspend fun subscriptionFeed(
+    suspend fun getSubscriptionFeed(
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
 
     @GET("v1/video")
-    suspend fun searchFeed(
+    suspend fun getSearchFeed(
         @Query("searchString") query: String?,
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
 
     @GET("v1/user/likes")
-    suspend fun myLikedFeed(
+    suspend fun getMyLikedFeed(
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<LikedVideoFeedItemResponseDto>>
 
     @GET("v1/user/{userId}/likes")
-    suspend fun likedFeed(
+    suspend fun getLikedFeed(
         @Path("userId") userId: Uuid?,
         @Query("from") from: Uuid?,
         @Query("count") count: Int,
     ): BaseResponse<List<VideoFeedItemResponseDto>>
 
     @POST("v1/video/{videoId}/like")
-    suspend fun like(
-        @Path("videoId") videoId: Uuid,
-    ): BaseResponse<Completable>
-
-    @POST("v1/video/{videoId}/view")
-    suspend fun markWatched(
+    suspend fun likeVideo(
         @Path("videoId") videoId: Uuid,
     ): BaseResponse<Completable>
 
     @POST("v1/video/{videoId}/showed")
-    suspend fun markShown(
+    suspend fun markVideoShown(
+        @Path("videoId") videoId: Uuid,
+    ): BaseResponse<Completable>
+
+    @POST("v1/video/{videoId}/view")
+    suspend fun markVideoWatched(
         @Path("videoId") videoId: Uuid,
     ): BaseResponse<Completable>
 

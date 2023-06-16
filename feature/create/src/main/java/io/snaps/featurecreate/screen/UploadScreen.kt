@@ -3,12 +3,10 @@ package io.snaps.featurecreate.screen
 import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,13 +35,13 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.basefeed.ui.UploadProgress
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
@@ -53,8 +51,6 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonActionL
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
-import io.snaps.coreuicompose.uikit.other.Progress
-import io.snaps.coreuicompose.uikit.other.SimpleCard
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
@@ -70,7 +66,6 @@ fun UploadScreen(
     val viewModel = hiltViewModel<UploadViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
 
     viewModel.command.collectAsCommand {
         when (it) {
@@ -81,7 +76,7 @@ fun UploadScreen(
     UploadScreen(
         uiState = uiState,
         onBackClicked = router::back,
-        onPublishClicked = { viewModel.onPublishClicked(context = context.applicationContext, thumbnail = it) },
+        onPublishClicked = { viewModel.onPublishClicked(thumbnail = it) },
         onTitleChanged = viewModel::onTitleChanged,
         onDescriptionChanged = viewModel::onDescriptionChanged,
     )
@@ -173,7 +168,7 @@ private fun UploadScreen(
                     )
                 }
                 if (uiState.uploadingProgress != null) {
-                    Progress(uploadingProgress = uiState.uploadingProgress)
+                    UploadProgress(uploadingProgress = uiState.uploadingProgress)
                 } else {
                     SimpleButtonActionL(
                         onClick = { onPublishClicked(selectedBitmap) },
@@ -244,38 +239,4 @@ private fun DescriptionTextField(
             )
         },
     )
-}
-
-@Composable
-private fun Progress(
-    uploadingProgress: Float,
-) {
-    SimpleCard {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Progress(
-                modifier = Modifier.weight(1f),
-                progress = uploadingProgress,
-                isDashed = true,
-                backColor = AppTheme.specificColorScheme.white_10,
-                fillColor = AppTheme.specificColorScheme.white_20,
-                height = 24.dp,
-                cornerSize = 4.dp,
-            )
-            Text(
-                text = "${(uploadingProgress * 100).toInt()}/100%",
-                modifier = Modifier
-                    .background(
-                        color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
-                        shape = AppTheme.shapes.small,
-                    )
-                    .padding(4.dp),
-            )
-        }
-    }
 }

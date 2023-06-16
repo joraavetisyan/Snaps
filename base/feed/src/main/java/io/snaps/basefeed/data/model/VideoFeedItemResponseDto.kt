@@ -19,14 +19,15 @@ data class VideoFeedItemResponseDto(
     @SerialName("thumbnailUrl") val thumbnailUrl: FullUrl?,
     @SerialName("title") val title: String,
     @SerialName("description") val description: String?,
-    @SerialName("author") val author: UserInfoResponseDto?, // null for liked feed
+    @SerialName("author") val author: UserInfoResponseDto?, // null for my liked feed
     @SerialName("authorUserId") val authorId: Uuid?, // null for other feeds
-    @SerialName("status") val status: VideoStatus?,
+    @SerialName("status") val status: VideoStatus? = null,
+    @SerialName("isLiked") val isLiked: Boolean? = null, // null for my liked feed
 )
 
 @Serializable
 enum class VideoStatus {
-    Approved,
-    Review,
-    Reject,
+    @SerialName("Review") InReview,
+    @SerialName("Reject") Rejected,
+    @SerialName("Approved") Approved,
 }
