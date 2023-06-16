@@ -21,6 +21,10 @@ class CoroutineModule {
     ): CoroutineScope = (application as ApplicationCoroutineScopeHolder).applicationScope
 
     @Provides
+    @UserSessionCoroutineScope
+    fun userSessionScope(): CoroutineScope = UserSessionCoroutineScopeHolder.userSessionScope
+
+    @Provides
     @Singleton
     @IoDispatcher
     fun ioDispatcher(): CoroutineDispatcher = Dispatchers.IO

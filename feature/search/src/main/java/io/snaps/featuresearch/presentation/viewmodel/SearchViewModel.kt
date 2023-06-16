@@ -58,7 +58,9 @@ class SearchViewModel @Inject constructor(
 
     init {
         search("")
-        checkOnboarding(OnboardingType.Popular)
+        viewModelScope.launch {
+            checkOnboarding(OnboardingType.Popular)
+        }
     }
 
     private fun search(query: String) {

@@ -4,7 +4,7 @@ import io.snaps.basenft.data.NftRepository
 import io.snaps.baseprofile.ui.MainHeaderState
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.ext.log
-import io.snaps.coredata.coroutine.ApplicationCoroutineScope
+import io.snaps.coredata.coroutine.UserSessionCoroutineScope
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import kotlinx.coroutines.CoroutineScope
@@ -38,7 +38,7 @@ interface MainHeaderHandler {
 }
 
 class MainHeaderHandlerImplDelegate @Inject constructor(
-    @ApplicationCoroutineScope private val scope: CoroutineScope,
+    @UserSessionCoroutineScope private val scope: CoroutineScope,
     private val action: Action,
     @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val walletRepository: WalletRepository,

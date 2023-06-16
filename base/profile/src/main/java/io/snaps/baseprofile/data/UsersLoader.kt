@@ -5,8 +5,8 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.baseprofile.domain.UserInfoModel
-import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.coroutine.UserSessionCoroutineScope
 import io.snaps.coredata.network.Action
 import io.snaps.coredata.network.PagedLoader
 import io.snaps.coredata.network.PagedLoaderFactory
@@ -16,7 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 
 class UsersLoader @AssistedInject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @ApplicationCoroutineScope private val scope: CoroutineScope,
+    @UserSessionCoroutineScope private val scope: CoroutineScope,
     action: Action,
     @Assisted private val params: PagedLoaderParams<UserInfoResponseDto, UserInfoModel>,
 ) : PagedLoader<UserInfoResponseDto, UserInfoModel>(

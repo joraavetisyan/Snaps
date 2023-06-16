@@ -109,16 +109,18 @@ class BottomBarViewModel @Inject constructor(
     }
 
     fun onOnboardingDialogActionClicked(type: OnboardingType?) {
-        closeOnboardingDialog()
-        when (type) {
-            OnboardingType.Rank,
-            OnboardingType.Nft -> viewModelScope.launch { _command publish Command.OpenNftPurchaseScreen }
-            OnboardingType.Popular,
-            OnboardingType.Tasks,
-            OnboardingType.Referral,
-            OnboardingType.Wallet,
-            OnboardingType.Rewards,
-            null -> Unit
+        viewModelScope.launch {
+            closeOnboardingDialog()
+            when (type) {
+                OnboardingType.Rank,
+                OnboardingType.Nft -> _command publish Command.OpenNftPurchaseScreen
+                OnboardingType.Popular,
+                OnboardingType.Tasks,
+                OnboardingType.Referral,
+                OnboardingType.Wallet,
+                OnboardingType.Rewards,
+                null -> Unit
+            }
         }
     }
 
