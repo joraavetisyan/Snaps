@@ -68,7 +68,9 @@ class MyCollectionViewModel @Inject constructor(
 
         refreshNfts()
 
-        checkOnboarding(OnboardingType.Nft)
+        viewModelScope.launch {
+            checkOnboarding(OnboardingType.Nft)
+        }
     }
 
     private fun subscribeOnNft() {

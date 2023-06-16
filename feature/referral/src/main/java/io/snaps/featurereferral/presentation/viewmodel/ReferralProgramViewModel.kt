@@ -73,7 +73,9 @@ class ReferralProgramViewModel @Inject constructor(
 
         updateReferrals()
 
-        checkOnboarding(OnboardingType.Referral)
+        viewModelScope.launch {
+            checkOnboarding(OnboardingType.Referral)
+        }
     }
 
     private fun subscribeOnCurrentUser() {

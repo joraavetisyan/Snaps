@@ -96,7 +96,9 @@ class WalletViewModel @Inject constructor(
 
         updatePayouts(isSilently = true)
 
-        checkOnboarding(OnboardingType.Wallet)
+        viewModelScope.launch {
+            checkOnboarding(OnboardingType.Wallet)
+        }
     }
 
     private fun subscribeToTotalBalance() {
@@ -165,7 +167,9 @@ class WalletViewModel @Inject constructor(
 
             updateBalance()
         }
-        checkOnboarding(OnboardingType.Rewards)
+        viewModelScope.launch {
+            checkOnboarding(OnboardingType.Rewards)
+        }
     }
 
     private fun subscribeToRewards() {
