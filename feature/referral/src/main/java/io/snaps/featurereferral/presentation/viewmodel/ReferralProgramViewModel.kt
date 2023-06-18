@@ -79,9 +79,11 @@ class ReferralProgramViewModel @Inject constructor(
 
         updateReferrals()
 
-        checkOnboarding(OnboardingType.Referral)
-        args?.referralCode?.let {
-            applyReferralCode(it)
+        viewModelScope.launch {
+            checkOnboarding(OnboardingType.Referral)
+            args?.referralCode?.let {
+                applyReferralCode(it)
+            }
         }
     }
 

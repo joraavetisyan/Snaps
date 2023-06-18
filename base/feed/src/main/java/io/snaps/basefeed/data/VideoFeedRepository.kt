@@ -9,14 +9,12 @@ import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
-import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.PagedLoader
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import java.time.ZoneOffset
 import javax.inject.Inject
@@ -48,7 +46,6 @@ interface VideoFeedRepository {
 
 class VideoFeedRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val videoFeedApi: VideoFeedApi,
     private val loaderFactory: VideoFeedLoaderFactory,
     private val videoFeedUploader: VideoFeedUploader,

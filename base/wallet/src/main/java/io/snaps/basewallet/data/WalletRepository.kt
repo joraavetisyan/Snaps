@@ -51,8 +51,8 @@ import io.snaps.corecrypto.entities.AccountType
 import io.snaps.corecrypto.entities.Currency
 import io.snaps.corecrypto.entities.Wallet
 import io.snaps.corecrypto.entities.normalizeNFKD
-import io.snaps.coredata.coroutine.ApplicationCoroutineScope
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.coroutine.UserSessionCoroutineScope
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreui.viewmodel.tryPublish
@@ -119,7 +119,7 @@ interface WalletRepository {
 }
 
 class WalletRepositoryImpl @Inject constructor(
-    @ApplicationCoroutineScope private val scope: CoroutineScope,
+    @UserSessionCoroutineScope private val scope: CoroutineScope,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 
     private val accountFactory: IAccountFactory,

@@ -3,8 +3,8 @@ package io.snaps.basesettings.data
 import io.snaps.basesettings.domain.CommonSettingsModel
 import io.snaps.basesources.featuretoggle.EditableFeatureToggle
 import io.snaps.basesources.featuretoggle.Feature
-import io.snaps.basesources.remotedata.model.BannerDto
-import io.snaps.basesources.remotedata.model.SettingsDto
+import io.snaps.basesettings.data.model.BannerDto
+import io.snaps.basesettings.data.model.SettingsDto
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.Completable

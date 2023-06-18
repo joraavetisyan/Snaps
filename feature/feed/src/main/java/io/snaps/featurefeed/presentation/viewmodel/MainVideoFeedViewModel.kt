@@ -73,7 +73,9 @@ class MainVideoFeedViewModel @Inject constructor(
 
     init {
         subscribeOnMenuRouteState()
-        checkOnboarding(OnboardingType.Rank)
+        viewModelScope.launch {
+            checkOnboarding(OnboardingType.Rank)
+        }
     }
 
     private fun subscribeOnMenuRouteState() {

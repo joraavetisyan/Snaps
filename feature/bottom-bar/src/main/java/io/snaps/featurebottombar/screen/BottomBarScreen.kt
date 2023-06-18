@@ -48,7 +48,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import io.snaps.basesources.remotedata.model.BannerDto
+import io.snaps.basesettings.data.model.BannerDto
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.imageValue

@@ -6,12 +6,13 @@ import io.horizontalsystems.ethereumkit.core.Ext
 import io.horizontalsystems.ethereumkit.core.stripHexPrefix
 import io.snaps.basewallet.domain.SwapTransactionModel
 import io.snaps.corecommon.ext.log
+import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.model.CryptoAddress
 import org.json.JSONObject
 import java.math.BigInteger
 
 /**
- * This class is used to communicate with the webview
+ * This class is used to communicate with webview
  */
 class TrustWalletWebAppInterface(
     private val address: CryptoAddress,
@@ -60,12 +61,12 @@ class TrustWalletWebAppInterface(
         val data = try {
             param.getString("data")
         } catch (e: Exception) {
-            log("Error extracting data: ${e.message}")
+            log(e, "Error extracting data!")
             null
         }?.let {
             Ext.hexStringAsByteArray(it)
         } ?: kotlin.run {
-            log("No data found!")
+            logE("No data found!")
             return
         }
         val to = param.getString("to")

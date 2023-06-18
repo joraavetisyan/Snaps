@@ -11,7 +11,7 @@ import io.snaps.basesettings.data.SettingsRepository
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
-import io.snaps.basesources.remotedata.model.SocialPageType
+import io.snaps.basesettings.data.model.SocialPageType
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.TotalBalanceModel
 import io.snaps.basewallet.domain.WalletModel
@@ -96,7 +96,9 @@ class WalletViewModel @Inject constructor(
 
         updatePayouts(isSilently = true)
 
-        checkOnboarding(OnboardingType.Wallet)
+        viewModelScope.launch {
+            checkOnboarding(OnboardingType.Wallet)
+        }
     }
 
     private fun subscribeToTotalBalance() {
@@ -165,7 +167,9 @@ class WalletViewModel @Inject constructor(
 
             updateBalance()
         }
-        checkOnboarding(OnboardingType.Rewards)
+        viewModelScope.launch {
+            checkOnboarding(OnboardingType.Rewards)
+        }
     }
 
     private fun subscribeToRewards() {
