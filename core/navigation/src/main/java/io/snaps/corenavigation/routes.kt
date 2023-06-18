@@ -243,10 +243,11 @@ object AppRoute {
 object AppDeeplink {
 
     private val BaseUri = "https://snapsapp.io".toUri()
+    private val AppsFlyerBaseUri = "https://appsnaps.onelink.me".toUri()
 
     private val pathProfile = "$BaseUri/blogger?id="
     private val pathVideoClip = "$BaseUri/video?id="
-    private val pathInvite = "$BaseUri/invite?code="
+    private val pathInvite = "$AppsFlyerBaseUri/Bf5Q/s47f9o5i?code="
 
     fun parse(deeplink: String?): Deeplink? {
         val result = when {
