@@ -127,6 +127,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Немає даних",
         SupportedLanguageKey.Es to "Sin datos",
     ),
+    key(StringKey.MessageReferralCodeApplySuccess) to mapOf(
+        SupportedLanguageKey.En to "Referral code successfully applied",
+        SupportedLanguageKey.Ru to "Реферальный код успешно применен",
+        SupportedLanguageKey.Tr to "Yönlendirme kodu başarıyla uygulandı",
+        SupportedLanguageKey.Ua to "Реферальний код успішно застосовано",
+        SupportedLanguageKey.Es to "Código de referencia aplicado con éxito",
+    ),
     key(StringKey.FieldMinutes) to mapOf(
         SupportedLanguageKey.En to "%s min",
         SupportedLanguageKey.Ru to "%s мин",

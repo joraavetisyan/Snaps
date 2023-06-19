@@ -21,6 +21,7 @@ enum class StringKey {
     MessageEmptyVideoFeed,
     MessageNothingFound,
     MessageNoData,
+    MessageReferralCodeApplySuccess,
 
     FieldMinutes,
     FieldMinutesShort,

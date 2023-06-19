@@ -48,14 +48,14 @@ import javax.inject.Inject
 @HiltViewModel
 class ReferralProgramViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @Bridged mainHeaderHandler: MainHeaderHandler,
     @Bridged onboardingHandler: OnboardingHandler,
-    bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
+    @Bridged private val profileRepository: ProfileRepository,
     private val fileManager: FileManager,
     private val barcodeManager: BarcodeManager,
-    @Bridged private val profileRepository: ProfileRepository,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel(),
@@ -240,7 +240,10 @@ class ReferralProgramViewModel @Inject constructor(
 
     fun onApplyReferralCodeClicked(code: String) {
         setInviteCode(code) {
-            _uiState.update { it.copy(dialog = null) }
+            viewModelScope.launch {
+                _uiState.update { it.copy(dialog = null) }
+                notificationsSource.sendMessage(StringKey.MessageReferralCodeApplySuccess.textValue())
+            }
         }
     }
 

@@ -11,7 +11,9 @@ import io.snaps.basesession.data.SessionRepository
 import io.snaps.basesession.data.UserSessionTracker
 import io.snaps.basesources.LocaleSource
 import io.snaps.basesources.NotificationsSource
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringHolder
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
@@ -31,7 +33,7 @@ class AppViewModel @AssistedInject constructor(
     localeSource: LocaleSource,
     activeAppZoneProvider: ActiveAppZoneProvider,
     userSessionTracker: UserSessionTracker,
-    notificationsSource: NotificationsSource,
+    private val notificationsSource: NotificationsSource,
     @Bridged private val profileRepository: ProfileRepository,
     private val sessionRepository: SessionRepository,
     private val userDataStorage: UserDataStorage,
@@ -108,6 +110,8 @@ class AppViewModel @AssistedInject constructor(
         viewModelScope.launch {
             action.execute(needsErrorProcessing = false) {
                 profileRepository.setInviteCode(appsFlyerDeepLink.code)
+            }.doOnSuccess {
+                notificationsSource.sendMessage(StringKey.MessageReferralCodeApplySuccess.textValue())
             }
         }
     }
