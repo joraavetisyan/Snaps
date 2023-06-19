@@ -38,6 +38,7 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.Uuid
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.addIf
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.doOnClick
@@ -188,10 +189,10 @@ private fun StatusMessage(status: VideoStatus?) {
     }
     Block(
         text = when (status) {
-            VideoStatus.Rejected -> "Rejected" // todo localization
-            VideoStatus.InReview -> "In review" // todo localization
-            else -> ""
-        }.textValue(),
+            VideoStatus.Rejected -> StringKey.MessageVideoRejected.textValue()
+            VideoStatus.InReview -> StringKey.MessageVideoInReview.textValue()
+            else -> "".textValue()
+        },
         textColor = color,
         backgroundColor = color.copy(alpha = 0.1f),
     )
@@ -225,7 +226,7 @@ private fun ReloadButton(
     onClick: () -> Unit,
 ) {
     Block(
-        text = "Retry".textValue(), // todo localization
+        text = StringKey.ActionReload.textValue(),
         textColor = AppTheme.specificColorScheme.white,
         backgroundColor = AppTheme.specificColorScheme.uiSystemRed,
         onClick = onClick,

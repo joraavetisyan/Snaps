@@ -14,6 +14,7 @@ enum class StringKey {
     ActionDelete,
     ActionHowItWorks,
     ActionOk,
+    ActionLearnMore,
 
     MessageSuccess,
     MessageCopySuccess,
@@ -23,11 +24,14 @@ enum class StringKey {
     MessageNoData,
     MessageVideoUploadSuccess,
     MessageReferralCodeApplySuccess,
+    MessageVideoRejected,
+    MessageVideoInReview,
 
     FieldMinutes,
     FieldMinutesShort,
     FieldSeconds,
     FieldSecondsShort,
+    FieldSponsored,
 
     Error,
     ErrorLoadFail,

@@ -518,7 +518,7 @@ private fun VideoClipBottomItems(
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
             if (clipModel.isSponsored) {
-                SimpleChip(selected = true, onClick = {}, label = "Sponsored".textValue())
+                SimpleChip(selected = true, onClick = {}, label = StringKey.FieldSponsored.textValue())
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -568,7 +568,7 @@ private fun VideoClipBottomItems(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     SimpleButtonContent(
-                        text = "Learn more".textValue(),
+                        text = StringKey.ActionLearnMore.textValue(),
                         contentRight = {
                             Icon(
                                 painter = AppTheme.specificIcons.forward.get(),

@@ -85,6 +85,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Ok",
         SupportedLanguageKey.Es to "Ok",
     ),
+    key(StringKey.ActionLearnMore) to mapOf(
+        SupportedLanguageKey.En to "Learn more",
+        SupportedLanguageKey.Ru to "Узнать больше",
+        SupportedLanguageKey.Tr to "Daha fazlasını öğrenmek için",
+        SupportedLanguageKey.Ua to "Дізнатися більше",
+        SupportedLanguageKey.Es to "Más información",
+    ),
     key(StringKey.MessageSuccess) to mapOf(
         SupportedLanguageKey.En to "Success!",
         SupportedLanguageKey.Ru to "Успешно!",
@@ -134,6 +141,20 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Реферальний код успішно застосовано",
         SupportedLanguageKey.Es to "Código de referencia aplicado con éxito",
     ),
+    key(StringKey.MessageVideoRejected) to mapOf(
+        SupportedLanguageKey.En to "Rejected",
+        SupportedLanguageKey.Ru to "Отклоненный",
+        SupportedLanguageKey.Tr to "Reddedildi",
+        SupportedLanguageKey.Ua to "Відхилений",
+        SupportedLanguageKey.Es to "Rechazado",
+    ),
+    key(StringKey.MessageVideoInReview) to mapOf(
+        SupportedLanguageKey.En to "In review",
+        SupportedLanguageKey.Ru to "На ревью",
+        SupportedLanguageKey.Tr to "İncelemede",
+        SupportedLanguageKey.Ua to "На рев'ю",
+        SupportedLanguageKey.Es to "En la revisión",
+    ),
     key(StringKey.FieldMinutes) to mapOf(
         SupportedLanguageKey.En to "%s min",
         SupportedLanguageKey.Ru to "%s мин",
@@ -161,6 +182,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Tr to "%ss",
         SupportedLanguageKey.Ua to "%sс",
         SupportedLanguageKey.Es to "%ss",
+    ),
+    key(StringKey.FieldSponsored) to mapOf(
+        SupportedLanguageKey.En to "Sponsored",
+        SupportedLanguageKey.Ru to "Спонсируемый",
+        SupportedLanguageKey.Tr to "Sponsorlu",
+        SupportedLanguageKey.Ua to "Спонсорований",
+        SupportedLanguageKey.Es to "Patrocinado",
     ),
     key(StringKey.Error) to mapOf(
         // keep it short
