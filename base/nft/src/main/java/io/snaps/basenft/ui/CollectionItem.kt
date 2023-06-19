@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +29,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.snaps.corecommon.container.ImageValue
@@ -74,10 +71,6 @@ sealed class CollectionItemState : TileState {
         val onHelpIconClicked: () -> Unit,
     ) : CollectionItemState()
 
-    data class MysteryBox(
-        val image: ImageValue,
-    ) : CollectionItemState()
-
     data class AddItem(val onClick: () -> Unit) : CollectionItemState()
 
     object Shimmer : CollectionItemState()
@@ -102,7 +95,6 @@ private fun CollectionItem(
             .defaultState(onClick = data.onClick)
             .Content(modifier = modifier)
         is CollectionItemState.AddItem -> AddItem(modifier = modifier, onClick = data.onClick)
-        is CollectionItemState.MysteryBox -> MysteryBox(modifier, data)
     }
 }
 
@@ -330,41 +322,6 @@ private fun LevelInfoBlock(
 }
 
 @Composable
-private fun MysteryBox(
-    modifier: Modifier,
-    data: CollectionItemState.MysteryBox,
-) {
-    Container(modifier) {
-        Card(
-            shape = AppTheme.shapes.small,
-            colors = CardDefaults.cardColors(
-                containerColor = AppTheme.specificColorScheme.uiContentBg,
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(156.dp),
-        ) {
-            Image(
-                painter = data.image.get(),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                contentScale = ContentScale.Crop,
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = LocalStringHolder.current(StringKey.MyCollectionTitleMysteryBox),
-            style = AppTheme.specificTypography.labelMedium,
-            modifier = modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-        )
-    }
-}
-
-@Composable
 private fun Shimmer(
     modifier: Modifier,
 ) {
@@ -380,29 +337,6 @@ private fun Shimmer(
             MiddlePart.Shimmer(needValueLine = true).Content(modifier = Modifier)
             Spacer(modifier = Modifier.height(4.dp))
         }
-    }
-}
-
-@Composable
-private fun Line(name: String, value: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(
-            text = name,
-            color = AppTheme.specificColorScheme.textSecondary,
-            style = AppTheme.specificTypography.bodySmall,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f),
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = value,
-            modifier = Modifier.padding(start = 4.dp),
-            style = AppTheme.specificTypography.bodySmall,
-            maxLines = 1,
-        )
     }
 }
 

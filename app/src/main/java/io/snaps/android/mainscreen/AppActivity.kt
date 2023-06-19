@@ -95,6 +95,7 @@ class AppActivity : FragmentActivity() {
                         LaunchedEffect(currentFlow.isReady) {
                             if (currentFlow.isReady) {
                                 navController.navigate(currentFlow.deeplink)
+                                viewModel.applyReferralCode()
                             }
                         }
                         // When firebase dynamic links support is added, use this instead of the custom intent handle

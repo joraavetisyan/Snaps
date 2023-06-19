@@ -127,6 +127,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Немає даних",
         SupportedLanguageKey.Es to "Sin datos",
     ),
+    key(StringKey.MessageReferralCodeApplySuccess) to mapOf(
+        SupportedLanguageKey.En to "Referral code successfully applied",
+        SupportedLanguageKey.Ru to "Реферальный код успешно применен",
+        SupportedLanguageKey.Tr to "Yönlendirme kodu başarıyla uygulandı",
+        SupportedLanguageKey.Ua to "Реферальний код успішно застосовано",
+        SupportedLanguageKey.Es to "Código de referencia aplicado con éxito",
+    ),
     key(StringKey.FieldMinutes) to mapOf(
         SupportedLanguageKey.En to "%s min",
         SupportedLanguageKey.Ru to "%s мин",
@@ -1275,6 +1282,20 @@ internal val strings = mapOf(
         SupportedLanguageKey.Tr to "Snaps'ı indirin ve yönlendirme kodumu kullanın - %s",
         SupportedLanguageKey.Ua to "Завантажте Snaps і використовуйте мій реферальний код - %s",
         SupportedLanguageKey.Es to "Descargar Snaps y usar mi código de referencia - %s",
+    ),
+    key(StringKey.ReferralProgramDialogMessageApplyCode) to mapOf(
+        SupportedLanguageKey.En to "Apply referral code?",
+        SupportedLanguageKey.Ru to "Применить реферальный код?",
+        SupportedLanguageKey.Tr to "Yönlendirme kodu uygulansın mı?",
+        SupportedLanguageKey.Ua to "Застосувати реферальний код?",
+        SupportedLanguageKey.Es to "¿Aplicar código de referencia?",
+    ),
+    key(StringKey.ReferralProgramDialogMessageCodeEntered) to mapOf(
+        SupportedLanguageKey.En to "Referral code already entered",
+        SupportedLanguageKey.Ru to "Реферальный код уже введен",
+        SupportedLanguageKey.Tr to "Yönlendirme kodu zaten girilmiş",
+        SupportedLanguageKey.Ua to "Реферальний код уже введено",
+        SupportedLanguageKey.Es to "código de referencia ya ingresado",
     ),
     key(StringKey.SettingsTitle) to mapOf(
         SupportedLanguageKey.En to "Settings",

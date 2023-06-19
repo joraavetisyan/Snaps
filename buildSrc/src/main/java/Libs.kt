@@ -78,6 +78,8 @@ object Libs {
     private const val trustWeb3Version = "2.0.8"
     private const val trustWalletCoreVersion = "3.1.20"
 
+    private const val appsflyerVersion = "6.9.0"
+
     object plugin {
         const val application = "com.android.application"
         const val library = "com.android.library"
@@ -276,6 +278,10 @@ object Libs {
 
         val facebook = arrayOf(
             "com.facebook.android:facebook-android-sdk:$facebookVersion",
+        )
+
+        val appsflyer = arrayOf(
+            "com.appsflyer:af-android-sdk:$appsflyerVersion",
         )
 
         const val unitTestsRunner = "android.support.test.runner.AndroidJUnitRunner"

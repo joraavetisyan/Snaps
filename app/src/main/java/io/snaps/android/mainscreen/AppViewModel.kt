@@ -3,14 +3,20 @@ package io.snaps.android.mainscreen
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import io.snaps.android.appsflyer.DeepLinkProvider
+import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.ActiveAppZoneProvider
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.basesession.data.UserSessionTracker
 import io.snaps.basesources.LocaleSource
 import io.snaps.basesources.NotificationsSource
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringHolder
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.database.UserDataStorage
+import io.snaps.coredata.di.Bridged
+import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppDeeplink
 import io.snaps.corenavigation.Deeplink
 import io.snaps.corenavigation.base.ROUTE_ARGS_SEPARATOR
@@ -27,10 +33,13 @@ class AppViewModel @AssistedInject constructor(
     localeSource: LocaleSource,
     activeAppZoneProvider: ActiveAppZoneProvider,
     userSessionTracker: UserSessionTracker,
-    notificationsSource: NotificationsSource,
+    private val notificationsSource: NotificationsSource,
+    @Bridged private val profileRepository: ProfileRepository,
     private val sessionRepository: SessionRepository,
     private val userDataStorage: UserDataStorage,
     private val appRouteProvider: AppRouteProvider,
+    private val deepLinkProvider: DeepLinkProvider,
+    private val action: Action,
 ) : SimpleViewModel() {
 
     init {
@@ -91,6 +100,20 @@ class AppViewModel @AssistedInject constructor(
 
     fun onRetry() {
         checkStatus()
+    }
+
+    // If the application has not been installed, the first launch, then immediately apply the code after authorization
+    fun applyReferralCode() {
+        // checking if this is the first launch
+        val appsFlyerDeepLink = deepLinkProvider.deepLink.value
+        if (appsFlyerDeepLink !is AppDeeplink.Invite || deeplink != null) return
+        viewModelScope.launch {
+            action.execute(needsErrorProcessing = false) {
+                profileRepository.setInviteCode(appsFlyerDeepLink.code)
+            }.doOnSuccess {
+                notificationsSource.sendMessage(StringKey.MessageReferralCodeApplySuccess.textValue())
+            }
+        }
     }
 
     sealed class StartFlow {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="io.snaps.android">
 
     <uses-feature
@@ -22,12 +23,15 @@
         android:name=".SnapsApp"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="${app_name}"
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/SNAPS.AppTheme">
+        android:theme="@style/SNAPS.AppTheme"
+        tools:replace="android:fullBackupContent"
+        tools:targetApi="s">
 
         <activity
             android:name=".mainscreen.AppActivity"
@@ -54,7 +58,15 @@
                 <data android:pathPrefix="/app" />
                 <data android:pathPrefix="/video" />
                 <data android:pathPrefix="/blogger" />
-                <data android:pathPrefix="/invite" />
+            </intent-filter>
+
+            <intent-filter  android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                    android:host="appsnaps.onelink.me"
+                    android:pathPrefix="/Bf5Q" />
             </intent-filter>
         </activity>
 

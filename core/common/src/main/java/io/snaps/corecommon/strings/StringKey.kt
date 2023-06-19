@@ -22,6 +22,7 @@ enum class StringKey {
     MessageNothingFound,
     MessageNoData,
     MessageVideoUploadSuccess,
+    MessageReferralCodeApplySuccess,
 
     FieldMinutes,
     FieldMinutesShort,
@@ -204,6 +205,8 @@ enum class StringKey {
     ReferralProgramDialogTitleFootnoteMyReferralsLevel3,
     ReferralProgramDialogMessageFootnoteMyReferralsLevel3,
     ReferralProgramMessageShare,
+    ReferralProgramDialogMessageApplyCode,
+    ReferralProgramDialogMessageCodeEntered,
 
     SettingsTitle,
     SettingsTitleWallet,

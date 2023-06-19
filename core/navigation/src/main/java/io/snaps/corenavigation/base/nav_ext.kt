@@ -58,7 +58,11 @@ fun NavController.navigate(deeplink: Deeplink?, builder: NavOptionsBuilder.() ->
             arg = AppRoute.SingleVideo.Args(deeplink.id),
             optionsBuilder = builder,
         )
-        is AppDeeplink.Invite -> navigate(AppRoute.ReferralProgramScreen)
+        is AppDeeplink.Invite -> this navigate FeatureNavDirection(
+            route = AppRoute.ReferralProgram,
+            arg = AppRoute.ReferralProgram.Args(deeplink.code),
+            optionsBuilder = builder,
+        )
         null -> Unit
     }
 }

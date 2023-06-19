@@ -28,6 +28,6 @@ class ReferralFeatureProviderImpl @Inject constructor() : ReferralFeatureProvide
 
     override fun NavGraphBuilder.referralGraph(controller: NavHostController) {
         composable(AppRoute.MainBottomBar.MainTab5Start) { ReferralProgramScreen(controller) }
-        composable(AppRoute.ReferralProgramScreen) { ReferralProgramScreen(controller) }
+        composable(AppRoute.ReferralProgram) { ReferralProgramScreen(controller) }
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -25,6 +26,8 @@ import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppDeeplink
+import io.snaps.corenavigation.AppRoute
+import io.snaps.corenavigation.base.getArg
 import io.snaps.coreui.FileManager
 import io.snaps.coreui.barcode.BarcodeManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
@@ -44,20 +47,23 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReferralProgramViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @Bridged mainHeaderHandler: MainHeaderHandler,
     @Bridged onboardingHandler: OnboardingHandler,
-    bottomDialogBarVisibilityHandler: BottomDialogBarVisibilityHandler,
+    @Bridged private val profileRepository: ProfileRepository,
     private val fileManager: FileManager,
     private val barcodeManager: BarcodeManager,
-    @Bridged private val profileRepository: ProfileRepository,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel(),
     MainHeaderHandler by mainHeaderHandler,
     OnboardingHandler by onboardingHandler,
     BottomDialogBarVisibilityHandler by bottomDialogBarVisibilityHandler {
+
+    private val args = savedStateHandle.getArg<AppRoute.ReferralProgram.Args>()
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(
         UiState(referralsTileState = ReferralsTileState.Shimmer(::onShowReferralQrClicked))
@@ -74,7 +80,11 @@ class ReferralProgramViewModel @Inject constructor(
         updateReferrals()
 
         viewModelScope.launch {
-            checkOnboarding(OnboardingType.Referral)
+            if (args?.referralCode != null) {
+                applyReferralCode(args.referralCode)
+            } else {
+                checkOnboarding(OnboardingType.Referral)
+            }
         }
     }
 
@@ -107,6 +117,14 @@ class ReferralProgramViewModel @Inject constructor(
             _uiState.update {
                 it.copy(template = template, referralQr = referralQr)
             }
+        }
+    }
+
+    private fun applyReferralCode(code: String) {
+        if (uiState.value.isInviteAvailable) {
+            _uiState.update { it.copy(dialog = Dialog.ApplyReferralCode(code)) }
+        } else {
+            _uiState.update { it.copy(dialog = Dialog.ReferralCodeEntered) }
         }
     }
 
@@ -147,18 +165,15 @@ class ReferralProgramViewModel @Inject constructor(
 
     fun onInviteUserButtonClicked() {
         _uiState.update {
-            it.copy(isInviteUserDialogVisible = true)
+            it.copy(dialog = Dialog.InviteUser)
         }
     }
 
-    fun onReferralCodeDialogButtonClicked() = viewModelScope.launch {
-        _uiState.update { it.copy(isLoading = true) }
-        action.execute {
-            profileRepository.setInviteCode(uiState.value.inviteCodeValue)
-        }.doOnComplete {
-            _uiState.update { it.copy(isLoading = false) }
-        }.doOnSuccess {
-            _command publish Command.HideBottomDialog
+    fun onReferralCodeDialogButtonClicked() {
+        setInviteCode(uiState.value.inviteCodeValue) {
+            viewModelScope.launch {
+                _command publish Command.HideBottomDialog
+            }
         }
     }
 
@@ -170,13 +185,13 @@ class ReferralProgramViewModel @Inject constructor(
 
     fun onDismissRequest() {
         _uiState.update {
-            it.copy(isInviteUserDialogVisible = false)
+            it.copy(dialog = null)
         }
     }
 
     fun onCloseDialogClicked() {
         _uiState.update {
-            it.copy(isInviteUserDialogVisible = false)
+            it.copy(dialog = null)
         }
     }
 
@@ -223,6 +238,28 @@ class ReferralProgramViewModel @Inject constructor(
         }
     }
 
+    fun onApplyReferralCodeClicked(code: String) {
+        setInviteCode(code) {
+            viewModelScope.launch {
+                _uiState.update { it.copy(dialog = null) }
+                notificationsSource.sendMessage(StringKey.MessageReferralCodeApplySuccess.textValue())
+            }
+        }
+    }
+
+    private fun setInviteCode(code: String, onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            action.execute {
+                profileRepository.setInviteCode(code)
+            }.doOnComplete {
+                _uiState.update { it.copy(isLoading = false) }
+            }.doOnSuccess {
+                onSuccess()
+            }
+        }
+    }
+
     data class UiState(
         val referralsTileState: ReferralsTileState,
         val isLoading: Boolean = false,
@@ -231,12 +268,12 @@ class ReferralProgramViewModel @Inject constructor(
         val inviteCodeValue: String = "",
         val invitedByCode: String = "",
         val bottomDialog: BottomDialog = BottomDialog.ReferralCode,
-        val isInviteUserDialogVisible: Boolean = false,
         val template: Bitmap? = null,
         val referralQr: Bitmap? = null,
         val firstLevelReferral: String = "",
         val secondLevelReferral: String = "",
         val isInviteAvailable: Boolean = false,
+        val dialog: Dialog? = null,
     ) {
 
         val isReferralCodeValid get() = inviteCodeValue.isNotBlank()
@@ -247,6 +284,12 @@ class ReferralProgramViewModel @Inject constructor(
         ReferralQr,
         ReferralProgramFootnote,
         ReferralsInvitedFootnote,
+    }
+
+    sealed class Dialog {
+        object InviteUser : Dialog()
+        object ReferralCodeEntered : Dialog()
+        data class ApplyReferralCode(val code: String) : Dialog()
     }
 
     sealed class Command {
