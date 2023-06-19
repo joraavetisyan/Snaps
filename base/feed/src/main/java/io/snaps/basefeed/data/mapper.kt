@@ -74,7 +74,7 @@ fun AdDto.toVideoModel() = VideoClipModel(
     isSponsored = true,
     isCommentsAvailable = false,
     learnMoreLink = openUrl,
-    status = status,
+    status = null,
     internalId = "",
 )
 
