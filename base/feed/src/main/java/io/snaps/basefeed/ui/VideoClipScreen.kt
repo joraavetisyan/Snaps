@@ -73,6 +73,7 @@ import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.imageValue
+import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.LocalBottomNavigationHeight
 import io.snaps.coreuicompose.tools.defaultTileRipple
@@ -81,6 +82,8 @@ import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetBottom
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ActionsBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
+import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleChip
 import io.snaps.coreuicompose.uikit.button.SimpleChipConfig
 import io.snaps.coreuicompose.uikit.dialog.SimpleConfirmDialogUi
@@ -514,6 +517,9 @@ private fun VideoClipBottomItems(
             modifier = modifier,
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
+            if (clipModel.isSponsored) {
+                SimpleChip(selected = true, onClick = {}, label = "Sponsored".textValue())
+            }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -526,7 +532,7 @@ private fun VideoClipBottomItems(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f, fill = false)
                 )
-                if (isSubscribeButtonVisible) {
+                if (isSubscribeButtonVisible && !clipModel.isSponsored) {
                     SimpleChip(
                         selected = isSubscribed,
                         onClick = onSubscribeClicked,
@@ -553,6 +559,25 @@ private fun VideoClipBottomItems(
                         ) { isDescriptionExpanded = !isDescriptionExpanded }
                         .animateContentSize(),
                 )
+            }
+            val context = LocalContext.current
+            if (clipModel.learnMoreLink != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                SimpleButtonActionM(
+                    onClick = { context.openUrl(clipModel.learnMoreLink) },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    SimpleButtonContent(
+                        text = "Learn more".textValue(),
+                        contentRight = {
+                            Icon(
+                                painter = AppTheme.specificIcons.forward.get(),
+                                contentDescription = null,
+                                tint = AppTheme.specificColorScheme.white,
+                            )
+                        },
+                    )
+                }
             }
         }
     }
@@ -615,8 +640,10 @@ private fun VideoClipEndItems(
 
         TextedIcon(
             icon = AppTheme.specificIcons.comment,
-            text = clipModel.commentCount.toCompactDecimalFormat(),
-            onIconClicked = { onCommentClicked(clipModel) },
+            text = if (clipModel.isSponsored) null else clipModel.commentCount.toCompactDecimalFormat(),
+            onIconClicked = if (clipModel.isSponsored) null else {
+                { onCommentClicked(clipModel) }
+            },
         )
 
         IconButton(onClick = { onShareClicked(clipModel) }) {
@@ -654,16 +681,16 @@ private fun VideoClipEndItems(
 private fun TextedIcon(
     modifier: Modifier = Modifier,
     icon: IconValue,
-    text: String,
+    text: String?,
     tint: Color = AppTheme.specificColorScheme.white,
     contentDescription: String? = null,
-    onIconClicked: () -> Unit,
+    onIconClicked: (() -> Unit)? = null,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        IconButton(onClick = onIconClicked) {
+        IconButton(onClick = { onIconClicked?.invoke() }, enabled = onIconClicked != null) {
             Icon(
                 painter = icon.get(),
                 contentDescription = contentDescription,
@@ -671,7 +698,7 @@ private fun TextedIcon(
                 modifier = modifier.size(36.dp),
             )
         }
-        Text(
+        if (text != null) Text(
             text = text,
             color = AppTheme.specificColorScheme.white,
         )
