@@ -24,6 +24,7 @@ interface VideoFeedUploader {
 class VideoFeedUploaderApivideoWorkManagerImpl @Inject constructor(
     @ApplicationContext private val applicationContext: Context,
     private val settingsRepository: SettingsRepository,
+    private val uploadStatusSource: UploadStatusSource,
 ) : VideoFeedUploader {
 
     private var isVideosApiStoreInitialized = false
@@ -33,7 +34,8 @@ class VideoFeedUploaderApivideoWorkManagerImpl @Inject constructor(
             init()
         }
         val workManager = WorkManager.getInstance(applicationContext)
-        val workId = workManager.upload(videoId, filePath).request.stringId
+        val workId = workManager.upload(videoId = videoId, filePath = filePath).request.stringId
+        uploadStatusSource.registerUploadId(videoId = videoId, uploadId = workId)
         return Effect.success(workId)
     }
 

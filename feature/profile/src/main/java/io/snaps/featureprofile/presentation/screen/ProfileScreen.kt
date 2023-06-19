@@ -50,6 +50,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.basefeed.data.UploadStatusSource
 import io.snaps.basefeed.ui.CreateCheckHandler
 import io.snaps.basefeed.ui.VideoFeedGrid
 import io.snaps.corecommon.R
@@ -58,6 +59,7 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startShareLinkIntent
+import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
@@ -77,6 +79,10 @@ import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.colors
 import io.snaps.featureprofile.ScreenNavigator
 import io.snaps.featureprofile.presentation.viewmodel.ProfileViewModel
+import kotlinx.coroutines.flow.Flow
+
+private const val Profile = 0
+private const val Liked = 1
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -118,6 +124,8 @@ fun ProfileScreen(
         onVideoClipClicked = viewModel::onVideoClipClicked,
         onUserLikedVideoClipClicked = viewModel::onUserLikedVideoClipClicked,
         onTabClicked = viewModel::onTabClicked,
+        uploadState = viewModel::uploadState,
+        onRetryUploadClicked = viewModel::onRetryUploadClicked,
     )
 }
 
@@ -133,6 +141,8 @@ private fun ProfileScreen(
     onVideoClipClicked: (Int) -> Unit,
     onUserLikedVideoClipClicked: (Int) -> Unit,
     onTabClicked: (Int) -> Unit,
+    uploadState: (videoId: Uuid) -> Flow<UploadStatusSource.State>?,
+    onRetryUploadClicked: (videoId: Uuid) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val scaffoldState = rememberBackdropScaffoldState(initialValue = BackdropValue.Revealed)
@@ -205,12 +215,15 @@ private fun ProfileScreen(
                             label = "",
                         ) {
                             when (it) {
-                                0 -> VideoFeedGrid(
+                                Profile -> VideoFeedGrid(
                                     columnCount = 3,
+                                    isShowStatus = true,
+                                    uploadState = uploadState,
+                                    onRetryUploadClicked = onRetryUploadClicked,
                                     uiState = uiState.videoFeedUiState,
                                     onClick = onVideoClipClicked,
                                 )
-                                1 -> VideoFeedGrid(
+                                Liked -> VideoFeedGrid(
                                     columnCount = 3,
                                     uiState = uiState.userLikedVideoFeedUiState,
                                     onClick = onUserLikedVideoClipClicked,

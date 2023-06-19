@@ -3,6 +3,7 @@ package io.snaps.featureprofile.presentation.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.snaps.basefeed.data.UploadStatusSource
 import io.snaps.basefeed.data.VideoFeedRepository
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.ui.CreateCheckHandler
@@ -26,6 +27,7 @@ import io.snaps.coreui.viewmodel.publish
 import io.snaps.featureprofile.presentation.screen.UserInfoTileState
 import io.snaps.featureprofile.presentation.toUserInfoTileState
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -41,6 +43,7 @@ class ProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     createCheckHandler: CreateCheckHandler,
     private val action: Action,
+    private val uploadStatusSource: UploadStatusSource,
     @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val videoFeedRepository: VideoFeedRepository,
     @Bridged private val subsRepository: SubsRepository,
@@ -281,6 +284,18 @@ class ProfileViewModel @Inject constructor(
         when (uiState.value.selectedItemIndex) {
             0 -> refreshFeed()
             1 -> refreshUserLiked()
+        }
+    }
+
+    fun uploadState(videoId: Uuid): Flow<UploadStatusSource.State>? {
+        return uploadStatusSource.listenToByVideoId(videoId)
+    }
+
+    fun onRetryUploadClicked(videoId: Uuid) {
+        viewModelScope.launch {
+            action.execute {
+                videoFeedRepository.retryUpload(videoId)
+            }
         }
     }
 

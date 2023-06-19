@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.snaps.coreuitheme.compose.AppTheme
 
@@ -17,12 +18,13 @@ fun SimpleCard(
     modifier: Modifier = Modifier,
     shape: Shape = AppTheme.shapes.medium,
     color: Color = AppTheme.specificColorScheme.uiContentBg,
+    elevation: Dp = 16.dp,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .shadow(elevation = 16.dp, shape = shape),
+            .shadow(elevation = elevation, shape = shape),
         colors = CardDefaults.cardColors(
             containerColor = color,
         ),

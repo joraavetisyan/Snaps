@@ -17,10 +17,9 @@ import java.time.ZonedDateTime
 
 fun List<VideoFeedItemResponseDto>.toVideoClipModelList(
     isExplicitlyLiked: Boolean = false,
-    likedVideos: List<LikedVideoFeedItemResponseDto>,
-) = map { dto -> dto.toModel(isExplicitlyLiked || likedVideos.find { it.video.entityId == dto.entityId } != null) }
+) = map { it.toModel(isExplicitlyLiked = isExplicitlyLiked) }
 
-fun VideoFeedItemResponseDto.toModel(isLiked: Boolean) = VideoClipModel(
+fun VideoFeedItemResponseDto.toModel(isExplicitlyLiked: Boolean) = VideoClipModel(
     id = entityId,
     viewCount = viewsCount,
     commentCount = commentsCount,
@@ -31,10 +30,12 @@ fun VideoFeedItemResponseDto.toModel(isLiked: Boolean) = VideoClipModel(
     authorId = (author?.userId ?: authorId)!!,
     author = author?.toModel(),
     thumbnail = thumbnailUrl,
-    isLiked = isLiked,
     isSponsored = false,
     isCommentsAvailable = true,
     learnMoreLink = null,
+    status = status,
+    isLiked = isExplicitlyLiked || (isLiked ?: false),
+    internalId = internalId,
 )
 
 fun AdDto.toVideoModel() = VideoClipModel(
@@ -73,6 +74,8 @@ fun AdDto.toVideoModel() = VideoClipModel(
     isSponsored = true,
     isCommentsAvailable = false,
     learnMoreLink = openUrl,
+    status = status,
+    internalId = "",
 )
 
 // Just a dummy wrapper

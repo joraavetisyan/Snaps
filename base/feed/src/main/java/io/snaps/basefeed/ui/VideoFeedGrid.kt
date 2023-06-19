@@ -4,8 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -20,25 +20,42 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.snaps.basefeed.data.model.VideoStatus
+import coil.size.Scale
+import io.snaps.basefeed.data.UploadStatusSource
 import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.corecommon.container.IconValue
+import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
+import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.Uuid
 import io.snaps.coreuicompose.tools.addIf
 import io.snaps.coreuicompose.tools.defaultTileRipple
+import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.other.ShimmerTile
 import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyVerticalGrid
 import io.snaps.coreuitheme.compose.AppTheme
+import io.snaps.coreuitheme.compose.colors
+import kotlinx.coroutines.flow.Flow
+import io.snaps.coreuitheme.R as CoreUiThemeR
 
 @Composable
 fun VideoFeedGrid(
     columnCount: Int,
     detectThreshold: Int = columnCount * 2,
+    isShowStatus: Boolean = false,
+    uploadState: ((videoId: Uuid) -> Flow<UploadStatusSource.State>?)? = null,
+    onRetryUploadClicked: (videoId: Uuid) -> Unit = {},
     uiState: VideoFeedUiState,
     onClick: (Int) -> Unit,
 ) {
@@ -57,6 +74,9 @@ fun VideoFeedGrid(
             when (it) {
                 is VideoClipUiState.Data -> Item(
                     item = it.clip,
+                    isShowStatus = isShowStatus,
+                    uploadState = uploadState,
+                    onRetryUploadClicked = onRetryUploadClicked,
                     onClick = { onClick(index) },
                 )
                 is VideoClipUiState.Shimmer -> ItemShimmer()
@@ -70,21 +90,60 @@ fun VideoFeedGrid(
 @Composable
 private fun Item(
     item: VideoClipModel,
+    isShowStatus: Boolean,
+    uploadState: ((videoId: Uuid) -> Flow<UploadStatusSource.State>?)? = null,
+    onRetryUploadClicked: (videoId: Uuid) -> Unit = {},
     onClick: () -> Unit,
 ) {
     ItemContainer(
         onClick = onClick,
     ) {
+        Thumbnail(modifier = Modifier.weight(1f), item = item)
+        if (isShowStatus) {
+            StatusMessage(status = item.status)
+            if (item.internalId != null && uploadState != null) {
+                when (val state = uploadState(item.internalId)?.collectAsState(null)?.value) {
+                    is UploadStatusSource.State.Error -> ReloadButton(
+                        onClick = { onRetryUploadClicked(item.internalId) },
+                    )
+                    is UploadStatusSource.State.Progress -> Progress(
+                        progress = state.progress,
+                    )
+                    is UploadStatusSource.State.Success,
+                    null -> Unit
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Thumbnail(
+    modifier: Modifier,
+    item: VideoClipModel,
+) {
+    Box(
+        modifier
+            .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
+            .background(
+                color = AppTheme.specificColorScheme.uiContentBg,
+                shape = AppTheme.shapes.medium,
+            ),
+    ) {
         item.thumbnail?.let {
             Image(
                 modifier = Modifier.fillMaxSize(),
-                painter = it.imageValue().get(),
+                painter = it.imageValue().get {
+                    this
+                        .placeholder(CoreUiThemeR.drawable.ic_launcher_foreground)
+                        .scale(Scale.FILL)
+                },
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
             )
         }
         @Composable
-        fun Column(icon: IconValue, value: String) {
+        fun Info(icon: IconValue, value: String) {
             Column(
                 modifier = Modifier,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -110,11 +169,76 @@ private fun Item(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
-            Column(icon = AppTheme.specificIcons.favorite, value = item.likeCount.toString())
+            Info(icon = AppTheme.specificIcons.favorite, value = item.likeCount.toString())
             Spacer(modifier = Modifier.width(20.dp))
-            Column(icon = AppTheme.specificIcons.eye, value = item.viewCount.toString())
+            Info(icon = AppTheme.specificIcons.eye, value = item.viewCount.toString())
         }
     }
+}
+
+@Composable
+private fun StatusMessage(status: VideoStatus?) {
+    if (status == null || status == VideoStatus.Approved) return
+    val color = colors {
+        when (status) {
+            VideoStatus.Rejected -> uiSystemRed
+            VideoStatus.InReview -> uiSystemYellow
+            else -> uiSystemGreen
+        }
+    }
+    Block(
+        text = when (status) {
+            VideoStatus.Rejected -> "Rejected" // todo localization
+            VideoStatus.InReview -> "In review" // todo localization
+            else -> ""
+        }.textValue(),
+        textColor = color,
+        backgroundColor = color.copy(alpha = 0.1f),
+    )
+}
+
+@Composable
+private fun Block(
+    text: TextValue,
+    textColor: Color,
+    backgroundColor: Color,
+    onClick: (() -> Unit)? = null,
+) {
+    Text(
+        text = text.get(),
+        color = textColor,
+        style = AppTheme.specificTypography.bodySmall,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .padding(top = 8.dp)
+            .fillMaxWidth()
+            .clip(shape = AppTheme.shapes.medium)
+            .background(color = backgroundColor)
+            .doOnClick(onClick = onClick)
+            .padding(8.dp),
+        maxLines = 2,
+    )
+}
+
+@Composable
+private fun ReloadButton(
+    onClick: () -> Unit,
+) {
+    Block(
+        text = "Retry".textValue(), // todo localization
+        textColor = AppTheme.specificColorScheme.white,
+        backgroundColor = AppTheme.specificColorScheme.uiSystemRed,
+        onClick = onClick,
+    )
+}
+
+@Composable
+private fun Progress(progress: Float) {
+    Block(
+        text = "Processing ${(progress * 100).toInt()}/100%".textValue(), // todo localization
+        textColor = AppTheme.specificColorScheme.textPrimary,
+        backgroundColor = AppTheme.specificColorScheme.lightGrey,
+    )
 }
 
 @Composable
@@ -128,18 +252,13 @@ private fun ItemShimmer() {
 private fun ItemContainer(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
-    content: @Composable BoxScope.() -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
-    Box(
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .addIf(onClick != null) { defaultTileRipple(onClick = onClick) }
-            .aspectRatio(177f / 222f)
-            .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
-            .background(
-                color = AppTheme.specificColorScheme.uiContentBg,
-                shape = AppTheme.shapes.medium,
-            ),
+            .aspectRatio(2f / 3f),
     ) {
         content()
     }

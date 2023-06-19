@@ -2824,7 +2824,7 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Продовживши",
         SupportedLanguageKey.Es to "Continuar",
     ),
-    key(StringKey.PreviewVideoMessageSuccess) to mapOf(
+    key(StringKey.MessageVideoUploadSuccess) to mapOf(
         SupportedLanguageKey.En to "Video uploaded successfully",
         SupportedLanguageKey.Ru to "Видео успешно загружено",
         SupportedLanguageKey.Tr to "Video başarıyla yüklendi",

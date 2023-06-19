@@ -1,7 +1,7 @@
 package io.snaps.basefeed.domain
 
+import io.snaps.basefeed.data.model.VideoStatus
 import io.snaps.baseprofile.domain.UserInfoModel
-import io.snaps.corecommon.model.DateTime
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.Uuid
 
@@ -20,4 +20,6 @@ data class VideoClipModel(
     val isSponsored: Boolean,
     val isCommentsAvailable: Boolean,
     val learnMoreLink: FullUrl?,
+    val status: VideoStatus?,
+    val internalId: Uuid?,
 )

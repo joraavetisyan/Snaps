@@ -52,6 +52,9 @@ import io.snaps.featuresearch.ScreenNavigator
 import io.snaps.featuresearch.presentation.viewmodel.SearchViewModel
 import kotlinx.coroutines.launch
 
+private const val Popular = 0
+private const val Users = 1
+
 @Composable
 fun SearchScreen(
     navHostController: NavHostController,
@@ -154,12 +157,12 @@ private fun SearchScreen(
                 state = pagerState,
             ) {
                 when (it) {
-                    0 -> VideoFeedGrid(
+                    Popular -> VideoFeedGrid(
                         columnCount = 2,
                         uiState = uiState.videoFeedUiState,
                         onClick = onClick,
                     )
-                    1 -> Users(uiState = uiState.usersUiState)
+                    Users -> Users(uiState = uiState.usersUiState)
                 }
             }
         }
