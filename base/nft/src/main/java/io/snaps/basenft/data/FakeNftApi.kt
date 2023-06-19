@@ -4,8 +4,11 @@ import io.snaps.basenft.data.model.LevelInfo
 import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.MintNftResponseDto
 import io.snaps.basenft.data.model.MintNftStoreRequestDto
+import io.snaps.basenft.data.model.MysteryBoxItemResponseDto
+import io.snaps.basenft.data.model.MysteryBoxType
 import io.snaps.basenft.data.model.NftItemAdditionalDataDto
 import io.snaps.basenft.data.model.NftItemResponseDto
+import io.snaps.basenft.data.model.ProbabilitiesDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.data.model.RepairGlassesResponseDto
 import io.snaps.basenft.data.model.UserNftItemResponseDto
@@ -66,6 +69,47 @@ class FakeNftApi : NftApi {
         delay(mockDelay)
         return BaseResponse(
             data = RepairGlassesResponseDto(null),
+        )
+    }
+
+    override suspend fun getMysteryBoxes(): BaseResponse<List<MysteryBoxItemResponseDto>> {
+        log("Requesting mystery box")
+        delay(mockDelay)
+        return BaseResponse(
+            data = listOf(
+                MysteryBoxItemResponseDto(
+                    type = MysteryBoxType.FirstTier,
+                    costInUsd = rDouble,
+                    marketingProbabilities = ProbabilitiesDto(
+                        follower = null,
+                        sub = null,
+                        sponsor = null,
+                        influencer = null,
+                        rockstar = rDouble,
+                        famousGuy = rDouble,
+                        newbie = null,
+                        superStar = null,
+                        viewer = rDouble,
+                        blogger = null,
+                        legend = null,
+                        star = rDouble,
+                    ),
+                    probabilities = ProbabilitiesDto(
+                        follower = null,
+                        sub = null,
+                        sponsor = null,
+                        influencer = null,
+                        rockstar = rDouble,
+                        famousGuy = rDouble,
+                        newbie = null,
+                        superStar = null,
+                        viewer = rDouble,
+                        blogger = null,
+                        legend = null,
+                        star = rDouble,
+                    ),
+                )
+            ),
         )
     }
 

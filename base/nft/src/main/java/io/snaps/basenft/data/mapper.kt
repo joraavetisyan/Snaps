@@ -1,13 +1,17 @@
 package io.snaps.basenft.data
 
+import io.snaps.basenft.data.model.MysteryBoxItemResponseDto
 import io.snaps.basenft.data.model.NftItemResponseDto
+import io.snaps.basenft.data.model.ProbabilitiesDto
 import io.snaps.basenft.data.model.UserNftItemResponseDto
+import io.snaps.basenft.domain.MysteryBoxModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
 import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.FiatUSD
 import io.snaps.basenft.domain.NftModel
+import io.snaps.basenft.domain.ProbabilitiesModel
 import java.time.ZonedDateTime
 
 fun List<NftItemResponseDto>.toRankModelList() = map(NftItemResponseDto::toModel)
@@ -48,4 +52,28 @@ private fun UserNftItemResponseDto.toModel() = NftModel(
     upperThreshold = levelInfo.upperThreshold,
     bonus = levelInfo.bonus,
     experience = levelInfo.experience,
+)
+
+fun List<MysteryBoxItemResponseDto>.toMysteryBoxModelList() = map(MysteryBoxItemResponseDto::toModel)
+
+private fun MysteryBoxItemResponseDto.toModel() = MysteryBoxModel(
+    type = type,
+    fiatCost = FiatUSD(costInUsd),
+    probabilities = probabilities.toModel(),
+    marketingProbabilities = marketingProbabilities.toModel(),
+)
+
+private fun ProbabilitiesDto.toModel() = ProbabilitiesModel(
+    follower = follower,
+    sub = sub,
+    sponsor = sponsor,
+    influencer = influencer,
+    famousGuy = famousGuy,
+    rockstar = rockstar,
+    star = star,
+    superStar = superStar,
+    newbie = newbie,
+    viewer = viewer,
+    blogger = blogger,
+    legend = legend,
 )

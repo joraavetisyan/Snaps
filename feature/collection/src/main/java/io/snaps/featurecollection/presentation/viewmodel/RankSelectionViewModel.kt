@@ -3,6 +3,7 @@ package io.snaps.featurecollection.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
+import io.snaps.basenft.domain.MysteryBoxModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.coredata.di.Bridged
@@ -10,7 +11,9 @@ import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
+import io.snaps.featurecollection.presentation.screen.MysteryBoxTileState
 import io.snaps.featurecollection.presentation.screen.RankTileState
+import io.snaps.featurecollection.presentation.toMysteryBoxTileState
 import io.snaps.featurecollection.presentation.toRankTileState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,18 +41,34 @@ class RankSelectionViewModel @Inject constructor(
 
     init {
         subscribeOnRanks()
+        subscribeOnMysteryBoxes()
+
         loadRanks()
+        loadMysteryBoxes()
     }
 
     private fun subscribeOnRanks() {
         nftRepository.ranksState.combine(walletRepository.snpsAccountState) { ranks, account ->
             ranks.toRankTileState(
                 snpsUsdExchangeRate = account.dataOrCache?.snpsUsdExchangeRate ?: 0.0,
-                onItemClicked = ::onItemClicked,
-                onReloadClicked = ::onReloadClicked,
+                onItemClicked = ::onRankItemClicked,
+                onReloadClicked = ::onRanksReloadClicked,
             )
         }.onEach { state ->
             _uiState.update { it.copy(ranks = state) }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeOnMysteryBoxes() {
+        nftRepository.mysteryBoxState.onEach { state ->
+            _uiState.update {
+                it.copy(
+                    mysteryBoxes = state.toMysteryBoxTileState(
+                        onItemClicked = ::onMysteryBoxItemClicked,
+                        onReloadClicked = ::onMysteryBoxReloadClicked,
+                    )
+                )
+            }
         }.launchIn(viewModelScope)
     }
 
@@ -59,12 +78,28 @@ class RankSelectionViewModel @Inject constructor(
         }
     }
 
-    private fun onReloadClicked() {
+    private fun loadMysteryBoxes(){
+        viewModelScope.launch {
+            action.execute {
+                nftRepository.updateMysteryBoxes()
+            }
+        }
+    }
+
+    private fun onRanksReloadClicked() {
         loadRanks()
     }
 
-    private fun onItemClicked(rank: RankModel) = viewModelScope.launch {
+    private fun onRankItemClicked(rank: RankModel) = viewModelScope.launch {
         _command publish Command.OpenPurchase(args = AppRoute.Purchase.Args(type = rank.type))
+    }
+
+    private fun onMysteryBoxItemClicked(mysteryBox: MysteryBoxModel) {
+        // todo
+    }
+
+    private fun onMysteryBoxReloadClicked() {
+        loadMysteryBoxes()
     }
 
     fun onRankFootnoteClick() {
@@ -82,6 +117,7 @@ class RankSelectionViewModel @Inject constructor(
 
     data class UiState(
         val ranks: List<RankTileState> = List(6) { RankTileState.Shimmer },
+        val mysteryBoxes: List<MysteryBoxTileState> = List(2) { MysteryBoxTileState.Shimmer },
         val bottomDialog: BottomDialog = BottomDialog.RankFootnote,
     )
 

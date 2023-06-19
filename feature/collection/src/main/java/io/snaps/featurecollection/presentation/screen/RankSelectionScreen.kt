@@ -109,23 +109,22 @@ private fun RankSelectionScreen(
             )
         },
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .padding(paddingValues)
                 .inset(insetAllExcludeTop()),
+            contentPadding = PaddingValues(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            FootnoteUi(
-                action = StringKey.RankSelectionActionFootnote.textValue(),
-                onClick = onRankFootnoteClick,
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                items(uiState.ranks) { it.Content(modifier = Modifier) }
+            items(uiState.mysteryBoxes) { it.Content(modifier = Modifier) }
+            item {
+                FootnoteUi(
+                    action = StringKey.RankSelectionActionFootnote.textValue(),
+                    onClick = onRankFootnoteClick,
+                    padding = 0.dp,
+                )
             }
+            items(uiState.ranks) { it.Content(modifier = Modifier) }
         }
     }
 }

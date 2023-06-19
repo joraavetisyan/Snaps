@@ -3,6 +3,7 @@ package io.snaps.basenft.data
 import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.MintNftStoreRequestDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
+import io.snaps.basenft.domain.MysteryBoxModel
 import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.corecommon.model.Completable
@@ -37,9 +38,13 @@ interface NftRepository {
 
     val allGlassesBrokenState: StateFlow<State<Boolean>>
 
+    val mysteryBoxState: StateFlow<State<List<MysteryBoxModel>>>
+
     suspend fun updateRanks(): Effect<Completable>
 
     suspend fun updateNftCollection(): Effect<List<NftModel>>
+
+    suspend fun updateMysteryBoxes(): Effect<List<MysteryBoxModel>>
 
     suspend fun mintNftStore(productId: Uuid, purchaseToken: Token, txSign: TxSign): Effect<TxHash>
 
@@ -64,6 +69,9 @@ class NftRepositoryImpl @Inject constructor(
 
     private val _ranksState = MutableStateFlow<State<List<RankModel>>>(Loading())
     override val ranksState = _ranksState.asStateFlow()
+
+    private val _mysteryBoxState = MutableStateFlow<State<List<MysteryBoxModel>>>(Loading())
+    override val mysteryBoxState = _mysteryBoxState.asStateFlow()
 
     override val countBrokenGlassesState = nftCollectionState.map { state ->
         when (state) {
@@ -102,6 +110,16 @@ class NftRepositoryImpl @Inject constructor(
             it.toNftModelList()
         }.also {
             _nftCollectionState tryPublish it
+        }
+    }
+
+    override suspend fun updateMysteryBoxes(): Effect<List<MysteryBoxModel>> {
+        return apiCall(ioDispatcher) {
+            nftApi.getMysteryBoxes()
+        }.map {
+            it.toMysteryBoxModelList()
+        }.also {
+            _mysteryBoxState tryPublish it
         }
     }
 
