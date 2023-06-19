@@ -78,7 +78,7 @@ class RankSelectionViewModel @Inject constructor(
         }
     }
 
-    private fun loadMysteryBoxes(){
+    private fun loadMysteryBoxes() {
         viewModelScope.launch {
             action.execute {
                 nftRepository.updateMysteryBoxes()

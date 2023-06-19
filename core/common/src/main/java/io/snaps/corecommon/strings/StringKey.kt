@@ -454,6 +454,11 @@ enum class StringKey {
     RankSelectionDialogTitleFootnote1,
     RankSelectionDialogMessageFootnote1,
     RankSelectionDialogActionFootnote1,
+    RankSelectionFieldWin,
+    RankSelectionFieldGuaranteed,
+    RankSelectionFieldChance,
+    RankSelectionTitleMysteryBox,
+    RankSelectionTitleNft,
 
     CreateVideoActionGrantPerms,
     CreateVideoActionFlip,

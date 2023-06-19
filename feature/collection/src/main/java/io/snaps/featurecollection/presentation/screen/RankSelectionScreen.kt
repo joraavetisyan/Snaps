@@ -1,11 +1,7 @@
 package io.snaps.featurecollection.presentation.screen
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -37,6 +33,7 @@ import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialogItem
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
+import io.snaps.coreuicompose.uikit.listtile.HeaderTileState
 import io.snaps.coreuicompose.uikit.status.FootnoteUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurecollection.ScreenNavigator
@@ -116,8 +113,16 @@ private fun RankSelectionScreen(
             contentPadding = PaddingValues(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            item {
+                HeaderTileState.small(StringKey.RankSelectionTitleMysteryBox.textValue()).Content(
+                    modifier = Modifier
+                )
+            }
             items(uiState.mysteryBoxes) { it.Content(modifier = Modifier) }
             item {
+                HeaderTileState.small(StringKey.RankSelectionTitleNft.textValue()).Content(
+                    modifier = Modifier
+                )
                 FootnoteUi(
                     action = StringKey.RankSelectionActionFootnote.textValue(),
                     onClick = onRankFootnoteClick,
