@@ -6,6 +6,7 @@ import coil.ImageLoaderFactory
 import coil.decode.SvgDecoder
 import com.appsflyer.AppsFlyerLib
 import dagger.hilt.android.HiltAndroidApp
+import io.snaps.android.appsflyer.DeepLinkProvider
 import io.snaps.basesources.NetworkStateSource
 import io.snaps.basewallet.data.blockchain.CryptoInitializer
 import io.snaps.corecommon.analytics.AnalyticsTracker
@@ -41,6 +42,9 @@ class SnapsApp : Application(), ApplicationCoroutineScopeHolder, ImageLoaderFact
     @Inject
     lateinit var buildInfo: BuildInfo
 
+    @Inject
+    lateinit var deepLinkProvider: DeepLinkProvider
+
     override val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     init {
@@ -56,6 +60,7 @@ class SnapsApp : Application(), ApplicationCoroutineScopeHolder, ImageLoaderFact
 
         AppsFlyerLib.getInstance().apply {
             setDebugLog(true)
+            subscribeForDeepLink(deepLinkProvider.getDeepLinkListener())
             init(AF_DEV_KEY, null, applicationContext)
             start(applicationContext)
         }
