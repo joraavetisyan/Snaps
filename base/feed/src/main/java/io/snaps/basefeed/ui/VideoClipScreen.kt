@@ -623,7 +623,9 @@ private fun VideoClipEndItems(
         Box(
             modifier = Modifier.defaultTileRipple(
                 shape = CircleShape,
-                onClick = { onAuthorClicked(clipModel) },
+                onClick = if (clipModel.isSponsored) null else {
+                    { onAuthorClicked(clipModel) }
+                },
             )
         ) {
             Card(
