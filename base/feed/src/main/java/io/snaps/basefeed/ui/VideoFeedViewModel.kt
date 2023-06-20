@@ -365,7 +365,7 @@ abstract class VideoFeedViewModel(
                     it.copy(dialog = null)
                 }
                 videoFeedRepository.refreshFeed(videoFeedType).doOnSuccess {
-                    // todo it's not right place to check for emptiness
+                    // todo it's not the right place to check for emptiness
                      if (uiState.value.videoFeedUiState.items.isEmpty()) {
                          _command publish Command.CloseScreen
                      }
@@ -392,12 +392,12 @@ abstract class VideoFeedViewModel(
                     subsRepository.unsubscribe(video.authorId)
                 } else {
                     subsRepository.subscribe(video.authorId)
-                }.flatMap {
-                    profileRepository.updateData(isSilently = true)
                 }.doOnError { _, _ ->
                     _uiState.update {
                         it.copy(isSubscribed = isSubscribedInitially)
                     }
+                }.flatMap {
+                    profileRepository.updateData(isSilently = true)
                 }
             }
         }

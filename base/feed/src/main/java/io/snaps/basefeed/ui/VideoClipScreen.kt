@@ -53,6 +53,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -60,6 +61,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.snaps.basefeed.domain.VideoClipModel
@@ -77,13 +79,12 @@ import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.LocalBottomNavigationHeight
 import io.snaps.coreuicompose.tools.defaultTileRipple
+import io.snaps.coreuicompose.tools.doOnClick
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetBottom
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ActionsBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
-import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
-import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleChip
 import io.snaps.coreuicompose.uikit.button.SimpleChipConfig
 import io.snaps.coreuicompose.uikit.dialog.SimpleConfirmDialogUi
@@ -518,7 +519,17 @@ private fun VideoClipBottomItems(
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
             if (clipModel.isSponsored) {
-                SimpleChip(selected = true, onClick = {}, label = StringKey.FieldSponsored.textValue())
+                Text(
+                    text = StringKey.FieldSponsored.textValue().get(),
+                    color = AppTheme.specificColorScheme.white,
+                    style = AppTheme.specificTypography.bodySmall,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .clip(shape = AppTheme.shapes.medium)
+                        .background(color = AppTheme.specificColorScheme.black_50)
+                        .padding(8.dp),
+                )
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -563,19 +574,28 @@ private fun VideoClipBottomItems(
             val context = LocalContext.current
             if (clipModel.learnMoreLink != null) {
                 Spacer(modifier = Modifier.height(8.dp))
-                SimpleButtonActionM(
-                    onClick = { context.openUrl(clipModel.learnMoreLink) },
-                    modifier = Modifier.fillMaxWidth(),
+                // todo use default ui element (add if needed)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(shape = AppTheme.shapes.medium)
+                        .background(color = AppTheme.specificColorScheme.black_50)
+                        .doOnClick(onClick = { context.openUrl(clipModel.learnMoreLink) })
+                        .padding(vertical = 8.dp, horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    SimpleButtonContent(
-                        text = StringKey.ActionLearnMore.textValue(),
-                        contentRight = {
-                            Icon(
-                                painter = AppTheme.specificIcons.forward.get(),
-                                contentDescription = null,
-                                tint = AppTheme.specificColorScheme.white,
-                            )
-                        },
+                    Text(
+                        text = StringKey.ActionLearnMore.textValue().get(),
+                        color = AppTheme.specificColorScheme.white,
+                        style = AppTheme.specificTypography.bodySmall,
+                        textAlign = TextAlign.Start,
+                        maxLines = 2,
+                    )
+                    Icon(
+                        painter = AppTheme.specificIcons.forward.get(),
+                        contentDescription = null,
+                        tint = AppTheme.specificColorScheme.white,
                     )
                 }
             }
@@ -635,7 +655,9 @@ private fun VideoClipEndItems(
             icon = icons { if (clipModel.isLiked) favorite else favoriteBorder },
             text = clipModel.likeCount.toCompactDecimalFormat(),
             tint = colors { if (clipModel.isLiked) red else white },
-            onIconClicked = { onLikeClicked(clipModel) },
+            onIconClicked = if (clipModel.isSponsored) null else {
+                { onLikeClicked(clipModel) }
+            },
         )
 
         TextedIcon(
