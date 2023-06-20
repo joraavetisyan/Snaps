@@ -209,7 +209,7 @@ private fun TitleTextField(
         value = uiState.titleValue,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Next,
+            imeAction = ImeAction.Done,
         ),
         placeholder = {
             Text(
