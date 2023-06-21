@@ -59,7 +59,7 @@ imglyConfig {
         include("ui:video-trim")
         include("ui:video-library")
         include("ui:video-composition")
-        include("ui:audio-composition")
+        // include("ui:audio-composition")
         include("ui:giphy-sticker")
 
         include("backend:serializer")

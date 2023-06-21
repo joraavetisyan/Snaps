@@ -80,6 +80,7 @@ class CreateVideoViewModel @Inject constructor(
     }
 
     private fun startDelayTimer(start: Int, onTimerFinished: () -> Unit) {
+        // todo unify all timers in app
         delayTimerJob?.cancel()
         delayTimerJob = viewModelScope.launch {
             var current = start
@@ -119,10 +120,14 @@ class CreateVideoViewModel @Inject constructor(
             if (duration != null && duration > RecordTiming._120.seconds) {
                 notificationsSource.sendError(StringKey.CreateVideoMessageDurationLimit.textValue())
             } else {
-                videoUri.path?.let { filePath ->
-                    _command publish Command.OpenPreviewScreen(filePath)
-                }
+                _command publish Command.OpenEditorScreen(videoUri)
             }
+        }
+    }
+
+    fun onVideoRecorded(uri: Uri) {
+        viewModelScope.launch {
+            _command publish Command.OpenEditorScreen(uri)
         }
     }
 
@@ -135,10 +140,10 @@ class CreateVideoViewModel @Inject constructor(
         val selectedRecordTiming: RecordTiming = RecordTiming._120,
     ) {
 
-        fun isSelected(recordTiming: RecordTiming) = selectedRecordTiming == recordTiming
+        fun isTimingSelected(recordTiming: RecordTiming) = selectedRecordTiming == recordTiming
     }
 
     sealed class Command {
-        data class OpenPreviewScreen(val uri: String) : Command()
+        data class OpenEditorScreen(val uri: Uri) : Command()
     }
 }

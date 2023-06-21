@@ -57,7 +57,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -113,11 +112,9 @@ fun CreateVideoScreen(
 
     viewModel.command.collectAsCommand {
         when (it) {
-            is CreateVideoViewModel.Command.OpenPreviewScreen -> {
+            is CreateVideoViewModel.Command.OpenEditorScreen -> {
                 val settingsList = VideoEditorSettingsList(false)
-                    .configure<LoadSettings> { loadSettings ->
-                        loadSettings.source = it.uri.toUri()
-                    }
+                    .configure<LoadSettings> { loadSettings -> loadSettings.source = it.uri }
                 editorLauncher.launch(settingsList)
                 settingsList.release()
             }
@@ -157,7 +154,7 @@ fun CreateVideoScreen(
         onTimingSelected = viewModel::onTimingSelected,
         onRecordingStartClicked = viewModel::onRecordingStartClicked,
         onCameraChanged = viewModel::onCameraChanged,
-        onRecordFinished = router::toPreviewScreen,
+        onRecordFinished = viewModel::onVideoRecorded,
         onRecorded = viewModel::onRecorded,
     )
 }
@@ -175,7 +172,7 @@ private fun CreateVideoScreen(
     onTimingSelected: (RecordTiming) -> Unit,
     onRecordingStartClicked: (((Boolean) -> Unit) -> Unit) -> Unit,
     onCameraChanged: (Boolean) -> Unit,
-    onRecordFinished: (String) -> Unit,
+    onRecordFinished: (Uri) -> Unit,
     onRecorded: (Long) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -236,7 +233,7 @@ fun BoxScope.PermissionGrantedContent(
     onTimingSelected: (RecordTiming) -> Unit,
     onRecordingStartClicked: (((Boolean) -> Unit) -> Unit) -> Unit,
     onCameraChanged: (Boolean) -> Unit,
-    onRecordFinished: (String) -> Unit,
+    onRecordFinished: (Uri) -> Unit,
     onRecorded: (Long) -> Unit,
 ) {
     val context = LocalContext.current
@@ -273,7 +270,7 @@ fun BoxScope.PermissionGrantedContent(
                         is VideoRecordEvent.Finalize -> {
                             val uri = event.outputResults.outputUri
                             if (uri != Uri.EMPTY) {
-                                onRecordFinished(uri.path!!)
+                                onRecordFinished(uri)
                             }
                             onRecordingStatusChanged(false)
                         }
@@ -423,7 +420,7 @@ private fun Timings(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         RecordTiming.values().forEach {
-            if (uiState.isSelected(it)) {
+            if (uiState.isTimingSelected(it)) {
                 SimpleButtonActionS(onClick = {}) {
                     SimpleButtonContent(text = it.toTextValue())
                 }

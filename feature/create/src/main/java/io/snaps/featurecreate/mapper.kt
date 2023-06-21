@@ -85,6 +85,7 @@ fun Context.startRecordingVideo(
     consumer: Consumer<VideoRecordEvent>,
 ): Recording {
     // todo use file manager
+    // todo clear cache, once the recorded video is not needed or save in gallery initially
     val outputDirectory: File = externalCacheDirs.firstOrNull()?.let {
         File(it, "snaps").apply { mkdirs() }
     }?.takeIf(File::exists) ?: filesDir
