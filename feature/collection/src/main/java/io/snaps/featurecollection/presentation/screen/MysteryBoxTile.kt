@@ -22,19 +22,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.snaps.basenft.data.model.MysteryBoxType
-import io.snaps.basenft.domain.ProbabilitiesModel
+import io.snaps.basenft.domain.ProbabilityModel
 import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FiatValue
+import io.snaps.corecommon.model.MysteryBoxType
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
@@ -50,7 +51,7 @@ sealed class MysteryBoxTileState : TileState {
     data class Data(
         val type: MysteryBoxType,
         val cost: FiatValue,
-        val probabilities: ProbabilitiesModel,
+        val probabilities: List<ProbabilityModel>,
         val clickListener: () -> Unit,
     ) : MysteryBoxTileState()
 
@@ -132,23 +133,23 @@ private fun Data(
                         MysteryBoxItem(
                             nftType1 = NftType.Sub,
                             isGuaranteed = true,
-                            probability1 = data.probabilities.sub ?: 0.0,
+                            probability1 = data.probabilities.find { it.nftType == NftType.Sub }?.probability ?: 0.0,
                             imageBackgroundColor = Color(0xFF65AFF5), // todo add color to palette
-                            image = R.drawable.img_sunglasses3.imageValue(),
+                            image = NftType.Sub.getSunglassesImage(),
                         )
                         MysteryBoxItem(
                             nftType1 = NftType.Follower,
                             isGuaranteed = false,
-                            probability1 = data.probabilities.follower ?: 0.0,
+                            probability1 = data.probabilities.find { it.nftType == NftType.Follower }?.probability ?: 0.0,
                             imageBackgroundColor = Color(0xFF7165F5), // todo add color to palette
-                            image = R.drawable.img_sunglasses3.imageValue(),
+                            image = NftType.Follower.getSunglassesImage(),
                         )
                         MysteryBoxItem(
                             nftType1 = NftType.Sponsor,
                             nftType2 = NftType.Influencer,
                             isGuaranteed = false,
-                            probability1 = data.probabilities.sponsor ?: 0.0,
-                            probability2 = data.probabilities.influencer ?: 0.0,
+                            probability1 = data.probabilities.find { it.nftType == NftType.Sponsor }?.probability ?: 0.0,
+                            probability2 = data.probabilities.find { it.nftType == NftType.Influencer }?.probability ?: 0.0,
                             imageBackgroundColor = Color(0xFFAD65F5), // todo add color to palette
                             image = R.drawable.img_sponsor_infuencer_mystery_box.imageValue(),
                         )
@@ -157,21 +158,21 @@ private fun Data(
                         MysteryBoxItem(
                             nftType1 = NftType.Sponsor,
                             isGuaranteed = true,
-                            probability1 = data.probabilities.sponsor ?: 0.0,
+                            probability1 = data.probabilities.find { it.nftType == NftType.Sponsor }?.probability ?: 0.0,
                             imageBackgroundColor = Color(0xFFAD65F5), // todo add color to palette
-                            image = R.drawable.img_sunglasses5.imageValue(),
+                            image = NftType.Sponsor.getSunglassesImage(),
                         )
                         MysteryBoxItem(
-                            nftType1 = NftType.Influencer,
-                            isGuaranteed = false,
-                            probability1 = data.probabilities.influencer ?: 0.0,
+                            nftType1 = NftType.Liker,
+                            isGuaranteed = true,
+                            probability1 = data.probabilities.find { it.nftType == NftType.Liker }?.probability ?: 0.0,
                             imageBackgroundColor = Color(0xFFF56E65), // todo add color to palette
-                            image = R.drawable.img_sunglasses6.imageValue(),
+                            image = NftType.Liker.getSunglassesImage(),
                         )
                         MysteryBoxItem(
                             nftType1 = NftType.Legend,
                             isGuaranteed = false,
-                            probability1 = data.probabilities.legend ?: 0.0,
+                            probability1 = data.probabilities.find { it.nftType == NftType.Legend }?.probability ?: 0.0,
                             imageBackgroundColor = Color(0xFFE3B40C), // todo add color to palette
                             image = R.drawable.img_legenda_mystery_box.imageValue(),
                         )
@@ -199,7 +200,7 @@ private fun RowScope.MysteryBoxItem(
         } else "${probability1.toInt()}%"
         Text(
             text = StringKey.RankSelectionFieldChance.textValue().get(),
-            style = AppTheme.specificTypography.labelLarge.copy(fontSize = 5.sp, lineHeight = 6.sp),
+            style = AppTheme.specificTypography.labelLarge.copy(fontSize = 8.sp, lineHeight = 9.sp),
             color = AppTheme.specificColorScheme.textSecondary,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -208,7 +209,7 @@ private fun RowScope.MysteryBoxItem(
         )
         Text(
             text = probability,
-            style = AppTheme.specificTypography.labelLarge.copy(fontSize = 5.sp),
+            style = AppTheme.specificTypography.labelLarge.copy(fontSize = 8.sp, lineHeight = 9.sp),
             color = AppTheme.specificColorScheme.textPrimary,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
@@ -235,6 +236,17 @@ private fun RowScope.MysteryBoxItem(
                 .background(color = imageBackgroundColor, shape = AppTheme.shapes.medium)
                 .height(56.dp),
         ) {
+            if (nftType1 == NftType.Liker) {
+                Image(
+                    painter = R.drawable.img_liker_nft_background.imageValue().get(),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clip(AppTheme.shapes.medium)
+                        .align(Alignment.Center)
+                )
+            }
             Image(
                 painter = image.get(),
                 contentDescription = null,
@@ -248,6 +260,7 @@ private fun RowScope.MysteryBoxItem(
                 style = AppTheme.specificTypography.labelLarge.copy(fontSize = 5.sp, lineHeight = 7.sp),
                 color = AppTheme.specificColorScheme.white,
                 textAlign = TextAlign.Center,
+                maxLines = 2,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(vertical = 2.dp)
@@ -267,7 +280,9 @@ private fun RowScope.MysteryBoxItem(
         ) {
             if (isGuaranteed) {
                 Text(
-                    text = StringKey.RankSelectionFieldGuaranteed.textValue().get(),
+                    text = if (nftType1 == NftType.Liker) {
+                        StringKey.RankSelectionFieldDropRate.textValue().get()
+                    } else StringKey.RankSelectionFieldGuaranteed.textValue().get(),
                     style = AppTheme.specificTypography.labelLarge.copy(fontSize = 8.sp, lineHeight = 9.sp),
                     color = AppTheme.specificColorScheme.textSecondary,
                     textAlign = TextAlign.Center,

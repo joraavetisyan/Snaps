@@ -8,7 +8,9 @@ import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
+import io.snaps.corecommon.model.MysteryBoxType
 import io.snaps.corecommon.model.State
+import io.snaps.featurecollection.presentation.screen.MysteryBoxInfoTileState
 import io.snaps.featurecollection.presentation.screen.MysteryBoxTileState
 import io.snaps.featurecollection.presentation.screen.RankTileState
 
@@ -122,3 +124,23 @@ private fun MysteryBoxModel.toMysteryBoxTileState(
     probabilities = marketingProbabilities,
     clickListener = { onItemClicked(this) },
 )
+
+fun State<List<MysteryBoxModel>>.toMysteryBoxInfoTileState(
+    type: MysteryBoxType,
+    onReloadClicked: () -> Unit,
+) = when (this) {
+    is Loading -> MysteryBoxInfoTileState.Shimmer
+    is Effect -> when {
+        isSuccess -> {
+            requireData
+                .first { it.type == type }
+                .let {
+                    MysteryBoxInfoTileState.Data(
+                        type = type,
+                        cost = it.fiatCost,
+                    )
+                }
+        }
+        else -> MysteryBoxInfoTileState.Error(onClick = onReloadClicked)
+    }
+}

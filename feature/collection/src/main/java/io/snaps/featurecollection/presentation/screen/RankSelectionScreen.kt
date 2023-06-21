@@ -59,6 +59,7 @@ fun RankSelectionScreen(
     viewModel.command.collectAsCommand {
         when (it) {
             is RankSelectionViewModel.Command.OpenPurchase -> router.toPurchaseScreen(it.args)
+            is RankSelectionViewModel.Command.OpenMysteryBox -> router.toMysteryBoxScreen(it.args)
             RankSelectionViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             RankSelectionViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
         }
@@ -113,12 +114,14 @@ private fun RankSelectionScreen(
             contentPadding = PaddingValues(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            item {
-                HeaderTileState.small(StringKey.RankSelectionTitleMysteryBox.textValue()).Content(
-                    modifier = Modifier
-                )
+            if (uiState.isMysteryBoxEnabled) {
+                item {
+                    HeaderTileState.small(StringKey.RankSelectionTitleMysteryBox.textValue()).Content(
+                        modifier = Modifier
+                    )
+                }
+                items(uiState.mysteryBoxes) { it.Content(modifier = Modifier) }
             }
-            items(uiState.mysteryBoxes) { it.Content(modifier = Modifier) }
             item {
                 HeaderTileState.small(StringKey.RankSelectionTitleNft.textValue()).Content(
                     modifier = Modifier

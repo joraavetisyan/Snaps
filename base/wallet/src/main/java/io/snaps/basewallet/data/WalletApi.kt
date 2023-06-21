@@ -3,6 +3,7 @@ package io.snaps.basewallet.data
 import io.snaps.basewallet.data.model.SnpsAccountResponseDto
 import io.snaps.basewallet.data.model.ClaimRequestDto
 import io.snaps.basewallet.data.model.ClaimResponseDto
+import io.snaps.basewallet.data.model.MysteryBoxSignatureResponseDto
 import io.snaps.basewallet.data.model.PayoutOrderRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
 import io.snaps.basewallet.data.model.RefillGasRequestDto
@@ -50,6 +51,11 @@ interface WalletApi {
     suspend fun getMintSignature(
         @Body body: SignatureRequestDto,
     ): BaseResponse<SignatureResponseDto>
+
+    @POST("v1/user/mystery-box/sign")
+    suspend fun getMysteryBoxSignature(
+        @Body body: SignatureRequestDto,
+    ): BaseResponse<MysteryBoxSignatureResponseDto>
 
     @POST("v2/base-token")
     suspend fun refillGas(

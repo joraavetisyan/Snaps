@@ -105,6 +105,7 @@ class SettingsRepositoryImpl @Inject constructor(
                 Feature.PurchaseNftInStore.key -> this.purchaseNftInStore
                 Feature.Captcha.key -> this.captcha
                 Feature.SellSnaps.key -> this.sellSnaps
+                Feature.MysteryBox.key -> this.mysteryBox
                 else -> false
             }
             featureToggle.setRemoteValue(

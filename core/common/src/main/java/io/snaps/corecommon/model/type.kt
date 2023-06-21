@@ -6,6 +6,8 @@ import io.snaps.corecommon.BuildConfig
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.toMoneyFormat
 import io.snaps.corecommon.serialization.BigDecimalSerializer
+import io.snaps.corecommon.R
+import io.snaps.corecommon.container.imageValue
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.math.BigDecimal
@@ -217,4 +219,27 @@ enum class NftType(val storeId: String?) {
     // todo we could use JsonNames to have one field only, but the name is displayed in gui, find a way
     // to obtain the serialized name
     val isLiker get() = this == Blogger || this == Liker
+
+    fun getSunglassesImage() = when (this) {
+        Free -> R.drawable.img_sunglasses0
+        Newbie -> R.drawable.img_sunglasses1
+        Viewer -> R.drawable.img_sunglasses2
+        Follower -> R.drawable.img_sunglasses3
+        Sub -> R.drawable.img_sunglasses4
+        Sponsor -> R.drawable.img_sunglasses5
+        Influencer -> R.drawable.img_sunglasses6
+        FamousGuy -> R.drawable.img_sunglasses7
+        Star -> R.drawable.img_sunglasses8
+        Rockstar -> R.drawable.img_sunglasses9
+        SuperStar -> R.drawable.img_sunglasses10
+        Legend -> R.drawable.img_sunglasses11
+        Blogger -> R.drawable.img_sunglasses12
+        Liker -> R.drawable.img_sunglasses12
+    }.imageValue()
+}
+
+@Serializable
+enum class MysteryBoxType {
+    @SerialName("FirstTier") FirstTier,
+    @SerialName("SecondTier") SecondTier,
 }

@@ -41,6 +41,7 @@ class MintContractMethod(
     val nonce: BigInteger,
     val deadline: BigInteger,
     val signature: ByteArray,
+    val tokensCount: BigInteger? = null,
 ) : ContractMethod() {
 
     override val methodSignature =
@@ -49,7 +50,7 @@ class MintContractMethod(
     // 12 params
     override fun getArguments() = listOf(
         listOf<BigInteger>(),
-        BigInteger.ONE,
+        tokensCount ?: BigInteger.ONE,
         owner,
         Address("0x0000000000000000000000000000000000000000"),
         listOf(profitWallet),

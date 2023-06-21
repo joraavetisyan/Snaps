@@ -457,8 +457,17 @@ enum class StringKey {
     RankSelectionFieldWin,
     RankSelectionFieldGuaranteed,
     RankSelectionFieldChance,
+    RankSelectionFieldDropRate,
     RankSelectionTitleMysteryBox,
     RankSelectionTitleNft,
+
+    MysteryBoxTitle,
+    MysteryBoxTitlePrimeBox,
+    MysteryBoxTitleGuaranteed,
+    MysteryBoxFieldDropRate,
+    MysteryBoxTitleChanceToWin,
+    MysteryBoxFieldDropChance,
+    MysteryBoxTitleChanceNftLoss,
 
     CreateVideoActionGrantPerms,
     CreateVideoActionFlip,

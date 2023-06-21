@@ -1,28 +1,16 @@
 package io.snaps.basenft.domain
 
-import io.snaps.basenft.data.model.MysteryBoxType
 import io.snaps.corecommon.model.FiatValue
-import kotlinx.serialization.Serializable
+import io.snaps.corecommon.model.MysteryBoxType
+import io.snaps.corecommon.model.NftType
 
 data class MysteryBoxModel(
     val type: MysteryBoxType,
     val fiatCost: FiatValue,
-    val probabilities: ProbabilitiesModel,
-    val marketingProbabilities: ProbabilitiesModel,
+    val marketingProbabilities: List<ProbabilityModel>,
 )
 
-@Serializable
-data class ProbabilitiesModel(
-    val follower: Double?,
-    val sub: Double?,
-    val sponsor: Double?,
-    val influencer: Double?,
-    val famousGuy: Double?,
-    val rockstar: Double?,
-    val star: Double?,
-    val superStar: Double?,
-    val newbie: Double?,
-    val viewer: Double?,
-    val blogger: Double?,
-    val legend: Double?,
+data class ProbabilityModel(
+    val nftType: NftType,
+    val probability: Double?,
 )

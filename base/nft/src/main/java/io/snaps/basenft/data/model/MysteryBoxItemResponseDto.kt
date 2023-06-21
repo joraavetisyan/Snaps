@@ -1,5 +1,6 @@
 package io.snaps.basenft.data.model
 
+import io.snaps.corecommon.model.MysteryBoxType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -8,7 +9,6 @@ data class MysteryBoxItemResponseDto(
     @SerialName("type") val type: MysteryBoxType,
     @SerialName("costInUsd") val costInUsd: Double,
     @SerialName("marketingProbabilities") val marketingProbabilities: ProbabilitiesDto,
-    @SerialName("probabilities") val probabilities: ProbabilitiesDto,
 )
 
 @Serializable
@@ -26,9 +26,3 @@ data class ProbabilitiesDto(
     @SerialName("Blogger") val blogger: Double?,
     @SerialName("Legend") val legend: Double?,
 )
-
-@Serializable
-enum class MysteryBoxType {
-    @SerialName("FirstTier") FirstTier,
-    @SerialName("SecondTier") SecondTier,
-}

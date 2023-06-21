@@ -1,5 +1,7 @@
 package io.snaps.basenft.data
 
+import io.snaps.basenft.data.model.MintMysteryBoxRequestDto
+import io.snaps.basenft.data.model.MintMysteryBoxResponseDto
 import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.MintNftStoreRequestDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
@@ -9,6 +11,7 @@ import io.snaps.basenft.domain.RankModel
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
+import io.snaps.corecommon.model.MysteryBoxType
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Token
@@ -52,6 +55,8 @@ interface NftRepository {
      * [txSign]=null for [NftType.Free]
      */
     suspend fun mintNft(type: NftType, txSign: TxSign? = null): Effect<TxHash>
+
+    suspend fun mintMysteryBox(mysteryBoxType: MysteryBoxType, txSign: TxSign? = null): Effect<MintMysteryBoxResponseDto>
 
     suspend fun repairNftBlockchain(nftModel: NftModel, txSign: TxSign): Effect<TxHash>
 
@@ -131,6 +136,24 @@ class NftRepositoryImpl @Inject constructor(
             updateRanks()
         }.map {
             it.txHash.orEmpty()
+        }
+    }
+
+    // todo domain model
+    override suspend fun mintMysteryBox(mysteryBoxType: MysteryBoxType, txSign: TxSign?): Effect<MintMysteryBoxResponseDto> {
+        return apiCall(ioDispatcher) {
+            nftApi.mintMysteryBox(
+                MintMysteryBoxRequestDto(
+                    mysteryBoxType = mysteryBoxType.ordinal + 1,
+                    paymentType = 1,
+                    productId = null,
+                    receipt = null,
+                    txSign = txSign,
+                )
+            )
+        }.doOnSuccess {
+            updateNftCollection()
+            updateRanks()
         }
     }
 

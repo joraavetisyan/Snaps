@@ -1,6 +1,7 @@
 package io.snaps.baseplayer.ui
 
 import android.os.Looper
+import android.util.Log
 import android.view.ViewGroup
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -64,6 +65,7 @@ fun VideoPlayer(
     performAtPosition: (() -> Unit)? = null,
     performPosition: Float = 0f, /*[0f,1f]*/
     onStarted: (() -> Unit)? = null,
+    onFinished: (() -> Unit)? = null, // todo ExoPlayer.STATE_ENDED event is not getting triggered
 ) {
     require(networkUrl == null || localUri == null) {
         "Don't provide both local and network sources!"
@@ -80,6 +82,7 @@ fun VideoPlayer(
         performAtPosition = performAtPosition,
         performPosition = performPosition,
         onStarted = onStarted,
+        onFinished = onFinished,
     )
     val playerView = rememberPlayerView(exoPlayer)
 
@@ -189,6 +192,7 @@ private fun rememberExoPlayerWithLifecycle(
     performAtPosition: (() -> Unit)?,
     performPosition: Float,
     onStarted: (() -> Unit)?,
+    onFinished: (() -> Unit)?,
 ): ExoPlayer {
     val context = LocalContext.current
     val performAtPositionRemembered by rememberUpdatedState(newValue = performAtPosition)
@@ -221,6 +225,9 @@ private fun rememberExoPlayerWithLifecycle(
                                     .setPayload(null)
                                     .setDeleteAfterDelivery(true)
                                     .send()
+                            }
+                            if (playbackState == ExoPlayer.STATE_ENDED) {
+                                onFinished?.invoke()
                             }
                         }
                     }

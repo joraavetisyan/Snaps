@@ -5,6 +5,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.basenft.domain.MysteryBoxModel
 import io.snaps.basenft.domain.RankModel
+import io.snaps.basesources.featuretoggle.Feature
+import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
@@ -29,11 +31,14 @@ import javax.inject.Inject
 @HiltViewModel
 class RankSelectionViewModel @Inject constructor(
     private val action: Action,
+    private val featureToggle: FeatureToggle,
     @Bridged private val nftRepository: NftRepository,
     @Bridged private val walletRepository: WalletRepository,
 ) : SimpleViewModel() {
 
-    private val _uiState = MutableStateFlow(UiState())
+    private val _uiState = MutableStateFlow(
+        UiState(isMysteryBoxEnabled = featureToggle.isEnabled(Feature.MysteryBox))
+    )
     val uiState = _uiState.asStateFlow()
 
     private val _command = Channel<Command>()
@@ -95,7 +100,9 @@ class RankSelectionViewModel @Inject constructor(
     }
 
     private fun onMysteryBoxItemClicked(mysteryBox: MysteryBoxModel) {
-        // todo
+        viewModelScope.launch {
+            _command publish Command.OpenMysteryBox(args = AppRoute.MysteryBox.Args(type = mysteryBox.type))
+        }
     }
 
     private fun onMysteryBoxReloadClicked() {
@@ -119,6 +126,7 @@ class RankSelectionViewModel @Inject constructor(
         val ranks: List<RankTileState> = List(6) { RankTileState.Shimmer },
         val mysteryBoxes: List<MysteryBoxTileState> = List(2) { MysteryBoxTileState.Shimmer },
         val bottomDialog: BottomDialog = BottomDialog.RankFootnote,
+        val isMysteryBoxEnabled: Boolean = false,
     )
 
     sealed class BottomDialog {
@@ -127,6 +135,7 @@ class RankSelectionViewModel @Inject constructor(
 
     sealed class Command {
         data class OpenPurchase(val args: AppRoute.Purchase.Args) : Command()
+        data class OpenMysteryBox(val args: AppRoute.MysteryBox.Args) : Command()
         object ShowBottomDialog : Command()
         object HideBottomDialog : Command()
     }
