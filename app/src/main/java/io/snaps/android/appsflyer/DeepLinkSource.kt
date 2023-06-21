@@ -12,17 +12,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
-interface DeepLinkProvider {
+interface DeepLinkSource {
 
-    val deepLink: StateFlow<Deeplink?>
+    val state: StateFlow<Deeplink?>
 
     fun getDeepLinkListener(): DeepLinkListener
 }
 
-class DeepLinkProviderImpl @Inject constructor() : DeepLinkProvider {
+class DeepLinkSourceImpl @Inject constructor() : DeepLinkSource {
 
-    private val _deepLink = MutableStateFlow<Deeplink?>(null)
-    override val deepLink = _deepLink.asStateFlow()
+    private val _state = MutableStateFlow<Deeplink?>(null)
+    override val state = _state.asStateFlow()
 
     override fun getDeepLinkListener(): DeepLinkListener {
         return object : DeepLinkListener {
@@ -45,7 +45,7 @@ class DeepLinkProviderImpl @Inject constructor() : DeepLinkProvider {
                     val deepLinkObj = deepLinkResult.deepLink
                     log("The DeepLink data is: $deepLinkObj")
                     parse(deepLinkObj)?.let {
-                        _deepLink.tryEmit(it)
+                        _state.tryEmit(it)
                     }
                 } catch (e: Exception) {
                     logE("DeepLink data came back null")

@@ -81,7 +81,11 @@ abstract class VideoFeedViewModel(
     private fun subscribeOnVideoFeed() {
         videoFeedRepository.getFeedState(videoFeedType).map {
             videoFeedPageModel = it
-            videoFeedInteractor.insertAds(it).toVideoFeedUiState(
+            if (videoFeedType == VideoFeedType.Main && !it.isLoading && it.error == null) {
+                videoFeedInteractor.insertAds(it)
+            } else {
+                it
+            }.toVideoFeedUiState(
                 shimmerListSize = 1,
                 onClipClicked = ::onClipClicked,
                 onReloadClicked = ::onReloadClicked,

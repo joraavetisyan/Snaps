@@ -3,7 +3,7 @@ package io.snaps.android.mainscreen
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import io.snaps.android.appsflyer.DeepLinkProvider
+import io.snaps.android.appsflyer.DeepLinkSource
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.ActiveAppZoneProvider
 import io.snaps.basesession.AppRouteProvider
@@ -38,7 +38,7 @@ class AppViewModel @AssistedInject constructor(
     private val sessionRepository: SessionRepository,
     private val userDataStorage: UserDataStorage,
     private val appRouteProvider: AppRouteProvider,
-    private val deepLinkProvider: DeepLinkProvider,
+    private val deepLinkSource: DeepLinkSource,
     private val action: Action,
 ) : SimpleViewModel() {
 
@@ -105,7 +105,7 @@ class AppViewModel @AssistedInject constructor(
     // If the application has not been installed, the first launch, then immediately apply the code after authorization
     fun applyReferralCode() {
         // checking if this is the first launch
-        val appsFlyerDeepLink = deepLinkProvider.deepLink.value
+        val appsFlyerDeepLink = deepLinkSource.state.value
         if (appsFlyerDeepLink !is AppDeeplink.Invite || deeplink != null) return
         viewModelScope.launch {
             action.execute(needsErrorProcessing = false) {

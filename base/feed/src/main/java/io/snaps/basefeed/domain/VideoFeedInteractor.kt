@@ -25,13 +25,11 @@ class VideoFeedInteractorImpl @Inject constructor(
             val chunked: List<List<VideoClipModel>> = pageModel.loadedPageItems.chunked(ad.showPlace)
             val result = mutableListOf<VideoClipModel>()
             val likeCount = action.execute(needsErrorProcessing = false) {
-                videoFeedRepository.get(ad.entityId)
+                videoFeedRepository.get(videoId = ad.entityId)
             }.map {
                 it.likeCount
             }.data ?: 0
-            val adVideo = ad.toVideoModel().copy(
-                likeCount = likeCount
-            )
+            val adVideo = ad.toVideoModel().copy(likeCount = likeCount)
             chunked.forEach {
                 result.addAll(it)
                 if (it.size == ad.showPlace) {

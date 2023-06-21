@@ -4,8 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.snaps.android.appsflyer.DeepLinkProvider
-import io.snaps.android.appsflyer.DeepLinkProviderImpl
+import io.snaps.android.appsflyer.DeepLinkSource
+import io.snaps.android.appsflyer.DeepLinkSourceImpl
 import javax.inject.Singleton
 
 @Module
@@ -14,5 +14,5 @@ interface AppsFlyerModule {
 
     @Binds
     @Singleton
-    fun deepLinkProvider(provider: DeepLinkProviderImpl): DeepLinkProvider
+    fun deepLinkSource(bind: DeepLinkSourceImpl): DeepLinkSource
 }
