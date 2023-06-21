@@ -1,13 +1,18 @@
 package io.snaps.basenft.data
 
+import io.snaps.basenft.data.model.MysteryBoxItemResponseDto
 import io.snaps.basenft.data.model.NftItemResponseDto
+import io.snaps.basenft.data.model.ProbabilitiesDto
 import io.snaps.basenft.data.model.UserNftItemResponseDto
+import io.snaps.basenft.domain.MysteryBoxModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.date.toOffsetLocalDateTime
 import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.FiatUSD
 import io.snaps.basenft.domain.NftModel
+import io.snaps.basenft.domain.ProbabilityModel
+import io.snaps.corecommon.model.NftType
 import java.time.ZonedDateTime
 
 fun List<NftItemResponseDto>.toRankModelList() = map(NftItemResponseDto::toModel)
@@ -49,3 +54,28 @@ private fun UserNftItemResponseDto.toModel() = NftModel(
     bonus = levelInfo.bonus,
     experience = levelInfo.experience,
 )
+
+fun List<MysteryBoxItemResponseDto>.toMysteryBoxModelList() = map(MysteryBoxItemResponseDto::toModel)
+
+private fun MysteryBoxItemResponseDto.toModel() = MysteryBoxModel(
+    type = type,
+    fiatCost = FiatUSD(costInUsd),
+    marketingProbabilities = marketingProbabilities.toModelList(),
+)
+
+private fun ProbabilitiesDto.toModelList(): List<ProbabilityModel> {
+    return listOf(
+        ProbabilityModel(nftType = NftType.Follower, probability = follower),
+        ProbabilityModel(nftType = NftType.Sub, probability = sub),
+        ProbabilityModel(nftType = NftType.Sponsor, probability = sponsor),
+        ProbabilityModel(nftType = NftType.Influencer, probability = influencer),
+        ProbabilityModel(nftType = NftType.FamousGuy, probability = famousGuy),
+        ProbabilityModel(nftType = NftType.Rockstar, probability = rockstar),
+        ProbabilityModel(nftType = NftType.Star, probability = star),
+        ProbabilityModel(nftType = NftType.SuperStar, probability = superStar),
+        ProbabilityModel(nftType = NftType.Newbie, probability = newbie),
+        ProbabilityModel(nftType = NftType.Viewer, probability = viewer),
+        ProbabilityModel(nftType = NftType.Blogger, probability = blogger),
+        ProbabilityModel(nftType = NftType.Legend, probability = legend),
+    )
+}

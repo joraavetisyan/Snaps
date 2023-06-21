@@ -1,8 +1,11 @@
 package io.snaps.basenft.data
 
+import io.snaps.basenft.data.model.MintMysteryBoxRequestDto
+import io.snaps.basenft.data.model.MintMysteryBoxResponseDto
 import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.MintNftResponseDto
 import io.snaps.basenft.data.model.MintNftStoreRequestDto
+import io.snaps.basenft.data.model.MysteryBoxItemResponseDto
 import io.snaps.basenft.data.model.NftItemResponseDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.data.model.RepairGlassesResponseDto
@@ -30,8 +33,16 @@ interface NftApi {
         @Body body: MintNftRequestDto,
     ): BaseResponse<MintNftResponseDto>
 
+    @POST("v1/user/mystery-box")
+    suspend fun mintMysteryBox(
+        @Body body: MintMysteryBoxRequestDto,
+    ): BaseResponse<MintMysteryBoxResponseDto>
+
     @POST("v1/user/nft/repair")
     suspend fun repairGlasses(
         @Body body: RepairGlassesRequestDto,
     ): BaseResponse<RepairGlassesResponseDto>
+
+    @GET("v1/user/mystery-box")
+    suspend fun getMysteryBoxes(): BaseResponse<List<MysteryBoxItemResponseDto>>
 }

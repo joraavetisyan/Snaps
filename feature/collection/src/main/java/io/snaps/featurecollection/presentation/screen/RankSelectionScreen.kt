@@ -1,11 +1,7 @@
 package io.snaps.featurecollection.presentation.screen
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -37,6 +33,7 @@ import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.FootnoteBottomDialogItem
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
+import io.snaps.coreuicompose.uikit.listtile.HeaderTileState
 import io.snaps.coreuicompose.uikit.status.FootnoteUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurecollection.ScreenNavigator
@@ -62,6 +59,7 @@ fun RankSelectionScreen(
     viewModel.command.collectAsCommand {
         when (it) {
             is RankSelectionViewModel.Command.OpenPurchase -> router.toPurchaseScreen(it.args)
+            is RankSelectionViewModel.Command.OpenMysteryBox -> router.toMysteryBoxScreen(it.args)
             RankSelectionViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             RankSelectionViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
         }
@@ -109,23 +107,32 @@ private fun RankSelectionScreen(
             )
         },
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .padding(paddingValues)
                 .inset(insetAllExcludeTop()),
+            contentPadding = PaddingValues(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            FootnoteUi(
-                action = StringKey.RankSelectionActionFootnote.textValue(),
-                onClick = onRankFootnoteClick,
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                items(uiState.ranks) { it.Content(modifier = Modifier) }
+            if (uiState.isMysteryBoxEnabled) {
+                item {
+                    HeaderTileState.small(StringKey.RankSelectionTitleMysteryBox.textValue()).Content(
+                        modifier = Modifier
+                    )
+                }
+                items(uiState.mysteryBoxes) { it.Content(modifier = Modifier) }
             }
+            item {
+                HeaderTileState.small(StringKey.RankSelectionTitleNft.textValue()).Content(
+                    modifier = Modifier
+                )
+                FootnoteUi(
+                    action = StringKey.RankSelectionActionFootnote.textValue(),
+                    onClick = onRankFootnoteClick,
+                    padding = 0.dp,
+                )
+            }
+            items(uiState.ranks) { it.Content(modifier = Modifier) }
         }
     }
 }

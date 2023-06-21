@@ -8,6 +8,7 @@ import androidx.navigation.navArgument
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.model.FullUrl
+import io.snaps.corecommon.model.MysteryBoxType
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.SubsType
 import io.snaps.corecommon.model.TaskType
@@ -238,6 +239,14 @@ object AppRoute {
     object EditName : Route("EditName")
 
     object AboutProject : Route("AboutProject")
+
+    object MysteryBox : RouteWithArg("MysteryBox") {
+
+        @Serializable
+        data class Args(
+            val type: MysteryBoxType,
+        )
+    }
 }
 
 object AppDeeplink {

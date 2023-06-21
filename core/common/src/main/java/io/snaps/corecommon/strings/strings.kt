@@ -2831,6 +2831,48 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Підвищити ранг NFT",
         SupportedLanguageKey.Es to "Elevar el rango de NFT",
     ),
+    key(StringKey.RankSelectionFieldWin) to mapOf(
+        SupportedLanguageKey.En to "Win-win",
+        SupportedLanguageKey.Ru to "Беспроигрышный",
+        SupportedLanguageKey.Tr to "Kazan-kazan",
+        SupportedLanguageKey.Ua to "Безпрограшний",
+        SupportedLanguageKey.Es to "Con premio asegurado",
+    ),
+    key(StringKey.RankSelectionFieldGuaranteed) to mapOf(
+        SupportedLanguageKey.En to "Guaranteed",
+        SupportedLanguageKey.Ru to "Гарантировано",
+        SupportedLanguageKey.Tr to "Garantili",
+        SupportedLanguageKey.Ua to "Гарантований",
+        SupportedLanguageKey.Es to "Garantizado",
+    ),
+    key(StringKey.RankSelectionFieldChance) to mapOf(
+        SupportedLanguageKey.En to "Chance",
+        SupportedLanguageKey.Ru to "Шанс",
+        SupportedLanguageKey.Tr to "Şans",
+        SupportedLanguageKey.Ua to "Шанс",
+        SupportedLanguageKey.Es to "Probabilidad",
+    ),
+    key(StringKey.RankSelectionTitleMysteryBox) to mapOf(
+        SupportedLanguageKey.En to "Mystery Box",
+        SupportedLanguageKey.Ru to "Mystery Box",
+        SupportedLanguageKey.Tr to "Mystery Box",
+        SupportedLanguageKey.Ua to "Mystery Box",
+        SupportedLanguageKey.Es to "Mystery Box",
+    ),
+    key(StringKey.RankSelectionTitleNft) to mapOf(
+        SupportedLanguageKey.En to "NFT glasses",
+        SupportedLanguageKey.Ru to "NFT очки",
+        SupportedLanguageKey.Tr to "NFT noktalarını",
+        SupportedLanguageKey.Ua to "точки NFT",
+        SupportedLanguageKey.Es to "puntos NFT",
+    ),
+    key(StringKey.RankSelectionFieldDropRate) to mapOf(
+        SupportedLanguageKey.En to "In the 5th box",
+        SupportedLanguageKey.Ru to "В 5-м боксе",
+        SupportedLanguageKey.Tr to "5. kutuda",
+        SupportedLanguageKey.Ua to "У 5-му боксі",
+        SupportedLanguageKey.Es to "En el quinto boxeo",
+    ),
     key(StringKey.CreateVideoActionGrantPerms) to mapOf(
         SupportedLanguageKey.En to "Grant permissions",
         SupportedLanguageKey.Ru to "Предоставить разрешения",
@@ -3282,5 +3324,54 @@ internal val strings = mapOf(
     // todo localization
     key(StringKey.AboutProjectTitleWhitepaper) to mapOf(
         SupportedLanguageKey.En to "Whitepaper",
+    ),
+    key(StringKey.MysteryBoxTitle) to mapOf(
+        SupportedLanguageKey.En to "Mystery Box",
+        SupportedLanguageKey.Ru to "Mystery Box",
+        SupportedLanguageKey.Tr to "Mystery Box",
+        SupportedLanguageKey.Ua to "Mystery Box",
+        SupportedLanguageKey.Es to "Mystery Box",
+    ),
+    key(StringKey.MysteryBoxTitlePrimeBox) to mapOf(
+        SupportedLanguageKey.En to "Prime Box",
+        SupportedLanguageKey.Ru to "Prime Box",
+        SupportedLanguageKey.Tr to "Prime Box",
+        SupportedLanguageKey.Ua to "Prime Box",
+        SupportedLanguageKey.Es to "Prime Box",
+    ),
+    key(StringKey.MysteryBoxTitleGuaranteed) to mapOf(
+        SupportedLanguageKey.En to "%s guaranteed",
+        SupportedLanguageKey.Ru to "%s гарантировано",
+        SupportedLanguageKey.Tr to "%s garantili",
+        SupportedLanguageKey.Ua to "%s гарантований",
+        SupportedLanguageKey.Es to "%s garantizado",
+    ),
+    key(StringKey.MysteryBoxFieldDropRate) to mapOf(
+        SupportedLanguageKey.En to "A gift in every 5th box",
+        SupportedLanguageKey.Ru to "Подарок в каждом 5-м боксе",
+        SupportedLanguageKey.Tr to "Her 5. kutuda bir hediye",
+        SupportedLanguageKey.Ua to "Подарунок в кожному 5-му боксі",
+        SupportedLanguageKey.Es to "Un regalo en cada Caja 5",
+    ),
+    key(StringKey.MysteryBoxTitleChanceToWin) to mapOf(
+        SupportedLanguageKey.En to "A chance to win a %s",
+        SupportedLanguageKey.Ru to "Шанс выиграть %s",
+        SupportedLanguageKey.Tr to "%s kazanma şansı",
+        SupportedLanguageKey.Ua to "Шанс виграти %s",
+        SupportedLanguageKey.Es to "Oportunidad de ganar la %s"
+    ),
+    key(StringKey.MysteryBoxFieldDropChance) to mapOf(
+        SupportedLanguageKey.En to "Chance of falling out: %s",
+        SupportedLanguageKey.Ru to "Шанс выпадения: %s",
+        SupportedLanguageKey.Tr to "Düşme şansı: %s",
+        SupportedLanguageKey.Ua to "Шанс випадання: %s",
+        SupportedLanguageKey.Es to "Probabilidad de caída: %s",
+    ),
+    key(StringKey.MysteryBoxTitleChanceNftLoss) to mapOf(
+        SupportedLanguageKey.En to "Chance of NFT loss",
+        SupportedLanguageKey.Ru to "Шанс выпадения NFT",
+        SupportedLanguageKey.Tr to "NFT'NİN düşme şansı",
+        SupportedLanguageKey.Ua to "Шанс випадання NFT",
+        SupportedLanguageKey.Es to "Probabilidad de caída de NFT",
     ),
 )

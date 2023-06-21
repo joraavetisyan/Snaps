@@ -3,6 +3,7 @@ package io.snaps.basewallet.data
 import io.snaps.basewallet.data.model.SnpsAccountResponseDto
 import io.snaps.basewallet.data.model.ClaimRequestDto
 import io.snaps.basewallet.data.model.ClaimResponseDto
+import io.snaps.basewallet.data.model.MysteryBoxSignatureResponseDto
 import io.snaps.basewallet.data.model.PayoutOrderRequestDto
 import io.snaps.basewallet.data.model.PayoutOrderResponseDto
 import io.snaps.basewallet.data.model.RefillGasRequestDto
@@ -69,6 +70,18 @@ class FakeWalletApi : WalletApi {
                 amountReceiver = "",
                 profitWallet = "",
                 contract = "",
+            )
+        )
+    }
+
+    override suspend fun getMysteryBoxSignature(body: SignatureRequestDto): BaseResponse<MysteryBoxSignatureResponseDto> {
+        return BaseResponse(
+            MysteryBoxSignatureResponseDto(
+                signature = "",
+                deadline = 0,
+                amountReceiver = "",
+                profitWallet = "",
+                tokensCount = 0,
             )
         )
     }

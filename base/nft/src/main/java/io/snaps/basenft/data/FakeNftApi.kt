@@ -1,11 +1,15 @@
 package io.snaps.basenft.data
 
 import io.snaps.basenft.data.model.LevelInfo
+import io.snaps.basenft.data.model.MintMysteryBoxRequestDto
+import io.snaps.basenft.data.model.MintMysteryBoxResponseDto
 import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.MintNftResponseDto
 import io.snaps.basenft.data.model.MintNftStoreRequestDto
+import io.snaps.basenft.data.model.MysteryBoxItemResponseDto
 import io.snaps.basenft.data.model.NftItemAdditionalDataDto
 import io.snaps.basenft.data.model.NftItemResponseDto
+import io.snaps.basenft.data.model.ProbabilitiesDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.data.model.RepairGlassesResponseDto
 import io.snaps.basenft.data.model.UserNftItemResponseDto
@@ -15,6 +19,7 @@ import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.mock.rDouble
 import io.snaps.corecommon.mock.rImage
 import io.snaps.corecommon.mock.rInt
+import io.snaps.corecommon.model.MysteryBoxType
 import io.snaps.corecommon.model.NftType
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
@@ -51,6 +56,17 @@ class FakeNftApi : NftApi {
         )
     }
 
+    override suspend fun mintMysteryBox(body: MintMysteryBoxRequestDto): BaseResponse<MintMysteryBoxResponseDto> {
+        log("Requesting add mystery box")
+        delay(mockDelay)
+        return BaseResponse(
+            data = MintMysteryBoxResponseDto(
+                txHash = "",
+                nftTypeFromBox = NftType.Sponsor,
+            ),
+        )
+    }
+
     override suspend fun mintNftStore(body: MintNftStoreRequestDto): BaseResponse<MintNftResponseDto> {
         log("Requesting add nft on store")
         delay(mockDelay)
@@ -66,6 +82,33 @@ class FakeNftApi : NftApi {
         delay(mockDelay)
         return BaseResponse(
             data = RepairGlassesResponseDto(null),
+        )
+    }
+
+    override suspend fun getMysteryBoxes(): BaseResponse<List<MysteryBoxItemResponseDto>> {
+        log("Requesting mystery box")
+        delay(mockDelay)
+        return BaseResponse(
+            data = listOf(
+                MysteryBoxItemResponseDto(
+                    type = MysteryBoxType.FirstTier,
+                    costInUsd = rDouble,
+                    marketingProbabilities = ProbabilitiesDto(
+                        follower = null,
+                        sub = null,
+                        sponsor = null,
+                        influencer = null,
+                        rockstar = rDouble,
+                        famousGuy = rDouble,
+                        newbie = null,
+                        superStar = null,
+                        viewer = rDouble,
+                        blogger = null,
+                        legend = null,
+                        star = rDouble,
+                    ),
+                )
+            ),
         )
     }
 

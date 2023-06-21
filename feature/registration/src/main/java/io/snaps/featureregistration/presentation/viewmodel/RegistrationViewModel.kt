@@ -48,21 +48,15 @@ class RegistrationViewModel @Inject constructor(
     }
 
     fun onLoginWithEmailClicked() = viewModelScope.launch {
-        if (authRepository.getCurrentUser() != null && !authRepository.isEmailVerified()) {
-            _uiState.update {
-                it.copy(dialog = Dialog.EmailVerification)
-            }
-        } else {
-            _uiState.update {
-                it.copy(
-                    bottomDialog = BottomDialog.SignIn,
-                    confirmPasswordValue = "",
-                    passwordValue = "",
-                    emailAddressValue = "",
-                )
-            }
-            _command publish Command.ShowBottomDialog
+        _uiState.update {
+            it.copy(
+                bottomDialog = BottomDialog.SignIn,
+                confirmPasswordValue = "",
+                passwordValue = "",
+                emailAddressValue = "",
+            )
         }
+        _command publish Command.ShowBottomDialog
     }
 
     fun onOneTapSignInStarted() {
@@ -187,7 +181,11 @@ class RegistrationViewModel @Inject constructor(
                 password = uiState.value.passwordValue,
             )
         }.doOnSuccess {
-            handleAuth()
+            if (authRepository.getCurrentUser() != null && !authRepository.isEmailVerified()) {
+                _uiState.update { it.copy(dialog = Dialog.EmailVerification) }
+            } else {
+                handleAuth()
+            }
         }.doOnError { error, _ ->
             if (error.cause is FirebaseAuthException) {
                 notificationsSource.sendError(error)

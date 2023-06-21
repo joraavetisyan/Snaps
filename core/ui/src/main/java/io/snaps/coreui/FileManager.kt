@@ -10,6 +10,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
+import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -161,6 +162,10 @@ class FileManager @Inject constructor(@ApplicationContext val context: Context) 
         val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
         retriever.release()
         return time?.toLong()?.milliseconds
+    }
+
+    fun getUriFromRes(@DrawableRes value: Int,): Uri {
+        return Uri.parse("android.resource://${context.packageName}/$value")
     }
 
     private fun copyFile(uri: Uri?, newFileUri: Uri): Uri? {

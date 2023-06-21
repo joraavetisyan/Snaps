@@ -26,4 +26,5 @@ enum class Feature(
     PurchaseNftInStore("android_buy_button", false, true, true),
     SellSnaps("snaps_cell_enabled", false, true, true),
     Captcha("captcha_enabled", false, true, false),
+    MysteryBox("mystery_enabled", false, true, true),
 }

@@ -1,5 +1,6 @@
 package io.snaps.featurecollection.presentation
 
+import io.snaps.basenft.domain.MysteryBoxModel
 import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.basenft.ui.CollectionItemState
@@ -7,7 +8,10 @@ import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.CoinSNPS
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
+import io.snaps.corecommon.model.MysteryBoxType
 import io.snaps.corecommon.model.State
+import io.snaps.featurecollection.presentation.screen.MysteryBoxInfoTileState
+import io.snaps.featurecollection.presentation.screen.MysteryBoxTileState
 import io.snaps.featurecollection.presentation.screen.RankTileState
 
 val likeValue get() = CoinSNPS(0.5)
@@ -94,3 +98,49 @@ private fun NftModel.toNftCollectionItemState(
     onItemClicked = { onItemClicked(this) },
     onHelpIconClicked = onHelpIconClicked,
 )
+
+fun State<List<MysteryBoxModel>>.toMysteryBoxTileState(
+    onItemClicked: (MysteryBoxModel) -> Unit,
+    onReloadClicked: () -> Unit,
+) = when (this) {
+    is Loading -> List(2) { MysteryBoxTileState.Shimmer }
+    is Effect -> when {
+        isSuccess -> {
+            requireData.map {
+                it.toMysteryBoxTileState(
+                    onItemClicked = onItemClicked,
+                )
+            }
+        }
+        else -> listOf(MysteryBoxTileState.Error(onClick = onReloadClicked))
+    }
+}
+
+private fun MysteryBoxModel.toMysteryBoxTileState(
+    onItemClicked: (MysteryBoxModel) -> Unit,
+) = MysteryBoxTileState.Data(
+    type = type,
+    cost = fiatCost,
+    probabilities = marketingProbabilities,
+    clickListener = { onItemClicked(this) },
+)
+
+fun State<List<MysteryBoxModel>>.toMysteryBoxInfoTileState(
+    type: MysteryBoxType,
+    onReloadClicked: () -> Unit,
+) = when (this) {
+    is Loading -> MysteryBoxInfoTileState.Shimmer
+    is Effect -> when {
+        isSuccess -> {
+            requireData
+                .first { it.type == type }
+                .let {
+                    MysteryBoxInfoTileState.Data(
+                        type = type,
+                        cost = it.fiatCost,
+                    )
+                }
+        }
+        else -> MysteryBoxInfoTileState.Error(onClick = onReloadClicked)
+    }
+}

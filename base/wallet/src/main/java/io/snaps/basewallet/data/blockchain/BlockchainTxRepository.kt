@@ -64,7 +64,11 @@ interface BlockchainTxRepository {
 
     suspend fun getNftMintSummary(nftType: NftType, amount: Double, gasLimit: Long? = null): Effect<NftMintSummary>
 
+    suspend fun getMysteryBoxMintSummary(amount: Double, gasLimit: Long? = null): Effect<NftMintSummary>
+
     suspend fun getMintNftSign(nftType: NftType, summary: NftMintSummary): Effect<TxSign>
+
+    suspend fun getMintMysteryBoxSign(summary: NftMintSummary): Effect<TxSign>
 }
 
 // todo doc for incorrect adapter use
@@ -381,9 +385,70 @@ class BlockchainTxRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getMysteryBoxMintSummary(amount: Double, gasLimit: Long?): Effect<NftMintSummary> {
+        val nonceRaw = getNonceRaw()
+
+        return apiCall(ioDispatcher) {
+            walletApi.getMysteryBoxSignature(body = SignatureRequestDto(nonce = nonceRaw, amount = amount))
+        }.flatMap { data ->
+            blockchainCall(ioDispatcher) {
+                val wallet = requireSnapsWallet()
+                val adapter = requireEip20Adapter(wallet)
+
+                fun error(): Nothing = throw IllegalStateException("Signature data null! $data")
+
+                val address = Address(Nft.SNAPS.address)
+                val fromAddress = requireActiveWalletReceiveAddress()
+
+                val method = MintContractMethod(
+                    owner = Address(fromAddress),
+                    fromAccountAmounts = data.amountReceiver?.let(::BigInteger) ?: error(),
+                    deadline = data.deadline?.toBigInteger() ?: error(),
+                    nonce = nonceRaw.toBigInteger(),
+                    signature = data.signature?.hexStringToByteArray() ?: error(),
+                    profitWallet = data.profitWallet?.let(::Address) ?: error(),
+                    tokensCount = data.tokensCount?.toBigInteger(),
+                )
+                val encodedAbi: ByteArray = method.encodedABI()
+
+                val valueApplied = amount.applyDecimal(wallet.decimal)
+                val transactionData = TransactionData(
+                    to = address,
+                    value = valueApplied,
+                    input = encodedAbi,
+                )
+                val gasLimitEstimate: Long = gasLimit ?: adapter.evmKit.estimateGas(
+                    transactionData = transactionData,
+                    gasPrice = defaultGasPrice,
+                ).blockingGet()
+                val gasPriceDecimal = defaultGasPrice.max.unapplyDecimal(wallet.decimal).times(gasLimitEstimate.toBigDecimal())
+
+                NftMintSummary(
+                    from = fromAddress,
+                    to = address.hex,
+                    summary = amount.toBigDecimal(),
+                    gas = gasPriceDecimal,
+                    total = amount.toBigDecimal() + gasPriceDecimal,
+                    gasLimit = gasLimitEstimate,
+                    transactionData = transactionData,
+                )
+            }
+        }
+    }
+
     private fun getNonceRaw() = System.currentTimeMillis()
 
     override suspend fun getMintNftSign(nftType: NftType, summary: NftMintSummary): Effect<TxSign> {
+        return blockchainCall(ioDispatcher) {
+            requireEip20Adapter(requireSnapsWallet()).evmKitWrapper.signSingle(
+                transactionData = summary.transactionData as TransactionData,
+                gasPrice = defaultGasPrice,
+                gasLimit = summary.gasLimit,
+            ).blockingGet().toHexString()
+        }
+    }
+
+    override suspend fun getMintMysteryBoxSign(summary: NftMintSummary): Effect<TxSign> {
         return blockchainCall(ioDispatcher) {
             requireEip20Adapter(requireSnapsWallet()).evmKitWrapper.signSingle(
                 transactionData = summary.transactionData as TransactionData,
