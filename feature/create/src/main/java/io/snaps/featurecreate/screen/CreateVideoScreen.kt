@@ -57,6 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -85,6 +86,10 @@ import io.snaps.featurecreate.viewmodel.CreateVideoViewModel
 import io.snaps.featurecreate.viewmodel.RecordDelay
 import io.snaps.featurecreate.viewmodel.RecordTiming
 import kotlinx.coroutines.launch
+import ly.img.android.pesdk.VideoEditorSettingsList
+import ly.img.android.pesdk.backend.model.EditorSDKResult
+import ly.img.android.pesdk.backend.model.state.LoadSettings
+import ly.img.android.pesdk.ui.activity.VideoEditorActivityResultContract
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -96,9 +101,26 @@ fun CreateVideoScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
+    val editorLauncher = rememberLauncherForActivityResult(
+        contract = VideoEditorActivityResultContract(),
+        onResult = { result ->
+            when (result.resultStatus) {
+                EditorSDKResult.Status.EXPORT_DONE -> result.resultUri?.path?.let(router::toUploadScreen)
+                else -> Unit
+            }
+        }
+    )
+
     viewModel.command.collectAsCommand {
         when (it) {
-            is CreateVideoViewModel.Command.OpenPreviewScreen -> router.toPreviewScreen(it.uri)
+            is CreateVideoViewModel.Command.OpenPreviewScreen -> {
+                val settingsList = VideoEditorSettingsList(false)
+                    .configure<LoadSettings> { loadSettings ->
+                        loadSettings.source = it.uri.toUri()
+                    }
+                editorLauncher.launch(settingsList)
+                settingsList.release()
+            }
         }
     }
 

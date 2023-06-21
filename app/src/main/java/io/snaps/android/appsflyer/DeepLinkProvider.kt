@@ -4,6 +4,7 @@ import com.appsflyer.deeplink.DeepLink
 import com.appsflyer.deeplink.DeepLinkListener
 import com.appsflyer.deeplink.DeepLinkResult
 import io.snaps.corecommon.ext.log
+import io.snaps.corecommon.ext.logE
 import io.snaps.corenavigation.AppDeeplink
 import io.snaps.corenavigation.Deeplink
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +37,7 @@ class DeepLinkProviderImpl @Inject constructor() : DeepLinkProvider {
                     }
                     else -> {
                         val dlError = deepLinkResult.error
-                        log("There was an error getting Deep Link data: $dlError")
+                        logE("There was an error getting Deep Link data: $dlError")
                         return
                     }
                 }
@@ -47,7 +48,7 @@ class DeepLinkProviderImpl @Inject constructor() : DeepLinkProvider {
                         _deepLink.tryEmit(it)
                     }
                 } catch (e: Exception) {
-                    log("DeepLink data came back null")
+                    logE("DeepLink data came back null")
                 }
             }
         }

@@ -58,6 +58,7 @@ class SnapsApp : Application(), ApplicationCoroutineScopeHolder, ImageLoaderFact
 
         CryptoInitializer.initKit(this)
 
+        // todo Wrap
         AppsFlyerLib.getInstance().apply {
             setDebugLog(true)
             subscribeForDeepLink(deepLinkProvider.getDeepLinkListener())

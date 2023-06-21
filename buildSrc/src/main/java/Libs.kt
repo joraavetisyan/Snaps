@@ -10,6 +10,7 @@ object Libs {
     private const val rulerVersion = "1.1.0"
     private const val benManesVersionsVersion = "0.45.0"
     const val sentryVersion = "3.7.0"
+    const val imglyVersion = "10.7.0"
 
     /*Compatibility with Kotlin https://developer.android.com/jetpack/androidx/releases/compose-kotlin*/
     const val composeCompilerVersion = "1.4.7"
@@ -94,6 +95,7 @@ object Libs {
         const val spotify_ruler = "com.spotify.ruler"
         const val ben_manes_versions = "com.github.ben-manes.versions"
         const val sentry = "io.sentry.android.gradle"
+        const val imgly = "ly.img.android.sdk"
     }
 
     object classpath {
