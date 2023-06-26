@@ -1,5 +1,6 @@
 package io.snaps.basefile.data
 
+import dagger.Lazy
 import io.snaps.basefile.domain.FileModel
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
@@ -22,7 +23,7 @@ interface FileRepository {
 
 class FileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val api: FileApi,
+    private val api: Lazy<FileApi>,
     private val fileManager: FileManager,
 ) : FileRepository {
 
@@ -35,7 +36,7 @@ class FileRepositoryImpl @Inject constructor(
             body = file.asRequestBody(mediaType),
         )
         return apiCall(ioDispatcher) {
-            api.upload(multipartBody)
+            api.get().upload(multipartBody)
         }.map {
             it.first().toFileModel()
         }
@@ -43,7 +44,7 @@ class FileRepositoryImpl @Inject constructor(
 
     override suspend fun downloadFile(fileId: Uuid): Effect<InputStream> {
         return apiCall(ioDispatcher) {
-            api.download(fileId)
+            api.get().download(fileId)
         }.map {
            it.byteStream()
         }

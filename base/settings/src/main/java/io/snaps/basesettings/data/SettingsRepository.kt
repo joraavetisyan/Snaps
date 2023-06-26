@@ -1,5 +1,6 @@
 package io.snaps.basesettings.data
 
+import dagger.Lazy
 import io.snaps.basesettings.domain.CommonSettingsModel
 import io.snaps.basesources.featuretoggle.EditableFeatureToggle
 import io.snaps.basesources.featuretoggle.Feature
@@ -42,7 +43,7 @@ interface SettingsRepository {
 class SettingsRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationCoroutineScope private val scope: CoroutineScope,
-    private val api: SettingsApi,
+    private val api: Lazy<SettingsApi>,
     private val buildInfo: BuildInfo,
     private val featureToggle: EditableFeatureToggle,
     private val userDataStorage: UserDataStorage,
@@ -65,7 +66,7 @@ class SettingsRepositoryImpl @Inject constructor(
 
     override suspend fun update(): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            api.settings()
+            api.get().settings()
         }.doOnSuccess {
             it.setRemotes()
             it.banner.checkBannerVersion()
@@ -76,7 +77,7 @@ class SettingsRepositoryImpl @Inject constructor(
 
     override suspend fun getCommonSettings(): Effect<CommonSettingsModel> {
         return apiCall(ioDispatcher) {
-            api.commonSettings()
+            api.get().commonSettings()
         }.map {
             it.toModel()
         }
@@ -86,7 +87,7 @@ class SettingsRepositoryImpl @Inject constructor(
         return state.value.dataOrCache?.let {
             Effect.success(it.mapToVideoApiKey())
         } ?: apiCall(ioDispatcher) {
-            api.settings()
+            api.get().settings()
         }.map { it.mapToVideoApiKey() }
     }
 

@@ -41,7 +41,7 @@ object Libs {
     private const val hiltJetpackVersion = "1.0.0"
 
     private const val crashlyticsGradleVersion = "2.5.2"
-    private const val firebaseBomVersion = "32.0.0"
+    private const val firebaseBomVersion = "32.1.1"
 
     private const val playServicesAuthVersion = "20.4.1"
     private const val recaptchaVersion = "18.1.1"
@@ -150,6 +150,7 @@ object Libs {
             "com.google.firebase:firebase-messaging-ktx",
             "com.google.firebase:firebase-config-ktx",
             "com.google.firebase:firebase-dynamic-links-ktx",
+            "com.google.firebase:firebase-database-ktx",
         )
 
         val composeCompiler = arrayOf("androidx.compose.compiler:compiler:$composeCompilerVersion")

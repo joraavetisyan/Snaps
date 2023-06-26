@@ -1,5 +1,6 @@
 package io.snaps.featurecreate.screen
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,10 @@ import io.snaps.coreuicompose.uikit.other.Progress
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.featurecreate.ScreenNavigator
 import io.snaps.featurecreate.viewmodel.PreviewViewModel
+import ly.img.android.pesdk.VideoEditorSettingsList
+import ly.img.android.pesdk.backend.model.EditorSDKResult
+import ly.img.android.pesdk.backend.model.state.LoadSettings
+import ly.img.android.pesdk.ui.activity.VideoEditorActivityResultContract
 
 @Composable
 fun PreviewScreen(
@@ -44,9 +49,24 @@ fun PreviewScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
+    val editorLauncher = rememberLauncherForActivityResult(
+        contract = VideoEditorActivityResultContract(),
+        onResult = { result ->
+            when (result.resultStatus) {
+                EditorSDKResult.Status.EXPORT_DONE -> result.resultUri?.path?.let(router::toUploadScreen)
+                else -> Unit
+            }
+        }
+    )
+
     viewModel.command.collectAsCommand {
         when (it) {
-            is PreviewViewModel.Command.OpenUploadScreen -> router.toUploadScreen(it.uri)
+            is PreviewViewModel.Command.OpenEditorScreen -> {
+                val settingsList = VideoEditorSettingsList(false)
+                    .configure<LoadSettings> { loadSettings -> loadSettings.source = it.uri }
+                editorLauncher.launch(settingsList)
+                settingsList.release()
+            }
         }
     }
 

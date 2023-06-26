@@ -45,15 +45,13 @@ class MyCollectionInteractorImpl @Inject constructor(
     override suspend fun repair(nftModel: NftModel): Effect<TxHash> {
         return profileRepository.updateData(isSilently = true).flatMap { userInfoModel ->
             if (userInfoModel.paymentsState == PaymentsState.Blockchain) {
-                repairNftBlockchain(nftModel)
-            } else {
-                // if it was not possible to repair for web 2, then need to repair for web 3
-                val repairNft = nftRepository.repairNft(nftModel = nftModel)
-                if (repairNft.isError) {
-                    repairNftBlockchain(nftModel = nftModel)
-                } else {
-                    repairNft.map { "" }
+                if ((walletRepository.snps.value?.coinValue?.value ?: 0.0) < nftModel.repairCost.value) {
+                    Effect.error(AppError.Custom(cause = NoEnoughSnpToRepair))
+                } else blockchainTxRepository.getRepairNftSign(repairCost = nftModel.repairCost.value).flatMap { sign ->
+                    nftRepository.repairNftBlockchain(nftModel = nftModel, txSign = sign)
                 }
+            } else {
+                nftRepository.repairNft(nftModel = nftModel).map { "" }
             }.doOnSuccess {
                 walletRepository.updateTotalBalance()
             }
@@ -120,14 +118,6 @@ class MyCollectionInteractorImpl @Inject constructor(
         }.doOnSuccess {
             profileRepository.updateData(isSilently = true)
             walletRepository.updateTotalBalance()
-        }
-    }
-
-    private suspend fun repairNftBlockchain(nftModel: NftModel): Effect<TxHash> {
-        return if ((walletRepository.snps.value?.coinValue?.value ?: 0.0) < nftModel.repairCost.value) {
-            Effect.error(AppError.Custom(cause = NoEnoughSnpToRepair))
-        } else blockchainTxRepository.getRepairNftSign(repairCost = nftModel.repairCost.value).flatMap { sign ->
-            nftRepository.repairNftBlockchain(nftModel = nftModel, txSign = sign)
         }
     }
 }

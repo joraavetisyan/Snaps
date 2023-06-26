@@ -2,6 +2,7 @@ package io.snaps.basewallet.data
 
 import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.UserNotAuthenticatedException
+import dagger.Lazy
 import io.horizontalsystems.ethereumkit.models.Address
 import io.horizontalsystems.marketkit.models.Blockchain
 import io.horizontalsystems.marketkit.models.BlockchainType
@@ -132,7 +133,7 @@ class WalletRepositoryImpl @Inject constructor(
     private val totalBalanceManager: ITotalBalance,
     private val balanceViewItemFactory: BalanceViewItemFactory,
 
-    private val walletApi: WalletApi,
+    private val walletApi: Lazy<WalletApi>,
 ) : WalletRepository {
 
     private val _snpsAccountState = MutableStateFlow<State<SnpsAccountModel>>(Loading())
@@ -199,7 +200,7 @@ class WalletRepositoryImpl @Inject constructor(
     override suspend fun updateSnpsAccount(): Effect<Completable> {
         _snpsAccountState tryPublish Loading()
         return apiCall(ioDispatcher) {
-            walletApi.getSnpsAccount()
+            walletApi.get().getSnpsAccount()
         }.map {
             it.toModel()
         }.also {
@@ -272,7 +273,7 @@ class WalletRepositoryImpl @Inject constructor(
             address = getActiveWalletReceiveAddress()
         }
         return apiCall(ioDispatcher) {
-            walletApi.save(WalletSaveRequestDto(address = address))
+            walletApi.get().save(WalletSaveRequestDto(address = address))
         }.toCompletable()
     }
 
@@ -351,19 +352,19 @@ class WalletRepositoryImpl @Inject constructor(
 
     override suspend fun claim(amount: Double): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            walletApi.claim(ClaimRequestDto(amount))
+            walletApi.get().claim(ClaimRequestDto(amount))
         }.toCompletable()
     }
 
     override suspend fun claimMax(): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            walletApi.claimMax()
+            walletApi.get().claimMax()
         }.toCompletable()
     }
 
     override suspend fun confirmPayout(amount: Double, cardNumber: CardNumber): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            walletApi.payoutOrder(PayoutOrderRequestDto(cardNumber = cardNumber, amount = amount))
+            walletApi.get().payoutOrder(PayoutOrderRequestDto(cardNumber = cardNumber, amount = amount))
         }
     }
 
@@ -372,7 +373,7 @@ class WalletRepositoryImpl @Inject constructor(
             _payouts tryPublish Loading()
         }
         return apiCall(ioDispatcher) {
-            walletApi.payoutStatus()
+            walletApi.get().payoutStatus()
         }.also {
             _payouts tryPublish it
         }.toCompletable()
@@ -380,7 +381,7 @@ class WalletRepositoryImpl @Inject constructor(
 
     override suspend fun refillGas(amount: Double): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            walletApi.refillGas(RefillGasRequestDto(amount = amount))
+            walletApi.get().refillGas(RefillGasRequestDto(amount = amount))
         }
     }
 

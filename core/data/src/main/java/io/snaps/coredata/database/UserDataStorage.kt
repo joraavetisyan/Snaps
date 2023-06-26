@@ -39,6 +39,10 @@ class UserDataStorage @Inject constructor(
 
     var captchaResult: String? = null
 
+    var prodBaseUrl: String?
+        get() = provider.prefs.getString("prodBaseUrl", null)
+        set(value) = provider.prefs.edit { putString("prodBaseUrl", value) }
+
     fun isOnboardingShown(type: OnboardingType): Boolean {
         return provider.prefs.getBoolean("onboarding${type.name}", false)
     }

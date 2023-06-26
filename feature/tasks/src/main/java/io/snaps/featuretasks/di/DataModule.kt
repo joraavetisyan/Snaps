@@ -9,7 +9,6 @@ import dagger.hilt.android.scopes.ViewModelScoped
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.coredata.network.ApiConfig
-import io.snaps.coredata.network.ApiService
 import io.snaps.featuretasks.data.FakeTasksApi
 import io.snaps.featuretasks.data.TasksApi
 import io.snaps.featuretasks.data.TasksRepository
@@ -27,7 +26,6 @@ class DataModule {
         if (feature.isEnabled(Feature.TasksApiMock)) FakeTasksApi()
         else config
             .serviceBuilder(TasksApi::class.java)
-            .service(ApiService.General)
             .interceptor(config.commonHeaderInterceptor)
             .interceptor(config.authenticationInterceptor)
             .build()

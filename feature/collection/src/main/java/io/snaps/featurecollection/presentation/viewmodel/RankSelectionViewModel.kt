@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
 import io.snaps.basenft.domain.MysteryBoxModel
 import io.snaps.basenft.domain.RankModel
+import io.snaps.basesettings.data.SettingsRepository
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesources.featuretoggle.FeatureToggle
 import io.snaps.basewallet.data.WalletRepository
@@ -34,6 +35,7 @@ class RankSelectionViewModel @Inject constructor(
     private val featureToggle: FeatureToggle,
     @Bridged private val nftRepository: NftRepository,
     @Bridged private val walletRepository: WalletRepository,
+    private val settingsRepository: SettingsRepository,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -45,11 +47,20 @@ class RankSelectionViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     init {
-        subscribeOnRanks()
-        subscribeOnMysteryBoxes()
+        viewModelScope.launch {
+            if (settingsRepository.state.value.dataOrCache == null) {
+                settingsRepository.update().doOnSuccess {
+                    _uiState.update {
+                        it.copy(isMysteryBoxEnabled = featureToggle.isEnabled(Feature.MysteryBox))
+                    }
+                }
+            }
+            subscribeOnRanks()
+            subscribeOnMysteryBoxes()
 
-        loadRanks()
-        loadMysteryBoxes()
+            loadRanks()
+            loadMysteryBoxes()
+        }
     }
 
     private fun subscribeOnRanks() {

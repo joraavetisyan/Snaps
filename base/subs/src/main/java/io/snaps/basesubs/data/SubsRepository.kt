@@ -1,5 +1,6 @@
 package io.snaps.basesubs.data
 
+import dagger.Lazy
 import io.snaps.basesubs.data.model.SubsItemResponseDto
 import io.snaps.basesubs.data.model.SubscribeRequestDto
 import io.snaps.basesubs.data.model.UnsubscribeRequestDto
@@ -37,7 +38,7 @@ interface SubsRepository {
 
 class SubsRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val subsApi: SubsApi,
+    private val subsApi: Lazy<SubsApi>,
     private val loaderFactory: SubsLoaderFactory,
 ) : SubsRepository {
 
@@ -50,9 +51,9 @@ class SubsRepositoryImpl @Inject constructor(
                 is SubType.Subscription -> PagedLoaderParams(
                     action = { from, count ->
                         if (type.userId == null) {
-                            subsApi.mySubscriptions(from = from, count = count)
+                            subsApi.get().mySubscriptions(from = from, count = count)
                         } else {
-                            subsApi.subscriptions(from = from, count = count, userId = type.userId)
+                            subsApi.get().subscriptions(from = from, count = count, userId = type.userId)
                         }
                     },
                     pageSize = 100,
@@ -62,9 +63,9 @@ class SubsRepositoryImpl @Inject constructor(
                 is SubType.Subscriber -> PagedLoaderParams(
                     action = { from, count ->
                         if (type.userId == null) {
-                            subsApi.mySubscribers(from = from, count = count)
+                            subsApi.get().mySubscribers(from = from, count = count)
                         } else {
-                            subsApi.subscribers(from = from, count = count, userId = type.userId)
+                            subsApi.get().subscribers(from = from, count = count, userId = type.userId)
                         }
                     },
                     pageSize = 100,
@@ -95,7 +96,7 @@ class SubsRepositoryImpl @Inject constructor(
 
     override suspend fun subscribe(toSubscribeUserId: Uuid): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            subsApi.subscribe(
+            subsApi.get().subscribe(
                 SubscribeRequestDto(toSubscribeUserId = toSubscribeUserId)
             )
         }.doOnSuccess {
@@ -115,7 +116,7 @@ class SubsRepositoryImpl @Inject constructor(
 
     override suspend fun unsubscribe(subscriptionId: Uuid): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            subsApi.unsubscribe(
+            subsApi.get().unsubscribe(
                 UnsubscribeRequestDto(subscriptionId = subscriptionId)
             )
         }.doOnSuccess {
@@ -132,7 +133,7 @@ class SubsRepositoryImpl @Inject constructor(
 
     private suspend fun mySubscriptions(): Effect<List<SubsItemResponseDto>> {
         return mySubscriptions?.let(Effect.Companion::success) ?: apiCall(ioDispatcher) {
-            subsApi.mySubscriptions(from = null, count = 1000)
+            subsApi.get().mySubscriptions(from = null, count = 1000)
         }.doOnSuccess {
             mySubscriptions = it
         }

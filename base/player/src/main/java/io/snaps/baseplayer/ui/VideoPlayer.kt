@@ -1,7 +1,6 @@
 package io.snaps.baseplayer.ui
 
 import android.os.Looper
-import android.util.Log
 import android.view.ViewGroup
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.gestures.detectTapGestures

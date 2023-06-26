@@ -1,5 +1,6 @@
 package io.snaps.featurewallet.data
 
+import dagger.Lazy
 import io.snaps.baseprofile.data.ProfileApi
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
@@ -21,7 +22,7 @@ interface TransactionsRepository {
 
 class TransactionsRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val profileApi: ProfileApi,
+    private val profileApi: Lazy<ProfileApi>,
     private val loaderFactory: TransactionsLoaderFactory,
 ) : TransactionsRepository {
 
@@ -30,7 +31,7 @@ class TransactionsRepositoryImpl @Inject constructor(
             when (type) {
                 TransactionsType.Unlocked -> PagedLoaderParams(
                     action = { from, count ->
-                        profileApi.unlockedTransactions(from = from, count = count)
+                        profileApi.get().unlockedTransactions(from = from, count = count)
                     },
                     pageSize = 50,
                     nextPageIdFactory = { it.id },
@@ -38,7 +39,7 @@ class TransactionsRepositoryImpl @Inject constructor(
                 )
                 TransactionsType.Locked -> PagedLoaderParams(
                     action = { from, count ->
-                        profileApi.lockedTransactions(from = from, count = count)
+                        profileApi.get().lockedTransactions(from = from, count = count)
                     },
                     pageSize = 50,
                     nextPageIdFactory = { it.id },

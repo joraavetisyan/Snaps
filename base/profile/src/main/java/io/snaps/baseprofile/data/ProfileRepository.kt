@@ -1,5 +1,6 @@
 package io.snaps.baseprofile.data
 
+import dagger.Lazy
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
@@ -78,7 +79,7 @@ interface ProfileRepository {
 class ProfileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @UserSessionCoroutineScope private val scope: CoroutineScope,
-    private val api: ProfileApi,
+    private val api: Lazy<ProfileApi>,
     private val loaderFactory: UsersLoaderFactory,
 ) : ProfileRepository {
 
@@ -102,7 +103,7 @@ class ProfileRepositoryImpl @Inject constructor(
         return loaderFactory.get(query) {
             PagedLoaderParams(
                 action = { from, count ->
-                    api.users(
+                    api.get().users(
                         query = query,
                         from = from,
                         count = count,
@@ -131,7 +132,7 @@ class ProfileRepositoryImpl @Inject constructor(
             _state tryPublish Loading()
         }
         return apiCall(ioDispatcher) {
-            api.userInfo()
+            api.get().userInfo()
         }.map {
             it.toModel()
         }.also {
@@ -142,7 +143,7 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun updateReferrals(): Effect<Completable> {
         _referralsState tryPublish Loading()
         return apiCall(ioDispatcher) {
-            api.users(query = null, from = null, count = 100, onlyInvited = true)
+            api.get().users(query = null, from = null, count = 100, onlyInvited = true)
         }.map {
             it.map(UserInfoResponseDto::toModel)
         }.also {
@@ -152,7 +153,7 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun getUserInfoById(userId: String): Effect<UserInfoModel> {
         return apiCall(ioDispatcher) {
-            api.userInfo(userId)
+            api.get().userInfo(userId)
         }.map {
             it.toModel()
         }
@@ -164,7 +165,7 @@ class ProfileRepositoryImpl @Inject constructor(
         address: CryptoAddress
     ): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            api.editUser(
+            api.get().editUser(
                 EditUserRequestDto(
                     name = userName,
                     avatarUrl = avatar,
@@ -180,7 +181,7 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun setInviteCode(inviteCode: String): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            api.setInviteCode(
+            api.get().setInviteCode(
                 SetInviteCodeRequestDto(inviteCode = inviteCode)
             )
         }.doOnSuccess {
@@ -205,7 +206,7 @@ class ProfileRepositoryImpl @Inject constructor(
         avatar: FullUrl?,
     ): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            api.connectInstagram(
+            api.get().connectInstagram(
                 ConnectInstagramRequestDto(
                     instagramId = instagramUsername,
                     wallet = address,
@@ -230,7 +231,7 @@ class ProfileRepositoryImpl @Inject constructor(
         avatar: FullUrl?,
     ): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            api.connectInstagram(
+            api.get().connectInstagram(
                 ConnectInstagramRequestDto(
                     instagramId = null,
                     wallet = address,

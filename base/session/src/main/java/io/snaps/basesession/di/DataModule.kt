@@ -21,7 +21,6 @@ import io.snaps.coredata.di.UserSessionComponentManager
 import io.snaps.coredata.di.UserSessionScope
 import io.snaps.coredata.network.Action
 import io.snaps.coredata.network.ApiConfig
-import io.snaps.coredata.network.ApiService
 import javax.inject.Singleton
 
 @Module
@@ -31,7 +30,6 @@ class DataModule {
     @Provides
     @Singleton
     fun logoutApi(config: ApiConfig) = config.serviceBuilder(LogoutApi::class.java)
-        .service(ApiService.General)
         .interceptor(config.commonHeaderInterceptor)
         .interceptor(config.authenticationInterceptor)
         .build()

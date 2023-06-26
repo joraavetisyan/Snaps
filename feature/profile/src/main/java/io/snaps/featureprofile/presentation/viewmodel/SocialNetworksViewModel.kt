@@ -37,6 +37,12 @@ class SocialNetworksViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     init {
+        subscribeToSettings()
+
+        loadSettings()
+    }
+
+    private fun subscribeToSettings() {
         settingsRepository.state.onEach {
             if (it is Effect && it.isSuccess) {
                 val items = it.requireData.socialPages.map { socialPage ->
@@ -61,6 +67,14 @@ class SocialNetworksViewModel @Inject constructor(
                 _uiState.update { it.copy(items = items) }
             }
         }.launchIn(viewModelScope)
+    }
+
+    private fun loadSettings() {
+        viewModelScope.launch {
+            if (settingsRepository.state.value.dataOrCache == null) {
+                settingsRepository.update()
+            }
+        }
     }
 
     private fun onSocialPageItemClicked(link: FullUrl) {

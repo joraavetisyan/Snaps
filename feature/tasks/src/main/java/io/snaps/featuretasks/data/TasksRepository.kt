@@ -1,5 +1,6 @@
 package io.snaps.featuretasks.data
 
+import dagger.Lazy
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.coredata.coroutine.IoDispatcher
@@ -24,14 +25,14 @@ interface TasksRepository {
 
 class TasksRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val tasksApi: TasksApi,
+    private val tasksApi: Lazy<TasksApi>,
     private val loaderFactory: HistoryTasksLoaderFactory,
 ) : TasksRepository {
 
     private fun getLoader(): HistoryTasksLoader {
         return loaderFactory.get(Unit) {
             PagedLoaderParams(
-                action = { from, count -> tasksApi.historyTasks(from = from, count = count) },
+                action = { from, count -> tasksApi.get().historyTasks(from = from, count = count) },
                 pageSize = 20,
                 nextPageIdFactory = { it.date },
                 mapper = List<HistoryTaskItemResponseDto>::toModelList,
@@ -47,7 +48,7 @@ class TasksRepositoryImpl @Inject constructor(
 
     override suspend fun postToInstagram(): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            tasksApi.instagramPost()
+            tasksApi.get().instagramPost()
         }
     }
 }

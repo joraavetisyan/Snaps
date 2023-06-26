@@ -24,4 +24,5 @@ dependencies {
     implementation(projects.baseNft)
     implementation(projects.baseSession)
     implementation(projects.basePlayer)
+    implementation(projects.baseSettings)
 }

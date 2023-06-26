@@ -6,8 +6,5 @@
             <certificates src="user" />
         </trust-anchors>
     </debug-overrides>
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">51.250.36.197</domain> <!--dev-->
-        <domain includeSubdomains="true">51.250.42.53</domain> <!--prod todo release remove once back supports, need https-->
-    </domain-config>
+    <base-config cleartextTrafficPermitted="true"/>
 </network-security-config>

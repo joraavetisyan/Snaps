@@ -3,7 +3,6 @@ package io.snaps.baseprofile.domain
 import io.snaps.basefile.data.FileRepository
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basewallet.data.WalletRepository
-import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FullUrl
@@ -21,14 +20,14 @@ class EditUserInteractorImpl @Inject constructor(
     @Bridged private val profileRepository: ProfileRepository,
     private val fileRepository: FileRepository,
     @Bridged private val walletRepository: WalletRepository,
-    private val buildInfo: BuildInfo,
+    private val apiService: ApiService,
 ) : EditUserInteractor {
 
     override suspend fun editUser(avatarFile: File?, userName: String?): Effect<Completable> {
         return avatarFile?.let { file ->
             fileRepository.uploadFile(file).flatMap {
                 edit(
-                    avatarUrl = "${ApiService.General.getBaseUrl(buildInfo)}v1/file?fileId=${it.id}",
+                    avatarUrl = "${apiService.getBaseUrl()}v1/file?fileId=${it.id}",
                     userName = userName,
                 )
             }

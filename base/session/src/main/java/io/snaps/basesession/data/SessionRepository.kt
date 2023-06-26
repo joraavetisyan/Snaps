@@ -1,6 +1,7 @@
 package io.snaps.basesession.data
 
 import com.google.firebase.auth.FirebaseAuth
+import dagger.Lazy
 import io.snaps.baseprofile.data.ProfileApi
 import io.snaps.basesources.DeviceInfoProvider
 import io.snaps.basewallet.data.WalletDataManager
@@ -51,7 +52,7 @@ class SessionRepositoryImpl @Inject constructor(
     private val userDataStorage: UserDataStorage,
     private val deviceInfoProvider: DeviceInfoProvider,
     private val auth: FirebaseAuth,
-    private val profileApi: ProfileApi,
+    private val profileApi: Lazy<ProfileApi>,
     private val walletDataManager: WalletDataManager,
 ) : SessionRepository {
 
@@ -73,7 +74,7 @@ class SessionRepositoryImpl @Inject constructor(
 
     private suspend fun checkStatus(userId: Uuid): Effect<Completable> {
         suspend fun check() = apiCall(ioDispatcher) {
-            profileApi.userInfo()
+            profileApi.get().userInfo()
         }.doOnSuccess { user ->
             when {
                 // todo check for account AND wallets

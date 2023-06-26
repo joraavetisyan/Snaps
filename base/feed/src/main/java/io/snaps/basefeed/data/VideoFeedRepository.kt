@@ -1,5 +1,6 @@
 package io.snaps.basefeed.data
 
+import dagger.Lazy
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
@@ -55,7 +56,7 @@ interface VideoFeedRepository {
 class VideoFeedRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @UserSessionCoroutineScope private val scope: CoroutineScope,
-    private val videoFeedApi: VideoFeedApi,
+    private val videoFeedApi: Lazy<VideoFeedApi>,
     private val loaderFactory: VideoFeedLoaderFactory,
     private val uploader: VideoFeedUploader,
     private val userDataStorage: UserDataStorage,
@@ -75,25 +76,25 @@ class VideoFeedRepositoryImpl @Inject constructor(
         return loaderFactory.get(videoFeedType) { type ->
             when (type) {
                 VideoFeedType.Main -> PagedLoaderParams(
-                    action = { from, count -> videoFeedApi.getFeed(from = from, count = count) },
+                    action = { from, count -> videoFeedApi.get().getFeed(from = from, count = count) },
                     pageSize = 20,
                     nextPageIdFactory = { it.entityId },
                     mapper = { it.toVideoClipModelList() },
                 )
                 VideoFeedType.Subscriptions -> PagedLoaderParams(
-                    action = { from, count -> videoFeedApi.getSubscriptionFeed(from = from, count = count) },
+                    action = { from, count -> videoFeedApi.get().getSubscriptionFeed(from = from, count = count) },
                     pageSize = 5,
                     nextPageIdFactory = { it.entityId },
                     mapper = { it.toVideoClipModelList() },
                 )
                 is VideoFeedType.Single -> PagedLoaderParams(
-                    action = { _, _ -> videoFeedApi.getVideo(type.videoId).toFeedBaseResponse() },
+                    action = { _, _ -> videoFeedApi.get().getVideo(type.videoId).toFeedBaseResponse() },
                     pageSize = 1,
                     nextPageIdFactory = { null },
                     mapper = { it.toVideoClipModelList() },
                 )
                 is VideoFeedType.Popular -> PagedLoaderParams(
-                    action = { from, count -> videoFeedApi.getPopularFeed(from = from, count = count) },
+                    action = { from, count -> videoFeedApi.get().getPopularFeed(from = from, count = count) },
                     pageSize = 50,
                     nextPageIdFactory = { it.entityId },
                     mapper = { it.toVideoClipModelList() },
@@ -101,9 +102,9 @@ class VideoFeedRepositoryImpl @Inject constructor(
                 is VideoFeedType.User -> PagedLoaderParams(
                     action = { from, count ->
                         if (type.userId != null) {
-                            videoFeedApi.getUserFeed(userId = type.userId, from = from, count = count)
+                            videoFeedApi.get().getUserFeed(userId = type.userId, from = from, count = count)
                         } else {
-                            videoFeedApi.getMyFeed(from = from, count = count)
+                            videoFeedApi.get().getMyFeed(from = from, count = count)
                         }
                     },
                     pageSize = 50,
@@ -112,7 +113,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
                 )
                 is VideoFeedType.Search -> PagedLoaderParams(
                     action = { from, count ->
-                        videoFeedApi.getSearchFeed(query = type.query, from = from, count = count)
+                        videoFeedApi.get().getSearchFeed(query = type.query, from = from, count = count)
                     },
                     pageSize = 50,
                     nextPageIdFactory = { it.entityId },
@@ -121,9 +122,9 @@ class VideoFeedRepositoryImpl @Inject constructor(
                 is VideoFeedType.Liked -> PagedLoaderParams(
                     action = { from, count ->
                         if (type.userId == null) {
-                            videoFeedApi.getMyLikedFeed(from = from, count = count).toFeedBaseResponse()
+                            videoFeedApi.get().getMyLikedFeed(from = from, count = count).toFeedBaseResponse()
                         } else {
-                            videoFeedApi.getLikedFeed(userId = type.userId, from = from, count = count)
+                            videoFeedApi.get().getLikedFeed(userId = type.userId, from = from, count = count)
                         }
                     },
                     pageSize = 50,
@@ -144,19 +145,19 @@ class VideoFeedRepositoryImpl @Inject constructor(
         getLoader(feedType).loadNext()
 
     override suspend fun get(videoId: Uuid): Effect<VideoClipModel> {
-        return apiCall(ioDispatcher) { videoFeedApi.getVideo(videoId) }.map { it.toModel(false) }
+        return apiCall(ioDispatcher) { videoFeedApi.get().getVideo(videoId) }.map { it.toModel(false) }
     }
 
     override suspend fun like(videoId: Uuid): Effect<Completable> {
-        return apiCall(ioDispatcher) { videoFeedApi.likeVideo(videoId = videoId) }
+        return apiCall(ioDispatcher) { videoFeedApi.get().likeVideo(videoId = videoId) }
     }
 
     override suspend fun markWatched(videoId: Uuid): Effect<Completable> {
-        return apiCall(ioDispatcher) { videoFeedApi.markVideoWatched(videoId = videoId) }
+        return apiCall(ioDispatcher) { videoFeedApi.get().markVideoWatched(videoId = videoId) }
     }
 
     override suspend fun markShown(videoId: Uuid): Effect<Completable> {
-        return apiCall(ioDispatcher) { videoFeedApi.markVideoShown(videoId = videoId) }
+        return apiCall(ioDispatcher) { videoFeedApi.get().markVideoShown(videoId = videoId) }
     }
 
     override suspend fun upload(
@@ -166,7 +167,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
         userInfoModel: UserInfoModel?,
     ): Effect<Uuid> {
         return apiCall(ioDispatcher) {
-            videoFeedApi.addVideo(
+            videoFeedApi.get().addVideo(
                 AddVideoRequestDto(
                     title = title,
                     description = title,
@@ -218,6 +219,6 @@ class VideoFeedRepositoryImpl @Inject constructor(
     }
 
     override suspend fun delete(videoId: Uuid): Effect<Completable> {
-        return apiCall(ioDispatcher) { videoFeedApi.deleteVideo(videoId = videoId) }
+        return apiCall(ioDispatcher) { videoFeedApi.get().deleteVideo(videoId = videoId) }
     }
 }

@@ -22,6 +22,7 @@ class ApiConfig @Inject constructor(
 
     private val converter: Converter.Factory,
     private val buildInfo: BuildInfo,
+    private val apiService: ApiService,
 ) {
 
     fun <API> serviceBuilder(clazz: Class<API>): ServiceParams<API> = ServiceParams(clazz)
@@ -60,15 +61,15 @@ class ApiConfig @Inject constructor(
 
     inner class ServiceParams<API>(var clazz: Class<API>) {
 
-        private var service: ApiService? = null
+        // private var service: ApiService? = null
         private val interceptors = mutableSetOf<Interceptor>()
 
-        fun service(service: ApiService) = this.apply { this.service = service }
+        // fun service(service: ApiService) = this.apply { this.service = service }
 
         fun interceptor(interceptor: Interceptor) = this.apply { interceptors += interceptor }
 
         fun build(): API = createRetrofit(
-            requireNotNull(service).getBaseUrl(buildInfo),
+            apiService.getBaseUrl(),
             interceptors
         ).create(clazz)
     }

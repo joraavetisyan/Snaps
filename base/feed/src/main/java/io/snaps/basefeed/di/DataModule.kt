@@ -32,7 +32,6 @@ import io.snaps.coredata.di.UserSessionComponent
 import io.snaps.coredata.di.UserSessionComponentManager
 import io.snaps.coredata.di.UserSessionScope
 import io.snaps.coredata.network.ApiConfig
-import io.snaps.coredata.network.ApiService
 import javax.inject.Singleton
 
 @Module
@@ -45,7 +44,6 @@ internal class DataModule {
         if (feature.isEnabled(Feature.FeedApiMock)) FakeVideoFeedApi()
         else config
             .serviceBuilder(VideoFeedApi::class.java)
-            .service(ApiService.General)
             .interceptor(config.commonHeaderInterceptor)
             .interceptor(config.authenticationInterceptor)
             .build()
@@ -56,7 +54,6 @@ internal class DataModule {
         if (feature.isEnabled(Feature.CommentApiMock)) FakeCommentApi()
         else config
             .serviceBuilder(CommentApi::class.java)
-            .service(ApiService.General)
             .interceptor(config.commonHeaderInterceptor)
             .interceptor(config.authenticationInterceptor)
             .build()

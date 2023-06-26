@@ -22,7 +22,6 @@ import io.snaps.coredata.di.UserSessionComponent
 import io.snaps.coredata.di.UserSessionComponentManager
 import io.snaps.coredata.di.UserSessionScope
 import io.snaps.coredata.network.ApiConfig
-import io.snaps.coredata.network.ApiService
 import javax.inject.Singleton
 
 @Module
@@ -35,7 +34,6 @@ class DataModule {
         if (feature.isEnabled(Feature.ProfileApiMock)) FakeProfileApi()
         else config
             .serviceBuilder(ProfileApi::class.java)
-            .service(ApiService.General)
             .interceptor(config.commonHeaderInterceptor)
             .interceptor(config.authenticationInterceptor)
             .build()

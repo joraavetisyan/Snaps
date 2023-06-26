@@ -9,7 +9,6 @@ import io.snaps.basesettings.data.SettingsApi
 import io.snaps.basesettings.data.SettingsRepository
 import io.snaps.basesettings.data.SettingsRepositoryImpl
 import io.snaps.coredata.network.ApiConfig
-import io.snaps.coredata.network.ApiService
 import javax.inject.Singleton
 
 @Module
@@ -20,7 +19,6 @@ class DataModule {
     @Singleton
     fun settingsApi(config: ApiConfig): SettingsApi = config
             .serviceBuilder(SettingsApi::class.java)
-            .service(ApiService.General)
             .interceptor(config.commonHeaderInterceptor)
             .interceptor(config.authenticationInterceptor)
             .build()

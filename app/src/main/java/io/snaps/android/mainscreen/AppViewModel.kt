@@ -17,6 +17,7 @@ import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
+import io.snaps.coredata.network.ApiService
 import io.snaps.corenavigation.AppDeeplink
 import io.snaps.corenavigation.Deeplink
 import io.snaps.corenavigation.base.ROUTE_ARGS_SEPARATOR
@@ -39,11 +40,24 @@ class AppViewModel @AssistedInject constructor(
     private val userDataStorage: UserDataStorage,
     private val appRouteProvider: AppRouteProvider,
     private val deepLinkSource: DeepLinkSource,
+    private val apiService: ApiService,
     private val action: Action,
 ) : SimpleViewModel() {
 
     init {
-        checkStatus()
+        loadProdUrl()
+    }
+
+    private fun loadProdUrl() {
+        viewModelScope.launch {
+            if (apiService.getBaseUrl().isEmpty()) {
+                apiService.loadProdUrl().doOnSuccess {
+                    checkStatus()
+                }
+            } else {
+                checkStatus()
+            }
+        }
     }
 
     private fun checkStatus() {
@@ -99,7 +113,7 @@ class AppViewModel @AssistedInject constructor(
     }
 
     fun onRetry() {
-        checkStatus()
+        loadProdUrl()
     }
 
     // If the application has not been installed, the first launch, then immediately apply the code after authorization

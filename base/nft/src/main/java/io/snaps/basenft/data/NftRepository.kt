@@ -1,5 +1,6 @@
 package io.snaps.basenft.data
 
+import dagger.Lazy
 import io.snaps.basenft.data.model.MintMysteryBoxRequestDto
 import io.snaps.basenft.data.model.MintMysteryBoxResponseDto
 import io.snaps.basenft.data.model.MintNftRequestDto
@@ -66,7 +67,7 @@ interface NftRepository {
 class NftRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @UserSessionCoroutineScope private val scope: CoroutineScope,
-    private val nftApi: NftApi,
+    private val nftApi: Lazy<NftApi>,
 ) : NftRepository {
 
     private val _nftCollectionState = MutableStateFlow<State<List<NftModel>>>(Loading())
@@ -100,7 +101,7 @@ class NftRepositoryImpl @Inject constructor(
 
     override suspend fun updateRanks(): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            nftApi.getNfts()
+            nftApi.get().getNfts()
         }.map {
             it.toRankModelList()
         }.also {
@@ -110,7 +111,7 @@ class NftRepositoryImpl @Inject constructor(
 
     override suspend fun updateNftCollection(): Effect<List<NftModel>> {
         return apiCall(ioDispatcher) {
-            nftApi.getUserNftCollection()
+            nftApi.get().getUserNftCollection()
         }.map {
             it.toNftModelList()
         }.also {
@@ -120,7 +121,7 @@ class NftRepositoryImpl @Inject constructor(
 
     override suspend fun updateMysteryBoxes(): Effect<List<MysteryBoxModel>> {
         return apiCall(ioDispatcher) {
-            nftApi.getMysteryBoxes()
+            nftApi.get().getMysteryBoxes()
         }.map {
             it.toMysteryBoxModelList()
         }.also {
@@ -130,7 +131,7 @@ class NftRepositoryImpl @Inject constructor(
 
     override suspend fun mintNft(type: NftType, txSign: TxHash?): Effect<TxHash> {
         return apiCall(ioDispatcher) {
-            nftApi.mintNft(MintNftRequestDto(nftType = type, txSign = txSign))
+            nftApi.get().mintNft(MintNftRequestDto(nftType = type, txSign = txSign))
         }.doOnSuccess {
             updateNftCollection()
             updateRanks()
@@ -142,7 +143,7 @@ class NftRepositoryImpl @Inject constructor(
     // todo domain model
     override suspend fun mintMysteryBox(mysteryBoxType: MysteryBoxType, txSign: TxSign?): Effect<MintMysteryBoxResponseDto> {
         return apiCall(ioDispatcher) {
-            nftApi.mintMysteryBox(
+            nftApi.get().mintMysteryBox(
                 MintMysteryBoxRequestDto(
                     mysteryBoxType = mysteryBoxType.ordinal + 1,
                     paymentType = 1,
@@ -162,7 +163,7 @@ class NftRepositoryImpl @Inject constructor(
      */
     override suspend fun mintNftStore(productId: Uuid, purchaseToken: Token, txSign: TxSign): Effect<TxHash> {
         return apiCall(ioDispatcher) {
-            nftApi.mintNftStore(
+            nftApi.get().mintNftStore(
                 body = MintNftStoreRequestDto(
                     productId = productId,
                     purchaseToken = purchaseToken,
@@ -177,7 +178,7 @@ class NftRepositoryImpl @Inject constructor(
 
     override suspend fun repairNftBlockchain(nftModel: NftModel, txSign: TxSign): Effect<TxHash> {
         return apiCall(ioDispatcher) {
-            nftApi.repairGlasses(RepairGlassesRequestDto(glassesId = nftModel.id, txSign = txSign))
+            nftApi.get().repairGlasses(RepairGlassesRequestDto(glassesId = nftModel.id, txSign = txSign))
         }.doOnSuccess {
             updateNftCollection()
         }.map { it.txHash.orEmpty() }
@@ -185,7 +186,7 @@ class NftRepositoryImpl @Inject constructor(
 
     override suspend fun repairNft(nftModel: NftModel): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            nftApi.repairGlasses(RepairGlassesRequestDto(glassesId = nftModel.id))
+            nftApi.get().repairGlasses(RepairGlassesRequestDto(glassesId = nftModel.id))
         }.doOnSuccess {
             updateNftCollection()
         }.toCompletable()

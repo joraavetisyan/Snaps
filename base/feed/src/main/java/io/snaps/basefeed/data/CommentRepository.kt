@@ -1,5 +1,6 @@
 package io.snaps.basefeed.data
 
+import dagger.Lazy
 import io.snaps.basefeed.data.model.CreateCommentRequestDto
 import io.snaps.basefeed.domain.CommentPageModel
 import io.snaps.baseprofile.data.ProfileApi
@@ -27,8 +28,8 @@ interface CommentRepository {
 
 class CommentRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val commentApi: CommentApi,
-    private val profileApi: ProfileApi,
+    private val commentApi: Lazy<CommentApi>,
+    private val profileApi: Lazy<ProfileApi>,
     private val loaderFactory: CommentLoaderFactory,
 ) : CommentRepository {
 
@@ -38,7 +39,7 @@ class CommentRepositoryImpl @Inject constructor(
         return loaderFactory.get(videoId) {
             PagedLoaderParams(
                 action = { from, count ->
-                    commentApi.comments(videoId = videoId, from = from, count = count)
+                    commentApi.get().comments(videoId = videoId, from = from, count = count)
                 },
                 pageSize = 20,
                 nextPageIdFactory = { it.id },
@@ -49,7 +50,7 @@ class CommentRepositoryImpl @Inject constructor(
 
     private suspend fun getUser(id: Uuid): UserInfoResponseDto? {
         return users.getOrPut(id) {
-            apiCall(ioDispatcher) { profileApi.userInfo(id) }.dataOrCache
+            apiCall(ioDispatcher) { profileApi.get().userInfo(id) }.dataOrCache
         }
     }
 
@@ -64,7 +65,7 @@ class CommentRepositoryImpl @Inject constructor(
 
     override suspend fun createComment(videoId: Uuid, text: String): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            commentApi.createComment(
+            commentApi.get().createComment(
                 videoId = videoId,
                 body = CreateCommentRequestDto(text),
             )

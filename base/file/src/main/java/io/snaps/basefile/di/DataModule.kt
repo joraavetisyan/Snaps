@@ -9,7 +9,6 @@ import io.snaps.basefile.data.FileApi
 import io.snaps.basefile.data.FileRepository
 import io.snaps.basefile.data.FileRepositoryImpl
 import io.snaps.coredata.network.ApiConfig
-import io.snaps.coredata.network.ApiService
 import javax.inject.Singleton
 
 @Module
@@ -20,7 +19,6 @@ class DataModule {
     @Singleton
     fun fileApi(config: ApiConfig) = config
         .serviceBuilder(FileApi::class.java)
-        .service(ApiService.General)
         .interceptor(config.commonHeaderInterceptor)
         .interceptor(config.authenticationInterceptor)
         .build()

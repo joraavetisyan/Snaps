@@ -5,7 +5,6 @@ import io.snaps.basefeed.data.toVideoModel
 import io.snaps.basesettings.data.SettingsRepository
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 interface VideoFeedInteractor {

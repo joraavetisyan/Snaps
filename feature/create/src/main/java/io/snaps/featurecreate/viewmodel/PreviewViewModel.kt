@@ -1,5 +1,6 @@
 package io.snaps.featurecreate.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +30,7 @@ class PreviewViewModel @Inject constructor(
     val command = _command.receiveAsFlow()
 
     fun onProceedClicked() = viewModelScope.launch {
-        _command publish Command.OpenUploadScreen(args.uri)
+        _command publish Command.OpenEditorScreen(Uri.parse(args.uri))
     }
 
     fun onProgressChanged(value: Float) {
@@ -42,6 +43,6 @@ class PreviewViewModel @Inject constructor(
     )
 
     sealed class Command {
-        data class OpenUploadScreen(val uri: String) : Command()
+        data class OpenEditorScreen(val uri: Uri) : Command()
     }
 }
