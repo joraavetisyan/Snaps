@@ -20,4 +20,6 @@ dependencies {
     implementation(projects.baseSession)
     implementation(projects.baseSources)
     implementation(projects.baseProfile)
+    implementation(projects.baseNft)
+    implementation(projects.baseWallet)
 }

@@ -10,15 +10,17 @@ import io.snaps.basenft.data.model.NftItemResponseDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.data.model.RepairGlassesResponseDto
 import io.snaps.basenft.data.model.UserNftItemResponseDto
+import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface NftApi {
 
     @GET("v1/user/nft")
-    suspend fun getUserNftCollection(): BaseResponse<List<UserNftItemResponseDto>>
+    suspend fun getCurrentUserNftCollection(): BaseResponse<List<UserNftItemResponseDto>>
 
     @GET("v1/nft")
     suspend fun getNfts(): BaseResponse<List<NftItemResponseDto>>
@@ -45,4 +47,7 @@ interface NftApi {
 
     @GET("v1/user/mystery-box")
     suspend fun getMysteryBoxes(): BaseResponse<List<MysteryBoxItemResponseDto>>
+
+    @GET("v1/user/{userId}/nft")
+    suspend fun getUserNftCollection(@Path("userId") userId: Uuid): BaseResponse<List<UserNftItemResponseDto>>
 }

@@ -13,6 +13,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +23,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -64,6 +69,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.ui.MainHeader
 import io.snaps.baseprofile.ui.MainHeaderState
@@ -74,6 +80,7 @@ import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startSharePhotoIntent
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.LocalBottomNavigationHeight
 import io.snaps.coreuicompose.tools.defaultTileRipple
@@ -90,6 +97,7 @@ import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContentWithLoader
 import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyS
+import io.snaps.coreuicompose.uikit.button.SimpleButtonOutlineM
 import io.snaps.coreuicompose.uikit.dialog.DiamondDialog
 import io.snaps.coreuicompose.uikit.dialog.DiamondDialogButtonData
 import io.snaps.coreuicompose.uikit.dialog.SimpleAlertDialogUi
@@ -139,6 +147,7 @@ fun ReferralProgramScreen(
             ReferralProgramViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             ReferralProgramViewModel.Command.HideBottomDialog -> coroutineScope.launch { sheetState.hide() }
             is ReferralProgramViewModel.Command.OpenUserInfoScreen -> router.toProfileScreen(it.userId)
+            is ReferralProgramViewModel.Command.OpenBscScan -> context.openUrl(it.url)
             is ReferralProgramViewModel.Command.OpenShareDialog -> context.startSharePhotoIntent(
                 uri = it.uri,
                 text = stringHolder(StringKey.ReferralProgramMessageShare).format(it.code),
@@ -189,6 +198,12 @@ fun ReferralProgramScreen(
                     )
                 )
                 ReferralProgramViewModel.BottomDialog.ReferralsInvitedFootnote -> ReferralsInvitedBottomDialog()
+                ReferralProgramViewModel.BottomDialog.ReferralInfo -> ReferralInfoBottomDialog(
+                    userInfoTileState = uiState.userInfoTileState,
+                    userNftCollection = uiState.userNftCollection,
+                    onBscScanClicked = viewModel::onOpenBscScanClicked,
+                    onProfileClicked = viewModel::onOpenProfileClicked,
+                )
             }
         },
     ) {
@@ -354,7 +369,12 @@ private fun Body(
                         action = StringKey.ActionHowItWorks.textValue(),
                         onClick = onReferralsInvitedFootnoteClick,
                     )
-                    uiState.referralsTileState.Content(modifier = Modifier.weight(1f))
+                    MyReferrals(
+                        firstReferralsTileState = uiState.firstReferralsTileState,
+                        secondReferralsTileState = uiState.secondReferralsTileState,
+                        totalFirstReferrals = uiState.totalFirstReferrals,
+                        totalSecondReferrals = uiState.totalSecondReferrals,
+                    )
                 }
             }
         }
@@ -394,12 +414,12 @@ private fun Main(
             DirectReferralCard(
                 image = R.drawable.img_guys_surprised_eating.imageValue(),
                 title = StringKey.ReferralProgramTitleDirectReferral.textValue(uiState.firstLevelReferral),
-                message = StringKey.ReferralProgramMessageDirectReferral.textValue(uiState.firstLevelReferral),
+                message = StringKey.ReferralProgramMessageReferral.textValue(uiState.firstLevelReferral),
             )
             DirectReferralCard(
                 image = R.drawable.img_guys_surprised_shadowed_eating.imageValue(),
-                title = StringKey.ReferralProgramTitleDirectReferral.textValue(uiState.secondLevelReferral),
-                message = StringKey.ReferralProgramMessageDirectReferral.textValue(uiState.secondLevelReferral),
+                title = StringKey.ReferralProgramTitleIndirectReferral.textValue(uiState.secondLevelReferral),
+                message = StringKey.ReferralProgramMessageReferral.textValue(uiState.secondLevelReferral),
             )
         }
         if (uiState.isInviteAvailable) {
@@ -410,6 +430,60 @@ private fun Main(
                 onClick = onInviteUserButtonClicked,
             ) {
                 SimpleButtonContent(text = StringKey.ReferralProgramActionInviteUser.textValue())
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun MyReferrals(
+    firstReferralsTileState: ReferralsTileState,
+    secondReferralsTileState: ReferralsTileState,
+    totalFirstReferrals: Int?,
+    totalSecondReferrals: Int?,
+) {
+    val direct = StringKey.ReferralProgramTitleSliderDirectReferrals.textValue()
+    val indirect = StringKey.ReferralProgramTitleSliderIndirectReferrals.textValue()
+
+    val pagerState = rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
+
+    TitleSlider(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        items = listOf(direct, indirect),
+        selectedItemIndex = pagerState.currentPage,
+        onClick = {
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(it)
+            }
+        },
+    )
+    if (totalFirstReferrals != null && totalSecondReferrals != null) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            DirectReferralCard(
+                image = R.drawable.img_guys_surprised_eating.imageValue(),
+                title = totalFirstReferrals.toString().textValue(),
+                message = StringKey.ReferralProgramTitleInvitedDirectReferral.textValue(),
+            )
+            DirectReferralCard(
+                image = R.drawable.img_guys_surprised_shadowed_eating.imageValue(),
+                title = totalSecondReferrals.toString().textValue(),
+                message = StringKey.ReferralProgramTitleInvitedIndirectReferral.textValue(),
+            )
+        }
+    }
+    HorizontalPager(
+        pageCount = 2,
+        state = pagerState,
+    ) {
+        Column(modifier = Modifier) {
+            when (it) {
+                0 -> firstReferralsTileState.Content(modifier = Modifier.weight(1f))
+                1 -> secondReferralsTileState.Content(modifier = Modifier.weight(1f))
             }
         }
     }
@@ -493,12 +567,17 @@ private fun RowScope.DirectReferralCard(
             Text(
                 text = title.get(),
                 style = AppTheme.specificTypography.titleSmall,
-                modifier = Modifier.padding(top = 12.dp, bottom = 4.dp),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, bottom = 4.dp),
             )
             Text(
                 text = message.get(),
                 style = AppTheme.specificTypography.bodySmall,
                 color = AppTheme.specificColorScheme.textSecondary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }
@@ -707,6 +786,48 @@ private fun ReferralLevelBlock(
                 .size(48.dp)
                 .rotate(rotateDegree),
         )
+    }
+}
+
+@Composable
+private fun ReferralInfoBottomDialog(
+    userInfoTileState: InvitedUserInfoTileState,
+    userNftCollection: List<CollectionItemState>,
+    onBscScanClicked: () -> Unit,
+    onProfileClicked: () -> Unit,
+) {
+    SimpleBottomDialogUI(header = StringKey.ReferralProgramDialogTitleYourReferral.textValue()) {
+        item {
+            userInfoTileState.Content(modifier = Modifier)
+        }
+        item {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(12.dp),
+            ) {
+                items(userNftCollection) {
+                    it.Content(modifier = Modifier.width(180.dp))
+                }
+            }
+        }
+        item {
+            SimpleButtonOutlineM(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                onClick = onBscScanClicked,
+            ) {
+                SimpleButtonContent(text = StringKey.ReferralProgramDialogActionBscScan.textValue())
+            }
+            SimpleButtonActionM(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+                onClick = onProfileClicked,
+            ) {
+                SimpleButtonContent(text = StringKey.ReferralProgramDialogActionProfile.textValue())
+            }
+        }
     }
 }
 

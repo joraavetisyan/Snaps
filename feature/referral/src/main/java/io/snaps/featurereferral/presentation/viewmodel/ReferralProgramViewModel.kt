@@ -8,16 +8,22 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.snaps.basenft.data.NftRepository
+import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.baseprofile.domain.InvitedReferralModel
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesources.NotificationsSource
+import io.snaps.basewallet.data.WalletRepository
+import io.snaps.basewallet.domain.SnpsAccountModel
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toPercentageFormat
 import io.snaps.corecommon.model.Effect
+import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
@@ -32,7 +38,9 @@ import io.snaps.coreui.FileManager
 import io.snaps.coreui.barcode.BarcodeManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
+import io.snaps.featurereferral.presentation.screen.InvitedUserInfoTileState
 import io.snaps.featurereferral.presentation.screen.ReferralsTileState
+import io.snaps.featurereferral.presentation.toNftCollectionItemState
 import io.snaps.featurereferral.presentation.toReferralsUiState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
@@ -54,6 +62,8 @@ class ReferralProgramViewModel @Inject constructor(
     @Bridged mainHeaderHandler: MainHeaderHandler,
     @Bridged onboardingHandler: OnboardingHandler,
     @Bridged private val profileRepository: ProfileRepository,
+    @Bridged private val nftRepository: NftRepository,
+    @Bridged private val walletRepository: WalletRepository,
     private val fileManager: FileManager,
     private val barcodeManager: BarcodeManager,
     private val action: Action,
@@ -66,7 +76,10 @@ class ReferralProgramViewModel @Inject constructor(
     private val args = savedStateHandle.getArg<AppRoute.ReferralProgram.Args>()
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(
-        UiState(referralsTileState = ReferralsTileState.Shimmer(::onShowReferralQrClicked))
+        UiState(
+            firstReferralsTileState = ReferralsTileState.Shimmer(::onShowReferralQrClicked),
+            secondReferralsTileState = ReferralsTileState.Shimmer(::onShowReferralQrClicked),
+        )
     )
     val uiState = _uiState.asStateFlow()
 
@@ -75,9 +88,11 @@ class ReferralProgramViewModel @Inject constructor(
 
     init {
         subscribeOnCurrentUser()
-        subscribeOnReferrals()
+        subscribeOnFirstReferrals()
+        subscribeOnSecondReferrals()
 
-        updateReferrals()
+        loadInvitedFirstReferral()
+        loadInvitedSecondReferral()
 
         viewModelScope.launch {
             if (args?.referralCode != null) {
@@ -108,6 +123,53 @@ class ReferralProgramViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    private fun subscribeOnFirstReferrals() {
+        profileRepository.invitedFirstReferralState.onEach { state ->
+            _uiState.update {
+                it.copy(
+                    firstReferralsTileState = state.toReferralsUiState(
+                        onReferralClick = ::onReferralClick,
+                        onReloadClick = ::loadInvitedFirstReferral,
+                        onShowQrClick = ::onShowReferralQrClicked,
+                    ),
+                )
+            }
+            if (state is Effect<InvitedReferralModel>) {
+                _uiState.update {
+                    it.copy(totalFirstReferrals = state.requireData.total)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeOnSecondReferrals() {
+        profileRepository.invitedSecondReferralState.onEach { state ->
+            _uiState.update {
+                it.copy(
+                    secondReferralsTileState = state.toReferralsUiState(
+                        onReferralClick = ::onReferralClick,
+                        onReloadClick = ::loadInvitedSecondReferral,
+                        onShowQrClick = ::onShowReferralQrClicked,
+                    ),
+                )
+            }
+            if (state is Effect<InvitedReferralModel>) {
+                _uiState.update {
+                    it.copy(totalSecondReferrals = state.requireData.total)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeToBnbRate(userId: Uuid) {
+        walletRepository.snpsAccountState.onEach { account ->
+            if (account is Effect<SnpsAccountModel>) {
+                loadUserInfo(userId)
+                loadUserNft(userId, account.requireData.snpsUsdExchangeRate)
+            }
+        }.launchIn(viewModelScope)
+    }
+
     private fun generateReferralCode(inviteCode: String) {
         viewModelScope.launch(ioDispatcher) {
             val template = _uiState.value.template ?: BitmapFactory.decodeResource(
@@ -128,31 +190,27 @@ class ReferralProgramViewModel @Inject constructor(
         }
     }
 
-    private fun subscribeOnReferrals() {
-        profileRepository.referralsState.onEach { state ->
-            _uiState.update {
-                it.copy(
-                    referralsTileState = state.toReferralsUiState(
-                        onReferralClick = ::onReferralClick,
-                        onReloadClick = ::updateReferrals,
-                        onShowQrClick = ::onShowReferralQrClicked,
-                    ),
-                )
-            }
-        }.launchIn(viewModelScope)
+    private fun onReferralClick(model: UserInfoModel) {
+        subscribeToBnbRate(model.userId)
+        viewModelScope.launch {
+            _uiState.update { it.copy(bottomDialog = BottomDialog.ReferralInfo) }
+            _command publish Command.ShowBottomDialog
+        }
     }
 
-    private fun updateReferrals() {
+    private fun loadInvitedFirstReferral() {
         viewModelScope.launch {
             action.execute {
-                profileRepository.updateReferrals()
+                profileRepository.updateInvitedFirstReferral()
             }
         }
     }
 
-    private fun onReferralClick(model: UserInfoModel) {
+    private fun loadInvitedSecondReferral() {
         viewModelScope.launch {
-            _command publish Command.OpenUserInfoScreen(model.userId)
+            action.execute {
+                profileRepository.updateInvitedSecondReferral()
+            }
         }
     }
 
@@ -247,21 +305,102 @@ class ReferralProgramViewModel @Inject constructor(
         }
     }
 
+    fun onOpenBscScanClicked() {
+        val user = uiState.value.userInfoTileState
+        if (user is InvitedUserInfoTileState.Data) {
+            viewModelScope.launch {
+                _command publish Command.OpenBscScan("https://bscscan.com/address/${user.wallet}")
+            }
+        }
+    }
+
+    fun onOpenProfileClicked() {
+        val user = uiState.value.userInfoTileState
+        if (user is InvitedUserInfoTileState.Data) {
+            viewModelScope.launch {
+                _command publish Command.OpenUserInfoScreen(user.id)
+            }
+        }
+    }
+
     private fun setInviteCode(code: String, onSuccess: () -> Unit) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             action.execute {
                 profileRepository.setInviteCode(code)
-            }.doOnComplete {
-                _uiState.update { it.copy(isLoading = false) }
-            }.doOnSuccess {
-                onSuccess()
             }
         }
     }
 
+    private fun loadUserNft(userId: Uuid, snpsUsdExchangeRate: Double) {
+        viewModelScope.launch {
+            action.execute {
+                nftRepository.getUserNftCollection(userId)
+            }.doOnSuccess { userNft ->
+                _uiState.update {
+                    it.copy(
+                        userNftCollection = userNft.map { nft ->
+                            nft.toNftCollectionItemState(snpsUsdExchangeRate = snpsUsdExchangeRate)
+                        }
+                    )
+                }
+            }.doOnError { _, _ ->
+                _uiState.update {
+                    it.copy(
+                        userNftCollection = listOf(
+                            CollectionItemState.Error(
+                                onClick = { onUserNftReloadClicked(userId, snpsUsdExchangeRate) }
+                            ),
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun loadUserInfo(userId: Uuid) {
+        viewModelScope.launch {
+            action.execute {
+                profileRepository.getUserInfoById(userId)
+            }.doOnSuccess { user ->
+                _uiState.update {
+                    it.copy(
+                        userInfoTileState = InvitedUserInfoTileState.Data(
+                            id = userId,
+                            wallet = user.wallet.orEmpty(),
+                            avatar = user.avatar,
+                            name = user.name.textValue(),
+                            energy = user.questInfo?.totalEnergyProgress ?: 0,
+                        )
+                    )
+                }
+            }.doOnError { _, _ ->
+                _uiState.update {
+                    it.copy(
+                        userInfoTileState = InvitedUserInfoTileState.Error(
+                            onReloadClick = { onUserInfoReloadClicked(userId) },
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun onUserInfoReloadClicked(userId: Uuid) {
+        loadUserInfo(userId)
+    }
+
+    private fun onUserNftReloadClicked(userId: Uuid, snpsUsdExchangeRate: Double) {
+        loadUserNft(userId, snpsUsdExchangeRate)
+    }
+
     data class UiState(
-        val referralsTileState: ReferralsTileState,
+        val firstReferralsTileState: ReferralsTileState,
+        val secondReferralsTileState: ReferralsTileState,
+        val totalFirstReferrals: Int? = null,
+        val totalSecondReferrals: Int? = null,
+        val userInfoTileState: InvitedUserInfoTileState = InvitedUserInfoTileState.Shimmer,
+        val userNftCollection: List<CollectionItemState> = List(6) { CollectionItemState.Shimmer },
         val isLoading: Boolean = false,
         val referralCode: String = "",
         val referralLink: String = "",
@@ -284,6 +423,7 @@ class ReferralProgramViewModel @Inject constructor(
         ReferralQr,
         ReferralProgramFootnote,
         ReferralsInvitedFootnote,
+        ReferralInfo,
     }
 
     sealed class Dialog {
@@ -297,5 +437,6 @@ class ReferralProgramViewModel @Inject constructor(
         object HideBottomDialog : Command()
         data class OpenUserInfoScreen(val userId: Uuid) : Command()
         data class OpenShareDialog(val uri: Uri, val code: String) : Command()
+        data class OpenBscScan(val url: FullUrl) : Command()
     }
 }

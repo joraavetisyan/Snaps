@@ -2,6 +2,7 @@ package io.snaps.baseprofile.data
 
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.EditUserRequestDto
+import io.snaps.baseprofile.data.model.InvitedReferralResponseDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.TransactionItemResponseDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
@@ -52,4 +53,10 @@ interface ProfileApi {
         @Query("count") count: Int,
         @Query("onlyInvited") onlyInvited: Boolean,
     ): BaseResponse<List<UserInfoResponseDto>>
+
+    @GET("v1/user/invited/first-level")
+    suspend fun getInvitedFirstReferral(): BaseResponse<InvitedReferralResponseDto>
+
+    @GET("v1/user/invited/second-level")
+    suspend fun getInvitedSecondReferral(): BaseResponse<InvitedReferralResponseDto>
 }

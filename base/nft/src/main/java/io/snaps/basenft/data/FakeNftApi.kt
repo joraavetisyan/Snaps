@@ -21,6 +21,7 @@ import io.snaps.corecommon.mock.rImage
 import io.snaps.corecommon.mock.rInt
 import io.snaps.corecommon.model.MysteryBoxType
 import io.snaps.corecommon.model.NftType
+import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
 
@@ -28,8 +29,8 @@ class FakeNftApi : NftApi {
 
     private var generation = 0
 
-    override suspend fun getUserNftCollection(): BaseResponse<List<UserNftItemResponseDto>> {
-        log("Requesting nft")
+    override suspend fun getCurrentUserNftCollection(): BaseResponse<List<UserNftItemResponseDto>> {
+        log("Requesting current user nft")
         delay(mockDelay)
         return BaseResponse(
             data = getUserNft()
@@ -110,6 +111,10 @@ class FakeNftApi : NftApi {
                 )
             ),
         )
+    }
+
+    override suspend fun getUserNftCollection(userId: Uuid): BaseResponse<List<UserNftItemResponseDto>> {
+        TODO("Not yet implemented")
     }
 
     private fun getRanks() = buildList {

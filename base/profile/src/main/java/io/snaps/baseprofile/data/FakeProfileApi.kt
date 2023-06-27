@@ -2,6 +2,7 @@ package io.snaps.baseprofile.data
 
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.EditUserRequestDto
+import io.snaps.baseprofile.data.model.InvitedReferralResponseDto
 import io.snaps.baseprofile.data.model.PaymentsState
 import io.snaps.baseprofile.data.model.QuestDto
 import io.snaps.baseprofile.data.model.QuestInfoResponseDto
@@ -80,6 +81,24 @@ class FakeProfileApi : ProfileApi {
             data = List(10) {
                 getUserInfo("user $it")
             },
+        )
+    }
+
+    override suspend fun getInvitedFirstReferral(): BaseResponse<InvitedReferralResponseDto> {
+        return BaseResponse(
+            data = InvitedReferralResponseDto(
+                users = listOf(getUserInfo(null)),
+                total = rInt,
+            ),
+        )
+    }
+
+    override suspend fun getInvitedSecondReferral(): BaseResponse<InvitedReferralResponseDto> {
+        return BaseResponse(
+            data = InvitedReferralResponseDto(
+                users = listOf(getUserInfo(null)),
+                total = rInt,
+            ),
         )
     }
 

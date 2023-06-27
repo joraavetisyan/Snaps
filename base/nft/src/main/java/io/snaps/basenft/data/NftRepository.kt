@@ -62,6 +62,8 @@ interface NftRepository {
     suspend fun repairNftBlockchain(nftModel: NftModel, txSign: TxSign): Effect<TxHash>
 
     suspend fun repairNft(nftModel: NftModel): Effect<Completable>
+
+    suspend fun getUserNftCollection(userId: Uuid): Effect<List<NftModel>>
 }
 
 class NftRepositoryImpl @Inject constructor(
@@ -111,7 +113,7 @@ class NftRepositoryImpl @Inject constructor(
 
     override suspend fun updateNftCollection(): Effect<List<NftModel>> {
         return apiCall(ioDispatcher) {
-            nftApi.get().getUserNftCollection()
+            nftApi.get().getCurrentUserNftCollection()
         }.map {
             it.toNftModelList()
         }.also {
@@ -190,5 +192,13 @@ class NftRepositoryImpl @Inject constructor(
         }.doOnSuccess {
             updateNftCollection()
         }.toCompletable()
+    }
+
+    override suspend fun getUserNftCollection(userId: Uuid): Effect<List<NftModel>> {
+        return apiCall(ioDispatcher) {
+            nftApi.get().getUserNftCollection(userId)
+        }.map {
+            it.toNftModelList()
+        }
     }
 }

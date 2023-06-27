@@ -13,6 +13,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.snaps.coreuitheme.compose.AppTheme
 
+// todo rename
 @Composable
 fun Line(name: String, value: String) {
     Row(

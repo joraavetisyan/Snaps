@@ -1,8 +1,10 @@
 package io.snaps.baseprofile.data
 
+import io.snaps.baseprofile.data.model.InvitedReferralResponseDto
 import io.snaps.baseprofile.data.model.QuestInfoResponseDto
 import io.snaps.baseprofile.data.model.QuestItemDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
+import io.snaps.baseprofile.domain.InvitedReferralModel
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.baseprofile.domain.UserInfoModel
@@ -37,6 +39,11 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
     paymentsState = paymentsState,
     firstLevelReferralMultiplier = firstLevelReferralMultiplier ?: 0.03,
     secondLevelReferralMultiplier = secondLevelReferralMultiplier ?: 0.01,
+)
+
+fun InvitedReferralResponseDto.toModel() = InvitedReferralModel(
+    users = users.toModelList(),
+    total = total,
 )
 
 fun QuestInfoResponseDto.toQuestInfoModel() = QuestInfoModel(

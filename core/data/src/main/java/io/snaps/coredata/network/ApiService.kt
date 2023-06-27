@@ -1,6 +1,5 @@
 package io.snaps.coredata.network
 
-import android.util.Log
 import com.google.firebase.database.FirebaseDatabase
 import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.model.AppError
@@ -44,7 +43,7 @@ class ApiService @Inject constructor(
         return try {
             val endPoint = firebaseDatabase.getReference("Endpoint").get().await().value
             prod = "$endPoint/api/"
-            Log.e("prod", prod)
+            userDataStorage.prodBaseUrl = prod
             Effect.success(Completable)
         } catch (e: Exception) {
             logE("firebase database load cancelled: $e")

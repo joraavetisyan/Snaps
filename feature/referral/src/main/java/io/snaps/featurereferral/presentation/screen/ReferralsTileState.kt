@@ -2,6 +2,7 @@ package io.snaps.featurereferral.presentation.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -72,7 +73,7 @@ private fun Shimmer(
     modifier: Modifier,
     data: ReferralsTileState.Shimmer,
 ) {
-    Content(modifier = modifier, data = data) {
+    Content(modifier = modifier) {
         repeat(3) {
             CellTileState(
                 leftPart = LeftPart.Shimmer,
@@ -88,20 +89,10 @@ private fun Shimmer(
 @Composable
 private fun Content(
     modifier: Modifier,
-    data: ReferralsTileState,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(modifier = modifier) {
         content()
-        SimpleButtonActionL(
-            onClick = data.onShowQrClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .padding(bottom = LocalBottomNavigationHeight.current),
-        ) {
-            SimpleButtonContent(text = StringKey.ReferralProgramActionReferralProgram.textValue())
-        }
     }
 }
 
@@ -110,7 +101,7 @@ private fun Data(
     modifier: Modifier,
     data: ReferralsTileState.Data,
 ) {
-    Content(modifier = modifier, data = data) {
+    Content(modifier = modifier) {
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -141,11 +132,21 @@ private fun Empty(
     modifier: Modifier,
     data: ReferralsTileState.Empty,
 ) {
-    Content(modifier = modifier, data = data) {
+    Content(modifier = modifier) {
         EmptyListTileState.defaultState(
             title = StringKey.ReferralProgramTitleNoReferrals.textValue(),
             message = StringKey.ReferralProgramMessageNoReferrals.textValue(),
-        ).Content(modifier = modifier)
+            image = null,
+        ).Content(modifier = modifier.padding(top = 12.dp))
+        SimpleButtonActionL(
+            onClick = data.onShowQrClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .padding(bottom = LocalBottomNavigationHeight.current),
+        ) {
+            SimpleButtonContent(text = StringKey.ReferralProgramActionReferralProgram.textValue())
+        }
     }
 }
 
@@ -154,7 +155,7 @@ private fun Error(
     modifier: Modifier,
     data: ReferralsTileState.Error,
 ) {
-    Content(modifier = modifier, data = data) {
+    Content(modifier = modifier) {
         MessageBannerState
             .defaultState(onClick = data.onReloadClick)
             .Content(modifier = modifier)

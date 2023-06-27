@@ -4,7 +4,7 @@ import dagger.Lazy
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
-import io.snaps.baseprofile.data.model.UserInfoResponseDto
+import io.snaps.baseprofile.domain.InvitedReferralModel
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.domain.UsersPageModel
@@ -36,7 +36,9 @@ interface ProfileRepository {
 
     val currentTasksState: StateFlow<State<QuestInfoModel>>
 
-    val referralsState: StateFlow<State<List<UserInfoModel>>>
+    val invitedFirstReferralState: StateFlow<State<InvitedReferralModel>>
+
+    val invitedSecondReferralState: StateFlow<State<InvitedReferralModel>>
 
     fun getUsersState(query: String): StateFlow<UsersPageModel>
 
@@ -47,8 +49,6 @@ interface ProfileRepository {
     suspend fun updateData(
         isSilently: Boolean = false,
     ): Effect<UserInfoModel>
-
-    suspend fun updateReferrals(): Effect<Completable>
 
     suspend fun getUserInfoById(userId: String): Effect<UserInfoModel>
 
@@ -74,6 +74,10 @@ interface ProfileRepository {
         address: CryptoAddress,
         avatar: FullUrl?,
     ): Effect<Completable>
+
+    suspend fun updateInvitedFirstReferral(): Effect<Completable>
+
+    suspend fun updateInvitedSecondReferral(): Effect<Completable>
 }
 
 class ProfileRepositoryImpl @Inject constructor(
@@ -86,8 +90,11 @@ class ProfileRepositoryImpl @Inject constructor(
     private val _state = MutableStateFlow<State<UserInfoModel>>(Loading())
     override val state = _state.asStateFlow()
 
-    private val _referralsState = MutableStateFlow<State<List<UserInfoModel>>>(Loading())
-    override val referralsState = _referralsState.asStateFlow()
+    private val _invitedFirstReferralState = MutableStateFlow<State<InvitedReferralModel>>(Loading())
+    override val invitedFirstReferralState = _invitedFirstReferralState.asStateFlow()
+
+    private val _invitedSecondReferralState = MutableStateFlow<State<InvitedReferralModel>>(Loading())
+    override val invitedSecondReferralState = _invitedSecondReferralState.asStateFlow()
 
     override val currentTasksState = state.map {
         when (it) {
@@ -138,17 +145,6 @@ class ProfileRepositoryImpl @Inject constructor(
         }.also {
             _state tryPublish it
         }
-    }
-
-    override suspend fun updateReferrals(): Effect<Completable> {
-        _referralsState tryPublish Loading()
-        return apiCall(ioDispatcher) {
-            api.get().users(query = null, from = null, count = 100, onlyInvited = true)
-        }.map {
-            it.map(UserInfoResponseDto::toModel)
-        }.also {
-            _referralsState tryPublish it
-        }.toCompletable()
     }
 
     override suspend fun getUserInfoById(userId: String): Effect<UserInfoModel> {
@@ -247,6 +243,26 @@ class ProfileRepositoryImpl @Inject constructor(
                     it
                 }
             }
+        }.toCompletable()
+    }
+
+    override suspend fun updateInvitedFirstReferral(): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            api.get().getInvitedFirstReferral()
+        }.map {
+            it.toModel()
+        }.also {
+            _invitedFirstReferralState tryPublish it
+        }.toCompletable()
+    }
+
+    override suspend fun updateInvitedSecondReferral(): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            api.get().getInvitedSecondReferral()
+        }.map {
+            it.toModel()
+        }.also {
+            _invitedSecondReferralState tryPublish it
         }.toCompletable()
     }
 }
