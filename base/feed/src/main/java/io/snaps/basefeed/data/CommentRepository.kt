@@ -9,6 +9,7 @@ import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.network.BaseResponse
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import kotlinx.coroutines.CoroutineDispatcher
@@ -39,7 +40,11 @@ class CommentRepositoryImpl @Inject constructor(
         return loaderFactory.get(videoId) {
             PagedLoaderParams(
                 action = { from, count ->
-                    commentApi.get().comments(videoId = videoId, from = from, count = count)
+                    val comments = commentApi.get()
+                        .comments(videoId = videoId, from = from, count = count).data?.filter {
+                        it.text.isNotEmpty()
+                    }
+                    BaseResponse(comments)
                 },
                 pageSize = 20,
                 nextPageIdFactory = { it.id },
