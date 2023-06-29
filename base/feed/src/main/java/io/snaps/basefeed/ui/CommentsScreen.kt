@@ -129,94 +129,96 @@ fun CommentsScreen(
 @Composable
 private fun Item(data: CommentUiState.Data, onReplyClicked: () -> Unit) {
     val item = data.item
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.Top,
-    ) {
-        Card(
-            shape = CircleShape,
-            modifier = Modifier.defaultTileRipple(onClick = data.onAvatarClicked),
+    if (item.text.isNotEmpty()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.Top,
         ) {
-            item.owner?.avatarUrl?.imageValue()?.let {
-                Image(
-                    painter = it.get(),
-                    contentDescription = null,
-                    modifier = Modifier.size(32.dp),
-                    contentScale = ContentScale.Crop,
-                )
-            }
-        }
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            Card(
+                shape = CircleShape,
+                modifier = Modifier.defaultTileRipple(onClick = data.onAvatarClicked),
             ) {
-                Text(
-                    text = item.owner?.name.orEmpty(),
-                    style = AppTheme.specificTypography.bodySmall,
-                    color = AppTheme.specificColorScheme.textSecondary,
-                )
-                if (item.isOwnerVerified == true) {
+                item.owner?.avatarUrl?.imageValue()?.let {
                     Image(
-                        painter = AppTheme.specificIcons.verified.get(),
+                        painter = it.get(),
                         contentDescription = null,
-                        modifier = Modifier.size(12.dp),
+                        modifier = Modifier.size(32.dp),
                         contentScale = ContentScale.Crop,
                     )
                 }
-                if (item.ownerTitle != null) {
-                    Text(
-                        text = " · " + item.ownerTitle,
-                        color = AppTheme.specificColorScheme.uiSystemRed,
-                        style = AppTheme.specificTypography.bodySmall,
-                    )
-                }
             }
-            Text(
-                text = item.text,
-                style = AppTheme.specificTypography.bodySmall,
-            )
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = item.owner?.name.orEmpty(),
+                        style = AppTheme.specificTypography.bodySmall,
+                        color = AppTheme.specificColorScheme.textSecondary,
+                    )
+                    if (item.isOwnerVerified == true) {
+                        Image(
+                            painter = AppTheme.specificIcons.verified.get(),
+                            contentDescription = null,
+                            modifier = Modifier.size(12.dp),
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
+                    if (item.ownerTitle != null) {
+                        Text(
+                            text = " · " + item.ownerTitle,
+                            color = AppTheme.specificColorScheme.uiSystemRed,
+                            style = AppTheme.specificTypography.bodySmall,
+                        )
+                    }
+                }
                 Text(
-                    text = item.createdDate.toStringValue(),
+                    text = item.text,
                     style = AppTheme.specificTypography.bodySmall,
-                    color = AppTheme.specificColorScheme.textSecondary,
                 )
-                // Not available for now
-                /*Text(
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = item.createdDate.toStringValue(),
+                        style = AppTheme.specificTypography.bodySmall,
+                        color = AppTheme.specificColorScheme.textSecondary,
+                    )
+                    // Not available for now
+                    /*Text(
                     text = StringKey.ActionReply.textValue().get(),
                     style = AppTheme.specificTypography.bodySmall,
                     color = AppTheme.specificColorScheme.textSecondary,
                     modifier = Modifier.defaultTileRipple { onReplyClicked() }
                 )*/
+                }
             }
-        }
-        Column(
-            horizontalAlignment = Alignment.End,
-        ) {
-            if (item.likes != null) {
-                Image(
-                    painter = AppTheme.specificIcons.favoriteBorder.get(),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(12.dp)
-                        .align(Alignment.CenterHorizontally),
-                    contentScale = ContentScale.Crop,
-                )
-                Text(
-                    text = item.likes.toString(),
-                    style = AppTheme.specificTypography.bodySmall,
-                    color = AppTheme.specificColorScheme.textSecondary,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                )
+            Column(
+                horizontalAlignment = Alignment.End,
+            ) {
+                if (item.likes != null) {
+                    Image(
+                        painter = AppTheme.specificIcons.favoriteBorder.get(),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(12.dp)
+                            .align(Alignment.CenterHorizontally),
+                        contentScale = ContentScale.Crop,
+                    )
+                    Text(
+                        text = item.likes.toString(),
+                        style = AppTheme.specificTypography.bodySmall,
+                        color = AppTheme.specificColorScheme.textSecondary,
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                    )
+                }
             }
         }
     }
