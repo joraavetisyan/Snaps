@@ -60,21 +60,20 @@ import com.google.firebase.auth.GoogleAuthProvider
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
-import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAll
+import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
 import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.SimpleButtonDefaultM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonInlineM
+import io.snaps.coreuicompose.uikit.dialog.SimpleAlertDialogUi
 import io.snaps.coreuicompose.uikit.input.SimpleTextField
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
-import io.snaps.coreuicompose.uikit.dialog.SimpleAlertDialogUi
-import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialogUI
 import io.snaps.coreuicompose.uikit.text.LinkText
 import io.snaps.coreuicompose.uikit.text.LinkTextData
 import io.snaps.coreuitheme.compose.AppTheme
@@ -224,12 +223,6 @@ fun RegistrationScreen(
                         googleSignInLauncher.launch(intentSenderRequest)
                     }.addOnFailureListener {
                         viewModel.onOneTapSignInCompleted(false)
-                        log(
-                            it,
-                            """
-                            If this is "com.google.android.gms.common.api.ApiException: 10: Developer console is not set up correctly." add your machine's sha1 to the firebase console
-                            """.trimIndent(),
-                        )
                     }
             },
             onLoginWithEmailClicked = viewModel::onLoginWithEmailClicked,
