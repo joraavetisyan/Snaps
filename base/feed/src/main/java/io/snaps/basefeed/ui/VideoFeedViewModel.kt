@@ -5,10 +5,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.viewModelScope
 import io.snaps.basefeed.data.CommentRepository
 import io.snaps.basefeed.data.VideoFeedRepository
-import io.snaps.basefeed.domain.VideoFeedPageModel
-import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.basefeed.domain.VideoFeedInteractor
+import io.snaps.basefeed.domain.VideoFeedPageModel
+import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesubs.data.SubsRepository
@@ -121,7 +121,8 @@ abstract class VideoFeedViewModel(
     }
 
     fun onScrolledToPosition(position: Int) {
-        val current = _uiState.value.videoFeedUiState.items.getOrNull(position) as? VideoClipUiState.Data
+        val current =
+            _uiState.value.videoFeedUiState.items.getOrNull(position) as? VideoClipUiState.Data
         val videoClip = current?.clip ?: return
         currentVideo = videoClip
         loadComments(videoClip.id)
@@ -152,7 +153,10 @@ abstract class VideoFeedViewModel(
         authorLoadJob?.cancel()
         if (videoClipModel.author != null) {
             _uiState.update {
-                it.copy(authorProfileAvatar = videoClipModel.author.avatar, authorName = videoClipModel.author.name)
+                it.copy(
+                    authorProfileAvatar = videoClipModel.author.avatar,
+                    authorName = videoClipModel.author.name
+                )
             }
             return
         }
@@ -164,7 +168,10 @@ abstract class VideoFeedViewModel(
             }.doOnSuccess { profileModel ->
                 if (!isActive) return@doOnSuccess
                 _uiState.update {
-                    it.copy(authorProfileAvatar = profileModel.avatar, authorName = profileModel.name)
+                    it.copy(
+                        authorProfileAvatar = profileModel.avatar,
+                        authorName = profileModel.name
+                    )
                 }
             }
         }
@@ -285,7 +292,7 @@ abstract class VideoFeedViewModel(
             action.execute {
                 commentRepository.createComment(
                     videoId = video.id,
-                    text = uiState.value.comment.text.trim(),
+                    text = removeEmptyLines(uiState.value.comment.text),
                 ).doOnSuccess {
                     _command publish Command.HideCommentInputBottomDialog
                     _uiState.update { it.copy(comment = TextFieldValue("")) }
@@ -302,6 +309,7 @@ abstract class VideoFeedViewModel(
                 video.id -> it.copy(
                     commentCount = it.commentCount + 1
                 )
+
                 else -> it
             }
         } ?: emptyList()
@@ -370,9 +378,9 @@ abstract class VideoFeedViewModel(
                 }
                 videoFeedRepository.refreshFeed(videoFeedType).doOnSuccess {
                     // todo it's not the right place to check for emptiness
-                     if (uiState.value.videoFeedUiState.items.isEmpty()) {
-                         _command publish Command.CloseScreen
-                     }
+                    if (uiState.value.videoFeedUiState.items.isEmpty()) {
+                        _command publish Command.CloseScreen
+                    }
                 }
             }
         }
@@ -382,6 +390,10 @@ abstract class VideoFeedViewModel(
         _uiState.update {
             it.copy(dialog = null)
         }
+    }
+
+    private fun removeEmptyLines(text: String): String {
+        return text.split("\n").filter { it.trim().isNotEmpty() }.joinToString("\n")
     }
 
     fun onSubscribeClicked() {
