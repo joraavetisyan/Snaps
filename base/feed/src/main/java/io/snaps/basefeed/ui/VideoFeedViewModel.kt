@@ -1,15 +1,14 @@
 package io.snaps.basefeed.ui
 
-import android.util.Log
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.viewModelScope
 import io.snaps.basefeed.data.CommentRepository
 import io.snaps.basefeed.data.VideoFeedRepository
-import io.snaps.basefeed.domain.VideoFeedPageModel
-import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.basefeed.domain.VideoFeedInteractor
+import io.snaps.basefeed.domain.VideoFeedPageModel
+import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesubs.data.SubsRepository
@@ -256,7 +255,6 @@ abstract class VideoFeedViewModel(
                     isLiked = !clipModel.isLiked,
                     likeCount = clipModel.likeCount + (if (clipModel.isLiked) -1 else 1),
                 )
-
                 else -> it
             }
         } ?: emptyList()
