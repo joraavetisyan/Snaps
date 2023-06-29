@@ -38,6 +38,7 @@ class SettingsViewModel @Inject constructor(
     // todo delete account api request
     fun onDeleteAccountConfirmed() {
         _uiState.update { it.copy(dialog = null) }
+        sessionRepository.logout()
     }
 
     fun onLogoutClicked() {
