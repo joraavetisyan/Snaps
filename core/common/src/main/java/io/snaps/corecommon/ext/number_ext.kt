@@ -14,7 +14,11 @@ fun Int.toCompactDecimalFormat(locale: Locale = DEFAULT_LOCALE): String {
 
 fun String.stringAmountToDoubleSafely() = filter {
     it.isDigit() || it == ',' || it == '.'
-}.replace(',', '.').toDoubleOrNull()
+}.replace(',', '.').run {
+    if (count { it == '.' } > 1) {
+        replaceFirst(".", "")
+    } else this
+}.toDoubleOrNull()
 
 fun String.stringAmountToDoubleOrZero() = stringAmountToDoubleSafely() ?: 0.0
 
