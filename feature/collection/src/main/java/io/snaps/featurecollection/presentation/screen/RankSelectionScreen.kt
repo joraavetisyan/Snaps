@@ -115,51 +115,73 @@ private fun RankSelectionScreen(
                 navigationIcon = AppTheme.specificIcons.back to onBackClicked,
                 scrollBehavior = scrollBehavior,
             ) {
-                TitleSlider(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    items = listOf(
-                        StringKey.RankSelectionTitleSliderBundles.textValue(),
-                        StringKey.RankSelectionTitleSliderNft.textValue(),
-                    ),
-                    selectedItemIndex = pagerState.currentPage,
-                    onClick = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(it)
-                        }
-                    },
-                )
+                if (uiState.isBundleEnabled) {
+                    TitleSlider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        items = listOf(
+                            StringKey.RankSelectionTitleSliderBundles.textValue(),
+                            StringKey.RankSelectionTitleSliderNft.textValue(),
+                        ),
+                        selectedItemIndex = pagerState.currentPage,
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(it)
+                            }
+                        },
+                    )
+                }
             }
         },
     ) { paddingValues ->
-        HorizontalPager(
-            pageCount = 2,
-            state = pagerState,
-        ) {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .inset(insetAllExcludeTop()),
-                contentPadding = PaddingValues(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+        if (uiState.isBundleEnabled) {
+            HorizontalPager(
+                pageCount = 2,
+                state = pagerState,
             ) {
-                when (it) {
-                    0 -> {
-                        if (uiState.isBundleEnabled) {
+                RankSelectionContent(
+                    modifier = Modifier.padding(paddingValues),
+                ) {
+                    when (it) {
+                        0 -> {
                             bundles(bundles = uiState.bundles)
                         }
-                    }
-                    1 -> {
-                        nftItems(
-                            isMysteryBoxEnabled = uiState.isMysteryBoxEnabled,
-                            mysteryBoxes = uiState.mysteryBoxes,
-                            ranks = uiState.ranks,
-                            onRankFootnoteClick = onRankFootnoteClick,
-                        )
+                        1 -> {
+                            nftItems(
+                                isMysteryBoxEnabled = uiState.isMysteryBoxEnabled,
+                                mysteryBoxes = uiState.mysteryBoxes,
+                                ranks = uiState.ranks,
+                                onRankFootnoteClick = onRankFootnoteClick,
+                            )
+                        }
                     }
                 }
             }
+        } else {
+            RankSelectionContent(
+                modifier = Modifier.padding(paddingValues),
+            ) {
+                nftItems(
+                    isMysteryBoxEnabled = uiState.isMysteryBoxEnabled,
+                    mysteryBoxes = uiState.mysteryBoxes,
+                    ranks = uiState.ranks,
+                    onRankFootnoteClick = onRankFootnoteClick,
+                )
+            }
         }
     }
+}
+
+@Composable
+private fun RankSelectionContent(
+    modifier: Modifier,
+    content: LazyListScope.() -> Unit,
+) {
+    LazyColumn(
+        modifier = modifier.inset(insetAllExcludeTop()),
+        contentPadding = PaddingValues(12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        content = content
+    )
 }
 
 private fun LazyListScope.nftItems(
