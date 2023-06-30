@@ -39,7 +39,7 @@ imglyConfig {
             // uncomment this for debug
             // null
             // uncomment this for release
-             "vesdk_android_license"
+            "vesdk_android_license"
         )
     }
 

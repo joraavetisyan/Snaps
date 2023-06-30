@@ -38,11 +38,17 @@ android {
     }
 
     signingConfigs {
+        getByName(BuildTypes.debug) {
+            storeFile = file(DebugKeystoreParams.path)
+            storePassword = DebugKeystoreParams.storePassword
+            keyAlias = DebugKeystoreParams.keyAlias
+            keyPassword = DebugKeystoreParams.keyPassword
+        }
         create(BuildTypes.release) {
-            storeFile = rootProject.file(KeystoreParams.path)
-            storePassword = KeystoreParams.storePassword
-            keyAlias = KeystoreParams.keyAlias
-            keyPassword = KeystoreParams.keyPassword
+            storeFile = file(ReleaseKeystoreParams.path)
+            storePassword = ReleaseKeystoreParams.storePassword
+            keyAlias = ReleaseKeystoreParams.keyAlias
+            keyPassword = ReleaseKeystoreParams.keyPassword
         }
     }
 
@@ -61,7 +67,7 @@ android {
                     "app_name" to "SNAPS Debug",
                 )
             )
-
+            signingConfig = signingConfigs.getByName(BuildTypes.debug)
             isMinifyEnabled = false
         }
         getByName(BuildTypes.alpha) {

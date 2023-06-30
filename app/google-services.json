@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "132799039711",
+    "firebase_url": "https://watchverse-default-rtdb.firebaseio.com",
     "project_id": "watchverse",
     "storage_bucket": "watchverse.appspot.com"
   },
@@ -13,6 +14,22 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "132799039711-p9t2olrkr03022bfkpgah0et848d5iq7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.snaps.android",
+            "certificate_hash": "8d27a967bf301ed8ed82a078ac0a726f8b480c86"
+          }
+        },
+        {
+          "client_id": "132799039711-sgjj7a61e2uopvkepqev05tt3d5kvb48.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.snaps.android",
+            "certificate_hash": "bf98aa0c1d29f3608fe274208a6b33185fa1c80c"
+          }
+        },
         {
           "client_id": "132799039711-rd59jfaphbpinbmhrp647hqapp2b6aiu.apps.googleusercontent.com",
           "client_type": 3
@@ -66,11 +83,27 @@
           }
         },
         {
+          "client_id": "132799039711-fjd4n5t5an1qsm6i7r4p8r50qpkgiqq9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.snaps.android.debug",
+            "certificate_hash": "303121dffd4160e69f5df8bc53a7fdf16c77dfe2"
+          }
+        },
+        {
           "client_id": "132799039711-g3fjkbr8b4otoq68dht5vd418pqdnbtc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "io.snaps.android.debug",
             "certificate_hash": "f936ba5cba315fe91583d2e7dc64f7684539a65b"
+          }
+        },
+        {
+          "client_id": "132799039711-jg4reah6u3junk6lm9t4dgcfe2r05vf9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.snaps.android.debug",
+            "certificate_hash": "3c438b0726d7e4ee2b92cb20516797dafd61ee44"
           }
         },
         {

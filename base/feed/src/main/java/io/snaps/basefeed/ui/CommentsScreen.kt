@@ -112,6 +112,7 @@ fun CommentsScreen(
                                 rightPart = RightPart.Shimmer(needCircle = true),
                             )
                         )
+
                         is CommentUiState.Progress -> Box(modifier = Modifier.fillMaxWidth()) {
                             CircularProgressIndicator(
                                 modifier = Modifier
@@ -192,11 +193,11 @@ private fun Item(data: CommentUiState.Data, onReplyClicked: () -> Unit) {
                 )
                 // Not available for now
                 /*Text(
-                    text = StringKey.ActionReply.textValue().get(),
-                    style = AppTheme.specificTypography.bodySmall,
-                    color = AppTheme.specificColorScheme.textSecondary,
-                    modifier = Modifier.defaultTileRipple { onReplyClicked() }
-                )*/
+                text = StringKey.ActionReply.textValue().get(),
+                style = AppTheme.specificTypography.bodySmall,
+                color = AppTheme.specificColorScheme.textSecondary,
+                modifier = Modifier.defaultTileRipple { onReplyClicked() }
+            )*/
             }
         }
         Column(
