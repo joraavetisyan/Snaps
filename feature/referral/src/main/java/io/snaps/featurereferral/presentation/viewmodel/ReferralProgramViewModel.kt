@@ -235,6 +235,7 @@ class ReferralProgramViewModel @Inject constructor(
         setInviteCode(uiState.value.inviteCodeValue, {
             viewModelScope.launch {
                 hideReferralCodeSheet()
+                onReferralCodeApplied()
             }
         }, {
             viewModelScope.launch {
@@ -275,6 +276,12 @@ class ReferralProgramViewModel @Inject constructor(
     fun onReferralLinkCopied() {
         viewModelScope.launch {
             notificationsSource.sendMessage(StringKey.ReferralProgramMessageReferralLinkCopied.textValue())
+        }
+    }
+
+    fun onReferralCodeApplied() {
+        viewModelScope.launch {
+            notificationsSource.sendMessage(StringKey.ReferralProgramMessageReferralCodeApplied.textValue())
         }
     }
 

@@ -194,6 +194,7 @@ enum class StringKey {
     ReferralProgramCodeDialogHintEnterCode,
     ReferralProgramMessageReferralCodeCopied,
     ReferralProgramMessageReferralLinkCopied,
+    ReferralProgramMessageReferralCodeApplied,
     ReferralProgramMessageFootnoteMain,
     ReferralProgramMessageFootnoteMyReferrals,
     ReferralProgramTitleNoReferrals,

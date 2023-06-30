@@ -1206,6 +1206,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Реферальне посилання скопійовано!",
         SupportedLanguageKey.Es to "Enlace de referencia copiado!",
     ),
+    key(StringKey.ReferralProgramMessageReferralCodeApplied) to mapOf(
+        SupportedLanguageKey.En to "Code applied successfully!",
+        SupportedLanguageKey.Ru to "Код успешно применён!",
+        SupportedLanguageKey.Tr to "Kod başarıyla uygulandı!",
+        SupportedLanguageKey.Ua to "Код успішно застосований!",
+        SupportedLanguageKey.Es to "Código aplicado con éxito!",
+    ),
     key(StringKey.ReferralProgramMessageFootnoteMain) to mapOf(
         SupportedLanguageKey.En to "Invite new users and earn even more rewards every day!",
         SupportedLanguageKey.Ru to "Приглашайте новых пользователей и зарабатывайте еще больше наград каждый день!",
