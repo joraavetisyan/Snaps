@@ -107,6 +107,7 @@ class SettingsRepositoryImpl @Inject constructor(
                 Feature.Captcha.key -> this.captcha
                 Feature.SellSnaps.key -> this.sellSnaps
                 Feature.MysteryBox.key -> this.mysteryBox
+                Feature.Bundle.key -> this.mysteryBox
                 else -> false
             }
             featureToggle.setRemoteValue(

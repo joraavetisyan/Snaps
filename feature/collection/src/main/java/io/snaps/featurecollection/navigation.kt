@@ -12,6 +12,7 @@ import io.snaps.corenavigation.base.Navigator
 import io.snaps.corenavigation.base.composable
 import io.snaps.corenavigation.base.navigate
 import io.snaps.corenavigation.base.popBackStackWithResult
+import io.snaps.featurecollection.presentation.screen.BundleScreen
 import io.snaps.featurecollection.presentation.screen.MyCollectionScreen
 import io.snaps.featurecollection.presentation.screen.MysteryBoxScreen
 import io.snaps.featurecollection.presentation.screen.PurchaseScreen
@@ -70,6 +71,13 @@ internal class ScreenNavigator(navHostController: NavHostController) :
         route = AppRoute.MysteryBox,
         arg = args,
     )
+
+    fun toBundleScreen(
+        args: AppRoute.Bundle.Args
+    ) = navHostController navigate FeatureNavDirection(
+        route = AppRoute.Bundle,
+        arg = args,
+    )
 }
 
 class CollectionFeatureProviderImpl @Inject constructor() : CollectionFeatureProvider {
@@ -80,5 +88,6 @@ class CollectionFeatureProviderImpl @Inject constructor() : CollectionFeaturePro
         composable(AppRoute.Purchase) { PurchaseScreen(controller) }
         composable(AppRoute.UserNftDetails) { UserNftDetailsScreen(controller) }
         composable(AppRoute.MysteryBox) { MysteryBoxScreen(controller) }
+        composable(AppRoute.Bundle) { BundleScreen(controller) }
     }
 }

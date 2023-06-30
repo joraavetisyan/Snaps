@@ -1,9 +1,11 @@
 package io.snaps.basenft.data
 
+import io.snaps.basenft.data.model.BundleItemResponseDto
 import io.snaps.basenft.data.model.MysteryBoxItemResponseDto
 import io.snaps.basenft.data.model.NftItemResponseDto
 import io.snaps.basenft.data.model.ProbabilitiesDto
 import io.snaps.basenft.data.model.UserNftItemResponseDto
+import io.snaps.basenft.domain.BundleModel
 import io.snaps.basenft.domain.MysteryBoxModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.corecommon.container.imageValue
@@ -79,3 +81,12 @@ private fun ProbabilitiesDto.toModelList(): List<ProbabilityModel> {
         ProbabilityModel(nftType = NftType.Legend, probability = legend),
     )
 }
+
+fun List<BundleItemResponseDto>.toBundleModelList() = map(BundleItemResponseDto::toModel)
+
+private fun BundleItemResponseDto.toModel() = BundleModel(
+    type = type,
+    fiatCost = FiatUSD(costInUsd),
+    discountCost = FiatUSD(discount),
+    itemsInBundle = itemsInBundle,
+)

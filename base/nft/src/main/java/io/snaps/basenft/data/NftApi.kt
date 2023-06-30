@@ -1,5 +1,7 @@
 package io.snaps.basenft.data
 
+import io.snaps.basenft.data.model.BundleItemResponseDto
+import io.snaps.basenft.data.model.MintBundleResponseDto
 import io.snaps.basenft.data.model.MintMysteryBoxRequestDto
 import io.snaps.basenft.data.model.MintMysteryBoxResponseDto
 import io.snaps.basenft.data.model.MintNftRequestDto
@@ -50,4 +52,12 @@ interface NftApi {
 
     @GET("v1/user/{userId}/nft")
     suspend fun getUserNftCollection(@Path("userId") userId: Uuid): BaseResponse<List<UserNftItemResponseDto>>
+
+    @GET("v1/user/bundle")
+    suspend fun getBundles(): BaseResponse<List<BundleItemResponseDto>>
+
+    @POST("v1/user/bundle")
+    suspend fun mintBundle(
+        @Body body: MintMysteryBoxRequestDto,
+    ): BaseResponse<MintBundleResponseDto>
 }

@@ -3,6 +3,7 @@ package io.snaps.featurecollection.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
+import io.snaps.basenft.domain.BundleModel
 import io.snaps.basenft.domain.MysteryBoxModel
 import io.snaps.basenft.domain.RankModel
 import io.snaps.basesettings.data.SettingsRepository
@@ -14,8 +15,10 @@ import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
+import io.snaps.featurecollection.presentation.screen.BundleTileState
 import io.snaps.featurecollection.presentation.screen.MysteryBoxTileState
 import io.snaps.featurecollection.presentation.screen.RankTileState
+import io.snaps.featurecollection.presentation.toBundleTileState
 import io.snaps.featurecollection.presentation.toMysteryBoxTileState
 import io.snaps.featurecollection.presentation.toRankTileState
 import kotlinx.coroutines.channels.Channel
@@ -39,7 +42,10 @@ class RankSelectionViewModel @Inject constructor(
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(
-        UiState(isMysteryBoxEnabled = featureToggle.isEnabled(Feature.MysteryBox))
+        UiState(
+            isMysteryBoxEnabled = featureToggle.isEnabled(Feature.MysteryBox),
+            isBundleEnabled = featureToggle.isEnabled(Feature.Bundle),
+        )
     )
     val uiState = _uiState.asStateFlow()
 
@@ -51,15 +57,21 @@ class RankSelectionViewModel @Inject constructor(
             if (settingsRepository.state.value.dataOrCache == null) {
                 settingsRepository.update().doOnSuccess {
                     _uiState.update {
-                        it.copy(isMysteryBoxEnabled = featureToggle.isEnabled(Feature.MysteryBox))
+                        it.copy(
+                            isMysteryBoxEnabled = featureToggle.isEnabled(Feature.MysteryBox),
+                            isBundleEnabled = featureToggle.isEnabled(Feature.Bundle),
+                        )
                     }
                 }
             }
+
             subscribeOnRanks()
             subscribeOnMysteryBoxes()
+            subscribeOnBundles()
 
             loadRanks()
             loadMysteryBoxes()
+            loadBundles()
         }
     }
 
@@ -88,6 +100,19 @@ class RankSelectionViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    private fun subscribeOnBundles() {
+        nftRepository.bundleState.onEach { state ->
+            _uiState.update {
+                it.copy(
+                    bundles = state.toBundleTileState(
+                        onItemClicked = ::onBundleItemClicked,
+                        onReloadClicked = ::onBundleReloadClicked,
+                    )
+                )
+            }
+        }.launchIn(viewModelScope)
+    }
+
     private fun loadRanks() = viewModelScope.launch {
         action.execute {
             nftRepository.updateRanks()
@@ -98,6 +123,14 @@ class RankSelectionViewModel @Inject constructor(
         viewModelScope.launch {
             action.execute {
                 nftRepository.updateMysteryBoxes()
+            }
+        }
+    }
+
+    private fun loadBundles() {
+        viewModelScope.launch {
+            action.execute {
+                nftRepository.updateBundle()
             }
         }
     }
@@ -120,6 +153,16 @@ class RankSelectionViewModel @Inject constructor(
         loadMysteryBoxes()
     }
 
+    private fun onBundleItemClicked(bundle: BundleModel) {
+        viewModelScope.launch {
+            _command publish Command.OpenBundle(AppRoute.Bundle.Args(bundle.type))
+        }
+    }
+
+    private fun onBundleReloadClicked() {
+        loadBundles()
+    }
+
     fun onRankFootnoteClick() {
         viewModelScope.launch {
             _uiState.update { it.copy(bottomDialog = BottomDialog.RankFootnote) }
@@ -136,8 +179,10 @@ class RankSelectionViewModel @Inject constructor(
     data class UiState(
         val ranks: List<RankTileState> = List(6) { RankTileState.Shimmer },
         val mysteryBoxes: List<MysteryBoxTileState> = List(2) { MysteryBoxTileState.Shimmer },
+        val bundles: List<BundleTileState> = List(8) { BundleTileState.Shimmer },
         val bottomDialog: BottomDialog = BottomDialog.RankFootnote,
         val isMysteryBoxEnabled: Boolean = false,
+        val isBundleEnabled: Boolean = false,
     )
 
     sealed class BottomDialog {
@@ -147,6 +192,7 @@ class RankSelectionViewModel @Inject constructor(
     sealed class Command {
         data class OpenPurchase(val args: AppRoute.Purchase.Args) : Command()
         data class OpenMysteryBox(val args: AppRoute.MysteryBox.Args) : Command()
+        data class OpenBundle(val args: AppRoute.Bundle.Args) : Command()
         object ShowBottomDialog : Command()
         object HideBottomDialog : Command()
     }

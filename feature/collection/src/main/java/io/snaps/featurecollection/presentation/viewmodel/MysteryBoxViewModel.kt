@@ -35,7 +35,6 @@ import io.snaps.coreui.viewmodel.publish
 import io.snaps.coreuicompose.uikit.listtile.CellTileState
 import io.snaps.coreuicompose.uikit.listtile.LeftPart
 import io.snaps.coreuicompose.uikit.listtile.MiddlePart
-import io.snaps.corecommon.R
 import io.snaps.coreui.FileManager
 import io.snaps.featurecollection.domain.BalanceInSync
 import io.snaps.featurecollection.domain.MyCollectionInteractor
@@ -278,7 +277,6 @@ class MysteryBoxViewModel @Inject constructor(
                 interactor.mysteryBoxMintOnBlockchain(mysteryBoxType = args.type, summary = summary)
             }.doOnSuccess { data ->
                 txHash = data.txHash
-                setVideoUri(data.nftTypeFromBox)
             }.doOnError { error, _ ->
                 if (error.code == 400) notificationsSource.sendError(error)
             }.doOnComplete {
@@ -292,25 +290,6 @@ class MysteryBoxViewModel @Inject constructor(
             action.execute {
                 nftRepository.updateMysteryBoxes()
             }
-        }
-    }
-
-    private fun setVideoUri(nftType: NftType) {
-        val videoUri = when (nftType) {
-            NftType.FamousGuy -> R.raw.famousguy
-            NftType.Follower -> R.raw.follower
-            NftType.Influencer -> R.raw.influencer
-            NftType.Newbie -> R.raw.newbee
-            NftType.Rockstar -> R.raw.rockstar
-            NftType.Sponsor -> R.raw.sponsor
-            NftType.Star -> R.raw.star
-            NftType.Sub -> R.raw.sub
-            NftType.SuperStar -> R.raw.superstar
-            NftType.Viewer -> R.raw.viewer
-            else -> null
-        }?.let { fileManager.getUriFromRes(it) }
-        _uiState.update {
-            it.copy(uri = videoUri?.toString())
         }
     }
 

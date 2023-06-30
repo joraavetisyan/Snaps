@@ -6,6 +6,7 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import io.snaps.corecommon.ext.log
+import io.snaps.corecommon.model.BundleType
 import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.MysteryBoxType
@@ -245,6 +246,14 @@ object AppRoute {
         @Serializable
         data class Args(
             val type: MysteryBoxType,
+        )
+    }
+
+    object Bundle : RouteWithArg("Bundle") {
+
+        @Serializable
+        data class Args(
+            val type: BundleType,
         )
     }
 }

@@ -243,3 +243,26 @@ enum class MysteryBoxType {
     @SerialName("FirstTier") FirstTier,
     @SerialName("SecondTier") SecondTier,
 }
+
+@Serializable
+enum class BundleType(val value: String) {
+    @SerialName("Viewer") Viewer("COOPER BUNDLE"),
+    @SerialName("Starter") Starter("BRONZE BUNDLE"),
+    @SerialName("Follower") Follower("SILVER BUNDLE"),
+    @SerialName("Sub") Sub("GOLD BUNDLE"),
+    @SerialName("Sponsor") Sponsor("PLATINUM BUNDLE"),
+    @SerialName("Liker") Liker("DIAMOND BUNDLE"),
+    @SerialName("Premium") Premium("PRIME BUNDLE"),
+    @SerialName("Ultra") Ultra("STAR BUNDLE");
+
+    fun getBundleImage() = when (this) {
+        BundleType.Viewer -> R.drawable.img_bundle_background_0
+        BundleType.Starter -> R.drawable.img_bundle_background_1
+        BundleType.Follower -> R.drawable.img_bundle_background_2
+        BundleType.Sub -> R.drawable.img_bundle_background_3
+        BundleType.Sponsor -> R.drawable.img_bundle_background_4
+        BundleType.Liker -> R.drawable.img_bundle_background_5
+        BundleType.Premium -> R.drawable.img_bundle_background_6
+        BundleType.Ultra -> R.drawable.img_bundle_background_7
+    }.imageValue()
+}

@@ -10,6 +10,7 @@ import io.horizontalsystems.ethereumkit.models.GasPrice
 import io.horizontalsystems.ethereumkit.models.TransactionData
 import io.snaps.basewallet.data.WalletApi
 import io.snaps.basewallet.data.blockchainCall
+import io.snaps.basewallet.data.model.BundleSignatureRequestDto
 import io.snaps.basewallet.data.model.SignatureRequestDto
 import io.snaps.basewallet.domain.NftMintSummary
 import io.snaps.corecommon.model.Effect
@@ -22,6 +23,7 @@ import io.snaps.corecommon.ext.applyDecimal
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.ext.unapplyDecimal
+import io.snaps.corecommon.model.BundleType
 import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.model.TxSign
 import io.snaps.corecrypto.core.IAccountManager
@@ -65,6 +67,8 @@ interface BlockchainTxRepository {
     suspend fun getNftMintSummary(nftType: NftType, amount: Double, gasLimit: Long? = null): Effect<NftMintSummary>
 
     suspend fun getMysteryBoxMintSummary(amount: Double, gasLimit: Long? = null): Effect<NftMintSummary>
+
+    suspend fun getBundleMintSummary(type: BundleType, amount: Double, gasLimit: Long? = null): Effect<NftMintSummary>
 
     suspend fun getMintNftSign(nftType: NftType, summary: NftMintSummary): Effect<TxSign>
 
@@ -390,6 +394,67 @@ class BlockchainTxRepositoryImpl @Inject constructor(
 
         return apiCall(ioDispatcher) {
             walletApi.getMysteryBoxSignature(body = SignatureRequestDto(nonce = nonceRaw, amount = amount))
+        }.flatMap { data ->
+            blockchainCall(ioDispatcher) {
+                val wallet = requireSnapsWallet()
+                val adapter = requireEip20Adapter(wallet)
+
+                fun error(): Nothing = throw IllegalStateException("Signature data null! $data")
+
+                val address = Address(Nft.SNAPS.address)
+                val fromAddress = requireActiveWalletReceiveAddress()
+
+                val method = MintContractMethod(
+                    owner = Address(fromAddress),
+                    fromAccountAmounts = data.amountReceiver?.let(::BigInteger) ?: error(),
+                    deadline = data.deadline?.toBigInteger() ?: error(),
+                    nonce = nonceRaw.toBigInteger(),
+                    signature = data.signature?.hexStringToByteArray() ?: error(),
+                    profitWallet = data.profitWallet?.let(::Address) ?: error(),
+                    tokensCount = data.tokensCount?.toBigInteger(),
+                )
+                val encodedAbi: ByteArray = method.encodedABI()
+
+                val valueApplied = amount.applyDecimal(wallet.decimal)
+                val transactionData = TransactionData(
+                    to = address,
+                    value = valueApplied,
+                    input = encodedAbi,
+                )
+                val gasLimitEstimate: Long = gasLimit ?: adapter.evmKit.estimateGas(
+                    transactionData = transactionData,
+                    gasPrice = defaultGasPrice,
+                ).blockingGet()
+                val gasPriceDecimal = defaultGasPrice.max.unapplyDecimal(wallet.decimal).times(gasLimitEstimate.toBigDecimal())
+
+                NftMintSummary(
+                    from = fromAddress,
+                    to = address.hex,
+                    summary = amount.toBigDecimal(),
+                    gas = gasPriceDecimal,
+                    total = amount.toBigDecimal() + gasPriceDecimal,
+                    gasLimit = gasLimitEstimate,
+                    transactionData = transactionData,
+                )
+            }
+        }
+    }
+
+    override suspend fun getBundleMintSummary(
+        type: BundleType,
+        amount: Double,
+        gasLimit: Long?
+    ): Effect<NftMintSummary> {
+        val nonceRaw = getNonceRaw()
+
+        return apiCall(ioDispatcher) {
+            walletApi.getBundleSignature(
+                body = BundleSignatureRequestDto(
+                    nonce = nonceRaw,
+                    amount = amount,
+                    type = type.ordinal + 1,
+                )
+            )
         }.flatMap { data ->
             blockchainCall(ioDispatcher) {
                 val wallet = requireSnapsWallet()

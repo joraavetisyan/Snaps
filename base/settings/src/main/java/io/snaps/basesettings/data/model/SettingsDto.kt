@@ -18,4 +18,5 @@ data class SettingsDto(
     @SerialName("video_key_dev") val videoKeyDev: String,
     @SerialName("mobile_add") val ad: AdDto?,
     @SerialName("mystery_enabled") val mysteryBox: Boolean,
+    @SerialName("bundle_enabled") val bundle: Boolean,
 )

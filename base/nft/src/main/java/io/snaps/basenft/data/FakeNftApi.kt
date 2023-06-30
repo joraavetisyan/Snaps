@@ -1,6 +1,8 @@
 package io.snaps.basenft.data
 
+import io.snaps.basenft.data.model.BundleItemResponseDto
 import io.snaps.basenft.data.model.LevelInfo
+import io.snaps.basenft.data.model.MintBundleResponseDto
 import io.snaps.basenft.data.model.MintMysteryBoxRequestDto
 import io.snaps.basenft.data.model.MintMysteryBoxResponseDto
 import io.snaps.basenft.data.model.MintNftRequestDto
@@ -114,6 +116,14 @@ class FakeNftApi : NftApi {
     }
 
     override suspend fun getUserNftCollection(userId: Uuid): BaseResponse<List<UserNftItemResponseDto>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getBundles(): BaseResponse<List<BundleItemResponseDto>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun mintBundle(body: MintMysteryBoxRequestDto): BaseResponse<MintBundleResponseDto> {
         TODO("Not yet implemented")
     }
 

@@ -236,7 +236,7 @@ private fun PurchaseScreen(
                 .padding(horizontal = 12.dp)
                 .padding(bottom = buttonsHeight + 24.dp),
         ) {
-            if (uiState.nft.isPurchasable) {
+            if (uiState.nft.isPurchasable || uiState.nft.type == NftType.Liker) {
                 NftInfoBlock(
                     nft = uiState.nft,
                 )
@@ -398,7 +398,7 @@ private fun NftInfoBlock(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        NftImageWithBadge(nftImage = nft.image, badgeValue = nft.additionalData.leftCopies?.toString())
+        NftImageWithBadge(nftImage = nft.image, badgeValue = null)
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {

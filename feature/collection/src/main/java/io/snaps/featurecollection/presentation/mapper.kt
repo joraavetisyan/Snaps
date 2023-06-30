@@ -1,5 +1,6 @@
 package io.snaps.featurecollection.presentation
 
+import io.snaps.basenft.domain.BundleModel
 import io.snaps.basenft.domain.MysteryBoxModel
 import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
@@ -10,6 +11,7 @@ import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.MysteryBoxType
 import io.snaps.corecommon.model.State
+import io.snaps.featurecollection.presentation.screen.BundleTileState
 import io.snaps.featurecollection.presentation.screen.MysteryBoxInfoTileState
 import io.snaps.featurecollection.presentation.screen.MysteryBoxTileState
 import io.snaps.featurecollection.presentation.screen.RankTileState
@@ -35,14 +37,13 @@ fun State<List<RankModel>>.toRankTileState(
     }
 }
 
-private fun RankModel.toRankTileState(
+fun RankModel.toRankTileState(
     snpsUsdExchangeRate: Double,
     onItemClicked: (RankModel) -> Unit,
 ) = RankTileState.Data(
     type = type,
     cost = cost,
     image = image,
-    additionalData = additionalData,
     dailyReward = dailyReward.toFiat(rate = snpsUsdExchangeRate),
     dailyUnlock = dailyUnlock.toPercentageFormat(),
     dailyConsumption = dailyConsumption.toPercentageFormat(),
@@ -144,3 +145,29 @@ fun State<List<MysteryBoxModel>>.toMysteryBoxInfoTileState(
         else -> MysteryBoxInfoTileState.Error(onClick = onReloadClicked)
     }
 }
+
+fun State<List<BundleModel>>.toBundleTileState(
+    onItemClicked: (BundleModel) -> Unit,
+    onReloadClicked: () -> Unit,
+) = when (this) {
+    is Loading -> List(8) { BundleTileState.Shimmer }
+    is Effect -> when {
+        isSuccess -> {
+            requireData.map {
+                it.toBundleTileState(
+                    onItemClicked = onItemClicked,
+                )
+            }
+        }
+        else -> listOf(BundleTileState.Error(onClick = onReloadClicked))
+    }
+}
+
+fun BundleModel.toBundleTileState(
+    onItemClicked: (BundleModel) -> Unit,
+) = BundleTileState.Data(
+    type = type,
+    cost = fiatCost,
+    discount = discountCost,
+    clickListener = { onItemClicked(this) },
+)

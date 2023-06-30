@@ -1,14 +1,17 @@
 package io.snaps.basenft.data
 
 import dagger.Lazy
+import io.snaps.basenft.data.model.MintBundleResponseDto
 import io.snaps.basenft.data.model.MintMysteryBoxRequestDto
 import io.snaps.basenft.data.model.MintMysteryBoxResponseDto
 import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.MintNftStoreRequestDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
+import io.snaps.basenft.domain.BundleModel
 import io.snaps.basenft.domain.MysteryBoxModel
 import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.domain.RankModel
+import io.snaps.corecommon.model.BundleType
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
@@ -44,11 +47,15 @@ interface NftRepository {
 
     val mysteryBoxState: StateFlow<State<List<MysteryBoxModel>>>
 
+    val bundleState: StateFlow<State<List<BundleModel>>>
+
     suspend fun updateRanks(): Effect<Completable>
 
     suspend fun updateNftCollection(): Effect<List<NftModel>>
 
     suspend fun updateMysteryBoxes(): Effect<List<MysteryBoxModel>>
+
+    suspend fun updateBundle(): Effect<List<BundleModel>>
 
     suspend fun mintNftStore(productId: Uuid, purchaseToken: Token, txSign: TxSign): Effect<TxHash>
 
@@ -58,6 +65,8 @@ interface NftRepository {
     suspend fun mintNft(type: NftType, txSign: TxSign? = null): Effect<TxHash>
 
     suspend fun mintMysteryBox(mysteryBoxType: MysteryBoxType, txSign: TxSign? = null): Effect<MintMysteryBoxResponseDto>
+
+    suspend fun mintBundle(bundleType: BundleType, txSign: TxSign? = null): Effect<MintBundleResponseDto>
 
     suspend fun repairNftBlockchain(nftModel: NftModel, txSign: TxSign): Effect<TxHash>
 
@@ -80,6 +89,9 @@ class NftRepositoryImpl @Inject constructor(
 
     private val _mysteryBoxState = MutableStateFlow<State<List<MysteryBoxModel>>>(Loading())
     override val mysteryBoxState = _mysteryBoxState.asStateFlow()
+
+    private val _bundleState = MutableStateFlow<State<List<BundleModel>>>(Loading())
+    override val bundleState = _bundleState.asStateFlow()
 
     override val countBrokenGlassesState = nftCollectionState.map { state ->
         when (state) {
@@ -131,6 +143,16 @@ class NftRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateBundle(): Effect<List<BundleModel>> {
+        return apiCall(ioDispatcher) {
+            nftApi.get().getBundles()
+        }.map {
+            it.toBundleModelList()
+        }.also {
+            _bundleState tryPublish it
+        }
+    }
+
     override suspend fun mintNft(type: NftType, txSign: TxHash?): Effect<TxHash> {
         return apiCall(ioDispatcher) {
             nftApi.get().mintNft(MintNftRequestDto(nftType = type, txSign = txSign))
@@ -148,6 +170,26 @@ class NftRepositoryImpl @Inject constructor(
             nftApi.get().mintMysteryBox(
                 MintMysteryBoxRequestDto(
                     mysteryBoxType = mysteryBoxType.ordinal + 1,
+                    paymentType = 1,
+                    productId = null,
+                    receipt = null,
+                    txSign = txSign,
+                )
+            )
+        }.doOnSuccess {
+            updateNftCollection()
+            updateRanks()
+        }
+    }
+
+    override suspend fun mintBundle(
+        bundleType: BundleType,
+        txSign: TxSign?
+    ): Effect<MintBundleResponseDto> {
+        return apiCall(ioDispatcher) {
+            nftApi.get().mintBundle(
+                MintMysteryBoxRequestDto(
+                    mysteryBoxType = bundleType.ordinal + 1,
                     paymentType = 1,
                     productId = null,
                     receipt = null,

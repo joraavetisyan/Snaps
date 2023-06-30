@@ -1,5 +1,6 @@
 package io.snaps.basewallet.data
 
+import io.snaps.basewallet.data.model.BundleSignatureRequestDto
 import io.snaps.basewallet.data.model.SnpsAccountResponseDto
 import io.snaps.basewallet.data.model.ClaimRequestDto
 import io.snaps.basewallet.data.model.ClaimResponseDto
@@ -84,6 +85,10 @@ class FakeWalletApi : WalletApi {
                 tokensCount = 0,
             )
         )
+    }
+
+    override suspend fun getBundleSignature(body: BundleSignatureRequestDto): BaseResponse<MysteryBoxSignatureResponseDto> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun refillGas(body: RefillGasRequestDto): BaseResponse<Completable> {

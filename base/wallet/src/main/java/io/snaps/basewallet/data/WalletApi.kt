@@ -1,5 +1,6 @@
 package io.snaps.basewallet.data
 
+import io.snaps.basewallet.data.model.BundleSignatureRequestDto
 import io.snaps.basewallet.data.model.SnpsAccountResponseDto
 import io.snaps.basewallet.data.model.ClaimRequestDto
 import io.snaps.basewallet.data.model.ClaimResponseDto
@@ -55,6 +56,11 @@ interface WalletApi {
     @POST("v1/user/mystery-box/sign")
     suspend fun getMysteryBoxSignature(
         @Body body: SignatureRequestDto,
+    ): BaseResponse<MysteryBoxSignatureResponseDto>
+
+    @POST("v1/user/bundle/sign")
+    suspend fun getBundleSignature(
+        @Body body: BundleSignatureRequestDto,
     ): BaseResponse<MysteryBoxSignatureResponseDto>
 
     @POST("v2/base-token")

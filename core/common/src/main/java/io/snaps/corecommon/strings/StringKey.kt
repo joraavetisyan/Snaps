@@ -463,6 +463,8 @@ enum class StringKey {
     DialogSummaryTitleTotal,
 
     RankSelectionTitle,
+    RankSelectionTitleSliderNft,
+    RankSelectionTitleSliderBundles,
     RankSelectionActionFootnote,
     RankSelectionTitleDailyReward,
     RankSelectionTitleDailyUnlock,
@@ -477,6 +479,8 @@ enum class StringKey {
     RankSelectionFieldDropRate,
     RankSelectionTitleMysteryBox,
     RankSelectionTitleNft,
+    RankSelectionMessageBundle,
+    RankSelectionFieldDiscount,
 
     MysteryBoxTitle,
     MysteryBoxTitlePrimeBox,

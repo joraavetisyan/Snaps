@@ -27,4 +27,5 @@ enum class Feature(
     SellSnaps("snaps_cell_enabled", false, true, true),
     Captcha("captcha_enabled", false, true, false),
     MysteryBox("mystery_enabled", false, true, true),
+    Bundle("bundle_enabled", false, true, true),
 }

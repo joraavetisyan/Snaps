@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import io.snaps.basenft.domain.RankModel
 import io.snaps.basenft.ui.Line
 import io.snaps.baseprofile.ui.ValueWidget
 import io.snaps.corecommon.R
@@ -46,7 +45,6 @@ sealed class RankTileState : TileState {
         val type: NftType,
         val cost: FiatValue?,
         val image: ImageValue,
-        val additionalData: RankModel.AdditionalData,
         val dailyReward: FiatValue,
         val dailyUnlock: String,
         val dailyConsumption: String,
@@ -95,7 +93,7 @@ private fun Data(
                 }
             },
     ) {
-        NftImageWithBadge(nftImage = data.image, badgeValue = data.additionalData.leftCopies?.toString())
+        NftImageWithBadge(nftImage = data.image, badgeValue = null)
         Spacer(Modifier.width(8.dp))
         Column(
             modifier = Modifier.fillMaxWidth(),
