@@ -233,20 +233,18 @@ class ReferralProgramViewModel @Inject constructor(
 
     fun onReferralCodeDialogButtonClicked() {
         setInviteCode(uiState.value.inviteCodeValue, {
-            viewModelScope.launch {
-                hideReferralCodeSheet()
-                onReferralCodeApplied()
-            }
+            hideReferralCodeSheet()
+            onReferralCodeApplied()
         }, {
-            viewModelScope.launch {
-                hideReferralCodeSheet()
-            }
+            hideReferralCodeSheet()
         })
     }
 
-    private suspend fun hideReferralCodeSheet() {
-        _uiState.update { it.copy(isLoading = false, inviteCodeValue = "") }
-        _command publish Command.HideBottomDialog
+    private fun hideReferralCodeSheet() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = false, inviteCodeValue = "") }
+            _command publish Command.HideBottomDialog
+        }
     }
 
     fun onInviteCodeValueChanged(code: String) {
