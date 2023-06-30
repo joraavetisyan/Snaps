@@ -167,6 +167,7 @@ fun VideoClipScreen(
                 commentInputSheetState.showSheet()
                 focusRequester.requestFocus()
             }
+
             VideoFeedViewModel.Command.CloseScreen -> onCloseScreen?.invoke()
             VideoFeedViewModel.Command.HideCommentInputBottomDialog -> commentInputSheetState.hideSheet()
             is VideoFeedViewModel.Command.ScrollToPosition -> pagerState.scrollToPage(it.position)
@@ -221,6 +222,7 @@ fun VideoClipScreen(
                         onReplyClicked = commentInputSheetState::showSheet,
                         onEmojiClicked = viewModel::onEmojiClicked,
                     )
+
                     VideoFeedViewModel.BottomDialog.MoreActions -> ActionsBottomDialog(
                         title = StringKey.VideoClipTitleAction.textValue(),
                         actions = uiState.actions,
@@ -279,6 +281,7 @@ fun VideoClipScreen(
                                     onVideoClipStartedPlaying = viewModel::onVideoClipStartedPlaying,
                                 )
                             }
+
                             is VideoClipUiState.Shimmer -> FullScreenLoaderUi(
                                 isLoading = true,
                                 backgroundColor = AppTheme.specificColorScheme.black,
@@ -317,7 +320,8 @@ private fun ScrollDetector(
     val scrollInfo = remember(pagerState) {
         derivedStateOf {
             val currentPage = pagerState.currentPage
-            val isReachingEnd = pageCountRemembered > 0 && currentPage + 1 >= pageCountRemembered - DETECT_THRESHOLD
+            val isReachingEnd =
+                pageCountRemembered > 0 && currentPage + 1 >= pageCountRemembered - DETECT_THRESHOLD
             ScrollInfo(
                 isReachingEnd = isReachingEnd,
                 totalItemsCount = pageCountRemembered,
@@ -549,7 +553,8 @@ private fun VideoClipBottomItems(
                         onClick = onSubscribeClicked,
                         label = (if (isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),
                         colors = SimpleChipConfig.greyColor(),
-                        leadingIcon = AppTheme.specificIcons.checkBox.toImageValue().takeIf { isSubscribed },
+                        leadingIcon = AppTheme.specificIcons.checkBox.toImageValue()
+                            .takeIf { isSubscribed },
                     )
                 }
             }
@@ -655,7 +660,7 @@ private fun VideoClipEndItems(
 
         TextedIcon(
             icon = icons { if (clipModel.isLiked) favorite else favoriteBorder },
-            text = clipModel.likeCount.toCompactDecimalFormat(),
+            text = if (clipModel.isSponsored) null else clipModel.likeCount.toCompactDecimalFormat(),
             tint = colors { if (clipModel.isLiked) red else white },
             onIconClicked = if (clipModel.isSponsored) null else {
                 { onLikeClicked(clipModel) }
