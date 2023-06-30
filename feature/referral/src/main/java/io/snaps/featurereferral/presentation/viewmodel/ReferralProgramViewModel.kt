@@ -232,10 +232,10 @@ class ReferralProgramViewModel @Inject constructor(
     }
 
     fun onReferralCodeDialogButtonClicked() {
-        setInviteCode(uiState.value.inviteCodeValue, {
+        setInviteCode(uiState.value.inviteCodeValue, onSuccess = {
             hideReferralCodeSheet()
             onReferralCodeApplied()
-        }, {
+        }, onError = {
             hideReferralCodeSheet()
         })
     }
@@ -315,12 +315,12 @@ class ReferralProgramViewModel @Inject constructor(
     }
 
     fun onApplyReferralCodeClicked(code: String) {
-        setInviteCode(code, {
+        setInviteCode(code, onSuccess = {
             viewModelScope.launch {
                 _uiState.update { it.copy(dialog = null) }
                 notificationsSource.sendMessage(StringKey.MessageReferralCodeApplySuccess.textValue())
             }
-        }, {
+        }, onError = {
         })
     }
 
