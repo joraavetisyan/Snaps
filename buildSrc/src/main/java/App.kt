@@ -11,9 +11,9 @@ object App {
     val name
         get() = "$major.$minor.$patch"
 
-    private var version = 36
+    private var version = 37
 
     private var major = 1
     private var minor = 0
-    private var patch = 23
+    private var patch = 24
 }
