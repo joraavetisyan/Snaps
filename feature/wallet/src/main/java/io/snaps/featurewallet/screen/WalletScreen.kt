@@ -59,6 +59,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
@@ -133,12 +134,13 @@ fun WalletScreen(
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(key1 = sheetState.currentValue) {
         if (sheetState.currentValue == ModalBottomSheetValue.Hidden
             && uiState.bottomDialog == WalletViewModel.BottomDialog.RewardsWithdraw
         ) {
-            focusRequester.freeFocus()
+            focusManager.clearFocus()
             keyboardController?.hide()
         }
     }

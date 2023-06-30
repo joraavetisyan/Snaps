@@ -40,6 +40,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -104,10 +105,11 @@ fun RegistrationScreen(
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(key1 = sheetState.currentValue) {
         if (sheetState.currentValue == ModalBottomSheetValue.Hidden) {
-            focusRequester.freeFocus()
+            focusManager.clearFocus()
             keyboardController?.hide()
         }
     }
@@ -160,7 +162,7 @@ fun RegistrationScreen(
         when (it) {
             RegistrationViewModel.Command.ShowBottomDialog -> coroutineScope.launch { sheetState.show() }
             RegistrationViewModel.Command.HideBottomDialog -> coroutineScope.launch {
-                focusRequester.freeFocus()
+                focusManager.clearFocus()
                 keyboardController?.hide()
                 sheetState.hide()
             }
