@@ -8,6 +8,7 @@ import io.snaps.basewallet.domain.SwapTransactionModel
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.model.CryptoAddress
+import io.snaps.corecommon.model.TxHash
 import org.json.JSONObject
 import java.math.BigInteger
 
@@ -17,7 +18,7 @@ import java.math.BigInteger
 class TrustWalletWebAppInterface(
     private val address: CryptoAddress,
     private val webView: WebView,
-    private val sendTransaction: (SwapTransactionModel) -> Unit,
+    private val sendTransaction: (SwapTransactionModel, (TxHash) -> Unit) -> Unit,
 ) {
 
     companion object {
@@ -44,12 +45,8 @@ class TrustWalletWebAppInterface(
     private fun handleRequestAccounts(obj: JSONObject) {
         val id = obj.getLong("id")
         val network = obj.getString("network")
-        val setAddress = "window.$network.setAddress(\"$address\");"
         val callback = "window.$network.sendResponse($id, [\"$address\"])"
         webView.post {
-            webView.evaluateJavascript(setAddress) {
-                log("EvaluateJavascript result: setAddress $it")
-            }
             webView.evaluateJavascript(callback) {
                 log("EvaluateJavascript result: callback $it")
             }
@@ -83,6 +80,15 @@ class TrustWalletWebAppInterface(
                 gasLimit = gasLimitInt,
                 data = data,
             )
-        )
+        ) { thHash ->
+            val id = obj.getLong("id")
+            val network = obj.getString("network")
+            val callback = "window.$network.sendResponse($id, \"$thHash\")"
+            webView.post {
+                webView.evaluateJavascript(callback) {
+                    log("EvaluateJavascript result: callback $it")
+                }
+            }
+        }
     }
 }

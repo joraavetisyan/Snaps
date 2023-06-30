@@ -32,6 +32,7 @@ import io.snaps.basewallet.data.blockchain.trustwallet.TrustWalletWebAppInterfac
 import io.snaps.basewallet.domain.SwapTransactionModel
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.TxHash
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.collectAsCommand
@@ -101,7 +102,7 @@ fun ExchangeScreen(
 private fun ExchangeScreen(
     uiState: ExchangeViewModel.UiState,
     onBackClicked: () -> Boolean,
-    onTransactionSendClicked: (SwapTransactionModel) -> Unit,
+    onTransactionSendClicked: (SwapTransactionModel, (TxHash) -> Unit) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val localContext = LocalContext.current

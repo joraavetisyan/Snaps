@@ -7,13 +7,9 @@ import io.snaps.basesources.NotificationsSource
 import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.domain.SwapTransactionModel
-import io.snaps.corecommon.container.textValue
 import io.snaps.basewallet.domain.WalletModel
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
-import io.snaps.basewallet.ui.TransferTokensSuccessData
-import io.snaps.corecommon.ext.unapplyDecimal
-import io.snaps.corecommon.model.CoinBNB
-import io.snaps.corecommon.strings.StringKey
+import io.snaps.corecommon.model.TxHash
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
@@ -48,7 +44,7 @@ class ExchangeViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
-    fun onTransactionSendClicked(transactionModel: SwapTransactionModel) {
+    fun onTransactionSendClicked(transactionModel: SwapTransactionModel, onSuccess: (TxHash) -> Unit) {
         walletRepository.bnb.value?.let {
             _uiState.update { it.copy(isLoading = true) }
             viewModelScope.launch {
@@ -64,15 +60,7 @@ class ExchangeViewModel @Inject constructor(
                 }.doOnComplete {
                     _uiState.update { it.copy(isLoading = false) }
                 }.doOnSuccess {
-                    notificationsSource.sendMessage(StringKey.MessageSuccess.textValue())
-                    onSuccessfulTransfer(
-                        scope = viewModelScope,
-                        data = TransferTokensSuccessData(
-                            txHash = it,
-                            to = transactionModel.address,
-                            sent = CoinBNB(transactionModel.amount.toLong().unapplyDecimal(args.coin.decimal).toDouble()),
-                        ),
-                    )
+                    onSuccess(it)
                 }
             }
         }
