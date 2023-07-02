@@ -320,8 +320,7 @@ class ReferralProgramViewModel @Inject constructor(
                 _uiState.update { it.copy(dialog = null) }
                 notificationsSource.sendMessage(StringKey.MessageReferralCodeApplySuccess.textValue())
             }
-        }, onError = {
-        })
+        }, onError = null)
     }
 
     fun onOpenBscScanClicked() {
@@ -342,7 +341,7 @@ class ReferralProgramViewModel @Inject constructor(
         }
     }
 
-    private fun setInviteCode(code: String, onSuccess: () -> Unit, onError: () -> Unit) {
+    private fun setInviteCode(code: String, onSuccess: () -> Unit, onError: (() -> Unit)? = null) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             action.execute {
@@ -350,7 +349,7 @@ class ReferralProgramViewModel @Inject constructor(
             }.doOnSuccess {
                 onSuccess()
             }.doOnError { _, _ ->
-                onError()
+                onError?.invoke()
             }
         }
     }
