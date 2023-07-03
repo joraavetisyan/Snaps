@@ -51,7 +51,8 @@ class AppActivity : FragmentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         installSplashScreen().setKeepOnScreenCondition { shouldKeepSplashScreen }
         setContent {
-            AppTheme(calculateWindowSizeClass(this)) {
+            // todo add Dark Theme
+            AppTheme(calculateWindowSizeClass(this), isDarkTheme = false) {
                 SystemBarsIconsColor()
                 AppScreen()
             }
