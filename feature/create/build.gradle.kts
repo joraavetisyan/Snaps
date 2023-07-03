@@ -37,9 +37,9 @@ imglyConfig {
         licensePath(
             // todo release
             // uncomment this for debug
-            // null
+             null
             // uncomment this for release
-            "vesdk_android_license"
+            //"vesdk_android_license"
         )
     }
 

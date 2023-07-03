@@ -66,15 +66,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.baseplayer.ui.VideoPlayer
+import io.snaps.corecommon.R
 import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.startShareLinkIntent
 import io.snaps.corecommon.ext.toCompactDecimalFormat
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.corecommon.R
-import io.snaps.corecommon.container.imageValue
 import io.snaps.corenavigation.base.openUrl
 import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.LocalBottomNavigationHeight
@@ -349,7 +349,7 @@ private fun VideoClip(
     onMoreClicked: () -> Unit,
     onCreateVideoClicked: (() -> Unit)?,
     onSubscribeClicked: () -> Unit,
-    onVideoClipStartedPlaying: (VideoClipModel) -> Unit,
+    onVideoClipStartedPlaying: (VideoClipModel, Long, Long) -> Unit,
 ) {
     val shouldPlay by remember(pagerState) {
         derivedStateOf {
@@ -361,7 +361,22 @@ private fun VideoClip(
         }
     }
 
+
     var progress by remember(item.clip.id) { mutableStateOf(0f) }
+    var currentPage by remember { mutableStateOf(pagerState.currentPage) }
+    var duration by remember { mutableStateOf(0L) }
+
+    LaunchedEffect(key1 = pagerState.currentPage) {
+        if (pagerState.currentPage != currentPage && progress > 0) {
+            onVideoClipStartedPlaying(
+                item.clip,
+                duration / 1000,
+                (progress * duration / 1000).toLong()
+            )
+
+            currentPage = pagerState.currentPage
+        }
+    }
 
     VideoPlayer(
         networkUrl = item.clip.url,
@@ -372,10 +387,10 @@ private fun VideoClip(
         isScrolling = pagerState.isScrollInProgress,
         onLiked = { onDoubleLikeClicked(item.clip) },
         onProgressChanged = { progress = it },
+        onDurationReady = { duration = it },
         progressPollFrequencyInMillis = 10L,
         performAtPosition = { onProgressChanged(item.clip) },
         performPosition = 0.7f,
-        onStarted = { onVideoClipStartedPlaying(item.clip) }
     )
 
     VideoClipItems(
