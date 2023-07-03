@@ -76,7 +76,7 @@ interface VideoFeedApi {
         @Path("videoId") videoId: Uuid,
     ): BaseResponse<Completable>
 
-    @POST("v1/video/{videoId}/showed")
+    @POST("v2/video/{videoId}/showed")
     suspend fun markVideoShown(
         @Path("videoId") videoId: Uuid,
         @Body body: MarkVideoShownRequestDto

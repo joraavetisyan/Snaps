@@ -59,7 +59,7 @@ fun VideoPlayer(
     onLiked: (() -> Unit)? = null,
     progressPollFrequencyInMillis: Long = 1000L, /*every 1 second*/
     onProgressChanged: ((progress: Float) -> Unit)? = null, /*[0f,1f] every [progressChangePollFrequency]*/
-    onDurationReady: ((Long) -> Unit)? = null,
+    onDurationReady: ((Float) -> Unit)? = null,
     isScrolling: Boolean = false,
     isRepeat: Boolean = true,
     performAtPosition: (() -> Unit)? = null,
@@ -106,7 +106,7 @@ fun VideoPlayer(
                     onProgressChangedRemembered?.invoke(
                         progress
                     )
-                    onDurationReady?.invoke(duration)
+                    onDurationReady?.invoke(duration.toFloat())
                 }
                 delay(progressPollFrequencyInMillis)
             }

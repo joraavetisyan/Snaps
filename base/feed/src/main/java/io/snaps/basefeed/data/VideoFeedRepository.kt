@@ -54,7 +54,7 @@ interface VideoFeedRepository {
 
     suspend fun like(videoId: Uuid): Effect<Completable>
 
-    suspend fun markShown(videoId: Uuid, videoDuration: Long, duration: Long): Effect<Completable>
+    suspend fun markShown(videoId: Uuid, videoDuration: Float, duration: Float): Effect<Completable>
 
     suspend fun markWatched(videoId: Uuid): Effect<Completable>
 }
@@ -184,8 +184,8 @@ class VideoFeedRepositoryImpl @Inject constructor(
 
     override suspend fun markShown(
         videoId: Uuid,
-        videoDuration: Long,
-        skipDuration: Long
+        videoDuration: Float,
+        skipDuration: Float
     ): Effect<Completable> {
         return apiCall(ioDispatcher) {
             videoFeedApi.get().markVideoShown(

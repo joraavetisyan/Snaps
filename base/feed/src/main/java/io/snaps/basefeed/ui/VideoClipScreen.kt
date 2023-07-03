@@ -349,7 +349,7 @@ private fun VideoClip(
     onMoreClicked: () -> Unit,
     onCreateVideoClicked: (() -> Unit)?,
     onSubscribeClicked: () -> Unit,
-    onVideoClipStartedPlaying: (VideoClipModel, Long, Long) -> Unit,
+    onVideoClipStartedPlaying: (VideoClipModel, Float, Float) -> Unit,
 ) {
     val shouldPlay by remember(pagerState) {
         derivedStateOf {
@@ -364,14 +364,14 @@ private fun VideoClip(
 
     var progress by remember(item.clip.id) { mutableStateOf(0f) }
     var currentPage by remember { mutableStateOf(pagerState.currentPage) }
-    var duration by remember { mutableStateOf(0L) }
+    var duration by remember { mutableStateOf(0f) }
 
     LaunchedEffect(key1 = pagerState.currentPage) {
         if (pagerState.currentPage != currentPage && progress > 0) {
             onVideoClipStartedPlaying(
                 item.clip,
                 duration / 1000,
-                (progress * duration / 1000).toLong()
+                progress * duration / 1000
             )
 
             currentPage = pagerState.currentPage

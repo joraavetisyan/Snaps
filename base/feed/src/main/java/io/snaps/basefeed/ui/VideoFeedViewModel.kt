@@ -228,8 +228,8 @@ abstract class VideoFeedViewModel(
 
     fun onVideoClipStartedPlaying(
         clipModel: VideoClipModel,
-        videoDuration: Long,
-        skipDuration: Long
+        videoDuration: Float,
+        skipDuration: Float
     ) {
         viewModelScope.launch {
             action.execute(needsErrorProcessing = false) {
