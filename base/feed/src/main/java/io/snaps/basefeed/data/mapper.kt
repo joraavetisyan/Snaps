@@ -68,6 +68,7 @@ fun AdDto.toVideoModel() = VideoClipModel(
         paymentsState = null,
         firstLevelReferralMultiplier = 0.0,
         secondLevelReferralMultiplier = 0.0,
+        isUsedTags = true,
     ),
     isLiked = false,
     thumbnail = null,

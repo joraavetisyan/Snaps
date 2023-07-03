@@ -118,7 +118,6 @@ import io.snaps.featurereferral.presentation.viewmodel.ReferralProgramViewModel
 import kotlinx.coroutines.launch
 import toTypeface
 
-
 @OptIn(
     ExperimentalMaterialApi::class,
     ExperimentalComposeUiApi::class,
@@ -159,7 +158,6 @@ fun ReferralProgramScreen(
             hideKeyboard()
         }
     }
-
 
     val coroutineScope = rememberCoroutineScope()
 

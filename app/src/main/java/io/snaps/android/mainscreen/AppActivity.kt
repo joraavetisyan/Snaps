@@ -92,6 +92,7 @@ class AppActivity : FragmentActivity() {
                             needsWalletConnect = currentFlow.needsWalletConnect,
                             needsWalletImport = currentFlow.needsWalletImport,
                             needsInitialization = currentFlow.needsInitialization,
+                            needsInterestsSelection = currentFlow.needsInterestsSelection,
                         )
                         LaunchedEffect(currentFlow.isReady) {
                             if (currentFlow.isReady) {

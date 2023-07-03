@@ -57,12 +57,14 @@ class NavHostProvider @Inject constructor(
         needsWalletConnect: Boolean,
         needsWalletImport: Boolean,
         needsInitialization: Boolean,
+        needsInterestsSelection: Boolean,
     ) = Graph(
         navController = navController,
         startDestinationRoute = when {
             needsWalletConnect -> createRoute(AppRoute.WalletConnect)
             needsWalletImport -> createRoute(AppRoute.WalletImport)
             needsInitialization -> createRoute(AppRoute.UserCreate)
+            needsInterestsSelection -> createRoute(AppRoute.InterestsSelection)
             else -> createRoute(AppRoute.MainBottomBar)
         },
     )

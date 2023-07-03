@@ -29,6 +29,7 @@ data class UserInfoModel(
     val paymentsState: PaymentsState?,
     val firstLevelReferralMultiplier: Double,
     val secondLevelReferralMultiplier: Double,
+    val isUsedTags: Boolean,
 ) {
 
     val avatar: ImageValue get() = avatarUrl?.imageValue() ?: R.drawable.img_avatar.imageValue()

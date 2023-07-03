@@ -62,7 +62,9 @@ class AppViewModel @AssistedInject constructor(
 
     private fun checkStatus() {
         viewModelScope.launch {
-            sessionRepository.tryStatusCheck()
+            action.execute {
+                sessionRepository.tryStatusCheck()
+            }
         }
     }
 
@@ -83,6 +85,7 @@ class AppViewModel @AssistedInject constructor(
                 needsWalletImport = userSession is UserSessionTracker.State.Active.NeedsWalletImport,
                 needsInitialization = userSession is UserSessionTracker.State.Active.NeedsInitialization,
                 deeplink = AppDeeplink.parse(deeplink).also { deeplink = null },
+                needsInterestsSelection = userSession is UserSessionTracker.State.Active.NeedsInterestsSelection
             )
         }
     }.likeStateFlow(scope = viewModelScope, initialValue = StartFlow.Idle)
@@ -144,6 +147,7 @@ class AppViewModel @AssistedInject constructor(
             val needsWalletConnect: Boolean,
             val needsWalletImport: Boolean,
             val needsInitialization: Boolean,
+            val needsInterestsSelection: Boolean,
             val deeplink: Deeplink? = null,
         ) : StartFlow() {
 

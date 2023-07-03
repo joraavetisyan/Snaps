@@ -78,6 +78,8 @@ interface ProfileRepository {
     suspend fun updateInvitedFirstReferral(): Effect<Completable>
 
     suspend fun updateInvitedSecondReferral(): Effect<Completable>
+
+    suspend fun addUserTags(tagIds: List<Uuid>): Effect<Completable>
 }
 
 class ProfileRepositoryImpl @Inject constructor(
@@ -264,5 +266,11 @@ class ProfileRepositoryImpl @Inject constructor(
         }.also {
             _invitedSecondReferralState tryPublish it
         }.toCompletable()
+    }
+
+    override suspend fun addUserTags(tagIds: List<Uuid>): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            api.get().userTag(tagIds)
+        }
     }
 }

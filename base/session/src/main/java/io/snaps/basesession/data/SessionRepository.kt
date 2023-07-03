@@ -36,7 +36,9 @@ interface SessionRepository {
 
     suspend fun onWalletConnected(): Effect<Completable>
 
-    fun onInitialized()
+    fun onInitialized(usedTags: Boolean)
+
+    fun onSelectedInterests()
 
     fun logout()
 
@@ -81,7 +83,7 @@ class SessionRepositoryImpl @Inject constructor(
                 walletDataManager.hasAccount(userId) -> if (user.name.isNullOrBlank() || user.avatarUrl == null) {
                     userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsInitialization)
                 } else {
-                    userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
+                    checkUsedTags(user.isUsedTags ?: true)
                 }
                 else -> userSessionTracker.onLogin(
                     if (user.wallet == null) UserSessionTracker.State.Active.NeedsWalletConnect
@@ -101,6 +103,14 @@ class SessionRepositoryImpl @Inject constructor(
         }
 
         return check.toCompletable()
+    }
+
+    private fun checkUsedTags(usedTags: Boolean) {
+        if (usedTags) {
+            userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
+        } else {
+            userSessionTracker.onLogin(UserSessionTracker.State.Active.NeedsInterestsSelection)
+        }
     }
 
     override suspend fun tryLogin(): Effect<Completable> {
@@ -129,7 +139,11 @@ class SessionRepositoryImpl @Inject constructor(
         return tryStatusCheck()
     }
 
-    override fun onInitialized() {
+    override fun onInitialized(usedTags: Boolean) {
+        checkUsedTags(usedTags)
+    }
+
+    override fun onSelectedInterests() {
         userSessionTracker.onLogin(UserSessionTracker.State.Active.Ready)
     }
 

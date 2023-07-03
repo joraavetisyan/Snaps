@@ -35,7 +35,8 @@ interface UserSessionTracker {
             object NeedsWalletConnect : Active() // Registered/authorized, but not connected to wallet
             object NeedsWalletImport : Active() // Registered/authorized, connected to wallet previously, needs to import it
             object NeedsInitialization : Active() // Registered/authorized, connected to wallet, but not initialized
-            object Ready : Active() // Registered/authorized, connected to wallet, initialized
+            object NeedsInterestsSelection : Active() // Registered/authorized, connected to wallet, initialized, but not selected interests
+            object Ready : Active() // Registered/authorized, connected to wallet, initialized, selected interests
             object Error : Active()
         }
     }

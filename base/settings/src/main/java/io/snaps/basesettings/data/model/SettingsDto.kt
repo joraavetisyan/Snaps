@@ -19,4 +19,5 @@ data class SettingsDto(
     @SerialName("mobile_add") val ad: AdDto?,
     @SerialName("mystery_enabled") val mysteryBox: Boolean,
     @SerialName("bundle_enabled") val bundle: Boolean,
+    @SerialName("interests") val interests: List<InterestDto>,
 )

@@ -256,6 +256,8 @@ object AppRoute {
             val type: BundleType,
         )
     }
+
+    object InterestsSelection : Route("InterestsSelection")
 }
 
 object AppDeeplink {

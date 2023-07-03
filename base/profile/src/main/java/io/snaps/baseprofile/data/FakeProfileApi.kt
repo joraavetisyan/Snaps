@@ -12,9 +12,12 @@ import io.snaps.baseprofile.data.model.TransactionItemResponseDto
 import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.corecommon.mock.mockDelay
+import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.mock.rDouble
 import io.snaps.corecommon.mock.rInt
+import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.TaskType
+import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
 import retrofit2.http.Body
@@ -102,6 +105,10 @@ class FakeProfileApi : ProfileApi {
         )
     }
 
+    override suspend fun userTag(tagIds: List<Uuid>): BaseResponse<Completable> {
+        TODO("Not yet implemented")
+    }
+
     private fun getTransactions() = List(10) {
         TransactionItemResponseDto(
             id = it.toString(),
@@ -134,6 +141,7 @@ class FakeProfileApi : ProfileApi {
             paymentsState = PaymentsState.No,
             firstLevelReferralMultiplier = 0.03,
             secondLevelReferralMultiplier = 0.01,
+            isUsedTags = rBool,
         )
 
         fun getQuestInfo() = QuestInfoResponseDto(

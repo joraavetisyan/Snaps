@@ -5,6 +5,7 @@ import io.snaps.basesettings.domain.CommonSettingsModel
 import io.snaps.basesources.featuretoggle.EditableFeatureToggle
 import io.snaps.basesources.featuretoggle.Feature
 import io.snaps.basesettings.data.model.BannerDto
+import io.snaps.basesettings.data.model.InterestDto
 import io.snaps.basesettings.data.model.SettingsDto
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.BuildInfo
@@ -32,6 +33,8 @@ interface SettingsRepository {
 
     val bannerState: StateFlow<State<BannerDto>>
 
+    val interestsState: StateFlow<State<List<InterestDto>>>
+
     suspend fun update(): Effect<Completable>
 
     suspend fun getCommonSettings(): Effect<CommonSettingsModel>
@@ -58,6 +61,18 @@ class SettingsRepositoryImpl @Inject constructor(
             is Effect -> when {
                 it.isSuccess -> Effect.success(
                     requireNotNull(it.requireData.banner)
+                )
+                else -> Effect.error(requireNotNull(it.errorOrNull))
+            }
+        }
+    }.likeStateFlow(scope, Loading())
+
+    override val interestsState = state.map {
+        when (it) {
+            is Loading -> Loading()
+            is Effect -> when {
+                it.isSuccess -> Effect.success(
+                    requireNotNull(it.requireData.interests)
                 )
                 else -> Effect.error(requireNotNull(it.errorOrNull))
             }

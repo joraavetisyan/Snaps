@@ -39,6 +39,7 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
     paymentsState = paymentsState,
     firstLevelReferralMultiplier = firstLevelReferralMultiplier ?: 0.03,
     secondLevelReferralMultiplier = secondLevelReferralMultiplier ?: 0.01,
+    isUsedTags = isUsedTags ?: true,
 )
 
 fun InvitedReferralResponseDto.toModel() = InvitedReferralModel(

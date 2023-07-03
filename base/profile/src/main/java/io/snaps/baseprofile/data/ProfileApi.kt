@@ -6,6 +6,8 @@ import io.snaps.baseprofile.data.model.InvitedReferralResponseDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.TransactionItemResponseDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
+import io.snaps.corecommon.model.Completable
+import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -59,4 +61,9 @@ interface ProfileApi {
 
     @GET("v1/user/invited/second-level")
     suspend fun getInvitedSecondReferral(): BaseResponse<InvitedReferralResponseDto>
+
+    @POST("v1/user/tag")
+    suspend fun userTag(
+        @Query("tagIds") tagIds: List<Uuid>,
+    ): BaseResponse<Completable>
 }
