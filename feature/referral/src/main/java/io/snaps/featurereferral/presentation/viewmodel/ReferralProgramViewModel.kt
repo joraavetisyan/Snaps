@@ -90,7 +90,6 @@ class ReferralProgramViewModel @Inject constructor(
         subscribeOnCurrentUser()
         subscribeOnFirstReferrals()
         subscribeOnSecondReferrals()
-
         loadInvitedFirstReferral()
         loadInvitedSecondReferral()
 
@@ -112,7 +111,11 @@ class ReferralProgramViewModel @Inject constructor(
                     generateReferralCode(inviteCode)
                     it.copy(
                         referralCode = inviteCode.addPrefix("#"),
-                        referralLink = AppDeeplink.generateSharingLink(deeplink = AppDeeplink.Invite(code = inviteCode)),
+                        referralLink = AppDeeplink.generateSharingLink(
+                            deeplink = AppDeeplink.Invite(
+                                code = inviteCode
+                            )
+                        ),
                         firstLevelReferral = state.requireData.firstLevelReferralMultiplier.toPercentageFormat(),
                         secondLevelReferral = state.requireData.secondLevelReferralMultiplier.toPercentageFormat(),
                         invitedByCode = state.requireData.inviteCodeRegisteredBy.orEmpty(),
@@ -175,7 +178,8 @@ class ReferralProgramViewModel @Inject constructor(
             val template = _uiState.value.template ?: BitmapFactory.decodeResource(
                 context.resources, R.drawable.img_template_referral
             )
-            val referralQr = barcodeManager.getQrCodeBitmap(text = inviteCode, size = template.width / 6f)
+            val referralQr =
+                barcodeManager.getQrCodeBitmap(text = inviteCode, size = template.width / 6f)
             _uiState.update {
                 it.copy(template = template, referralQr = referralQr)
             }
@@ -228,10 +232,18 @@ class ReferralProgramViewModel @Inject constructor(
     }
 
     fun onReferralCodeDialogButtonClicked() {
-        setInviteCode(uiState.value.inviteCodeValue) {
-            viewModelScope.launch {
-                _command publish Command.HideBottomDialog
-            }
+        setInviteCode(uiState.value.inviteCodeValue, onSuccess = {
+            hideReferralCodeSheet()
+            onReferralCodeApplied()
+        }, onError = {
+            hideReferralCodeSheet()
+        })
+    }
+
+    private fun hideReferralCodeSheet() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = false, inviteCodeValue = "") }
+            _command publish Command.HideBottomDialog
         }
     }
 
@@ -262,6 +274,12 @@ class ReferralProgramViewModel @Inject constructor(
     fun onReferralLinkCopied() {
         viewModelScope.launch {
             notificationsSource.sendMessage(StringKey.ReferralProgramMessageReferralLinkCopied.textValue())
+        }
+    }
+
+    fun onReferralCodeApplied() {
+        viewModelScope.launch {
+            notificationsSource.sendMessage(StringKey.ReferralProgramMessageReferralCodeApplied.textValue())
         }
     }
 
@@ -297,12 +315,12 @@ class ReferralProgramViewModel @Inject constructor(
     }
 
     fun onApplyReferralCodeClicked(code: String) {
-        setInviteCode(code) {
+        setInviteCode(code, onSuccess = {
             viewModelScope.launch {
                 _uiState.update { it.copy(dialog = null) }
                 notificationsSource.sendMessage(StringKey.MessageReferralCodeApplySuccess.textValue())
             }
-        }
+        }, onError = null)
     }
 
     fun onOpenBscScanClicked() {
@@ -323,11 +341,15 @@ class ReferralProgramViewModel @Inject constructor(
         }
     }
 
-    private fun setInviteCode(code: String, onSuccess: () -> Unit) {
+    private fun setInviteCode(code: String, onSuccess: () -> Unit, onError: (() -> Unit)? = null) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             action.execute {
                 profileRepository.setInviteCode(code)
+            }.doOnSuccess {
+                onSuccess()
+            }.doOnError { _, _ ->
+                onError?.invoke()
             }
         }
     }

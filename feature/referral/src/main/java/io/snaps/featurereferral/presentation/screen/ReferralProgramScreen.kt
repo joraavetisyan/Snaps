@@ -45,14 +45,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -60,6 +64,8 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -112,7 +118,11 @@ import io.snaps.featurereferral.presentation.viewmodel.ReferralProgramViewModel
 import kotlinx.coroutines.launch
 import toTypeface
 
-@OptIn(ExperimentalMaterialApi::class)
+
+@OptIn(
+    ExperimentalMaterialApi::class,
+    ExperimentalComposeUiApi::class,
+)
 @Composable
 fun ReferralProgramScreen(
     navHostController: NavHostController,
@@ -132,6 +142,24 @@ fun ReferralProgramScreen(
         sheetState = sheetState,
         onStateToChange = viewModel::onBottomDialogStateChange,
     )
+
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    fun hideKeyboard() {
+        focusManager.clearFocus()
+        keyboardController?.hide()
+    }
+
+    LaunchedEffect(key1 = sheetState.currentValue) {
+        if (sheetState.currentValue == ModalBottomSheetValue.Hidden
+            && uiState.bottomDialog == ReferralProgramViewModel.BottomDialog.ReferralCode
+        ) {
+            hideKeyboard()
+        }
+    }
+
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -172,16 +200,19 @@ fun ReferralProgramScreen(
         sheetContent = {
             when (uiState.bottomDialog) {
                 ReferralProgramViewModel.BottomDialog.ReferralCode -> ReferralCodeDialog(
+                    focusRequester = focusRequester,
                     referralCode = uiState.inviteCodeValue,
                     isInviteUserButtonEnabled = uiState.isReferralCodeValid,
                     isLoading = uiState.isLoading,
                     onInviteUserClicked = viewModel::onReferralCodeDialogButtonClicked,
                     onInviteCodeValueChanged = viewModel::onInviteCodeValueChanged,
                 )
+
                 ReferralProgramViewModel.BottomDialog.ReferralQr -> ReferralQrBottomDialog(
                     bitmap = templatePhoto,
                     onClick = viewModel::onShareQrClicked,
                 )
+
                 ReferralProgramViewModel.BottomDialog.ReferralProgramFootnote -> FootnoteBottomDialog(
                     FootnoteBottomDialogItem(
                         image = R.drawable.img_guy_eating.imageValue(),
@@ -196,6 +227,7 @@ fun ReferralProgramScreen(
                         buttonText = StringKey.ReferralProgramDialogActionFootnoteMain2.textValue(),
                     )
                 )
+
                 ReferralProgramViewModel.BottomDialog.ReferralsInvitedFootnote -> ReferralsInvitedBottomDialog()
                 ReferralProgramViewModel.BottomDialog.ReferralInfo -> ReferralInfoBottomDialog(
                     userInfoTileState = uiState.userInfoTileState,
@@ -295,11 +327,13 @@ private fun ReferralProgramScreen(
                     onDismissRequest = onDismissRequest,
                     onConfirmRequest = { onApplyReferralCodeClicked(it.code) },
                 )
+
                 ReferralProgramViewModel.Dialog.ReferralCodeEntered -> SimpleAlertDialogUi(
                     text = StringKey.ReferralProgramDialogMessageCodeEntered.textValue(),
                     buttonText = StringKey.ActionOk.textValue(),
                     onClickRequest = onDismissRequest,
                 )
+
                 ReferralProgramViewModel.Dialog.InviteUser -> DiamondDialog(
                     title = StringKey.ReferralProgramInviteDialogTitle.textValue(),
                     message = StringKey.ReferralProgramInviteDialogMessage.textValue(),
@@ -361,6 +395,7 @@ private fun Body(
                         onInviteUserButtonClicked = onInviteUserButtonClicked,
                     )
                 }
+
                 1 -> {
                     FootnoteUi(
                         title = StringKey.ReferralProgramTitleFootnoteMyReferrals.textValue(),
@@ -519,7 +554,9 @@ private fun ReferralCodeCard(
                 modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
             )
             SimpleButtonGreyS(
-                onClick = { if (uiState.isInviteAvailable) onEnterCodeClicked() },
+                onClick = {
+                    if (uiState.isInviteAvailable) onEnterCodeClicked()
+                },
             ) {
                 SimpleButtonContent(
                     text = uiState.invitedByCode.takeUnless {
@@ -634,6 +671,7 @@ private fun CopyButton(
 
 @Composable
 private fun ReferralCodeDialog(
+    focusRequester: FocusRequester,
     referralCode: String,
     isInviteUserButtonEnabled: Boolean,
     isLoading: Boolean,
@@ -654,7 +692,8 @@ private fun ReferralCodeDialog(
             SimpleTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
+                    .padding(horizontal = 32.dp)
+                    .focusRequester(focusRequester),
                 onValueChange = onInviteCodeValueChanged,
                 value = referralCode,
                 keyboardOptions = KeyboardOptions(
@@ -883,7 +922,8 @@ private fun generateTemplatePhoto(
                 width = bitmap.width - padding.toInt() * 2,
             )
             val staticLayout2 = getStaticLayout(
-                text = "Download the SNAPS app and get a referral code".textValue().get().text, // todo localize
+                text = "Download the SNAPS app and get a referral code".textValue()
+                    .get().text, // todo localize
                 paint = getTextPaint(
                     size = bitmap.height / 24f,
                     typeface = AppTheme.specificTypography.bodyLarge.toTypeface(),
@@ -899,7 +939,10 @@ private fun generateTemplatePhoto(
             val text1dx = (bitmap.width - staticLayout.width) / 2f
             translate(text1dx, text1dy)
             staticLayout.draw(this)
-            translate((staticLayout.width - staticLayout2.width) / 2f, staticLayout.height + padding)
+            translate(
+                (staticLayout.width - staticLayout2.width) / 2f,
+                staticLayout.height + padding
+            )
             staticLayout2.draw(this)
         }
     }

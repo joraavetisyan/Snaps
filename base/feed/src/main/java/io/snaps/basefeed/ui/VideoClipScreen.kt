@@ -60,6 +60,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -120,13 +121,14 @@ fun VideoClipScreen(
     val uiState by viewModel.uiState.collectAsState()
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     val pagerState = rememberPagerState(initialPage = viewModel.startPosition)
     val currentPage by remember(pagerState) { derivedStateOf { pagerState.currentPage } }
     LaunchedEffect(currentPage) { viewModel.onScrolledToPosition(currentPage) }
 
     fun hideKeyboard() {
-        focusRequester.freeFocus()
+        focusManager.clearFocus()
         keyboardController?.hide()
     }
 
