@@ -226,10 +226,18 @@ abstract class VideoFeedViewModel(
         }
     }
 
-    fun onVideoClipStartedPlaying(clipModel: VideoClipModel) {
+    fun onVideoClipStartedPlaying(
+        clipModel: VideoClipModel,
+        videoDuration: Float,
+        skipDuration: Float
+    ) {
         viewModelScope.launch {
             action.execute(needsErrorProcessing = false) {
-                videoFeedRepository.markShown(clipModel.id)
+                videoFeedRepository.markShown(
+                    videoId = clipModel.id,
+                    videoDuration = videoDuration,
+                    duration = skipDuration
+                )
             }
         }
     }
@@ -255,6 +263,7 @@ abstract class VideoFeedViewModel(
                     isLiked = !clipModel.isLiked,
                     likeCount = clipModel.likeCount + (if (clipModel.isLiked) -1 else 1),
                 )
+
                 else -> it
             }
         } ?: emptyList()

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="SNAPS.AppThemeSplash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
@@ -11,7 +11,9 @@
         <item name="android:navigationBarColor">@color/colorNavigationBar</item>
     </style>
 
-    <style name="SNAPS.AppTheme" parent="Theme.Material3.DynamicColors.DayNight">
+    <!-- todo DayNight after the dark theme is added -->
+    <style name="SNAPS.AppTheme" parent="Theme.Material3.DynamicColors.Light">
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
 
         <item name="android:statusBarColor">@color/colorStatusBar</item>
         <item name="android:navigationBarColor">@color/colorNavigationBar</item>

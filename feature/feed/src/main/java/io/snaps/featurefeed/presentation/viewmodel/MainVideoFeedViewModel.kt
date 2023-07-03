@@ -26,10 +26,6 @@ import io.snaps.corenavigation.base.getArg
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -75,18 +71,9 @@ class MainVideoFeedViewModel @Inject constructor(
     val mainFeedCommand = _mainFeedCommand.receiveAsFlow()
 
     init {
-        subscribeOnMenuRouteState()
         viewModelScope.launch {
             checkOnboarding(OnboardingType.Rank)
         }
-    }
-
-    private fun subscribeOnMenuRouteState() {
-        appRouteProvider.menuRouteState
-            .filter { it == AppRoute.MainBottomBar.MainTab1Start.pattern }
-            .drop(1) // it's already loaded on first open
-            .onEach { onReloadClicked() }
-            .launchIn(viewModelScope)
     }
 
     fun onTabRowClicked(tab: Tab) {
