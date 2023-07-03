@@ -75,6 +75,14 @@
           }
         },
         {
+          "client_id": "132799039711-91fv2djgooh46t14743c3n0i40q2mph6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.snaps.android.debug",
+            "certificate_hash": "5d69e2697ab203829caef6e52c56dbce80bb492d"
+          }
+        },
+        {
           "client_id": "132799039711-e0ao7uh5tdus65nm3d1bih20udd4j4ck.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
