@@ -54,21 +54,11 @@ class RankSelectionViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            if (settingsRepository.state.value.dataOrCache == null) {
-                settingsRepository.update().doOnSuccess {
-                    _uiState.update {
-                        it.copy(
-                            isMysteryBoxEnabled = featureToggle.isEnabled(Feature.MysteryBox),
-                            isBundleEnabled = featureToggle.isEnabled(Feature.Bundle),
-                        )
-                    }
-                }
-            }
-
             subscribeOnRanks()
             subscribeOnMysteryBoxes()
             subscribeOnBundles()
 
+            loadSettings()
             loadRanks()
             loadMysteryBoxes()
             loadBundles()
@@ -120,6 +110,7 @@ class RankSelectionViewModel @Inject constructor(
     }
 
     private fun loadMysteryBoxes() {
+        if (!uiState.value.isMysteryBoxEnabled) return
         viewModelScope.launch {
             action.execute {
                 nftRepository.updateMysteryBoxes()
@@ -128,9 +119,25 @@ class RankSelectionViewModel @Inject constructor(
     }
 
     private fun loadBundles() {
+        if (!uiState.value.isBundleEnabled) return
         viewModelScope.launch {
             action.execute {
                 nftRepository.updateBundle()
+            }
+        }
+    }
+
+    private suspend fun loadSettings() {
+        if (settingsRepository.state.value.dataOrCache == null) {
+            action.execute {
+                settingsRepository.update().doOnSuccess {
+                    _uiState.update {
+                        it.copy(
+                            isMysteryBoxEnabled = featureToggle.isEnabled(Feature.MysteryBox),
+                            isBundleEnabled = featureToggle.isEnabled(Feature.Bundle),
+                        )
+                    }
+                }
             }
         }
     }

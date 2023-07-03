@@ -11,13 +11,13 @@ import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.TransactionItemResponseDto
 import io.snaps.baseprofile.data.model.TransactionType
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
+import io.snaps.baseprofile.data.model.UserTagRequestDto
 import io.snaps.corecommon.mock.mockDelay
 import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.mock.rDouble
 import io.snaps.corecommon.mock.rInt
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.TaskType
-import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
 import retrofit2.http.Body
@@ -105,7 +105,7 @@ class FakeProfileApi : ProfileApi {
         )
     }
 
-    override suspend fun userTag(tagIds: List<Uuid>): BaseResponse<Completable> {
+    override suspend fun userTag(@Body body: UserTagRequestDto): BaseResponse<Completable> {
         TODO("Not yet implemented")
     }
 

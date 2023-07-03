@@ -4,6 +4,7 @@ import dagger.Lazy
 import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
+import io.snaps.baseprofile.data.model.UserTagRequestDto
 import io.snaps.baseprofile.domain.InvitedReferralModel
 import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.UserInfoModel
@@ -270,7 +271,9 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun addUserTags(tagIds: List<Uuid>): Effect<Completable> {
         return apiCall(ioDispatcher) {
-            api.get().userTag(tagIds)
+            api.get().userTag(
+                body = UserTagRequestDto(tagIds)
+            )
         }
     }
 }

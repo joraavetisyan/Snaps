@@ -28,7 +28,7 @@ class UserInfoResponseDto(
     @SerialName("paymentsState") val paymentsState: PaymentsState? = null,
     @SerialName("firstLevelReferralMultiplier") val firstLevelReferralMultiplier: Double?,
     @SerialName("secondLevelReferralMultiplier") val secondLevelReferralMultiplier: Double?,
-    @SerialName(" isUsedTags") val isUsedTags: Boolean?,
+    @SerialName("isUsedTags") val isUsedTags: Boolean?,
 )
 
 @Serializable
