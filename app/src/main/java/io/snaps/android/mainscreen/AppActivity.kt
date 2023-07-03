@@ -60,7 +60,8 @@ class AppActivity : FragmentActivity() {
 
         setContent {
             if (isDeviceEmulated) finish() else AppScreen()
-            AppTheme(calculateWindowSizeClass(this)) {
+            // todo add dark theme
+            AppTheme(calculateWindowSizeClass(this), isDarkTheme = false) {
                 SystemBarsIconsColor()
                 AppScreen()
             }
