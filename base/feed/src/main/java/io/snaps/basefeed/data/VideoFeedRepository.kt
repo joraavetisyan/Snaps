@@ -2,9 +2,10 @@ package io.snaps.basefeed.data
 
 import dagger.Lazy
 import io.snaps.basefeed.data.model.AddVideoRequestDto
+import io.snaps.basefeed.data.model.MarkVideoShownRequestDto
+import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
-import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
@@ -35,7 +36,12 @@ interface VideoFeedRepository {
     /**
      * returns: upload id to track the progress
      */
-    suspend fun upload(title: String, thumbnailFileId: Uuid, file: String, userInfoModel: UserInfoModel?): Effect<Uuid>
+    suspend fun upload(
+        title: String,
+        thumbnailFileId: Uuid,
+        file: String,
+        userInfoModel: UserInfoModel?
+    ): Effect<Uuid>
 
     /**
      * returns: upload id to track the progress
@@ -48,7 +54,7 @@ interface VideoFeedRepository {
 
     suspend fun like(videoId: Uuid): Effect<Completable>
 
-    suspend fun markShown(videoId: Uuid): Effect<Completable>
+    suspend fun markShown(videoId: Uuid, videoDuration: Float, duration: Float): Effect<Completable>
 
     suspend fun markWatched(videoId: Uuid): Effect<Completable>
 }
@@ -76,33 +82,46 @@ class VideoFeedRepositoryImpl @Inject constructor(
         return loaderFactory.get(videoFeedType) { type ->
             when (type) {
                 VideoFeedType.Main -> PagedLoaderParams(
-                    action = { from, count -> videoFeedApi.get().getFeed(from = from, count = count) },
+                    action = { from, count ->
+                        videoFeedApi.get().getFeed(from = from, count = count)
+                    },
                     pageSize = 20,
                     nextPageIdFactory = { it.entityId },
                     mapper = { it.toVideoClipModelList() },
                 )
+
                 VideoFeedType.Subscriptions -> PagedLoaderParams(
-                    action = { from, count -> videoFeedApi.get().getSubscriptionFeed(from = from, count = count) },
+                    action = { from, count ->
+                        videoFeedApi.get().getSubscriptionFeed(from = from, count = count)
+                    },
                     pageSize = 5,
                     nextPageIdFactory = { it.entityId },
                     mapper = { it.toVideoClipModelList() },
                 )
+
                 is VideoFeedType.Single -> PagedLoaderParams(
-                    action = { _, _ -> videoFeedApi.get().getVideo(type.videoId).toFeedBaseResponse() },
+                    action = { _, _ ->
+                        videoFeedApi.get().getVideo(type.videoId).toFeedBaseResponse()
+                    },
                     pageSize = 1,
                     nextPageIdFactory = { null },
                     mapper = { it.toVideoClipModelList() },
                 )
+
                 is VideoFeedType.Popular -> PagedLoaderParams(
-                    action = { from, count -> videoFeedApi.get().getPopularFeed(from = from, count = count) },
+                    action = { from, count ->
+                        videoFeedApi.get().getPopularFeed(from = from, count = count)
+                    },
                     pageSize = 50,
                     nextPageIdFactory = { it.entityId },
                     mapper = { it.toVideoClipModelList() },
                 )
+
                 is VideoFeedType.User -> PagedLoaderParams(
                     action = { from, count ->
                         if (type.userId != null) {
-                            videoFeedApi.get().getUserFeed(userId = type.userId, from = from, count = count)
+                            videoFeedApi.get()
+                                .getUserFeed(userId = type.userId, from = from, count = count)
                         } else {
                             videoFeedApi.get().getMyFeed(from = from, count = count)
                         }
@@ -111,20 +130,25 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     nextPageIdFactory = { it.entityId },
                     mapper = { it.toVideoClipModelList() },
                 )
+
                 is VideoFeedType.Search -> PagedLoaderParams(
                     action = { from, count ->
-                        videoFeedApi.get().getSearchFeed(query = type.query, from = from, count = count)
+                        videoFeedApi.get()
+                            .getSearchFeed(query = type.query, from = from, count = count)
                     },
                     pageSize = 50,
                     nextPageIdFactory = { it.entityId },
                     mapper = { it.toVideoClipModelList() },
                 )
+
                 is VideoFeedType.Liked -> PagedLoaderParams(
                     action = { from, count ->
                         if (type.userId == null) {
-                            videoFeedApi.get().getMyLikedFeed(from = from, count = count).toFeedBaseResponse()
+                            videoFeedApi.get().getMyLikedFeed(from = from, count = count)
+                                .toFeedBaseResponse()
                         } else {
-                            videoFeedApi.get().getLikedFeed(userId = type.userId, from = from, count = count)
+                            videoFeedApi.get()
+                                .getLikedFeed(userId = type.userId, from = from, count = count)
                         }
                     },
                     pageSize = 50,
@@ -145,7 +169,9 @@ class VideoFeedRepositoryImpl @Inject constructor(
         getLoader(feedType).loadNext()
 
     override suspend fun get(videoId: Uuid): Effect<VideoClipModel> {
-        return apiCall(ioDispatcher) { videoFeedApi.get().getVideo(videoId) }.map { it.toModel(false) }
+        return apiCall(ioDispatcher) {
+            videoFeedApi.get().getVideo(videoId)
+        }.map { it.toModel(false) }
     }
 
     override suspend fun like(videoId: Uuid): Effect<Completable> {
@@ -156,8 +182,21 @@ class VideoFeedRepositoryImpl @Inject constructor(
         return apiCall(ioDispatcher) { videoFeedApi.get().markVideoWatched(videoId = videoId) }
     }
 
-    override suspend fun markShown(videoId: Uuid): Effect<Completable> {
-        return apiCall(ioDispatcher) { videoFeedApi.get().markVideoShown(videoId = videoId) }
+    override suspend fun markShown(
+        videoId: Uuid,
+        videoDuration: Float,
+        skipDuration: Float
+    ): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            videoFeedApi.get().markVideoShown(
+                videoId = videoId,
+                body = MarkVideoShownRequestDto(
+                    videoId = videoId,
+                    videoDuration = videoDuration,
+                    duration = skipDuration,
+                )
+            )
+        }
     }
 
     override suspend fun upload(
@@ -190,20 +229,23 @@ class VideoFeedRepositoryImpl @Inject constructor(
     }
 
     private suspend fun doUpload(videoId: Uuid, uploadInfo: UploadInfo): Effect<Uuid> {
-        return uploader.upload(videoId = videoId, filePath = uploadInfo.file).doOnSuccess { uploadId ->
-            uploadStatusSource.listenToByUploadId(uploadId = uploadId).onEach {
-                when (it) {
-                    is UploadStatusSource.State.Success -> {
-                        // todo delete once checked on backend
-                        incrementCreatedVideoCount(userInfoModel = uploadInfo.userInfoModel)
+        return uploader.upload(videoId = videoId, filePath = uploadInfo.file)
+            .doOnSuccess { uploadId ->
+                uploadStatusSource.listenToByUploadId(uploadId = uploadId).onEach {
+                    when (it) {
+                        is UploadStatusSource.State.Success -> {
+                            // todo delete once checked on backend
+                            incrementCreatedVideoCount(userInfoModel = uploadInfo.userInfoModel)
+                        }
+
+                        is UploadStatusSource.State.Error -> {
+                            failedUploads[videoId] = uploadInfo
+                        }
+
+                        is UploadStatusSource.State.Progress -> Unit
                     }
-                    is UploadStatusSource.State.Error -> {
-                        failedUploads[videoId] = uploadInfo
-                    }
-                    is UploadStatusSource.State.Progress -> Unit
-                }
-            }.launchIn(scope)
-        }
+                }.launchIn(scope)
+            }
     }
 
     override suspend fun retryUpload(videoId: Uuid): Effect<Uuid> {
@@ -213,7 +255,8 @@ class VideoFeedRepositoryImpl @Inject constructor(
     }
 
     private fun incrementCreatedVideoCount(userInfoModel: UserInfoModel?) {
-        val date = userInfoModel?.questInfo?.questDate?.toInstant(ZoneOffset.UTC)?.toEpochMilli() ?: return
+        val date =
+            userInfoModel?.questInfo?.questDate?.toInstant(ZoneOffset.UTC)?.toEpochMilli() ?: return
         val currentCount = userDataStorage.getCreatedVideoCount(userInfoModel.userId, date)
         userDataStorage.setCreatedVideoCount(userInfoModel.userId, date, currentCount + 1)
     }

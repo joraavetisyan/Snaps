@@ -3,6 +3,7 @@ package io.snaps.basefeed.data
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.AddVideoResponseDto
 import io.snaps.basefeed.data.model.LikedVideoFeedItemResponseDto
+import io.snaps.basefeed.data.model.MarkVideoShownRequestDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.basefeed.data.model.VideoStatus
 import io.snaps.baseprofile.data.FakeProfileApi
@@ -174,7 +175,10 @@ class FakeVideoFeedApi : VideoFeedApi {
         )
     }
 
-    override suspend fun markVideoShown(videoId: Uuid): BaseResponse<Completable> {
+    override suspend fun markVideoShown(
+        videoId: Uuid,
+        body: MarkVideoShownRequestDto
+    ): BaseResponse<Completable> {
         log("Requesting show video $videoId")
         delay(mockDelay)
         return BaseResponse(
