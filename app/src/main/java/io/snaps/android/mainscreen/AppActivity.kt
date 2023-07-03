@@ -26,7 +26,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.snaps.android.di.AppViewModelFactory
+import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corenavigation.base.navigate
+import io.snaps.coreui.tools.EmulatorChecker
 import io.snaps.coreuicompose.tools.SystemBarsIconsColor
 import io.snaps.coreuicompose.uikit.listtile.MessageBannerState
 import io.snaps.coreuicompose.uikit.status.MessageBannerUi
@@ -41,6 +43,9 @@ class AppActivity : FragmentActivity() {
     @Inject
     lateinit var navHostProvider: NavHostProvider
 
+    @Inject
+    lateinit var buildInfo: BuildInfo
+
     private var shouldKeepSplashScreen = true
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -50,9 +55,12 @@ class AppActivity : FragmentActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         WindowCompat.setDecorFitsSystemWindows(window, false)
         installSplashScreen().setKeepOnScreenCondition { shouldKeepSplashScreen }
+
+        val isDeviceEmulated = EmulatorChecker.isDeviceEmulated() && buildInfo.isRelease
+
         setContent {
-            // todo add Dark Theme
-            AppTheme(calculateWindowSizeClass(this), isDarkTheme = false) {
+            if (isDeviceEmulated) finish() else AppScreen()
+            AppTheme(calculateWindowSizeClass(this)) {
                 SystemBarsIconsColor()
                 AppScreen()
             }
@@ -80,6 +88,7 @@ class AppActivity : FragmentActivity() {
                         needsStartOnBoarding = currentFlow.needsStartOnBoarding,
                     )
                 }
+
                 is AppViewModel.StartFlow.AuthorizedFlow -> {
                     if (currentFlow.isError) {
                         Box(modifier = Modifier.fillMaxSize()) {

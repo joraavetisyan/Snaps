@@ -58,13 +58,12 @@ fun VideoPlayer(
     isLiked: Boolean = false,
     onLiked: (() -> Unit)? = null,
     progressPollFrequencyInMillis: Long = 1000L, /*every 1 second*/
-    onProgressChanged: ((Float) -> Unit)? = null, /*[0f,1f] every [progressChangePollFrequency]*/
+    onProgressChanged: ((progress: Float) -> Unit)? = null, /*[0f,1f] every [progressChangePollFrequency]*/
+    onDurationReady: ((Float) -> Unit)? = null,
     isScrolling: Boolean = false,
     isRepeat: Boolean = true,
     performAtPosition: (() -> Unit)? = null,
     performPosition: Float = 0f, /*[0f,1f]*/
-    onStarted: (() -> Unit)? = null,
-    onFinished: (() -> Unit)? = null, // todo ExoPlayer.STATE_ENDED event is not getting triggered
 ) {
     require(networkUrl == null || localUri == null) {
         "Don't provide both local and network sources!"
@@ -80,8 +79,6 @@ fun VideoPlayer(
         isRepeat = isRepeat,
         performAtPosition = performAtPosition,
         performPosition = performPosition,
-        onStarted = onStarted,
-        onFinished = onFinished,
     )
     val playerView = rememberPlayerView(exoPlayer)
 
@@ -96,14 +93,21 @@ fun VideoPlayer(
     if (onProgressChangedRemembered != null) {
         LaunchedEffect(exoPlayer) {
             while (isActive) {
-                onProgressChangedRemembered?.invoke(
-                    try {
-                        exoPlayer.currentPosition.toFloat() / exoPlayer.duration.toFloat()
-                    } catch (e: Exception) {
-                        log(e)
-                        0f
-                    }.coerceIn(0f, 1f)
-                )
+                var duration = exoPlayer.duration
+                val progress = try {
+                    exoPlayer.currentPosition.toFloat() / duration.toFloat()
+                } catch (e: Exception) {
+                    duration = 0
+                    log(e)
+                    0f
+                }.coerceIn(0f, 1f)
+
+                if (progress > 0 && duration > 0) {
+                    onProgressChangedRemembered?.invoke(
+                        progress
+                    )
+                    onDurationReady?.invoke(duration.toFloat())
+                }
                 delay(progressPollFrequencyInMillis)
             }
         }
@@ -159,7 +163,9 @@ fun VideoPlayer(
 
         Crossfade(targetState = lottieAnimatable.isPlaying, label = "likeLottieAnimation") {
             if (it) {
-                LottieAnimation(composition = lottieComposition, progress = { lottieAnimatable.progress })
+                LottieAnimation(
+                    composition = lottieComposition,
+                    progress = { lottieAnimatable.progress })
             }
         }
 
@@ -190,8 +196,6 @@ private fun rememberExoPlayerWithLifecycle(
     isRepeat: Boolean,
     performAtPosition: (() -> Unit)?,
     performPosition: Float,
-    onStarted: (() -> Unit)?,
-    onFinished: (() -> Unit)?,
 ): ExoPlayer {
     val context = LocalContext.current
     val performAtPositionRemembered by rememberUpdatedState(newValue = performAtPosition)
@@ -217,16 +221,12 @@ private fun rememberExoPlayerWithLifecycle(
                     object : Player.Listener {
                         override fun onPlaybackStateChanged(playbackState: Int) {
                             if (playbackState == ExoPlayer.STATE_READY) {
-                                onStarted?.invoke()
                                 createMessage { _, _ -> performAtPositionRemembered?.invoke() }
                                     .setLooper(Looper.getMainLooper())
                                     .setPosition((performPosition * duration).toLong())
                                     .setPayload(null)
                                     .setDeleteAfterDelivery(true)
                                     .send()
-                            }
-                            if (playbackState == ExoPlayer.STATE_ENDED) {
-                                onFinished?.invoke()
                             }
                         }
                     }

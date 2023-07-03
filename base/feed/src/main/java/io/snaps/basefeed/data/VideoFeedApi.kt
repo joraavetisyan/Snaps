@@ -3,6 +3,7 @@ package io.snaps.basefeed.data
 import io.snaps.basefeed.data.model.AddVideoRequestDto
 import io.snaps.basefeed.data.model.AddVideoResponseDto
 import io.snaps.basefeed.data.model.LikedVideoFeedItemResponseDto
+import io.snaps.basefeed.data.model.MarkVideoShownRequestDto
 import io.snaps.basefeed.data.model.VideoFeedItemResponseDto
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Uuid
@@ -75,9 +76,10 @@ interface VideoFeedApi {
         @Path("videoId") videoId: Uuid,
     ): BaseResponse<Completable>
 
-    @POST("v1/video/{videoId}/showed")
+    @POST("v2/video/{videoId}/showed")
     suspend fun markVideoShown(
         @Path("videoId") videoId: Uuid,
+        @Body body: MarkVideoShownRequestDto
     ): BaseResponse<Completable>
 
     @POST("v1/video/{videoId}/view")
