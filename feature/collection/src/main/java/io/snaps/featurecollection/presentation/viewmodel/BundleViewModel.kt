@@ -100,7 +100,7 @@ class BundleViewModel @Inject constructor(
 
     private fun subscribeToBnbRate() {
         walletRepository.snpsAccountState.map {
-            val bundle = nftRepository.bundleState.value.dataOrCache ?.find { it.type == args.type }
+            val bundle = nftRepository.bundleState.value.dataOrCache?.find { it.type == args.type }
             bundle?.fiatCost?.toCoin(it.dataOrCache?.usdBnbExchangeRate ?: 0.0)
         }.onEach { coin ->
             _uiState.update { it.copy(costInCoin = coin) }
@@ -110,9 +110,9 @@ class BundleViewModel @Inject constructor(
     private fun subscribeToRanks(model: BundleModel) {
         nftRepository.ranksState.combine(walletRepository.snpsAccountState) { ranks, account ->
             if (ranks is Effect<List<RankModel>>) {
-                val bundleNft = ranks.requireData
-                    .filter { it.type in model.itemsInBundle }
-                    .map { it.copy(isPurchasable = true) }
+                val bundleNft = model.itemsInBundle.map { bundle ->
+                    ranks.requireData.first { it.type == bundle }.copy(isPurchasable = true)
+                }
                 bundleNft.map {
                     it.toRankTileState(
                         snpsUsdExchangeRate = account.dataOrCache?.snpsUsdExchangeRate ?: 0.0,
