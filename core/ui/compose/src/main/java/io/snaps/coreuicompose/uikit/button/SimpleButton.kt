@@ -441,6 +441,27 @@ fun SimpleButtonRedActionS(
 }
 
 @Composable
+fun SimpleButtonRedActionM(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
+    enabled: Boolean = true,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    content: @Composable RowScope.() -> Unit,
+) {
+    SimpleButton(
+        modifier = modifier,
+        size = SimpleButtonSize.m(),
+        onClick = onClick,
+        onLongClick = onLongClick,
+        enabled = enabled,
+        interactionSource = interactionSource,
+        colors = SimpleButtonColors.redAction(),
+        content = content,
+    )
+}
+
+@Composable
 fun SimpleButtonRedInlineM(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
