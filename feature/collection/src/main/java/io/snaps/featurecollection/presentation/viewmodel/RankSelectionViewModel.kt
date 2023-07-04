@@ -44,7 +44,7 @@ class RankSelectionViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(
         UiState(
             isMysteryBoxEnabled = featureToggle.isEnabled(Feature.MysteryBox),
-            isBundleEnabled = featureToggle.isEnabled(Feature.Bundle),
+            isBundleEnabled = true,
         )
     )
     val uiState = _uiState.asStateFlow()

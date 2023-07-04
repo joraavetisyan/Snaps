@@ -24,6 +24,7 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FiatValue
 import io.snaps.corecommon.model.BundleType
 import io.snaps.corecommon.model.FiatUSD
+import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.defaultTileRipple
@@ -40,6 +41,7 @@ sealed class BundleTileState : TileState {
         val type: BundleType,
         val cost: FiatValue,
         val discount: FiatValue,
+        val itemsInBundle: List<NftType>,
         val clickListener: () -> Unit,
     ) : BundleTileState()
 
@@ -111,7 +113,9 @@ private fun Data(
                 modifier = Modifier.fillMaxWidth(),
             )
             Text(
-                text = StringKey.RankSelectionMessageBundle.textValue().get(),
+                text = StringKey.RankSelectionMessageBundle.textValue(
+                    data.itemsInBundle.map(NftType::displayName).joinToString(", ")
+                ).get(),
                 style = AppTheme.specificTypography.titleSmall,
                 color = AppTheme.specificColorScheme.white,
             )

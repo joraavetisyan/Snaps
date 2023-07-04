@@ -166,6 +166,7 @@ fun State<List<BundleModel>>.toBundleTileState(
 fun BundleModel.toBundleTileState(
     onItemClicked: (BundleModel) -> Unit,
 ) = BundleTileState.Data(
+    itemsInBundle = itemsInBundle,
     type = type,
     cost = fiatCost,
     discount = discountCost,

@@ -2860,11 +2860,11 @@ internal val strings = mapOf(
         SupportedLanguageKey.Es to "Bundles",
     ),
     key(StringKey.RankSelectionMessageBundle) to mapOf(
-        SupportedLanguageKey.En to "Sponsor Influencer\nLegend in every bundle",
-        SupportedLanguageKey.Ru to "Sponsor Influencer\nLegend в каждом бандле",
-        SupportedLanguageKey.Tr to "Sponsor Influencer\nLegend her pakette",
-        SupportedLanguageKey.Ua to "Sponsor Influencer\nLegend в кожному бандлі",
-        SupportedLanguageKey.Es to "Sponsor Influencer\nLegend en cada paquete",
+        SupportedLanguageKey.En to "%s in every bundle",
+        SupportedLanguageKey.Ru to "%s в каждом бандле",
+        SupportedLanguageKey.Tr to "%s her pakette",
+        SupportedLanguageKey.Ua to "%s в кожному бандлі",
+        SupportedLanguageKey.Es to "%s en cada paquete",
     ),
     key(StringKey.RankSelectionFieldDiscount) to mapOf(
         SupportedLanguageKey.En to "Discount %s",

@@ -39,7 +39,7 @@ enum class InterestType() {
     val label: TextValue
         get() = when (this) {
             Auto -> StringKey.InterestsSelectionTitleAuto.textValue()
-            Nature -> StringKey.TransactionTitleSend.textValue()
+            Nature -> StringKey.InterestsSelectionTitleNature.textValue()
             Cinema -> StringKey.InterestsSelectionTitleCinema.textValue()
             Football -> StringKey.InterestsSelectionTitleFootball.textValue()
             Cooking -> StringKey.InterestsSelectionTitleCooking.textValue()
