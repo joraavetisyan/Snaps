@@ -244,9 +244,7 @@ class PurchaseViewModel @Inject constructor(
     }
 
     fun onFreeClicked() {
-        if (args.type == NftType.Free) {
-            _uiState.update { uiState -> uiState.copy(isFreeButtonEnabled = false) }
-        }
+        _uiState.update { it.copy(isFreeButtonEnabled = false) }
         mint()
     }
 
