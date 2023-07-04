@@ -30,7 +30,7 @@ import io.snaps.coreui.viewmodel.collectAsCommand
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
-import io.snaps.coreuicompose.uikit.button.SimpleButtonGreyM
+import io.snaps.coreuicompose.uikit.button.SimpleButtonRedActionM
 import io.snaps.coreuicompose.uikit.button.SimpleButtonRedInlineM
 import io.snaps.coreuicompose.uikit.dialog.SimpleConfirmDialogUi
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
@@ -119,7 +119,7 @@ private fun SettingsScreen(
             }
             item {
                 Spacer(Modifier.height(16.dp))
-                SimpleButtonGreyM(
+                SimpleButtonRedActionM(
                     onClick = onLogoutClicked,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -149,11 +149,13 @@ private fun SettingsScreen(
             onDismissRequest = onDialogDismissRequest,
             onConfirmRequest = onLogoutConfirmed,
         )
+
         is SettingsViewModel.Dialog.ConfirmDeleteAccount -> SimpleConfirmDialogUi(
             title = StringKey.SettingsDialogDeleteAccountTitle.textValue(),
             onDismissRequest = onDialogDismissRequest,
             onConfirmRequest = onDeleteAccountConfirmed,
         )
+
         null -> Unit
     }
 }
