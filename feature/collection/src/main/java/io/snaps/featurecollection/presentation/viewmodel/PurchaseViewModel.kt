@@ -23,6 +23,7 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.CoinBNB
 import io.snaps.corecommon.model.CoinValue
+import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.Token
 import io.snaps.corecommon.strings.StringKey
@@ -30,10 +31,9 @@ import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
+import io.snaps.coreui.barcode.BarcodeManager
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
-import io.snaps.corecommon.model.CryptoAddress
-import io.snaps.coreui.barcode.BarcodeManager
 import io.snaps.featurecollection.domain.BalanceInSync
 import io.snaps.featurecollection.domain.MyCollectionInteractor
 import io.snaps.featurecollection.domain.NoEnoughBnbToMint
@@ -133,10 +133,16 @@ class PurchaseViewModel @Inject constructor(
                     _command publish Command.BackToMyCollectionScreen()
                 } else {
                     _command publish Command.BackToMyCollectionScreen(
-                        data = TransferTokensSuccessData(txHash = it, type = TransferTokensSuccessData.Type.Purchase)
+                        data = TransferTokensSuccessData(
+                            txHash = it,
+                            type = TransferTokensSuccessData.Type.Purchase
+                        )
                     )
                 }
             }.doOnError { error, _ ->
+                if (args.type == NftType.Free) {
+                    _uiState.update { uiState -> uiState.copy(isFreeButtonEnabled = true) }
+                }
                 if (error.cause is BalanceInSync) {
                     notificationsSource.sendError(StringKey.ErrorBalanceInSync.textValue())
                 }
@@ -199,11 +205,13 @@ class PurchaseViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is BalanceInSync -> {
                     onTransferTokensDialogHidden()
                     hideTransferTokensBottomDialog(viewModelScope)
                     notificationsSource.sendError(StringKey.ErrorBalanceInSync.textValue())
                 }
+
                 else -> updateTransferTokensState(
                     state = TransferTokensState.Error(
                         title = purchaseWithBnbDialogTitle,
@@ -222,7 +230,10 @@ class PurchaseViewModel @Inject constructor(
                 interactor.mintOnBlockchain(nftType = args.type, summary = summary)
             }.doOnSuccess { hash ->
                 _command publish Command.BackToMyCollectionScreen(
-                    data = TransferTokensSuccessData(txHash = hash, type = TransferTokensSuccessData.Type.Purchase)
+                    data = TransferTokensSuccessData(
+                        txHash = hash,
+                        type = TransferTokensSuccessData.Type.Purchase
+                    )
                 )
             }.doOnError { error, _ ->
                 if (error.code == 400) notificationsSource.sendError(error)
@@ -232,7 +243,12 @@ class PurchaseViewModel @Inject constructor(
         }
     }
 
-    fun onFreeClicked() = mint()
+    fun onFreeClicked() {
+        if (args.type == NftType.Free) {
+            _uiState.update { uiState -> uiState.copy(isFreeButtonEnabled = false) }
+        }
+        mint()
+    }
 
     fun onBottomDialogHidden() {
         _uiState.update { it.copy(bottomDialog = null) }
@@ -255,6 +271,7 @@ class PurchaseViewModel @Inject constructor(
         val isPurchasableForFree: Boolean,
         val isPurchasableInStore: Boolean,
         val bottomDialog: BottomDialog? = null,
+        val isFreeButtonEnabled: Boolean = true
     )
 
     sealed class BottomDialog {

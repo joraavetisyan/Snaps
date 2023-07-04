@@ -347,7 +347,6 @@ private fun ActionButtons(
     onBuyWithBNBClicked: () -> Unit,
     onGloballyPositioned: (LayoutCoordinates) -> Unit,
 ) {
-    val isButtonEnabled = remember { mutableStateOf(true) }
     Column(
         modifier = Modifier
             .onGloballyPositioned { coordinates -> onGloballyPositioned(coordinates) }
@@ -358,13 +357,8 @@ private fun ActionButtons(
             if (isFreeButtonVisible) {
                 SimpleButtonActionM(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        if (isButtonEnabled.value) {
-                            onFreeClicked()
-                            isButtonEnabled.value = false
-                        }
-                    },
-                    enabled = isButtonEnabled.value
+                    onClick = onFreeClicked,
+                    enabled = uiState.isFreeButtonEnabled
                 ) {
                     SimpleButtonContent(text = StringKey.PurchaseActionFree.textValue())
                 }
