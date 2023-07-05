@@ -392,7 +392,7 @@ class ReferralProgramViewModel @Inject constructor(
                             wallet = user.wallet.orEmpty(),
                             avatar = user.avatar,
                             name = user.name.textValue(),
-                            energy = user.questInfo?.totalEnergyProgress ?: 0,
+                            energy = user.energy,
                         )
                     )
                 }

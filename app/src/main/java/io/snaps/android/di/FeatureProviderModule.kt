@@ -26,7 +26,7 @@ import io.snaps.featureprofile.ProfileFeatureProviderImpl
 import io.snaps.featurereferral.ReferralFeatureProviderImpl
 import io.snaps.featureregistration.presentation.RegistrationFeatureProviderImpl
 import io.snaps.featuresearch.SearchFeatureProviderImpl
-import io.snaps.featuretasks.TasksFeatureProviderImpl
+import io.snaps.featurequests.TasksFeatureProviderImpl
 import io.snaps.featurewallet.WalletFeatureProviderImpl
 import io.snaps.featurewalletconnect.WalletConnectFeatureProviderImpl
 import io.snaps.featurewebview.WebViewFeatureProviderImpl

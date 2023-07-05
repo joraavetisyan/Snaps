@@ -26,7 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
     @Bridged profileRepository: ProfileRepository,
-    @Bridged private val interactor: EditUserInteractor,
+    private val interactor: EditUserInteractor,
     private val fileManager: FileManager,
     private val action: Action,
 ) : SimpleViewModel() {

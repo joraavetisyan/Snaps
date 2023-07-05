@@ -1,14 +1,12 @@
 package io.snaps.baseprofile.data
 
+import android.util.Log
 import io.snaps.baseprofile.data.model.InvitedReferralResponseDto
-import io.snaps.baseprofile.data.model.QuestInfoResponseDto
-import io.snaps.baseprofile.data.model.QuestItemDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.baseprofile.domain.InvitedReferralModel
-import io.snaps.baseprofile.domain.QuestInfoModel
-import io.snaps.baseprofile.domain.QuestModel
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.ui.MainHeaderState
+import io.snaps.basequests.domain.QuestModel
 import io.snaps.corecommon.date.toOffsetLocalDateTime
 import io.snaps.corecommon.ext.toCompactDecimalFormat
 import io.snaps.corecommon.model.CoinValue
@@ -24,14 +22,13 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
     userId = userId,
     email = email,
     wallet = wallet,
-    name = name.orEmpty(),
+    name = name ?: "Snaps User",
     totalLikes = totalLikes,
     totalSubscribers = totalSubscribers,
     totalSubscriptions = totalSubscriptions,
     avatarUrl = avatarUrl,
     level = level,
     experience = experience,
-    questInfo = questInfo?.toQuestInfoModel(),
     inviteCodeRegisteredBy = inviteCodeRegisteredBy,
     ownInviteCode = ownInviteCode,
     totalPublication = null,
@@ -40,6 +37,7 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
     firstLevelReferralMultiplier = firstLevelReferralMultiplier ?: 0.03,
     secondLevelReferralMultiplier = secondLevelReferralMultiplier ?: 0.01,
     isUsedTags = isUsedTags ?: true,
+    energy = energy ?: 0,
 )
 
 fun InvitedReferralResponseDto.toModel() = InvitedReferralModel(
@@ -47,49 +45,21 @@ fun InvitedReferralResponseDto.toModel() = InvitedReferralModel(
     total = total,
 )
 
-fun QuestInfoResponseDto.toQuestInfoModel() = QuestInfoModel(
-    quests = quests.map(QuestItemDto::toQuestModel),
-    questDate = requireNotNull(ZonedDateTime.parse(questDate)).toOffsetLocalDateTime(),
-    totalEnergy = quests.sumOf { it.quest.energy },
-    totalEnergyProgress = quests
-        .filter { it.energyProgress() == it.quest.energy }
-        .sumOf { it.quest.energy },
-)
-
-fun QuestItemDto.toQuestModel() = QuestModel(
-    energy = quest.energy,
-    type = quest.type,
-    completed = completed,
-    status = status,
-    count = quest.count,
-    madeCount = madeCount,
-)
-
-// todo must be on back
-private fun QuestItemDto.energyProgress(): Int {
-    return if (madeCount != null && quest.count != null) {
-        val madeByOne = madeCount.toDouble() / quest.count.toDouble() * quest.energy
-        madeByOne.toInt()
-    } else {
-        if (completed) {
-            quest.energy
-        } else 0
-    }
-}
-
 fun mainHeaderState(
     profile: State<UserInfoModel>,
+    quests: State<QuestModel>,
     isAllGlassesBroken: Boolean,
     snp: CoinValue?,
     bnb: CoinValue?,
     onProfileClicked: () -> Unit,
     onWalletClicked: () -> Unit,
-) = when (profile) {
-    is Effect -> if (profile.isSuccess) {
+) = when {
+    profile is Effect && quests is Effect -> if (profile.isSuccess && quests.isSuccess) {
+        Log.e("profile.isSuccess && quests.isSuccess", "yes")
         MainHeaderState.Data(
             profileImage = profile.requireData.avatar,
             energy = if (!isAllGlassesBroken) {
-                profile.requireData.questInfo?.totalEnergyProgress.toString()
+                quests.requireData.totalEnergyProgress.toString()
             } else "0",
             bnb = bnb?.value?.toCompactDecimalFormat() ?: "-",
             snp = snp?.value?.toCompactDecimalFormat() ?: "-",

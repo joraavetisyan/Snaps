@@ -23,6 +23,7 @@ dependencies {
     implementation(projects.basePlayer)
     implementation(projects.baseFile)
     implementation(projects.baseFeed)
+    implementation(projects.baseQuests)
 
     implementation(*Libs.bundle.camerax)
     implementation(*Libs.bundle.videoCompressor)

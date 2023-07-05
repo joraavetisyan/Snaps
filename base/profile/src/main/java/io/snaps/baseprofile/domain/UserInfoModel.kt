@@ -22,7 +22,6 @@ data class UserInfoModel(
     val avatarUrl: FullUrl?,
     val experience: Int?,
     val level: Int?,
-    val questInfo: QuestInfoModel?,
     val inviteCodeRegisteredBy: String?,
     val ownInviteCode: String?,
     val instagramId: Uuid?,
@@ -30,6 +29,7 @@ data class UserInfoModel(
     val firstLevelReferralMultiplier: Double,
     val secondLevelReferralMultiplier: Double,
     val isUsedTags: Boolean,
+    val energy: Int,
 ) {
 
     val avatar: ImageValue get() = avatarUrl?.imageValue() ?: R.drawable.img_avatar.imageValue()
