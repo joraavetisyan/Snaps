@@ -1,8 +1,6 @@
 package io.snaps.basefeed.ui
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -20,15 +18,14 @@ fun UploadProgress(
     uploadingProgress: Float,
 ) {
     SimpleCard(modifier = modifier) {
-        Row(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                .fillMaxWidth(),
         ) {
             Progress(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .padding(4.dp),
                 progress = uploadingProgress,
                 isDashed = true,
                 backColor = AppTheme.specificColorScheme.white_10,
@@ -38,12 +35,9 @@ fun UploadProgress(
             )
             Text(
                 text = "${(uploadingProgress * 100).toInt()}/100%",
-                modifier = Modifier
-                    .background(
-                        color = AppTheme.specificColorScheme.darkGrey.copy(alpha = 0.5f),
-                        shape = AppTheme.shapes.small,
-                    )
-                    .padding(4.dp),
+                style = AppTheme.specificTypography.bodySmall,
+                modifier = Modifier.align(Alignment.Center),
+                maxLines = 1
             )
         }
     }

@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import io.snaps.basefeed.ui.UploadProgress
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
@@ -135,7 +134,9 @@ private fun UploadScreen(
                     }
                 }
                 val height by remember(selectedBitmap) {
-                    mutableStateOf(selectedBitmap?.let { it.height * frameSize / it.width }?.dp ?: frameSize.dp)
+                    mutableStateOf(
+                        selectedBitmap?.let { it.height * frameSize / it.width }?.dp ?: frameSize.dp
+                    )
                 }
                 Box {
                     HorizontalPager(
@@ -165,18 +166,14 @@ private fun UploadScreen(
                             .align(Alignment.CenterStart),
                     )
                 }
-                if (uiState.uploadingProgress != null) {
-                    UploadProgress(uploadingProgress = uiState.uploadingProgress)
-                } else {
-                    SimpleButtonActionL(
-                        onClick = { onPublishClicked(selectedBitmap) },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = uiState.isPublishEnabled,
-                    ) {
-                        SimpleButtonContent(
-                            text = StringKey.UploadVideoActionPublish.textValue(),
-                        )
-                    }
+                SimpleButtonActionL(
+                    onClick = { onPublishClicked(selectedBitmap) },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = uiState.isPublishEnabled,
+                ) {
+                    SimpleButtonContent(
+                        text = StringKey.UploadVideoActionPublish.textValue(),
+                    )
                 }
             }
         }
