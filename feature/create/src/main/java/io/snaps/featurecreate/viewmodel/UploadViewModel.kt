@@ -11,6 +11,7 @@ import io.snaps.basefile.data.FileRepository
 import io.snaps.basefile.domain.FileModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basequests.data.QuestsRepository
+import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.strings.StringKey
