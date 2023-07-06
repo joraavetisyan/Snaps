@@ -3,6 +3,7 @@ package io.snaps.featurebottombar.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basenft.data.NftRepository
+import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.AppRouteProvider
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesettings.data.SettingsRepository
@@ -39,6 +40,7 @@ class BottomBarViewModel @Inject constructor(
     bottomBarVisibilitySource: BottomBarVisibilitySource,
     @Bridged onboardingHandler: OnboardingHandler,
     @Bridged private val nftRepository: NftRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     private val settingsRepository: SettingsRepository,
     private val appRouteProvider: AppRouteProvider,
     private val appUpdateProvider: AppUpdateProvider,
@@ -58,6 +60,7 @@ class BottomBarViewModel @Inject constructor(
     init {
         subscribeOnCountBrokenGlasses()
         subscribeOnAppUpdateInfo()
+        subscribeOnCurrentUser()
 
         bottomBarVisibilitySource.state.onEach { isBottomBarVisible ->
             _uiState.update { it.copy(isBottomBarVisible = isBottomBarVisible) }
@@ -98,6 +101,16 @@ class BottomBarViewModel @Inject constructor(
                     }
                     _uiState.update { it.copy(banner = banner) }
                     _command publish Command.ShowBottomDialog
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeOnCurrentUser() {
+        profileRepository.state.onEach { state ->
+            if (state is Effect && state.isSuccess) {
+                if (!state.requireData.isUsedTags) {
+                    _command publish Command.OpenInterestsSelectionScreen
                 }
             }
         }.launchIn(viewModelScope)
@@ -181,6 +194,7 @@ class BottomBarViewModel @Inject constructor(
     sealed interface Command {
         object OpenNftPurchaseScreen : Command
         data class OpenUrlScreen(val url: FullUrl) : Command
+        object OpenInterestsSelectionScreen : Command
         object ShowBottomDialog : Command
         object HideBottomDialog : Command
     }

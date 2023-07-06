@@ -120,6 +120,7 @@ fun BottomBarScreen(
             BottomBarViewModel.Command.OpenNftPurchaseScreen -> navController.navigate(AppRoute.RankSelection)
             BottomBarViewModel.Command.ShowBottomDialog -> showSheet()
             BottomBarViewModel.Command.HideBottomDialog -> hideSheet()
+            BottomBarViewModel.Command.OpenInterestsSelectionScreen -> navController.navigate(AppRoute.InterestsSelection)
             is BottomBarViewModel.Command.OpenUrlScreen -> context.openUrl(it.url)
         }
     }

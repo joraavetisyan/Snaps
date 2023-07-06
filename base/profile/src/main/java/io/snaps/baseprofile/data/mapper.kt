@@ -1,6 +1,5 @@
 package io.snaps.baseprofile.data
 
-import android.util.Log
 import io.snaps.baseprofile.data.model.InvitedReferralResponseDto
 import io.snaps.baseprofile.data.model.UserInfoResponseDto
 import io.snaps.baseprofile.domain.InvitedReferralModel
@@ -22,7 +21,7 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
     userId = userId,
     email = email,
     wallet = wallet,
-    name = name ?: "Snaps User",
+    name = name.orEmpty(),
     totalLikes = totalLikes,
     totalSubscribers = totalSubscribers,
     totalSubscriptions = totalSubscriptions,
@@ -55,7 +54,6 @@ fun mainHeaderState(
     onWalletClicked: () -> Unit,
 ) = when {
     profile is Effect && quests is Effect -> if (profile.isSuccess && quests.isSuccess) {
-        Log.e("profile.isSuccess && quests.isSuccess", "yes")
         MainHeaderState.Data(
             profileImage = profile.requireData.avatar,
             energy = if (!isAllGlassesBroken) {

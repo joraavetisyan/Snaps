@@ -103,9 +103,7 @@ class CreateUserViewModel @Inject constructor(
     }
 
     private fun handleCreate() {
-        profileRepository.state.value.dataOrCache?.let {
-            sessionRepository.onInitialized(it.isUsedTags)
-        }
+        sessionRepository.onInitialized()
     }
 
     fun onNickNameValueChanged(value: String) {
