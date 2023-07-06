@@ -9,13 +9,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.basefeed.data.VideoFeedRepository
 import io.snaps.basefile.data.FileRepository
 import io.snaps.basefile.domain.FileModel
-import io.snaps.basesources.NotificationsSource
-import io.snaps.basefeed.data.UploadStatusSource
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basequests.data.QuestsRepository
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.logE
-import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.di.Bridged
@@ -30,8 +27,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -43,7 +38,6 @@ class UploadViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
-    private val uploadStatusSource: UploadStatusSource,
     private val fileManager: FileManager,
     private val fileRepository: FileRepository,
     private val videoCompressor: VideoCompressor,
@@ -139,29 +133,11 @@ class UploadViewModel @Inject constructor(
                 questModel = questsRepository.currentQuestsState.value.dataOrCache,
             )
         }.doOnSuccess {
-            startProgressListen(it)
+            _uiState.update { it.copy(isLoading = false) }
+            _command publish Command.CloseScreen
         }.doOnComplete {
             _uiState.update { it.copy(isLoading = false) }
         }
-    }
-
-    private fun startProgressListen(uploadId: Uuid) {
-        progressListenJob?.cancel()
-        progressListenJob = uploadStatusSource.listenToByUploadId(uploadId).onEach { state ->
-            when (state) {
-                is UploadStatusSource.State.Error -> {
-                    _uiState.update { it.copy(uploadingProgress = null) }
-                    notificationsSource.sendError(state.error)
-                }
-                is UploadStatusSource.State.Progress -> {
-                    _uiState.update { it.copy(uploadingProgress = state.progress) }
-                }
-                is UploadStatusSource.State.Success -> {
-                    notificationsSource.sendMessage(StringKey.MessageVideoUploadSuccess.textValue())
-                    _command publish Command.CloseScreen
-                }
-            }
-        }.launchIn(viewModelScope)
     }
 
     fun onTitleChanged(value: String) {

@@ -47,7 +47,7 @@ class ApiConfig @Inject constructor(
     private fun okHttpClientBuilder(): OkHttpClient.Builder {
         val builder = OkHttpClient.Builder()
             .connectTimeout(20, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
+            .writeTimeout(VIDEO_WRITE_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
             .protocols(listOf(Protocol.HTTP_1_1))
             .followRedirects(true)
@@ -81,5 +81,9 @@ class ApiConfig @Inject constructor(
         fun interceptor(interceptor: Interceptor) = this.apply { interceptors += interceptor }
 
         fun build() = createOkHttpClient(interceptors)
+    }
+
+    companion object {
+        private const val VIDEO_WRITE_TIMEOUT: Long = 60 * 5
     }
 }
