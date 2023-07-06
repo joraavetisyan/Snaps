@@ -29,9 +29,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import io.snaps.basefeed.data.model.VideoStatus
 import coil.size.Scale
 import io.snaps.basefeed.data.UploadStatusSource
+import io.snaps.basefeed.data.model.VideoStatus
 import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.corecommon.container.IconValue
 import io.snaps.corecommon.container.TextValue
@@ -80,6 +80,7 @@ fun VideoFeedGrid(
                     onRetryUploadClicked = onRetryUploadClicked,
                     onClick = { onClick(index) },
                 )
+
                 is VideoClipUiState.Shimmer -> ItemShimmer()
             }
         }
@@ -107,9 +108,11 @@ private fun Item(
                     is UploadStatusSource.State.Error -> ReloadButton(
                         onClick = { onRetryUploadClicked(item.internalId) },
                     )
-                    is UploadStatusSource.State.Progress -> Progress(
-                        progress = state.progress,
+
+                    is UploadStatusSource.State.Progress -> UploadProgress(
+                        uploadingProgress = state.progress,
                     )
+
                     is UploadStatusSource.State.Success,
                     null -> Unit
                 }
@@ -211,13 +214,13 @@ private fun Block(
         style = AppTheme.specificTypography.bodySmall,
         textAlign = TextAlign.Center,
         modifier = Modifier
-            .padding(top = 8.dp)
+            .padding(top = 4.dp)
             .fillMaxWidth()
             .clip(shape = AppTheme.shapes.medium)
             .background(color = backgroundColor)
             .doOnClick(onClick = onClick)
             .padding(8.dp),
-        maxLines = 2,
+        maxLines = 1,
     )
 }
 
@@ -230,15 +233,6 @@ private fun ReloadButton(
         textColor = AppTheme.specificColorScheme.white,
         backgroundColor = AppTheme.specificColorScheme.uiSystemRed,
         onClick = onClick,
-    )
-}
-
-@Composable
-private fun Progress(progress: Float) {
-    Block(
-        text = "Processing ${(progress * 100).toInt()}/100%".textValue(), // todo localization
-        textColor = AppTheme.specificColorScheme.textPrimary,
-        backgroundColor = AppTheme.specificColorScheme.lightGrey,
     )
 }
 
