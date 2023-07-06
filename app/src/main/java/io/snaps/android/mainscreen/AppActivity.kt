@@ -87,7 +87,6 @@ class AppActivity : FragmentActivity() {
                     SideEffect { shouldKeepSplashScreen = false }
                     navHostProvider.NonAuthorizedGraph(
                         navController = navController,
-                        needsStartOnBoarding = currentFlow.needsStartOnBoarding,
                     )
                 }
 
@@ -103,7 +102,6 @@ class AppActivity : FragmentActivity() {
                             needsWalletConnect = currentFlow.needsWalletConnect,
                             needsWalletImport = currentFlow.needsWalletImport,
                             needsInitialization = currentFlow.needsInitialization,
-                            needsInterestsSelection = currentFlow.needsInterestsSelection,
                         )
                         LaunchedEffect(currentFlow.isReady) {
                             if (currentFlow.isReady) {

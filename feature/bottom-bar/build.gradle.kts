@@ -21,4 +21,5 @@ dependencies {
     implementation(projects.baseSession)
     implementation(projects.baseNft)
     implementation(projects.baseSettings)
+    implementation(projects.baseProfile)
 }

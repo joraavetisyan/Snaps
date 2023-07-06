@@ -37,7 +37,6 @@ class AppViewModel @AssistedInject constructor(
     private val notificationsSource: NotificationsSource,
     @Bridged private val profileRepository: ProfileRepository,
     private val sessionRepository: SessionRepository,
-    private val userDataStorage: UserDataStorage,
     private val appRouteProvider: AppRouteProvider,
     private val deepLinkSource: DeepLinkSource,
     private val apiService: ApiService,
@@ -61,11 +60,7 @@ class AppViewModel @AssistedInject constructor(
     }
 
     private fun checkStatus() {
-        viewModelScope.launch {
-            action.execute {
-                sessionRepository.tryStatusCheck()
-            }
-        }
+        sessionRepository.tryStatusCheck()
     }
 
     val stringHolderState = localeSource.stateFlow
@@ -75,9 +70,7 @@ class AppViewModel @AssistedInject constructor(
     val currentFlowState = userSessionTracker.state.map { userSession ->
         when (userSession) {
             UserSessionTracker.State.Idle -> StartFlow.Idle
-            UserSessionTracker.State.NotActive -> StartFlow.RegistrationFlow(
-                needsStartOnBoarding = !userDataStorage.isStartOnBoardingFinished,
-            )
+            UserSessionTracker.State.NotActive -> StartFlow.RegistrationFlow
 
             is UserSessionTracker.State.Active -> StartFlow.AuthorizedFlow(
                 isError = userSession is UserSessionTracker.State.Active.Error,
@@ -85,7 +78,6 @@ class AppViewModel @AssistedInject constructor(
                 needsWalletImport = userSession is UserSessionTracker.State.Active.NeedsWalletImport,
                 needsInitialization = userSession is UserSessionTracker.State.Active.NeedsInitialization,
                 deeplink = AppDeeplink.parse(deeplink).also { deeplink = null },
-                needsInterestsSelection = userSession is UserSessionTracker.State.Active.NeedsInterestsSelection
             )
         }
     }.likeStateFlow(scope = viewModelScope, initialValue = StartFlow.Idle)
@@ -137,9 +129,7 @@ class AppViewModel @AssistedInject constructor(
 
         object Idle : StartFlow()
 
-        data class RegistrationFlow(
-            val needsStartOnBoarding: Boolean,
-        ) : StartFlow()
+        object RegistrationFlow : StartFlow()
 
         // todo better way than multiple flags
         data class AuthorizedFlow(
@@ -147,7 +137,6 @@ class AppViewModel @AssistedInject constructor(
             val needsWalletConnect: Boolean,
             val needsWalletImport: Boolean,
             val needsInitialization: Boolean,
-            val needsInterestsSelection: Boolean,
             val deeplink: Deeplink? = null,
         ) : StartFlow() {
 

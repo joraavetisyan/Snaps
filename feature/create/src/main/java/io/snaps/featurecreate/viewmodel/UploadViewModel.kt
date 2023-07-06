@@ -12,6 +12,7 @@ import io.snaps.basefile.domain.FileModel
 import io.snaps.basesources.NotificationsSource
 import io.snaps.basefeed.data.UploadStatusSource
 import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.basequests.data.QuestsRepository
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.logE
 import io.snaps.corecommon.model.Uuid
@@ -48,6 +49,7 @@ class UploadViewModel @Inject constructor(
     private val videoCompressor: VideoCompressor,
     @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val videoFeedRepository: VideoFeedRepository,
+    @Bridged private val questsRepository: QuestsRepository,
 ) : SimpleViewModel() {
 
     private val args = savedStateHandle.requireArgs<AppRoute.UploadVideo.Args>()
@@ -134,6 +136,7 @@ class UploadViewModel @Inject constructor(
                 thumbnailFileId = thumbnail.id,
                 file = filePath,
                 userInfoModel = profileRepository.state.value.dataOrCache,
+                questModel = questsRepository.currentQuestsState.value.dataOrCache,
             )
         }.doOnSuccess {
             startProgressListen(it)

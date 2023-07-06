@@ -23,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateUserViewModel @Inject constructor(
     private val fileManager: FileManager,
-    @Bridged private val interactor: EditUserInteractor,
+    private val interactor: EditUserInteractor,
     private val action: Action,
     @Bridged private val profileRepository: ProfileRepository,
     private val sessionRepository: SessionRepository,
@@ -103,9 +103,7 @@ class CreateUserViewModel @Inject constructor(
     }
 
     private fun handleCreate() {
-        profileRepository.state.value.dataOrCache?.let {
-            sessionRepository.onInitialized(it.isUsedTags)
-        }
+        sessionRepository.onInitialized()
     }
 
     fun onNickNameValueChanged(value: String) {

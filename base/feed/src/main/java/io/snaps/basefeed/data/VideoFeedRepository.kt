@@ -7,6 +7,7 @@ import io.snaps.basefeed.domain.VideoClipModel
 import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoFeedType
 import io.snaps.baseprofile.domain.UserInfoModel
+import io.snaps.basequests.domain.QuestModel
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
@@ -40,7 +41,8 @@ interface VideoFeedRepository {
         title: String,
         thumbnailFileId: Uuid,
         file: String,
-        userInfoModel: UserInfoModel?
+        userInfoModel: UserInfoModel?,
+        questModel: QuestModel?,
     ): Effect<Uuid>
 
     /**
@@ -74,6 +76,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
         val thumbnailFileId: Uuid,
         val file: String,
         val userInfoModel: UserInfoModel?,
+        val questModel: QuestModel?,
     )
 
     private val failedUploads = mutableMapOf<Uuid, UploadInfo>()
@@ -204,6 +207,7 @@ class VideoFeedRepositoryImpl @Inject constructor(
         thumbnailFileId: Uuid,
         file: String,
         userInfoModel: UserInfoModel?,
+        questModel: QuestModel?,
     ): Effect<Uuid> {
         return apiCall(ioDispatcher) {
             videoFeedApi.get().addVideo(
@@ -223,7 +227,8 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     thumbnailFileId = thumbnailFileId,
                     file = file,
                     userInfoModel = userInfoModel,
-                )
+                    questModel = questModel
+                ),
             )
         }
     }
@@ -235,7 +240,10 @@ class VideoFeedRepositoryImpl @Inject constructor(
                     when (it) {
                         is UploadStatusSource.State.Success -> {
                             // todo delete once checked on backend
-                            incrementCreatedVideoCount(userInfoModel = uploadInfo.userInfoModel)
+                            incrementCreatedVideoCount(
+                                userInfoModel = uploadInfo.userInfoModel,
+                                questModel = uploadInfo.questModel,
+                            )
                         }
 
                         is UploadStatusSource.State.Error -> {
@@ -254,11 +262,11 @@ class VideoFeedRepositoryImpl @Inject constructor(
         } ?: Effect.error(AppError.Unknown())
     }
 
-    private fun incrementCreatedVideoCount(userInfoModel: UserInfoModel?) {
-        val date =
-            userInfoModel?.questInfo?.questDate?.toInstant(ZoneOffset.UTC)?.toEpochMilli() ?: return
-        val currentCount = userDataStorage.getCreatedVideoCount(userInfoModel.userId, date)
-        userDataStorage.setCreatedVideoCount(userInfoModel.userId, date, currentCount + 1)
+    private fun incrementCreatedVideoCount(userInfoModel: UserInfoModel?, questModel: QuestModel?) {
+        val date = questModel?.questDate?.toInstant(ZoneOffset.UTC)?.toEpochMilli() ?: return
+        val userId = userInfoModel?.userId ?: return
+        val currentCount = userDataStorage.getCreatedVideoCount(userId, date)
+        userDataStorage.setCreatedVideoCount(userId, date, currentCount + 1)
     }
 
     override suspend fun delete(videoId: Uuid): Effect<Completable> {

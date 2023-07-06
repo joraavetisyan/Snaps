@@ -363,7 +363,6 @@ private fun VideoClip(
         }
     }
 
-
     var progress by remember(item.clip.id) { mutableStateOf(0f) }
     var currentPage by remember { mutableStateOf(pagerState.currentPage) }
     var duration by remember { mutableStateOf(0f) }

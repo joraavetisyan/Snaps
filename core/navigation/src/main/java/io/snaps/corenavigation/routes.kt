@@ -11,8 +11,8 @@ import io.snaps.corecommon.model.CoinType
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.MysteryBoxType
 import io.snaps.corecommon.model.NftType
+import io.snaps.corecommon.model.QuestType
 import io.snaps.corecommon.model.SubsType
-import io.snaps.corecommon.model.TaskType
 import io.snaps.corecommon.model.Uuid
 import kotlinx.serialization.Serializable
 
@@ -164,15 +164,13 @@ object AppRoute {
         )
     }
 
-    object FindPoints : Route("FindPoints")
-
     object ShareTemplate : Route("ShareTemplate")
 
-    object TaskDetails : RouteWithArg("TaskDetails") {
+    object QuestDetails : RouteWithArg("QuestDetails") {
 
         @Serializable
         data class Args(
-            val type: TaskType,
+            val type: QuestType,
             val energy: Int,
             val count: Int?,
             val energyProgress: Int,

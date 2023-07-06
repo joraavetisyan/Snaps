@@ -1,7 +1,7 @@
 package io.snaps.basefeed.ui
 
 import io.snaps.baseprofile.data.ProfileRepository
-import io.snaps.baseprofile.domain.UserInfoModel
+import io.snaps.basequests.data.QuestsRepository
 import io.snaps.basesettings.data.SettingsRepository
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.container.textValue
@@ -31,6 +31,7 @@ class CreateCheckHandlerImplDelegate @Inject constructor(
     private val notificationsSource: NotificationsSource,
     private val settingsRepository: SettingsRepository,
     private val userDataStorage: UserDataStorage,
+    @Bridged private val questsRepository: QuestsRepository,
     @Bridged private val profileRepository: ProfileRepository,
 ) : CreateCheckHandler {
 
@@ -38,7 +39,7 @@ class CreateCheckHandlerImplDelegate @Inject constructor(
     override val createCheckCommand = _command.receiveAsFlow()
 
     override suspend fun tryOpenCreate() {
-        val (isAllowed, maxCount) = isAllowedToCreate(profileRepository.state.value.dataOrCache)
+        val (isAllowed, maxCount) = isAllowedToCreate()
         if (isAllowed) {
             _command publish CreateCheckHandler.Command.OpenCreateScreen
         } else {
@@ -47,8 +48,10 @@ class CreateCheckHandlerImplDelegate @Inject constructor(
     }
 
     // todo delete once checked on backend
-    private fun isAllowedToCreate(userInfoModel: UserInfoModel?): Pair<Boolean, Int> {
-        val date = userInfoModel?.questInfo?.questDate?.toInstant(ZoneOffset.UTC)?.toEpochMilli() ?: return true to 0
+    private fun isAllowedToCreate(): Pair<Boolean, Int> {
+        val userInfoModel = profileRepository.state.value.dataOrCache ?: return true to 0
+        val questInfo = questsRepository.currentQuestsState.value.dataOrCache ?: return true to 0
+        val date = questInfo.questDate.toInstant(ZoneOffset.UTC).toEpochMilli()
         val maxCount = settingsRepository.state.value.dataOrCache?.maxVideosCount ?: return true to 0
         val currentCount = userDataStorage.getCreatedVideoCount(userInfoModel.userId, date)
         return (currentCount < maxCount) to maxCount

@@ -42,7 +42,11 @@ fun InterestSelectionScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
-    viewModel.command.collectAsCommand {}
+    viewModel.command.collectAsCommand {
+        when (it) {
+            InterestsSelectionViewModel.Command.CloseScreen -> router.back()
+        }
+    }
 
     InterestSelectionScreen(
         uiState = uiState,
