@@ -44,3 +44,5 @@ val String.approximated get() = "~ $this"
 fun String.capitalizeFirstLetter() = replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
 fun String.digitsOnly() = filter { it.isDigit() }
+
+fun String.isUserNameValid() = Regex("^\\p{L}+[\\p{L}\\p{Nd}_.]*$").matches(this)

@@ -92,7 +92,7 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             auth.signInWithEmailAndPassword(email, password)
                 .await()
-                .handleAuthResult()
+                .handleAuthResult() // todo call only if the email is confirmed
         } catch (e: FirebaseAuthException) {
             Effect.error(AppError.Custom(displayMessage = e.localizedMessage, cause = e))
         } catch (e: Exception) {

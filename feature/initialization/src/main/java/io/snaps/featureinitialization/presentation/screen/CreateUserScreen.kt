@@ -133,7 +133,7 @@ private fun CreateUserScreen(
             .inset(insetAll()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.height(148.dp))
+        Spacer(modifier = Modifier.height(32.dp))
         Text(
             text = LocalStringHolder.current(StringKey.CreateUserTitle),
             color = AppTheme.specificColorScheme.textPrimary,
@@ -183,7 +183,7 @@ private fun CreateUserScreen(
             SimpleButtonActionM(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 12.dp),
+                    .padding(12.dp),
                 onClick = onUploadPhotoClicked,
             ) {
                 SimpleButtonContent(

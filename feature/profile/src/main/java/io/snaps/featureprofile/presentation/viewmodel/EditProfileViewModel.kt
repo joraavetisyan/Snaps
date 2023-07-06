@@ -8,6 +8,7 @@ import io.snaps.baseprofile.domain.EditUserInteractor
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.model.Effect
+import io.snaps.corecommon.strings.isUserNameValid
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
@@ -127,14 +128,10 @@ class EditProfileViewModel @Inject constructor(
         val imageUri: Uri? = null,
         val editNameValue: String = "",
     ) {
-        val isNameValid get() = isNameValid(editNameValue)
+        val isNameValid get() = editNameValue.isUserNameValid()
     }
 
     sealed class Command {
         object CloseScreen : Command()
     }
-}
-
-private fun isNameValid(name: String): Boolean {
-    return Regex("^\\p{L}+[\\p{L}\\p{Nd}_.]*$").matches(name)
 }

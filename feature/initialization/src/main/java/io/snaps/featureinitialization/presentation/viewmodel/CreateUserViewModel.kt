@@ -6,8 +6,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.domain.EditUserInteractor
 import io.snaps.basesession.data.SessionRepository
+import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.imageValue
+import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.strings.StringKey
+import io.snaps.corecommon.strings.isUserNameValid
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.FileManager
@@ -27,6 +31,7 @@ class CreateUserViewModel @Inject constructor(
     private val action: Action,
     @Bridged private val profileRepository: ProfileRepository,
     private val sessionRepository: SessionRepository,
+    private val notificationsSource: NotificationsSource,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -93,13 +98,17 @@ class CreateUserViewModel @Inject constructor(
 
     fun onStartButtonClicked() = viewModelScope.launch {
         val avatarFile = uiState.value.imageUri?.let { fileManager.createFileFromUri(it) }
+        if (!uiState.value.nicknameValue.isUserNameValid()) {
+            notificationsSource.sendError(StringKey.ErrorUserNameInvalid.textValue())
+            return@launch
+        }
         action.execute {
             _uiState.update { it.copy(isLoading = true) }
             interactor.editUser(avatarFile = avatarFile, userName = uiState.value.nicknameValue)
-        }.doOnError { _, _ ->
-            _uiState.update { it.copy(isLoading = false) }
         }.doOnSuccess {
             handleCreate()
+        }.doOnComplete {
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 

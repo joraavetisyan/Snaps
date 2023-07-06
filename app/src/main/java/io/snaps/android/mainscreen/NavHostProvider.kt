@@ -85,6 +85,7 @@ class NavHostProvider @Inject constructor(
                     with(createFeatureProvider) { createGraph(controller) }
                     with(profileFeatureProvider) { profileGraph(controller) }
                     with(webViewFeatureProvider) { webViewGraph(controller) }
+                    with(initializationFeatureProvider) { initializationGraph(controller) }
                 }
             }
         }

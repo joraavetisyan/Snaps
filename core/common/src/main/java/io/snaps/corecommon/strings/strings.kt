@@ -240,6 +240,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Ви можете завантажити максимум %s відео за раунд",
         SupportedLanguageKey.Es to "Puedes subir un máximo de %s videos por ronda",
     ),
+    key(StringKey.ErrorUserNameInvalid) to mapOf(
+        SupportedLanguageKey.En to "Only letters, numbers, underscores, and dots can be used in the user name.",
+        SupportedLanguageKey.Ru to "В имени пользователя можно использовать только буквы, цифры, нижнее подчеркивание и точки",
+        SupportedLanguageKey.Tr to "Kullanıcı adına yalnızca harfler, sayılar, alt çizgiler ve noktalar kullanılabilir.",
+        SupportedLanguageKey.Ua to "В імені користувача можна використовувати лише літери, цифри, підкреслення та крапки.",
+        SupportedLanguageKey.Es to "Solo se pueden usar letras, números, guiones bajos y puntos en el nombre de usuario.",
+    ),
     key(StringKey.OnboardingRankTitle) to mapOf(
         SupportedLanguageKey.En to "Welcome to Snaps!",
         SupportedLanguageKey.Ru to "Добро пожаловать в Snaps!",

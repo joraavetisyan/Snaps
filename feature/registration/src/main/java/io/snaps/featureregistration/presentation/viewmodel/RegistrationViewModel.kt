@@ -205,7 +205,7 @@ class RegistrationViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
         action.execute {
             profileRepository.updateData().flatMap { user ->
-                userDataStorage.needsInitialization = user.name.isEmpty() || user.avatarUrl == null
+                userDataStorage.needsInitialization = user.name.isNullOrEmpty()
                 userDataStorage.needsWalletConnect = user.wallet == null
                 sessionRepository.tryLogin()
             }

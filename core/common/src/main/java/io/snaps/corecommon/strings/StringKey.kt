@@ -40,6 +40,7 @@ enum class StringKey {
     ErrorBalanceInSync,
     ErrorRefillGasLimit,
     ErrorCreateVideoLimit,
+    ErrorUserNameInvalid,
 
     OnboardingRankTitle,
     OnboardingRankMessage,
