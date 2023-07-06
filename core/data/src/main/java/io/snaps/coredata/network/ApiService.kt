@@ -49,7 +49,7 @@ class ApiService @Inject constructor(
                 Effect.success(Completable)
             }
         } catch (e: Exception) {
-            logE("telephony manager error: $e")
+            logE("telephony manager  error: $e")
             Effect.error(AppError.Unknown(cause = e))
         }
     }
