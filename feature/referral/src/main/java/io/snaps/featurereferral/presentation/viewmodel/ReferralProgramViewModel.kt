@@ -90,6 +90,7 @@ class ReferralProgramViewModel @Inject constructor(
         subscribeOnCurrentUser()
         subscribeOnFirstReferrals()
         subscribeOnSecondReferrals()
+
         loadInvitedFirstReferral()
         loadInvitedSecondReferral()
 
@@ -137,7 +138,7 @@ class ReferralProgramViewModel @Inject constructor(
                     ),
                 )
             }
-            if (state is Effect<InvitedReferralModel>) {
+            if (state is Effect && state.isSuccess) {
                 _uiState.update {
                     it.copy(totalFirstReferrals = state.requireData.total)
                 }
@@ -156,7 +157,7 @@ class ReferralProgramViewModel @Inject constructor(
                     ),
                 )
             }
-            if (state is Effect<InvitedReferralModel>) {
+            if (state is Effect && state.isSuccess) {
                 _uiState.update {
                     it.copy(totalSecondReferrals = state.requireData.total)
                 }

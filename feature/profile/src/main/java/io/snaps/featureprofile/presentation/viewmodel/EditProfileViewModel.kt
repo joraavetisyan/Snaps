@@ -40,7 +40,7 @@ class EditProfileViewModel @Inject constructor(
 
     init {
         profileRepository.state.onEach { state ->
-            if (state is Effect<UserInfoModel>) {
+            if (state is Effect && state.isSuccess) {
                 _uiState.update {
                     it.copy(
                         name = state.dataOrCache?.name.orEmpty(),
