@@ -51,15 +51,16 @@ class AppActivity : FragmentActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (EmulatorChecker.isDeviceEmulated() && buildInfo.isRelease) {
+            finish()
+            return
+        }
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         WindowCompat.setDecorFitsSystemWindows(window, false)
         installSplashScreen().setKeepOnScreenCondition { shouldKeepSplashScreen }
 
-        val isDeviceEmulated = EmulatorChecker.isDeviceEmulated() && buildInfo.isRelease
-
         setContent {
-            if (isDeviceEmulated) finish() else AppScreen()
             // todo add dark theme
             AppTheme(calculateWindowSizeClass(this), isDarkTheme = false) {
                 SystemBarsIconsColor()
