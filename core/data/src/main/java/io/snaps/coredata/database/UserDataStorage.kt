@@ -39,10 +39,6 @@ class UserDataStorage @Inject constructor(
 
     var captchaResult: String? = null
 
-    var prodBaseUrl: String?
-        get() = provider.prefs.getString("prodBaseUrl", null)
-        set(value) = provider.prefs.edit { putString("prodBaseUrl", value) }
-
     fun isOnboardingShown(type: OnboardingType): Boolean {
         return provider.prefs.getBoolean("onboarding${type.name}", false)
     }
@@ -64,7 +60,12 @@ class UserDataStorage @Inject constructor(
     }
 
     fun setPostedInstagramTemplateCount(userId: Uuid, date: Long, count: Int) {
-        return provider.prefs.edit { putInt("getPostedInstagramTemplateCount${userId}${date}", count) }
+        return provider.prefs.edit {
+            putInt(
+                "getPostedInstagramTemplateCount${userId}${date}",
+                count
+            )
+        }
     }
 
     fun reset(reason: LogOutReason? = null) {

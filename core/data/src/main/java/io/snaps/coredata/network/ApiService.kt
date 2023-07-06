@@ -7,28 +7,23 @@ import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.BuildInfo
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
-import io.snaps.coredata.coroutine.ApplicationCoroutineScope
-import io.snaps.coredata.database.UserDataStorage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ApiService @Inject constructor(
-    @ApplicationCoroutineScope private val scope: CoroutineScope,
     private val buildInfo: BuildInfo,
-    private val userDataStorage: UserDataStorage,
     private val telephonyManager: TelephonyManager
 ) {
 
     private val test = "http://51.250.36.197:5100/api/"
-    private var prod: String = userDataStorage.prodBaseUrl.orEmpty()
+    private val productionUrl = "http://51.250.42.53:5100/api/"
+    private val googleProductionUrl = "http://34.118.21.102/api/"
+    private var prod: String = ""
 
     init {
-        scope.launch {
+        if (buildInfo.isRelease)
             loadProdUrl()
-        }
     }
 
     fun getBaseUrl() = when {
@@ -43,8 +38,6 @@ class ApiService @Inject constructor(
     }
 
     fun loadProdUrl(): Effect<Completable> {
-        val productionUrl = "http://51.250.42.53:5100/api/"
-        val googleProductionUrl = "http://34.118.21.102/api/"
         return try {
             if (checkForCountry() == "ru") {
                 log(productionUrl)
@@ -56,7 +49,7 @@ class ApiService @Inject constructor(
                 Effect.success(Completable)
             }
         } catch (e: Exception) {
-            logE("firebase database load cancelled: $e")
+            logE("telephony manager error: $e")
             Effect.error(AppError.Unknown(cause = e))
         }
     }
