@@ -137,14 +137,14 @@ private fun Data(
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
                 )
-                Text(
+                /*Text(
                     text = description,
                     inlineContent = inlineContent,
                     color = AppTheme.specificColorScheme.textSecondary,
                     style = MiddlePartTileConfig.descriptionStyle(),
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
-                )
+                )*/
             }
         }
     }

@@ -14,7 +14,6 @@ import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringHolder
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coredata.network.ApiService

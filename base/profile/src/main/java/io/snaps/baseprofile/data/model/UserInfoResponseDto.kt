@@ -28,7 +28,6 @@ class UserInfoResponseDto(
     @SerialName("firstLevelReferralMultiplier") val firstLevelReferralMultiplier: Double?,
     @SerialName("secondLevelReferralMultiplier") val secondLevelReferralMultiplier: Double?,
     @SerialName("isUsedTags") val isUsedTags: Boolean?,
-    @SerialName("energy") val energy: Int?,
 )
 
 @Serializable

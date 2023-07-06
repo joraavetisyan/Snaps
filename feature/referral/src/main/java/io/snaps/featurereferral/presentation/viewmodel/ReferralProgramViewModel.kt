@@ -392,7 +392,7 @@ class ReferralProgramViewModel @Inject constructor(
                             wallet = user.wallet.orEmpty(),
                             avatar = user.avatar,
                             name = user.name.textValue(),
-                            energy = user.energy,
+                            energy = 0, // todo when this field appears on the back
                         )
                     )
                 }

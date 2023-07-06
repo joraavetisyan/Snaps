@@ -29,7 +29,6 @@ data class UserInfoModel(
     val firstLevelReferralMultiplier: Double,
     val secondLevelReferralMultiplier: Double,
     val isUsedTags: Boolean,
-    val energy: Int,
 ) {
 
     val avatar: ImageValue get() = avatarUrl?.imageValue() ?: R.drawable.img_avatar.imageValue()

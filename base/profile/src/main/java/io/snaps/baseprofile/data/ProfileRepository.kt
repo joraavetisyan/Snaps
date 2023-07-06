@@ -16,6 +16,7 @@ import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.coredata.coroutine.IoDispatcher
+import io.snaps.coredata.database.UserDataStorage
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
 import io.snaps.coreui.viewmodel.tryPublish
@@ -80,6 +81,7 @@ class ProfileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val api: Lazy<ProfileApi>,
     private val loaderFactory: UsersLoaderFactory,
+    private val userDataStorage: UserDataStorage,
 ) : ProfileRepository {
 
     private val _state = MutableStateFlow<State<UserInfoModel>>(Loading())
@@ -153,6 +155,8 @@ class ProfileRepositoryImpl @Inject constructor(
                     wallet = address,
                 )
             )
+        }.doOnSuccess {
+            userDataStorage.needsInitialization = it.name.isNullOrEmpty()
         }.map {
             it.toModel()
         }.also {

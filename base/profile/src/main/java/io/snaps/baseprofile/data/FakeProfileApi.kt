@@ -137,7 +137,6 @@ class FakeProfileApi : ProfileApi {
             firstLevelReferralMultiplier = 0.03,
             secondLevelReferralMultiplier = 0.01,
             isUsedTags = rBool,
-            energy = 0,
         )
     }
 }

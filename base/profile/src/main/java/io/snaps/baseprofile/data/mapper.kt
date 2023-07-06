@@ -36,7 +36,6 @@ fun UserInfoResponseDto.toModel() = UserInfoModel(
     firstLevelReferralMultiplier = firstLevelReferralMultiplier ?: 0.03,
     secondLevelReferralMultiplier = secondLevelReferralMultiplier ?: 0.01,
     isUsedTags = isUsedTags ?: true,
-    energy = energy ?: 0,
 )
 
 fun InvitedReferralResponseDto.toModel() = InvitedReferralModel(

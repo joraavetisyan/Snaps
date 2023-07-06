@@ -38,7 +38,15 @@ class CreateUserViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             profileRepository.updateData().doOnSuccess { user ->
-                _uiState.update { it.copy(nicknameValue = user.name, avatar = user.avatarUrl?.imageValue()) }
+                _uiState.update {
+                    it.copy(
+                        nicknameValue = user.name,
+                        avatar = user.avatarUrl?.imageValue(),
+                        photoStatus = if (user.avatarUrl != null) {
+                            PhotoStatus.Uploaded
+                        } else PhotoStatus.NotUploaded,
+                    )
+                }
             }
         }
     }
@@ -84,21 +92,14 @@ class CreateUserViewModel @Inject constructor(
     }
 
     fun onStartButtonClicked() = viewModelScope.launch {
-        uiState.value.imageUri?.let { fileManager.createFileFromUri(it) }?.let {
-            action.execute {
-                _uiState.update { it.copy(isLoading = true) }
-                interactor.editUser(avatarFile = it, userName = uiState.value.nicknameValue)
-            }.doOnError { _, _ ->
-                _uiState.update { it.copy(isLoading = false) }
-            }.doOnSuccess {
-                handleCreate()
-            }
-        } ?: run {
-            val currentName = profileRepository.state.value.dataOrCache?.name
-            val enteredName = uiState.value.nicknameValue
-            if (currentName == enteredName && uiState.value.avatar != null) {
-                handleCreate()
-            }
+        val avatarFile = uiState.value.imageUri?.let { fileManager.createFileFromUri(it) }
+        action.execute {
+            _uiState.update { it.copy(isLoading = true) }
+            interactor.editUser(avatarFile = avatarFile, userName = uiState.value.nicknameValue)
+        }.doOnError { _, _ ->
+            _uiState.update { it.copy(isLoading = false) }
+        }.doOnSuccess {
+            handleCreate()
         }
     }
 
@@ -121,9 +122,7 @@ class CreateUserViewModel @Inject constructor(
         val photoStatus: PhotoStatus = PhotoStatus.NotUploaded,
     ) {
 
-        val isStartButtonEnabled
-            get() = nicknameValue.isNotBlank()
-                    && (photoStatus == PhotoStatus.Uploaded || avatar != null)
+        val isStartButtonEnabled get() = nicknameValue.isNotBlank()
     }
 
     enum class PhotoStatus {
