@@ -3,12 +3,12 @@ package io.snaps.featureinitialization.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
-import io.snaps.basesession.data.SessionRepository
 import io.snaps.basesettings.data.SettingsRepository
 import io.snaps.corecommon.model.Uuid
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
+import io.snaps.coreui.viewmodel.publish
 import io.snaps.featureinitialization.presentation.screen.InterestsSectorTileState
 import io.snaps.featureinitialization.presentation.toInterestsSectorTileState
 import kotlinx.coroutines.channels.Channel
@@ -24,7 +24,6 @@ import javax.inject.Inject
 @HiltViewModel
 class InterestsSelectionViewModel @Inject constructor(
     private val action: Action,
-    private val sessionRepository: SessionRepository,
     private val settingsRepository: SettingsRepository,
     @Bridged private val profileRepository: ProfileRepository,
 ) : SimpleViewModel() {
@@ -74,7 +73,7 @@ class InterestsSelectionViewModel @Inject constructor(
             action.execute {
                 profileRepository.addUserTags(tags)
             }.doOnSuccess {
-                sessionRepository.onSelectedInterests()
+                _command publish Command.CloseScreen
             }.doOnComplete {
                 _uiState.update { it.copy(isLoading = false) }
             }
@@ -109,5 +108,7 @@ class InterestsSelectionViewModel @Inject constructor(
         val isSelectButtonEnabled: Boolean = false,
     )
 
-    sealed class Command
+    sealed class Command {
+        object CloseScreen : Command()
+    }
 }

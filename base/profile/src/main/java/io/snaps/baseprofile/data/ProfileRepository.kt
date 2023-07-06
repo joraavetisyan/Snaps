@@ -6,7 +6,6 @@ import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.UserTagRequestDto
 import io.snaps.baseprofile.domain.InvitedReferralModel
-import io.snaps.baseprofile.domain.QuestInfoModel
 import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.baseprofile.domain.UsersPageModel
 import io.snaps.corecommon.model.Completable
@@ -17,25 +16,19 @@ import io.snaps.corecommon.model.State
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.model.CryptoAddress
 import io.snaps.coredata.coroutine.IoDispatcher
-import io.snaps.coredata.coroutine.UserSessionCoroutineScope
 import io.snaps.coredata.network.PagedLoaderParams
 import io.snaps.coredata.network.apiCall
-import io.snaps.coreui.viewmodel.likeStateFlow
 import io.snaps.coreui.viewmodel.tryPublish
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 interface ProfileRepository {
 
     val state: StateFlow<State<UserInfoModel>>
-
-    val currentTasksState: StateFlow<State<QuestInfoModel>>
 
     val invitedFirstReferralState: StateFlow<State<InvitedReferralModel>>
 
@@ -85,7 +78,6 @@ interface ProfileRepository {
 
 class ProfileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @UserSessionCoroutineScope private val scope: CoroutineScope,
     private val api: Lazy<ProfileApi>,
     private val loaderFactory: UsersLoaderFactory,
 ) : ProfileRepository {
@@ -98,16 +90,6 @@ class ProfileRepositoryImpl @Inject constructor(
 
     private val _invitedSecondReferralState = MutableStateFlow<State<InvitedReferralModel>>(Loading())
     override val invitedSecondReferralState = _invitedSecondReferralState.asStateFlow()
-
-    override val currentTasksState = state.map {
-        when (it) {
-            is Loading -> Loading()
-            is Effect -> when {
-                it.isSuccess -> Effect.success(requireNotNull(it.requireData.questInfo))
-                else -> Effect.error(requireNotNull(it.errorOrNull))
-            }
-        }
-    }.likeStateFlow(scope, Loading())
 
     private fun getLoader(query: String): UsersLoader {
         return loaderFactory.get(query) {
@@ -172,7 +154,7 @@ class ProfileRepositoryImpl @Inject constructor(
                 )
             )
         }.map {
-            it.toModel().copy(questInfo = state.value.dataOrCache?.questInfo) // user model without questInfo is returned
+            it.toModel()
         }.also {
             _state tryPublish it
         }.toCompletable()

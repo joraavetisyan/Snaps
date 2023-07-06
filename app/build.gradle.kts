@@ -123,7 +123,7 @@ dependencies {
     implementation(projects.featureWalletConnect)
     implementation(projects.featureProfile)
     implementation(projects.featureCollection)
-    implementation(projects.featureTasks)
+    implementation(projects.featureQuests)
     implementation(projects.featureFeed)
     implementation(projects.featureSearch)
     implementation(projects.featureCreate)

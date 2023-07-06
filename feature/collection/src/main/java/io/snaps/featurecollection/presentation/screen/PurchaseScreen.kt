@@ -358,6 +358,7 @@ private fun ActionButtons(
                 SimpleButtonActionM(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onFreeClicked,
+                    enabled = uiState.isFreeButtonEnabled
                 ) {
                     SimpleButtonContent(text = StringKey.PurchaseActionFree.textValue())
                 }
@@ -380,7 +381,9 @@ private fun ActionButtons(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onBuyWithBNBClicked,
                     text = StringKey.PurchaseActionBuyWithBNB.textValue(),
-                    additionalText = StringKey.PurchaseFieldOff.textValue(uiState.costInCoin?.getFormatted().orEmpty()),
+                    additionalText = StringKey.PurchaseFieldOff.textValue(
+                        uiState.costInCoin?.getFormatted().orEmpty()
+                    ),
                 )
             }
         }

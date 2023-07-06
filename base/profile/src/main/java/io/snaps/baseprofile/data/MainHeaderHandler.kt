@@ -2,6 +2,7 @@ package io.snaps.baseprofile.data
 
 import io.snaps.basenft.data.NftRepository
 import io.snaps.baseprofile.ui.MainHeaderState
+import io.snaps.basequests.data.QuestsRepository
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.corecommon.ext.log
 import io.snaps.coredata.coroutine.UserSessionCoroutineScope
@@ -43,6 +44,7 @@ class MainHeaderHandlerImplDelegate @Inject constructor(
     @Bridged private val profileRepository: ProfileRepository,
     @Bridged private val walletRepository: WalletRepository,
     @Bridged private val ntfRepository: NftRepository,
+    @Bridged private val questsRepository: QuestsRepository,
 ) : MainHeaderHandler {
 
     private val _uiState = MutableStateFlow(MainHeaderHandler.UiState())
@@ -63,9 +65,11 @@ class MainHeaderHandlerImplDelegate @Inject constructor(
             walletRepository.bnb,
             walletRepository.snps,
             ntfRepository.allGlassesBrokenState,
-        ) { profile, bnb, snps, brokenGlasses ->
+            questsRepository.currentQuestsState,
+        ) { profile, bnb, snps, brokenGlasses, quests ->
             mainHeaderState(
                 profile = profile,
+                quests = quests,
                 isAllGlassesBroken = brokenGlasses.dataOrCache ?: false,
                 snp = snps?.coinValue,
                 bnb = bnb?.coinValue,
@@ -89,6 +93,7 @@ class MainHeaderHandlerImplDelegate @Inject constructor(
         scope.launch {
             action.execute { profileRepository.updateData() }
             action.execute { walletRepository.updateSnpsAccount() }
+            action.execute { questsRepository.updateData() }
         }
     }
 }

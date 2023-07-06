@@ -25,10 +25,6 @@ class UserDataStorage @Inject constructor(
         provider.userDataStore.set(PREF_THEME_MODE, value.name)
     }
 
-    var isStartOnBoardingFinished: Boolean
-        get() = provider.prefs.getBoolean("isStartOnBoardingFinished", false)
-        set(value) = provider.prefs.edit { putBoolean("isStartOnBoardingFinished", value) }
-
     var countBannerViews: Int
         get() = provider.prefs.getInt("countBannerViews", 0)
         set(value) = provider.prefs.edit { putInt("countBannerViews", value) }
@@ -38,6 +34,14 @@ class UserDataStorage @Inject constructor(
         set(value) = provider.prefs.edit { putInt("bannerVersion", value) }
 
     var captchaResult: String? = null
+
+    var needsInitialization: Boolean
+        get() = provider.prefs.getBoolean("needsInitialization", false)
+        set(value) = provider.prefs.edit { putBoolean("needsInitialization", value) }
+
+    var needsWalletConnect: Boolean
+        get() = provider.prefs.getBoolean("needsWalletConnect", true)
+        set(value) = provider.prefs.edit { putBoolean("needsWalletConnect", value) }
 
     fun isOnboardingShown(type: OnboardingType): Boolean {
         return provider.prefs.getBoolean("onboarding${type.name}", false)
@@ -70,6 +74,8 @@ class UserDataStorage @Inject constructor(
 
     fun reset(reason: LogOutReason? = null) {
         captchaResult = null
+        needsWalletConnect = true
+        needsInitialization = false
     }
 }
 

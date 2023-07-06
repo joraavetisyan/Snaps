@@ -5,11 +5,14 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuthException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseauth.data.AuthRepository
+import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesession.data.SessionRepository
 import io.snaps.basesources.NotificationsSource
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coredata.database.UserDataStorage
+import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
@@ -27,6 +30,8 @@ class RegistrationViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val action: Action,
     private val notificationsSource: NotificationsSource,
+    private val userDataStorage: UserDataStorage,
+    @Bridged private val profileRepository: ProfileRepository,
 ) : SimpleViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -195,10 +200,17 @@ class RegistrationViewModel @Inject constructor(
         }
     }
 
+    // todo AuthInteractor
     private suspend fun handleAuth() {
+        _uiState.update { it.copy(isLoading = true) }
         action.execute {
-            sessionRepository.tryLogin()
+            profileRepository.updateData().flatMap { user ->
+                userDataStorage.needsInitialization = user.name.isEmpty() || user.avatarUrl == null
+                userDataStorage.needsWalletConnect = user.wallet == null
+                sessionRepository.tryLogin()
+            }
         }.doOnComplete {
+            _uiState.update { it.copy(isLoading = false) }
             _command publish Command.HideBottomDialog
         }
     }
@@ -206,6 +218,7 @@ class RegistrationViewModel @Inject constructor(
     fun signUpWithEmail() = viewModelScope.launch {
         _uiState.update { it.copy(isLoading = true) }
         action.execute {
+            // todo AuthInteractor
             authRepository.signUpWithEmail(
                 email = uiState.value.emailAddressValue,
                 password = uiState.value.confirmPasswordValue,

@@ -18,7 +18,6 @@ class UserInfoResponseDto(
     @SerialName("totalLikes") val totalLikes: Int,
     @SerialName("avatar") val avatarUrl: FullUrl?,
     @SerialName("experience") val experience: Int?,
-    @SerialName("questInfo") val questInfo: QuestInfoResponseDto?, // current quests aren't null only for current user
     @SerialName("subscribersCount") val totalSubscribers: Int,
     @SerialName("subscribesCount") val totalSubscriptions: Int,
     @SerialName("inviteCodeRegisteredBy") val inviteCodeRegisteredBy: String?,
@@ -29,6 +28,7 @@ class UserInfoResponseDto(
     @SerialName("firstLevelReferralMultiplier") val firstLevelReferralMultiplier: Double?,
     @SerialName("secondLevelReferralMultiplier") val secondLevelReferralMultiplier: Double?,
     @SerialName("isUsedTags") val isUsedTags: Boolean?,
+    @SerialName("energy") val energy: Int?,
 )
 
 @Serializable

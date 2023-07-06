@@ -6,6 +6,8 @@ import dagger.Provides
 import dagger.hilt.EntryPoint
 import dagger.hilt.EntryPoints
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import io.snaps.baseprofile.data.FakeProfileApi
 import io.snaps.baseprofile.data.MainHeaderHandler
@@ -50,10 +52,6 @@ interface DataBindModule {
     @Binds
     @UserSessionScope
     fun profileRepository(bind: ProfileRepositoryImpl): ProfileRepository
-
-    @Binds
-    @UserSessionScope
-    fun editUserInteractor(bind: EditUserInteractorImpl): EditUserInteractor
 }
 
 @EntryPoint
@@ -63,8 +61,6 @@ internal interface DataBindEntryPoint {
     fun mainHeaderHandler(): MainHeaderHandler
 
     fun profileRepository(): ProfileRepository
-
-    fun editUserInteractor(): EditUserInteractor
 }
 
 @Module
@@ -90,14 +86,13 @@ internal object DataBindEntryPointBridge {
             .get(componentManager, DataBindEntryPoint::class.java)
             .profileRepository()
     }
+}
 
-    @Bridged
-    @Provides
-    fun editUserInteractor(
-        componentManager: UserSessionComponentManager,
-    ): EditUserInteractor {
-        return EntryPoints
-            .get(componentManager, DataBindEntryPoint::class.java)
-            .editUserInteractor()
-    }
+@Module
+@InstallIn(ViewModelComponent::class)
+internal interface ViewModelDataBindModule {
+
+    @Binds
+    @ViewModelScoped
+    fun editUserInteractor(bind: EditUserInteractorImpl): EditUserInteractor
 }

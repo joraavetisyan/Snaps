@@ -22,6 +22,7 @@ dependencies {
     implementation(projects.baseProfile)
     implementation(projects.baseSubs)
     implementation(projects.baseSettings)
+    implementation(projects.baseQuests)
 
     implementation(*Libs.bundle.work)
     implementation(*Libs.bundle.media)

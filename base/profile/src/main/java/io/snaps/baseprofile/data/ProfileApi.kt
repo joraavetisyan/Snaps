@@ -16,7 +16,7 @@ import retrofit2.http.Query
 
 interface ProfileApi {
 
-    @GET("v1/user-info")
+    @GET("v1/user-profile")
     suspend fun userInfo(
         @Query("userId") userId: String? = null,
     ): BaseResponse<UserInfoResponseDto>

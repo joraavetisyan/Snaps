@@ -4,9 +4,6 @@ import io.snaps.baseprofile.data.model.ConnectInstagramRequestDto
 import io.snaps.baseprofile.data.model.EditUserRequestDto
 import io.snaps.baseprofile.data.model.InvitedReferralResponseDto
 import io.snaps.baseprofile.data.model.PaymentsState
-import io.snaps.baseprofile.data.model.QuestDto
-import io.snaps.baseprofile.data.model.QuestInfoResponseDto
-import io.snaps.baseprofile.data.model.QuestItemDto
 import io.snaps.baseprofile.data.model.SetInviteCodeRequestDto
 import io.snaps.baseprofile.data.model.TransactionItemResponseDto
 import io.snaps.baseprofile.data.model.TransactionType
@@ -17,7 +14,6 @@ import io.snaps.corecommon.mock.rBool
 import io.snaps.corecommon.mock.rDouble
 import io.snaps.corecommon.mock.rInt
 import io.snaps.corecommon.model.Completable
-import io.snaps.corecommon.model.TaskType
 import io.snaps.coredata.network.BaseResponse
 import kotlinx.coroutines.delay
 import retrofit2.http.Body
@@ -134,7 +130,6 @@ class FakeProfileApi : ProfileApi {
             totalSubscriptions = 10,
             experience = 0,
             level = 1,
-            questInfo = getQuestInfo(),
             ownInviteCode = "#42GJXE8QM",
             inviteCodeRegisteredBy = null,
             instagramId = null,
@@ -142,72 +137,7 @@ class FakeProfileApi : ProfileApi {
             firstLevelReferralMultiplier = 0.03,
             secondLevelReferralMultiplier = 0.01,
             isUsedTags = rBool,
-        )
-
-        fun getQuestInfo() = QuestInfoResponseDto(
-            questDate = "2023-03-06T00:00:00+00:00",
-            roundEndDate = "2023-02-07T02:46:30.3218237+00:00",
-            experience = 0,
-            energy = 20,
-            roundId = "1",
-            id = "",
-            quests = listOf(
-                QuestItemDto(
-                    completed = true,
-                    done = null,
-                    madeCount = rInt,
-                    status = null,
-                    quest = QuestDto(
-                        count = 20,
-                        type = TaskType.Like,
-                        energy = 20,
-                    )
-                ),
-                QuestItemDto(
-                    done = null,
-                    completed = false,
-                    madeCount = rInt,
-                    status = null,
-                    quest = QuestDto(
-                        count = rInt,
-                        type = TaskType.PublishVideo,
-                        energy = 20,
-                    )
-                ),
-                QuestItemDto(
-                    completed = false,
-                    done = null,
-                    madeCount = 0,
-                    status = null,
-                    quest = QuestDto(
-                        count = 20,
-                        type = TaskType.Watch,
-                        energy = 20,
-                    )
-                ),
-                QuestItemDto(
-                    completed = false,
-                    done = null,
-                    madeCount = 0,
-                    status = null,
-                    quest = QuestDto(
-                        count = 5,
-                        type = TaskType.Subscribe,
-                        energy = 20,
-                    )
-                ),
-                QuestItemDto(
-                    completed = false,
-                    done = null,
-                    madeCount = rInt,
-                    status = null,
-                    quest = QuestDto(
-                        count = rInt,
-                        type = TaskType.SocialPost,
-                        energy = 20,
-                    )
-                ),
-            )
+            energy = 0,
         )
     }
 }

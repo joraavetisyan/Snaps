@@ -42,13 +42,9 @@ class NavHostProvider @Inject constructor(
     @Composable
     fun NonAuthorizedGraph(
         navController: NavHostController,
-        needsStartOnBoarding: Boolean,
     ) = Graph(
         navController = navController,
-        startDestinationRoute = when {
-            needsStartOnBoarding -> createRoute(AppRoute.Registration)
-            else -> createRoute(AppRoute.Registration)
-        }
+        startDestinationRoute = createRoute(AppRoute.Registration),
     )
 
     @Composable
@@ -57,14 +53,12 @@ class NavHostProvider @Inject constructor(
         needsWalletConnect: Boolean,
         needsWalletImport: Boolean,
         needsInitialization: Boolean,
-        needsInterestsSelection: Boolean,
     ) = Graph(
         navController = navController,
         startDestinationRoute = when {
             needsWalletConnect -> createRoute(AppRoute.WalletConnect)
             needsWalletImport -> createRoute(AppRoute.WalletImport)
             needsInitialization -> createRoute(AppRoute.UserCreate)
-            needsInterestsSelection -> createRoute(AppRoute.InterestsSelection)
             else -> createRoute(AppRoute.MainBottomBar)
         },
     )

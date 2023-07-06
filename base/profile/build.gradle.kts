@@ -21,4 +21,5 @@ dependencies {
     implementation(projects.baseWallet)
     implementation(projects.baseNft)
     implementation(projects.baseFile)
+    implementation(projects.baseQuests)
 }

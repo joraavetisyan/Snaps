@@ -176,7 +176,7 @@ enum class SubsType {
 }
 
 @Serializable
-enum class TaskType {
+enum class QuestType {
     Like,
     PublishVideo,
     Subscribe,
