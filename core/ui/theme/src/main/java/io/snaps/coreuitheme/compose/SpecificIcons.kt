@@ -87,6 +87,7 @@ object SpecificIcons {
     val addCircled = R.drawable.ic_add.iconValue()
     val comment = R.drawable.ic_comment.iconValue()
     val share = R.drawable.ic_share.iconValue()
+    val showMore = R.drawable.ic_show_more.iconValue()
     val copy = R.drawable.ic_copy.iconValue()
     val exchange = R.drawable.ic_exchange.iconValue()
     val topUp = R.drawable.ic_topup.iconValue()

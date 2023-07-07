@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -156,7 +157,7 @@ private fun ProfileScreen(
     val navigationIcon = AppTheme.specificIcons.back to onBackClicked
     val actions = listOfNotNull(
         ActionIconData(
-            icon = AppTheme.specificIcons.settings,
+            icon = AppTheme.specificIcons.showMore,
             color = AppTheme.specificColorScheme.white,
             onClick = onSettingsClicked,
         ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
@@ -208,7 +209,6 @@ private fun ProfileScreen(
                             tabs = tabs,
                             onTabClicked = onTabClicked,
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
                         AnimatedContent(
                             targetState = uiState.selectedItemIndex,
                             modifier = Modifier.fillMaxSize(),
@@ -336,7 +336,7 @@ private fun AppBar(
                 actionIconContentColor = colors.actionIconContentColor,
                 title = {
                     Text(
-                        text = title,
+                        text = "title",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.padding(start = 16.dp),
@@ -392,3 +392,27 @@ private fun AppBar(
         }
     }
 }
+
+//@OptIn(ExperimentalMaterialApi::class)
+//@Preview
+//@Composable
+//fun ProfileScreenPreview() {
+//    val dummyUiState = ProfileViewModel.UiState(
+//        // Ваша модель данных или макетные данные
+//    )
+//    val dummyPullRefreshState = rememberPullRefreshState(false, {})
+//
+//    ProfileScreen(
+//        uiState = dummyUiState,
+//        pullRefreshState = dummyPullRefreshState,
+//        onCreateVideoClicked = {},
+//        onSettingsClicked = {},
+//        onBackClicked = {true},
+//        onSubscribeClicked = {},
+//        onVideoClipClicked = {},
+//        onUserLikedVideoClipClicked = {},
+//        onTabClicked = {},
+//        uploadState = {},
+//        onRetryUploadClicked = {}
+//    )
+//}

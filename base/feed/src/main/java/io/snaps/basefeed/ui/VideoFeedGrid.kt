@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -67,6 +69,7 @@ fun VideoFeedGrid(
         columns = GridCells.Fixed(columnCount),
         onScrollEndDetected = uiState.onListEndReaching,
         detectThreshold = detectThreshold,
+        contentPadding = PaddingValues(0.dp),
     ) {
         itemsIndexed(
             items = uiState.items,
@@ -100,7 +103,7 @@ private fun Item(
     ItemContainer(
         onClick = onClick,
     ) {
-        Thumbnail(modifier = Modifier.weight(1f), item = item)
+        Thumbnail(modifier = Modifier, item = item)
         if (isShowStatus) {
             StatusMessage(status = item.status)
             if (item.internalId != null && uploadState != null) {
@@ -128,10 +131,8 @@ private fun Thumbnail(
 ) {
     Box(
         modifier
-            .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
             .background(
                 color = AppTheme.specificColorScheme.uiContentBg,
-                shape = AppTheme.shapes.medium,
             ),
     ) {
         item.thumbnail?.let {
@@ -149,14 +150,14 @@ private fun Thumbnail(
         @Composable
         fun Info(icon: IconValue, value: String) {
             Column(
-                modifier = Modifier,
+                modifier = Modifier.wrapContentSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Icon(
                     painter = icon.get(),
                     contentDescription = null,
                     tint = AppTheme.specificColorScheme.white,
-                    modifier = Modifier.size(12.dp),
+                    modifier = Modifier.size(12.dp)
                 )
                 Text(
                     text = value,
@@ -168,13 +169,12 @@ private fun Thumbnail(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(horizontal = 4.dp, vertical = 8.dp),
+                .align(Alignment.BottomCenter),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
             Info(icon = AppTheme.specificIcons.favorite, value = item.likeCount.toString())
-            Spacer(modifier = Modifier.width(20.dp))
+            Spacer(modifier = Modifier.width(10.dp))
             Info(icon = AppTheme.specificIcons.eye, value = item.viewCount.toString())
         }
     }
