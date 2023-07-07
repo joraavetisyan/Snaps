@@ -1,5 +1,6 @@
 package io.snaps.basesubs.data
 
+import android.util.Log
 import dagger.Lazy
 import io.snaps.basesubs.data.model.SubsItemResponseDto
 import io.snaps.basesubs.data.model.SubscribeRequestDto
@@ -51,8 +52,10 @@ class SubsRepositoryImpl @Inject constructor(
                 is SubType.Subscription -> PagedLoaderParams(
                     action = { from, count ->
                         if (type.userId == null) {
+                            Log.d("subsChecking", "load null ${type.userId}")
                             subsApi.get().mySubscriptions(from = from, count = count)
                         } else {
+                            Log.d("subsChecking", "load  ${type.userId}")
                             subsApi.get().subscriptions(from = from, count = count, userId = type.userId)
                         }
                     },
@@ -63,8 +66,10 @@ class SubsRepositoryImpl @Inject constructor(
                 is SubType.Subscriber -> PagedLoaderParams(
                     action = { from, count ->
                         if (type.userId == null) {
+                            Log.d("subsChecking", "load null ${type.userId}")
                             subsApi.get().mySubscribers(from = from, count = count)
                         } else {
+                            Log.d("subsChecking", "load ${type.userId}")
                             subsApi.get().subscribers(from = from, count = count, userId = type.userId)
                         }
                     },
@@ -111,6 +116,9 @@ class SubsRepositoryImpl @Inject constructor(
             loaderFactory[SubType.Subscriber(toSubscribeUserId)]?.refresh()
             refreshSubscribers(null)
             refreshSubscriptions(null)
+            for (sub in mySubscriptions!!) {
+                Log.d("subsChecking", "sub ${sub.userId} $toSubscribeUserId")
+            }
         }
     }
 
@@ -124,6 +132,9 @@ class SubsRepositoryImpl @Inject constructor(
             loaderFactory[SubType.Subscriber(subscriptionId)]?.refresh()
             refreshSubscribers(null)
             refreshSubscriptions(null)
+            for (sub in mySubscriptions!!) {
+                Log.d("subsChecking", "unsub ${sub.userId} $subscriptionId")
+            }
         }
     }
 
@@ -136,6 +147,11 @@ class SubsRepositoryImpl @Inject constructor(
             subsApi.get().mySubscriptions(from = null, count = 1000)
         }.doOnSuccess {
             mySubscriptions = it
+            for (sub in mySubscriptions!!) {
+                Log.d("subsChecking", "Mysubs ${sub.name}")
+            }
+        }.doOnError{_, _ ->
+            Log.d("subsChecking", "Error subLoading ")
         }
     }
 }
