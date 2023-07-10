@@ -12,6 +12,7 @@ import io.snaps.corenavigation.base.navigate
 import io.snaps.featureprofile.presentation.screen.ProfileScreen
 import io.snaps.featureprofile.presentation.screen.SubsScreen
 import io.snaps.featureprofile.presentation.screen.LikedFeedScreen
+import io.snaps.featureprofile.presentation.screen.NotificationsScreen
 import io.snaps.featureprofile.presentation.screen.UserFeedScreen
 import io.snaps.featureprofile.presentation.screen.settings.AboutProjectScreen
 import io.snaps.featureprofile.presentation.screen.settings.BackupWalletKeyScreen
@@ -65,6 +66,10 @@ internal class ScreenNavigator(navHostController: NavHostController) : Navigator
         route = AppRoute.LikedFeed,
         arg = AppRoute.LikedFeed.Args(userId = userId, position = position),
     )
+
+    fun toMainVideoFeedScreen() = navHostController.navigate(AppRoute.MainBottomBar.MainTab1Start)
+
+    fun toNotificationsScreen() = navHostController.navigate(AppRoute.Notifications)
 }
 
 class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider {
@@ -81,5 +86,6 @@ class ProfileFeatureProviderImpl @Inject constructor() : ProfileFeatureProvider 
         composable(AppRoute.EditProfile) { EditProfileScreen(controller) }
         composable(AppRoute.EditName) { EditNameScreen(controller) }
         composable(AppRoute.AboutProject) { AboutProjectScreen(controller) }
+        composable(AppRoute.Notifications) { NotificationsScreen(controller) }
     }
 }

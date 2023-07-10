@@ -256,6 +256,8 @@ object AppRoute {
     }
 
     object InterestsSelection : Route("InterestsSelection")
+
+    object Notifications : Route("Notifications")
 }
 
 object AppDeeplink {

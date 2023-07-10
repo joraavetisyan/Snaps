@@ -98,6 +98,7 @@ fun ProfileScreen(
     viewModel.command.collectAsCommand {
         when (it) {
             ProfileViewModel.Command.OpenSettingsScreen -> router.toSettingsScreen()
+            ProfileViewModel.Command.OpenNotificationsScreen -> router.toNotificationsScreen()
             is ProfileViewModel.Command.OpenSubsScreen -> router.toSubsScreen(it.args)
             is ProfileViewModel.Command.OpenUserFeedScreen -> router.toUserFeedScreen(
                 userId = it.userId, position = it.position
@@ -119,6 +120,7 @@ fun ProfileScreen(
         pullRefreshState = pullRefreshState,
         onCreateVideoClicked = viewModel::onCreateVideoClicked,
         onSettingsClicked = viewModel::onSettingsClicked,
+        onNotificationsClicked = viewModel::onNotificationsClicked,
         onBackClicked = router::back,
         onSubscribeClicked = viewModel::onSubscribeClicked,
         onVideoClipClicked = viewModel::onVideoClipClicked,
@@ -136,6 +138,7 @@ private fun ProfileScreen(
     pullRefreshState: PullRefreshState,
     onCreateVideoClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
+    onNotificationsClicked: () -> Unit,
     onBackClicked: () -> Boolean,
     onSubscribeClicked: () -> Unit,
     onVideoClipClicked: (Int) -> Unit,
@@ -165,6 +168,11 @@ private fun ProfileScreen(
             color = AppTheme.specificColorScheme.white,
             onClick = { context.startShareLinkIntent(uiState.shareLink!!) },
         ).takeIf { uiState.shareLink != null },
+        ActionIconData(
+            icon = AppTheme.specificIcons.notification,
+            color = AppTheme.specificColorScheme.white,
+            onClick = onNotificationsClicked,
+        ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
     )
     Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
         BackdropScaffold(

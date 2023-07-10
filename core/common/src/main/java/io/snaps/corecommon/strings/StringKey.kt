@@ -574,4 +574,11 @@ enum class StringKey {
     InterestsSelectionTitleFinance,
     InterestsSelectionTitleBusiness,
     InterestsSelectionTitleGirls,
+
+    NotificationsTitle,
+    NotificationsMessageFollow,
+    NotificationsMessageComment,
+    NotificationsMessageLike,
+    NotificationsTitleEmpty,
+    NotificationsActionStartSubscribe,
 }

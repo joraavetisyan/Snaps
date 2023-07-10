@@ -1,9 +1,12 @@
-package io.snaps.coredata.network
+package io.snaps.basenotifications.data
 
 import io.snaps.corecommon.ext.log
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.Completable
 import io.snaps.corecommon.model.Effect
+import io.snaps.coredata.network.Action
+import io.snaps.coredata.network.BaseResponse
+import io.snaps.coredata.network.apiCall
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,23 +14,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**
- * [from] - eg, id of the last item, null if nothing loaded yet
- */
-typealias PagedLoaderAction<T> = suspend (from: String?, count: Int) -> BaseResponse<List<T>>
+typealias PagedLoaderAction<T> = suspend (from: Int, count: Int) -> BaseResponse<List<T>>
 
-// todo in the future, nextPage: Int will be used
+// todo use common PadedLoader from coredata.networks
 data class PagedLoaderParams<T, R>(
     val action: PagedLoaderAction<T>,
     val pageSize: Int,
-    val nextPageIdFactory: (T) -> String?,
     val mapper: suspend (List<T>) -> List<R>,
 )
 
 data class PageModel<T>(
     val pageSize: Int,
     val loadedPageItems: List<T> = emptyList(),
-    val nextPageId: String? = "", // empty string for the first page, null - no next page
+    val nextPage: Int? = 0, // null - no next page
     val isLoading: Boolean = false,
     val error: AppError? = null,
 )
@@ -63,25 +62,21 @@ abstract class PagedLoader<T, R>(
     }
 
     private suspend fun load(): Effect<Completable> {
-        val nextPageId = _state.value.nextPageId ?: return Effect.completable
+        val nextPage = _state.value.nextPage ?: return Effect.completable
 
         if (_state.value.isLoading) return Effect.completable
 
         _state.update { it.copy(isLoading = true, error = null) }
         return apiCall(ioDispatcher) {
             params.action(
-                nextPageId.ifEmpty { null },
+                nextPage * params.pageSize,
                 params.pageSize,
             )
         }.doOnSuccess { result ->
             _state.update { currentState ->
                 currentState.copy(
                     loadedPageItems = currentState.loadedPageItems + params.mapper(result),
-                    nextPageId = if (result.size < params.pageSize) {
-                        null
-                    } else {
-                        result.lastOrNull()?.let { params.nextPageIdFactory(it) }
-                    },
+                    nextPage = if (result.size < params.pageSize) null else nextPage + 1,
                     isLoading = false,
                     pageSize = params.pageSize,
                     error = null,
