@@ -67,7 +67,7 @@ import io.snaps.coreuicompose.tools.insetAllExcludeBottom
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.tools.insetTop
 import io.snaps.coreuicompose.tools.toPx
-import io.snaps.coreuicompose.uikit.button.SubscribeButtonChip
+import io.snaps.coreuicompose.uikit.button.ProfileRoundedCornerChip
 import io.snaps.coreuicompose.uikit.duplicate.ActionIconData
 import io.snaps.coreuicompose.uikit.duplicate.OnBackIconClick
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
@@ -392,7 +392,7 @@ private fun AppBar(
                         .background(color = AppTheme.specificColorScheme.white)
                         .padding(bottom = 16.dp),
                 ) {
-                    SubscribeButtonChip(
+                    ProfileRoundedCornerChip(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),

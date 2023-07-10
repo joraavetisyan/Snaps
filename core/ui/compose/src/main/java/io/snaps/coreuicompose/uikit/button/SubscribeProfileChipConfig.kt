@@ -4,7 +4,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -16,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -53,6 +51,16 @@ object SubscribeProfileChipConfig {
     )
 
     @Composable
+    fun lightGreyColor() = FilterChipDefaults.filterChipColors(
+        containerColor = AppTheme.specificColorScheme.grey.copy(),
+        labelColor = AppTheme.specificColorScheme.black,
+        selectedContainerColor = AppTheme.specificColorScheme.grey.copy(),
+        selectedLabelColor = AppTheme.specificColorScheme.white,
+        selectedLeadingIconColor = AppTheme.specificColorScheme.white,
+        selectedTrailingIconColor = AppTheme.specificColorScheme.white,
+    )
+
+    @Composable
     fun defaultElevation() = FilterChipDefaults.filterChipElevation(
         elevation = 0.dp,
         pressedElevation = 0.dp,
@@ -75,7 +83,7 @@ object SubscribeProfileChipConfig {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SubscribeButtonChip(
+fun ProfileRoundedCornerChip(
     modifier: Modifier = Modifier,
     selected: Boolean,
     onClick: () -> Unit,

@@ -2648,6 +2648,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Відео",
         SupportedLanguageKey.Es to "Video",
     ),
+    key(StringKey.ProfileEditProfile) to mapOf(
+        SupportedLanguageKey.En to "Edit profile",
+        SupportedLanguageKey.Ru to "Изменить профиль",
+        SupportedLanguageKey.Tr to "Profili düzenle",
+        SupportedLanguageKey.Ua to "Змінити профіль",
+        SupportedLanguageKey.Es to "Editar perfil",
+    ),
     key(StringKey.CommentsTitle) to mapOf(
         SupportedLanguageKey.En to "%s comments",
         SupportedLanguageKey.Ru to "%s комментарии",

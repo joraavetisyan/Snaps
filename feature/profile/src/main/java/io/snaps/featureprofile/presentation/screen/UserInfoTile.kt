@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -27,11 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.RoundedCornerShape
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.uikit.button.ProfileRoundedCornerChip
+import io.snaps.coreuicompose.uikit.button.SubscribeProfileChipConfig
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.other.ShimmerTileLine
 import io.snaps.coreuitheme.compose.AppTheme
@@ -69,6 +74,7 @@ fun UserInfoTile(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Data(
     modifier: Modifier = Modifier,
@@ -115,6 +121,22 @@ private fun Data(
                 ShimmerTileCircle(size = 76.dp)
             }
         }
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 16.dp, bottom = 124.dp)
+        ) {
+            ProfileRoundedCornerChip(
+                modifier = Modifier.wrapContentSize(),
+                selected = false,
+                label = StringKey.ProfileEditProfile.textValue(),
+                textStyle = AppTheme.specificTypography.titleSmall,
+                contentPadding = PaddingValues(10.dp),
+                colors = SubscribeProfileChipConfig.lightGreyColor(),
+                onClick = {},
+            )
+        }
+
         Text(
             text = data.profileTitle,
             modifier = Modifier
