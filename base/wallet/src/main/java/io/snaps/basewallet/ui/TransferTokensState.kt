@@ -110,8 +110,11 @@ private fun Content(
     Text(text = StringKey.DialogSummaryTitle.textValue().get())
     Spacer(modifier = Modifier.height(8.dp))
     if (summary != null) {
+        val summaryText = if (summary.type != gas?.type) {
+            "${summary.getFormatted()} + ~ ${gas?.getFormatted()}"
+        } else summary.getFormatted()
         Text(
-            text = summary.getFormatted(),
+            text = summaryText,
             style = AppTheme.specificTypography.displaySmall,
         )
     } else {

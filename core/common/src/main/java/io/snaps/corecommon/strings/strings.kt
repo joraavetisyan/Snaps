@@ -2824,6 +2824,20 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Перегляд на Bscscan",
         SupportedLanguageKey.Es to "Ver en Bscscan",
     ),
+    key(StringKey.MyCollectionDialogWithBnbTitle) to mapOf(
+        SupportedLanguageKey.En to "Repair all %s NFT",
+        SupportedLanguageKey.Ru to "Починить все %s NFT",
+        SupportedLanguageKey.Tr to "Tüm %s NFT'leri onarın",
+        SupportedLanguageKey.Ua to "Відновити всі %s NFT",
+        SupportedLanguageKey.Es to "Reparar todos los %s NFT",
+    ),
+    key(StringKey.MyCollectionActionRepairAllGlasses) to mapOf(
+        SupportedLanguageKey.En to "Repair all",
+        SupportedLanguageKey.Ru to "Починить все",
+        SupportedLanguageKey.Tr to "Tüm onarın",
+        SupportedLanguageKey.Ua to "Відновити всі",
+        SupportedLanguageKey.Es to "Reparar todos",
+    ),
     key(StringKey.DialogLimitedGasTitle) to mapOf(
         SupportedLanguageKey.En to "There is not enough gas on your account",
         SupportedLanguageKey.Ru to "На вашем счете недостаточно газа",

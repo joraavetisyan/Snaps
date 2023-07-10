@@ -13,6 +13,7 @@ import io.snaps.basewallet.data.blockchainCall
 import io.snaps.basewallet.data.model.BundleSignatureRequestDto
 import io.snaps.basewallet.data.model.SignatureRequestDto
 import io.snaps.basewallet.domain.NftMintSummary
+import io.snaps.basewallet.domain.TransferData
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.NftType
 import io.snaps.corecommon.model.TxHash
@@ -37,6 +38,7 @@ import io.snaps.coredata.coroutine.IoDispatcher
 import io.snaps.coredata.network.apiCall
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
+import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -63,6 +65,8 @@ interface BlockchainTxRepository {
     ): Effect<TxHash>
 
     suspend fun getRepairNftSign(repairCost: Double): Effect<TxSign>
+
+    suspend fun getTransferData(amount: Double): Effect<TransferData>
 
     suspend fun getNftMintSummary(nftType: NftType, amount: Double, gasLimit: Long? = null): Effect<NftMintSummary>
 
@@ -261,6 +265,24 @@ class BlockchainTxRepositoryImpl @Inject constructor(
                     } else throw throwable
                 }
             }
+        }
+    }
+
+    override suspend fun getTransferData(amount: Double): Effect<TransferData> {
+        return blockchainCall(ioDispatcher) {
+            val address = Address(Nft.SNAPS.address)
+            val fromAddress = requireActiveWalletReceiveAddress()
+            val wallet = requireSnapsWallet()
+            val gasPrice = defaultGasPrice.max.unapplyDecimal(wallet.decimal).times(
+                BigDecimal.valueOf(100000) // todo
+            )
+            TransferData(
+                from = fromAddress,
+                to = address.hex,
+                summary = amount,
+                gas = gasPrice.toDouble(),
+                total = amount,
+            )
         }
     }
 
