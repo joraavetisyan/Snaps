@@ -443,6 +443,7 @@ enum class StringKey {
     MyCollectionFieldNeedToRepair,
     MyCollectionActionRepairGlasses,
     MyCollectionActionProcessing,
+    MyCollectionActionRepairAllGlasses,
     MyCollectionFieldBonus,
     MyCollectionFieldExperience,
     MyCollectionFieldLevel,
@@ -453,6 +454,7 @@ enum class StringKey {
     MyCollectionDialogWithBnbSuccessTitle,
     MyCollectionDialogWithBnbSuccessMessage,
     MyCollectionDialogWithBnbSuccessAction,
+    MyCollectionDialogWithBnbTitle,
 
     DialogLimitedGasTitle,
     DialogLimitedGasMessage,

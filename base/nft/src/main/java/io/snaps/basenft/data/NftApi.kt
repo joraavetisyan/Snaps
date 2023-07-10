@@ -9,6 +9,7 @@ import io.snaps.basenft.data.model.MintNftResponseDto
 import io.snaps.basenft.data.model.MintNftStoreRequestDto
 import io.snaps.basenft.data.model.MysteryBoxItemResponseDto
 import io.snaps.basenft.data.model.NftItemResponseDto
+import io.snaps.basenft.data.model.RepairAllGlassesRequestDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.data.model.RepairGlassesResponseDto
 import io.snaps.basenft.data.model.UserNftItemResponseDto
@@ -45,6 +46,11 @@ interface NftApi {
     @POST("v1/user/nft/repair")
     suspend fun repairGlasses(
         @Body body: RepairGlassesRequestDto,
+    ): BaseResponse<RepairGlassesResponseDto>
+
+    @POST("v1/user/nft/repair-all")
+    suspend fun repairAllGlasses(
+        @Body body: RepairAllGlassesRequestDto,
     ): BaseResponse<RepairGlassesResponseDto>
 
     @GET("v1/user/mystery-box")

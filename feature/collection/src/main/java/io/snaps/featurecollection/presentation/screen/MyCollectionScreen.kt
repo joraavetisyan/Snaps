@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -20,6 +21,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -27,12 +29,16 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -42,6 +48,7 @@ import io.snaps.basewallet.ui.LimitedGasDialog
 import io.snaps.basewallet.ui.LimitedGasDialogHandler
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
 import io.snaps.basewallet.ui.TransferTokensSuccessData
+import io.snaps.basewallet.ui.TransferTokensUi
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
@@ -49,10 +56,12 @@ import io.snaps.corecommon.strings.StringKey
 import io.snaps.corenavigation.base.openUrl
 import io.snaps.corenavigation.base.resultFlow
 import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.LocalBottomNavigationHeight
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetCurrentStateListener
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.SimpleBottomDialog
+import io.snaps.coreuicompose.uikit.button.SimpleTwoLineButtonActionL
 import io.snaps.coreuicompose.uikit.status.FullScreenLoaderUi
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.LocalStringHolder
@@ -126,7 +135,9 @@ fun MyCollectionScreen(
         sheetState = sheetState,
         sheetContent = {
             when (val dialog = transferTokensState.bottomDialog) {
-                TransferTokensDialogHandler.BottomDialog.TokensTransfer -> Unit
+                TransferTokensDialogHandler.BottomDialog.TokensTransfer -> TransferTokensUi(
+                    data = transferTokensState.state,
+                )
                 is TransferTokensDialogHandler.BottomDialog.TokensTransferSuccess -> SimpleBottomDialog(
                     image = R.drawable.img_guy_hands_up.imageValue(),
                     title = StringKey.MyCollectionDialogRepairSuccessTitle.textValue(),
@@ -161,6 +172,7 @@ fun MyCollectionScreen(
             uiState = uiState,
             headerState = headerState,
             pullRefreshState = pullRefreshState,
+            onRepairAllNftClicked = viewModel::onRepairAllNftClicked,
         )
     }
 
@@ -173,17 +185,38 @@ private fun MyCollectionScreen(
     uiState: MyCollectionViewModel.UiState,
     headerState: MainHeaderHandler.UiState,
     pullRefreshState: PullRefreshState,
+    onRepairAllNftClicked: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val localDensity = LocalDensity.current
+    var buttonHeight by remember { mutableStateOf(0.dp) }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {},
+        floatingActionButton = {
+            if (uiState.isAllNftRepairButtonVisible) {
+                SimpleTwoLineButtonActionL(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp)
+                        .padding(bottom = LocalBottomNavigationHeight.current)
+                        .onGloballyPositioned {
+                            buttonHeight = with(localDensity) { it.size.height.toDp() + 24.dp }
+                        },
+                    onClick = onRepairAllNftClicked,
+                    text = StringKey.MyCollectionActionRepairAllGlasses.textValue(),
+                    additionalText = uiState.nftsRepairCost.getFormatted().textValue(),
+                )
+            }
+        },
+        floatingActionButtonPosition = FabPosition.Center,
     ) {
         Column(
             modifier = Modifier
                 .padding(it)
-                .inset(insetAllExcludeTop()),
+                .inset(insetAllExcludeTop())
+                .padding(bottom = buttonHeight),
         ) {
             MainHeader(state = headerState.value)
             Header()
@@ -198,7 +231,7 @@ private fun MyCollectionScreen(
                         top = 12.dp,
                         start = 12.dp,
                         end = 12.dp,
-                        bottom = 100.dp,
+                        bottom = LocalBottomNavigationHeight.current + 12.dp,
                     ),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {

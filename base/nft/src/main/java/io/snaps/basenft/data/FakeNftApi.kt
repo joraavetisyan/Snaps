@@ -12,6 +12,7 @@ import io.snaps.basenft.data.model.MysteryBoxItemResponseDto
 import io.snaps.basenft.data.model.NftItemAdditionalDataDto
 import io.snaps.basenft.data.model.NftItemResponseDto
 import io.snaps.basenft.data.model.ProbabilitiesDto
+import io.snaps.basenft.data.model.RepairAllGlassesRequestDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.data.model.RepairGlassesResponseDto
 import io.snaps.basenft.data.model.UserNftItemResponseDto
@@ -86,6 +87,10 @@ class FakeNftApi : NftApi {
         return BaseResponse(
             data = RepairGlassesResponseDto(null),
         )
+    }
+
+    override suspend fun repairAllGlasses(body: RepairAllGlassesRequestDto): BaseResponse<RepairGlassesResponseDto> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun getMysteryBoxes(): BaseResponse<List<MysteryBoxItemResponseDto>> {
