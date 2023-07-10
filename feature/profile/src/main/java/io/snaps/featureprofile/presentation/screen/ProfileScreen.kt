@@ -99,6 +99,7 @@ fun ProfileScreen(
         when (it) {
             ProfileViewModel.Command.OpenWalletScreen -> router.toWalletSettingsScreen()
             ProfileViewModel.Command.OpenSettingsScreen -> router.toSettingsScreen()
+            ProfileViewModel.Command.OpenEditProfileScreen -> router.toEditProfileScreen()
             is ProfileViewModel.Command.OpenSubsScreen -> router.toSubsScreen(it.args)
             is ProfileViewModel.Command.OpenUserFeedScreen -> router.toUserFeedScreen(
                 userId = it.userId, position = it.position

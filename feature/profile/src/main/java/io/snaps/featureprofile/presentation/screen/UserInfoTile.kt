@@ -47,12 +47,14 @@ sealed class UserInfoTileState : TileState {
     data class Data(
         val profileImage: ImageValue?,
         val profileTitle: String,
+        val isUserCurrent: Boolean,
         val likes: String,
         val subscribers: Int,
         val subscriptions: Int,
         val publication: String?,
         val onSubscribersClick: () -> Unit,
         val onSubscriptionsClick: () -> Unit,
+        val onEditProfileClick: ()-> Unit,
     ) : UserInfoTileState()
 
     object Shimmer : UserInfoTileState()
@@ -121,22 +123,23 @@ private fun Data(
                 ShimmerTileCircle(size = 76.dp)
             }
         }
-        Column(
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 16.dp, bottom = 124.dp)
-        ) {
-            ProfileRoundedCornerChip(
-                modifier = Modifier.wrapContentSize(),
-                selected = false,
-                label = StringKey.ProfileEditProfile.textValue(),
-                textStyle = AppTheme.specificTypography.titleSmall,
-                contentPadding = PaddingValues(10.dp),
-                colors = SubscribeProfileChipConfig.lightGreyColor(),
-                onClick = {},
-            )
+        if (data.isUserCurrent) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 16.dp, bottom = 124.dp)
+            ) {
+                ProfileRoundedCornerChip(
+                    modifier = Modifier.wrapContentSize(),
+                    selected = false,
+                    label = StringKey.ProfileEditProfile.textValue(),
+                    textStyle = AppTheme.specificTypography.titleSmall,
+                    contentPadding = PaddingValues(10.dp),
+                    colors = SubscribeProfileChipConfig.lightGreyColor(),
+                    onClick = data.onEditProfileClick,
+                )
+            }
         }
-
         Text(
             text = data.profileTitle,
             modifier = Modifier

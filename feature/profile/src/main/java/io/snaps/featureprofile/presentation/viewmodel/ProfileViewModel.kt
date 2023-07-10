@@ -93,6 +93,8 @@ class ProfileViewModel @Inject constructor(
                     userInfoTileState = state.toUserInfoTileState(
                         onSubscribersClick = { onSubscribersClicked(SubsType.Subscribers) },
                         onSubscriptionsClick = { onSubscribersClicked(SubsType.Subscriptions) },
+                        onEditProfileClick = { onEditProfileClicked() },
+                        isUserCurrent = _uiState.value.userType == UserType.Current
                     ),
                     name = state.dataOrCache?.name.orEmpty(),
                     userImage = state.dataOrCache?.avatar,
@@ -130,10 +132,13 @@ class ProfileViewModel @Inject constructor(
                         userInfoTileState = user.toUserInfoTileState(
                             onSubscribersClick = { onSubscribersClicked(SubsType.Subscribers) },
                             onSubscriptionsClick = { onSubscribersClicked(SubsType.Subscriptions) },
+                            onEditProfileClick = { onEditProfileClicked() },
+                            isUserCurrent = _uiState.value.userType == UserType.Current
                         ),
                         name = user.name,
                         userImage = user.avatar,
-                    )
+
+                        )
                 }
             }.doOnComplete {
                 // Subscribing here to have the user name on empty screen
@@ -176,6 +181,7 @@ class ProfileViewModel @Inject constructor(
                 emptyMessage = when (_uiState.value.userType) {
                     UserType.None,
                     UserType.Other -> StringKey.ProfileMessageEmptyVideos.textValue(uiState.value.name)
+
                     UserType.Current -> StringKey.MessageEmptyVideoFeed.textValue()
                 },
                 emptyImage = ImageValue.ResVector(R.drawable.ic_add_video),
@@ -246,6 +252,12 @@ class ProfileViewModel @Inject constructor(
     fun onWalletClicked() {
         viewModelScope.launch {
             _command publish Command.OpenWalletScreen
+        }
+    }
+
+    fun onEditProfileClicked() {
+        viewModelScope.launch {
+            _command publish Command.OpenEditProfileScreen
         }
     }
 
@@ -324,7 +336,8 @@ class ProfileViewModel @Inject constructor(
 
     sealed class Command {
         object OpenSettingsScreen : Command()
-        object OpenWalletScreen: Command()
+        object OpenWalletScreen : Command()
+        object OpenEditProfileScreen : Command()
         data class OpenSubsScreen(val args: AppRoute.Subs.Args) : Command()
         data class OpenUserFeedScreen(val userId: Uuid?, val position: Int) : Command()
         data class OpenLikedFeedScreen(val userId: Uuid?, val position: Int) : Command()
