@@ -16,19 +16,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.strings.StringKey
@@ -73,7 +69,6 @@ fun UserInfoTile(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Data(
     modifier: Modifier = Modifier,
@@ -158,8 +153,8 @@ private fun Shimmer(
         ShimmerTileCircle(
             size = 76.dp,
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(bottom = 72.dp),
+                .align(Alignment.TopStart)
+                .padding(bottom = 72.dp, start = 16.dp),
         )
     }
 }

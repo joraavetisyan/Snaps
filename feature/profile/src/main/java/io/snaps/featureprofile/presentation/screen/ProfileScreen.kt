@@ -94,7 +94,8 @@ fun ProfileScreen(
     val viewModel = hiltViewModel<ProfileViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
-    val pullRefreshState = rememberPullRefreshState(uiState.isRefreshing, { viewModel.onRefreshPulled() })
+    val pullRefreshState =
+        rememberPullRefreshState(uiState.isRefreshing, { viewModel.onRefreshPulled() })
 
     viewModel.command.collectAsCommand {
         when (it) {
@@ -103,6 +104,7 @@ fun ProfileScreen(
             is ProfileViewModel.Command.OpenUserFeedScreen -> router.toUserFeedScreen(
                 userId = it.userId, position = it.position
             )
+
             is ProfileViewModel.Command.OpenLikedFeedScreen -> router.toLikedFeedScreen(
                 userId = it.userId, position = it.position,
             )
@@ -152,20 +154,30 @@ private fun ProfileScreen(
     val title = when (uiState.userType) {
         ProfileViewModel.UserType.Other,
         ProfileViewModel.UserType.Current -> "@${uiState.name}"
+
         ProfileViewModel.UserType.None -> ""
     }
-    val navigationIcon = AppTheme.specificIcons.back to onBackClicked
+    val navigationIcon = AppTheme.specificIcons.profileBack to onBackClicked
     val actions = listOfNotNull(
         ActionIconData(
             icon = AppTheme.specificIcons.showMore,
             color = AppTheme.specificColorScheme.white,
-            onClick = onSettingsClicked,
-        ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
+            onClick = {},
+        ).takeIf { uiState.userType == ProfileViewModel.UserType.Other },
         ActionIconData(
-            icon = AppTheme.specificIcons.share,
+            icon = AppTheme.specificIcons.profileShare,
             color = AppTheme.specificColorScheme.white,
             onClick = { context.startShareLinkIntent(uiState.shareLink!!) },
         ).takeIf { uiState.shareLink != null },
+        ActionIconData(
+            icon = AppTheme.specificIcons.wallet,
+            color = AppTheme.specificColorScheme.white,
+            onClick = { }).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
+        ActionIconData(
+            icon = AppTheme.specificIcons.profileSettings,
+            color = AppTheme.specificColorScheme.white,
+            onClick = onSettingsClicked
+        ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
     )
     Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
         BackdropScaffold(
@@ -223,6 +235,7 @@ private fun ProfileScreen(
                                     uiState = uiState.videoFeedUiState,
                                     onClick = onVideoClipClicked,
                                 )
+
                                 Liked -> VideoFeedGrid(
                                     columnCount = 3,
                                     uiState = uiState.userLikedVideoFeedUiState,
@@ -240,7 +253,8 @@ private fun ProfileScreen(
             frontLayerContentColor = AppTheme.specificColorScheme.textPrimary,
             frontLayerScrimColor = Color.Unspecified,
             frontLayerElevation = 0.dp,
-            peekHeight = SimpleTopAppBarConfig.ContainerHeight + insetTop().asPaddingValues().calculateTopPadding(),
+            peekHeight = SimpleTopAppBarConfig.ContainerHeight + insetTop().asPaddingValues()
+                .calculateTopPadding(),
             stickyFrontLayer = true,
             persistentAppBar = false,
             gesturesEnabled = true,
@@ -392,27 +406,3 @@ private fun AppBar(
         }
     }
 }
-
-//@OptIn(ExperimentalMaterialApi::class)
-//@Preview
-//@Composable
-//fun ProfileScreenPreview() {
-//    val dummyUiState = ProfileViewModel.UiState(
-//        // Ваша модель данных или макетные данные
-//    )
-//    val dummyPullRefreshState = rememberPullRefreshState(false, {})
-//
-//    ProfileScreen(
-//        uiState = dummyUiState,
-//        pullRefreshState = dummyPullRefreshState,
-//        onCreateVideoClicked = {},
-//        onSettingsClicked = {},
-//        onBackClicked = {true},
-//        onSubscribeClicked = {},
-//        onVideoClipClicked = {},
-//        onUserLikedVideoClipClicked = {},
-//        onTabClicked = {},
-//        uploadState = {},
-//        onRetryUploadClicked = {}
-//    )
-//}
