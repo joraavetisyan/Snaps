@@ -26,6 +26,7 @@ import androidx.compose.material.icons.rounded.Help
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.NavigateNext
+import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Star
@@ -66,6 +67,7 @@ object SpecificIcons {
     val volumeDown = Icons.Rounded.VolumeMute.iconValue()
     val volumeUp = Icons.Rounded.VolumeUp.iconValue()
     val help = Icons.Rounded.Help.iconValue()
+    val notification = Icons.Rounded.Notifications.iconValue() // todo use from figma
 
     // Bottom menu icons
     val camera = Icons.Rounded.Videocam.iconValue()
