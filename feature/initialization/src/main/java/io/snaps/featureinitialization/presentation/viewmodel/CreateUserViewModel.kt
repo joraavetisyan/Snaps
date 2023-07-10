@@ -98,13 +98,14 @@ class CreateUserViewModel @Inject constructor(
 
     fun onStartButtonClicked() = viewModelScope.launch {
         val avatarFile = uiState.value.imageUri?.let { fileManager.createFileFromUri(it) }
-        if (!uiState.value.nicknameValue.isUserNameValid()) {
+        val nickname = uiState.value.nicknameValue.trim()
+        if (!nickname.isUserNameValid()) {
             notificationsSource.sendError(StringKey.ErrorUserNameInvalid.textValue())
             return@launch
         }
         action.execute {
             _uiState.update { it.copy(isLoading = true) }
-            interactor.editUser(avatarFile = avatarFile, userName = uiState.value.nicknameValue)
+            interactor.editUser(avatarFile = avatarFile, userName = nickname)
         }.doOnSuccess {
             handleCreate()
         }.doOnComplete {
