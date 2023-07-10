@@ -88,6 +88,7 @@ import io.snaps.coreuicompose.uikit.bottomsheetdialog.ActionsBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
 import io.snaps.coreuicompose.uikit.button.SimpleChip
 import io.snaps.coreuicompose.uikit.button.SimpleChipConfig
+import io.snaps.coreuicompose.uikit.button.SubscribeProfileChipConfig
 import io.snaps.coreuicompose.uikit.dialog.SimpleConfirmDialogUi
 import io.snaps.coreuicompose.uikit.other.Progress
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
@@ -568,7 +569,7 @@ private fun VideoClipBottomItems(
                         selected = isSubscribed,
                         onClick = onSubscribeClicked,
                         label = (if (isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),
-                        colors = SimpleChipConfig.greyColor(),
+                        colors = SubscribeProfileChipConfig.greyColor(),
                         leadingIcon = AppTheme.specificIcons.checkBox.toImageValue()
                             .takeIf { isSubscribed },
                     )

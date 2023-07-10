@@ -45,6 +45,7 @@ sealed class UserInfoTileState : TileState {
 
     data class Data(
         val profileImage: ImageValue?,
+        val profileTitle: String,
         val likes: String,
         val subscribers: Int,
         val subscriptions: Int,
@@ -120,7 +121,7 @@ private fun Data(
             }
         }
         Text(
-            text = "title",
+            text = data.profileTitle,
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .padding(start = 16.dp),
