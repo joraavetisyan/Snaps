@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,7 +46,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -197,6 +195,7 @@ private fun ProfileScreen(
             backLayerContent = {
                 AppBar(
                     title = title,
+                    uiState = uiState,
                     navigationIcon = navigationIcon,
                     actions = actions,
                     userInfoTileState = uiState.userInfoTileState,
@@ -318,6 +317,7 @@ private fun TabRow(
 private fun AppBar(
     modifier: Modifier = Modifier,
     title: String,
+    uiState: ProfileViewModel.UiState,
     navigationIcon: Pair<IconValue, OnBackIconClick>,
     actions: List<ActionIconData>,
     userInfoTileState: UserInfoTileState,
@@ -332,12 +332,13 @@ private fun AppBar(
         modifier = modifier.fillMaxWidth(),
     ) {
         Image(
-            painter = R.drawable.img_background_profile.imageValue().get(),
+            painter = if (uiState.userImage != null) uiState.userImage.get() else R.drawable.img_background_profile.imageValue()
+                .get(),
             contentDescription = null,
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(imageHeight),
+                .height(imageHeight)
         )
         Column {
             TopAppBarLayout(

@@ -95,6 +95,7 @@ class ProfileViewModel @Inject constructor(
                         onSubscriptionsClick = { onSubscribersClicked(SubsType.Subscriptions) },
                     ),
                     name = state.dataOrCache?.name.orEmpty(),
+                    userImage = state.dataOrCache?.avatar,
                     shareLink = state.dataOrCache?.userId?.let { userId ->
                         AppDeeplink.generateSharingLink(AppDeeplink.Profile(userId))
                     },
@@ -131,6 +132,7 @@ class ProfileViewModel @Inject constructor(
                             onSubscriptionsClick = { onSubscribersClicked(SubsType.Subscriptions) },
                         ),
                         name = user.name,
+                        userImage = user.avatar,
                     )
                 }
             }.doOnComplete {
@@ -304,6 +306,7 @@ class ProfileViewModel @Inject constructor(
         val isLoading: Boolean = true,
         val userInfoTileState: UserInfoTileState = UserInfoTileState.Shimmer,
         val name: String = "",
+        val userImage: ImageValue? = null,
         // if current authed user is subscribed to this user
         val isSubscribed: Boolean = false,
         val userType: UserType = UserType.None,

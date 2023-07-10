@@ -26,8 +26,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -67,6 +67,8 @@ fun VideoFeedGrid(
         modifier = Modifier.fillMaxSize(),
         state = lazyGridState,
         columns = GridCells.Fixed(columnCount),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
         onScrollEndDetected = uiState.onListEndReaching,
         detectThreshold = detectThreshold,
         contentPadding = PaddingValues(0.dp),
@@ -102,8 +104,9 @@ private fun Item(
 ) {
     ItemContainer(
         onClick = onClick,
+        modifier = Modifier.fillMaxSize()
     ) {
-        Thumbnail(modifier = Modifier, item = item)
+        Thumbnail(modifier = Modifier.fillMaxSize(), item = item)
         if (isShowStatus) {
             StatusMessage(status = item.status)
             if (item.internalId != null && uploadState != null) {
@@ -133,7 +136,8 @@ private fun Thumbnail(
         modifier
             .background(
                 color = AppTheme.specificColorScheme.uiContentBg,
-            ),
+            )
+            .fillMaxSize(),
     ) {
         item.thumbnail?.let {
             Image(
@@ -252,8 +256,14 @@ private fun ItemContainer(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .addIf(onClick != null) { defaultTileRipple(onClick = onClick) }
-            .aspectRatio(2f / 3f),
+            .addIf(onClick != null) {
+                defaultTileRipple(
+                    onClick = onClick,
+                    padding = 0.dp,
+                    shape = RectangleShape
+                )
+            }
+            .aspectRatio(1f / 2f),
     ) {
         content()
     }
