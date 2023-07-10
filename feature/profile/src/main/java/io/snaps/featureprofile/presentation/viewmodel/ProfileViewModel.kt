@@ -243,6 +243,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun onWalletClicked() {
+        viewModelScope.launch {
+            _command publish Command.OpenWalletScreen
+        }
+    }
+
     fun onCreateVideoClicked() {
         viewModelScope.launch { tryOpenCreate() }
     }
@@ -318,6 +324,7 @@ class ProfileViewModel @Inject constructor(
 
     sealed class Command {
         object OpenSettingsScreen : Command()
+        object OpenWalletScreen: Command()
         data class OpenSubsScreen(val args: AppRoute.Subs.Args) : Command()
         data class OpenUserFeedScreen(val userId: Uuid?, val position: Int) : Command()
         data class OpenLikedFeedScreen(val userId: Uuid?, val position: Int) : Command()

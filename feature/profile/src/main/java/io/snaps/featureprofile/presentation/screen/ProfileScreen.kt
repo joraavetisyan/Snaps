@@ -97,6 +97,7 @@ fun ProfileScreen(
 
     viewModel.command.collectAsCommand {
         when (it) {
+            ProfileViewModel.Command.OpenWalletScreen -> router.toWalletSettingsScreen()
             ProfileViewModel.Command.OpenSettingsScreen -> router.toSettingsScreen()
             is ProfileViewModel.Command.OpenSubsScreen -> router.toSubsScreen(it.args)
             is ProfileViewModel.Command.OpenUserFeedScreen -> router.toUserFeedScreen(
@@ -120,6 +121,7 @@ fun ProfileScreen(
         pullRefreshState = pullRefreshState,
         onCreateVideoClicked = viewModel::onCreateVideoClicked,
         onSettingsClicked = viewModel::onSettingsClicked,
+        onWalletClick = viewModel::onWalletClicked,
         onBackClicked = router::back,
         onSubscribeClicked = viewModel::onSubscribeClicked,
         onVideoClipClicked = viewModel::onVideoClipClicked,
@@ -137,6 +139,7 @@ private fun ProfileScreen(
     pullRefreshState: PullRefreshState,
     onCreateVideoClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
+    onWalletClick: () -> Unit,
     onBackClicked: () -> Boolean,
     onSubscribeClicked: () -> Unit,
     onVideoClipClicked: (Int) -> Unit,
@@ -170,7 +173,8 @@ private fun ProfileScreen(
         ActionIconData(
             icon = AppTheme.specificIcons.wallet,
             color = AppTheme.specificColorScheme.white,
-            onClick = { }).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
+            onClick = onWalletClick
+        ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
         ActionIconData(
             icon = AppTheme.specificIcons.profileSettings,
             color = AppTheme.specificColorScheme.white,
