@@ -106,7 +106,7 @@ private fun Data(
             border = BorderStroke(width = 2.dp, color = AppTheme.specificColorScheme.white),
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(bottom = 76.dp, start = 16.dp),
+                .padding(bottom = 124.dp, start = 16.dp),
         ) {
             if (data.profileImage != null) {
                 Image(
@@ -114,12 +114,18 @@ private fun Data(
                     contentDescription = null,
                     modifier = Modifier.size(76.dp),
                     contentScale = ContentScale.Crop,
-
-                    )
+                )
             } else {
                 ShimmerTileCircle(size = 76.dp)
             }
         }
+        Text(
+            text = "title",
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 16.dp),
+            style = AppTheme.specificTypography.titleSmall,
+        )
     }
 }
 
@@ -181,7 +187,7 @@ private fun BoxScope.InfoContainer(
             modifier = Modifier
                 .padding(horizontal = 12.dp)
                 .padding(bottom = 16.dp)
-                .padding(top = 32.dp)
+                .padding(top = 80.dp)
                 .height(IntrinsicSize.Min)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,

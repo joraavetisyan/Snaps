@@ -336,7 +336,7 @@ private fun AppBar(
                 actionIconContentColor = colors.actionIconContentColor,
                 title = {
                     Text(
-                        text = "title",
+                        text = "",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.padding(start = 16.dp),
