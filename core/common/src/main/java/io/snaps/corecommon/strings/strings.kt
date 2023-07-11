@@ -2627,6 +2627,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Опублікувавши",
         SupportedLanguageKey.Es to "Publicar",
     ),
+    key(StringKey.ProfileTitleAddVideo) to mapOf(
+        SupportedLanguageKey.En to "Download video",
+        SupportedLanguageKey.Ru to "Загрузить видео",
+        SupportedLanguageKey.Tr to "Video indir",
+        SupportedLanguageKey.Ua to "Завантажити відео",
+        SupportedLanguageKey.Es to "Descargar video",
+    ),
     key(StringKey.ProfileMessageEmptyVideos) to mapOf(
         SupportedLanguageKey.En to "Videos posted by %s will appear here",
         SupportedLanguageKey.Ru to "Здесь появятся видео, которые опубликует %s",

@@ -416,6 +416,7 @@ enum class StringKey {
     ProfileTitleSubscribers,
     ProfileTitleSubscriptions,
     ProfileTitlePublication,
+    ProfileTitleAddVideo,
     ProfileMessageEmptyVideos,
     ProfileTitleLiked,
     ProfileTitleShorts,
