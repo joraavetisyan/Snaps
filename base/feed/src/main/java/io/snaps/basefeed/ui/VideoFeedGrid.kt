@@ -31,7 +31,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.size.Scale
 import io.snaps.basefeed.data.UploadStatusSource
 import io.snaps.basefeed.data.model.VideoStatus
 import io.snaps.basefeed.domain.VideoClipModel
@@ -50,7 +49,6 @@ import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyVerticalGrid
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.colors
 import kotlinx.coroutines.flow.Flow
-import io.snaps.coreuitheme.R as CoreUiThemeR
 
 @Composable
 fun VideoFeedGrid(
@@ -135,18 +133,14 @@ private fun Thumbnail(
     Box(
         modifier
             .background(
-                color = AppTheme.specificColorScheme.uiContentBg,
+                color = AppTheme.specificColorScheme.black.copy(alpha = 0.1f),
             )
             .fillMaxSize(),
     ) {
         item.thumbnail?.let {
             Image(
                 modifier = Modifier.fillMaxSize(),
-                painter = it.imageValue().get {
-                    this
-                        .placeholder(CoreUiThemeR.drawable.ic_launcher_foreground)
-                        .scale(Scale.FILL)
-                },
+                painter = it.imageValue().get(),
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
             )

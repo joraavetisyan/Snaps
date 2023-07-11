@@ -39,6 +39,21 @@ fun TopAppBarActionIcon(
 }
 
 @Composable
+fun CollapsedTopAppBarActionIcon(
+    data: ActionIconData,
+) {
+    Icon(
+        painter = data.icon.get(),
+        contentDescription = null,
+        tint = AppTheme.specificColorScheme.textPrimary,
+        modifier = Modifier
+            .clip(CircleShape)
+            .clickable(enabled = true, onClick = data.onClick)
+            .padding(6.dp),
+    )
+}
+
+@Composable
 fun TopAppBarNavIcon(iconValue: IconValue, onClick: () -> Unit) {
     Icon(
         painter = iconValue.get(),

@@ -161,7 +161,7 @@ private fun ProfileScreen(
 
     val title = when (uiState.userType) {
         ProfileViewModel.UserType.Other,
-        ProfileViewModel.UserType.Current -> "@${uiState.name}"
+        ProfileViewModel.UserType.Current -> uiState.name
 
         ProfileViewModel.UserType.None -> ""
     }
@@ -201,6 +201,7 @@ private fun ProfileScreen(
                     title = title.textValue(),
                     navigationIcon = navigationIcon,
                     actions = actions,
+                    titleHorizontalArrangement = Arrangement.Start,
                     scrollBehavior = scrollBehavior,
                     colors = SimpleTopAppBarConfig.transparentColors(
                         containerColor = AppTheme.specificColorScheme.white,
@@ -210,7 +211,6 @@ private fun ProfileScreen(
             },
             backLayerContent = {
                 AppBar(
-                    title = title,
                     uiState = uiState,
                     navigationIcon = navigationIcon,
                     actions = actions,
@@ -332,7 +332,6 @@ private fun TabRow(
 @Composable
 private fun AppBar(
     modifier: Modifier = Modifier,
-    title: String,
     uiState: ProfileViewModel.UiState,
     navigationIcon: Pair<IconValue, OnBackIconClick>,
     actions: List<ActionIconData>,

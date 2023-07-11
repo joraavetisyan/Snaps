@@ -26,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.ImageValue
@@ -34,7 +33,6 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.RoundedCornerShape
 import io.snaps.coreuicompose.tools.TileState
-import io.snaps.coreuicompose.tools.blur
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.uikit.button.ProfileRoundedCornerChip
@@ -56,7 +54,7 @@ sealed class UserInfoTileState : TileState {
         val publication: String?,
         val onSubscribersClick: () -> Unit,
         val onSubscriptionsClick: () -> Unit,
-        val onEditProfileClick: ()-> Unit,
+        val onEditProfileClick: () -> Unit,
     ) : UserInfoTileState()
 
     object Shimmer : UserInfoTileState()
