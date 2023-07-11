@@ -79,7 +79,7 @@ fun Modifier.gradientBackground(colors: List<Color>, angle: Float) = then(
 
 fun Modifier.blur(isEnabled: Boolean) = composed {
     val color = AppTheme.specificColorScheme.white_80
-    val radius = animateDpAsState(targetValue = if (isEnabled) 15.dp else 0.dp)
+    val radius = animateDpAsState(targetValue = if (isEnabled) 16.dp else 0.dp)
     when {
         isEnabled -> when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> blur(radius = radius.value)

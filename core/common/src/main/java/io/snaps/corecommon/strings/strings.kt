@@ -2627,7 +2627,7 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Опублікувавши",
         SupportedLanguageKey.Es to "Publicar",
     ),
-    key(StringKey.ProfileTitleAddVideo) to mapOf(
+    key(StringKey.ProfileActionAddVideo) to mapOf(
         SupportedLanguageKey.En to "Download video",
         SupportedLanguageKey.Ru to "Загрузить видео",
         SupportedLanguageKey.Tr to "Video indir",
@@ -2655,7 +2655,7 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Відео",
         SupportedLanguageKey.Es to "Video",
     ),
-    key(StringKey.ProfileEditProfile) to mapOf(
+    key(StringKey.ProfileActionEditProfile) to mapOf(
         SupportedLanguageKey.En to "Edit profile",
         SupportedLanguageKey.Ru to "Изменить профиль",
         SupportedLanguageKey.Tr to "Profili düzenle",

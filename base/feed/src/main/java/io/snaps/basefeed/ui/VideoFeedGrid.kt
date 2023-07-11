@@ -1,5 +1,6 @@
 package io.snaps.basefeed.ui
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -59,6 +59,7 @@ fun VideoFeedGrid(
     onRetryUploadClicked: (videoId: Uuid) -> Unit = {},
     uiState: VideoFeedUiState,
     onClick: (Int) -> Unit,
+    contentPadding: PaddingValues,
 ) {
     val lazyGridState = rememberLazyGridState()
     ScrollEndDetectLazyVerticalGrid(
@@ -69,7 +70,7 @@ fun VideoFeedGrid(
         horizontalArrangement = Arrangement.spacedBy(2.dp),
         onScrollEndDetected = uiState.onListEndReaching,
         detectThreshold = detectThreshold,
-        contentPadding = PaddingValues(0.dp),
+        contentPadding = contentPadding,
     ) {
         itemsIndexed(
             items = uiState.items,
@@ -102,9 +103,8 @@ private fun Item(
 ) {
     ItemContainer(
         onClick = onClick,
-        modifier = Modifier.fillMaxSize()
     ) {
-        Thumbnail(modifier = Modifier.fillMaxSize(), item = item)
+        Thumbnail(modifier = Modifier.weight(1f), item = item)
         if (isShowStatus) {
             StatusMessage(status = item.status)
             if (item.internalId != null && uploadState != null) {
@@ -133,9 +133,8 @@ private fun Thumbnail(
     Box(
         modifier
             .background(
-                color = AppTheme.specificColorScheme.black.copy(alpha = 0.1f),
+                color = AppTheme.specificColorScheme.black_10.copy(alpha = 0.1f),
             )
-            .fillMaxSize(),
     ) {
         item.thumbnail?.let {
             Image(
@@ -148,14 +147,14 @@ private fun Thumbnail(
         @Composable
         fun Info(icon: IconValue, value: String) {
             Column(
-                modifier = Modifier.wrapContentSize(),
+                modifier = Modifier,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Icon(
                     painter = icon.get(),
                     contentDescription = null,
                     tint = AppTheme.specificColorScheme.white,
-                    modifier = Modifier.size(12.dp)
+                    modifier = Modifier.size(12.dp),
                 )
                 Text(
                     text = value,
@@ -172,7 +171,7 @@ private fun Thumbnail(
             horizontalArrangement = Arrangement.Center,
         ) {
             Info(icon = AppTheme.specificIcons.favorite, value = item.likeCount.toString())
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Info(icon = AppTheme.specificIcons.eye, value = item.viewCount.toString())
         }
     }
@@ -180,6 +179,7 @@ private fun Thumbnail(
 
 @Composable
 private fun StatusMessage(status: VideoStatus?) {
+    Log.d("CheckForStatus", status.toString())
     if (status == null || status == VideoStatus.Approved) return
     val color = colors {
         when (status) {

@@ -86,8 +86,8 @@ import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetBottom
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ActionsBottomDialog
 import io.snaps.coreuicompose.uikit.bottomsheetdialog.ModalBottomSheetTargetStateListener
-import io.snaps.coreuicompose.uikit.button.ProfileRoundedCornerChip
-import io.snaps.coreuicompose.uikit.button.SubscribeProfileChipConfig
+import io.snaps.coreuicompose.uikit.button.SimpleChip
+import io.snaps.coreuicompose.uikit.button.SimpleChipConfig
 import io.snaps.coreuicompose.uikit.dialog.SimpleConfirmDialogUi
 import io.snaps.coreuicompose.uikit.other.Progress
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
@@ -564,11 +564,11 @@ private fun VideoClipBottomItems(
                     modifier = Modifier.weight(1f, fill = false)
                 )
                 if (isSubscribeButtonVisible && !clipModel.isSponsored) {
-                    ProfileRoundedCornerChip(
+                    SimpleChip(
                         selected = isSubscribed,
                         onClick = onSubscribeClicked,
                         label = (if (isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),
-                        colors = SubscribeProfileChipConfig.greyColor(),
+                        colors = SimpleChipConfig.greyColor(),
                         leadingIcon = AppTheme.specificIcons.checkBox.toImageValue()
                             .takeIf { isSubscribed },
                     )

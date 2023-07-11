@@ -46,7 +46,6 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -69,7 +68,7 @@ import io.snaps.coreuicompose.tools.insetAllExcludeBottom
 import io.snaps.coreuicompose.tools.insetAllExcludeTop
 import io.snaps.coreuicompose.tools.insetTop
 import io.snaps.coreuicompose.tools.toPx
-import io.snaps.coreuicompose.uikit.button.ProfileRoundedCornerChip
+import io.snaps.coreuicompose.uikit.button.SimpleChip
 import io.snaps.coreuicompose.uikit.duplicate.ActionIconData
 import io.snaps.coreuicompose.uikit.duplicate.OnBackIconClick
 import io.snaps.coreuicompose.uikit.duplicate.SimpleTopAppBar
@@ -169,27 +168,27 @@ private fun ProfileScreen(
     val actions = listOfNotNull(
         ActionIconData(
             icon = AppTheme.specificIcons.showMore,
-            color = AppTheme.specificColorScheme.white,
+            color = AppTheme.specificColorScheme.textPrimary,
             onClick = {},
         ).takeIf { uiState.userType == ProfileViewModel.UserType.Other },
         ActionIconData(
             icon = AppTheme.specificIcons.profileShare,
-            color = AppTheme.specificColorScheme.white,
+            color = AppTheme.specificColorScheme.textPrimary,
             onClick = { context.startShareLinkIntent(uiState.shareLink!!) },
         ).takeIf { uiState.shareLink != null },
         ActionIconData(
             icon = AppTheme.specificIcons.wallet,
-            color = AppTheme.specificColorScheme.white,
+            color = AppTheme.specificColorScheme.textPrimary,
             onClick = onWalletClick
         ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
         ActionIconData(
             icon = AppTheme.specificIcons.profileSettings,
-            color = AppTheme.specificColorScheme.white,
+            color = AppTheme.specificColorScheme.textPrimary,
             onClick = onSettingsClicked
         ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
         ActionIconData(
             icon = AppTheme.specificIcons.profileNotification,
-            color = AppTheme.specificColorScheme.white,
+            color = AppTheme.specificColorScheme.textPrimary,
             onClick = onNotificationsClicked,
         ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
     )
@@ -249,12 +248,14 @@ private fun ProfileScreen(
                                     onRetryUploadClicked = onRetryUploadClicked,
                                     uiState = uiState.videoFeedUiState,
                                     onClick = onVideoClipClicked,
+                                    contentPadding = PaddingValues(0.dp),
                                 )
 
                                 Liked -> VideoFeedGrid(
                                     columnCount = 3,
                                     uiState = uiState.userLikedVideoFeedUiState,
                                     onClick = onUserLikedVideoClipClicked,
+                                    contentPadding = PaddingValues(0.dp),
                                 )
                             }
                         }
@@ -366,15 +367,7 @@ private fun AppBar(
                 navigationIconContentColor = colors.navigationIconContentColor,
                 titleContentColor = colors.titleContentColor,
                 actionIconContentColor = colors.actionIconContentColor,
-                title = {
-                    Text(
-                        text = "",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(start = 16.dp),
-                        color = AppTheme.specificColorScheme.white,
-                    )
-                },
+                title = {},
                 titleTextStyle = AppTheme.specificTypography.titleMedium,
                 titleAlpha = 1f,
                 titleVerticalArrangement = Arrangement.Center,
@@ -384,10 +377,11 @@ private fun AppBar(
                 navigationIcon = {
                     Icon(
                         painter = navigationIcon.first.get(),
-                        tint = AppTheme.specificColorScheme.white,
+                        tint = AppTheme.specificColorScheme.textPrimary,
                         contentDescription = "navigation icon",
                         modifier = Modifier
                             .clip(CircleShape)
+                            .alpha(0.4f)
                             .clickable(onClick = { navigationIcon.second() })
                             .padding(8.dp),
                     )
@@ -409,10 +403,14 @@ private fun AppBar(
                         .background(color = AppTheme.specificColorScheme.white)
                         .padding(bottom = 16.dp),
                 ) {
-                    ProfileRoundedCornerChip(
+                    SimpleChip(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
+                        shape = io.snaps.coreuicompose.tools.RoundedCornerShape(
+                            top = 10.dp,
+                            bottom = 10.dp
+                        ),
                         selected = !isSubscribed,
                         label = (if (isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),
                         textStyle = AppTheme.specificTypography.titleSmall,

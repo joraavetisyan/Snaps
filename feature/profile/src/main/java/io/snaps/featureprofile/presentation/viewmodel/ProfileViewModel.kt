@@ -11,12 +11,12 @@ import io.snaps.basefeed.ui.VideoFeedUiState
 import io.snaps.basefeed.ui.toVideoFeedUiState
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesubs.data.SubsRepository
+import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.SubsType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.corecommon.R
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppDeeplink
@@ -134,12 +134,11 @@ class ProfileViewModel @Inject constructor(
                             onSubscribersClick = { onSubscribersClicked(SubsType.Subscribers) },
                             onSubscriptionsClick = { onSubscribersClicked(SubsType.Subscriptions) },
                             onEditProfileClick = { onEditProfileClicked() },
-                            isUserCurrent = _uiState.value.userType == UserType.Current
+                            isUserCurrent = _uiState.value.userType == UserType.Current,
                         ),
                         name = user.name,
                         userImage = user.avatar,
-
-                        )
+                    )
                 }
             }.doOnComplete {
                 // Subscribing here to have the user name on empty screen
@@ -186,9 +185,9 @@ class ProfileViewModel @Inject constructor(
                     UserType.Current -> StringKey.MessageEmptyVideoFeed.textValue()
                 },
                 emptyImage = ImageValue.ResVector(R.drawable.ic_add_video),
-                emptyButtonData = EmptyListTileState.EmptyButtonData(
-                 onCreateVideoClick = ::onCreateVideoClicked,
-                    isShown = true,
+                emptyButtonData = EmptyListTileState.ButtonData(
+                    onClick = ::onCreateVideoClicked,
+                    text = StringKey.ProfileActionAddVideo.textValue(),
                 ).takeIf { uiState.value.userType == UserType.Current },
                 onClipClicked = {},
                 onReloadClicked = ::refreshFeed,

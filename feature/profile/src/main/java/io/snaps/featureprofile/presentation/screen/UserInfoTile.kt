@@ -35,8 +35,8 @@ import io.snaps.coreuicompose.tools.RoundedCornerShape
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
-import io.snaps.coreuicompose.uikit.button.ProfileRoundedCornerChip
-import io.snaps.coreuicompose.uikit.button.SubscribeProfileChipConfig
+import io.snaps.coreuicompose.uikit.button.SimpleChip
+import io.snaps.coreuicompose.uikit.button.SimpleChipConfig
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.other.ShimmerTileLine
 import io.snaps.coreuitheme.compose.AppTheme
@@ -86,7 +86,7 @@ private fun Data(
         InfoContainer {
             StatsLine(
                 value = data.likes,
-                name = LocalStringHolder.current(StringKey.ProfileTitleLikes)
+                name = LocalStringHolder.current(StringKey.ProfileTitleLikes),
             )
             Spacer(modifier = Modifier.width(8.dp))
             StatsLine(
@@ -129,13 +129,14 @@ private fun Data(
                     .align(Alignment.CenterEnd)
                     .padding(end = 16.dp, bottom = 124.dp)
             ) {
-                ProfileRoundedCornerChip(
+                SimpleChip(
                     modifier = Modifier.wrapContentSize(),
                     selected = false,
-                    label = StringKey.ProfileEditProfile.textValue(),
+                    shape = RoundedCornerShape(top = 10.dp, bottom = 10.dp),
+                    label = StringKey.ProfileActionEditProfile.textValue(),
                     textStyle = AppTheme.specificTypography.titleSmall,
                     contentPadding = PaddingValues(10.dp),
-                    colors = SubscribeProfileChipConfig.lightGreyColor(),
+                    colors = SimpleChipConfig.lightGreyColor(),
                     onClick = data.onEditProfileClick,
                 )
             }
@@ -225,13 +226,13 @@ private fun RowScope.StatsLine(
 ) {
     Card(
         modifier = Modifier.weight(1f),
-        shape = RoundedCornerShape(top = 10.dp, bottom = 10.dp),
-        elevation = CardDefaults.cardElevation(10.dp),
+        shape = RoundedCornerShape(top = 12.dp, bottom = 12.dp),
+        elevation = CardDefaults.cardElevation(12.dp),
         colors = CardDefaults.cardColors(containerColor = AppTheme.specificColorScheme.white),
     ) {
         Column(
             modifier = Modifier
-                .padding(horizontal = 10.dp, vertical = 5.dp)
+                .padding(horizontal = 12.dp, vertical = 4.dp)
                 .weight(1f)
                 .align(alignment = Alignment.CenterHorizontally)
                 .defaultTileRipple(onClick = onClick),

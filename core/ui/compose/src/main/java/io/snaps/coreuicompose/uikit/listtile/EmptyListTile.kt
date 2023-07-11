@@ -1,6 +1,5 @@
 package io.snaps.coreuicompose.uikit.listtile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,11 +20,10 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
+import io.snaps.coreuicompose.tools.RoundedCornerShape
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.get
-import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
-import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
-import io.snaps.coreuicompose.uikit.button.ProfileRoundedCornerChip
+import io.snaps.coreuicompose.uikit.button.SimpleChip
 import io.snaps.coreuitheme.compose.AppTheme
 
 data class EmptyListTileState(
@@ -34,17 +31,11 @@ data class EmptyListTileState(
     val message: TextValue? = null,
     val image: ImageValue? = null,
     val buttonData: ButtonData? = null,
-    val emptyButtonData: EmptyButtonData? = null,
 ) : TileState {
 
     data class ButtonData(
         val text: TextValue,
         val onClick: () -> Unit,
-    )
-
-    data class EmptyButtonData(
-        val onCreateVideoClick: () -> Unit,
-        val isShown: Boolean = false
     )
 
     @Composable
@@ -92,29 +83,18 @@ fun EmptyListTile(
                 textAlign = TextAlign.Center,
             )
         }
-        Spacer(modifier = Modifier.height(4.dp))
-        data.emptyButtonData?.let {
-            if (data.emptyButtonData.isShown) {
-                ProfileRoundedCornerChip(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 32.dp),
-                    selected = true,
-                    label = StringKey.ProfileTitleAddVideo.textValue(),
-                    textStyle = AppTheme.specificTypography.titleSmall,
-                    contentPadding = PaddingValues(10.dp),
-                    onClick = it.onCreateVideoClick,
-                )
-            }
-        }
-
         data.buttonData?.let {
-            Spacer(modifier = Modifier.height(4.dp))
-            SimpleButtonActionM(
+            SimpleChip(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
+                shape = RoundedCornerShape(top = 10.dp, bottom = 10.dp),
+                selected = true,
+                label = it.text,
+                textStyle = AppTheme.specificTypography.titleSmall,
+                contentPadding = PaddingValues(10.dp),
                 onClick = it.onClick,
-            ) {
-                SimpleButtonContent(text = it.text)
-            }
+            )
         }
     }
 }

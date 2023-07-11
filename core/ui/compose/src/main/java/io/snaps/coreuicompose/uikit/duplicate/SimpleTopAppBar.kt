@@ -135,7 +135,7 @@ fun SimpleTopAppBar(
             }
         },
         actions = {
-            actions.toList().forEach { CollapsedTopAppBarActionIcon(data = it) }
+            actions.toList().forEach { TopAppBarActionIcon(data = it) }
         },
         windowInsets = windowInsets,
         colors = colors,
