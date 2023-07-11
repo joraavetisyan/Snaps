@@ -1,10 +1,14 @@
 package io.snaps.featureprofile.presentation
 
+import io.snaps.basenotifications.data.model.NotificationType
 import io.snaps.baseprofile.domain.UserInfoModel
+import io.snaps.corecommon.container.TextValue
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toCompactDecimalFormat
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.Loading
 import io.snaps.corecommon.model.State
+import io.snaps.corecommon.strings.StringKey
 import io.snaps.featureprofile.presentation.screen.UserInfoTileState
 import io.snaps.featureprofile.presentation.viewmodel.Phrase
 
@@ -52,3 +56,11 @@ fun UserInfoModel.toUserInfoTileState(
     onSubscriptionsClick = onSubscriptionsClick,
     onEditProfileClick = onEditProfileClick
 )
+
+fun NotificationType.toActionText(userName: String): TextValue {
+    return when (this) {
+        NotificationType.Like -> StringKey.NotificationsMessageLike.textValue(userName)
+        NotificationType.Comment -> StringKey.NotificationsMessageComment.textValue(userName)
+        NotificationType.Follow -> StringKey.NotificationsMessageFollow.textValue(userName)
+    }
+}

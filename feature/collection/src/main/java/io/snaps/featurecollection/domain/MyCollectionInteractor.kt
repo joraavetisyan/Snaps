@@ -9,6 +9,7 @@ import io.snaps.baseprofile.data.model.PaymentsState
 import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.data.blockchain.BlockchainTxRepository
 import io.snaps.basewallet.domain.NftMintSummary
+import io.snaps.basewallet.domain.TransferData
 import io.snaps.corecommon.model.AppError
 import io.snaps.corecommon.model.BundleType
 import io.snaps.corecommon.model.Effect
@@ -22,6 +23,10 @@ import javax.inject.Inject
 interface MyCollectionInteractor {
 
     suspend fun repair(nftModel: NftModel): Effect<TxHash>
+
+    suspend fun repairAllNft(repairCost: Double): Effect<TxHash>
+
+    suspend fun getRepairAllNftTransferData(amount: Double): Effect<TransferData>
 
     suspend fun mint(
         nftType: NftType,
@@ -62,6 +67,26 @@ class MyCollectionInteractorImpl @Inject constructor(
                 walletRepository.updateTotalBalance()
             }
         }
+    }
+
+    override suspend fun repairAllNft(repairCost: Double): Effect<TxHash> {
+        return profileRepository.updateData(isSilently = true).flatMap { userInfoModel ->
+            if (userInfoModel.paymentsState == PaymentsState.Blockchain) {
+                if ((walletRepository.snps.value?.coinValue?.value ?: 0.0) < repairCost) {
+                    Effect.error(AppError.Custom(cause = NoEnoughSnpToRepair))
+                } else blockchainTxRepository.getRepairNftSign(repairCost = repairCost).flatMap { sign ->
+                    nftRepository.repairAllNftBlockchain(txSign = sign)
+                }
+            } else {
+                nftRepository.repairAllNft().map { "" }
+            }.doOnSuccess {
+                walletRepository.updateTotalBalance()
+            }
+        }
+    }
+
+    override suspend fun getRepairAllNftTransferData(amount: Double): Effect<TransferData> {
+        return blockchainTxRepository.getTransferData(amount)
     }
 
     override suspend fun mint(nftType: NftType, purchaseToken: Token?): Effect<TxHash> {

@@ -24,6 +24,8 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionM
+import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuicompose.uikit.button.ProfileRoundedCornerChip
 import io.snaps.coreuitheme.compose.AppTheme
 
@@ -31,7 +33,13 @@ data class EmptyListTileState(
     val title: TextValue,
     val message: TextValue? = null,
     val image: ImageValue? = null,
+    val buttonData: ButtonData? = null,
 ) : TileState {
+
+    data class ButtonData(
+        val text: TextValue,
+        val onClick: () -> Unit,
+    )
 
     @Composable
     override fun Content(modifier: Modifier) {
@@ -89,5 +97,13 @@ fun EmptyListTile(
             contentPadding = PaddingValues(10.dp),
             onClick = {},
         )
+        data.buttonData?.let {
+            Spacer(modifier = Modifier.height(4.dp))
+            SimpleButtonActionM(
+                onClick = it.onClick,
+            ) {
+                SimpleButtonContent(text = it.text)
+            }
+        }
     }
 }

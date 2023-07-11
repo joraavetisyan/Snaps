@@ -26,4 +26,5 @@ dependencies {
     implementation(projects.baseSubs)
     implementation(projects.baseFile)
     implementation(projects.baseSettings)
+    implementation(projects.baseNotifications)
 }

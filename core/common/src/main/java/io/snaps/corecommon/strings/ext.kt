@@ -45,4 +45,4 @@ fun String.capitalizeFirstLetter() = replaceFirstChar { if (it.isLowerCase()) it
 
 fun String.digitsOnly() = filter { it.isDigit() }
 
-fun String.isUserNameValid() = Regex("^\\p{L}+[\\p{L}\\p{Nd}_.]*$").matches(this)
+fun String.isUserNameValid() = Regex("^[\\p{L}\\p{Nd}_]+[\\p{L}\\p{Nd}\\s_.]*$").matches(this)

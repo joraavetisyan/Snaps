@@ -261,6 +261,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun onNotificationsClicked() {
+        viewModelScope.launch {
+            _command publish Command.OpenNotificationsScreen
+        }
+    }
+
     fun onCreateVideoClicked() {
         viewModelScope.launch { tryOpenCreate() }
     }
@@ -336,6 +342,7 @@ class ProfileViewModel @Inject constructor(
 
     sealed class Command {
         object OpenSettingsScreen : Command()
+        object OpenNotificationsScreen : Command()
         object OpenWalletScreen : Command()
         object OpenEditProfileScreen : Command()
         data class OpenSubsScreen(val args: AppRoute.Subs.Args) : Command()

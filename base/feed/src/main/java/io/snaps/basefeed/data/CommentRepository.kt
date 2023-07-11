@@ -42,8 +42,8 @@ class CommentRepositoryImpl @Inject constructor(
                 action = { from, count ->
                     val comments = commentApi.get()
                         .comments(videoId = videoId, from = from, count = count).data?.filter {
-                        it.text.isNotEmpty()
-                    }
+                            it.text.isNotEmpty()
+                        }
                     BaseResponse(comments)
                 },
                 pageSize = 20,

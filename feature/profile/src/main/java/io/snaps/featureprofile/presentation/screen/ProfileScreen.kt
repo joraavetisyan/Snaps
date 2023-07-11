@@ -101,6 +101,7 @@ fun ProfileScreen(
             ProfileViewModel.Command.OpenWalletScreen -> router.toWalletSettingsScreen()
             ProfileViewModel.Command.OpenSettingsScreen -> router.toSettingsScreen()
             ProfileViewModel.Command.OpenEditProfileScreen -> router.toEditProfileScreen()
+            ProfileViewModel.Command.OpenNotificationsScreen -> router.toNotificationsScreen()
             is ProfileViewModel.Command.OpenSubsScreen -> router.toSubsScreen(it.args)
             is ProfileViewModel.Command.OpenUserFeedScreen -> router.toUserFeedScreen(
                 userId = it.userId, position = it.position
@@ -124,6 +125,7 @@ fun ProfileScreen(
         onCreateVideoClicked = viewModel::onCreateVideoClicked,
         onSettingsClicked = viewModel::onSettingsClicked,
         onWalletClick = viewModel::onWalletClicked,
+        onNotificationsClicked = viewModel::onNotificationsClicked,
         onBackClicked = router::back,
         onSubscribeClicked = viewModel::onSubscribeClicked,
         onVideoClipClicked = viewModel::onVideoClipClicked,
@@ -142,6 +144,7 @@ private fun ProfileScreen(
     onCreateVideoClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
     onWalletClick: () -> Unit,
+    onNotificationsClicked: () -> Unit,
     onBackClicked: () -> Boolean,
     onSubscribeClicked: () -> Unit,
     onVideoClipClicked: (Int) -> Unit,
@@ -181,6 +184,11 @@ private fun ProfileScreen(
             icon = AppTheme.specificIcons.profileSettings,
             color = AppTheme.specificColorScheme.white,
             onClick = onSettingsClicked
+        ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
+        ActionIconData(
+            icon = AppTheme.specificIcons.notification,
+            color = AppTheme.specificColorScheme.white,
+            onClick = onNotificationsClicked,
         ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
     )
     Box(modifier = Modifier.pullRefresh(pullRefreshState)) {

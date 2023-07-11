@@ -6,6 +6,7 @@ import io.snaps.basenft.data.model.MintMysteryBoxRequestDto
 import io.snaps.basenft.data.model.MintMysteryBoxResponseDto
 import io.snaps.basenft.data.model.MintNftRequestDto
 import io.snaps.basenft.data.model.MintNftStoreRequestDto
+import io.snaps.basenft.data.model.RepairAllGlassesRequestDto
 import io.snaps.basenft.data.model.RepairGlassesRequestDto
 import io.snaps.basenft.domain.BundleModel
 import io.snaps.basenft.domain.MysteryBoxModel
@@ -70,7 +71,11 @@ interface NftRepository {
 
     suspend fun repairNftBlockchain(nftModel: NftModel, txSign: TxSign): Effect<TxHash>
 
+    suspend fun repairAllNftBlockchain(txSign: TxSign): Effect<TxHash>
+
     suspend fun repairNft(nftModel: NftModel): Effect<Completable>
+
+    suspend fun repairAllNft(): Effect<Completable>
 
     suspend fun getUserNftCollection(userId: Uuid): Effect<List<NftModel>>
 }
@@ -228,9 +233,25 @@ class NftRepositoryImpl @Inject constructor(
         }.map { it.txHash.orEmpty() }
     }
 
+    override suspend fun repairAllNftBlockchain(txSign: TxSign): Effect<TxHash> {
+        return apiCall(ioDispatcher) {
+            nftApi.get().repairAllGlasses(RepairAllGlassesRequestDto(txSign = txSign))
+        }.doOnSuccess {
+            updateNftCollection()
+        }.map { it.txHash.orEmpty() }
+    }
+
     override suspend fun repairNft(nftModel: NftModel): Effect<Completable> {
         return apiCall(ioDispatcher) {
             nftApi.get().repairGlasses(RepairGlassesRequestDto(glassesId = nftModel.id))
+        }.doOnSuccess {
+            updateNftCollection()
+        }.toCompletable()
+    }
+
+    override suspend fun repairAllNft(): Effect<Completable> {
+        return apiCall(ioDispatcher) {
+            nftApi.get().repairAllGlasses(RepairAllGlassesRequestDto())
         }.doOnSuccess {
             updateNftCollection()
         }.toCompletable()
