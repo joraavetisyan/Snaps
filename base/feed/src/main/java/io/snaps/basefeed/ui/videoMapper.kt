@@ -44,6 +44,7 @@ fun VideoFeedPageModel.toVideoFeedUiState(
     onClipClicked: (VideoClipModel) -> Unit,
     onReloadClicked: () -> Unit,
     onListEndReaching: () -> Unit,
+    emptyButtonData: EmptyListTileState.EmptyButtonData? = null,
 ): VideoFeedUiState {
     return when {
         isLoading && loadedPageItems.isEmpty() -> VideoFeedUiState(
@@ -55,10 +56,11 @@ fun VideoFeedPageModel.toVideoFeedUiState(
             errorState = MessageBannerState.defaultState(onReloadClicked)
         )
         loadedPageItems.isEmpty() -> VideoFeedUiState(
-            emptyState = EmptyListTileState.defaultState(
+            emptyState = EmptyListTileState(
                 title = emptyTitle,
                 message = emptyMessage,
                 image = emptyImage,
+                emptyButtonData = emptyButtonData,
             )
         )
         else -> VideoFeedUiState(

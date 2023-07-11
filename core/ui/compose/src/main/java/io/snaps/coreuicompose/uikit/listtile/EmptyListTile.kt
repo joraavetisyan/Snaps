@@ -34,11 +34,17 @@ data class EmptyListTileState(
     val message: TextValue? = null,
     val image: ImageValue? = null,
     val buttonData: ButtonData? = null,
+    val emptyButtonData: EmptyButtonData? = null,
 ) : TileState {
 
     data class ButtonData(
         val text: TextValue,
         val onClick: () -> Unit,
+    )
+
+    data class EmptyButtonData(
+        val onCreateVideoClick: () -> Unit,
+        val isShown: Boolean = false
     )
 
     @Composable
@@ -87,16 +93,21 @@ fun EmptyListTile(
             )
         }
         Spacer(modifier = Modifier.height(4.dp))
-        ProfileRoundedCornerChip(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp),
-            selected = true,
-            label = StringKey.ProfileTitleAddVideo.textValue(),
-            textStyle = AppTheme.specificTypography.titleSmall,
-            contentPadding = PaddingValues(10.dp),
-            onClick = {},
-        )
+        data.emptyButtonData?.let {
+            if (data.emptyButtonData.isShown) {
+                ProfileRoundedCornerChip(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp),
+                    selected = true,
+                    label = StringKey.ProfileTitleAddVideo.textValue(),
+                    textStyle = AppTheme.specificTypography.titleSmall,
+                    contentPadding = PaddingValues(10.dp),
+                    onClick = it.onCreateVideoClick,
+                )
+            }
+        }
+
         data.buttonData?.let {
             Spacer(modifier = Modifier.height(4.dp))
             SimpleButtonActionM(

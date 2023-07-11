@@ -93,6 +93,7 @@ object SpecificIcons {
     val showMore = R.drawable.ic_show_more.iconValue()
     val wallet = R.drawable.ic_wallet.iconValue()
     val profileSettings = R.drawable.ic_profile_settings.iconValue()
+    val profileNotification = R.drawable.ic_notification.iconValue()
     val profileBack = R.drawable.ic_profile_back.iconValue()
     val copy = R.drawable.ic_copy.iconValue()
     val exchange = R.drawable.ic_exchange.iconValue()

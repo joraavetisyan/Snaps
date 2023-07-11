@@ -24,6 +24,7 @@ import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
+import io.snaps.coreuicompose.uikit.listtile.EmptyListTileState
 import io.snaps.featureprofile.presentation.screen.UserInfoTileState
 import io.snaps.featureprofile.presentation.toUserInfoTileState
 import kotlinx.coroutines.channels.Channel
@@ -185,6 +186,10 @@ class ProfileViewModel @Inject constructor(
                     UserType.Current -> StringKey.MessageEmptyVideoFeed.textValue()
                 },
                 emptyImage = ImageValue.ResVector(R.drawable.ic_add_video),
+                emptyButtonData = EmptyListTileState.EmptyButtonData(
+                 onCreateVideoClick = ::onCreateVideoClicked,
+                    isShown = true,
+                ).takeIf { uiState.value.userType == UserType.Current },
                 onClipClicked = {},
                 onReloadClicked = ::refreshFeed,
                 onListEndReaching = ::onListEndReaching,
@@ -255,7 +260,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun onEditProfileClicked() {
+    private fun onEditProfileClicked() {
         viewModelScope.launch {
             _command publish Command.OpenEditProfileScreen
         }
@@ -345,6 +350,7 @@ class ProfileViewModel @Inject constructor(
         object OpenNotificationsScreen : Command()
         object OpenWalletScreen : Command()
         object OpenEditProfileScreen : Command()
+        object OpenCreateVideoScreen : Command()
         data class OpenSubsScreen(val args: AppRoute.Subs.Args) : Command()
         data class OpenUserFeedScreen(val userId: Uuid?, val position: Int) : Command()
         data class OpenLikedFeedScreen(val userId: Uuid?, val position: Int) : Command()

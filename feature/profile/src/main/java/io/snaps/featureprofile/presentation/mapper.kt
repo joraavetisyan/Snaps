@@ -1,7 +1,7 @@
 package io.snaps.featureprofile.presentation
 
-import io.snaps.basenotifications.data.model.NotificationType
 import io.snaps.baseprofile.domain.UserInfoModel
+import io.snaps.basenotifications.data.model.NotificationType
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toCompactDecimalFormat

@@ -40,7 +40,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
@@ -62,6 +62,7 @@ import io.snaps.corecommon.ext.startShareLinkIntent
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.blur
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeBottom
@@ -102,6 +103,7 @@ fun ProfileScreen(
             ProfileViewModel.Command.OpenSettingsScreen -> router.toSettingsScreen()
             ProfileViewModel.Command.OpenEditProfileScreen -> router.toEditProfileScreen()
             ProfileViewModel.Command.OpenNotificationsScreen -> router.toNotificationsScreen()
+            ProfileViewModel.Command.OpenCreateVideoScreen -> router.toCreateVideoScreen()
             is ProfileViewModel.Command.OpenSubsScreen -> router.toSubsScreen(it.args)
             is ProfileViewModel.Command.OpenUserFeedScreen -> router.toUserFeedScreen(
                 userId = it.userId, position = it.position
@@ -186,7 +188,7 @@ private fun ProfileScreen(
             onClick = onSettingsClicked
         ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
         ActionIconData(
-            icon = AppTheme.specificIcons.notification,
+            icon = AppTheme.specificIcons.profileNotification,
             color = AppTheme.specificColorScheme.white,
             onClick = onNotificationsClicked,
         ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
@@ -352,8 +354,9 @@ private fun AppBar(
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .fillMaxWidth()
-                .blur(radiusX = 15.dp, radiusY = 15.dp)
+                .blur(true)
                 .height(imageHeight)
+                .alpha(0.7f)
         )
         Column {
             TopAppBarLayout(
