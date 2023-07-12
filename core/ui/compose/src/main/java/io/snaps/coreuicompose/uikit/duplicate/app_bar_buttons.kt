@@ -39,10 +39,14 @@ fun TopAppBarActionIcon(
 }
 
 @Composable
-fun TopAppBarNavIcon(iconValue: IconValue, onClick: () -> Unit) {
+fun TopAppBarNavIcon(iconValue: IconValue, onClick: () -> Unit, alpha: Float? = null) {
     Icon(
         painter = iconValue.get(),
-        tint = AppTheme.specificColorScheme.textPrimary,
+        tint =
+        if (alpha != null)
+            AppTheme.specificColorScheme.textPrimary.copy(alpha = alpha)
+        else
+            AppTheme.specificColorScheme.textPrimary,
         contentDescription = "navigation icon",
         modifier = Modifier
             .clip(CircleShape)

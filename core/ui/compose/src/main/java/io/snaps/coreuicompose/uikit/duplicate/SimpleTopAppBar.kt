@@ -81,6 +81,7 @@ fun SimpleTopAppBar(
     titleTextStyle: TextStyle = AppTheme.specificTypography.titleMedium,
     titleHorizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
     navigationIcon: Pair<IconValue, OnBackIconClick>? = null,
+    alpha: Float? = null,
     actions: List<ActionIconData> = emptyList(),
     windowInsets: WindowInsets = insetAllExcludeBottom(),
     colors: SimpleTopAppBarColors = SimpleTopAppBarConfig.transparentSurfaceColors(),
@@ -101,6 +102,7 @@ fun SimpleTopAppBar(
         titleHorizontalArrangement = titleHorizontalArrangement,
         titleTextStyle = titleTextStyle,
         navigationIcon = navigationIcon,
+        alpha = alpha,
         actions = actions,
         windowInsets = windowInsets,
         colors = colors,
@@ -116,6 +118,7 @@ fun SimpleTopAppBar(
     titleHorizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
     titleTextStyle: TextStyle = AppTheme.specificTypography.titleMedium,
     navigationIcon: Pair<IconValue, OnBackIconClick>? = null,
+    alpha: Float? = null,
     actions: List<ActionIconData> = emptyList(),
     windowInsets: WindowInsets = insetAllExcludeBottom(),
     colors: SimpleTopAppBarColors = SimpleTopAppBarConfig.transparentSurfaceColors(),
@@ -131,6 +134,7 @@ fun SimpleTopAppBar(
                 TopAppBarNavIcon(
                     iconValue = navigationIcon.first,
                     onClick = { navigationIcon.second() },
+                    alpha = alpha,
                 )
             }
         },
