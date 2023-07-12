@@ -2627,6 +2627,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Ua to "Опублікувавши",
         SupportedLanguageKey.Es to "Publicar",
     ),
+    key(StringKey.ProfileActionAddVideo) to mapOf(
+        SupportedLanguageKey.En to "Download video",
+        SupportedLanguageKey.Ru to "Загрузить видео",
+        SupportedLanguageKey.Tr to "Video indir",
+        SupportedLanguageKey.Ua to "Завантажити відео",
+        SupportedLanguageKey.Es to "Descargar video",
+    ),
     key(StringKey.ProfileMessageEmptyVideos) to mapOf(
         SupportedLanguageKey.En to "Videos posted by %s will appear here",
         SupportedLanguageKey.Ru to "Здесь появятся видео, которые опубликует %s",
@@ -2647,6 +2654,13 @@ internal val strings = mapOf(
         SupportedLanguageKey.Tr to "Video",
         SupportedLanguageKey.Ua to "Відео",
         SupportedLanguageKey.Es to "Video",
+    ),
+    key(StringKey.ProfileActionEditProfile) to mapOf(
+        SupportedLanguageKey.En to "Edit profile",
+        SupportedLanguageKey.Ru to "Изменить профиль",
+        SupportedLanguageKey.Tr to "Profili düzenle",
+        SupportedLanguageKey.Ua to "Змінити профіль",
+        SupportedLanguageKey.Es to "Editar perfil",
     ),
     key(StringKey.CommentsTitle) to mapOf(
         SupportedLanguageKey.En to "%s comments",

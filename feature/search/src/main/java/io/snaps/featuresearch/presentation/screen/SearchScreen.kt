@@ -159,6 +159,7 @@ private fun SearchScreen(
                 when (it) {
                     Popular -> VideoFeedGrid(
                         columnCount = 2,
+                        contentPadding = PaddingValues(12.dp),
                         uiState = uiState.videoFeedUiState,
                         onClick = onClick,
                     )

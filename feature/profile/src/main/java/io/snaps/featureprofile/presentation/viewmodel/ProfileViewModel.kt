@@ -16,7 +16,6 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.SubsType
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.corecommon.R
 import io.snaps.coredata.di.Bridged
 import io.snaps.coredata.network.Action
 import io.snaps.corenavigation.AppDeeplink
@@ -24,6 +23,7 @@ import io.snaps.corenavigation.AppRoute
 import io.snaps.corenavigation.base.requireArgs
 import io.snaps.coreui.viewmodel.SimpleViewModel
 import io.snaps.coreui.viewmodel.publish
+import io.snaps.coreuicompose.uikit.listtile.EmptyListTileState
 import io.snaps.featureprofile.presentation.screen.UserInfoTileState
 import io.snaps.featureprofile.presentation.toUserInfoTileState
 import kotlinx.coroutines.channels.Channel
@@ -93,8 +93,11 @@ class ProfileViewModel @Inject constructor(
                     userInfoTileState = state.toUserInfoTileState(
                         onSubscribersClick = { onSubscribersClicked(SubsType.Subscribers) },
                         onSubscriptionsClick = { onSubscribersClicked(SubsType.Subscriptions) },
+                        onEditProfileClick = { onEditProfileClicked() },
+                        isUserCurrent = _uiState.value.userType == UserType.Current
                     ),
                     name = state.dataOrCache?.name.orEmpty(),
+                    userImage = state.dataOrCache?.avatar,
                     shareLink = state.dataOrCache?.userId?.let { userId ->
                         AppDeeplink.generateSharingLink(AppDeeplink.Profile(userId))
                     },
@@ -129,8 +132,11 @@ class ProfileViewModel @Inject constructor(
                         userInfoTileState = user.toUserInfoTileState(
                             onSubscribersClick = { onSubscribersClicked(SubsType.Subscribers) },
                             onSubscriptionsClick = { onSubscribersClicked(SubsType.Subscriptions) },
+                            onEditProfileClick = { onEditProfileClicked() },
+                            isUserCurrent = _uiState.value.userType == UserType.Current,
                         ),
                         name = user.name,
+                        userImage = user.avatar,
                     )
                 }
             }.doOnComplete {
@@ -171,12 +177,12 @@ class ProfileViewModel @Inject constructor(
         videoFeedRepository.getFeedState(VideoFeedType.User(args.userId)).map {
             it.toVideoFeedUiState(
                 shimmerListSize = 12,
-                emptyMessage = when (_uiState.value.userType) {
-                    UserType.None,
-                    UserType.Other -> StringKey.ProfileMessageEmptyVideos.textValue(uiState.value.name)
-                    UserType.Current -> StringKey.MessageEmptyVideoFeed.textValue()
-                },
-                emptyImage = ImageValue.ResVector(R.drawable.ic_add_video),
+                emptyMessage = StringKey.ProfileMessageEmptyVideos.textValue(uiState.value.name),
+                emptyImage = null,
+                emptyButtonData = EmptyListTileState.ButtonData(
+                    onClick = ::onCreateVideoClicked,
+                    text = StringKey.ProfileActionAddVideo.textValue(),
+                ).takeIf { uiState.value.userType == UserType.Current },
                 onClipClicked = {},
                 onReloadClicked = ::refreshFeed,
                 onListEndReaching = ::onListEndReaching,
@@ -238,6 +244,18 @@ class ProfileViewModel @Inject constructor(
     fun onSettingsClicked() {
         viewModelScope.launch {
             _command publish Command.OpenSettingsScreen
+        }
+    }
+
+    fun onWalletClicked() {
+        viewModelScope.launch {
+            _command publish Command.OpenWalletScreen
+        }
+    }
+
+    private fun onEditProfileClicked() {
+        viewModelScope.launch {
+            _command publish Command.OpenEditProfileScreen
         }
     }
 
@@ -310,6 +328,7 @@ class ProfileViewModel @Inject constructor(
         val isLoading: Boolean = true,
         val userInfoTileState: UserInfoTileState = UserInfoTileState.Shimmer,
         val name: String = "",
+        val userImage: ImageValue? = null,
         // if current authed user is subscribed to this user
         val isSubscribed: Boolean = false,
         val userType: UserType = UserType.None,
@@ -322,6 +341,9 @@ class ProfileViewModel @Inject constructor(
     sealed class Command {
         object OpenSettingsScreen : Command()
         object OpenNotificationsScreen : Command()
+        object OpenWalletScreen : Command()
+        object OpenEditProfileScreen : Command()
+        object OpenCreateVideoScreen : Command()
         data class OpenSubsScreen(val args: AppRoute.Subs.Args) : Command()
         data class OpenUserFeedScreen(val userId: Uuid?, val position: Int) : Command()
         data class OpenLikedFeedScreen(val userId: Uuid?, val position: Int) : Command()

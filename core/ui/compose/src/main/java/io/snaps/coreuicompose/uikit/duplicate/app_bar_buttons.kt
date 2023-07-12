@@ -34,7 +34,7 @@ fun TopAppBarActionIcon(
         modifier = Modifier
             .clip(CircleShape)
             .clickable(enabled = true, onClick = data.onClick)
-            .padding(12.dp),
+            .padding(8.dp),
     )
 }
 
@@ -47,6 +47,6 @@ fun TopAppBarNavIcon(iconValue: IconValue, onClick: () -> Unit) {
         modifier = Modifier
             .clip(CircleShape)
             .clickable(onClick = onClick)
-            .padding(8.dp),
+            .padding(8.dp)
     )
 }

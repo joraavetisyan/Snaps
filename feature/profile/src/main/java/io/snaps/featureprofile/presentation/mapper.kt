@@ -1,7 +1,7 @@
 package io.snaps.featureprofile.presentation
 
-import io.snaps.basenotifications.data.model.NotificationType
 import io.snaps.baseprofile.domain.UserInfoModel
+import io.snaps.basenotifications.data.model.NotificationType
 import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.ext.toCompactDecimalFormat
@@ -17,6 +17,8 @@ fun List<String>.toPhrases() = mapIndexed { i, s -> Phrase(orderNumber = i + 1, 
 fun State<UserInfoModel>.toUserInfoTileState(
     onSubscribersClick: () -> Unit,
     onSubscriptionsClick: () -> Unit,
+    onEditProfileClick: () -> Unit,
+    isUserCurrent: Boolean
 ) = when (this) {
     is Loading -> UserInfoTileState.Shimmer
     is Effect -> when {
@@ -24,11 +26,15 @@ fun State<UserInfoModel>.toUserInfoTileState(
             requireData.toUserInfoTileState(
                 onSubscribersClick = onSubscribersClick,
                 onSubscriptionsClick = onSubscriptionsClick,
+                isUserCurrent = isUserCurrent,
+                onEditProfileClick = onEditProfileClick
             )
         }
         else -> dataOrCache?.toUserInfoTileState(
             onSubscribersClick = onSubscribersClick,
             onSubscriptionsClick = onSubscriptionsClick,
+            isUserCurrent = isUserCurrent,
+            onEditProfileClick = onEditProfileClick
         ) ?: UserInfoTileState.Shimmer
     }
 }
@@ -36,14 +42,19 @@ fun State<UserInfoModel>.toUserInfoTileState(
 fun UserInfoModel.toUserInfoTileState(
     onSubscribersClick: () -> Unit,
     onSubscriptionsClick: () -> Unit,
+    onEditProfileClick: () -> Unit,
+    isUserCurrent: Boolean
 ) = UserInfoTileState.Data(
     profileImage = avatar,
+    profileTitle = name,
+    isUserCurrent = isUserCurrent,
     likes = totalLikes.toCompactDecimalFormat(),
     subscriptions = totalSubscriptions,
     subscribers = totalSubscribers,
     publication = totalPublication?.toCompactDecimalFormat(),
     onSubscribersClick = onSubscribersClick,
     onSubscriptionsClick = onSubscriptionsClick,
+    onEditProfileClick = onEditProfileClick
 )
 
 fun NotificationType.toActionText(userName: String): TextValue {
