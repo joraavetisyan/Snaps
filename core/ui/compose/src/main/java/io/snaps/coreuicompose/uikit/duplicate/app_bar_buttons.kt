@@ -42,7 +42,7 @@ fun TopAppBarActionIcon(
 fun TopAppBarNavIcon(iconValue: IconValue, onClick: () -> Unit) {
     Icon(
         painter = iconValue.get(),
-        tint = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.4f),
+        tint = AppTheme.specificColorScheme.textPrimary,
         contentDescription = "navigation icon",
         modifier = Modifier
             .clip(CircleShape)

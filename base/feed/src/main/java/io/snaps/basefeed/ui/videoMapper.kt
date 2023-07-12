@@ -40,7 +40,7 @@ fun VideoFeedPageModel.toVideoFeedUiState(
     shimmerListSize: Int,
     emptyMessage: TextValue? = null,
     emptyTitle: TextValue = StringKey.MessageEmptyVideoFeed.textValue(),
-    emptyImage: ImageValue = R.drawable.img_guy_confused.imageValue(),
+    emptyImage: ImageValue? = R.drawable.img_guy_confused.imageValue(),
     onClipClicked: (VideoClipModel) -> Unit,
     onReloadClicked: () -> Unit,
     onListEndReaching: () -> Unit,

@@ -11,7 +11,6 @@ import io.snaps.basefeed.ui.VideoFeedUiState
 import io.snaps.basefeed.ui.toVideoFeedUiState
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.basesubs.data.SubsRepository
-import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.model.SubsType
@@ -179,7 +178,7 @@ class ProfileViewModel @Inject constructor(
             it.toVideoFeedUiState(
                 shimmerListSize = 12,
                 emptyMessage = StringKey.ProfileMessageEmptyVideos.textValue(uiState.value.name),
-                emptyImage = ImageValue.ResVector(R.drawable.ic_add_video),
+                emptyImage = null,
                 emptyButtonData = EmptyListTileState.ButtonData(
                     onClick = ::onCreateVideoClicked,
                     text = StringKey.ProfileActionAddVideo.textValue(),
