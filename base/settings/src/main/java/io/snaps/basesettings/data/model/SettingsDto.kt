@@ -16,7 +16,7 @@ data class SettingsDto(
     @SerialName("social") val socialPages: List<SocialPageDto>,
     @SerialName("video_key") val videoKey: String,
     @SerialName("video_key_dev") val videoKeyDev: String,
-    @SerialName("mobile_add") val ad: AdDto?,
+    @SerialName("mobile_ads") val ads: List<AdDto>,
     @SerialName("mystery_enabled") val mysteryBox: Boolean,
     @SerialName("bundle_enabled") val bundle: Boolean,
     @SerialName("interests") val interests: List<InterestDto>,
