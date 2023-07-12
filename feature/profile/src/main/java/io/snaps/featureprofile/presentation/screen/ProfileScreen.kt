@@ -198,6 +198,7 @@ private fun ProfileScreen(
                 SimpleTopAppBar(
                     title = title.textValue(),
                     navigationIcon = navigationIcon,
+                    alpha = 0.4f,
                     actions = actions,
                     titleHorizontalArrangement = Arrangement.Start,
                     scrollBehavior = scrollBehavior,
