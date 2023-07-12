@@ -81,7 +81,7 @@ fun SimpleTopAppBar(
     titleTextStyle: TextStyle = AppTheme.specificTypography.titleMedium,
     titleHorizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
     navigationIcon: Pair<IconValue, OnBackIconClick>? = null,
-    alpha: Float? = null,
+    alpha: Float? = null, // todo pass color with alpha to navigation icon
     actions: List<ActionIconData> = emptyList(),
     windowInsets: WindowInsets = insetAllExcludeBottom(),
     colors: SimpleTopAppBarColors = SimpleTopAppBarConfig.transparentSurfaceColors(),

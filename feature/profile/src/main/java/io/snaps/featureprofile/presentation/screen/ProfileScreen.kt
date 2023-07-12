@@ -358,6 +358,7 @@ private fun AppBar(
                 .height(imageHeight)
         )
         Column {
+            // todo use SimpleTopAppBar
             TopAppBarLayout(
                 modifier = Modifier
                     .windowInsetsPadding(insetAllExcludeBottom())
