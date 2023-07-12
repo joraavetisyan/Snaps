@@ -178,12 +178,7 @@ class ProfileViewModel @Inject constructor(
         videoFeedRepository.getFeedState(VideoFeedType.User(args.userId)).map {
             it.toVideoFeedUiState(
                 shimmerListSize = 12,
-                emptyMessage = when (_uiState.value.userType) {
-                    UserType.None,
-                    UserType.Other -> StringKey.ProfileMessageEmptyVideos.textValue(uiState.value.name)
-
-                    UserType.Current -> StringKey.MessageEmptyVideoFeed.textValue()
-                },
+                emptyMessage = StringKey.ProfileMessageEmptyVideos.textValue(uiState.value.name),
                 emptyImage = ImageValue.ResVector(R.drawable.ic_add_video),
                 emptyButtonData = EmptyListTileState.ButtonData(
                     onClick = ::onCreateVideoClicked,

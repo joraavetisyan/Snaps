@@ -8,7 +8,6 @@ import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -35,8 +34,7 @@ fun TopAppBarActionIcon(
         modifier = Modifier
             .clip(CircleShape)
             .clickable(enabled = true, onClick = data.onClick)
-            .padding(6.dp)
-            .alpha(0.4f),
+            .padding(8.dp),
     )
 }
 
@@ -44,12 +42,11 @@ fun TopAppBarActionIcon(
 fun TopAppBarNavIcon(iconValue: IconValue, onClick: () -> Unit) {
     Icon(
         painter = iconValue.get(),
-        tint = AppTheme.specificColorScheme.textPrimary,
+        tint = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.4f),
         contentDescription = "navigation icon",
         modifier = Modifier
             .clip(CircleShape)
             .clickable(onClick = onClick)
             .padding(8.dp)
-            .alpha(0.4f),
     )
 }

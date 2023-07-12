@@ -106,7 +106,7 @@ private fun Data(
             }
         }
         Card(
-            shape = RoundedCornerShape(top = 20.dp, bottom = 20.dp),
+            shape = AppTheme.shapes.large,
             border = BorderStroke(width = 2.dp, color = AppTheme.specificColorScheme.white),
             modifier = Modifier
                 .align(Alignment.TopStart)
@@ -132,10 +132,10 @@ private fun Data(
                 SimpleChip(
                     modifier = Modifier.wrapContentSize(),
                     selected = false,
-                    shape = RoundedCornerShape(top = 10.dp, bottom = 10.dp),
+                    shape = AppTheme.shapes.medium,
                     label = StringKey.ProfileActionEditProfile.textValue(),
                     textStyle = AppTheme.specificTypography.titleSmall,
-                    contentPadding = PaddingValues(10.dp),
+                    contentPadding = PaddingValues(8.dp),
                     colors = SimpleChipConfig.lightGreyColor(),
                     onClick = data.onEditProfileClick,
                 )
@@ -226,7 +226,7 @@ private fun RowScope.StatsLine(
 ) {
     Card(
         modifier = Modifier.weight(1f),
-        shape = RoundedCornerShape(top = 12.dp, bottom = 12.dp),
+        shape = AppTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(12.dp),
         colors = CardDefaults.cardColors(containerColor = AppTheme.specificColorScheme.white),
     ) {

@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -82,7 +83,7 @@ fun Modifier.blur(isEnabled: Boolean) = composed {
     val radius = animateDpAsState(targetValue = if (isEnabled) 16.dp else 0.dp)
     when {
         isEnabled -> when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> blur(radius = radius.value)
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> blur(radius = radius.value).alpha(0.7f)
             else -> drawWithContent {
                 drawContent()
                 drawRect(color = color, alpha = 0.85f)

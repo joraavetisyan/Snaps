@@ -1,6 +1,5 @@
 package io.snaps.basefeed.ui
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -133,7 +132,7 @@ private fun Thumbnail(
     Box(
         modifier
             .background(
-                color = AppTheme.specificColorScheme.black_10.copy(alpha = 0.1f),
+                color = AppTheme.specificColorScheme.black_10,
             )
     ) {
         item.thumbnail?.let {
@@ -179,7 +178,6 @@ private fun Thumbnail(
 
 @Composable
 private fun StatusMessage(status: VideoStatus?) {
-    Log.d("CheckForStatus", status.toString())
     if (status == null || status == VideoStatus.Approved) return
     val color = colors {
         when (status) {

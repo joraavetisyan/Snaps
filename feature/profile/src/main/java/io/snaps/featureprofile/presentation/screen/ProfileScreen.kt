@@ -40,7 +40,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
@@ -98,7 +97,7 @@ fun ProfileScreen(
 
     viewModel.command.collectAsCommand {
         when (it) {
-            ProfileViewModel.Command.OpenWalletScreen -> router.toWalletSettingsScreen()
+            ProfileViewModel.Command.OpenWalletScreen -> router.toWalletScreen()
             ProfileViewModel.Command.OpenSettingsScreen -> router.toSettingsScreen()
             ProfileViewModel.Command.OpenEditProfileScreen -> router.toEditProfileScreen()
             ProfileViewModel.Command.OpenNotificationsScreen -> router.toNotificationsScreen()
@@ -168,28 +167,28 @@ private fun ProfileScreen(
     val actions = listOfNotNull(
         ActionIconData(
             icon = AppTheme.specificIcons.showMore,
-            color = AppTheme.specificColorScheme.textPrimary,
+            color = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.4f),
             onClick = {},
         ).takeIf { uiState.userType == ProfileViewModel.UserType.Other },
         ActionIconData(
+            icon = AppTheme.specificIcons.profileNotification,
+            color = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.4f),
+            onClick = onNotificationsClicked,
+        ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
+        ActionIconData(
             icon = AppTheme.specificIcons.profileShare,
-            color = AppTheme.specificColorScheme.textPrimary,
+            color = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.4f),
             onClick = { context.startShareLinkIntent(uiState.shareLink!!) },
         ).takeIf { uiState.shareLink != null },
         ActionIconData(
             icon = AppTheme.specificIcons.wallet,
-            color = AppTheme.specificColorScheme.textPrimary,
+            color = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.4f),
             onClick = onWalletClick
         ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
         ActionIconData(
             icon = AppTheme.specificIcons.profileSettings,
-            color = AppTheme.specificColorScheme.textPrimary,
+            color = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.4f),
             onClick = onSettingsClicked
-        ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
-        ActionIconData(
-            icon = AppTheme.specificIcons.profileNotification,
-            color = AppTheme.specificColorScheme.textPrimary,
-            onClick = onNotificationsClicked,
         ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
     )
     Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
@@ -356,7 +355,6 @@ private fun AppBar(
                 .fillMaxWidth()
                 .blur(true)
                 .height(imageHeight)
-                .alpha(0.7f)
         )
         Column {
             TopAppBarLayout(
@@ -377,11 +375,10 @@ private fun AppBar(
                 navigationIcon = {
                     Icon(
                         painter = navigationIcon.first.get(),
-                        tint = AppTheme.specificColorScheme.textPrimary,
+                        tint = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.4f),
                         contentDescription = "navigation icon",
                         modifier = Modifier
                             .clip(CircleShape)
-                            .alpha(0.4f)
                             .clickable(onClick = { navigationIcon.second() })
                             .padding(8.dp),
                     )
@@ -407,14 +404,11 @@ private fun AppBar(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
-                        shape = io.snaps.coreuicompose.tools.RoundedCornerShape(
-                            top = 10.dp,
-                            bottom = 10.dp
-                        ),
+                        shape = AppTheme.shapes.medium,
                         selected = !isSubscribed,
                         label = (if (isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),
                         textStyle = AppTheme.specificTypography.titleSmall,
-                        contentPadding = PaddingValues(10.dp),
+                        contentPadding = PaddingValues(12.dp),
                         onClick = onSubscribeClicked,
                     )
                 }

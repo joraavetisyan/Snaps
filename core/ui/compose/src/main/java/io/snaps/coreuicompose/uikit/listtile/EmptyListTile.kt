@@ -1,8 +1,8 @@
 package io.snaps.coreuicompose.uikit.listtile
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,10 +20,10 @@ import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.imageValue
 import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
-import io.snaps.coreuicompose.tools.RoundedCornerShape
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.get
-import io.snaps.coreuicompose.uikit.button.SimpleChip
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
+import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuitheme.compose.AppTheme
 
 data class EmptyListTileState(
@@ -84,17 +84,21 @@ fun EmptyListTile(
             )
         }
         data.buttonData?.let {
-            SimpleChip(
+            Spacer(modifier = Modifier.height(4.dp))
+            SimpleButtonActionS(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
-                shape = RoundedCornerShape(top = 10.dp, bottom = 10.dp),
-                selected = true,
-                label = it.text,
-                textStyle = AppTheme.specificTypography.titleSmall,
-                contentPadding = PaddingValues(10.dp),
+                    .padding(start = 32.dp, end = 32.dp)
+                    .background(
+                        color = AppTheme.specificColorScheme.actionBase,
+                        shape = AppTheme.shapes.medium
+                    ),
                 onClick = it.onClick,
-            )
+            ) {
+                SimpleButtonContent(
+                    text = it.text,
+                )
+            }
         }
     }
 }

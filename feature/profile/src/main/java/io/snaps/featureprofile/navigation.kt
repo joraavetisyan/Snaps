@@ -35,6 +35,8 @@ internal class ScreenNavigator(navHostController: NavHostController) : Navigator
 
     fun toWalletSettingsScreen() = navHostController.navigate(AppRoute.WalletSettings)
 
+    fun toWalletScreen() = navHostController.navigate(AppRoute.Wallet)
+
     fun toCreateVideoScreen() = navHostController.navigate(AppRoute.CreateVideo)
 
     fun toEditProfileScreen() = navHostController.navigate(AppRoute.EditProfile)
