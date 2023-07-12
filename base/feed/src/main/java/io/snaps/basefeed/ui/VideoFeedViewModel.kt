@@ -125,7 +125,6 @@ abstract class VideoFeedViewModel(
             _uiState.value.videoFeedUiState.items.getOrNull(position) as? VideoClipUiState.Data
         val videoClip = current?.clip ?: return
         currentVideo = videoClip
-        loadComments(videoClip.id)
         loadAuthor(videoClip)
         checkIfSubscribed(videoClip.authorId)
     }
@@ -273,6 +272,7 @@ abstract class VideoFeedViewModel(
     }
 
     fun onCommentClicked(clipModel: VideoClipModel) {
+        loadComments(clipModel.id)
         _uiState.update {
             it.copy(bottomDialog = BottomDialog.Comments)
         }
