@@ -398,6 +398,7 @@ private fun VideoClip(
         videoClipModel = item.clip,
         isMoreIconVisible = uiState.actions.isNotEmpty(),
         isSubscribeButtonVisible = uiState.isSubscribeButtonVisible,
+        isSubscribeButtonEnabled = uiState.isSubscribeButtonEnabled,
         isSubscribed = uiState.isSubscribed,
         authorProfileAvatar = uiState.authorProfileAvatar,
         authorName = uiState.authorName,
@@ -418,6 +419,7 @@ private fun VideoClipItems(
     videoClipModel: VideoClipModel,
     isMoreIconVisible: Boolean,
     isSubscribeButtonVisible: Boolean,
+    isSubscribeButtonEnabled: Boolean,
     isSubscribed: Boolean,
     authorProfileAvatar: ImageValue?,
     authorName: String,
@@ -449,6 +451,7 @@ private fun VideoClipItems(
                 clipModel = videoClipModel,
                 isMoreIconVisible = isMoreIconVisible,
                 isSubscribeButtonVisible = isSubscribeButtonVisible,
+                isSubscribeButtonEnabled = isSubscribeButtonEnabled,
                 isSubscribed = isSubscribed,
                 authorProfileAvatar = authorProfileAvatar,
                 authorName = authorName,
@@ -479,6 +482,7 @@ private fun VideoClipInfoItems(
     clipModel: VideoClipModel,
     isMoreIconVisible: Boolean,
     isSubscribeButtonVisible: Boolean,
+    isSubscribeButtonEnabled: Boolean,
     isSubscribed: Boolean,
     authorProfileAvatar: ImageValue?,
     authorName: String,
@@ -499,6 +503,7 @@ private fun VideoClipInfoItems(
             clipModel = clipModel,
             authorName = authorName,
             isSubscribeButtonVisible = isSubscribeButtonVisible,
+            isSubscribeButtonEnabled = isSubscribeButtonEnabled,
             isSubscribed = isSubscribed,
             onSubscribeClicked = onSubscribeClicked,
         )
@@ -522,6 +527,7 @@ private fun VideoClipInfoItems(
 private fun VideoClipBottomItems(
     modifier: Modifier = Modifier,
     isSubscribeButtonVisible: Boolean,
+    isSubscribeButtonEnabled: Boolean,
     isSubscribed: Boolean,
     clipModel: VideoClipModel,
     authorName: String,
@@ -565,6 +571,7 @@ private fun VideoClipBottomItems(
                 )
                 if (isSubscribeButtonVisible && !clipModel.isSponsored) {
                     SimpleChip(
+                        enabled = isSubscribeButtonEnabled,
                         selected = isSubscribed,
                         onClick = onSubscribeClicked,
                         label = (if (isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),

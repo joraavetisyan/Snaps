@@ -410,7 +410,7 @@ abstract class VideoFeedViewModel(
         viewModelScope.launch {
             val isSubscribedInitially = _uiState.value.isSubscribed
             _uiState.update {
-                it.copy(isSubscribed = !isSubscribedInitially)
+                it.copy(isSubscribed = !isSubscribedInitially, isSubscribeButtonEnabled = false)
             }
             action.execute {
                 if (isSubscribedInitially) {
@@ -423,6 +423,8 @@ abstract class VideoFeedViewModel(
                     }
                 }.flatMap {
                     profileRepository.updateData(isSilently = true)
+                }.doOnSuccess {
+                    _uiState.update { it.copy(isSubscribeButtonEnabled = true) }
                 }
             }
         }
@@ -441,6 +443,7 @@ abstract class VideoFeedViewModel(
         val actions: List<ActionData>,
         val isSubscribeButtonVisible: Boolean = false,
         val isSubscribed: Boolean = false,
+        val isSubscribeButtonEnabled: Boolean = true,
     ) {
 
         val isCommentSendEnabled get() = comment.text.isNotBlank()

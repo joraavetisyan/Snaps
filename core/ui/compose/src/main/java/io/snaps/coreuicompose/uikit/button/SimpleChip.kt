@@ -48,6 +48,10 @@ object SimpleChipConfig {
         selectedLabelColor = AppTheme.specificColorScheme.white,
         selectedLeadingIconColor = AppTheme.specificColorScheme.white,
         selectedTrailingIconColor = AppTheme.specificColorScheme.white,
+        disabledContainerColor = AppTheme.specificColorScheme.grey.copy(alpha = 0.16f),
+        disabledLabelColor = AppTheme.specificColorScheme.white.copy(alpha = 0.8f),
+        disabledSelectedContainerColor = AppTheme.specificColorScheme.grey.copy(alpha = 0.16f),
+        disabledLeadingIconColor = AppTheme.specificColorScheme.white.copy(alpha = 0.8f),
     )
 
     @Composable
