@@ -63,7 +63,6 @@ class SubsRepositoryImpl @Inject constructor(
                     nextPageIdFactory = { it.entityId },
                     mapper = { it.toModelList(mySubscriptions = mySubscriptions().data) },
                 )
-
                 is SubType.Subscriber -> PagedLoaderParams(
                     action = { from, count ->
                         if (type.userId == null) {
