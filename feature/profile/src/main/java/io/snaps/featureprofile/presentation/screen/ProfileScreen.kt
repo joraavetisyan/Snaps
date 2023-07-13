@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,7 +45,6 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -62,6 +60,7 @@ import io.snaps.corecommon.ext.startShareLinkIntent
 import io.snaps.corecommon.model.Uuid
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreui.viewmodel.collectAsCommand
+import io.snaps.coreuicompose.tools.blur
 import io.snaps.coreuicompose.tools.get
 import io.snaps.coreuicompose.tools.inset
 import io.snaps.coreuicompose.tools.insetAllExcludeBottom
@@ -93,15 +92,21 @@ fun ProfileScreen(
     val viewModel = hiltViewModel<ProfileViewModel>()
 
     val uiState by viewModel.uiState.collectAsState()
-    val pullRefreshState = rememberPullRefreshState(uiState.isRefreshing, { viewModel.onRefreshPulled() })
+    val pullRefreshState =
+        rememberPullRefreshState(uiState.isRefreshing, { viewModel.onRefreshPulled() })
 
     viewModel.command.collectAsCommand {
         when (it) {
+            ProfileViewModel.Command.OpenWalletScreen -> router.toWalletScreen()
             ProfileViewModel.Command.OpenSettingsScreen -> router.toSettingsScreen()
+            ProfileViewModel.Command.OpenEditProfileScreen -> router.toEditProfileScreen()
+            ProfileViewModel.Command.OpenNotificationsScreen -> router.toNotificationsScreen()
+            ProfileViewModel.Command.OpenCreateVideoScreen -> router.toCreateVideoScreen()
             is ProfileViewModel.Command.OpenSubsScreen -> router.toSubsScreen(it.args)
             is ProfileViewModel.Command.OpenUserFeedScreen -> router.toUserFeedScreen(
                 userId = it.userId, position = it.position
             )
+
             is ProfileViewModel.Command.OpenLikedFeedScreen -> router.toLikedFeedScreen(
                 userId = it.userId, position = it.position,
             )
@@ -119,6 +124,8 @@ fun ProfileScreen(
         pullRefreshState = pullRefreshState,
         onCreateVideoClicked = viewModel::onCreateVideoClicked,
         onSettingsClicked = viewModel::onSettingsClicked,
+        onWalletClick = viewModel::onWalletClicked,
+        onNotificationsClicked = viewModel::onNotificationsClicked,
         onBackClicked = router::back,
         onSubscribeClicked = viewModel::onSubscribeClicked,
         onVideoClipClicked = viewModel::onVideoClipClicked,
@@ -136,6 +143,8 @@ private fun ProfileScreen(
     pullRefreshState: PullRefreshState,
     onCreateVideoClicked: () -> Unit,
     onSettingsClicked: () -> Unit,
+    onWalletClick: () -> Unit,
+    onNotificationsClicked: () -> Unit,
     onBackClicked: () -> Boolean,
     onSubscribeClicked: () -> Unit,
     onVideoClipClicked: (Int) -> Unit,
@@ -150,21 +159,37 @@ private fun ProfileScreen(
 
     val title = when (uiState.userType) {
         ProfileViewModel.UserType.Other,
-        ProfileViewModel.UserType.Current -> "@${uiState.name}"
+        ProfileViewModel.UserType.Current -> uiState.name
+
         ProfileViewModel.UserType.None -> ""
     }
-    val navigationIcon = AppTheme.specificIcons.back to onBackClicked
+    val navigationIcon = AppTheme.specificIcons.profileBack to onBackClicked
     val actions = listOfNotNull(
         ActionIconData(
-            icon = AppTheme.specificIcons.settings,
-            color = AppTheme.specificColorScheme.white,
-            onClick = onSettingsClicked,
+            icon = AppTheme.specificIcons.showMore,
+            color = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.4f),
+            onClick = {},
+        ).takeIf { uiState.userType == ProfileViewModel.UserType.Other },
+        ActionIconData(
+            icon = AppTheme.specificIcons.profileNotification,
+            color = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.4f),
+            onClick = onNotificationsClicked,
         ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
         ActionIconData(
-            icon = AppTheme.specificIcons.share,
-            color = AppTheme.specificColorScheme.white,
+            icon = AppTheme.specificIcons.profileShare,
+            color = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.4f),
             onClick = { context.startShareLinkIntent(uiState.shareLink!!) },
         ).takeIf { uiState.shareLink != null },
+        ActionIconData(
+            icon = AppTheme.specificIcons.wallet,
+            color = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.4f),
+            onClick = onWalletClick
+        ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
+        ActionIconData(
+            icon = AppTheme.specificIcons.profileSettings,
+            color = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.4f),
+            onClick = onSettingsClicked
+        ).takeIf { uiState.userType == ProfileViewModel.UserType.Current },
     )
     Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
         BackdropScaffold(
@@ -173,7 +198,9 @@ private fun ProfileScreen(
                 SimpleTopAppBar(
                     title = title.textValue(),
                     navigationIcon = navigationIcon,
+                    alpha = 0.4f,
                     actions = actions,
+                    titleHorizontalArrangement = Arrangement.Start,
                     scrollBehavior = scrollBehavior,
                     colors = SimpleTopAppBarConfig.transparentColors(
                         containerColor = AppTheme.specificColorScheme.white,
@@ -183,7 +210,7 @@ private fun ProfileScreen(
             },
             backLayerContent = {
                 AppBar(
-                    title = title,
+                    uiState = uiState,
                     navigationIcon = navigationIcon,
                     actions = actions,
                     userInfoTileState = uiState.userInfoTileState,
@@ -208,7 +235,6 @@ private fun ProfileScreen(
                             tabs = tabs,
                             onTabClicked = onTabClicked,
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
                         AnimatedContent(
                             targetState = uiState.selectedItemIndex,
                             modifier = Modifier.fillMaxSize(),
@@ -222,11 +248,14 @@ private fun ProfileScreen(
                                     onRetryUploadClicked = onRetryUploadClicked,
                                     uiState = uiState.videoFeedUiState,
                                     onClick = onVideoClipClicked,
+                                    contentPadding = PaddingValues(0.dp),
                                 )
+
                                 Liked -> VideoFeedGrid(
                                     columnCount = 3,
                                     uiState = uiState.userLikedVideoFeedUiState,
                                     onClick = onUserLikedVideoClipClicked,
+                                    contentPadding = PaddingValues(0.dp),
                                 )
                             }
                         }
@@ -240,7 +269,8 @@ private fun ProfileScreen(
             frontLayerContentColor = AppTheme.specificColorScheme.textPrimary,
             frontLayerScrimColor = Color.Unspecified,
             frontLayerElevation = 0.dp,
-            peekHeight = SimpleTopAppBarConfig.ContainerHeight + insetTop().asPaddingValues().calculateTopPadding(),
+            peekHeight = SimpleTopAppBarConfig.ContainerHeight + insetTop().asPaddingValues()
+                .calculateTopPadding(),
             stickyFrontLayer = true,
             persistentAppBar = false,
             gesturesEnabled = true,
@@ -303,7 +333,7 @@ private fun TabRow(
 @Composable
 private fun AppBar(
     modifier: Modifier = Modifier,
-    title: String,
+    uiState: ProfileViewModel.UiState,
     navigationIcon: Pair<IconValue, OnBackIconClick>,
     actions: List<ActionIconData>,
     userInfoTileState: UserInfoTileState,
@@ -318,14 +348,17 @@ private fun AppBar(
         modifier = modifier.fillMaxWidth(),
     ) {
         Image(
-            painter = R.drawable.img_background_profile.imageValue().get(),
+            painter = if (uiState.userImage != null) uiState.userImage.get() else R.drawable.img_background_profile.imageValue()
+                .get(),
             contentDescription = null,
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(imageHeight),
+                .blur(true)
+                .height(imageHeight)
         )
         Column {
+            // todo use SimpleTopAppBar
             TopAppBarLayout(
                 modifier = Modifier
                     .windowInsetsPadding(insetAllExcludeBottom())
@@ -334,15 +367,7 @@ private fun AppBar(
                 navigationIconContentColor = colors.navigationIconContentColor,
                 titleContentColor = colors.titleContentColor,
                 actionIconContentColor = colors.actionIconContentColor,
-                title = {
-                    Text(
-                        text = title,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(start = 16.dp),
-                        color = AppTheme.specificColorScheme.white,
-                    )
-                },
+                title = {},
                 titleTextStyle = AppTheme.specificTypography.titleMedium,
                 titleAlpha = 1f,
                 titleVerticalArrangement = Arrangement.Center,
@@ -352,7 +377,7 @@ private fun AppBar(
                 navigationIcon = {
                     Icon(
                         painter = navigationIcon.first.get(),
-                        tint = AppTheme.specificColorScheme.white,
+                        tint = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.4f),
                         contentDescription = "navigation icon",
                         modifier = Modifier
                             .clip(CircleShape)
@@ -381,10 +406,11 @@ private fun AppBar(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
+                        shape = AppTheme.shapes.medium,
                         selected = !isSubscribed,
                         label = (if (isSubscribed) StringKey.SubsActionFollowing else StringKey.SubsActionFollow).textValue(),
                         textStyle = AppTheme.specificTypography.titleSmall,
-                        contentPadding = PaddingValues(10.dp),
+                        contentPadding = PaddingValues(12.dp),
                         onClick = onSubscribeClicked,
                     )
                 }

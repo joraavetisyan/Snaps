@@ -7,15 +7,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -27,11 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import io.snaps.corecommon.container.ImageValue
+import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.RoundedCornerShape
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.defaultTileRipple
 import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.uikit.button.SimpleChip
+import io.snaps.coreuicompose.uikit.button.SimpleChipConfig
 import io.snaps.coreuicompose.uikit.other.ShimmerTileCircle
 import io.snaps.coreuicompose.uikit.other.ShimmerTileLine
 import io.snaps.coreuitheme.compose.AppTheme
@@ -41,12 +46,15 @@ sealed class UserInfoTileState : TileState {
 
     data class Data(
         val profileImage: ImageValue?,
+        val profileTitle: String,
+        val isUserCurrent: Boolean,
         val likes: String,
         val subscribers: Int,
         val subscriptions: Int,
         val publication: String?,
         val onSubscribersClick: () -> Unit,
         val onSubscriptionsClick: () -> Unit,
+        val onEditProfileClick: () -> Unit,
     ) : UserInfoTileState()
 
     object Shimmer : UserInfoTileState()
@@ -76,14 +84,17 @@ private fun Data(
 ) {
     Container(modifier) {
         InfoContainer {
-            StatsLine(data.likes, LocalStringHolder.current(StringKey.ProfileTitleLikes))
-            VerticalDivider()
+            StatsLine(
+                value = data.likes,
+                name = LocalStringHolder.current(StringKey.ProfileTitleLikes),
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             StatsLine(
                 value = data.subscriptions.toString(),
                 name = LocalStringHolder.current(StringKey.ProfileTitleSubscriptions),
                 onClick = data.onSubscriptionsClick
             )
-            VerticalDivider()
+            Spacer(modifier = Modifier.width(8.dp))
             StatsLine(
                 value = data.subscribers.toString(),
                 name = LocalStringHolder.current(StringKey.ProfileTitleSubscribers),
@@ -95,11 +106,11 @@ private fun Data(
             }
         }
         Card(
-            shape = CircleShape,
+            shape = AppTheme.shapes.large,
             border = BorderStroke(width = 2.dp, color = AppTheme.specificColorScheme.white),
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(bottom = 76.dp),
+                .align(Alignment.TopStart)
+                .padding(bottom = 124.dp, start = 16.dp),
         ) {
             if (data.profileImage != null) {
                 Image(
@@ -112,6 +123,31 @@ private fun Data(
                 ShimmerTileCircle(size = 76.dp)
             }
         }
+        if (data.isUserCurrent) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 16.dp, bottom = 124.dp)
+            ) {
+                SimpleChip(
+                    modifier = Modifier.wrapContentSize(),
+                    selected = false,
+                    shape = AppTheme.shapes.medium,
+                    label = StringKey.ProfileActionEditProfile.textValue(),
+                    textStyle = AppTheme.specificTypography.titleSmall,
+                    contentPadding = PaddingValues(8.dp),
+                    colors = SimpleChipConfig.lightGreyColor(),
+                    onClick = data.onEditProfileClick,
+                )
+            }
+        }
+        Text(
+            text = data.profileTitle,
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 16.dp),
+            style = AppTheme.specificTypography.titleSmall,
+        )
     }
 }
 
@@ -143,8 +179,8 @@ private fun Shimmer(
         ShimmerTileCircle(
             size = 76.dp,
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(bottom = 72.dp),
+                .align(Alignment.TopStart)
+                .padding(bottom = 72.dp, start = 16.dp),
         )
     }
 }
@@ -173,7 +209,7 @@ private fun BoxScope.InfoContainer(
             modifier = Modifier
                 .padding(horizontal = 12.dp)
                 .padding(bottom = 16.dp)
-                .padding(top = 32.dp)
+                .padding(top = 80.dp)
                 .height(IntrinsicSize.Min)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -188,18 +224,30 @@ private fun RowScope.StatsLine(
     name: String,
     onClick: (() -> Unit)? = null,
 ) {
-    Column(
-        modifier = Modifier
-            .weight(1f)
-            .defaultTileRipple(onClick = onClick),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Card(
+        modifier = Modifier.weight(1f),
+        shape = AppTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(12.dp),
+        colors = CardDefaults.cardColors(containerColor = AppTheme.specificColorScheme.white),
     ) {
-        Text(text = value, style = AppTheme.specificTypography.titleSmall)
-        Text(
-            text = name,
-            style = AppTheme.specificTypography.bodySmall,
-            color = AppTheme.specificColorScheme.textPrimary.copy(alpha = 0.5f),
-        )
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 12.dp, vertical = 4.dp)
+                .weight(1f)
+                .align(alignment = Alignment.CenterHorizontally)
+                .defaultTileRipple(onClick = onClick),
+        ) {
+            Text(
+                text = value,
+                style = AppTheme.specificTypography.titleSmall,
+                modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
+            )
+            Text(
+                text = name,
+                style = AppTheme.specificTypography.bodySmall,
+                modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
+            )
+        }
     }
 }
 

@@ -5,12 +5,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SelectableChipBorder
+import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.SelectableChipElevation
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,6 +45,16 @@ object SimpleChipConfig {
         containerColor = AppTheme.specificColorScheme.grey.copy(alpha = 0.32f),
         labelColor = AppTheme.specificColorScheme.white,
         selectedContainerColor = AppTheme.specificColorScheme.grey.copy(alpha = 0.16f),
+        selectedLabelColor = AppTheme.specificColorScheme.white,
+        selectedLeadingIconColor = AppTheme.specificColorScheme.white,
+        selectedTrailingIconColor = AppTheme.specificColorScheme.white,
+    )
+
+    @Composable
+    fun lightGreyColor() = FilterChipDefaults.filterChipColors(
+        containerColor = AppTheme.specificColorScheme.grey.copy(),
+        labelColor = AppTheme.specificColorScheme.black,
+        selectedContainerColor = AppTheme.specificColorScheme.grey.copy(),
         selectedLabelColor = AppTheme.specificColorScheme.white,
         selectedLeadingIconColor = AppTheme.specificColorScheme.white,
         selectedTrailingIconColor = AppTheme.specificColorScheme.white,

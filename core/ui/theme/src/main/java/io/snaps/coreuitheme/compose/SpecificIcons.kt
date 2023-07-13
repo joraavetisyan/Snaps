@@ -26,6 +26,7 @@ import androidx.compose.material.icons.rounded.Help
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.NavigateNext
+import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Star
@@ -66,6 +67,7 @@ object SpecificIcons {
     val volumeDown = Icons.Rounded.VolumeMute.iconValue()
     val volumeUp = Icons.Rounded.VolumeUp.iconValue()
     val help = Icons.Rounded.Help.iconValue()
+    val notification = Icons.Rounded.Notifications.iconValue() // todo use from figma
 
     // Bottom menu icons
     val camera = Icons.Rounded.Videocam.iconValue()
@@ -86,7 +88,13 @@ object SpecificIcons {
     val sendCircled = R.drawable.ic_send.iconValue()
     val addCircled = R.drawable.ic_add.iconValue()
     val comment = R.drawable.ic_comment.iconValue()
+    val profileShare = R.drawable.ic_profile_share.iconValue()
     val share = R.drawable.ic_share.iconValue()
+    val showMore = R.drawable.ic_show_more.iconValue()
+    val wallet = R.drawable.ic_wallet.iconValue()
+    val profileSettings = R.drawable.ic_profile_settings.iconValue()
+    val profileNotification = R.drawable.ic_notification.iconValue()
+    val profileBack = R.drawable.ic_profile_back.iconValue()
     val copy = R.drawable.ic_copy.iconValue()
     val exchange = R.drawable.ic_exchange.iconValue()
     val topUp = R.drawable.ic_topup.iconValue()

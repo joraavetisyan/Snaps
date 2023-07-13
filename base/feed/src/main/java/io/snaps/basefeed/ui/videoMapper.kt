@@ -1,7 +1,7 @@
 package io.snaps.basefeed.ui
 
-import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.basefeed.domain.VideoClipModel
+import io.snaps.basefeed.domain.VideoFeedPageModel
 import io.snaps.corecommon.R
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.container.TextValue
@@ -40,10 +40,11 @@ fun VideoFeedPageModel.toVideoFeedUiState(
     shimmerListSize: Int,
     emptyMessage: TextValue? = null,
     emptyTitle: TextValue = StringKey.MessageEmptyVideoFeed.textValue(),
-    emptyImage: ImageValue = R.drawable.img_guy_confused.imageValue(),
+    emptyImage: ImageValue? = R.drawable.img_guy_confused.imageValue(),
     onClipClicked: (VideoClipModel) -> Unit,
     onReloadClicked: () -> Unit,
     onListEndReaching: () -> Unit,
+    emptyButtonData: EmptyListTileState.ButtonData? = null,
 ): VideoFeedUiState {
     return when {
         isLoading && loadedPageItems.isEmpty() -> VideoFeedUiState(
@@ -51,16 +52,20 @@ fun VideoFeedPageModel.toVideoFeedUiState(
                 VideoClipUiState.Shimmer("${VideoClipUiState.Shimmer::class.simpleName}$it")
             }
         )
+
         error != null -> VideoFeedUiState(
             errorState = MessageBannerState.defaultState(onReloadClicked)
         )
+
         loadedPageItems.isEmpty() -> VideoFeedUiState(
-            emptyState = EmptyListTileState.defaultState(
+            emptyState = EmptyListTileState(
                 title = emptyTitle,
                 message = emptyMessage,
                 image = emptyImage,
+                buttonData = emptyButtonData,
             )
         )
+
         else -> VideoFeedUiState(
             items = loadedPageItems.map {
                 VideoClipUiState.Data(

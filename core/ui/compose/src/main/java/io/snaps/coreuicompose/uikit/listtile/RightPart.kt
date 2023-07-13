@@ -18,9 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil.request.ImageRequest
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -58,7 +60,10 @@ sealed class RightPart : TileState {
 
     data class NavigateNextIcon(val text: TextValue? = null) : RightPart()
 
-    data class Logo(val source: ImageValue) : RightPart()
+    data class Logo(
+        val source: ImageValue,
+        val builder: ImageRequest.Builder.() -> Unit = {},
+    ) : RightPart()
 
     data class LottieAnim(
         @RawRes val resId: Int,
@@ -172,8 +177,9 @@ fun RightPartTile(modifier: Modifier, data: RightPart) {
                 )
             }
             is RightPart.Logo -> Image(
-                painter = data.source.get(),
+                painter = data.source.get(data.builder),
                 contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(RightPartTileConfig.IconSize),
             )
@@ -209,7 +215,6 @@ fun RightPartTile(modifier: Modifier, data: RightPart) {
             }
             is RightPart.ChipData -> {
                 SimpleChip(
-                    modifier = Modifier.width(124.dp),
                     selected = data.selected,
                     label = data.text,
                     textStyle = AppTheme.specificTypography.labelSmall,

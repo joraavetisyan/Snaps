@@ -12,6 +12,8 @@ interface VideoFeedInteractor {
     suspend fun insertAds(pageModel: VideoFeedPageModel): VideoFeedPageModel
 }
 
+private const val SHOW_AD_PLACE = 10
+
 class VideoFeedInteractorImpl @Inject constructor(
     private val action: Action,
     private val settingsRepository: SettingsRepository,
@@ -19,25 +21,25 @@ class VideoFeedInteractorImpl @Inject constructor(
 ) : VideoFeedInteractor {
 
     override suspend fun insertAds(pageModel: VideoFeedPageModel): VideoFeedPageModel {
-        val ad = settingsRepository.state.value.dataOrCache?.ad
-        return if (ad != null && ad.isShown) {
-            val chunked: List<List<VideoClipModel>> = pageModel.loadedPageItems.chunked(ad.showPlace)
-            val result = mutableListOf<VideoClipModel>()
-            val likeCount = action.execute(needsErrorProcessing = false) {
-                videoFeedRepository.get(videoId = ad.entityId)
-            }.map {
-                it.likeCount
-            }.data ?: 0
-            val adVideo = ad.toVideoModel().copy(likeCount = likeCount)
-            chunked.forEach {
-                result.addAll(it)
-                if (it.size == ad.showPlace) {
-                    result.add(adVideo)
+        val ads = settingsRepository.state.value.dataOrCache?.ads ?: return pageModel
+        val result = pageModel.loadedPageItems.toMutableList()
+        ads.forEachIndexed { index, ad ->
+            if (ad.isShown) {
+                val likeCount = action.execute(needsErrorProcessing = false) {
+                    videoFeedRepository.get(videoId = ad.entityId)
+                }.map {
+                    it.likeCount
+                }.data ?: 0
+                val adVideo = ad.toVideoModel().copy(likeCount = likeCount)
+
+                val startIndex = SHOW_AD_PLACE * (index + 1)
+                val endIndex = pageModel.loadedPageItems.lastIndex
+                val step = ads.size * SHOW_AD_PLACE
+                for (i in startIndex..endIndex step step) {
+                    result.add(i, adVideo)
                 }
             }
-            pageModel.copy(loadedPageItems = result)
-        } else {
-            pageModel
         }
+        return pageModel.copy(loadedPageItems = result)
     }
 }

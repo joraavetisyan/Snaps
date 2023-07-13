@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
  */
 typealias PagedLoaderAction<T> = suspend (from: String?, count: Int) -> BaseResponse<List<T>>
 
+// todo in the future, nextPage: Int will be used
 data class PagedLoaderParams<T, R>(
     val action: PagedLoaderAction<T>,
     val pageSize: Int,

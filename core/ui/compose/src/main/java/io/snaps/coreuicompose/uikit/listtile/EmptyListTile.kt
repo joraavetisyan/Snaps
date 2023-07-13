@@ -1,11 +1,13 @@
 package io.snaps.coreuicompose.uikit.listtile
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,13 +23,21 @@ import io.snaps.corecommon.container.textValue
 import io.snaps.corecommon.strings.StringKey
 import io.snaps.coreuicompose.tools.TileState
 import io.snaps.coreuicompose.tools.get
+import io.snaps.coreuicompose.uikit.button.SimpleButtonActionS
+import io.snaps.coreuicompose.uikit.button.SimpleButtonContent
 import io.snaps.coreuitheme.compose.AppTheme
 
 data class EmptyListTileState(
     val title: TextValue,
     val message: TextValue? = null,
     val image: ImageValue? = null,
+    val buttonData: ButtonData? = null,
 ) : TileState {
+
+    data class ButtonData(
+        val text: TextValue,
+        val onClick: () -> Unit,
+    )
 
     @Composable
     override fun Content(modifier: Modifier) {
@@ -56,7 +66,7 @@ fun EmptyListTile(
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
     ) {
         data.image?.let {
             Image(
@@ -66,6 +76,7 @@ fun EmptyListTile(
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = data.title.get(),
             style = AppTheme.specificTypography.bodyLarge,
@@ -79,6 +90,23 @@ fun EmptyListTile(
                 color = AppTheme.specificColorScheme.textSecondary,
                 textAlign = TextAlign.Center,
             )
+        }
+        data.buttonData?.let {
+            Spacer(modifier = Modifier.height(4.dp))
+            SimpleButtonActionS(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, end = 32.dp)
+                    .background(
+                        color = AppTheme.specificColorScheme.actionBase,
+                        shape = AppTheme.shapes.medium
+                    ),
+                onClick = it.onClick,
+            ) {
+                SimpleButtonContent(
+                    text = it.text,
+                )
+            }
         }
     }
 }

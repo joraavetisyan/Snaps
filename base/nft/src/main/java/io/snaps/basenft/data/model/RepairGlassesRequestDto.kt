@@ -8,5 +8,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RepairGlassesRequestDto(
     @SerialName("glassesId") val glassesId: Uuid,
-    @SerialName("transactionData") val txSign: TxSign? = null,
+    @SerialName("transactionData") val txSign: TxSign? = null, // transactionData not null for web3
 )

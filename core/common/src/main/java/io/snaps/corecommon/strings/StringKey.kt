@@ -416,9 +416,11 @@ enum class StringKey {
     ProfileTitleSubscribers,
     ProfileTitleSubscriptions,
     ProfileTitlePublication,
+    ProfileActionAddVideo,
     ProfileMessageEmptyVideos,
     ProfileTitleLiked,
     ProfileTitleShorts,
+    ProfileActionEditProfile,
 
     EditProfileTitle,
     EditProfileFieldPhoto,
@@ -443,6 +445,7 @@ enum class StringKey {
     MyCollectionFieldNeedToRepair,
     MyCollectionActionRepairGlasses,
     MyCollectionActionProcessing,
+    MyCollectionActionRepairAllGlasses,
     MyCollectionFieldBonus,
     MyCollectionFieldExperience,
     MyCollectionFieldLevel,
@@ -453,6 +456,7 @@ enum class StringKey {
     MyCollectionDialogWithBnbSuccessTitle,
     MyCollectionDialogWithBnbSuccessMessage,
     MyCollectionDialogWithBnbSuccessAction,
+    MyCollectionDialogWithBnbTitle,
 
     DialogLimitedGasTitle,
     DialogLimitedGasMessage,
@@ -572,4 +576,11 @@ enum class StringKey {
     InterestsSelectionTitleFinance,
     InterestsSelectionTitleBusiness,
     InterestsSelectionTitleGirls,
+
+    NotificationsTitle,
+    NotificationsMessageFollow,
+    NotificationsMessageComment,
+    NotificationsMessageLike,
+    NotificationsTitleEmpty,
+    NotificationsActionStartSubscribe,
 }

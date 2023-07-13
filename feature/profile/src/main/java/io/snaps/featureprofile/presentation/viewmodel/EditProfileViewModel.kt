@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.snaps.baseprofile.data.ProfileRepository
 import io.snaps.baseprofile.domain.EditUserInteractor
-import io.snaps.baseprofile.domain.UserInfoModel
 import io.snaps.corecommon.container.ImageValue
 import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.strings.isUserNameValid
@@ -105,14 +104,15 @@ class EditProfileViewModel @Inject constructor(
     }
 
     fun editName() = viewModelScope.launch {
-        if (uiState.value.name != uiState.value.editNameValue) {
+        val editName = uiState.value.editNameValue.trim()
+        if (uiState.value.name != editName) {
             action.execute {
                 _uiState.update { it.copy(isLoading = true) }
-                interactor.editUser(userName = uiState.value.editNameValue)
+                interactor.editUser(userName = editName)
             }.doOnComplete {
                 _uiState.update { it.copy(isLoading = false) }
             }.doOnSuccess {
-                _uiState.update { it.copy(name = uiState.value.editNameValue) }
+                _uiState.update { it.copy(name = editName) }
                 _command publish Command.CloseScreen
             }
         } else {
@@ -128,7 +128,7 @@ class EditProfileViewModel @Inject constructor(
         val imageUri: Uri? = null,
         val editNameValue: String = "",
     ) {
-        val isNameValid get() = editNameValue.isUserNameValid()
+        val isNameValid get() = editNameValue.trim().isUserNameValid()
     }
 
     sealed class Command {

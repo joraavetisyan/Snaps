@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -24,12 +25,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.size.Scale
 import io.snaps.basefeed.data.UploadStatusSource
 import io.snaps.basefeed.data.model.VideoStatus
 import io.snaps.basefeed.domain.VideoClipModel
@@ -48,7 +48,6 @@ import io.snaps.coreuicompose.uikit.scroll.ScrollEndDetectLazyVerticalGrid
 import io.snaps.coreuitheme.compose.AppTheme
 import io.snaps.coreuitheme.compose.colors
 import kotlinx.coroutines.flow.Flow
-import io.snaps.coreuitheme.R as CoreUiThemeR
 
 @Composable
 fun VideoFeedGrid(
@@ -59,14 +58,18 @@ fun VideoFeedGrid(
     onRetryUploadClicked: (videoId: Uuid) -> Unit = {},
     uiState: VideoFeedUiState,
     onClick: (Int) -> Unit,
+    contentPadding: PaddingValues,
 ) {
     val lazyGridState = rememberLazyGridState()
     ScrollEndDetectLazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
         state = lazyGridState,
         columns = GridCells.Fixed(columnCount),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
         onScrollEndDetected = uiState.onListEndReaching,
         detectThreshold = detectThreshold,
+        contentPadding = contentPadding,
     ) {
         itemsIndexed(
             items = uiState.items,
@@ -128,20 +131,14 @@ private fun Thumbnail(
 ) {
     Box(
         modifier
-            .shadow(elevation = 16.dp, shape = AppTheme.shapes.medium)
             .background(
-                color = AppTheme.specificColorScheme.uiContentBg,
-                shape = AppTheme.shapes.medium,
-            ),
+                color = AppTheme.specificColorScheme.black_10,
+            )
     ) {
         item.thumbnail?.let {
             Image(
                 modifier = Modifier.fillMaxSize(),
-                painter = it.imageValue().get {
-                    this
-                        .placeholder(CoreUiThemeR.drawable.ic_launcher_foreground)
-                        .scale(Scale.FILL)
-                },
+                painter = it.imageValue().get(),
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
             )
@@ -168,13 +165,12 @@ private fun Thumbnail(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(horizontal = 4.dp, vertical = 8.dp),
+                .align(Alignment.BottomCenter),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
             Info(icon = AppTheme.specificIcons.favorite, value = item.likeCount.toString())
-            Spacer(modifier = Modifier.width(20.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Info(icon = AppTheme.specificIcons.eye, value = item.viewCount.toString())
         }
     }
@@ -252,8 +248,14 @@ private fun ItemContainer(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .addIf(onClick != null) { defaultTileRipple(onClick = onClick) }
-            .aspectRatio(2f / 3f),
+            .addIf(onClick != null) {
+                defaultTileRipple(
+                    onClick = onClick,
+                    padding = 0.dp,
+                    shape = RectangleShape
+                )
+            }
+            .aspectRatio(1f / 2f),
     ) {
         content()
     }

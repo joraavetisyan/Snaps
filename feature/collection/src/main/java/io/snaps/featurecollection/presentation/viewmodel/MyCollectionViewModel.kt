@@ -6,6 +6,8 @@ import io.snaps.basenft.data.NftRepository
 import io.snaps.basenft.domain.NftModel
 import io.snaps.basenft.ui.CollectionItemState
 import io.snaps.baseprofile.data.MainHeaderHandler
+import io.snaps.baseprofile.data.ProfileRepository
+import io.snaps.baseprofile.data.model.PaymentsState
 import io.snaps.basesession.data.OnboardingHandler
 import io.snaps.basesources.BottomDialogBarVisibilityHandler
 import io.snaps.basesources.NotificationsSource
@@ -13,8 +15,14 @@ import io.snaps.basewallet.data.WalletRepository
 import io.snaps.basewallet.ui.LimitedGasDialogHandler
 import io.snaps.featurecollection.domain.NoEnoughSnpToRepair
 import io.snaps.basewallet.ui.TransferTokensDialogHandler
+import io.snaps.basewallet.ui.TransferTokensState
 import io.snaps.basewallet.ui.TransferTokensSuccessData
+import io.snaps.corecommon.container.TextValue
 import io.snaps.corecommon.container.textValue
+import io.snaps.corecommon.model.CoinBNB
+import io.snaps.corecommon.model.CoinSNPS
+import io.snaps.corecommon.model.CoinValue
+import io.snaps.corecommon.model.Effect
 import io.snaps.corecommon.model.FullUrl
 import io.snaps.corecommon.model.OnboardingType
 import io.snaps.corecommon.strings.StringKey
@@ -49,6 +57,7 @@ class MyCollectionViewModel @Inject constructor(
     private val notificationsSource: NotificationsSource,
     @Bridged private val nftRepository: NftRepository,
     @Bridged private val walletRepository: WalletRepository,
+    @Bridged private val profileRepository: ProfileRepository,
     private val interactor: MyCollectionInteractor,
 ) : SimpleViewModel(),
     MainHeaderHandler by mainHeaderHandler,
@@ -63,8 +72,15 @@ class MyCollectionViewModel @Inject constructor(
     private val _command = Channel<Command>()
     val command = _command.receiveAsFlow()
 
+    private val repairAllNftWithBnbDialogTitle: TextValue by lazy {
+        StringKey.MyCollectionDialogWithBnbTitle.textValue(
+            nftRepository.countBrokenGlassesState.value.dataOrCache.toString()
+        )
+    }
+
     init {
         subscribeOnNft()
+        subscribeOnBrokenGlasses()
 
         refreshNfts()
 
@@ -75,6 +91,16 @@ class MyCollectionViewModel @Inject constructor(
 
     private fun subscribeOnNft() {
         nftRepository.nftCollectionState.combine(walletRepository.snpsAccountState) { collection, account ->
+            if (collection is Effect<List<NftModel>> && collection.isSuccess) {
+                _uiState.update {
+                    it.copy(
+                        nftsRepairCost = collection.requireData
+                            .filter { nftModel -> !nftModel.isHealthy }
+                            .sumOf { nftModel -> nftModel.repairCost.value }
+                            .let { cost -> CoinSNPS(cost) }
+                    )
+                }
+            }
             collection.toNftCollectionItemState(
                 snpsUsdExchangeRate = account.dataOrCache?.snpsUsdExchangeRate ?: 0.0,
                 onAddItemClicked = ::onAddItemClicked,
@@ -85,6 +111,16 @@ class MyCollectionViewModel @Inject constructor(
             )
         }.onEach { state ->
             _uiState.update { it.copy(nft = state) }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun subscribeOnBrokenGlasses() {
+        nftRepository.countBrokenGlassesState.onEach { state ->
+            if (state is Effect<Int> && state.isSuccess) {
+                _uiState.update {
+                    it.copy(isAllNftRepairButtonVisible = state.requireData > 0)
+                }
+            }
         }.launchIn(viewModelScope)
     }
 
@@ -133,6 +169,61 @@ class MyCollectionViewModel @Inject constructor(
         }
     }
 
+    fun onRepairAllNftClicked() {
+        if (nftRepository.nftCollectionState.value.dataOrCache == null) return
+        if (profileRepository.state.value.dataOrCache?.paymentsState == PaymentsState.Blockchain) {
+            repairAllNftTransferData()
+        } else {
+            onRepairAllNftConfirmed()
+        }
+    }
+
+    private fun repairAllNftTransferData() {
+        viewModelScope.launch {
+            showTransferTokensBottomDialog(
+                scope = viewModelScope,
+                state = TransferTokensState.Shimmer(title = repairAllNftWithBnbDialogTitle),
+            )
+            action.execute {
+                interactor.getRepairAllNftTransferData(uiState.value.nftsRepairCost.value)
+            }.doOnSuccess { transferData ->
+                updateTransferTokensState(
+                    state = TransferTokensState.Data(
+                        title = repairAllNftWithBnbDialogTitle,
+                        from = transferData.from,
+                        to = transferData.to,
+                        summary = CoinSNPS(transferData.summary),
+                        gas = CoinBNB(transferData.gas),
+                        total = CoinSNPS(transferData.total),
+                        onConfirmClick = { onRepairAllNftConfirmed() },
+                        onCancelClick = { hideTransferTokensBottomDialog(viewModelScope) },
+                    )
+                )
+            }
+        }
+    }
+
+    private fun onRepairAllNftConfirmed() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            action.execute {
+                interactor.repairAllNft(uiState.value.nftsRepairCost.value)
+            }.doOnSuccess {
+                if (it.isNotEmpty()) {
+                    onSuccessfulTransfer(scope = viewModelScope, data = TransferTokensSuccessData(txHash = it))
+                } else {
+                    notificationsSource.sendMessage(StringKey.MessageSuccess.textValue())
+                }
+            }.doOnError { error, _ ->
+                if (error.cause is NoEnoughSnpToRepair) {
+                    notificationsSource.sendError(StringKey.MyCollectionErrorNoEnoughSnp.textValue())
+                }
+            }.doOnComplete {
+                _uiState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
     fun onRefreshPulled() {
         _uiState.update { it.copy(isRefreshing = true) }
         refreshNfts()
@@ -158,6 +249,8 @@ class MyCollectionViewModel @Inject constructor(
         val isRefreshing: Boolean = false,
         val isLoading: Boolean = false,
         val nft: List<CollectionItemState> = List(6) { CollectionItemState.Shimmer },
+        val isAllNftRepairButtonVisible: Boolean = false,
+        val nftsRepairCost: CoinValue = CoinSNPS(0.0),
     )
 
     sealed class Command {

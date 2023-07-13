@@ -35,6 +35,8 @@ interface SubsRepository {
     suspend fun unsubscribe(subscriptionId: Uuid): Effect<Completable>
 
     suspend fun isSubscribed(userId: Uuid): Effect<Boolean>
+
+    suspend fun mySubscriptions(): Effect<List<SubsItemResponseDto>>
 }
 
 class SubsRepositoryImpl @Inject constructor(
@@ -142,7 +144,7 @@ class SubsRepositoryImpl @Inject constructor(
         return mySubscriptions().map { subscriptions -> subscriptions.any { it.userId == userId } }
     }
 
-    private suspend fun mySubscriptions(): Effect<List<SubsItemResponseDto>> {
+    override suspend fun mySubscriptions(): Effect<List<SubsItemResponseDto>> {
         return mySubscriptions?.let(Effect.Companion::success) ?: apiCall(ioDispatcher) {
             subsApi.get().mySubscriptions(from = null, count = 1000)
         }.doOnSuccess {
