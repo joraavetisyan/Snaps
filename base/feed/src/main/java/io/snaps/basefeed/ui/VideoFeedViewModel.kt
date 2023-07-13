@@ -288,7 +288,9 @@ abstract class VideoFeedViewModel(
     }
 
     fun onCommentChanged(newValue: TextFieldValue) {
-        _uiState.update { it.copy(comment = newValue) }
+        if (newValue.text.count { it == '\n' } < 6 && newValue.text.length <= 130) {
+            _uiState.update { it.copy(comment = newValue) }
+        }
     }
 
     fun onCommentInputClick() {
