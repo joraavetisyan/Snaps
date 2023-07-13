@@ -127,11 +127,7 @@ private fun InputRow(
         }
         SimpleTextField(
             value = value,
-            onValueChange = { newValue ->
-                if (newValue.text.count { it == '\n' } < 6 && newValue.text.length <= 130) {
-                    onValueChange(newValue)
-                }
-            },
+            onValueChange = onValueChange,
             placeholder = { Text(text = StringKey.CommentsHint.textValue().get()) },
             modifier = Modifier
                 .addIf(focusRequester != null) {
