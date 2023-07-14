@@ -423,7 +423,7 @@ abstract class VideoFeedViewModel(
                     }
                 }.flatMap {
                     profileRepository.updateData(isSilently = true)
-                }.doOnSuccess {
+                }.doOnComplete {
                     _uiState.update { it.copy(isSubscribeButtonEnabled = true) }
                 }
             }
