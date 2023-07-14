@@ -55,7 +55,8 @@ class SubsRepositoryImpl @Inject constructor(
                         if (type.userId == null) {
                             subsApi.get().mySubscriptions(from = from, count = count)
                         } else {
-                            subsApi.get().subscriptions(from = from, count = count, userId = type.userId)
+                            subsApi.get()
+                                .subscriptions(from = from, count = count, userId = type.userId)
                         }
                     },
                     pageSize = 100,
@@ -67,7 +68,8 @@ class SubsRepositoryImpl @Inject constructor(
                         if (type.userId == null) {
                             subsApi.get().mySubscribers(from = from, count = count)
                         } else {
-                            subsApi.get().subscribers(from = from, count = count, userId = type.userId)
+                            subsApi.get()
+                                .subscribers(from = from, count = count, userId = type.userId)
                         }
                     },
                     pageSize = 100,
